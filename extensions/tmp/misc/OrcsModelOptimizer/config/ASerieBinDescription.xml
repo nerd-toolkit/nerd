@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+	<physicalDataSourceDescription name="Binary">
+	
+		<normalization physicalMin="-32768" physicalMax="32767"/>
+
+		<!-- 	timePos = position in frame for timestamp 
+			timeChangeIntervall = number of frames before the timestamp changes
+			frameLength = length of a frame in byte
+			frameTimeLength = time in msec between the frames
+			syncValue = value of the first value in the frame	-->
+		<dataFormat 	timePos="2"		
+				timeChangeIntervall="10"
+				frameLength="128" 
+				frameTimeLength="10"
+				syncValue="21845"/>
+
+		<!-- Head Pan -->
+		<value binPos="17" orcs="/Sim/ASeries/Head/Pan/DesiredTorque" />
+		<value binPos="27" orcs="/Sim/ASeries/Head/Pan/JointAngle" />
+		<value binPos="30" orcs="/Sim/ASeries/Head/Pan/DesiredAngle" />
+	
+		<!-- Head Tilt -->
+		<value binPos="18" orcs="/Sim/ASeries/Head/Tilt/DesiredTorque" />	
+		<value binPos="28" orcs="/Sim/ASeries/Head/Tilt/JointAngle" />
+		<value binPos="31" orcs="/Sim/ASeries/Head/Tilt/DesiredAngle" />
+
+		<!-- Left AnklePitch -->
+		<value binPos="98" orcs="/Sim/ASeries/Left/AnklePitch/DesiredTorque" />	
+		<value binPos="108" orcs="/Sim/ASeries/Left/AnklePitch/JointAngle" />
+		<value binPos="111" orcs="/Sim/ASeries/Left/AnklePitch/DesiredAngle" />
+
+		<!-- Left AnkleYaw -->
+		<value binPos="97" orcs="/Sim/ASeries/Left/AnkleYaw/DesiredTorque" />	
+		<value binPos="107" orcs="/Sim/ASeries/Left/AnkleYaw/JointAngle" />
+		<value binPos="110" orcs="/Sim/ASeries/Left/AnkleYaw/DesiredAngle" />
+
+		<!-- Left Elbow -->
+		<value binPos="34" orcs="/Sim/ASeries/Left/Elbow/DesiredTorque" />	
+		<value binPos="44" orcs="/Sim/ASeries/Left/Elbow/JointAngle" />
+		<value binPos="47" orcs="/Sim/ASeries/Left/Elbow/DesiredAngle" />
+
+		<!-- Left HipPitch -->
+		<value binPos="65" orcs="/Sim/ASeries/Left/HipPitch/DesiredTorque" />	
+		<value binPos="75" orcs="/Sim/ASeries/Left/HipPitch/JointAngle" />
+		<value binPos="78" orcs="/Sim/ASeries/Left/HipPitch/DesiredAngle" />
+
+		<!-- Left HipRoll -->
+		<value binPos="64" orcs="/Sim/ASeries/Left/HipRoll/DesiredTorque" />	
+		<value binPos="74" orcs="/Sim/ASeries/Left/HipRoll/JointAngle" />
+		<value binPos="77" orcs="/Sim/ASeries/Left/HipRoll/DesiredAngle" />
+
+		<!-- Left HipYaw -->
+		<value binPos="66" orcs="/Sim/ASeries/Left/HipYaw/DesiredTorque" />	
+		<value binPos="76" orcs="/Sim/ASeries/Left/HipYaw/JointAngle" />
+		<value binPos="79" orcs="/Sim/ASeries/Left/HipYaw/DesiredAngle" />
+
+		<!-- Left Knee -->
+		<value binPos="96" orcs="/Sim/ASeries/Left/Knee/DesiredTorque" />	
+		<value binPos="106" orcs="/Sim/ASeries/Left/Knee/JointAngle" />
+		<value binPos="109" orcs="/Sim/ASeries/Left/Knee/DesiredAngle" />
+
+		<!-- Left ShoulderPitch -->
+		<value binPos="33" orcs="/Sim/ASeries/Left/ShoulderPitch/DesiredTorque" />	
+		<value binPos="43" orcs="/Sim/ASeries/Left/ShoulderPitch/JointAngle" />
+		<value binPos="46" orcs="/Sim/ASeries/Left/ShoulderPitch/DesiredAngle" />
+
+		<!-- Left ShoulderYaw -->
+		<value binPos="32" orcs="/Sim/ASeries/Left/ShoulderYaw/DesiredTorque" />	
+		<value binPos="42" orcs="/Sim/ASeries/Left/ShoulderYaw/JointAngle" />
+		<value binPos="45" orcs="/Sim/ASeries/Left/ShoulderYaw/DesiredAngle" />
+
+		<!-- Right AnklePitch -->
+		<value binPos="114" orcs="/Sim/ASeries/Right/AnklePitch/DesiredTorque" />	
+		<value binPos="124" orcs="/Sim/ASeries/Right/AnklePitch/JointAngle" />
+		<value binPos="127" orcs="/Sim/ASeries/Right/AnklePitch/DesiredAngle" />
+
+		<!-- Right AnkleYaw -->
+		<value binPos="113" orcs="/Sim/ASeries/Right/AnkleYaw/DesiredTorque" />	
+		<value binPos="123" orcs="/Sim/ASeries/Right/AnkleYaw/JointAngle" />
+		<value binPos="126" orcs="/Sim/ASeries/Right/AnkleYaw/DesiredAngle" />
+
+		<!-- Right Elbow -->
+		<value binPos="50" orcs="/Sim/ASeries/Right/Elbow/DesiredTorque" />	
+		<value binPos="60" orcs="/Sim/ASeries/Right/Elbow/JointAngle" />
+		<value binPos="63" orcs="/Sim/ASeries/Right/Elbow/DesiredAngle" />
+
+		<!-- Right HipPitch -->
+		<value binPos="81" orcs="/Sim/ASeries/Right/HipPitch/DesiredTorque" />	
+		<value binPos="91" orcs="/Sim/ASeries/Right/HipPitch/JointAngle" />
+		<value binPos="94" orcs="/Sim/ASeries/Right/HipPitch/DesiredAngle" />
+
+		<!-- Right HipRoll -->
+		<value binPos="80" orcs="/Sim/ASeries/Right/HipRoll/DesiredTorque" />	
+		<value binPos="90" orcs="/Sim/ASeries/Right/HipRoll/JointAngle" />
+		<value binPos="93" orcs="/Sim/ASeries/Right/HipRoll/DesiredAngle" />
+
+		<!-- Right HipYaw -->
+		<value binPos="82" orcs="/Sim/ASeries/Right/HipYaw/DesiredTorque" />	
+		<value binPos="92" orcs="/Sim/ASeries/Right/HipYaw/JointAngle" />
+		<value binPos="95" orcs="/Sim/ASeries/Right/HipYaw/DesiredAngle" />
+
+		<!-- Right Knee -->
+		<value binPos="112" orcs="/Sim/ASeries/Right/Knee/DesiredTorque" />	
+		<value binPos="122" orcs="/Sim/ASeries/Right/Knee/JointAngle" />
+		<value binPos="125" orcs="/Sim/ASeries/Right/Knee/DesiredAngle" />
+
+		<!-- Right Shoulder Pitch -->	
+		<value binPos="49" orcs="/Sim/ASeries/Right/ShoulderPitch/DesiredTorque" />
+		<value binPos="59" orcs="/Sim/ASeries/Right/ShoulderPitch/JointAngle" />
+		<value binPos="62" orcs="/Sim/ASeries/Right/ShoulderPitch/DesiredAngle" />
+
+		<!-- Right Shoulder Yaw -->	
+		<value binPos="48" orcs="/Sim/ASeries/Right/ShoulderYaw/DesiredTorque" />
+		<value binPos="58" orcs="/Sim/ASeries/Right/ShoulderYaw/JointAngle" />
+		<value binPos="61" orcs="/Sim/ASeries/Right/ShoulderYaw/DesiredAngle" />
+
+		<!-- Waist -->	
+		<value binPos="16" orcs="/Sim/ASeries/Waist/DesiredTorque" />
+		<value binPos="26" orcs="/Sim/ASeries/Waist/JointAngle" />
+		<value binPos="29" orcs="/Sim/ASeries/Waist/DesiredAngle" />
+
+		<!-- WARNING: It was not tested if the Accelvalues are correctly mapped and if the normalization is correct-->
+		<!-- Accel ABML -->
+		<value binPos="3" orcs="/Sim/ASeries/ABML/AccelAxis1" />
+		<value binPos="4" orcs="/Sim/ASeries/ABML/AccelAxis2" />
+
+		<!-- Accel ABSR -->
+		<value binPos="19" orcs="/Sim/ASeries/ABSR/AccelAxis1" />
+		<value binPos="20" orcs="/Sim/ASeries/ABSR/AccelAxis2" />
+
+		<!-- Accel ABAL -->
+		<value binPos="35" orcs="/Sim/ASeries/ABAL/AccelAxis1" />
+		<value binPos="36" orcs="/Sim/ASeries/ABAL/AccelAxis2" />
+
+		<!-- Accel ABAR -->
+		<value binPos="51" orcs="/Sim/ASeries/ABAR/AccelAxis1" />
+		<value binPos="52" orcs="/Sim/ASeries/ABAR/AccelAxis2" />
+
+		<!-- Accel ABHL -->
+		<value binPos="67" orcs="/Sim/ASeries/ABHL/AccelAxis1" />
+		<value binPos="68" orcs="/Sim/ASeries/ABHL/AccelAxis2" />
+
+		<!-- Accel ABHR -->
+		<value binPos="83" orcs="/Sim/ASeries/ABHR/AccelAxis1" />
+		<value binPos="84" orcs="/Sim/ASeries/ABHR/AccelAxis2" />
+
+		<!-- Accel ABFL -->
+		<value binPos="99" orcs="/Sim/ASeries/ABFL/AccelAxis1" />
+		<value binPos="100" orcs="/Sim/ASeries/ABFL/AccelAxis2" />
+
+		<!-- Accel ABFR -->
+		<value binPos="115" orcs="/Sim/ASeries/ABFR/AccelAxis1" />
+		<value binPos="116" orcs="/Sim/ASeries/ABFR/AccelAxis2" />
+
+	</physicalDataSourceDescription>
+</configuration>

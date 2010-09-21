@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <defaultTransferFunction name="tanh" />
+    <defaultActivationFunction name="AdditiveTD" />
+    <defaultSynapseFunction name="SimpleUpdateFunction" />
+    <neuron bias="0" id="6" name="/Sensor0/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(75.1034,197.19,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="7" name="/Sensor1/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(106.484,104.068,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="8" name="/Sensor2/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(213.215,46.9675,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="9" name="/Sensor3/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(355.871,47.4309,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="10" name="/Sensor4/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(443.196,109.457,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="11" name="/Sensor5/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(464.639,200.839,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="12" name="/Sensor6/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(356.815,264.672,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="13" name="/Sensor7/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(195.368,259.775,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="14" name="/Left/BadGuys/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(112.481,99.0479,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="15" name="/Mid/BadGuys/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(221.896,32.1,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="16" name="/Right/BadGuys/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(325.379,99.713,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="17" name="/Left/Friends/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(102.934,85.8871,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="18" name="/Mid/Friends/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(210.092,27.3792,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="19" name="/Right/Friends/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(310.687,84.6441,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="20" name="/Left/Campfire/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(111.296,101.963,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="21" name="/Mid/Campfire/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(225.469,38.2346,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="22" name="/Right/Campfire/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(335.151,101.464,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="23" name="/Left/Food/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(97.3045,92.918,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="24" name="/Mid/Food/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(196.375,31.9517,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="25" name="/Right/Food/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(286.101,92.2322,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="26" name="/Left/FoodType/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(341.306,89.5636,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="27" name="/Mid/FoodType/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(234.145,32.3503,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="28" name="/Right/FoodType/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(119.568,89.4444,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="29" name="/Sensors/Hunger" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(262.602,121.054,0)" name="Location" />
+        </properties>
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="30" name="/Sensors/BabbleDrive" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(99.7767,44.1085,0)" name="Location" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="31" name="/Sensors/DayLight" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(262.356,43.2762,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="32" name="/Sensors/Health" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(101.862,122.289,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="33" name="/LeftMotor/DesiredSetting" >
+        <properties>
+            <prop value="(85.4805,36.3348,0)" name="Location" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="34" name="/RightMotor/DesiredSetting" >
+        <properties>
+            <prop value="(254.506,38.2867,0)" name="Location" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="65" name="EatFood" >
+        <properties>
+            <prop value="(406.951,85.8519,0)" name="Location" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="148" name="Steering" >
+        <properties>
+            <prop value="(92.0393,82.0168,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="149" name="Velocity" >
+        <properties>
+            <prop value="(258.669,82.955,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <group id="25" name="Default" >
+        <properties>
+            <prop value="(-254.523,-738.694,0)" name="Location" />
+        </properties>
+        <members>
+            <member id="6" />
+            <member id="7" />
+            <member id="8" />
+            <member id="9" />
+            <member id="10" />
+            <member id="11" />
+            <member id="12" />
+            <member id="13" />
+            <member id="14" />
+            <member id="15" />
+            <member id="16" />
+            <member id="17" />
+            <member id="18" />
+            <member id="19" />
+            <member id="20" />
+            <member id="21" />
+            <member id="22" />
+            <member id="23" />
+            <member id="24" />
+            <member id="25" />
+            <member id="26" />
+            <member id="27" />
+            <member id="28" />
+            <member id="29" />
+            <member id="30" />
+            <member id="31" />
+            <member id="32" />
+            <member id="33" />
+            <member id="34" />
+            <member id="65" />
+            <member id="148" />
+            <member id="149" />
+        </members>
+    </group>
+    <module id="88" name="Distance" >
+        <properties>
+            <prop value="(-443.199,-441.513,0)" name="Location" />
+            <prop value="(548,328)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="8" />
+            <member type="" id="7" />
+            <member type="" id="9" />
+            <member type="" id="11" />
+            <member type="" id="10" />
+            <member type="" id="13" />
+            <member type="" id="6" />
+            <member type="" id="12" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="89" name="Campfire" >
+        <properties>
+            <prop value="(-129.346,-646.917,0)" name="Location" />
+            <prop value="(464,164)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="20" />
+            <member type="" id="21" />
+            <member type="" id="22" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="90" name="Food" >
+        <properties>
+            <prop value="(-904.921,-454.132,0)" name="Location" />
+            <prop value="(417,154)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="23" />
+            <member type="" id="24" />
+            <member type="" id="25" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="91" name="FoodType" >
+        <properties>
+            <prop value="(-948.881,-256.888,0)" name="Location" />
+            <prop value="(459,159)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="28" />
+            <member type="" id="26" />
+            <member type="" id="27" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="93" name="Friends" >
+        <properties>
+            <prop value="(148.909,-441.42,0)" name="Location" />
+            <prop value="(424,145)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="19" />
+            <member type="" id="17" />
+            <member type="" id="18" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="94" name="BadGuys" >
+        <properties>
+            <prop value="(151.345,-257.661,0)" name="Location" />
+            <prop value="(442,167)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="14" />
+            <member type="" id="15" />
+            <member type="" id="16" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="95" name="Actuators" >
+        <properties>
+            <prop value="(-425.365,-57.0616,0)" name="Location" />
+            <prop value="(527,355)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="65" />
+            <member type="" id="148" />
+            <member type="" id="149" />
+        </members>
+        <subModules>
+            <subModule id="150" />
+        </subModules>
+    </module>
+    <module id="150" name="Restricted Motors" >
+        <properties>
+            <prop value="(88.2302,198.296,0)" name="Location" />
+            <prop value="(321.399,107.134)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="33" />
+            <member type="" id="34" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="96" name="Proprioceptors" >
+        <properties>
+            <prop value="(-544.342,-676.297,0)" name="Location" />
+            <prop value="(380,164.882)" name="LocationSize" />
+        </properties>
+        <members>
+            <member type="" id="31" />
+            <member type="" id="29" />
+            <member type="" id="32" />
+            <member type="" id="30" />
+        </members>
+        <subModules/>
+    </module>
+</net>
+
