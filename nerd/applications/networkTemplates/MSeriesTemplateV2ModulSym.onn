@@ -1,0 +1,3104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <defaultTransferFunction name="tanh" />
+    <defaultActivationFunction name="AdditiveTD" />
+    <defaultSynapseFunction name="SimpleUpdateFunction" />
+    <neuron bias="0" id="1094" name="/Right/ForceSensorSoleOfFootRight/Force" >
+        <properties>
+            <prop value="537.601,3285.13,0" name="_LOCATION" />
+            <prop value="89" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1095" name="/Right/ForceSensorSoleOfFootLeft/Force" >
+        <properties>
+            <prop value="365.381,3283.46,0" name="_LOCATION" />
+            <prop value="87" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1096" name="/Right/ForceSensorBallOfFootRight/Force" >
+        <properties>
+            <prop value="198.453,3280.68,0" name="_LOCATION" />
+            <prop value="88" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1097" name="/Right/ForceSensorBallOfFootLeft/Force" >
+        <properties>
+            <prop value="29.746,3286.63,0" name="_LOCATION" />
+            <prop value="86" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1098" name="/Left/ForceSensorSoleOfFootRight/Force" >
+        <properties>
+            <prop value="-1336.19,3280.21,0" name="_LOCATION" />
+            <prop value="62" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1099" name="/Left/ForceSensorSoleOfFootLeft/Force" >
+        <properties>
+            <prop value="-1163.97,3278.54,0" name="_LOCATION" />
+            <prop value="60" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1100" name="/Left/ForceSensorBallOfFootRight/Force" >
+        <properties>
+            <prop value="-997.042,3275.76,0" name="_LOCATION" />
+            <prop value="61" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1101" name="/Left/ForceSensorBallOfFootLeft/Force" >
+        <properties>
+            <prop value="-828.335,3281.71,0" name="_LOCATION" />
+            <prop value="59" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1102" name="/Right/MotorToes/JointAngle" >
+        <properties>
+            <prop value="373.151,3104.5,0" name="_LOCATION" />
+            <prop value="84" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1103" name="/Left/MotorToes/JointAngle" >
+        <properties>
+            <prop value="-1171.74,3099.58,0" name="_LOCATION" />
+            <prop value="57" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1104" name="/Right/MotorAnklePitch/JointAngle" >
+        <properties>
+            <prop value="752.397,2333.72,0" name="_LOCATION" />
+            <prop value="138" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1105" name="/Right/MotorAnklePitch/MotorAngle0" >
+        <properties>
+            <prop value="752.167,2168.48,0" name="_LOCATION" />
+            <prop value="134" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1106" name="/Right/MotorAnklePitch/MotorAngle1" >
+        <properties>
+            <prop value="581.467,2168.18,0" name="_LOCATION" />
+            <prop value="135" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1107" name="/Right/MotorAnklePitch/MotorAngle2" >
+        <properties>
+            <prop value="415.827,2169.68,0" name="_LOCATION" />
+            <prop value="136" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1108" name="/Right/MotorAnklePitch/MotorAngle3" >
+        <properties>
+            <prop value="244.901,2171.18,0" name="_LOCATION" />
+            <prop value="137" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1109" name="/Left/MotorAnklePitch/JointAngle" >
+        <properties>
+            <prop value="-1347.26,2345.29,0" name="_LOCATION" />
+            <prop value="111" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1110" name="/Left/MotorAnklePitch/MotorAngle0" >
+        <properties>
+            <prop value="-1347.03,2180.05,0" name="_LOCATION" />
+            <prop value="107" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1111" name="/Left/MotorAnklePitch/MotorAngle1" >
+        <properties>
+            <prop value="-1176.33,2179.75,0" name="_LOCATION" />
+            <prop value="108" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1112" name="/Left/MotorAnklePitch/MotorAngle2" >
+        <properties>
+            <prop value="-1010.69,2181.25,0" name="_LOCATION" />
+            <prop value="109" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1113" name="/Left/MotorAnklePitch/MotorAngle3" >
+        <properties>
+            <prop value="-839.764,2182.75,0" name="_LOCATION" />
+            <prop value="110" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1114" name="/Right/MotorAnkleRoll/JointAngle" >
+        <properties>
+            <prop value="541.341,3103.43,0" name="_LOCATION" />
+            <prop value="85" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1115" name="/Right/MotorAnkleRoll/MotorAngle0" >
+        <properties>
+            <prop value="540.881,2932.72,0" name="_LOCATION" />
+            <prop value="80" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1116" name="/Left/MotorAnkleRoll/JointAngle" >
+        <properties>
+            <prop value="-1339.93,3098.51,0" name="_LOCATION" />
+            <prop value="58" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1117" name="/Left/MotorAnkleRoll/MotorAngle0" >
+        <properties>
+            <prop value="-1339.47,2927.8,0" name="_LOCATION" />
+            <prop value="53" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1118" name="/Right/MotorKneePitch/JointAngle" >
+        <properties>
+            <prop value="677.083,1552.92,0" name="_LOCATION" />
+            <prop value="192" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1119" name="/Right/MotorKneePitch/MotorAngle0" >
+        <properties>
+            <prop value="681.533,1384.58,0" name="_LOCATION" />
+            <prop value="188" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1120" name="/Right/MotorKneePitch/MotorAngle1" >
+        <properties>
+            <prop value="511.533,1381.81,0" name="_LOCATION" />
+            <prop value="189" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1121" name="/Right/MotorKneePitch/MotorAngle2" >
+        <properties>
+            <prop value="344.46,1381.41,0" name="_LOCATION" />
+            <prop value="190" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1122" name="/Left/MotorKneePitch/JointAngle" >
+        <properties>
+            <prop value="-1229.29,1552.12,0" name="_LOCATION" />
+            <prop value="165" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1123" name="/Left/MotorKneePitch/MotorAngle0" >
+        <properties>
+            <prop value="-1233.74,1383.78,0" name="_LOCATION" />
+            <prop value="161" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1124" name="/Left/MotorKneePitch/MotorAngle1" >
+        <properties>
+            <prop value="-1063.74,1381.01,0" name="_LOCATION" />
+            <prop value="162" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1125" name="/Left/MotorKneePitch/MotorAngle2" >
+        <properties>
+            <prop value="-896.667,1380.61,0" name="_LOCATION" />
+            <prop value="163" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1126" name="/Right/MotorHipRoll/JointAngle" >
+        <properties>
+            <prop value="682.147,125.963,0" name="_LOCATION" />
+            <prop value="300" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1127" name="/Right/MotorHipRoll/MotorAngle0" >
+        <properties>
+            <prop value="683.037,-34.6197,0" name="_LOCATION" />
+            <prop value="296" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1128" name="/Right/MotorHipRoll/MotorAngle1" >
+        <properties>
+            <prop value="513.827,-33.3371,0" name="_LOCATION" />
+            <prop value="298" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1129" name="/Left/MotorHipRoll/JointAngle" >
+        <properties>
+            <prop value="-1316.12,117.27,0" name="_LOCATION" />
+            <prop value="273" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1130" name="/Left/MotorHipRoll/MotorAngle0" >
+        <properties>
+            <prop value="-1317.01,-43.3127,0" name="_LOCATION" />
+            <prop value="269" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1131" name="/Left/MotorHipRoll/MotorAngle1" >
+        <properties>
+            <prop value="-1147.8,-42.0301,0" name="_LOCATION" />
+            <prop value="271" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1132" name="/Right/MotorHipPitch/JointAngle" >
+        <properties>
+            <prop value="738.389,848.521,0" name="_LOCATION" />
+            <prop value="246" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1133" name="/Right/MotorHipPitch/MotorAngle0" >
+        <properties>
+            <prop value="740.609,677.965,0" name="_LOCATION" />
+            <prop value="242" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1134" name="/Right/MotorHipPitch/MotorAngle1" >
+        <properties>
+            <prop value="563.949,679.632,0" name="_LOCATION" />
+            <prop value="243" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1135" name="/Right/MotorHipPitch/MotorAngle2" >
+        <properties>
+            <prop value="389.504,680.187,0" name="_LOCATION" />
+            <prop value="244" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1136" name="/Left/MotorHipPitch/JointAngle" >
+        <properties>
+            <prop value="-1333.21,818.166,0" name="_LOCATION" />
+            <prop value="219" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1137" name="/Left/MotorHipPitch/MotorAngle0" >
+        <properties>
+            <prop value="-1335.43,647.61,0" name="_LOCATION" />
+            <prop value="215" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1138" name="/Left/MotorHipPitch/MotorAngle1" >
+        <properties>
+            <prop value="-1158.77,649.277,0" name="_LOCATION" />
+            <prop value="216" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1139" name="/Left/MotorHipPitch/MotorAngle2" >
+        <properties>
+            <prop value="-984.325,649.832,0" name="_LOCATION" />
+            <prop value="217" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1140" name="/Right/MotorHipYaw/JointAngle" >
+        <properties>
+            <prop value="-319.226,-352.512,0" name="_LOCATION" />
+            <prop value="543" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1141" name="/Right/MotorHipYaw/MotorAngle0" >
+        <properties>
+            <prop value="-325.086,-514.932,0" name="_LOCATION" />
+            <prop value="539" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1142" name="/Left/MotorHipYaw/JointAngle" >
+        <properties>
+            <prop value="-486.806,-351.572,0" name="_LOCATION" />
+            <prop value="544" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1143" name="/Left/MotorHipYaw/MotorAngle0" >
+        <properties>
+            <prop value="-490.806,-517.572,0" name="_LOCATION" />
+            <prop value="541" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1144" name="/Middle/MotorWaistRoll/JointAngle" >
+        <properties>
+            <prop value="-762.132,-1001.17,0" name="_LOCATION" />
+            <prop value="489" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1145" name="/Middle/MotorWaistRoll/MotorAngle0" >
+        <properties>
+            <prop value="-766.132,-1165.17,0" name="_LOCATION" />
+            <prop value="485" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1146" name="/Middle/MotorHeadPitch/JointAngle" >
+        <properties>
+            <prop value="204.341,-2219.64,0" name="_LOCATION" />
+            <prop value="678" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1147" name="/Middle/MotorHeadPitch/MotorAngle0" >
+        <properties>
+            <prop value="204.341,-2399.83,0" name="_LOCATION" />
+            <prop value="676" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1149" name="/Middle/MotorHeadYaw/MotorAngle0" >
+        <properties>
+            <prop value="12.8817,-2396.88,0" name="_LOCATION" />
+            <prop value="674" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1151" name="/Middle/MotorHeadRoll/MotorAngle0" >
+        <properties>
+            <prop value="-169.402,-2396.96,0" name="_LOCATION" />
+            <prop value="675" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1152" name="/Right/MotorShoulderPitch/JointAngle" >
+        <properties>
+            <prop value="969.166,-1471.26,0" name="_LOCATION" />
+            <prop value="462" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1153" name="/Right/MotorShoulderPitch/MotorAngle0" >
+        <properties>
+            <prop value="973.486,-1636.5,0" name="_LOCATION" />
+            <prop value="458" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1154" name="/Right/MotorShoulderPitch/MotorAngle1" >
+        <properties>
+            <prop value="803.986,-1636.31,0" name="_LOCATION" />
+            <prop value="460" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1155" name="/Left/MotorShoulderPitch/JointAngle" >
+        <properties>
+            <prop value="-1500.19,-1471.05,0" name="_LOCATION" />
+            <prop value="435" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1156" name="/Left/MotorShoulderPitch/MotorAngle0" >
+        <properties>
+            <prop value="-1504.51,-1636.29,0" name="_LOCATION" />
+            <prop value="431" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1157" name="/Left/MotorShoulderPitch/MotorAngle1" >
+        <properties>
+            <prop value="-1335.01,-1636.1,0" name="_LOCATION" />
+            <prop value="433" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1158" name="/Right/MotorShoulderRoll/JointAngle" >
+        <properties>
+            <prop value="1729.84,-801.26,0" name="_LOCATION" />
+            <prop value="408" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1159" name="/Right/MotorShoulderRoll/MotorAngle0" >
+        <properties>
+            <prop value="1726.66,-989.52,0" name="_LOCATION" />
+            <prop value="406" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1160" name="/Left/MotorShoulderRoll/JointAngle" >
+        <properties>
+            <prop value="-2297.14,-796.94,0" name="_LOCATION" />
+            <prop value="381" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1161" name="/Left/MotorShoulderRoll/MotorAngle0" >
+        <properties>
+            <prop value="-2293.96,-985.2,0" name="_LOCATION" />
+            <prop value="379" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1162" name="/Right/MotorElbowPitch/JointAngle" >
+        <properties>
+            <prop value="2040.7,-307.19,0" name="_LOCATION" />
+            <prop value="354" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1163" name="/Right/MotorElbowPitch/MotorAngle0" >
+        <properties>
+            <prop value="1538.09,-988.012,0" name="_LOCATION" />
+            <prop value="404" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1164" name="/Left/MotorElbowPitch/JointAngle" >
+        <properties>
+            <prop value="-2525.43,-335.497,0" name="_LOCATION" />
+            <prop value="327" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1165" name="/Left/MotorElbowPitch/MotorAngle0" >
+        <properties>
+            <prop value="-2105.39,-983.692,0" name="_LOCATION" />
+            <prop value="377" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1166" name="/Right/AB_LegLowerBottom/AccelAxis1" >
+        <properties>
+            <prop value="539.801,3189.96,0" name="_LOCATION" />
+            <prop value="75" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1167" name="/Right/AB_LegLowerBottom/AccelAxis2" >
+        <properties>
+            <prop value="372.031,3189.4,0" name="_LOCATION" />
+            <prop value="76" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1168" name="/Right/AB_LegLowerBottom/AccelAxis3" >
+        <properties>
+            <prop value="204.251,3188.85,0" name="_LOCATION" />
+            <prop value="77" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1169" name="/Left/AB_LegLowerBottom/AccelAxis1" >
+        <properties>
+            <prop value="-1338.39,3185.04,0" name="_LOCATION" />
+            <prop value="48" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1170" name="/Left/AB_LegLowerBottom/AccelAxis2" >
+        <properties>
+            <prop value="-1170.62,3184.48,0" name="_LOCATION" />
+            <prop value="49" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1171" name="/Left/AB_LegLowerBottom/AccelAxis3" >
+        <properties>
+            <prop value="-1002.84,3183.93,0" name="_LOCATION" />
+            <prop value="50" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1172" name="/Right/AB_LegLowerTop/AccelAxis1" >
+        <properties>
+            <prop value="747.567,2420.92,0" name="_LOCATION" />
+            <prop value="129" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1173" name="/Right/AB_LegLowerTop/AccelAxis2" >
+        <properties>
+            <prop value="577.567,2420.92,0" name="_LOCATION" />
+            <prop value="130" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1174" name="/Right/AB_LegLowerTop/AccelAxis3" >
+        <properties>
+            <prop value="413.457,2420.92,0" name="_LOCATION" />
+            <prop value="131" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1175" name="/Left/AB_LegLowerTop/AccelAxis1" >
+        <properties>
+            <prop value="-1342.43,2432.49,0" name="_LOCATION" />
+            <prop value="102" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1176" name="/Left/AB_LegLowerTop/AccelAxis2" >
+        <properties>
+            <prop value="-1172.43,2432.49,0" name="_LOCATION" />
+            <prop value="103" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1177" name="/Left/AB_LegLowerTop/AccelAxis3" >
+        <properties>
+            <prop value="-1008.32,2432.49,0" name="_LOCATION" />
+            <prop value="104" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1178" name="/Right/AB_LegUpperBottom/AccelAxis1" >
+        <properties>
+            <prop value="681.253,1639.61,0" name="_LOCATION" />
+            <prop value="183" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1179" name="/Right/AB_LegUpperBottom/AccelAxis2" >
+        <properties>
+            <prop value="511.253,1640.16,0" name="_LOCATION" />
+            <prop value="184" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1180" name="/Right/AB_LegUpperBottom/AccelAxis3" >
+        <properties>
+            <prop value="340.144,1640.72,0" name="_LOCATION" />
+            <prop value="185" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1181" name="/Left/AB_LegUpperBottom/AccelAxis1" >
+        <properties>
+            <prop value="-1233.46,1638.81,0" name="_LOCATION" />
+            <prop value="156" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1182" name="/Left/AB_LegUpperBottom/AccelAxis2" >
+        <properties>
+            <prop value="-1063.46,1639.36,0" name="_LOCATION" />
+            <prop value="157" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1183" name="/Left/AB_LegUpperBottom/AccelAxis3" >
+        <properties>
+            <prop value="-892.351,1639.92,0" name="_LOCATION" />
+            <prop value="158" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1184" name="/Right/AB_LegUpperMiddle/AccelAxis1" >
+        <properties>
+            <prop value="737.039,930.404,0" name="_LOCATION" />
+            <prop value="237" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1185" name="/Right/AB_LegUpperMiddle/AccelAxis2" >
+        <properties>
+            <prop value="567.039,929.849,0" name="_LOCATION" />
+            <prop value="238" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1186" name="/Right/AB_LegUpperMiddle/AccelAxis3" >
+        <properties>
+            <prop value="395.084,928.356,0" name="_LOCATION" />
+            <prop value="239" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1187" name="/Left/AB_LegUpperMiddle/AccelAxis1" >
+        <properties>
+            <prop value="-1331.86,900.049,0" name="_LOCATION" />
+            <prop value="210" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1188" name="/Left/AB_LegUpperMiddle/AccelAxis2" >
+        <properties>
+            <prop value="-1161.86,899.494,0" name="_LOCATION" />
+            <prop value="211" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1189" name="/Left/AB_LegUpperMiddle/AccelAxis3" >
+        <properties>
+            <prop value="-989.905,898.001,0" name="_LOCATION" />
+            <prop value="212" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1190" name="/Right/AB_LegUpperTop/AccelAxis1" >
+        <properties>
+            <prop value="679.397,201.738,0" name="_LOCATION" />
+            <prop value="291" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1191" name="/Right/AB_LegUpperTop/AccelAxis2" >
+        <properties>
+            <prop value="514.307,203.02,0" name="_LOCATION" />
+            <prop value="292" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1192" name="/Right/AB_LegUpperTop/AccelAxis3" >
+        <properties>
+            <prop value="346.471,202.931,0" name="_LOCATION" />
+            <prop value="293" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1193" name="/Left/AB_LegUpperTop/AccelAxis1" >
+        <properties>
+            <prop value="-1313.37,193.045,0" name="_LOCATION" />
+            <prop value="264" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1194" name="/Left/AB_LegUpperTop/AccelAxis2" >
+        <properties>
+            <prop value="-1148.28,194.327,0" name="_LOCATION" />
+            <prop value="265" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1195" name="/Left/AB_LegUpperTop/AccelAxis3" >
+        <properties>
+            <prop value="-980.444,194.238,0" name="_LOCATION" />
+            <prop value="266" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1196" name="/Right/AB_ArmLower/AccelAxis1" >
+        <properties>
+            <prop value="2039.62,-225.106,0" name="_LOCATION" />
+            <prop value="345" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1197" name="/Right/AB_ArmLower/AccelAxis2" >
+        <properties>
+            <prop value="1871.8,-225.196,0" name="_LOCATION" />
+            <prop value="346" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1198" name="/Right/AB_ArmLower/AccelAxis3" >
+        <properties>
+            <prop value="1706.7,-225.285,0" name="_LOCATION" />
+            <prop value="347" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1199" name="/Left/AB_ArmLower/AccelAxis1" >
+        <properties>
+            <prop value="-2524.35,-253.413,0" name="_LOCATION" />
+            <prop value="318" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1200" name="/Left/AB_ArmLower/AccelAxis2" >
+        <properties>
+            <prop value="-2356.53,-253.503,0" name="_LOCATION" />
+            <prop value="319" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1201" name="/Left/AB_ArmLower/AccelAxis3" >
+        <properties>
+            <prop value="-2191.43,-253.592,0" name="_LOCATION" />
+            <prop value="320" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1202" name="/Right/AB_ArmUpper/AccelAxis1" >
+        <properties>
+            <prop value="1725.03,-687.691,0" name="_LOCATION" />
+            <prop value="399" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1203" name="/Right/AB_ArmUpper/AccelAxis2" >
+        <properties>
+            <prop value="1562.39,-687.501,0" name="_LOCATION" />
+            <prop value="400" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1204" name="/Right/AB_ArmUpper/AccelAxis3" >
+        <properties>
+            <prop value="1402.27,-684.72,0" name="_LOCATION" />
+            <prop value="401" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1205" name="/Left/AB_ArmUpper/AccelAxis1" >
+        <properties>
+            <prop value="-2292.32,-683.371,0" name="_LOCATION" />
+            <prop value="372" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1206" name="/Left/AB_ArmUpper/AccelAxis2" >
+        <properties>
+            <prop value="-2129.69,-683.181,0" name="_LOCATION" />
+            <prop value="373" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1207" name="/Left/AB_ArmUpper/AccelAxis3" >
+        <properties>
+            <prop value="-1969.57,-680.4,0" name="_LOCATION" />
+            <prop value="374" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1208" name="/Left/AB_BodyUpper/AccelAxis1" >
+        <properties>
+            <prop value="-1506.73,-1328.71,0" name="_LOCATION" />
+            <prop value="426" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1209" name="/Left/AB_BodyUpper/AccelAxis2" >
+        <properties>
+            <prop value="-1335.35,-1328.71,0" name="_LOCATION" />
+            <prop value="427" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1210" name="/Left/AB_BodyUpper/AccelAxis3" >
+        <properties>
+            <prop value="-1154.78,-1327.42,0" name="_LOCATION" />
+            <prop value="428" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1211" name="/Right/AB_BodyUpper/AccelAxis1" >
+        <properties>
+            <prop value="975.706,-1328.92,0" name="_LOCATION" />
+            <prop value="453" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1212" name="/Right/AB_BodyUpper/AccelAxis2" >
+        <properties>
+            <prop value="804.326,-1328.92,0" name="_LOCATION" />
+            <prop value="454" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1213" name="/Right/AB_BodyUpper/AccelAxis3" >
+        <properties>
+            <prop value="623.756,-1327.63,0" name="_LOCATION" />
+            <prop value="455" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1214" name="/Left/AB_BodyLower/AccelAxis1" >
+        <properties>
+            <prop value="-760.682,-921.137,0" name="_LOCATION" />
+            <prop value="480" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1215" name="/Left/AB_BodyLower/AccelAxis2" >
+        <properties>
+            <prop value="-592.682,-921.137,0" name="_LOCATION" />
+            <prop value="481" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1216" name="/Left/AB_BodyLower/AccelAxis3" >
+        <properties>
+            <prop value="-424.682,-917.137,0" name="_LOCATION" />
+            <prop value="482" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1217" name="/Right/AB_BodyLower/AccelAxis1" >
+        <properties>
+            <prop value="286.593,-855.048,0" name="_LOCATION" />
+            <prop value="507" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1218" name="/Right/AB_BodyLower/AccelAxis2" >
+        <properties>
+            <prop value="125.168,-855.29,0" name="_LOCATION" />
+            <prop value="508" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1219" name="/Right/AB_BodyLower/AccelAxis3" >
+        <properties>
+            <prop value="-36.3912,-855.944,0" name="_LOCATION" />
+            <prop value="509" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1220" name="/Middle/AB_BodyBottom/AccelAxis1" >
+        <properties>
+            <prop value="-487.656,-265.152,0" name="_LOCATION" />
+            <prop value="534" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1221" name="/Middle/AB_BodyBottom/AccelAxis2" >
+        <properties>
+            <prop value="-319.416,-268.242,0" name="_LOCATION" />
+            <prop value="535" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1222" name="/Middle/AB_BodyBottom/AccelAxis3" >
+        <properties>
+            <prop value="-153.686,-269.402,0" name="_LOCATION" />
+            <prop value="536" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1223" name="/Middle/AB_HeadLeft/AccelAxis1" >
+        <properties>
+            <prop value="-936.192,-2116.36,0" name="_LOCATION" />
+            <prop value="696" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1224" name="/Middle/AB_HeadLeft/AccelAxis2" >
+        <properties>
+            <prop value="-766.439,-2114.94,0" name="_LOCATION" />
+            <prop value="697" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1225" name="/Middle/AB_HeadLeft/AccelAxis3" >
+        <properties>
+            <prop value="-599.155,-2113.52,0" name="_LOCATION" />
+            <prop value="698" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1226" name="/Middle/AB_HeadRight/AccelAxis1" >
+        <properties>
+            <prop value="-172.399,-2127.87,0" name="_LOCATION" />
+            <prop value="669" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1227" name="/Middle/AB_HeadRight/AccelAxis2" >
+        <properties>
+            <prop value="17.9697,-2127.03,0" name="_LOCATION" />
+            <prop value="670" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1228" name="/Middle/AB_HeadRight/AccelAxis3" >
+        <properties>
+            <prop value="202.782,-2126.95,0" name="_LOCATION" />
+            <prop value="671" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1229" name="/Right/AnkleRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="539.791,3013.24,0" name="_LOCATION" />
+            <prop value="78" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1230" name="/Right/AnklePitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="747.887,2250.13,0" name="_LOCATION" />
+            <prop value="132" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1231" name="/Right/AnklePitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="415.607,2250.08,0" name="_LOCATION" />
+            <prop value="133" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1232" name="/Right/KneePitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="681.323,1472.78,0" name="_LOCATION" />
+            <prop value="186" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1233" name="/Right/KneePitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="341.325,1472.23,0" name="_LOCATION" />
+            <prop value="187" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1234" name="/Right/HipRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="683.447,42.5931,0" name="_LOCATION" />
+            <prop value="294" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1235" name="/Right/HipRoll/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="515.337,41.8809,0" name="_LOCATION" />
+            <prop value="295" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1236" name="/Right/HipPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="738.009,762.332,0" name="_LOCATION" />
+            <prop value="240" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1237" name="/Right/HipPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="392.444,767.741,0" name="_LOCATION" />
+            <prop value="241" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1238" name="/Right/HipYaw/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-324.296,-433.172,0" name="_LOCATION" />
+            <prop value="538" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1239" name="/Left/AnkleRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1338.38,3008.32,0" name="_LOCATION" />
+            <prop value="51" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1240" name="/Left/AnklePitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1342.75,2261.7,0" name="_LOCATION" />
+            <prop value="105" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1241" name="/Left/AnklePitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-1010.47,2261.65,0" name="_LOCATION" />
+            <prop value="106" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1242" name="/Left/KneePitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1233.53,1471.98,0" name="_LOCATION" />
+            <prop value="159" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1243" name="/Left/KneePitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-893.532,1471.43,0" name="_LOCATION" />
+            <prop value="160" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1244" name="/Left/HipRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1317.42,33.9001,0" name="_LOCATION" />
+            <prop value="267" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1245" name="/Left/HipRoll/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-1149.31,33.1879,0" name="_LOCATION" />
+            <prop value="268" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1246" name="/Left/HipPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1332.83,731.977,0" name="_LOCATION" />
+            <prop value="213" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1247" name="/Left/HipPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-987.265,737.386,0" name="_LOCATION" />
+            <prop value="214" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1248" name="/Left/HipYaw/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-491.026,-435.472,0" name="_LOCATION" />
+            <prop value="537" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1249" name="/Middle/WaistRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-762.682,-1085.01,0" name="_LOCATION" />
+            <prop value="483" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1250" name="/Right/ShoulderRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="1729.16,-905.882,0" name="_LOCATION" />
+            <prop value="403" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1252" name="/Right/ShoulderPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="972.456,-1551.48,0" name="_LOCATION" />
+            <prop value="456" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1253" name="/Right/ShoulderPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="805.176,-1551.3,0" name="_LOCATION" />
+            <prop value="457" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1254" name="/Right/ElbowPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="1536.22,-908.572,0" name="_LOCATION" />
+            <prop value="402" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1256" name="/Left/ShoulderRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-2296.46,-901.562,0" name="_LOCATION" />
+            <prop value="376" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1258" name="/Left/ShoulderPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1503.48,-1551.27,0" name="_LOCATION" />
+            <prop value="429" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1259" name="/Left/ShoulderPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-1336.2,-1551.09,0" name="_LOCATION" />
+            <prop value="430" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1260" name="/Left/ElbowPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-2103.51,-904.252,0" name="_LOCATION" />
+            <prop value="375" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1262" name="/Middle/HeadPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="204.341,-2312.85,0" name="_LOCATION" />
+            <prop value="673" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1263" name="/Middle/HeadRollYaw/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-169.682,-2314.55,0" name="_LOCATION" />
+            <prop value="672" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1264" name="/Right/MotorAnklePitch/DesiredTorque0" >
+        <properties>
+            <prop value="753.677,1984.68,0" name="_LOCATION" />
+            <prop value="M4" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1265" name="/Right/MotorAnklePitch/ReleaseMode0" >
+        <properties>
+            <prop value="752.097,2076.88,0" name="_LOCATION" />
+            <prop value="R4" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1266" name="/Right/MotorAnklePitch/DesiredTorque1" >
+        <properties>
+            <prop value="586.797,1982.98,0" name="_LOCATION" />
+            <prop value="M6" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1267" name="/Right/MotorAnklePitch/ReleaseMode1" >
+        <properties>
+            <prop value="587.097,2077.18,0" name="_LOCATION" />
+            <prop value="R6" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1268" name="/Right/MotorAnklePitch/DesiredTorque2" >
+        <properties>
+            <prop value="424.497,1984.18,0" name="_LOCATION" />
+            <prop value="M8" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1269" name="/Right/MotorAnklePitch/ReleaseMode2" >
+        <properties>
+            <prop value="421.497,2078.75,0" name="_LOCATION" />
+            <prop value="R8" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1270" name="/Right/MotorAnklePitch/DesiredTorque3" >
+        <properties>
+            <prop value="257.097,1987.55,0" name="_LOCATION" />
+            <prop value="M10" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1271" name="/Right/MotorAnklePitch/ReleaseMode3" >
+        <properties>
+            <prop value="253.797,2078.95,0" name="_LOCATION" />
+            <prop value="R10" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1272" name="/Left/MotorAnklePitch/DesiredTorque0" >
+        <properties>
+            <prop value="-1348.54,1996.25,0" name="_LOCATION" />
+            <prop value="M3" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1273" name="/Left/MotorAnklePitch/ReleaseMode0" >
+        <properties>
+            <prop value="-1346.96,2088.45,0" name="_LOCATION" />
+            <prop value="R3" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1274" name="/Left/MotorAnklePitch/DesiredTorque1" >
+        <properties>
+            <prop value="-1181.66,1994.55,0" name="_LOCATION" />
+            <prop value="M5" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1275" name="/Left/MotorAnklePitch/ReleaseMode1" >
+        <properties>
+            <prop value="-1181.96,2088.75,0" name="_LOCATION" />
+            <prop value="R5" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1276" name="/Left/MotorAnklePitch/DesiredTorque2" >
+        <properties>
+            <prop value="-1019.36,1995.75,0" name="_LOCATION" />
+            <prop value="M7" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1277" name="/Left/MotorAnklePitch/ReleaseMode2" >
+        <properties>
+            <prop value="-1016.36,2090.32,0" name="_LOCATION" />
+            <prop value="R7" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1278" name="/Left/MotorAnklePitch/DesiredTorque3" >
+        <properties>
+            <prop value="-851.96,1999.12,0" name="_LOCATION" />
+            <prop value="M9" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1279" name="/Left/MotorAnklePitch/ReleaseMode3" >
+        <properties>
+            <prop value="-848.66,2090.52,0" name="_LOCATION" />
+            <prop value="R9" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1280" name="/Right/MotorAnkleRoll/DesiredTorque0" >
+        <properties>
+            <prop value="548.401,2782.05,0" name="_LOCATION" />
+            <prop value="M2" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1281" name="/Right/MotorAnkleRoll/ReleaseMode0" >
+        <properties>
+            <prop value="543.441,2854.46,0" name="_LOCATION" />
+            <prop value="R2" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1282" name="/Left/MotorAnkleRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-1346.99,2777.13,0" name="_LOCATION" />
+            <prop value="M1" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1283" name="/Left/MotorAnkleRoll/ReleaseMode0" >
+        <properties>
+            <prop value="-1342.03,2849.54,0" name="_LOCATION" />
+            <prop value="R1" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1284" name="/Right/MotorKneePitch/DesiredTorque0" >
+        <properties>
+            <prop value="682.933,1221.37,0" name="_LOCATION" />
+            <prop value="M14" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1285" name="/Right/MotorKneePitch/ReleaseMode0" >
+        <properties>
+            <prop value="683.223,1302.02,0" name="_LOCATION" />
+            <prop value="R14" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1286" name="/Right/MotorKneePitch/DesiredTorque1" >
+        <properties>
+            <prop value="514.873,1221.96,0" name="_LOCATION" />
+            <prop value="M16" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1287" name="/Right/MotorKneePitch/ReleaseMode1" >
+        <properties>
+            <prop value="511.803,1300.99,0" name="_LOCATION" />
+            <prop value="R16" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1288" name="/Right/MotorKneePitch/DesiredTorque2" >
+        <properties>
+            <prop value="346.248,1221.54,0" name="_LOCATION" />
+            <prop value="M12" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1289" name="/Right/MotorKneePitch/ReleaseMode2" >
+        <properties>
+            <prop value="346.248,1300.99,0" name="_LOCATION" />
+            <prop value="R12" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1290" name="/Left/MotorKneePitch/DesiredTorque0" >
+        <properties>
+            <prop value="-1235.14,1220.57,0" name="_LOCATION" />
+            <prop value="M13" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1291" name="/Left/MotorKneePitch/ReleaseMode0" >
+        <properties>
+            <prop value="-1235.43,1301.22,0" name="_LOCATION" />
+            <prop value="R13" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1292" name="/Left/MotorKneePitch/DesiredTorque1" >
+        <properties>
+            <prop value="-1067.08,1221.16,0" name="_LOCATION" />
+            <prop value="M15" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1293" name="/Left/MotorKneePitch/ReleaseMode1" >
+        <properties>
+            <prop value="-1064.01,1300.19,0" name="_LOCATION" />
+            <prop value="R15" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1294" name="/Left/MotorKneePitch/DesiredTorque2" >
+        <properties>
+            <prop value="-898.455,1220.74,0" name="_LOCATION" />
+            <prop value="M11" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1295" name="/Left/MotorKneePitch/ReleaseMode2" >
+        <properties>
+            <prop value="-898.455,1300.19,0" name="_LOCATION" />
+            <prop value="R11" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1296" name="/Right/MotorHipRoll/DesiredTorque0" >
+        <properties>
+            <prop value="684.197,-186.391,0" name="_LOCATION" />
+            <prop value="M24" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1297" name="/Right/MotorHipRoll/ReleaseMode0" >
+        <properties>
+            <prop value="684.817,-104.797,0" name="_LOCATION" />
+            <prop value="R24" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1298" name="/Right/MotorHipRoll/DesiredTorque1" >
+        <properties>
+            <prop value="516.977,-185.811,0" name="_LOCATION" />
+            <prop value="M26" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1299" name="/Right/MotorHipRoll/ReleaseMode1" >
+        <properties>
+            <prop value="516.927,-104.968,0" name="_LOCATION" />
+            <prop value="R26" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1300" name="/Left/MotorHipRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-1318.17,-195.084,0" name="_LOCATION" />
+            <prop value="M23" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1301" name="/Left/MotorHipRoll/ReleaseMode0" >
+        <properties>
+            <prop value="-1318.79,-113.49,0" name="_LOCATION" />
+            <prop value="R23" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1302" name="/Left/MotorHipRoll/DesiredTorque1" >
+        <properties>
+            <prop value="-1150.95,-194.504,0" name="_LOCATION" />
+            <prop value="M25" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1303" name="/Left/MotorHipRoll/ReleaseMode1" >
+        <properties>
+            <prop value="-1150.9,-113.661,0" name="_LOCATION" />
+            <prop value="R25" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1304" name="/Right/MotorHipPitch/DesiredTorque0" >
+        <properties>
+            <prop value="743.409,521.188,0" name="_LOCATION" />
+            <prop value="M18" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1305" name="/Right/MotorHipPitch/ReleaseMode0" >
+        <properties>
+            <prop value="738.969,606.188,0" name="_LOCATION" />
+            <prop value="R18" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1306" name="/Right/MotorHipPitch/DesiredTorque1" >
+        <properties>
+            <prop value="563.409,522.299,0" name="_LOCATION" />
+            <prop value="M20" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1307" name="/Right/MotorHipPitch/ReleaseMode1" >
+        <properties>
+            <prop value="564.519,603.966,0" name="_LOCATION" />
+            <prop value="R20" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1308" name="/Right/MotorHipPitch/DesiredTorque2" >
+        <properties>
+            <prop value="391.184,521.188,0" name="_LOCATION" />
+            <prop value="M22" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1309" name="/Right/MotorHipPitch/ReleaseMode2" >
+        <properties>
+            <prop value="390.354,603.177,0" name="_LOCATION" />
+            <prop value="R22" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1310" name="/Left/MotorHipPitch/DesiredTorque0" >
+        <properties>
+            <prop value="-1338.23,490.833,0" name="_LOCATION" />
+            <prop value="M17" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1311" name="/Left/MotorHipPitch/ReleaseMode0" >
+        <properties>
+            <prop value="-1333.79,575.833,0" name="_LOCATION" />
+            <prop value="R17" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1312" name="/Left/MotorHipPitch/DesiredTorque1" >
+        <properties>
+            <prop value="-1158.23,491.944,0" name="_LOCATION" />
+            <prop value="M19" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1313" name="/Left/MotorHipPitch/ReleaseMode1" >
+        <properties>
+            <prop value="-1159.34,573.611,0" name="_LOCATION" />
+            <prop value="R19" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1314" name="/Left/MotorHipPitch/DesiredTorque2" >
+        <properties>
+            <prop value="-986.005,490.833,0" name="_LOCATION" />
+            <prop value="M21" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1315" name="/Left/MotorHipPitch/ReleaseMode2" >
+        <properties>
+            <prop value="-985.175,572.822,0" name="_LOCATION" />
+            <prop value="R21" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1316" name="/Right/MotorHipYaw/DesiredTorque0" >
+        <properties>
+            <prop value="-328.886,-667.822,0" name="_LOCATION" />
+            <prop value="M40" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1317" name="/Right/MotorHipYaw/ReleaseMode0" >
+        <properties>
+            <prop value="-328.166,-590.292,0" name="_LOCATION" />
+            <prop value="R40" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1318" name="/Left/MotorHipYaw/DesiredTorque0" >
+        <properties>
+            <prop value="-491.765,-665.48,0" name="_LOCATION" />
+            <prop value="M41" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1319" name="/Left/MotorHipYaw/ReleaseMode0" >
+        <properties>
+            <prop value="-489.486,-590.332,0" name="_LOCATION" />
+            <prop value="R41" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1320" name="/Middle/MotorWaistRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-769.842,-1319.8,0" name="_LOCATION" />
+            <prop value="M39" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1321" name="/Middle/MotorWaistRoll/ReleaseMode0" >
+        <properties>
+            <prop value="-765.842,-1239.8,0" name="_LOCATION" />
+            <prop value="R39" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="-1" id="1322" name="/Middle/MotorHeadPitch/DesiredTorque0" >
+        <properties>
+            <prop value="204.341,-2560.62,0" name="_LOCATION" />
+            <prop value="M42" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1323" name="/Middle/MotorHeadPitch/ReleaseMode0" >
+        <properties>
+            <prop value="204.341,-2481.38,0" name="_LOCATION" />
+            <prop value="R42" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="-1" id="1324" name="/Middle/MotorHeadYaw/DesiredTorque0" >
+        <properties>
+            <prop value="12.3637,-2567.31,0" name="_LOCATION" />
+            <prop value="M43" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1325" name="/Middle/MotorHeadYaw/ReleaseMode0" >
+        <properties>
+            <prop value="10.9327,-2478.42,0" name="_LOCATION" />
+            <prop value="R43" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="-1" id="1326" name="/Middle/MotorHeadRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-174.336,-2565.53,0" name="_LOCATION" />
+            <prop value="M44" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1327" name="/Middle/MotorHeadRoll/ReleaseMode0" >
+        <properties>
+            <prop value="-172.484,-2478.93,0" name="_LOCATION" />
+            <prop value="R44" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1328" name="/Right/MotorShoulderPitch/DesiredTorque0" >
+        <properties>
+            <prop value="978.986,-1795.28,0" name="_LOCATION" />
+            <prop value="M36" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1329" name="/Right/MotorShoulderPitch/ReleaseMode0" >
+        <properties>
+            <prop value="977.406,-1713.27,0" name="_LOCATION" />
+            <prop value="R36" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1330" name="/Right/MotorShoulderPitch/DesiredTorque1" >
+        <properties>
+            <prop value="810.126,-1797.04,0" name="_LOCATION" />
+            <prop value="M38" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1331" name="/Right/MotorShoulderPitch/ReleaseMode1" >
+        <properties>
+            <prop value="808.136,-1712.9,0" name="_LOCATION" />
+            <prop value="R38" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1332" name="/Left/MotorShoulderPitch/DesiredTorque0" >
+        <properties>
+            <prop value="-1510.01,-1795.07,0" name="_LOCATION" />
+            <prop value="M35" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1333" name="/Left/MotorShoulderPitch/ReleaseMode0" >
+        <properties>
+            <prop value="-1508.43,-1713.06,0" name="_LOCATION" />
+            <prop value="R35" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1334" name="/Left/MotorShoulderPitch/DesiredTorque1" >
+        <properties>
+            <prop value="-1341.15,-1796.83,0" name="_LOCATION" />
+            <prop value="462" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1335" name="/Left/MotorShoulderPitch/ReleaseMode1" >
+        <properties>
+            <prop value="-1339.16,-1712.69,0" name="_LOCATION" />
+            <prop value="R37" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1336" name="/Right/MotorShoulderRoll/DesiredTorque0" >
+        <properties>
+            <prop value="1732.3,-1147.83,0" name="_LOCATION" />
+            <prop value="408" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1337" name="/Right/MotorShoulderRoll/ReleaseMode0" >
+        <properties>
+            <prop value="1727.99,-1067.39,0" name="_LOCATION" />
+            <prop value="R34" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1338" name="/Left/MotorShoulderRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-2299.6,-1143.51,0" name="_LOCATION" />
+            <prop value="M33" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1339" name="/Left/MotorShoulderRoll/ReleaseMode0" >
+        <properties>
+            <prop value="-2295.28,-1063.07,0" name="_LOCATION" />
+            <prop value="R33" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1340" name="/Right/MotorElbowPitch/DesiredTorque0" >
+        <properties>
+            <prop value="1536.97,-1146.27,0" name="_LOCATION" />
+            <prop value="M32" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1341" name="/Right/MotorElbowPitch/ReleaseMode0" >
+        <properties>
+            <prop value="1538.82,-1068.72,0" name="_LOCATION" />
+            <prop value="408" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="_ConstraintSlave" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1342" name="/Left/MotorElbowPitch/DesiredTorque0" >
+        <properties>
+            <prop value="-2104.27,-1141.95,0" name="_LOCATION" />
+            <prop value="M31" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="1343" name="/Left/MotorElbowPitch/ReleaseMode0" >
+        <properties>
+            <prop value="-2106.12,-1064.4,0" name="_LOCATION" />
+            <prop value="R31" name="SPINAL_CORD_ADDRESS" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <group id="8" name="Default" >
+        <properties>
+            <prop value="1119.89,-2531.24,0" name="_LOCATION" />
+        </properties>
+        <members>
+            <member id="1094" />
+            <member id="1095" />
+            <member id="1096" />
+            <member id="1097" />
+            <member id="1098" />
+            <member id="1099" />
+            <member id="1100" />
+            <member id="1101" />
+            <member id="1102" />
+            <member id="1103" />
+            <member id="1104" />
+            <member id="1105" />
+            <member id="1106" />
+            <member id="1107" />
+            <member id="1108" />
+            <member id="1109" />
+            <member id="1110" />
+            <member id="1111" />
+            <member id="1112" />
+            <member id="1113" />
+            <member id="1114" />
+            <member id="1115" />
+            <member id="1116" />
+            <member id="1117" />
+            <member id="1118" />
+            <member id="1119" />
+            <member id="1120" />
+            <member id="1121" />
+            <member id="1122" />
+            <member id="1123" />
+            <member id="1124" />
+            <member id="1125" />
+            <member id="1126" />
+            <member id="1127" />
+            <member id="1128" />
+            <member id="1129" />
+            <member id="1130" />
+            <member id="1131" />
+            <member id="1132" />
+            <member id="1133" />
+            <member id="1134" />
+            <member id="1135" />
+            <member id="1136" />
+            <member id="1137" />
+            <member id="1138" />
+            <member id="1139" />
+            <member id="1140" />
+            <member id="1141" />
+            <member id="1142" />
+            <member id="1143" />
+            <member id="1144" />
+            <member id="1145" />
+            <member id="1146" />
+            <member id="1147" />
+            <member id="1149" />
+            <member id="1151" />
+            <member id="1152" />
+            <member id="1153" />
+            <member id="1154" />
+            <member id="1155" />
+            <member id="1156" />
+            <member id="1157" />
+            <member id="1158" />
+            <member id="1159" />
+            <member id="1160" />
+            <member id="1161" />
+            <member id="1162" />
+            <member id="1163" />
+            <member id="1164" />
+            <member id="1165" />
+            <member id="1166" />
+            <member id="1167" />
+            <member id="1168" />
+            <member id="1169" />
+            <member id="1170" />
+            <member id="1171" />
+            <member id="1172" />
+            <member id="1173" />
+            <member id="1174" />
+            <member id="1175" />
+            <member id="1176" />
+            <member id="1177" />
+            <member id="1178" />
+            <member id="1179" />
+            <member id="1180" />
+            <member id="1181" />
+            <member id="1182" />
+            <member id="1183" />
+            <member id="1184" />
+            <member id="1185" />
+            <member id="1186" />
+            <member id="1187" />
+            <member id="1188" />
+            <member id="1189" />
+            <member id="1190" />
+            <member id="1191" />
+            <member id="1192" />
+            <member id="1193" />
+            <member id="1194" />
+            <member id="1195" />
+            <member id="1196" />
+            <member id="1197" />
+            <member id="1198" />
+            <member id="1199" />
+            <member id="1200" />
+            <member id="1201" />
+            <member id="1202" />
+            <member id="1203" />
+            <member id="1204" />
+            <member id="1205" />
+            <member id="1206" />
+            <member id="1207" />
+            <member id="1208" />
+            <member id="1209" />
+            <member id="1210" />
+            <member id="1211" />
+            <member id="1212" />
+            <member id="1213" />
+            <member id="1214" />
+            <member id="1215" />
+            <member id="1216" />
+            <member id="1217" />
+            <member id="1218" />
+            <member id="1219" />
+            <member id="1220" />
+            <member id="1221" />
+            <member id="1222" />
+            <member id="1223" />
+            <member id="1224" />
+            <member id="1225" />
+            <member id="1226" />
+            <member id="1227" />
+            <member id="1228" />
+            <member id="1229" />
+            <member id="1230" />
+            <member id="1231" />
+            <member id="1232" />
+            <member id="1233" />
+            <member id="1234" />
+            <member id="1235" />
+            <member id="1236" />
+            <member id="1237" />
+            <member id="1238" />
+            <member id="1239" />
+            <member id="1240" />
+            <member id="1241" />
+            <member id="1242" />
+            <member id="1243" />
+            <member id="1244" />
+            <member id="1245" />
+            <member id="1246" />
+            <member id="1247" />
+            <member id="1248" />
+            <member id="1249" />
+            <member id="1250" />
+            <member id="1252" />
+            <member id="1253" />
+            <member id="1254" />
+            <member id="1256" />
+            <member id="1258" />
+            <member id="1259" />
+            <member id="1260" />
+            <member id="1262" />
+            <member id="1263" />
+            <member id="1264" />
+            <member id="1265" />
+            <member id="1266" />
+            <member id="1267" />
+            <member id="1268" />
+            <member id="1269" />
+            <member id="1270" />
+            <member id="1271" />
+            <member id="1272" />
+            <member id="1273" />
+            <member id="1274" />
+            <member id="1275" />
+            <member id="1276" />
+            <member id="1277" />
+            <member id="1278" />
+            <member id="1279" />
+            <member id="1280" />
+            <member id="1281" />
+            <member id="1282" />
+            <member id="1283" />
+            <member id="1284" />
+            <member id="1285" />
+            <member id="1286" />
+            <member id="1287" />
+            <member id="1288" />
+            <member id="1289" />
+            <member id="1290" />
+            <member id="1291" />
+            <member id="1292" />
+            <member id="1293" />
+            <member id="1294" />
+            <member id="1295" />
+            <member id="1296" />
+            <member id="1297" />
+            <member id="1298" />
+            <member id="1299" />
+            <member id="1300" />
+            <member id="1301" />
+            <member id="1302" />
+            <member id="1303" />
+            <member id="1304" />
+            <member id="1305" />
+            <member id="1306" />
+            <member id="1307" />
+            <member id="1308" />
+            <member id="1309" />
+            <member id="1310" />
+            <member id="1311" />
+            <member id="1312" />
+            <member id="1313" />
+            <member id="1314" />
+            <member id="1315" />
+            <member id="1316" />
+            <member id="1317" />
+            <member id="1318" />
+            <member id="1319" />
+            <member id="1320" />
+            <member id="1321" />
+            <member id="1322" />
+            <member id="1323" />
+            <member id="1324" />
+            <member id="1325" />
+            <member id="1326" />
+            <member id="1327" />
+            <member id="1328" />
+            <member id="1329" />
+            <member id="1330" />
+            <member id="1331" />
+            <member id="1332" />
+            <member id="1333" />
+            <member id="1334" />
+            <member id="1335" />
+            <member id="1336" />
+            <member id="1337" />
+            <member id="1338" />
+            <member id="1339" />
+            <member id="1340" />
+            <member id="1341" />
+            <member id="1342" />
+            <member id="1343" />
+        </members>
+        <subModules/>
+    </group>
+    <module id="1345" name="LeftLegLowerBottom" >
+        <properties>
+            <prop value="-1449.22,2723.88,0" name="_LOCATION" />
+            <prop value="784.222,651.222" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1345" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1098" />
+            <member id="1103" />
+            <member id="1116" />
+            <member id="1282" />
+            <member id="1099" />
+            <member id="1283" />
+            <member id="1117" />
+            <member id="1169" />
+            <member id="1170" />
+            <member id="1100" />
+            <member id="1171" />
+            <member id="1239" />
+            <member id="1101" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1346" name="RightLegLowerBottom" >
+        <properties>
+            <prop value="-133.591,2728.8,0" name="_LOCATION" />
+            <prop value="784.222,651.222" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1346" name="_MODULE_IDENTIFIER" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <members>
+            <member id="1114" />
+            <member id="1280" />
+            <member id="1094" />
+            <member id="1095" />
+            <member id="1102" />
+            <member id="1115" />
+            <member id="1166" />
+            <member id="1167" />
+            <member id="1281" />
+            <member id="1096" />
+            <member id="1168" />
+            <member id="1229" />
+            <member id="1097" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="4" name="Symmetry" >
+                <param value="" name="Mode" />
+                <param value="h" name="Layout" />
+                <param value="1345" name="TargetId" />
+                <param value="1094,1098|1102,1103|1114,1116|1280,1282|1281,1283|1115,1117|1166,1169|1167,1170|1096,1100|1168,1171|1229,1239|1097,1101|1095,1099" name="References" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="1347" name="LeftLegLowerTop" >
+        <properties>
+            <prop value="-1470.1,1922.21,0" name="_LOCATION" />
+            <prop value="900.499,637.348" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1347" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1109" />
+            <member id="1110" />
+            <member id="1111" />
+            <member id="1112" />
+            <member id="1113" />
+            <member id="1175" />
+            <member id="1240" />
+            <member id="1241" />
+            <member id="1272" />
+            <member id="1273" />
+            <member id="1274" />
+            <member id="1275" />
+            <member id="1276" />
+            <member id="1277" />
+            <member id="1278" />
+            <member id="1279" />
+            <member id="1176" />
+            <member id="1177" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1348" name="RightLegLowerTop" >
+        <properties>
+            <prop value="-25.2616,1910.64,0" name="_LOCATION" />
+            <prop value="900.499,637.348" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1348" name="_MODULE_IDENTIFIER" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <members>
+            <member id="1104" />
+            <member id="1264" />
+            <member id="1269" />
+            <member id="1105" />
+            <member id="1230" />
+            <member id="1231" />
+            <member id="1265" />
+            <member id="1270" />
+            <member id="1106" />
+            <member id="1266" />
+            <member id="1271" />
+            <member id="1173" />
+            <member id="1267" />
+            <member id="1107" />
+            <member id="1172" />
+            <member id="1174" />
+            <member id="1268" />
+            <member id="1108" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="4" name="Symmetry" >
+                <param value="" name="Mode" />
+                <param value="h" name="Layout" />
+                <param value="1347" name="TargetId" />
+                <param value="1104,1109|1105,1110|1106,1111|1107,1112|1108,1113|1172,1175|1230,1240|1231,1241|1264,1272|1265,1273|1266,1274|1267,1275|1268,1276|1269,1277|1270,1278|1271,1279|1173,1176|1174,1177" name="References" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="1349" name="LeftLegUpperBottom" >
+        <properties>
+            <prop value="-1336.03,1181,0" name="_LOCATION" />
+            <prop value="767.333,596.667" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1349" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1122" />
+            <member id="1125" />
+            <member id="1181" />
+            <member id="1290" />
+            <member id="1291" />
+            <member id="1123" />
+            <member id="1124" />
+            <member id="1182" />
+            <member id="1183" />
+            <member id="1292" />
+            <member id="1293" />
+            <member id="1294" />
+            <member id="1295" />
+            <member id="1242" />
+            <member id="1243" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1350" name="RightLegUpperBottom" >
+        <properties>
+            <prop value="16.4903,1181.8,0" name="_LOCATION" />
+            <prop value="767.333,596.667" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1350" name="_MODULE_IDENTIFIER" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <members>
+            <member id="1285" />
+            <member id="1118" />
+            <member id="1119" />
+            <member id="1178" />
+            <member id="1179" />
+            <member id="1286" />
+            <member id="1120" />
+            <member id="1180" />
+            <member id="1232" />
+            <member id="1233" />
+            <member id="1287" />
+            <member id="1121" />
+            <member id="1288" />
+            <member id="1289" />
+            <member id="1284" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="4" name="Symmetry" >
+                <param value="" name="Mode" />
+                <param value="h" name="Layout" />
+                <param value="1349" name="TargetId" />
+                <param value="1118,1122|1121,1125|1178,1181|1284,1290|1285,1291|1119,1123|1120,1124|1179,1182|1180,1183|1286,1292|1287,1293|1288,1294|1289,1295|1232,1242|1233,1243" name="References" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="1351" name="LeftLegUpperMiddle" >
+        <properties>
+            <prop value="-1425.83,454.934,0" name="_LOCATION" />
+            <prop value="853.778,573.778" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1351" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1136" />
+            <member id="1137" />
+            <member id="1138" />
+            <member id="1139" />
+            <member id="1187" />
+            <member id="1188" />
+            <member id="1189" />
+            <member id="1246" />
+            <member id="1247" />
+            <member id="1310" />
+            <member id="1311" />
+            <member id="1312" />
+            <member id="1313" />
+            <member id="1314" />
+            <member id="1315" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1352" name="RightLegUpperMiddle" >
+        <properties>
+            <prop value="-22.7692,485.289,0" name="_LOCATION" />
+            <prop value="853.778,573.778" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1352" name="_MODULE_IDENTIFIER" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <members>
+            <member id="1132" />
+            <member id="1133" />
+            <member id="1134" />
+            <member id="1135" />
+            <member id="1184" />
+            <member id="1185" />
+            <member id="1186" />
+            <member id="1236" />
+            <member id="1237" />
+            <member id="1304" />
+            <member id="1305" />
+            <member id="1306" />
+            <member id="1307" />
+            <member id="1308" />
+            <member id="1309" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="4" name="Symmetry" >
+                <param value="" name="Mode" />
+                <param value="h" name="Layout" />
+                <param value="1351" name="TargetId" />
+                <param value="1132,1136|1133,1137|1134,1138|1135,1139|1184,1187|1185,1188|1186,1189|1236,1246|1237,1247|1304,1310|1305,1311|1306,1312|1307,1313|1308,1314|1309,1315" name="References" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="1353" name="LeftLegUpperTop" >
+        <properties>
+            <prop value="-1417.05,-234.225,0" name="_LOCATION" />
+            <prop value="672.096,525.985" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1353" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1129" />
+            <member id="1130" />
+            <member id="1131" />
+            <member id="1193" />
+            <member id="1194" />
+            <member id="1195" />
+            <member id="1244" />
+            <member id="1245" />
+            <member id="1300" />
+            <member id="1301" />
+            <member id="1302" />
+            <member id="1303" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1354" name="RightLegUpperTop" >
+        <properties>
+            <prop value="110.981,-225.532,0" name="_LOCATION" />
+            <prop value="672.096,525.985" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1354" name="_MODULE_IDENTIFIER" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <members>
+            <member id="1126" />
+            <member id="1127" />
+            <member id="1128" />
+            <member id="1190" />
+            <member id="1191" />
+            <member id="1192" />
+            <member id="1234" />
+            <member id="1235" />
+            <member id="1296" />
+            <member id="1297" />
+            <member id="1298" />
+            <member id="1299" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="4" name="Symmetry" >
+                <param value="" name="Mode" />
+                <param value="h" name="Layout" />
+                <param value="1353" name="TargetId" />
+                <param value="1126,1129|1127,1130|1128,1131|1190,1193|1191,1194|1192,1195|1234,1244|1235,1245|1296,1300|1297,1301|1298,1302|1299,1303" name="References" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="1355" name="LeftLowerArm" >
+        <properties>
+            <prop value="-2620.88,-386.103,0" name="_LOCATION" />
+            <prop value="527.461,209.313" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1355" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1199" />
+            <member id="1164" />
+            <member id="1200" />
+            <member id="1201" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1356" name="RightLowerArm" >
+        <properties>
+            <prop value="1608.69,-357.796,0" name="_LOCATION" />
+            <prop value="527.461,209.313" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1356" name="_MODULE_IDENTIFIER" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <members>
+            <member id="1162" />
+            <member id="1196" />
+            <member id="1197" />
+            <member id="1198" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="4" name="Symmetry" >
+                <param value="" name="Mode" />
+                <param value="h" name="Layout" />
+                <param value="1355" name="TargetId" />
+                <param value="1196,1199|1162,1164|1197,1200|1198,1201" name="References" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="1357" name="LeftUpperArm" >
+        <properties>
+            <prop value="-2405.67,-1188.65,0" name="_LOCATION" />
+            <prop value="634.395,586.39" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1357" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1338" />
+            <member id="1339" />
+            <member id="1161" />
+            <member id="1256" />
+            <member id="1160" />
+            <member id="1165" />
+            <member id="1342" />
+            <member id="1343" />
+            <member id="1260" />
+            <member id="1207" />
+            <member id="1205" />
+            <member id="1206" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1358" name="RightUpperArm" >
+        <properties>
+            <prop value="1203.98,-1192.97,0" name="_LOCATION" />
+            <prop value="634.395,586.39" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1358" name="_MODULE_IDENTIFIER" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <members>
+            <member id="1250" />
+            <member id="1336" />
+            <member id="1158" />
+            <member id="1159" />
+            <member id="1337" />
+            <member id="1163" />
+            <member id="1254" />
+            <member id="1340" />
+            <member id="1341" />
+            <member id="1202" />
+            <member id="1203" />
+            <member id="1204" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="4" name="Symmetry" >
+                <param value="" name="Mode" />
+                <param value="h" name="Layout" />
+                <param value="1357" name="TargetId" />
+                <param value="1336,1338|1337,1339|1159,1161|1250,1256|1158,1160|1163,1165|1340,1342|1341,1343|1254,1260|1204,1207|1202,1205|1203,1206" name="References" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="1359" name="LeftUpperBody" >
+        <properties>
+            <prop value="-1615.91,-1870.58,0" name="_LOCATION" />
+            <prop value="670.567,631.019" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1359" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1332" />
+            <member id="1155" />
+            <member id="1156" />
+            <member id="1157" />
+            <member id="1258" />
+            <member id="1259" />
+            <member id="1333" />
+            <member id="1334" />
+            <member id="1335" />
+            <member id="1210" />
+            <member id="1209" />
+            <member id="1208" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1360" name="RightUpperBody" >
+        <properties>
+            <prop value="414.319,-1870.79,0" name="_LOCATION" />
+            <prop value="670.567,631.019" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1360" name="_MODULE_IDENTIFIER" />
+            <prop value="" name="_ConstraintSlave" />
+        </properties>
+        <members>
+            <member id="1328" />
+            <member id="1252" />
+            <member id="1253" />
+            <member id="1329" />
+            <member id="1152" />
+            <member id="1153" />
+            <member id="1330" />
+            <member id="1331" />
+            <member id="1154" />
+            <member id="1211" />
+            <member id="1212" />
+            <member id="1213" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="4" name="Symmetry" >
+                <param value="" name="Mode" />
+                <param value="h" name="Layout" />
+                <param value="1359" name="TargetId" />
+                <param value="1328,1332|1152,1155|1153,1156|1154,1157|1252,1258|1253,1259|1329,1333|1330,1334|1331,1335|1213,1210|1212,1209|1211,1208" name="References" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="1361" name="LeftLowerBody" >
+        <properties>
+            <prop value="-867.259,-1363.45,0" name="_LOCATION" />
+            <prop value="578,550" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1361" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1144" />
+            <member id="1145" />
+            <member id="1214" />
+            <member id="1215" />
+            <member id="1249" />
+            <member id="1320" />
+            <member id="1321" />
+            <member id="1216" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1362" name="RightLowerBody" >
+        <properties>
+            <prop value="-138.322,-1102.21,0" name="_LOCATION" />
+            <prop value="532.338,308" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1362" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1217" />
+            <member id="1218" />
+            <member id="1219" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1363" name="BodyBottom" >
+        <properties>
+            <prop value="-587.236,-705.422,0" name="_LOCATION" />
+            <prop value="635.96,562.78" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1363" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1140" />
+            <member id="1142" />
+            <member id="1143" />
+            <member id="1238" />
+            <member id="1248" />
+            <member id="1316" />
+            <member id="1317" />
+            <member id="1318" />
+            <member id="1319" />
+            <member id="1141" />
+            <member id="1220" />
+            <member id="1221" />
+            <member id="1222" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1364" name="LeftHead" >
+        <properties>
+            <prop value="-1039.52,-2562.05,0" name="_LOCATION" />
+            <prop value="638.074,548.494" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1" name="AccelBoard" />
+            <prop value="1364" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1223" />
+            <member id="1224" />
+            <member id="1225" />
+        </members>
+        <subModules/>
+    </module>
+    <module id="1365" name="RightHead" >
+        <properties>
+            <prop value="-274.974,-2607.93,0" name="_LOCATION" />
+            <prop value="660.296,597.877" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="1365" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="1326" />
+            <member id="1327" />
+            <member id="1263" />
+            <member id="1149" />
+            <member id="1151" />
+            <member id="1324" />
+            <member id="1325" />
+            <member id="1226" />
+            <member id="1227" />
+            <member id="1228" />
+            <member id="1262" />
+            <member id="1147" />
+            <member id="1322" />
+            <member id="1323" />
+            <member id="1146" />
+        </members>
+        <subModules/>
+    </module>
+</net>
+

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <properties>
+        <prop value="" name="TYPE_LIST" />
+    </properties>
+    <defaultTransferFunction name="tanh" />
+    <defaultActivationFunction name="AdditiveTD" />
+    <defaultSynapseFunction name="SimpleUpdateFunction" />
+    <neuron bias="0" id="1297" name="Hidden" >
+        <properties>
+            <prop value="590.811,463.207,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="0.18" source="1299" id="1301" >
+            <properties>
+                <prop value="869.66,464.137,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="1.2" source="1297" id="1302" >
+            <properties>
+                <prop value="590.811,393.207,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="0.1" source="1311" id="1313" >
+            <properties>
+                <prop value="725.288,609.486,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0" id="1298" name="Hidden" >
+        <properties>
+            <prop value="589.146,1019.92,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="-0.18" source="1297" id="1303" >
+            <properties>
+                <prop value="589.978,741.563,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="1.2" source="1298" id="1304" >
+            <properties>
+                <prop value="589.146,949.92,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0.5" id="1311" name="Hidden" >
+        <properties>
+            <prop value="859.765,755.764,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="1" source="1300" id="1312" >
+            <properties>
+                <prop value="1006.06,887.852,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0" id="1299" name="Hidden" >
+        <properties>
+            <prop value="1148.51,465.067,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="-0.18" source="1300" id="1305" >
+            <properties>
+                <prop value="1150.43,742.504,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="1.2" source="1299" id="1306" >
+            <properties>
+                <prop value="1148.51,395.067,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0.0001" id="1300" name="Hidden" >
+        <properties>
+            <prop value="1152.35,1019.94,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="-0.18" source="1298" id="1307" >
+            <properties>
+                <prop value="870.748,1019.93,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="1.2" source="1300" id="1308" >
+            <properties>
+                <prop value="1152.35,949.94,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <group id="1314" name="Default" >
+        <members>
+            <member id="1297" />
+            <member id="1298" />
+            <member id="1311" />
+            <member id="1299" />
+            <member id="1300" />
+        </members>
+        <subModules/>
+    </group>
+</net>
+

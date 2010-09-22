@@ -1,0 +1,19 @@
+<ORCS version="Environment XML V1.1">
+	<Models>
+		<model prototype="Ground" name="Arena"/>
+		<model prototype="Khepera" name="Khepera" position="(0, 0.1, 0)"/>
+	</Models>
+
+	<Environment>
+		<object type="Box" Name="Wall1" Position="(0, 0, 1.2)" Width="2.4" Height="0.1" Depth="0.05" Color="(127, 127, 127)" Dynamic="false"/>
+		<object type="Box" Name="Wall2" Position="(0, 0, -1.2)" Width="2.4" Height="0.1" Depth="0.05" Color="(127, 127, 127)" Dynamic="false"/>
+		<object type="Box" Name="Wall3" Position="(1.2, 0, 0)" Orientation="(0, 90, 0)" Width="2.4" Height="0.1" Depth="0.05" Color="(127, 127, 127)" Dynamic="false"/>
+		<object type="Sphere" Name="Sphere1" Position="(0.15,0.0,0.15)" Orientation="(0, 0, 0)" Radius="0.1" Color="(127, 127, 127)" Dynamic="false"/>
+		<object type="LightSource" Name="Light1" Range="0.20" Position="(0.6, 0.0, 0.0)" Orientation="(0.0, 0.0, 0.0)" Color="green" />
+		<object type="LightSource" Name="Light2" Range="0.1" Position="(0.0, 0.0, 1.0)" Orientation="(0.0, 0.0, 0.0)" Color="blue" />
+		<object type="LightSource" Name="Light3" Range="0.25" Position="(0.6, 0.0, 0.2)" Orientation="(0.0, 0.0, 0.0)" Color="white" />
+		<object type="LightSource" Name="Light4" Range="0.01" Position="(-0.1, 0.0, -0.1)" Orientation="(0.0, 0.0, 0.0)" Color="red" />
+	</Environment>
+
+
+</ORCS>

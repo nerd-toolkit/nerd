@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <properties>
+        <prop value="" name="TYPE_LIST" />
+    </properties>
+    <defaultTransferFunction name="tanh" />
+    <defaultActivationFunction name="AdditiveTD" />
+    <defaultSynapseFunction name="SimpleUpdateFunction" />
+    <neuron bias="6" id="90495" name="set" >
+        <properties>
+            <prop value="960.989,-386.18,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="-8" id="90496" name="Flip-Flop" >
+        <properties>
+            <prop value="1048.17,-570.8,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="-30" source="90497" id="90504" >
+            <properties>
+                <prop value="1105.4,-477.29,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="30" source="90495" id="90505" >
+            <properties>
+                <prop value="1004.58,-478.49,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="10" source="90496" id="90506" >
+            <properties>
+                <prop value="1048.17,-640.8,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="6" id="90497" name="reset" >
+        <properties>
+            <prop value="1162.62,-383.78,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <group id="90509" name="Default" >
+        <members>
+            <member id="90495" />
+            <member id="90496" />
+            <member id="90497" />
+        </members>
+        <subModules/>
+    </group>
+</net>
+
