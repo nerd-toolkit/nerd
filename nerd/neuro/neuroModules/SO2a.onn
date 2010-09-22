@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <properties>
+        <prop value="" name="TYPE_LIST" />
+    </properties>
+    <defaultTransferFunction name="tanh" />
+    <defaultActivationFunction name="AdditiveTD" />
+    <defaultSynapseFunction name="SimpleUpdateFunction" />
+    <neuron bias="0.001" id="828" name="SO2-excitatory" >
+        <properties>
+            <prop value="533.456,1800.32,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+        <synapse strength="0.3" source="827" id="835" >
+            <properties>
+                <prop value="415.967,1777.96,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="ASeries" />
+        </synapse>
+        <synapse strength="1.01" source="828" id="838" >
+            <properties>
+                <prop value="533.456,1730.32,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="ASeries" />
+        </synapse>
+    </neuron>
+    <neuron bias="0" id="827" name="SO2-inhibitory" >
+        <properties>
+            <prop value="297.677,1795.6,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+        <synapse strength="-0.3" source="828" id="836" >
+            <properties>
+                <prop value="415.166,1817.96,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="ASeries" />
+        </synapse>
+        <synapse strength="1.01" source="827" id="837" >
+            <properties>
+                <prop value="297.677,1725.6,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="ASeries" />
+        </synapse>
+    </neuron>
+    <group id="1183" name="Default" >
+        <members>
+            <member id="828" />
+            <member id="827" />
+        </members>
+        <subModules/>
+    </group>
+    <module id="833" name="SO2-oscillator" >
+        <properties>
+            <prop value="238.935,1627.9,0" name="_LOCATION" />
+            <prop value="353,311" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="" name="Protected" />
+            <prop value="833" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="828" />
+            <member id="827" />
+        </members>
+        <subModules/>
+    </module>
+</net>
+

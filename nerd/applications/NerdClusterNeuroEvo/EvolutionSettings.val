@@ -1,0 +1,7 @@
+/Control/NumberOfTries=2
+/Control/NumberOfSteps=1400
+/Evo/Pop/HumanoidControllers/PopulationSize=20
+/Evaluation/NumberOfResubmits=0
+/Evaluation/QSubScript=/home/verena/workspaceKD/orcs/applications/ClusterNNSimulatorEvolution/testQSubCallerNoGridEngine.sh
+/Evaluation/AgentInterfaces=ASeries
+/Evaluation/Application=/home/verena/workspaceKD/orcs/applications/OrcsEvaluation/OrcsEvaluation -env /home/verena/workspaceKD/orcs/applications/environments/ASeriesKneeControl.xml -val /home/verena/workspaceKD/orcs/applications/ClusterNNSimulatorEvolution/ControlParamSettings.val

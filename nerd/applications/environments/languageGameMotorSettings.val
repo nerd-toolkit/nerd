@@ -1,0 +1,16 @@
+/Sim/Humanoid/Head/Pan/DesiredSetting=0.56
+/Sim/Humanoid/Head/Tilt/DesiredSetting=-0.05
+/Sim/Humanoid/Left/Ellbow/DesiredSetting=0.15
+/Sim/Humanoid/Left/ShoulderPitch/DesiredSetting=0.35
+/Sim/Humanoid/Left/ShoulderYaw/DesiredSetting=0.02
+/Sim/Humanoid/Right/Ellbow/DesiredSetting=-0.15
+/Sim/Humanoid/Right/ShoulderPitch/DesiredSetting=-0.45
+/Sim/Humanoid/Right/ShoulderYaw/DesiredSetting=-0.6
+/Sim/Robot2/Head/Pan/DesiredSetting=-0.57
+/Sim/Robot2/Head/Tilt/DesiredSetting=-0.05
+/Sim/Robot2/Left/Ellbow/DesiredSetting=0.15
+/Sim/Robot2/Left/ShoulderPitch/DesiredSetting=0.45
+/Sim/Robot2/Left/ShoulderYaw/DesiredSetting=0.6
+/Sim/Robot2/Right/Ellbow/DesiredSetting=-0.15
+/Sim/Robot2/Right/ShoulderPitch/DesiredSetting=-0.45
+/Sim/Robot2/Right/ShoulderYaw/DesiredSetting=-0.6

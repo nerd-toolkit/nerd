@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="Simba XML V3.0">
+    <defaultTransferFunction name="tanh"/>
+    <defaultUpdateFunction name="AdditiveTD"/>
+    <defaultSynapseUpdateFunction name="SimpleUpdateFunction">
+    </defaultSynapseUpdateFunction>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="Output1" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+        <synapse protection="dynamic" source="1" strength="1">
+            <synapseUpdateFunction name="SimpleUpdateFunction"/>
+            <synapse protection="dynamic" source="1" strength="1">
+                <synapseUpdateFunction name="SimpleUpdateFunction"/>
+            </synapse>
+        </synapse>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="Hidden1" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+</net>

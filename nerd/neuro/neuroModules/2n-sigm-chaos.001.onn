@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <properties>
+        <prop value="" name="TYPE_LIST" />
+    </properties>
+    <defaultTransferFunction name="tanh" />
+    <defaultActivationFunction name="AdditiveTD" />
+    <defaultSynapseFunction name="SimpleUpdateFunction" />
+    <neuron bias="4" id="1202" name="Hidden" >
+        <properties>
+            <prop value="823.965,366.435,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="-6" source="1203" id="1205" >
+            <properties>
+                <prop value="926.314,381.955,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="-3" id="1203" name="Hidden" >
+        <properties>
+            <prop value="1045.33,367.981,0" name="_LOCATION" />
+        </properties>
+        <transferFunction name="sigmoid" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="7" source="1202" id="1204" >
+            <properties>
+                <prop value="928.346,342.007,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="-17" source="1203" id="1206" >
+            <properties>
+                <prop value="1045.33,297.981,0" name="_LOCATION" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <group id="1213" name="Default" >
+        <members>
+            <member id="1202" />
+            <member id="1203" />
+        </members>
+        <subModules/>
+    </group>
+</net>
+

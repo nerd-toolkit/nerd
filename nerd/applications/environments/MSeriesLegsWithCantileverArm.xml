@@ -1,0 +1,25 @@
+
+<ORCS version="Environment XML V1.1"> 
+
+	<Models> 
+		<model prototype="Ground" name="Ground" /> 
+		<model prototype="MSeriesV2" name="MSeriesV2" position="(-2,0.01,0)" orientation="(0,0,0)" BodyParts="RightLeg,LeftLeg,Hip,Body"/>
+		<model prototype="CantileverArm" name="CantileverArm" position="(0,1,0)" orientation="(0,0,0)" TargetBody="MSeriesV2/Middle/UpperBody" />
+	</Models> 
+
+<!--
+	<Environment>  
+		<object type="Box" Name="Box2" Position="(-1.9,0.1,1)" Orientation="(-10,0,0)" Width="1" Height="0.1" Depth="2" Color="blue" Dynamic="false"/>
+		<object type="Box" Name="Box3" Position="(0.3, -0.1, 0.0)" Orientation="(0,0,0)" Width="0.1" Height="0.2" Depth="0.3" Color="red" Dynamic="false"/> 
+		<object type="Box" Name="Box4" Position="(0.6, -0.1, 0.0)" Orientation="(0,0,0)" Width="0.1" Height="0.2" Depth="0.3" Color="blue" Dynamic="false"/>
+		<object type="Box" Name="Box5" Position="(0.9, -0.1, 0.0)" Orientation="(0,0,0)" Width="0.1" Height="0.2" Depth="0.3" Color="red" Dynamic="false"/> 
+		<object type="Box" Name="Box6" Position="(1.2, -0.1, 0.0)" Orientation="(0,0,0)" Width="0.1" Height="0.2" Depth="0.3" Color="blue" Dynamic="false"/>
+	</Environment>
+-->
+
+	<value name="/Simulation/IterationsPerStep" content="5" />
+	<value name="/Simulation/TimeStepSize" content="0.002" />
+
+
+</ORCS>
+
