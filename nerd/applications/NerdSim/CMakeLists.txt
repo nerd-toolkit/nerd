@@ -8,7 +8,6 @@ set(nerd_NerdSim_SRCS
 
 
 set(nerd_NerdSim_MOC_HDRS
-	NerdSimApplication.h
 )
 
 set(nerd_NerdSim_RCS

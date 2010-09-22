@@ -6,5 +6,5 @@ add_subdirectory(testNeuralNetwork)
 add_subdirectory(networkEditor)
 
 add_dependencies(neuralNetwork nerd)
-add_dependencies(testNeuralNetwork neuralNetwork)
-add_dependencies(networkEditor neuralNetwork)
+add_dependencies(testNeuralNetwork neuralNetwork nerd)
+add_dependencies(networkEditor neuralNetwork nerd)

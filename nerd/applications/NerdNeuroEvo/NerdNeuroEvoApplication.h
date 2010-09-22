@@ -57,6 +57,7 @@ namespace nerd {
 	 */
 	class NerdNeuroEvoApplication  : public BaseApplication {
 	Q_OBJECT
+
 	public:
 		NerdNeuroEvoApplication();
 		virtual ~NerdNeuroEvoApplication();
