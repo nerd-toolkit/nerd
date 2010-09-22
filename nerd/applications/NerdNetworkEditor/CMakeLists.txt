@@ -44,7 +44,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/neuralNetwork)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/networkEditor)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../evolution/evolution)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/${ODE_INCLUDE_PATH})
 
 TARGET_LINK_LIBRARIES(NerdNetworkEditor
 	${QT_LIBRARIES}
@@ -52,6 +51,5 @@ TARGET_LINK_LIBRARIES(NerdNetworkEditor
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
-	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}
 )
 
