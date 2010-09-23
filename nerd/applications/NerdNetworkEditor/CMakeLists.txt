@@ -8,7 +8,6 @@ set(nerd_NerdNetworkEditor_SRCS
 
 
 set(nerd_NerdNetworkEditor_MOC_HDRS
-	NeuralNetworkEditorApplication.h
 )
 
 set(nerd_NerdNetworkEditor_RCS

@@ -64,3 +64,12 @@ TARGET_LINK_LIBRARIES(testOdePhysics
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
 )
 
+if(WIN32)
+elseif(UNIX)
+TARGET_LINK_LIBRARIES(testOdePhysics
+	libGLU.a
+)
+endif(WIN32)
+
+
+
