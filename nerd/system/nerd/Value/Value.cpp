@@ -68,11 +68,13 @@ Value::Value(const QString &description, bool notifyAllSetAttempts) : Object() {
  */
 Value::Value(const Value &value) : Object() {
 	createValue(value.mDescription, value.mNotifyAllSetAttempts);
+	mDocumentation = value.mDocumentation;
+	mOptionList = value.mOptionList;
 }
 
 
 /**
- * If there are still ValueChangedListeners registered, then 
+ * If there are still ValueChangedListeners registered, then
  * Value calls their forceListenerDeregistration() method.
  * This method can be overwritten by listeners to handle this event.
  */
@@ -90,7 +92,7 @@ Value::~Value() {
  * Since this value does NOT encapsulate any data, it is only usefule for test purposes.
  *
  * @param description the type description of the Value, e.g. Integer.
- * @param notifyAllSetAttempty if true, then the ValueChangedListeners are notified at all calls of set(), 
+ * @param notifyAllSetAttempty if true, then the ValueChangedListeners are notified at all calls of set(),
  *        even if the value is not changed by the method call.
  */
 void Value::createValue(const QString &description, bool notifyAllSetAttempts) {
@@ -115,9 +117,9 @@ Value* Value::createCopy() {
 
 /**
  * Sets the notifyallSetAttempts flag of the Value. This causes the Value to notify its
- * ValueChangedListeners at any set attempt, independently of whether the conten is 
- * really changed. 
- * 
+ * ValueChangedListeners at any set attempt, independently of whether the conten is
+ * really changed.
+ *
  * @see isNotifyingAllSetAttempts
  * @param notify true to switch the flag on, false to switch it off.
  */
@@ -130,7 +132,7 @@ void Value::setNotifyAllSetAttempts(bool notify) {
  * Returns true if the Value is configured to notify its ValueChangedListeners at any set attempt
  * (set(), setValueFromString(), specific set methods, etc.), even if the call of these methods
  * does not effectively change the Value content.
- * 
+ *
  * @return true if notifyAllSetAttempty flag is set.
  */
 bool Value::isNotifyingAllSetAttempts() const {
@@ -140,7 +142,7 @@ bool Value::isNotifyingAllSetAttempts() const {
 
 /**
  * Returns the type description of the Value.
- * 
+ *
  * @return the description.
  */
 QString Value::getDescription() const {
@@ -155,6 +157,20 @@ QString Value::getDescription() const {
  */
 void Value::setDescription(const QString &description) {
 	mDescription = description;
+}
+
+void Value::setDocumentation(const QString &documentation) {
+    mDocumentation = documentation;
+}
+
+
+QString Value::getDocumentation() const {
+    return mDocumentation;
+}
+
+
+QList<QString>& Value::getOptionList() {
+    return mOptionList;
 }
 
 
@@ -175,11 +191,11 @@ bool Value::setValueFromString(const QString&) {
 
 
 /**
- * Returns a string representation of the value content. 
+ * Returns a string representation of the value content.
  * This method returns "" and has to be overwritten by subclasses
  * in a suitable way. The method should return true if the string
  * could be successfully parsed to set the content of the Value.
- * 
+ *
  * @return the value content as string.
  */
 QString Value::getValueAsString() const {
@@ -204,8 +220,8 @@ bool Value::addValueChangedListener(ValueChangedListener *listener) {
 
 
 /**
- * Removes a ValueChangedListener. 
- * 
+ * Removes a ValueChangedListener.
+ *
  * @param listener the listener to remove.
  * @return true if successful. False if already contained or NULL.
  */
@@ -301,7 +317,7 @@ bool Value::setProperties(const QString&) {
 /**
  * Returns the properties of this Value in a string representation.
  * Returns an empty string by default.
- * 
+ *
  * @return the properties (default is the empty string).
  */
 QString Value::getProperties() const {

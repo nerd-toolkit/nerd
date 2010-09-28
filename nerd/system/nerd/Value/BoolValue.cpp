@@ -47,10 +47,14 @@ namespace nerd {
 
 BoolValue::BoolValue() : Value("Bool", false) {
 	mValue = true;
+	mOptionList.append("true");
+    mOptionList.append("false");
 }
 
 BoolValue::BoolValue(bool value) : Value("Bool", false) {
 	mValue = value;
+	mOptionList.append("true");
+    mOptionList.append("false");
 }
 
 

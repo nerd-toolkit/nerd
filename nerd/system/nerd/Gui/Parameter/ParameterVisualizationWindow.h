@@ -88,11 +88,11 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 									 public virtual EventListener
 {
 	Q_OBJECT
-	
+
 	public:
 		ParameterVisualizationWindow(const QString &name, SetInitValueTask *setInitValueTaskPrototype = 0);
 		virtual ~ParameterVisualizationWindow();
-		
+
 		QList<ParameterVisualization*> getParameterVisualizations() const;
 		QString getName() const;
 		virtual void eventOccured(Event *event);
@@ -101,7 +101,7 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 
 
 		void modifySelection(bool select);
-	
+
 	private:
 		void createValueList();
 		void createEditButtons();
@@ -111,14 +111,14 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 		void executeFillComboList(const QString &text);
 
 	public slots:
-		void deleteValueFromList (QString valueName);	
+		void deleteValueFromList (QString valueName);
 		void saveCurrentParameters(const QString &fileName, bool saveValueContent);
 		QString loadParametersFromFile(const QString &fileName, bool autoApply);
 
 		void selectionChanged(const QString &text);
 		void fillComboList(const QString &text);
 		void showSelectedValues();
-		void showSelectedValue(const QString &text, bool startDeselected);
+		ParameterVisualization* showSelectedValue(const QString &text, bool startDeselected);
 		void deleteValuesFromList();
 		void applyAllChanges();
 		void modifySelection();
@@ -131,7 +131,7 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 
 	protected:
 		virtual void showEvent(QShowEvent *event);
-	
+
 	public:
 		bool mCloseDownRunning;
 
@@ -178,7 +178,7 @@ class ParameterComboBox : public QComboBox
 	public:
 		ParameterComboBox(QWidget *parent = 0)
 			: QComboBox(parent), mShiftKeyPressed(false) {}
- 
+
 
 		bool isShiftKeyPressed() const {
 			return mShiftKeyPressed;
@@ -215,11 +215,11 @@ class ParameterComboBox : public QComboBox
 			}
 			else if(event->key() == Qt::Key_Control) {
 				mCtrlKeyPressed = false;
-			} 
+			}
 			QComboBox::keyReleaseEvent(event);
 		}
 
-		
+
 
 	private:
 		bool mShiftKeyPressed;

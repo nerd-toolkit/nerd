@@ -142,7 +142,7 @@ class ChangeDoubleValueTask : public Task {
 
 // TODO: possible optimization: instead of using: glTexImage2D to choose the current texture data, use glBindTexture and a whole vector of texture images.
 
-OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenceBody, 
+OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenceBody,
 							const QString &name, bool publishValues, QWidget *w)
 	: QGLWidget(w), ParameterizedObject(name), mReferenceBody(referenceBody),
         mLastMousePosition(0), mPosition(0), mDiffuseLight(0), mSpecularLight(0),
@@ -150,7 +150,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
         mCurrentOrientation(0), mReferenceBodyPosition(0), mReferenceBodyOrientation(0),
         mViewPortUpdateTimerInterval(0), mShininess(0), mMinMoveStepSize(0), mMaxMoveStepSize(0),
         mMinSideStepSize(0), mMaxSideStepSize(0), mMouseRotationStepSize(0), mSimulationTime(0),
-        mRealTime(0), mTimeDisplaySize(0), mClearColorValue(0), mTimeTextColorValue(0), 
+        mRealTime(0), mTimeDisplaySize(0), mClearColorValue(0), mTimeTextColorValue(0),
 		mIsManipulatable(0), mPauseValue(0), mUseTexturesValue(0), mDisplaySimulationTime(0),
 		mChangeViewportTimer(0), mVisualizationTimer(0), mFramesPerSecondValue(0),
 		mRunInPerformanceMode(0), mGlIsUpdating(false), mUseAsFrameGrabber(0)
@@ -164,7 +164,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	if(mReferenceBody != 0) {
 		mReferenceBodyPosition = mReferenceBody->getPositionValue();
 		mReferenceBodyOrientation = mReferenceBody->getQuaternionOrientationValue();
-	} 
+	}
 	else {
 		mReferenceBodyPosition = new Vector3DValue(0.0, 0.0, 0.0);
 		mReferenceBodyOrientation = new QuaternionValue();
@@ -200,17 +200,27 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	mPublishValues = publishValues;
 
 	mStartOrientation = new Vector3DValue(-10.0, 0.3, 0.0);
+	mStartOrientation->setDocumentation("The camera orientation after view reset (STRG+V)");
 	mStartPosition = new Vector3DValue(0.0, 0.5, 1.5);
+	mStartPosition->setDocumentation("The camera position after view reset (STRG+V)");
 	mCurrentOrientation = new Vector3DValue();
+	mCurrentOrientation->setDocumentation("The current camera orientation");
 	mCurrentPosition = new Vector3DValue();
+	mCurrentPosition->setDocumentation("The current camera position");
 	mShowCoordinateSystemLines = new BoolValue(false);
+	mShowCoordinateSystemLines->setDocumentation("Enables/Disables the coordinate system lines.");
 	mShowFramesPerSecond = new BoolValue(true);
+	mShowFramesPerSecond->setDocumentation("Displays the number of steps per second.");
 
 	mOpeningAngleValue = new DoubleValue(getDefaultOpeningAngle());
+	mOpeningAngleValue->setDocumentation("The opening angle of the camera.");
 	mMinDistanceCutoffValue = new DoubleValue(getDefaultMinCutoff());
+	mMinDistanceCutoffValue->setDocumentation("Only objects between min and max cuttoff range are shown.");
 	mMaxDistanceCutoffValue = new DoubleValue(getDefaultMaxCutoff());
+	mMaxDistanceCutoffValue->setDocumentation("Only objects between min and max cuttoff range are shown.");
 
 	mReferenceBodyName = new StringValue("");
+	mReferenceBodyName->setDocumentation("The SimObject the camera is attached to. The name is without the leading /Sim.");
 	mReferenceBodyName->addValueChangedListener(this);
 
 	mOpeningAngle = mOpeningAngleValue->get();
@@ -218,10 +228,19 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	mMaxDistanceCutoff = mMaxDistanceCutoffValue->get();
 
 	mIsTranslationalValue = new BoolValue(false);
+	mIsTranslationalValue->setDocumentation("In translation mode, the camera is not following the orientation.");
 	mUseAsFrameGrabber = new BoolValue(false);
+	mUseAsFrameGrabber->setDocumentation("In frame grabber mode the camera image is stored in a buffer file.");
 
 	mValuePrefix = "/OpenGLVisualization/";
 	mValuePrefix.append(name).append("/");
+
+	mDisplaySimulationTime = new BoolValue(false);
+    mDisplaySimulationTime->setDocumentation("Displays the simulation and acutally passed time.");
+	mTimeDisplaySize = new IntValue(10);
+	mTimeDisplaySize->setDocumentation("The font size of the simulation time display.");
+	mTimeTextColorValue = new ColorValue("white");
+    mTimeTextColorValue->setDocumentation("The font color of the simulation time display");
 
 	addParameter("StartOrientation", mStartOrientation, publishValues);
 	addParameter("StartPosition", mStartPosition, publishValues);
@@ -235,10 +254,6 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	addParameter("Translational", mIsTranslationalValue, publishValues);
 	addParameter("ReferenceBodyName", mReferenceBodyName, publishValues);
 	addParameter("UseAsFrameGrabber", mUseAsFrameGrabber, publishValues);
-
-	mDisplaySimulationTime = new BoolValue(false);
-	mTimeDisplaySize = new IntValue(10);
-	mTimeTextColorValue = new ColorValue("white");
 	addParameter("DisplaySimulationTime", mDisplaySimulationTime, publishValues);
 	addParameter("TimeDisplaySize", mTimeDisplaySize, publishValues);
 	addParameter("TimeDisplayColor", mTimeTextColorValue, mPublishValues);
@@ -259,7 +274,7 @@ OpenGLVisualization::~OpenGLVisualization() {
 	if(mPauseValue != 0) {
 		mPauseValue->removeValueChangedListener(this);
 	}
-	
+
 	emit stopVisualizationTimer();
 	mShininess->removeValueChangedListener(this);
 	mAmbientLight->removeValueChangedListener(this);
@@ -274,7 +289,7 @@ OpenGLVisualization::~OpenGLVisualization() {
 		}
 	}
 
-	
+
 	mUpdateInterval = mPaintUpdateTimerInterval->get();
 	mPaintUpdateTimerInterval->addValueChangedListener(this);
 
@@ -312,13 +327,13 @@ void OpenGLVisualization::setUp() {
 	mVisualizationTimer = new QTimer(this);
 	mChangeViewportTimer = new QTimer(this)
 ;
-	connect(mVisualizationTimer, SIGNAL(timeout()), 
+	connect(mVisualizationTimer, SIGNAL(timeout()),
 			this, SLOT(updateGL()));
-	connect(this, SIGNAL(stopVisualizationTimer()), 
+	connect(this, SIGNAL(stopVisualizationTimer()),
 			mVisualizationTimer, SLOT(stop()));
-	connect(this, SIGNAL(startVisualizationTimer()), 
+	connect(this, SIGNAL(startVisualizationTimer()),
 			mVisualizationTimer, SLOT(start()));
-	connect(mChangeViewportTimer, SIGNAL(timeout()), 
+	connect(mChangeViewportTimer, SIGNAL(timeout()),
 			this, SLOT(moveViewPoint()));
 
 	init();
@@ -417,12 +432,12 @@ void OpenGLVisualization::setUp() {
 	mSpecularLight->addValueChangedListener(this);
 	mPosition->addValueChangedListener(this);
 
-	
+
 	mUpdateInterval = mPaintUpdateTimerInterval->get();
 	mPaintUpdateTimerInterval->addValueChangedListener(this);
-	
-	
-	
+
+
+
 	setMouseTracking(false);
 
 	mViewPortUpdateTimerInterval = new IntValue(30);
@@ -540,7 +555,7 @@ void OpenGLVisualization::init() {
 	}
 	if(mPauseValue != 0) {
 		mPauseValue->addValueChangedListener(this);
-	}	
+	}
 
 	//Note: all parameters may be NULL
 
@@ -560,7 +575,7 @@ void OpenGLVisualization::init() {
 		}
 	}
 
-	if(!ok) 
+	if(!ok)
 	{
 		mInitSuccessful = false;
 	}
@@ -596,13 +611,13 @@ void OpenGLVisualization::updateVisualization() {
 		double x  = 0.0;
 		double y = 0.0;
 		double z = 0.0;
-	
+
 		if(scale != 0) {
 			x = quaternion.getX() / scale;
 			y = quaternion.getY() / scale;
 			z = quaternion.getZ() / scale;
 		}
-	
+
 		angle = angle*180.0/Math::PI;
 		glRotated(-angle, x, y, z);
 	}
@@ -614,7 +629,7 @@ void OpenGLVisualization::updateVisualization() {
 
 	//synchronize with PhysicsManager reset.
 	QMutex *resetMutex = Physics::getPhysicsManager()->getResetMutex();
-	
+
 	if(!resetMutex->tryLock(1000)) {
 		//stop painting the visualization.
 		return;
@@ -634,7 +649,7 @@ void OpenGLVisualization::updateVisualization() {
 		drawSky();
 	}
 
-	glEnable(GL_BLEND); 
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	for(int paintOrder = 0; paintOrder < 2; ++paintOrder) {
@@ -654,7 +669,7 @@ void OpenGLVisualization::updateVisualization() {
 
 		for(int i = 0; i < mSimBodies.size(); i++)  {
 			SimBody *currentBody = mSimBodies.at(i);
-	
+
 			glPushMatrix();
 
 			// Use Quaternion instead of rotation matrix!
@@ -666,21 +681,21 @@ void OpenGLVisualization::updateVisualization() {
 			double x  = 0.0;
 			double y = 0.0;
 			double z = 0.0;
-	
+
 			if(scale != 0) {
 				x = quaternion.getX() / scale;
 				y = quaternion.getY() / scale;
 				z = quaternion.getZ() / scale;
 			}
-	
+
 			angle = angle * 180.0 / Math::PI;
-			glTranslated(currentBody->getPositionValue()->getX(), 
-						currentBody->getPositionValue()->getY(), 
+			glTranslated(currentBody->getPositionValue()->getX(),
+						currentBody->getPositionValue()->getY(),
 						currentBody->getPositionValue()->getZ());
 			glRotated(angle, x, y, z);
-			
+
 			for(int j = 0; j < currentBody->getCollisionObjects().size(); j++) {
-	
+
 				glDisable(GL_TEXTURE_2D);
 				CollisionObject *collisionObject = currentBody->getCollisionObjects().at(j);
 				SimGeom *currentGeom = collisionObject->getGeometry();
@@ -689,12 +704,12 @@ void OpenGLVisualization::updateVisualization() {
 					//do not draw objects that are almost transparent.
 					continue;
 				}
-	
+
 				bool hasTex = false;
 				if(mUseTexturesValue->get()) {
 					QList<int> textureTypes =
 							currentBody->getCollisionObjects().at(j)->getTextureTypeInformation();
-		
+
 					for(int i = 0; i < textureTypes.size(); i++) {
 						if(mTextureImages.contains(textureTypes.at(i))){
 							hasTex = true;
@@ -703,7 +718,7 @@ void OpenGLVisualization::updateVisualization() {
 						}
 					}
 				}
-		
+
 				//disable lighting for material light.
 				if(collisionObject->getMaterialType() == MaterialProperties::MATERIAL_NUMBER_LIGHT) {
 					glDisable(GL_LIGHTING);
@@ -711,14 +726,14 @@ void OpenGLVisualization::updateVisualization() {
 				else {
 					glEnable(GL_LIGHTING);
 				}
-	
+
 				if(dynamic_cast<PlaneBody*>(mSimBodies.at(i)) != 0) {
 					if(hasTex) {
 						int type = currentBody->getCollisionObjects().at(j)->
 							getTextureTypeInformation().at(0);
 						glBindTexture( GL_TEXTURE_2D, mTexture[0] );
 						glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(type).width(),
-							mTextureImages.value(type).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 
+							mTextureImages.value(type).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 							mTextureImages.value(type).bits() );
 						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -730,10 +745,10 @@ void OpenGLVisualization::updateVisualization() {
 					drawPlane(plane);
 				}
 				else if(currentGeom != 0 && currentGeom->isDrawingEnabled()) {
-	
+
 					glColor4f(currentGeom->getColor().red() / 255.0, currentGeom->getColor().green() / 255.0,
 						currentGeom->getColor().blue() / 255.0, currentGeom->getColor().alpha() / 255.0);
-	
+
 					if(dynamic_cast<BoxGeom*>(currentGeom) != 0) {
 						drawBox(currentBody->getCollisionObjects().at(j), hasTex);
 					}
@@ -743,7 +758,7 @@ void OpenGLVisualization::updateVisualization() {
 					}
 					else if(dynamic_cast<SphereGeom*>(currentGeom) != 0) {
 						drawSphere(currentBody->getCollisionObjects().at(j), hasTex);
-					} 
+					}
 					else if (dynamic_cast<CylinderGeom*>(currentGeom) != 0) {
 						drawCylinder(currentBody->getCollisionObjects().at(j), hasTex);
 					}
@@ -753,7 +768,7 @@ void OpenGLVisualization::updateVisualization() {
 					else if(dynamic_cast<CapsuleGeom*>(currentGeom) != 0) {
 						drawCapsule(currentBody->getCollisionObjects().at(j), hasTex);
 					}
-				} 
+				}
 			}
 			glPopMatrix();
 			glDisable(GL_TEXTURE_2D);
@@ -762,7 +777,7 @@ void OpenGLVisualization::updateVisualization() {
 		glDepthMask(1);
 		glPopMatrix();
 	}
-	glDisable(GL_BLEND); 
+	glDisable(GL_BLEND);
 }
 
 void OpenGLVisualization::drawPlane(PlaneBody *plane) {
@@ -780,7 +795,7 @@ void OpenGLVisualization::drawPlane(PlaneBody *plane) {
 	if(axis != 0 && distance != 0 && color != 0 && material != 0) {
 		const float gsize = PLANE_SIZE;
 		Vector3D newVector = distance->get() * axis->get();
-		glColor4f(color->get().red() / 255.0, color->get().green() / 255.0, 
+		glColor4f(color->get().red() / 255.0, color->get().green() / 255.0,
 			color->get().blue() / 255.0, color->get().alpha() / 255.0);
 
 		Vector3D point1(-gsize,distance->get(),-gsize);
@@ -855,7 +870,7 @@ void OpenGLVisualization::drawAxis() {
 				int mod = i % 5;
 				if(mod == 0) {
 					glColor4f(0, 0, 0, 100);
-				} 
+				}
 				else {
 					glColor4f(255,  255,255, 100);
 				}
@@ -880,9 +895,9 @@ void OpenGLVisualization::drawAxis() {
 }
 
 void OpenGLVisualization::initializeGL() {
-	glClearColor (mClearColorValue->get().red() / 255.0, 
-					mClearColorValue->get().green() / 255.0, 
-					mClearColorValue->get().blue() / 255.0, 
+	glClearColor (mClearColorValue->get().red() / 255.0,
+					mClearColorValue->get().green() / 255.0,
+					mClearColorValue->get().blue() / 255.0,
 					mClearColorValue->get().alpha() / 255.0);
 	glEnable(GL_DEPTH_TEST);
 	createEnvironmentConditions();
@@ -903,8 +918,8 @@ void OpenGLVisualization::paintGL() {
 	if(!mInitSuccessful) {
 		init();
 	}
-	if(!mInitSuccessful || (!isVisible() && !frameGrabberMode) 
-		|| (mRunInPerformanceMode != 0 && (mRunInPerformanceMode->get() && !frameGrabberMode))) 
+	if(!mInitSuccessful || (!isVisible() && !frameGrabberMode)
+		|| (mRunInPerformanceMode != 0 && (mRunInPerformanceMode->get() && !frameGrabberMode)))
 	{
 		//clear screen and return.
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -928,9 +943,9 @@ void OpenGLVisualization::paintGL() {
 	glPopMatrix();
 
 	Color timeTextColor = mTimeTextColorValue->get();
-	qglColor(QColor(timeTextColor.red(), 
-					timeTextColor.green(), 
-					timeTextColor.blue(), 
+	qglColor(QColor(timeTextColor.red(),
+					timeTextColor.green(),
+					timeTextColor.blue(),
 					timeTextColor.alpha()));
 
 	if(Core::getInstance()->isInitialized()) {
@@ -942,10 +957,10 @@ void OpenGLVisualization::paintGL() {
 			// Draw Simulation time information, if according value does exist.
 			QFont font(QApplication::font());
 			font.setPointSize(fontSize);
-	
+
 			if(mSimulationTime != 0) {
 				renderText(5, posY, "Sim. Time", font);
-				renderText(posX, posY, 
+				renderText(posX, posY,
 					QString(": ").append(QString::number(mSimulationTime->get())), font);
 			}
 			if(mRealTime != 0) {
@@ -985,9 +1000,9 @@ void OpenGLVisualization::updateGL() {
 	}
 
 	bool runVisualizationTimer = true;
-	if(((mRunInPerformanceMode != 0 && mRunInPerformanceMode->get()) 
+	if(((mRunInPerformanceMode != 0 && mRunInPerformanceMode->get())
 				|| (mPauseValue != 0 && mPauseValue->get()))
-			&& !(mRightButtonPress || mLeftButtonPress || mMiddleButtonPress)) 
+			&& !(mRightButtonPress || mLeftButtonPress || mMiddleButtonPress))
 	{
 		runVisualizationTimer = false;
 	}
@@ -995,7 +1010,7 @@ void OpenGLVisualization::updateGL() {
 	if(isVisible() || mUseAsFrameGrabber->get()) {
 
 		mGlIsUpdating = true;
-	
+
 		if(mTimerChanged) {
 			mVisualizationTimer->setInterval(mUpdateInterval);
 			mTimerChanged = false;
@@ -1008,7 +1023,7 @@ void OpenGLVisualization::updateGL() {
 		if(mViewChanged){
 			changeView();
 		}
-	
+
 		//bool runVisualizationTimer = true;
 		if(!runVisualizationTimer) {
 			//stop visualization timer if system runs in pause or performance mode AND
@@ -1016,7 +1031,7 @@ void OpenGLVisualization::updateGL() {
 			emit stopVisualizationTimer();
 		}
 		glDraw();
-	
+
 		mGlIsUpdating = false;
 
 		//TODO remove, just to try out.
@@ -1060,9 +1075,9 @@ void OpenGLVisualization::focusOutEvent(QFocusEvent*) {
 
 void OpenGLVisualization::createEnvironmentConditions() {
 	GLfloat pos[4] = {mPosition->getX(), mPosition->getY(), mPosition->getZ(), 1.0};
-	GLfloat white[4] = {mDiffuseLight->getX(), mDiffuseLight->getY(), 
+	GLfloat white[4] = {mDiffuseLight->getX(), mDiffuseLight->getY(),
 		mDiffuseLight->getZ(), 1.0};
-	GLfloat black[4] = {mSpecularLight->getX(), mSpecularLight->getY(), 
+	GLfloat black[4] = {mSpecularLight->getX(), mSpecularLight->getY(),
 		mSpecularLight->getZ(), 0.0};
 
 	glEnable(GL_LIGHTING);
@@ -1071,7 +1086,7 @@ void OpenGLVisualization::createEnvironmentConditions() {
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, black);
 
-	GLfloat LModelAmbient[4] ={mAmbientLight->getX(), mAmbientLight->getY(), 
+	GLfloat LModelAmbient[4] ={mAmbientLight->getX(), mAmbientLight->getY(),
 		mAmbientLight->getZ(),1.0F};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,&LModelAmbient[0]);
 
@@ -1084,14 +1099,14 @@ void OpenGLVisualization::createEnvironmentConditions() {
 	glMatrixMode(GL_MODELVIEW);
 
 	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);	
+	glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void OpenGLVisualization::changeLighting() {
 	GLfloat pos[4] = {mPosition->getX(), mPosition->getY(), mPosition->getZ(), 1.0};
- 	GLfloat white[4] = {mDiffuseLight->getX(), mDiffuseLight->getY(), 
+ 	GLfloat white[4] = {mDiffuseLight->getX(), mDiffuseLight->getY(),
 		mDiffuseLight->getZ(), 1.0};
-	GLfloat black[4] = {mSpecularLight->getX(), mSpecularLight->getY(), 
+	GLfloat black[4] = {mSpecularLight->getX(), mSpecularLight->getY(),
 		mSpecularLight->getZ(), 0.0};
 
 	glEnable(GL_LIGHTING);
@@ -1100,7 +1115,7 @@ void OpenGLVisualization::changeLighting() {
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, black);
 
-	GLfloat LModelAmbient[4] ={mAmbientLight->getX(), mAmbientLight->getY(), 
+	GLfloat LModelAmbient[4] ={mAmbientLight->getX(), mAmbientLight->getY(),
 		mAmbientLight->getZ(),1.0F};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,&LModelAmbient[0]);
 
@@ -1161,7 +1176,7 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 		}
 		glBindTexture( GL_TEXTURE_2D, mTexture[0] );
 		glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(),
-			mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 	
+			mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 			mTextureImages.value(textureType).bits());
 
   		glBegin(GL_POLYGON);
@@ -1184,15 +1199,15 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 
 		if(textureType != objectFaceInfos.at(1)) {
 			textureType = objectFaceInfos.at(1);
-	
+
 			if(textureType == defaultT || !mTextureImages.contains(textureType)) {
 					glDisable(GL_TEXTURE_2D);
 			}
 			else {
 				glEnable(GL_TEXTURE_2D);
 				glBindTexture( GL_TEXTURE_2D, mTexture[0] );
-				glTexImage2D( GL_TEXTURE_2D, 0, 3, 
-					mTextureImages.value(textureType).width(), 
+				glTexImage2D( GL_TEXTURE_2D, 0, 3,
+					mTextureImages.value(textureType).width(),
 					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 					mTextureImages.value(textureType).bits() );
 			}
@@ -1223,11 +1238,11 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 			}
 			else {
 				glEnable(GL_TEXTURE_2D);
-				
+
 				glBindTexture( GL_TEXTURE_2D, mTexture[0] );
-				glTexImage2D( GL_TEXTURE_2D, 0, 3, 
-					mTextureImages.value(textureType).width(), 
-					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,	
+				glTexImage2D( GL_TEXTURE_2D, 0, 3,
+					mTextureImages.value(textureType).width(),
+					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 					mTextureImages.value(textureType).bits() );
 			}
 		}
@@ -1260,9 +1275,9 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 			else {
 				glEnable(GL_TEXTURE_2D);
 				glBindTexture( GL_TEXTURE_2D, mTexture[0] );
-				glTexImage2D( GL_TEXTURE_2D, 0, 3, 
-					mTextureImages.value(textureType).width(), 
-					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 	
+				glTexImage2D( GL_TEXTURE_2D, 0, 3,
+					mTextureImages.value(textureType).width(),
+					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 					mTextureImages.value(textureType).bits() );
 			}
 		}
@@ -1292,10 +1307,10 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 			}
 			else {
 				glEnable(GL_TEXTURE_2D);
-			
+
 				glBindTexture( GL_TEXTURE_2D, mTexture[0] );
-				glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(), 	
-					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 	
+				glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(),
+					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 					mTextureImages.value(textureType).bits() );
 			}
 		}
@@ -1326,10 +1341,10 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 			}
 			else {
 				glEnable(GL_TEXTURE_2D);
-				
+
 				glBindTexture( GL_TEXTURE_2D, mTexture[0] );
-				glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(), 
-					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 	
+				glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(),
+					mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 					mTextureImages.value(textureType).bits() );
 			}
 		}
@@ -1349,7 +1364,7 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 	else {
 // 		glDisable(GL_TEXTURE_2D);
 		QVector<Vector3D> points = boxGeom->getPoints();
-	
+
 		firstCross = third - first;
 		secondCross = second - first;
 		normal = Vector3D::crossProduct(firstCross, secondCross);
@@ -1459,8 +1474,8 @@ void OpenGLVisualization::drawTriangleGeom(CollisionObject *currentCollisionObje
 		if(objectFaceInfos.at(i) != textureType) {
 			textureType = objectFaceInfos.at(i);
 			glBindTexture( GL_TEXTURE_2D, mTexture[0] );
-			glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(), 
-				mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 	
+			glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(),
+				mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 				mTextureImages.value(textureType).bits() );
 		}
 		Triangle current = triangleGeom->getTriangle(i);
@@ -1480,30 +1495,30 @@ void OpenGLVisualization::drawTriangleGeom(CollisionObject *currentCollisionObje
 
   	glBegin(GL_POLYGON);
 			glNormal3d(normal.getX(), normal.getY(), normal.getZ());
-			glTexCoord2f(0.0, 0.0); glVertex3d(trianglePoints.at(current.mEdge[0]).getX(), 
-				trianglePoints.at(current.mEdge[0]).getY(), 
+			glTexCoord2f(0.0, 0.0); glVertex3d(trianglePoints.at(current.mEdge[0]).getX(),
+				trianglePoints.at(current.mEdge[0]).getY(),
 				trianglePoints.at(current.mEdge[0]).getZ());
 			glTexCoord2f(scaling, 0.0);
 			glVertex3d(trianglePoints.at(current.mEdge[1]).getX(),
-				 trianglePoints.at(current.mEdge[1]).getY(), 
+				 trianglePoints.at(current.mEdge[1]).getY(),
 					trianglePoints.at(current.mEdge[1]).getZ());
-			glTexCoord2f(scaling, scaling); 
-			glVertex3d(trianglePoints.at(current.mEdge[2]).getX(), 
-				trianglePoints.at(current.mEdge[2]).getY(), 
+			glTexCoord2f(scaling, scaling);
+			glVertex3d(trianglePoints.at(current.mEdge[2]).getX(),
+				trianglePoints.at(current.mEdge[2]).getY(),
 				trianglePoints.at(current.mEdge[2]).getZ());
 		glEnd();
-	} 
+	}
 	else {
 		glBegin(GL_POLYGON);
 			glNormal3d(normal.getX(), normal.getY(), normal.getZ());
-			glVertex3d(triangleGeom->getPoint(current.mEdge[0]).getX(), 	
-				triangleGeom->getPoint(current.mEdge[0]).getY(), 
+			glVertex3d(triangleGeom->getPoint(current.mEdge[0]).getX(),
+				triangleGeom->getPoint(current.mEdge[0]).getY(),
 				triangleGeom->getPoint(current.mEdge[0]).getZ());
-			glVertex3d(triangleGeom->getPoint(current.mEdge[1]).getX(), 
-				triangleGeom->getPoint(current.mEdge[1]).getY(), 
+			glVertex3d(triangleGeom->getPoint(current.mEdge[1]).getX(),
+				triangleGeom->getPoint(current.mEdge[1]).getY(),
 				triangleGeom->getPoint(current.mEdge[1]).getZ());
-			glVertex3d(triangleGeom->getPoint(current.mEdge[2]).getX(), 
-				triangleGeom->getPoint(current.mEdge[2]).getY(), 
+			glVertex3d(triangleGeom->getPoint(current.mEdge[2]).getX(),
+				triangleGeom->getPoint(current.mEdge[2]).getY(),
 				triangleGeom->getPoint(current.mEdge[2]).getZ());
 		glEnd();
 	}
@@ -1527,7 +1542,7 @@ void OpenGLVisualization::valueChanged(Value *value) {
 		if(mReferenceBody != 0) {
 			mReferenceBodyPosition = mReferenceBody->getPositionValue();
 			mReferenceBodyOrientation = mReferenceBody->getQuaternionOrientationValue();
-		} 
+		}
 		else {
 			mReferenceBodyPosition = new Vector3DValue(0.0, 0.0, 0.0);
 			mReferenceBodyOrientation = new QuaternionValue();
@@ -1538,11 +1553,11 @@ void OpenGLVisualization::valueChanged(Value *value) {
 		beta = mCurrentOrientation->getY();
 		gamma = mCurrentOrientation->getZ();
 	}
-	else if(value == mAmbientLight 
-			|| value == mDiffuseLight 
-			|| value == mSpecularLight 
-			|| value == mPosition 
-			|| value == mShininess) 
+	else if(value == mAmbientLight
+			|| value == mDiffuseLight
+			|| value == mSpecularLight
+			|| value == mPosition
+			|| value == mShininess)
 	{
 		mLightChanged = true;
 	}
@@ -1550,12 +1565,12 @@ void OpenGLVisualization::valueChanged(Value *value) {
 		mUpdateInterval = mPaintUpdateTimerInterval->get();
 		mTimerChanged = true;
 	}
-	else if(value == mOpeningAngleValue 
-		|| value == mMinDistanceCutoffValue 
-		|| value == mMaxDistanceCutoffValue) 
+	else if(value == mOpeningAngleValue
+		|| value == mMinDistanceCutoffValue
+		|| value == mMaxDistanceCutoffValue)
 	{
-		if(value == mOpeningAngleValue 
-			&& (mOpeningAngleValue->get() > 180 || mOpeningAngleValue->get() < 0)) 
+		if(value == mOpeningAngleValue
+			&& (mOpeningAngleValue->get() > 180 || mOpeningAngleValue->get() < 0))
 		{
 			Core::getInstance()->scheduleTask(new ChangeDoubleValueTask(
 				mOpeningAngleValue, mOpeningAngle));
@@ -1576,7 +1591,7 @@ void OpenGLVisualization::valueChanged(Value *value) {
 			if(value == mMinDistanceCutoffValue) {
 				Core::getInstance()->scheduleTask(new ChangeDoubleValueTask(
 					mMinDistanceCutoffValue, mMinDistanceCutoff));
-	
+
 			}
 			else {
 				Core::getInstance()->scheduleTask(new ChangeDoubleValueTask(
@@ -1589,8 +1604,8 @@ void OpenGLVisualization::valueChanged(Value *value) {
 		mViewChanged = true;
 	}
 	else if(value == mRunInPerformanceMode || value == mPauseValue) {
-		if((mRunInPerformanceMode == 0 || !mRunInPerformanceMode->get()) 
-			&& (mPauseValue == 0 || !mPauseValue->get())) 
+		if((mRunInPerformanceMode == 0 || !mRunInPerformanceMode->get())
+			&& (mPauseValue == 0 || !mPauseValue->get()))
 		{
 			emit startVisualizationTimer();
 		}
@@ -1623,10 +1638,10 @@ void OpenGLVisualization::eventOccured(Event *event) {
 void OpenGLVisualization::changeView() {
 		glMatrixMode (GL_PROJECTION);
 		glLoadIdentity ();
-		
-		gluPerspective((GLfloat) mOpeningAngleValue->get(), mWindowRation, 
+
+		gluPerspective((GLfloat) mOpeningAngleValue->get(), mWindowRation,
 			mMinDistanceCutoffValue->get(), mMaxDistanceCutoffValue->get());
-	
+
 		glMatrixMode (GL_MODELVIEW);
 		mViewChanged = false;
 }
@@ -1654,8 +1669,8 @@ void OpenGLVisualization::mousePressEvent(QMouseEvent *e) {
 		if(e->button() & Qt::MidButton) {
 			mMiddleButtonPress = true;
 		}
-		if((mRunInPerformanceMode == 0 || !mRunInPerformanceMode->get()) 
-			&& !mVisualizationTimer->isActive()) 
+		if((mRunInPerformanceMode == 0 || !mRunInPerformanceMode->get())
+			&& !mVisualizationTimer->isActive())
 		{
 			//make sure that the visualization remains reactive while a mouse button is pressed.
 			emit startVisualizationTimer();
@@ -1664,15 +1679,15 @@ void OpenGLVisualization::mousePressEvent(QMouseEvent *e) {
 }
 
 void OpenGLVisualization::mouseReleaseEvent(QMouseEvent *e) {
-	if(mIsManipulatable->get() 
-		&& (mRunInPerformanceMode == 0 || !mRunInPerformanceMode->get())) 
+	if(mIsManipulatable->get()
+		&& (mRunInPerformanceMode == 0 || !mRunInPerformanceMode->get()))
 	{
 
-		ChangeVectorValueTask *adaptOrientationTask = 
+		ChangeVectorValueTask *adaptOrientationTask =
 				new ChangeVectorValueTask(mCurrentOrientation, alpha, beta, gamma);
 		Core::getInstance()->scheduleTask(adaptOrientationTask);
 
-		ChangeVectorValueTask *adaptPositionTask = 
+		ChangeVectorValueTask *adaptPositionTask =
 				new ChangeVectorValueTask(mCurrentPosition, mX, mY, mZ);
 		Core::getInstance()->scheduleTask(adaptPositionTask);
 
@@ -1689,8 +1704,8 @@ void OpenGLVisualization::mouseReleaseEvent(QMouseEvent *e) {
 			mMiddleButtonPress = false;
 		}
 	}
-	if((mPauseValue != 0 && mPauseValue->get()) 
-		|| (mRunInPerformanceMode != 0 && mRunInPerformanceMode->get())) 
+	if((mPauseValue != 0 && mPauseValue->get())
+		|| (mRunInPerformanceMode != 0 && mRunInPerformanceMode->get()))
 	{
 		//stop visualization timer if it was only active during mouse manipulations.
 		emit stopVisualizationTimer();
@@ -1711,7 +1726,7 @@ void OpenGLVisualization::mouseMoveEvent(QMouseEvent *e) {
 			factor /= 10.0;
 			double offsetY = -factor * (e->y() - mLastMousePosition->getY());
 			double offsetX = -factor * (e->x() - mLastMousePosition->getX());
-	
+
 			if(mRightButtonPress) {
 				Quaternion rot;
 				rot.setFromAngles(mCurrentOrientation->getX(),
@@ -1721,12 +1736,12 @@ void OpenGLVisualization::mouseMoveEvent(QMouseEvent *e) {
 				inverse = rot.getInverse();
 				Quaternion startPoint(0.0, -offsetX, 0.0, -offsetY);
 				Quaternion rotated = rot * startPoint * inverse;
-	
+
 				mX += rotated.getX();
 				mY += rotated.getY();
 				mZ += rotated.getZ();
 			}
-	
+
 			if(mMiddleButtonPress) {
 				Quaternion rot;
 				rot.setFromAngles(mCurrentOrientation->getX(),
@@ -1736,7 +1751,7 @@ void OpenGLVisualization::mouseMoveEvent(QMouseEvent *e) {
 				inverse = rot.getInverse();
 				Quaternion startPoint(0.0, 0.0, offsetY, 0.0);
 				Quaternion rotated = rot * startPoint * inverse;
-	
+
 				mX += rotated.getX();
 				mY += rotated.getY();
 				mZ += rotated.getZ();
@@ -1895,7 +1910,7 @@ void OpenGLVisualization::keyPressEvent(QKeyEvent *e) {
 			moveOffset = mMinMoveStepSize->get();
 			sideOffset = mMinSideStepSize->get();
 		}
-		else if(e->key() == Qt::Key_F 
+		else if(e->key() == Qt::Key_F
 				&& (e->modifiers() & Qt::ControlModifier)
 				&& (e->modifiers() & Qt::AltModifier)){
 				//switch framegrabber mode.
@@ -1955,12 +1970,12 @@ void OpenGLVisualization::keyPressEvent(QKeyEvent *e) {
 	}
 }
 
-void OpenGLVisualization::changeVisibility() {	
+void OpenGLVisualization::changeVisibility() {
 
 	if(isHidden()) {
 		move(mWindowPosX, mWindowPosY);
 		show();
-	} 
+	}
 	else {
 		hide();
 		mWindowPosX = x();
@@ -2046,7 +2061,7 @@ void OpenGLVisualization::drawCylinder(CollisionObject *currentCollisionObject, 
 
 	Vector3D pos = cylinderGeom->getLocalPosition();
 	glTranslated(pos.getX(), pos.getY(), pos.getZ());
-	
+
 	Quaternion quaternion = cylinderGeom->getLocalOrientation();
 	double angle = 2 * acos(quaternion.getW());
 	double scale = sqrt(quaternion.getX() * quaternion.getX()
@@ -2149,7 +2164,7 @@ void OpenGLVisualization::drawCylinder(CollisionObject *currentCollisionObject, 
   glVertex3d (0,0,-l+zoffset);
   for (i=0; i<=n; i++) {
     glNormal3d (0,0,-1);
-    glVertex3d (ny*r,nz*r,-l+zoffset);	
+    glVertex3d (ny*r,nz*r,-l+zoffset);
 
     // rotate ny,nz
     tmp = ca*ny + sa*nz;
@@ -2172,10 +2187,10 @@ void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
 	endPoint.setZ(endPoint.getZ() + length);
 
 	Vector3D pos = ray->getLocalPosition();
-	
+
 	Quaternion quaternion = ray->getLocalOrientation();
 	double angle = 2 * acos(quaternion.getW());
-	double scale = sqrt(quaternion.getX() * quaternion.getX() + quaternion.getY() 
+	double scale = sqrt(quaternion.getX() * quaternion.getX() + quaternion.getY()
 		* quaternion.getY() + quaternion.getZ() * quaternion.getZ());
 	double x  = 0.0;
 	double y = 0.0;
@@ -2192,7 +2207,7 @@ void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
 	glShadeModel(GL_FLAT);
 	glTranslated(pos.getX(), pos.getY(), pos.getZ());
 	glRotated(angle, x, y, z);
-	
+
 	glLineWidth(1);
 	glBegin(GL_LINES);
 		glVertex3d(startPoint.getX(), startPoint.getY(), startPoint.getZ());
@@ -2235,7 +2250,7 @@ void OpenGLVisualization::drawCapsule(CollisionObject *currentCollisionObject, b
 
 	Vector3D pos = capsuleGeom->getLocalPosition();
 	glTranslated(pos.getX(), pos.getY(), pos.getZ());
-	
+
 	Quaternion quaternion = capsuleGeom->getLocalOrientation();
 	double angle = 2 * acos(quaternion.getW());
 	double scale = sqrt(quaternion.getX() * quaternion.getX()
@@ -2288,7 +2303,7 @@ void OpenGLVisualization::drawCapsule(CollisionObject *currentCollisionObject, b
 	//double zoffset = 0.0; //TODO what was this for?
 	double l = height;
 	double r = radius;
-	
+
 	//Rest taken from drawstuff.cpp (ODE)
 	//******************************
 
@@ -2296,12 +2311,12 @@ void OpenGLVisualization::drawCapsule(CollisionObject *currentCollisionObject, b
 	float tmp,nx,ny,nz,start_nx,start_ny,a,ca,sa;
 	// number of sides to the cylinder (divisible by 4):
 	const int n = 24;
-	
+
 	l *= 0.5;
 	a = float(M_PI*2.0)/float(n);
 	sa = (float) sin(a);
 	ca = (float) cos(a);
-	
+
 	// draw cylinder body
 	ny=1; nz=0;		  // normal vector = (0,ny,nz)
 	glBegin (GL_TRIANGLE_STRIP);
@@ -2316,7 +2331,7 @@ void OpenGLVisualization::drawCapsule(CollisionObject *currentCollisionObject, b
 		ny = tmp;
 	}
 	glEnd();
-	
+
 	// draw first cylinder cap
 	start_nx = 0;
 	start_ny = 1;
@@ -2345,7 +2360,7 @@ void OpenGLVisualization::drawCapsule(CollisionObject *currentCollisionObject, b
 		start_nx = start_nx2;
 		start_ny = start_ny2;
 	}
-	
+
 	// draw second cylinder cap
 	start_nx = 0;
 	start_ny = 1;

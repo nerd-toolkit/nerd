@@ -63,10 +63,10 @@ using namespace std;
 namespace nerd {
 
 
-ParameterVisualizationWindow::ParameterVisualizationWindow(const QString &name, 
-							SetInitValueTask *setInitValueTaskPrototype) 
-		: QWidget(0), mName(name), 
- 			mValueListArea(0), mValueList(0), mListLayout(0), 
+ParameterVisualizationWindow::ParameterVisualizationWindow(const QString &name,
+							SetInitValueTask *setInitValueTaskPrototype)
+		: QWidget(0), mName(name),
+ 			mValueListArea(0), mValueList(0), mListLayout(0),
 			mRemoveAll(0), mAction(0),
 			mLoggerButton(0), mParameterLoggerWidget(0), mFillingComboBox(false),
 			mPhysicsEnvironmentChangedEvent(0), mValueRepositoryChangedEvent(0),
@@ -88,7 +88,7 @@ ParameterVisualizationWindow::ParameterVisualizationWindow(const QString &name,
 	setLayout(mLayout);
 	createEditButtons();
 
-	
+
 	mLayout->addWidget(mParameterLoggerWidget);
 	mParameterLoggerWidget->setVisible(false);
 
@@ -157,7 +157,7 @@ QHash<QString, Value*> ParameterVisualizationWindow::getValueCollection() const 
 
 	for(int i = 0; i < parameterVisus.size(); ++i) {
 		ParameterVisualization *visu = parameterVisus.at(i);
-		
+
 		if(visu == 0 || !visu->isValueUpdateActive()) {
 			continue;
 		}
@@ -172,7 +172,7 @@ QHash<QString, Value*> ParameterVisualizationWindow::getValueCollection() const 
 
 
 void ParameterVisualizationWindow::saveCurrentParameters(
-						const QString &fileName, bool saveValueContent) 
+						const QString &fileName, bool saveValueContent)
 {
 
 	QFile file(fileName);
@@ -195,6 +195,7 @@ void ParameterVisualizationWindow::saveCurrentParameters(
 
 	for(QMap<QString, ParameterVisualization*>::iterator i = mValues.begin(); i != mValues.end(); ++i) {
 		QString valueName = i.key();
+		ParameterVisualization *visu = i.value();
 
 		if(saveValueContent) {
 			Value *value = i.value()->getValue();
@@ -204,6 +205,10 @@ void ParameterVisualizationWindow::saveCurrentParameters(
 			QString valueContent = i.value()->getCurrentValue();
 			output << valueName << "=" << valueContent << "\n";
 		}
+		QList<QString> options = visu->getOptions();
+        for(QListIterator<QString> o(options); o.hasNext();) {
+            output << "#>" << o.next() << "\n";
+        }
 	}
 	file.close();
 }
@@ -225,10 +230,17 @@ QString ParameterVisualizationWindow::loadParametersFromFile(const QString &file
 	deleteValuesFromList();
 	QTextStream inputNew(&file);
 
+	ParameterVisualization *lastKnownValuePanel = 0;
+
 	while (!inputNew.atEnd()) {
 		QString line = inputNew.readLine();
 		line = line.trimmed();
 
+        if(line.startsWith("#>")) {
+            if(lastKnownValuePanel != 0) {
+                lastKnownValuePanel->addOption(line.mid(2));
+            }
+        }
 		if(line.startsWith("#")) {
 			continue;
 		}
@@ -248,7 +260,7 @@ QString ParameterVisualizationWindow::loadParametersFromFile(const QString &file
 			if(autoApply) {
 				value->setValueFromString(valueContent);
 			}
-			showSelectedValue(name, !autoApply);
+			lastKnownValuePanel = showSelectedValue(name, !autoApply);
 			if(!autoApply) {
 				mValues.value(name)->setCurrentValue(valueContent);
 			}
@@ -285,17 +297,17 @@ void ParameterVisualizationWindow::createEditButtons() {
 	mSaveSettingsButton = new QPushButton("Save");
 	mEditLayout->addWidget(mSaveSettingsButton, 1, 4);
 
-	connect(mApplyAllChanges, SIGNAL(clicked()), 
+	connect(mApplyAllChanges, SIGNAL(clicked()),
 			this, SLOT(applyAllChanges()));
-	connect(mRemoveAll, SIGNAL(clicked()), 
+	connect(mRemoveAll, SIGNAL(clicked()),
 			this, SLOT(deleteValuesFromList()));
-	connect(mSelectAllButton, SIGNAL(clicked()), 
+	connect(mSelectAllButton, SIGNAL(clicked()),
 			this, SLOT(modifySelection()));
 	connect(mLoggerButton, SIGNAL(clicked()),
 			mParameterLoggerWidget, SLOT(showDialog()));
 	connect(mParameterLoggerWidget, SIGNAL(loggerStatusChanged(bool)),
 			this, SLOT(updateLoggerButton(bool)));
-	connect(mPlotterButton, SIGNAL(clicked()), 
+	connect(mPlotterButton, SIGNAL(clicked()),
 			this, SLOT(showAndUpdatePlotter()));
 	connect(mLoadSettingsButton, SIGNAL(clicked()),
 			this, SLOT(loadSettings()));
@@ -311,33 +323,37 @@ void ParameterVisualizationWindow::createValueList()
 	mSearchLayout = new QGridLayout();
 	mValueSearch->setLayout(mSearchLayout);
 
-	
+
 
 	mValueComboBox = new ParameterComboBox();
 	mValueComboBox->setEditable(true);
 	mValueComboBox->setAutoCompletion(false);
 	mValueComboBox->setInsertPolicy(QComboBox::NoInsert);
+	mValueComboBox->setWhatsThis("Search for properties with regular expressions. For convenience .*"
+                    "can be replaced by **. The expression automatically starts and ends with **. "
+                    "Example: /Left/**Pos finds e.g. /Sim/Left/Arm/Position.");
 
 	mSearchLayout->addWidget(mValueComboBox, 0, 0);
 	mSearchLayout->setColumnStretch(0, 100);
 	mSearchLayout->setRowStretch(0, 100);
-	
+
 	mAddSelectedParameters = new QPushButton("Add");
+	mAddSelectedParameters->setWhatsThis("Adds all properties matching the regular expression to the panel.");
 	mNumberOfSelectedParametersLabel = new QLabel();
+	mNumberOfSelectedParametersLabel->setWhatsThis("Number of properties currently matching the regular expression.");
 	mSearchLayout->addWidget(mNumberOfSelectedParametersLabel, 0, 1);
 	mSearchLayout->addWidget(mAddSelectedParameters, 0, 2);
 
 	mValueComboBox->setMinimumSize(280, 25);
 	mNumberOfSelectedParametersLabel->setMinimumSize(40, 25);
-	mNumberOfSelectedParametersLabel->setToolTip("Number of matching parameters.");
 
 	connect(mValueComboBox, SIGNAL(downArrowPressed()),
 			this, SLOT(showComboBoxList()));
-	connect(mAddSelectedParameters, SIGNAL(clicked()), 
+	connect(mAddSelectedParameters, SIGNAL(clicked()),
 			this, SLOT(showSelectedValues()));
 	connect(mValueComboBox, SIGNAL(editTextChanged(const QString&)),
 			this, SLOT(fillComboList(const QString&)));
-	connect(mValueComboBox->lineEdit(), SIGNAL(returnPressed()), 
+	connect(mValueComboBox->lineEdit(), SIGNAL(returnPressed()),
 			this, SLOT(showSelectedValues()));
 	connect(mValueComboBox, SIGNAL(activated(const QString&)),
 			this, SLOT(selectionChanged(const QString&)));
@@ -492,7 +508,7 @@ void ParameterVisualizationWindow::showEvent(QShowEvent*) {
 }
 
 void ParameterVisualizationWindow::selectionChanged(const QString &text) {
-	//Memorize the name of the last selected parameter to avoid double selection 
+	//Memorize the name of the last selected parameter to avoid double selection
 	//when parameters have almost similar names.
 
 	if(mValueComboBox->isShiftKeyPressed()) {
@@ -527,7 +543,7 @@ void ParameterVisualizationWindow::fillComboList(const QString  &text) {
 	int cursorPosition = mValueComboBox->lineEdit()->cursorPosition();
 
 	//invalidate the last user selection.
-	mSelectedParameterName = "";	
+	mSelectedParameterName = "";
 
 	//fill combobox with the currently matching parameter names
 	mValueComboBox->clear();
@@ -561,7 +577,7 @@ void ParameterVisualizationWindow::fillComboList(const QString  &text) {
 	for(QListIterator<QString> i(names); i.hasNext();) {
 		mValueComboBox->addItem(i.next());
 	}
-	
+
 
 	//update the label with the number of matching parameters
 	QString number;
@@ -619,11 +635,11 @@ void ParameterVisualizationWindow::showSelectedValues() {
 }
 
 
-void ParameterVisualizationWindow::showSelectedValue(const QString &text, bool startDeselected) 
+ParameterVisualization* ParameterVisualizationWindow::showSelectedValue(const QString &text, bool startDeselected)
 {
 
 	if(mValues.contains(text)) {
-		return;
+		return 0;
 	}
 
 
@@ -638,12 +654,13 @@ void ParameterVisualizationWindow::showSelectedValue(const QString &text, bool s
 	mListLayout->addWidget(newVis);
 
 
-	//NOTE: This connection is done with Qt::QueuedConnection() to ensure that 
-	//the signal response is later but in the same thread. Otherwise time races 
+	//NOTE: This connection is done with Qt::QueuedConnection() to ensure that
+	//the signal response is later but in the same thread. Otherwise time races
 	//can occure between the deletion of the object and its method executions.
-	connect(newVis, SIGNAL(destroyThis(QString)), 
+	connect(newVis, SIGNAL(destroyThis(QString)),
 				this, SLOT(deleteValueFromList(QString)), Qt::QueuedConnection);
-	
+
+    return newVis;
 }
 
 
@@ -686,7 +703,7 @@ void ParameterVisualizationWindow::modifySelection(bool select) {
 	}
 	mAllSelected = select;
 
-	if(mAllSelected) {		
+	if(mAllSelected) {
 		mSelectAllButton->setText("Deselect All");
 	}
 	else {

@@ -52,6 +52,7 @@
 #include "Value/ValueChangedListener.h"
 #include <QWidget>
 #include <QLineEdit>
+#include <QComboBox>
 
 namespace nerd {
 
@@ -74,13 +75,15 @@ namespace nerd {
 
 	public slots:
 		void valueTextChanged(const QString &text = "");
+		void itemSelected(const QString &item);
 		void returnPressed();
 		void markAsValueEdited();
 		void markAsValueUpdated();
 
 	private:
 		Value *mValue;
-		QLineEdit *mValueContent;
+        QLineEdit *mValueContent;
+		QComboBox *mValueBox;
 		int mWidth;
 	};
 

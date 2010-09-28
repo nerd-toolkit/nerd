@@ -65,9 +65,9 @@ class ChangeValue : public Task {
 			mValue = value;
 			mNewValue = newValue;
 		}
-	
+
 		virtual ~ChangeValue() {}
-			
+
 		bool runTask() {
 			if(mValue == 0) {
 				return true;
@@ -77,64 +77,16 @@ class ChangeValue : public Task {
 		}
 
 	private:
-		Value *mValue;	
+		Value *mValue;
 		QString mNewValue;
 };
 
 
-// class SetSnapshotValue : public Task {
-// 
-// 	public:
-// 		SetSnapshotValue(Value *value, const QString &newValue) {
-// 			mValue = value;
-// 			mNewValue = newValue;
-// 		}
-// 	
-// 		virtual ~SetSnapshotValue() {}
-// 			
-// 		bool runTask() {
-// 			if(mValue == 0) {
-// 				return true;
-// 			}
-// 			SimulationEnvironmentManager *sem = Physics::getSimulationEnvironmentManager();
-// 			PhysicsManager *pm = Physics::getPhysicsManager();
-// 
-// 			const QList<SimObject*> &simObjects = pm->getSimObjects();
-// 			for(QListIterator<SimObject*> i(simObjects); i.hasNext();) {
-// 				SimObject *obj = i.next();
-// 			
-// 				const QList<Value*> &params = obj->getParameters();
-// 				for(QListIterator<Value*> j(params); j.hasNext();) {
-// 					Value *value = j.next();
-// 					if(value == mValue) {
-// 						
-// 						//get parameter name
-// 						QList<QString> parameterNames = obj->getParameterNames();
-// 						for(QListIterator<QString> k(parameterNames); k.hasNext();) {
-// 							QString name = k.next();
-// 							if(obj->getParameter(name) == mValue) {
-// 								sem->storeParameter(obj, name, mNewValue);
-// 								return true;
-// 							}
-// 						}
-// 					}
-// 				}
-// 			}
-// 		
-// 			//if value could not be found...
-// 			Core::log(QString("ParameterVisualization Warning: Could not find parameter!"));
-// 			return true;
-// 		}
-// 
-// 	private:
-// 		Value *mValue;
-// 		QString mNewValue;
-// };
 
-
-ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *list, 
-				Value *value, QString name, SetInitValueTask *setInitValueTaskPrototype) 
-	: QFrame(), mUpdateSnapshotButton(0), mSetInitValueTaskPrototype(setInitValueTaskPrototype)
+ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *list,
+				Value *value, QString name, SetInitValueTask *setInitValueTaskPrototype)
+	: QFrame(), mValueField(0), mValueBox(0),
+	  mUpdateSnapshotButton(0), mSetInitValueTaskPrototype(setInitValueTaskPrototype)
 {
 	setAttribute(Qt::WA_QuitOnClose, false);
 	setAttribute(Qt::WA_DeleteOnClose, false);
@@ -142,29 +94,52 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mValueList = list;
 	mValue = value;
 	mValueName = name;
-	
-	mNameLabel = new QLabel(mValueName);
-	mValueField = new QLineEdit(this);
-	mCloseButton = new QPushButton("x");
-	
-	mUpdateSnapshotButton = new QPushButton("Set Init");
-	mUpdateValue = new QCheckBox();
 
-	connect(mValueField, SIGNAL(returnPressed()), 
+	mNameLabel = new QLabel(mValueName);
+	mValueBox = new QComboBox(this);
+	mValueBox->setEditable(true);
+
+	if(mValue != 0) {
+        QList<QString> options = mValue->getOptionList();
+        for(QListIterator<QString> i(options); i.hasNext();) {
+            mValueBox->addItem(i.next());
+        }
+	}
+
+
+	mValueField = mValueBox->lineEdit();
+	mCloseButton = new QPushButton("x");
+
+	mCloseButton->setWhatsThis("Remove this property from the list");
+
+	if(mValue != 0) {
+        mNameLabel->setWhatsThis(mValue->getDocumentation());
+        mValueBox->setWhatsThis(mValue->getDocumentation());
+	}
+
+	mUpdateSnapshotButton = new QPushButton("Set Init");
+	mUpdateSnapshotButton->setWhatsThis("Use the current setting after a reset");
+
+	mUpdateValue = new QCheckBox();
+	mUpdateValue->setWhatsThis("Update content after each change");
+
+	connect(mValueField, SIGNAL(returnPressed()),
 			this, SLOT(changeValue()));
-	connect(mValueField, SIGNAL(textEdited(const QString&)), 
+	connect(mValueField, SIGNAL(textEdited(const QString&)),
 			this, SLOT(markAsValueEdited()));
-	connect(mCloseButton, SIGNAL(clicked()), 
+    connect(mValueBox, SIGNAL(currentIndexChanged(const QString&)),
+            this, SLOT(itemSelected(const QString&)));
+	connect(mCloseButton, SIGNAL(clicked()),
 			this, SLOT(destroy()));
-	connect(mUpdateSnapshotButton, SIGNAL(clicked()), 
-			this, SLOT(updateValueInEnvironmentManager())); 
-	connect(this, SIGNAL(lineEditTextChanged(QString)), 
-			mValueField,  SLOT(setText(QString)));
+	connect(mUpdateSnapshotButton, SIGNAL(clicked()),
+			this, SLOT(updateValueInEnvironmentManager()));
+	connect(this, SIGNAL(lineEditTextChanged(QString)),
+			mValueBox,  SLOT(setEditText(QString)));
 	connect(this, SIGNAL(lineEditTextChanged(QString)),
 			this, SLOT(markAsValueUpdated()));
-	connect(mUpdateValue, SIGNAL(stateChanged(int)), 
+	connect(mUpdateValue, SIGNAL(stateChanged(int)),
 			this, SLOT(setDoUpdateValue(int)));
-	
+
 	lineEditTextChanged(mValue->getValueAsString());
 	mUpdateValue->setCheckState(Qt::Checked);
 
@@ -179,7 +154,8 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 
 	mFrameLayout->setMargin(1);
 	mFrameLayout->addWidget(mUpdateValue);
-	mFrameLayout->addWidget(mValueField);
+	//mFrameLayout->addWidget(mValueField);
+	mFrameLayout->addWidget(mValueBox);
 	if(mSetInitValueTaskPrototype != 0 && name.startsWith("/Sim/")) {
 		mFrameLayout->addWidget(mUpdateSnapshotButton);
 	}
@@ -188,7 +164,7 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 
 	mUpdateSnapshotButton->setFixedWidth(60);
 	mCloseButton->setFixedWidth(20);
-	mValueField->setFixedWidth(250);
+	mValueBox->setFixedWidth(260);
 
 	setFrameStyle(QFrame::Panel | QFrame::Plain);
 	setLineWidth(2);
@@ -197,7 +173,7 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 }
 
 
-/** 
+/**
  * Destructor.
  */
 ParameterVisualization::~ParameterVisualization() {
@@ -225,15 +201,15 @@ void ParameterVisualization::setDoUpdateValue(int doUpdate)  {
 		lineEditTextChanged(mValue->getValueAsString());
 		mValue->addValueChangedListener(this);
 		mUpdateValue->setCheckState(Qt::Checked);
-		
+
 		markAsValueUpdated();
 	}
 }
 
 
 /**
- * This method copies the content of the text field into the 
- * reset snapshot of the SimulationEnvironmentManager. This applies 
+ * This method copies the content of the text field into the
+ * reset snapshot of the SimulationEnvironmentManager. This applies
  * value changes permanently, as the values from the reset shapshot are
  * taken to initialize the environment and agents during a reset.
  */
@@ -243,8 +219,8 @@ void ParameterVisualization::updateValueInEnvironmentManager() {
 	if(mValue == 0 || mSetInitValueTaskPrototype == 0 || !mValueName.startsWith("/Sim/")) {
 		return;
 	}
-	Core::getInstance()->scheduleTask(mSetInitValueTaskPrototype->create(mValue, mValueField->text()));
-	
+	Core::getInstance()->scheduleTask(mSetInitValueTaskPrototype->create(mValue, mValueBox->currentText()));
+
 }
 
 
@@ -254,8 +230,8 @@ void ParameterVisualization::updateValueInEnvironmentManager() {
  * Triggers the destruction of this object. In principle this method simply
  * resets the visualization and then emits signal destroyThis().
  * Exactly one object (usually the owning ParameterVisualizationWindow) should
- * connect to this signal WITH MODIFIER Qt::QueuedConnectionto ensure that 
- * the ParameterVisualization stopped processing before it is finally deleted 
+ * connect to this signal WITH MODIFIER Qt::QueuedConnectionto ensure that
+ * the ParameterVisualization stopped processing before it is finally deleted
  * in the owner ParameterVisualizationWindow.
  */
 void ParameterVisualization::destroy() {
@@ -276,7 +252,7 @@ QString ParameterVisualization::getName() const{
 
 /**
  * Returns the name that is associated with the observed Value.
- * 
+ *
  * @return the name of the Value.
  */
 QString ParameterVisualization::getValueName() const {
@@ -285,7 +261,7 @@ QString ParameterVisualization::getValueName() const {
 
 
 /**
- * Called when the observed Value changed. This will update the text field with the 
+ * Called when the observed Value changed. This will update the text field with the
  * current value of the Value.
  *
  * @param value the value that changed.
@@ -338,7 +314,7 @@ void ParameterVisualization::setValueObjectByName(const QString &name) {
 	}
 	else {
 		mNameLabel->setText(mValueName);
-		
+
 		setDoUpdateValue(mDoUpdateValue);
 	}
 }
@@ -346,7 +322,7 @@ void ParameterVisualization::setValueObjectByName(const QString &name) {
 
 /**
  * Sets the current value content for the text field.
- * 
+ *
  * @param currentValue the content of the text field.
  */
 void ParameterVisualization::setCurrentValue(const QString &currentValue) {
@@ -357,23 +333,50 @@ void ParameterVisualization::setCurrentValue(const QString &currentValue) {
 
 
 QString ParameterVisualization::getCurrentValue() const {
-	return mValueField->text();
+	return mValueBox->currentText();
+}
+
+void ParameterVisualization::addOption(const QString &optionText) {
+	for(int i = 0; i < mValueBox->count(); ++i) {
+        if(mValueBox->itemText(i) == optionText) {
+            return;
+        }
+	}
+	mValueBox->addItem(optionText);
+}
+
+QList<QString> ParameterVisualization::getOptions() const {
+    QList<QString> options;
+    for(int i = 0; i < mValueBox->count(); ++i) {
+        options.append(mValueBox->itemText(i));
+    }
+    return options;
+}
+
+
+void ParameterVisualization::itemSelected(const QString &item) {
+    mValueBox->setEditText(item);
+    mValueModified = true;
+    changeValue();
 }
 
 
 /**
  * Called when the user pressed the enter key in the text field.
  * If the text has been changed, then the content is set at the Value object.
- * Setting the new value is done via Task in the simulation thread, so the change 
+ * Setting the new value is done via Task in the simulation thread, so the change
  * might be applied with a short delay.
  */
 void ParameterVisualization::changeValue() {
 	markAsValueUpdated();
 	if(mValueField->isModified() || mValueModified) {
-		ChangeValue *changeValueTask = new ChangeValue(mValue, mValueField->text());
+		ChangeValue *changeValueTask = new ChangeValue(mValue, mValueBox->currentText());
 		Core::getInstance()->scheduleTask(changeValueTask);
 	}
 	mValueModified = false;
+
+	//check whether the current text is a new one (if so, add it to the combo list)
+	addOption(mValueBox->currentText());
 }
 
 

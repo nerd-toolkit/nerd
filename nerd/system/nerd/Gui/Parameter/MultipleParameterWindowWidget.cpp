@@ -59,14 +59,15 @@
 #include <QTime>
 #include <QMessageBox>
 #include "Gui/Parameter/ParameterVisualization.h"
+#include <QWhatsThis>
 
 using namespace std;
 
 namespace nerd {
 
-MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name, 
-					SetInitValueTask *setInitValueTaskPrototpye, QWidget *parent) 
-		: MultipleWindowWidget(name, parent), mCounter(1), 
+MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name,
+					SetInitValueTask *setInitValueTaskPrototpye, QWidget *parent)
+		: MultipleWindowWidget(name, parent), mCounter(1),
 		  mSetInitValueTaskPrototype(setInitValueTaskPrototpye)
 {
 	setWindowTitle("Object Properties");
@@ -114,6 +115,10 @@ MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name
 	QAction *setInitForAllValuesAction = editMenu->addAction("Set Init To All");
 	connect(setInitForAllValuesAction, SIGNAL(triggered()),
 			this, SLOT(setInitToAllValues()));
+
+    QMenu *helpMenu = localMenuBar->addMenu("Help");
+    helpMenu->addAction(QWhatsThis::createAction());
+
 }
 
 MultipleParameterWindowWidget::~MultipleParameterWindowWidget() {
@@ -143,7 +148,7 @@ void MultipleParameterWindowWidget::eventOccured(Event *event) {
 	if(event == 0) {
 		return;
 	}
-	
+
 	if(event == mInitCompletedEvent) {
 		emit initPhaseCompleted();
 	}
@@ -159,7 +164,7 @@ void MultipleParameterWindowWidget::handleInitPhase() {
 	QStringList filter;
 	filter << (mName + "_*.val");
 	configDir.setNameFilters(filter);
-	
+
 	QStringList tabValueFiles = configDir.entryList();
 
 	for(int i = 0; i < tabValueFiles.size(); ++i) {
@@ -281,18 +286,18 @@ void MultipleParameterWindowWidget::loadAllPanelsFromFile() {
 			if(tabCounter >= mTabWidget->count()) {
 				addTab();
 			}
-	
+
 			ParameterVisualizationWindow *visu = dynamic_cast<ParameterVisualizationWindow*>(
 					mTabWidget->widget(tabCounter));
-			
+
 			if(visu == 0) {
 				continue;
 			}
-	
+
 			QString subFileName = line.mid(9);
-	
+
 			missingValues += visu->loadParametersFromFile(subFileName, false);
-	
+
 			tabCounter++;
 		}
 	}
@@ -403,7 +408,7 @@ void MultipleParameterWindowWidget::setInitToAllValues()  {
 
 
 void MultipleParameterWindowWidget::handleShutDownPhase() {
-	
+
 	//do not write parameter files when in reduced file writing mode.
 	if(Core::getInstance()->isUsingReducedFileWriting()) {
 		return;
@@ -422,7 +427,7 @@ void MultipleParameterWindowWidget::handleShutDownPhase() {
 		QString fileName = tabValueFiles.at(i);
 
 		QFile file(path + "/" + fileName);
-		if(file.exists()) {	
+		if(file.exists()) {
 			file.remove();
 		}
 	}

@@ -44,6 +44,9 @@
 
 #include "BoxBody.h"
 #include "WavefrontGeom.h"
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
@@ -56,11 +59,11 @@ namespace nerd {
 // 	mWidth = new DoubleValue();
 // 	mHeight = new DoubleValue();
 // 	mDepth = new DoubleValue();
-// 
+//
 // 	addParameter("Width", mWidth);
 // 	addParameter("Height", mHeight);
 // 	addParameter("Depth", mDepth);
-// 
+//
 // 	//Collision and visualization geometries (will be initialized in update().
 // 	mBodyCollisionObject = new CollisionObject(BoxGeom(this, 0.0, 0.0, 0.0));
 // 	addGeometry(mBodyCollisionObject->getGeometry());
@@ -98,8 +101,8 @@ BoxBody::BoxBody(const QString &name, double width, double height, double depth)
  * The default CollisionObject and Geometry of a BoxBody are copied as well.
  * @param body the BoxBody to copy.
  */
-BoxBody::BoxBody(const BoxBody &body) 
-	: Object(), ValueChangedListener(), SimBody(body) 
+BoxBody::BoxBody(const BoxBody &body)
+	: Object(), ValueChangedListener(), SimBody(body)
 {
 	mWidth = dynamic_cast<DoubleValue*>(getParameter("Width"));
 	mHeight = dynamic_cast<DoubleValue*>(getParameter("Height"));

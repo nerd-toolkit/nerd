@@ -70,21 +70,32 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
 	QLabel *nameLabel = new QLabel(name);
 	nameLabel->setToolTip(name);
 	nameLabel->setFixedWidth(mWidth);
-	mValueContent = new QLineEdit("");
-	mValueContent->setFixedWidth(mWidth);
+	mValueBox = new QComboBox();
+	mValueBox->setEditable(true);
+	mValueBox->setFixedWidth(mWidth);
+
+	mValueContent = mValueBox->lineEdit();
+
 
 	if(mValue != 0) {
 		mValue->addValueChangedListener(this);
-		mValueContent->setText(mValue->getValueAsString());
+		mValueBox->setEditText(mValue->getValueAsString());
+
+		QList<QString> options = mValue->getOptionList();
+        for(QListIterator<QString> i(options); i.hasNext();) {
+            mValueBox->addItem(i.next());
+        }
 	}
 
 	layout->addWidget(nameLabel);
-	layout->addWidget(mValueContent);
+	layout->addWidget(mValueBox);
 
 	connect(mValueContent, SIGNAL(returnPressed()),
 			this, SLOT(returnPressed()));
 	connect(mValueContent, SIGNAL(textEdited(const QString&)),
 			this, SLOT(valueTextChanged(const QString&)));
+    connect(mValueBox, SIGNAL(currentIndexChanged(const QString&)),
+            this, SLOT(itemSelected(const QString&)));
 }
 
 
@@ -100,7 +111,7 @@ void ParameterControlWidget::valueChanged(Value *value) {
 		return;
 	}
 	else if(value == mValue) {
-		mValueContent->setText(mValue->getValueAsString());
+		mValueBox->setEditText(mValue->getValueAsString());
 	}
 }
 
@@ -122,11 +133,15 @@ void ParameterControlWidget::cleadUp() {
 }
 
 
+void ParameterControlWidget::itemSelected(const QString &item) {
+   returnPressed();
+}
+
 void ParameterControlWidget::valueTextChanged(const QString&) {
 	if(mValue == 0) {
 		return;
 	}
-	if(mValueContent->text() == mValue->getValueAsString()) {
+	if(mValueBox->currentText() == mValue->getValueAsString()) {
 		markAsValueUpdated();
 	}
 	else {
@@ -135,8 +150,21 @@ void ParameterControlWidget::valueTextChanged(const QString&) {
 }
 
 void ParameterControlWidget::returnPressed() {
-	if(mValueContent->text() != mValue->getValueAsString()) {
-		Core::getInstance()->scheduleTask(new ChangeValueTask(mValue, mValueContent->text()));
+	if(mValueBox->currentText() != mValue->getValueAsString()) {
+	    QString valueContent = mValueBox->currentText();
+
+		Core::getInstance()->scheduleTask(new ChangeValueTask(mValue, valueContent));
+
+		bool foundItem = false;
+		for(int i = 0; i < mValueBox->count(); ++i) {
+            if(mValueBox->itemText(i) == valueContent) {
+                foundItem = true;
+                break;
+            }
+        }
+        if(!foundItem) {
+            mValueBox->addItem(valueContent);
+        }
 	}
 	markAsValueUpdated();
 }

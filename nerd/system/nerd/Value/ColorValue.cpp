@@ -49,38 +49,45 @@
 namespace nerd {
 
 
-ColorValue::ColorValue() 
-	: Value("Color", false), mColor(Color(0,0,0,255)), mSettingValue(false) 
+ColorValue::ColorValue()
+	: Value("Color", false), mColor(Color(0,0,0,255)), mSettingValue(false)
 {
 	init();
 }
 
 
-ColorValue::ColorValue(const QString &color) 
-	: Value("Color", false), mColor(Color(0,0,0,255)), mSettingValue(false) 
+ColorValue::ColorValue(const QString &color)
+	: Value("Color", false), mColor(Color(0,0,0,255)), mSettingValue(false)
 {
 	init();
 	setValueFromString(color);
 }
 
-ColorValue::ColorValue(const Color &color) 
-	: Value("Color", false), mColor(color), mSettingValue(false)  
+ColorValue::ColorValue(const Color &color)
+	: Value("Color", false), mColor(color), mSettingValue(false)
 {
 	init();
 }
 
 
-ColorValue::ColorValue(int red, int green, int blue, int alpha) 
-	: Value("Color", false), mSettingValue(false) 
+ColorValue::ColorValue(int red, int green, int blue, int alpha)
+	: Value("Color", false), mSettingValue(false)
 {
 	mColor.set(red, green, blue, alpha);
 	init();
 }
 
-ColorValue::ColorValue(const ColorValue &value) 
-	: Object(), Value(value), mColor(value.mColor), mSettingValue(false)  
+ColorValue::ColorValue(const ColorValue &value)
+	: Object(), Value(value), mColor(value.mColor), mSettingValue(false)
 {
-	init();
+	mColorValues.append(new IntValue(mColor.red()));
+	mColorValues.append(new IntValue(mColor.green()));
+	mColorValues.append(new IntValue(mColor.blue()));
+	mColorValues.append(new IntValue(mColor.alpha()));
+
+	for(int i = 0; i < mColorValues.size(); ++i) {
+		mColorValues.at(i)->addValueChangedListener(this);
+	}
 }
 
 
@@ -93,7 +100,7 @@ ColorValue::~ColorValue() {
 }
 
 void ColorValue::init() {
-	mColorValues.append(new IntValue(mColor.red()));
+    mColorValues.append(new IntValue(mColor.red()));
 	mColorValues.append(new IntValue(mColor.green()));
 	mColorValues.append(new IntValue(mColor.blue()));
 	mColorValues.append(new IntValue(mColor.alpha()));
@@ -101,6 +108,25 @@ void ColorValue::init() {
 	for(int i = 0; i < mColorValues.size(); ++i) {
 		mColorValues.at(i)->addValueChangedListener(this);
 	}
+
+	mOptionList.append("black");
+	mOptionList.append("white");
+	mOptionList.append("red");
+	mOptionList.append("darkRed");
+	mOptionList.append("green");
+	mOptionList.append("darkGreen");
+	mOptionList.append("blue");
+	mOptionList.append("darkBlue");
+	mOptionList.append("cyan");
+	mOptionList.append("darkCyan");
+	mOptionList.append("magenta");
+	mOptionList.append("darkMagenta");
+	mOptionList.append("yellow");
+	mOptionList.append("darkYellow");
+	mOptionList.append("gray");
+	mOptionList.append("darkGray");
+	mOptionList.append("lightGray");
+	mOptionList.append("transparent");
 }
 
 QString ColorValue::getName() const {
@@ -289,7 +315,7 @@ bool ColorValue::setValueFromString(const QString &value) {
 			set(w, x, y, z);
 			}
 			return ok;
-		}	
+		}
 		return ok;
 	}
 	return true;

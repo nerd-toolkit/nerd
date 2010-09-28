@@ -74,6 +74,9 @@ class Value : public virtual Object
 
 		virtual void setDescription(const QString &description);
 		virtual QString getDescription() const;
+        virtual void setDocumentation(const QString &documentation);
+        virtual QString getDocumentation() const;
+        virtual QList<QString>& getOptionList();
 
 		virtual bool setValueFromString(const QString &value) ;
 		virtual QString getValueAsString() const;
@@ -103,9 +106,11 @@ class Value : public virtual Object
 		QMutex mMutex;
 		QList<ValueChangedListener*> mValueChangedListeners;
 		QList<ValueChangedListener*> mChangedListenerBufferVector;
+        QString mDocumentation;
 
 	protected:
 		bool mNotifyAllSetAttempts;
+		QList<QString> mOptionList;
 
 };
 }

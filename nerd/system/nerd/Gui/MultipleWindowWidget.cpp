@@ -56,7 +56,9 @@ MultipleWindowWidget::MultipleWindowWidget(const QString &name, QWidget *parent)
 	: PositionMemoryWidget(name, parent)
 {
 	mAddTabButton = new QPushButton("+");
+	mAddTabButton->setWhatsThis("Add a new tag to the dialog.");
 	mRemoveTabButton = new QPushButton("-");
+	mRemoveTabButton->setWhatsThis("Removes a tab from the dialog.");
 	mRemoveTabButton->setEnabled(false);
 
 	mAddTabButton->setFixedWidth(30);

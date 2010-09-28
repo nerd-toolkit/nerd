@@ -90,7 +90,24 @@ CreateNetworkOperator::CreateNetworkOperator(const QString &name)
 
 	EventManager *em = Core::getInstance()->getEventManager();
 	mEvolutionRestartedEvent = em->registerForEvent(EvolutionConstants::EVENT_EVO_EVOLUTION_RESTARTED, this, true);
-	
+
+
+	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
+	QList<TransferFunction*> tfs = nmm->getTransferFunctionPrototypes();
+	for(QListIterator<TransferFunction*> i(tfs); i.hasNext();) {
+        mTransferFunctionName->getOptionList().append(i.next()->getName());
+	}
+
+	QList<ActivationFunction*> afs = nmm->getActivationFunctionPrototypes();
+	for(QListIterator<ActivationFunction*> i(afs); i.hasNext();) {
+        mActivationFunctionName->getOptionList().append(i.next()->getName());
+	}
+
+	QList<SynapseFunction*> sfs = nmm->getSynapseFunctionPrototypes();
+	for(QListIterator<SynapseFunction*> i(sfs); i.hasNext();) {
+        mSynapseFunctionName->getOptionList().append(i.next()->getName());
+	}
+
 }
 
 CreateNetworkOperator::CreateNetworkOperator(const CreateNetworkOperator &other)
@@ -116,7 +133,7 @@ CreateNetworkOperator::CreateNetworkOperator(const CreateNetworkOperator &other)
 	mEvolutionRestartedEvent = em->registerForEvent(EvolutionConstants::EVENT_EVO_EVOLUTION_RESTARTED, this, true);
 }
 
-CreateNetworkOperator::~CreateNetworkOperator() {	
+CreateNetworkOperator::~CreateNetworkOperator() {
 	while(!mInitialNetworks.empty()) {
 		NeuralNetwork *net = mInitialNetworks.at(0);
 		mInitialNetworks.removeAll(net);
@@ -160,7 +177,7 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 		}
 		net = mInitialNetworks.at(mNetworkIndex)->createCopy();
 		mNetworkIndex++;
-		
+
 		individual->setGenome(net);
 		if(mFirstNetworkCycle && mPreserveInitialNetworks->get()) {
 			individual->protectGenome(true);
@@ -199,19 +216,19 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 
 				return true;
 			}
-			
+
 		}
 		else {
 
 			NeuralNetwork *net = loadNetwork(mInitialNetworkXML->get());
 
 			if(net != 0) {
-			
+
 				mInitialNetworks.append(net);
 				mFirstNetworkCycle = false;
 
 				individual->setGenome(net->createCopy());
-				
+
 				if(mPreserveInitialNetworks->get()) {
 					individual->protectGenome(true);
 				}
@@ -220,7 +237,7 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 			}
 		}
 	}
-	
+
 	//if no file was loaded, then create a network interface from scratch.
 
 	//create default function instances (at the stack, not at the heap)
@@ -242,7 +259,7 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 			activationFunction = af;
 			break;
 		}
-	}	
+	}
 
 	const QList<TransferFunction*> &transferFunctions = nnm->getTransferFunctionPrototypes();
 	for(QListIterator<TransferFunction*> i(transferFunctions); i.hasNext();) {
@@ -262,7 +279,7 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 		}
 	}
 
-	//Create a neural network as initial network with the given 
+	//Create a neural network as initial network with the given
 	//number of input/output neurons.
 	net = new ModularNeuralNetwork(*activationFunction, *transferFunction, *synapseFunction);
 
@@ -277,7 +294,7 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 	for(int i = 0; i < mNumberOfOutputNeurons->get(); ++i) {
 		Neuron *neuron = new Neuron(QString("Output").append(QString::number(i)), *transferFunction,
 									*activationFunction);
-		
+
 		neuron->setProperty(Neuron::NEURON_TYPE_OUTPUT);
 		neuron->setProperty(EvolutionConstants::TAG_EVO_CREATION_DATE, currentGenString);
 		net->addNeuron(neuron);

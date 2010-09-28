@@ -52,6 +52,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QString>
+#include <QComboBox>
 #include <QPushButton>
 #include <QCheckBox>
 #include "Core/Task.h"
@@ -70,7 +71,7 @@ class ParameterVisualization : public QFrame, public virtual ValueChangedListene
 	Q_OBJECT
 
 	public:
-		ParameterVisualization(ParameterVisualizationWindow *list, Value *value, QString name, 
+		ParameterVisualization(ParameterVisualizationWindow *list, Value *value, QString name,
 								SetInitValueTask *setInitValueTaskPrototype = 0);
 		virtual ~ParameterVisualization();
 
@@ -87,10 +88,12 @@ class ParameterVisualization : public QFrame, public virtual ValueChangedListene
 		void setCurrentValue(const QString &currentValue);
 		QString getCurrentValue() const;
 
-		
+        void addOption(const QString &optionText);
+        QList<QString> getOptions() const;
 
 
 	public slots:
+        void itemSelected(const QString &item);
 		void changeValue();
 		void setDoUpdateValue(int doUpdate);
 		void updateValueInEnvironmentManager();
@@ -103,10 +106,11 @@ class ParameterVisualization : public QFrame, public virtual ValueChangedListene
 		void destroy();
 		void markAsValueEdited();
 		void markAsValueUpdated();
-		
+
 
 	private:
 		QLineEdit *mValueField;
+		QComboBox *mValueBox;
 		Value *mValue;
 		QString mValueName;
 		ParameterVisualizationWindow *mValueList;
