@@ -1,19 +1,21 @@
-
 /***************************************************************************
- *   ORCS - Open Robot Control and Simulation Library                      *
+ *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
  *   http://www.ikw.uni-osnabrueck.de/~neurokybernetik/                    *
  *                                                                         *
- *   Copyright (C) 2008 by Christian Rempis, Ferry Bachmann                *
- *   christian.rempis@uni-osnabrueck.de +                                  *
- *   ferry.bachmann@uni-osnabrueck.de                                      *
+ *   Project homepage: nerd.x-bot.org                                      *
+ *                                                                         *
+ *   Copyright (C) 2008 - 2010 by the Neurocybernetics Groups Osnabrück    *
+ *   Contact: Christian Rempis                                             *
+ *   christian.rempis@uni-osnabrueck.de                                    *
+ *   Contributors: see contributors.txt in the nerd main directory.        *
  *                                                                         *
  *                                                                         *
  *   Acknowledgments:                                                      *
- *   The ORCS library is part of the EU project ALEAR                      *
+ *   The NERD Kit is part of the EU project ALEAR                          *
  *   (Artificial Language Evolution on Autonomous Robots) www.ALEAR.eu     *
  *   This work is funded by EU-Project Number ICT 214856                   *
  *                                                                         *
@@ -34,6 +36,9 @@
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ *                                                                         *
+ *   Publications based on work using the NERD kit have to state this      *
+ *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
 
@@ -42,11 +47,10 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
-#include "Math/Math.h"
 
 using namespace std;
 
-namespace orcs {
+namespace nerd {
 
 
 /**
@@ -84,25 +88,21 @@ Matrix& Matrix::operator=(const Matrix &other) {
 }
 
 void Matrix::setWidth(int width) {
-	mWidth = Math::max(0, width);
+	mWidth = width;
 	resize(mWidth, mHeight, mDepth);
 }
 
 void Matrix::setHeight(int height) {
-	mHeight = Math::max(0, height);
+	mHeight = height;
 	resize(mWidth, mHeight, mDepth);
 }
 
 void Matrix::setDepth(int depth) {
-	mDepth = Math::max(0, depth);
+	mDepth = depth;
 	resize(mWidth, mHeight, mDepth);
 }
 
 void Matrix::resize(int width, int height, int depth) {
-	width = Math::max(0, width);
-	height = Math::max(0, height);
-	depth = Math::max(0, depth);
-
 	mMatrix.resize(depth);
 	for(int i = 0; i < mMatrix.size(); ++i) {
 		QVector<QVector<double> > &v1 = mMatrix[i];
@@ -161,17 +161,17 @@ double Matrix::get(int w, int h, int d) {
 	return 0.0;
 }
 
-// void Matrix::clear(double clearValue) {
-// 	for(int i = 0; i < mMatrix.size(); ++i) {
-// 		QVector<QVector<double> > &v1 = mMatrix[i];
-// 		for(int j = 0; j < v1.size(); ++j) {
-// 			QVector<double> &v2 = v1[j];
-// 			for(int k = 0; k < v2.size(); ++k) {
-// 				v2[k] = clearValue;
-// 			}
-// 		}
-// 	}
-// }
+//void Matrix::clear(double clearValue) {
+//	for(int i = 0; i < mMatrix.size(); ++i) {
+//		QVector<QVector<double> > &v1 = mMatrix[i];
+//		for(int j = 0; j < v1.size(); ++j) {
+//			QVector<double> &v2 = v1[j];
+//			for(int k = 0; k < v2.size(); ++k) {
+//				v2[k] = clearValue;
+//			}
+//		}
+//	}
+//}
 
 const QVector<QVector<QVector<double> > >& Matrix::getData() const {
 	return mMatrix;

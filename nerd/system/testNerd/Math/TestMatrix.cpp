@@ -90,6 +90,74 @@ void TestMatrix::testSetAndGet() {
 
 //chris
 void TestMatrix::testResize() {
+
+	Matrix m1(3, 2, 5);
+
+	QCOMPARE(m1.getWidth(), 3);
+	QCOMPARE(m1.getHeight(), 2);
+	QCOMPARE(m1.getDepth(), 5);
+
+	m1.resize(100, 10, 5);
+	
+	QCOMPARE(m1.getWidth(), 100);
+	QCOMPARE(m1.getHeight(), 10);
+	QCOMPARE(m1.getDepth(), 5);
+
+	m1.set(9.999111, 99, 9, 4);
+
+	QCOMPARE(m1.get(99, 9, 4), 9.999111);
+
+	m1.resize(-10, -5, -9);
+	
+	QCOMPARE(m1.getWidth(), 0);
+	QCOMPARE(m1.getHeight(), 0);
+	QCOMPARE(m1.getDepth(), 0);
+}
+
+//chris
+void TestMatrix::testFillAndClear() {
+	Matrix m1(3, 2, 5);
+
+	QCOMPARE(m1.getWidth(), 3);
+	QCOMPARE(m1.getHeight(), 2);
+	QCOMPARE(m1.getDepth(), 5);
+
+	QVERIFY(allValuesEqual(m1, 0));
+
+	m1.fill(9765);
+	QVERIFY(allValuesEqual(m1, 9765));
+
+	m1.fill(-9862.07);
+	QVERIFY(allValuesEqual(m1, -9862.07));
+
+	m1.fill(-0.0000001);
+	QVERIFY(allValuesEqual(m1, -0.0000001));
+
+	//clear
+	QCOMPARE(m1.getWidth(), 3);
+	QCOMPARE(m1.getHeight(), 2);
+	QCOMPARE(m1.getDepth(), 5);
+	m1.clear();
+	QCOMPARE(m1.getWidth(), 0);
+	QCOMPARE(m1.getHeight(), 0);
+	QCOMPARE(m1.getDepth(), 0);
+
+	
+}
+
+bool TestMatrix::allValuesEqual(Matrix &matrix, double value) {
+	for(int i = 0; i < matrix.getWidth(); ++i) {
+		for(int j = 0; j < matrix.getHeight(); ++j) {
+			for(int k = 0; k < matrix.getDepth(); ++k) {
+				if(matrix.get(i, j, k) != value) {
+					cerr << "TestMatrix: Matrix entry [" << i << "," << j << "," << k << "] was not "
+						 << value << " (instead: " << matrix.get(i, j, k) << ")" << endl;
+					return false;
+				}
+			}
+		}
+	}
+	return true;
 }
 
 

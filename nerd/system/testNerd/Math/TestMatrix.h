@@ -46,26 +46,29 @@
 #define TESTTestMatrix_H_
 
 #include <QtTest/QtTest>
+#include "Math/Matrix.h"
 
 namespace nerd {
 
-class TestMatrix : public QObject {
+	class TestMatrix : public QObject {
 
-Q_OBJECT
+	Q_OBJECT
 
-private slots:
+	private slots:
 	
-	void cleanUpTestCase();
-	void initTestCase();
+		void cleanUpTestCase();
+		void initTestCase();
 
-	void testConstruction();
-	void testSetAndGet();
-	void testResize();
+		void testConstruction();
+		void testSetAndGet();
+		void testResize();
+		void testFillAndClear();
 
-private:
+	private:
+		bool allValuesEqual(Matrix &matrix, double value);
 	
 
-};
+	};
 
 }
 
