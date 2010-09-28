@@ -1,21 +1,18 @@
+
 /***************************************************************************
- *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
+ *   ORCS - Open Robot Control and Simulation Library                      *
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
  *   http://www.ikw.uni-osnabrueck.de/~neurokybernetik/                    *
  *                                                                         *
- *   Project homepage: nerd.x-bot.org                                      *
- *                                                                         *
- *   Copyright (C) 2008 - 2010 by the Neurocybernetics Groups Osnabrück    *
- *   Contact: Christian Rempis                                             *
- *   christian.rempis@uni-osnabrueck.de                                    *
- *   Contributors: see contributors.txt in the nerd main directory.        *
+ *   Copyright (C) 2008 by Christian Rempis, Ferry Bachmann                *
+ *   christian.rempis@uni-osnabrueck.de +                                  *
  *                                                                         *
  *                                                                         *
  *   Acknowledgments:                                                      *
- *   The NERD Kit is part of the EU project ALEAR                          *
+ *   The ORCS library is part of the EU project ALEAR                      *
  *   (Artificial Language Evolution on Autonomous Robots) www.ALEAR.eu     *
  *   This work is funded by EU-Project Number ICT 214856                   *
  *                                                                         *
@@ -36,21 +33,18 @@
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- *                                                                         *
- *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
 
 
-#ifndef NERDMatrix_H
-#define NERDMatrix_H
+#ifndef ORCSMatrix_H
+#define ORCSMatrix_H
 
 #include <QString>
 #include <QHash>
 #include <QVector>
 
-namespace nerd {
+namespace orcs {
 
 	/**
 	 * Matrix.
@@ -71,6 +65,8 @@ namespace nerd {
 		void setHeight(int height);
 		void setDepth(int depth);
 		void resize(int width, int height, int depth);
+		void clear();
+		void fill(double value);
 
 		int getWidth() const;
 		int getHeight() const;
@@ -79,7 +75,7 @@ namespace nerd {
 		void set(double value, int w = 0, int h = 0, int d = 0);
 		double get(int w, int h, int d);
 
-		void clear(double clearValue);
+		//void clear(double clearValue);
 		const QVector<QVector<QVector<double> > >& getData() const;
 
 	private:
