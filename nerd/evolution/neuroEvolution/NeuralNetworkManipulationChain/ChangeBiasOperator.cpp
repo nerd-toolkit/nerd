@@ -73,6 +73,9 @@ ChangeBiasOperator::ChangeBiasOperator(const QString &name)
 	mUseGaussDistribution = new BoolValue(true);
 	mReinitializeBiasProbability = new NormalizedDoubleValue(0.0, 0.0, 1.0, 0.0, 1.0);
 
+	mChangeProbability->setDocumentation("Probability per neuron to change the bias value if"
+										 " the neuron already as a bias.");
+
 	addParameter("ChangeProbability", mChangeProbability);
 	addParameter("ToggleDisableProbability", mToggleBiasEnableProbability);
 	addParameter("MaxBias", mMaxBias);

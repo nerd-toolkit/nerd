@@ -68,7 +68,11 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
 	setLayout(layout);
 
 	QLabel *nameLabel = new QLabel(name);
-	nameLabel->setToolTip(name);
+	QString toolTip = name;
+	if(value != 0 && value->getDocumentation() != "") {
+		toolTip += + "\n" + value->getDocumentation();
+	}
+	nameLabel->setToolTip(toolTip);
 	nameLabel->setFixedWidth(mWidth);
 	mValueBox = new QComboBox();
 	mValueBox->setEditable(true);

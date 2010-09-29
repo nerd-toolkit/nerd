@@ -50,6 +50,8 @@ SelectionMethod::SelectionMethod(const QString &name)
 	: ParameterizedObject(name, ""), mOwnerPopulation(0)
 {
 	mPopulationProportionValue = new DoubleValue(1.0);
+	mPopulationProportionValue->getOptionList().append("0.0");
+	mPopulationProportionValue->getOptionList().append("1.0");
 	addParameter("PopulationProportion", mPopulationProportionValue);
 
 }
