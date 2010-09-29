@@ -80,11 +80,11 @@ namespace nerd {
  * Constructs a new SynapseDetailWidget.
  */
 SynapseDetailWidget::SynapseDetailWidget(NeuralNetworkEditor *owner)
-	: EditorToolWidget(owner), mInitialized(false), mSynapse(0), 
+	: EditorToolWidget(owner), mInitialized(false), mSynapse(0),
 	  mStrengthValue(0), mEnabledValue(0), mUpdatingChangedSelection(false)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
-	
+
 	setLayout(layout);
 
 	QGridLayout *synapseLayout = new QGridLayout();
@@ -101,7 +101,7 @@ SynapseDetailWidget::SynapseDetailWidget(NeuralNetworkEditor *owner)
 	synapseLayout->addWidget(new QLabel("Weight:", this), 0, 0);
 	synapseLayout->addWidget(strengthArea, 0, 1);
 
-	
+
 	mEnableSynapseCheckBox = new QCheckBox(this);
 	synapseLayout->addWidget(new QLabel("Disable:", this), 1, 0);
 	synapseLayout->addWidget(mEnableSynapseCheckBox, 1, 1);
@@ -125,13 +125,15 @@ SynapseDetailWidget::SynapseDetailWidget(NeuralNetworkEditor *owner)
 	}
 
 	connect(mObserveStrengthField, SIGNAL(stateChanged(int)),
-			this, SLOT(enableStrengthObservation(int)));	
+			this, SLOT(enableStrengthObservation(int)));
 	connect(mSynapseFunctionSelector, SIGNAL(currentIndexChanged(int)),
 			this, SLOT(synapseFunctionSelectionChanged()));
 	connect(mSynapseStrengthField, SIGNAL(returnPressed()),
 			this, SLOT(changeSynapseStrength()));
+    connect(mSynapseStrengthField, SIGNAL(textEdited(const QString&)),
+			this, SLOT(markAsValueEdited()));
 	connect(mEnableSynapseCheckBox, SIGNAL(clicked()),
-			this, SLOT(enableSynapse()));	
+			this, SLOT(enableSynapse()));
 	connect(this, SIGNAL(setSynapseStrengthText(const QString&)),
 			mSynapseStrengthField, SLOT(setText(const QString&)));
 }
@@ -249,12 +251,12 @@ void SynapseDetailWidget::mouseDoubleClicked(NetworkVisualization *source,
 	if(clickedSynapse == 0) {
 		return;
 	}
-	
+
 	mEditor->bringToolWidgetToFront(this);
 	mSynapseStrengthField->setFocus();
 }
 
-void SynapseDetailWidget::mouseDragged(NetworkVisualization*, 
+void SynapseDetailWidget::mouseDragged(NetworkVisualization*,
 					QMouseEvent*, const QPointF&)
 {
 }
@@ -307,6 +309,8 @@ void SynapseDetailWidget::networkModified(ModularNeuralNetwork*)  {
 void SynapseDetailWidget::changeSynapseStrength() {
 	TRACE("SynapseDetailWidget::changeSynapseStrength");
 
+	emit markAsValueUpdated();
+
 	if(mEditor == 0 || !mModificationsEnabled) {
 			return;
 	}
@@ -323,7 +327,7 @@ void SynapseDetailWidget::changeSynapseStrength() {
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<Value*> selectedValues;
 	QList<QString> contents;
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		SynapseItem *item = dynamic_cast<SynapseItem*>(i.next());
 		if(item != 0) {
@@ -370,7 +374,7 @@ void SynapseDetailWidget::enableSynapse() {
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<Value*> selectedValues;
 	QList<QString> contents;
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		SynapseItem *item = dynamic_cast<SynapseItem*>(i.next());
 		if(item != 0) {
@@ -416,7 +420,7 @@ void SynapseDetailWidget::synapseFunctionSelectionChanged() {
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<Synapse*> selectedSynapses;
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		SynapseItem *item = dynamic_cast<SynapseItem*>(i.next());
 		if(item != 0) {
@@ -439,10 +443,10 @@ void SynapseDetailWidget::synapseFunctionSelectionChanged() {
 	for(QListIterator<SynapseFunction*> i(sfs); i.hasNext();) {
 		SynapseFunction *prototype = i.next();
 		if(prototype->getName() == name) {
-			
+
 			SynapseFunction *sf = prototype->createCopy();
 
-			ChangeSynapseFunctionCommand *command = 
+			ChangeSynapseFunctionCommand *command =
 					new ChangeSynapseFunctionCommand(visu, selectedSynapses, sf);
 			visu->getCommandExecutor()->executeCommand(command);
 		}
@@ -465,6 +469,27 @@ void SynapseDetailWidget::enableStrengthObservation(int) {
 			mStrengthValue->removeValueChangedListener(this);
 		}
 	}
+}
+
+/**
+ * Marks the background color of the text label red to show that the content
+ * has been changed manually.
+ */
+void SynapseDetailWidget::markAsValueEdited() {
+	QPalette p = mSynapseStrengthField->palette();
+	p.setColor(QPalette::Base, QColor(255,120,120));
+	mSynapseStrengthField->setPalette(p);
+}
+
+
+/**
+ * Marks the background color of the text label white to show that the content
+ * originates from the observed Value.
+ */
+void SynapseDetailWidget::markAsValueUpdated() {
+	QPalette p = mSynapseStrengthField->palette();
+	p.setColor(QPalette::Base, Qt::white);
+	mSynapseStrengthField->setPalette(p);
 }
 
 
@@ -500,7 +525,7 @@ void SynapseDetailWidget::updateSynapseView() {
 		if(item != 0) {
 			mSynapse = item->getSynapse();
 			enableStrengthObservation(0);
-			
+
 			if(mSynapse != 0) {
 				mSynapseStrengthField->setText(
 						mSynapse->getStrengthValue().getValueAsString());
@@ -520,6 +545,8 @@ void SynapseDetailWidget::updateSynapseView() {
 		setEnabled(true);
 	}
 
+	emit markAsValueUpdated();
+
 	udpateFunctionViews();
 
 	mUpdatingChangedSelection = false;
@@ -533,7 +560,7 @@ void SynapseDetailWidget::udpateFunctionViews() {
 
 	if(mSynapse == 0) {
 		mSynapseFunctionParameterEditor->setParameterizedObject(0);
-	}	
+	}
 	else {
 		SynapseFunction *sf = mSynapse->getSynapseFunction();
 

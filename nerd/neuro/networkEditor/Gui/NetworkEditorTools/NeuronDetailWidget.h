@@ -75,7 +75,7 @@ namespace nerd {
 	 */
 	class NeuronDetailWidget : public EditorToolWidget, public virtual SelectionListener,
 								public virtual ValueChangedListener,
-								public virtual VisualizationMouseListener 
+								public virtual VisualizationMouseListener
 	{
 	Q_OBJECT
 	public:
@@ -91,13 +91,13 @@ namespace nerd {
 
 		virtual void invalidateView();
 
-		virtual void mouseButtonPressed(NetworkVisualization *source, 
+		virtual void mouseButtonPressed(NetworkVisualization *source,
 					QMouseEvent *event, const QPointF &globalPosition);
-		virtual void mouseButtonReleased(NetworkVisualization *source, 
+		virtual void mouseButtonReleased(NetworkVisualization *source,
 					QMouseEvent *event, const QPointF &globalPosition);
 		virtual void mouseDoubleClicked(NetworkVisualization *source,
 					QMouseEvent *event, const QPointF &globalPosition);
-		virtual void mouseDragged(NetworkVisualization *source, 
+		virtual void mouseDragged(NetworkVisualization *source,
 					QMouseEvent *event, const QPointF &globalDistance);
 
 	public slots:
@@ -113,6 +113,14 @@ namespace nerd {
 		void enableOutputObservation(int state);
 		void transferFunctionSelectionChanged();
 		void activationFunctionSelectionChanged();
+
+    private slots:
+        void markNameFieldAsEdited();
+        void markBiasFieldAsEdited();
+        void markActivationFieldAsEdited();
+        void markOutputFieldAsEdited();
+        void markAsValueEdited(QLineEdit *edit);
+		void markAsValueUpdated(QLineEdit *edit);
 
 	signals:
 		void setBiasText(const QString &text);

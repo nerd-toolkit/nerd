@@ -75,7 +75,7 @@ namespace nerd {
 	 */
 	class SynapseDetailWidget : public EditorToolWidget, public virtual SelectionListener,
 								public virtual ValueChangedListener,
-								public virtual VisualizationMouseListener 
+								public virtual VisualizationMouseListener
 	{
 	Q_OBJECT
 	public:
@@ -90,14 +90,14 @@ namespace nerd {
 
 		virtual void invalidateView();
 
-		virtual void mouseButtonPressed(NetworkVisualization *source, 
+		virtual void mouseButtonPressed(NetworkVisualization *source,
 					QMouseEvent *event, const QPointF &globalPosition);
-		virtual void mouseButtonReleased(NetworkVisualization *source, 
+		virtual void mouseButtonReleased(NetworkVisualization *source,
 					QMouseEvent *event, const QPointF &globalPosition);
 		virtual void mouseDoubleClicked(NetworkVisualization *source,
 					QMouseEvent *event, const QPointF &globalPosition);
-		virtual void mouseDragged(NetworkVisualization *source, 
-					QMouseEvent *event, const QPointF &globalDistance); 
+		virtual void mouseDragged(NetworkVisualization *source,
+					QMouseEvent *event, const QPointF &globalDistance);
 
 	public slots:
 		void currentEditorTabChanged(int index);
@@ -107,6 +107,10 @@ namespace nerd {
 		void enableSynapse();
 		void synapseFunctionSelectionChanged();
 		void enableStrengthObservation(int state);
+
+    private slots:
+        void markAsValueEdited();
+		void markAsValueUpdated();
 
 	signals:
 		void setSynapseStrengthText(const QString &text);

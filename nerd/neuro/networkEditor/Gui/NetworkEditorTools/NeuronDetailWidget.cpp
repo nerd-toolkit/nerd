@@ -81,11 +81,11 @@ namespace nerd {
  * Constructs a new NeuronDetailWidget.
  */
 NeuronDetailWidget::NeuronDetailWidget(NeuralNetworkEditor *owner)
-	: EditorToolWidget(owner), mInitialized(false), mNeuron(0), 
+	: EditorToolWidget(owner), mInitialized(false), mNeuron(0),
 	  mActivationValue(0), mBiasValue(0), mOutputValue(0)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
-	
+
 	setLayout(layout);
 
 	QGridLayout *neuronLayout = new QGridLayout();
@@ -118,7 +118,7 @@ NeuronDetailWidget::NeuronDetailWidget(NeuralNetworkEditor *owner)
 	neuronLayout->addWidget(new QLabel("Output:", this), 2, 0);
 	neuronLayout->addWidget(outputArea, 2, 1);
 
-	
+
 	QWidget *biasArea = new QWidget(this);
 	mObserveBiasField= new QCheckBox(biasArea);
 	mObserveBiasField->setChecked(true);
@@ -129,7 +129,7 @@ NeuronDetailWidget::NeuronDetailWidget(NeuralNetworkEditor *owner)
 	biasFieldLayout->addWidget(mBiasField, 0, 0);
 	neuronLayout->addWidget(new QLabel("Bias:", this), 3, 0);
 	neuronLayout->addWidget(biasArea, 3, 1);
-	
+
 	QGroupBox *transferFunctionBox = new QGroupBox("TransferFunction", this);
 	QVBoxLayout *tfBoxLayout = new QVBoxLayout();
 	tfBoxLayout->setContentsMargins(4, 4, 4, 4);
@@ -160,7 +160,7 @@ NeuronDetailWidget::NeuronDetailWidget(NeuralNetworkEditor *owner)
 				this, SLOT(currentEditorTabChanged(int)));
 	}
 	connect(mObserveActivityField, SIGNAL(stateChanged(int)),
-			this, SLOT(enableActivityObservation(int)));	
+			this, SLOT(enableActivityObservation(int)));
 	connect(mObserveBiasField, SIGNAL(stateChanged(int)),
 			this, SLOT(enableBiasObservation(int)));
 	connect(mObserveOutputField, SIGNAL(stateChanged(int)),
@@ -171,19 +171,27 @@ NeuronDetailWidget::NeuronDetailWidget(NeuralNetworkEditor *owner)
 			this, SLOT(activationFunctionSelectionChanged()));
 	connect(mNeuronNameField, SIGNAL(returnPressed()),
 			this, SLOT(changeNeuronName()));
+    connect(mNeuronNameField, SIGNAL(textEdited(const QString&)),
+			this, SLOT(markNameFieldAsEdited()));
 	connect(mBiasField, SIGNAL(returnPressed()),
 			this, SLOT(changeBias()));
+    connect(mBiasField, SIGNAL(textEdited(const QString&)),
+			this, SLOT(markBiasFieldAsEdited()));
 	connect(mActivityField, SIGNAL(returnPressed()),
 			this, SLOT(changeActivity()));
+    connect(mActivityField, SIGNAL(textEdited(const QString&)),
+			this, SLOT(markActivationFieldAsEdited()));
 	connect(this, SIGNAL(setActivationText(const QString&)),
 			mActivityField, SLOT(setText(const QString&)));
 	connect(this, SIGNAL(setBiasText(const QString&)),
 			mBiasField, SLOT(setText(const QString&)));
 	connect(mOutputField, SIGNAL(returnPressed()),
 			this, SLOT(changeOutput()));
+    connect(mOutputField, SIGNAL(textEdited(const QString&)),
+			this, SLOT(markOutputFieldAsEdited()));
 	connect(this, SIGNAL(setOutputText(const QString&)),
 			mOutputField, SLOT(setText(const QString&)));
-	
+
 	resize(100, 100);
 }
 
@@ -218,12 +226,15 @@ void NeuronDetailWidget::valueChanged(Value *value) {
 	}
 	if(value == mOutputValue) {
 		emit setOutputText(mOutputValue->getValueAsString());
+		emit markAsValueUpdated(mOutputField);
 	}
 	else if(value == mActivationValue) {
 		emit setActivationText(mActivationValue->getValueAsString());
+		emit markAsValueUpdated(mActivityField);
 	}
 	else if(value == mBiasValue) {
 		emit setBiasText(mBiasValue->getValueAsString());
+		emit markAsValueUpdated(mBiasField);
 	}
 }
 
@@ -236,8 +247,11 @@ QString NeuronDetailWidget::getName() const {
 void NeuronDetailWidget::modificationPolicyChanged() {
 	mNeuronNameField->setReadOnly(!mModificationsEnabled);
 	mActivityField->setReadOnly(!mModificationsEnabled);
+	mObserveActivityField->setEnabled(mModificationsEnabled);
 	mOutputField->setReadOnly(!mModificationsEnabled);
+	mObserveOutputField->setEnabled(mModificationsEnabled);
 	mBiasField->setReadOnly(!mModificationsEnabled);
+	mObserveBiasField->setEnabled(mModificationsEnabled);
 	mTransferFunctionSelector->setEnabled(mModificationsEnabled);
 	mActivationFunctionSelector->setEnabled(mModificationsEnabled);
 	mTransferFunctionParameterEditor->setEnabled(mModificationsEnabled);
@@ -311,12 +325,12 @@ void NeuronDetailWidget::mouseDoubleClicked(NetworkVisualization *source,
 	if(clickedItem == 0) {
 		return;
 	}
-	
+
 	mEditor->bringToolWidgetToFront(this);
 	mBiasField->setFocus();
 }
 
-void NeuronDetailWidget::mouseDragged(NetworkVisualization*, 
+void NeuronDetailWidget::mouseDragged(NetworkVisualization*,
 					QMouseEvent*, const QPointF&)
 {
 }
@@ -376,9 +390,11 @@ void NeuronDetailWidget::networkModified(ModularNeuralNetwork*) {
 void NeuronDetailWidget::changeNeuronName() {
 	TRACE("NeuronDetailWidget::changeNeuronName");
 
+	emit markAsValueUpdated(mNeuronNameField);
+
 	if(mEditor == 0 || !mModificationsEnabled || mNetworkInvalid) {
 			return;
-	}	
+	}
 
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
@@ -397,7 +413,7 @@ void NeuronDetailWidget::changeNeuronName() {
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<Value*> selectedValues;
 	QList<QString> contents;
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		NeuronItem *item = dynamic_cast<NeuronItem*>(i.next());
 		if(item != 0) {
@@ -409,7 +425,7 @@ void NeuronDetailWidget::changeNeuronName() {
 		}
 	}
 
-	ChangeValueCommand *command = new ChangeValueCommand(visu, selectedValues, contents, 
+	ChangeValueCommand *command = new ChangeValueCommand(visu, selectedValues, contents,
 														 "Change Neuron Name");
 
 	visu->getCommandExecutor()->executeCommand(command);
@@ -418,10 +434,12 @@ void NeuronDetailWidget::changeNeuronName() {
 void NeuronDetailWidget::changeBias() {
 	TRACE("NeuronDetailWidget::changeBias");
 
+	emit markAsValueUpdated(mBiasField);
+
 	if(mEditor == 0 || !mModificationsEnabled || mNetworkInvalid) {
 		return;
 	}
-	
+
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
 	NetworkVisualization *visu = mEditor->getCurrentNetworkVisualization();
@@ -434,7 +452,7 @@ void NeuronDetailWidget::changeBias() {
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<Value*> selectedBiases;
 	QList<QString> contents;
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		NeuronItem *item = dynamic_cast<NeuronItem*>(i.next());
 		if(item != 0) {
@@ -463,10 +481,12 @@ void NeuronDetailWidget::changeBias() {
 void NeuronDetailWidget::changeActivity() {
 	TRACE("NeuronDetailWidget::changeActivity");
 
+    emit markAsValueUpdated(mActivityField);
+
 	if(mEditor == 0 || !mModificationsEnabled || mNetworkInvalid) {
 			return;
 	}
-	
+
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
 	NetworkVisualization *visu = mEditor->getCurrentNetworkVisualization();
@@ -477,7 +497,7 @@ void NeuronDetailWidget::changeActivity() {
 	QString content = mActivityField->text().trimmed();
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		NeuronItem *item = dynamic_cast<NeuronItem*>(i.next());
 		if(item != 0) {
@@ -493,6 +513,8 @@ void NeuronDetailWidget::changeActivity() {
 void NeuronDetailWidget::changeOutput() {
 	TRACE("NeuronDetailWidget::changeOutput");
 
+    emit markAsValueUpdated(mOutputField);
+
 	if(mEditor == 0 || !mModificationsEnabled || mNetworkInvalid) {
 			return;
 	}
@@ -507,7 +529,7 @@ void NeuronDetailWidget::changeOutput() {
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<QString> contents;
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		NeuronItem *item = dynamic_cast<NeuronItem*>(i.next());
 		if(item != 0) {
@@ -528,12 +550,14 @@ void NeuronDetailWidget::enableActivityObservation(int) {
 
 	if(mNeuron != 0 || mNetworkInvalid) {
 		mActivationValue = &(mNeuron->getActivationValue());
-		if(mObserveActivityField->isChecked()) {
-			mActivationValue->addValueChangedListener(this);
-			emit setActivationText(mActivationValue->getValueAsString());
-		}
-		else {
-			mActivationValue->removeValueChangedListener(this);
+		if(mActivationValue != 0) {
+            if(mObserveActivityField->isChecked()) {
+                mActivationValue->addValueChangedListener(this);
+                emit setActivationText(mActivationValue->getValueAsString());
+            }
+            else {
+                mActivationValue->removeValueChangedListener(this);
+            }
 		}
 	}
 }
@@ -546,12 +570,14 @@ void NeuronDetailWidget::enableBiasObservation(int) {
 
 	if(mNeuron != 0 || mNetworkInvalid) {
 		mBiasValue = &(mNeuron->getBiasValue());
-		if(mObserveBiasField->isChecked()) {
-			mBiasValue->addValueChangedListener(this);
-			emit setBiasText(mBiasValue->getValueAsString());	
-		}
-		else {
-			mBiasValue->removeValueChangedListener(this);
+		if(mBiasValue != 0) {
+            if(mObserveBiasField->isChecked()) {
+                mBiasValue->addValueChangedListener(this);
+                emit setBiasText(mBiasValue->getValueAsString());
+            }
+            else {
+                mBiasValue->removeValueChangedListener(this);
+            }
 		}
 	}
 }
@@ -563,12 +589,14 @@ void NeuronDetailWidget::enableOutputObservation(int) {
 
 	if(mNeuron != 0 || mNetworkInvalid) {
 		mOutputValue = &(mNeuron->getOutputActivationValue());
-		if(mObserveOutputField->isChecked()) {
-			mOutputValue->addValueChangedListener(this);
-			emit setOutputText(mOutputValue->getValueAsString());
-		}
-		else {
-			mOutputValue->removeValueChangedListener(this);
+		if(mOutputValue != 0) {
+            if(mObserveOutputField->isChecked()) {
+                mOutputValue->addValueChangedListener(this);
+                emit setOutputText(mOutputValue->getValueAsString());
+            }
+            else {
+                mOutputValue->removeValueChangedListener(this);
+            }
 		}
 	}
 }
@@ -592,7 +620,7 @@ void NeuronDetailWidget::transferFunctionSelectionChanged() {
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<Neuron*> selectedNeurons;
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		NeuronItem *item = dynamic_cast<NeuronItem*>(i.next());
 		if(item != 0) {
@@ -616,10 +644,10 @@ void NeuronDetailWidget::transferFunctionSelectionChanged() {
 	for(QListIterator<TransferFunction*> i(tfs); i.hasNext();) {
 		TransferFunction *prototype = i.next();
 		if(prototype->getName() == name) {
-			
+
 			TransferFunction *tf = prototype->createCopy();
 
-			ChangeTransferFunctionCommand *command = 
+			ChangeTransferFunctionCommand *command =
 					new ChangeTransferFunctionCommand(visu, selectedNeurons, tf);
 			visu->getCommandExecutor()->executeCommand(command);
 		}
@@ -645,7 +673,7 @@ void NeuronDetailWidget::activationFunctionSelectionChanged() {
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<Neuron*> selectedNeurons;
-	
+
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		NeuronItem *item = dynamic_cast<NeuronItem*>(i.next());
 		if(item != 0) {
@@ -668,14 +696,51 @@ void NeuronDetailWidget::activationFunctionSelectionChanged() {
 	for(QListIterator<ActivationFunction*> i(afs); i.hasNext();) {
 		ActivationFunction *prototype = i.next();
 		if(prototype->getName() == name) {
-			
+
 			ActivationFunction *af = prototype->createCopy();
 
-			ChangeActivationFunctionCommand *command = 
+			ChangeActivationFunctionCommand *command =
 					new ChangeActivationFunctionCommand(visu, selectedNeurons, af);
 			visu->getCommandExecutor()->executeCommand(command);
 		}
 	}
+}
+
+
+void NeuronDetailWidget::markNameFieldAsEdited() {
+   markAsValueEdited(mNeuronNameField);
+}
+
+void NeuronDetailWidget::markBiasFieldAsEdited() {
+    markAsValueEdited(mBiasField);
+}
+
+void NeuronDetailWidget::markActivationFieldAsEdited() {
+    markAsValueEdited(mActivityField);
+}
+
+void NeuronDetailWidget::markOutputFieldAsEdited() {
+    markAsValueEdited(mOutputField);
+}
+
+
+void NeuronDetailWidget::markAsValueEdited(QLineEdit *edit) {
+    if(edit == 0) {
+        return;
+    }
+    QPalette p = edit->palette();
+	p.setColor(QPalette::Base, QColor(255,120,120));
+	edit->setPalette(p);
+}
+
+
+void NeuronDetailWidget::markAsValueUpdated(QLineEdit *edit) {
+    if(edit == 0) {
+        return;
+    }
+    QPalette p = edit->palette();
+	p.setColor(QPalette::Base, Qt::white);
+	edit->setPalette(p);
 }
 
 
@@ -731,6 +796,11 @@ void NeuronDetailWidget::updateNeuronView() {
 		setEnabled(true);
 	}
 
+	emit markAsValueUpdated(mNeuronNameField);
+	emit markAsValueUpdated(mActivityField);
+	emit markAsValueUpdated(mOutputField);
+	emit markAsValueUpdated(mBiasField);
+
 	udpateFunctionViews();
 
 	mUpdatingChangedSelection = false;
@@ -739,13 +809,13 @@ void NeuronDetailWidget::updateNeuronView() {
 
 void NeuronDetailWidget::udpateFunctionViews() {
 	TRACE("NeuronDetailWidget::udpateFunctionViews");
-	
+
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
 	if(mNeuron == 0) {
 		mTransferFunctionParameterEditor->setParameterizedObject(0);
 		mActivationFunctionParameterEditor->setParameterizedObject(0);
-	}	
+	}
 	else {
 		TransferFunction *tf = mNeuron->getTransferFunction();
 

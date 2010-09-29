@@ -54,12 +54,12 @@ using namespace std;
 namespace nerd {
 
 
-/** 
+/**
  * Constructs a new ParameterPanel.
  */
-ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout, 
+ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
 							   QString name, Value *parameter)
-	: QObject(parent), mRegisteredAsListener(false), mTargetLayout(targetLayout), 
+	: QObject(parent), mRegisteredAsListener(false), mTargetLayout(targetLayout),
 	 mParameterName(name), mParameter(parameter), mInvalid(false)
 {
 
@@ -68,7 +68,7 @@ ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
 		mParameterContent->setText(mParameter->getValueAsString());
 		mParameter->addValueChangedListener(this);
 		mRegisteredAsListener = true;
-	}	
+	}
 	mNameLabel = new QLabel(name);
 	int row = targetLayout->rowCount();
 	targetLayout->addWidget(mNameLabel, row, 0);
@@ -76,6 +76,8 @@ ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
 
 	connect(mParameterContent, SIGNAL(returnPressed()),
 			this, SLOT(parameterContentChanged()));
+    connect(mParameterContent, SIGNAL(textEdited(const QString&)),
+			this, SLOT(markAsValueEdited()));
 }
 
 
@@ -100,6 +102,7 @@ void ParameterPanel::valueChanged(Value *value)  {
 	}
 	if(value == mParameter) {
 		mParameterContent->setText(mParameter->getValueAsString());
+		emit markAsValueUpdated();
 	}
 }
 
@@ -139,13 +142,36 @@ void ParameterPanel::parameterContentChanged() {
 		return;
 	}
 	QString newContent = mParameterContent->text().trimmed();
-	
+
 	if(mParameter->getValueAsString() == newContent) {
 		return;
 	}
 
 	emit parameterChanged(mParameter, mParameterName, newContent);
+	emit markAsValueUpdated();
 }
+
+/**
+ * Marks the background color of the text label red to show that the content
+ * has been changed manually.
+ */
+void ParameterPanel::markAsValueEdited() {
+	QPalette p = mParameterContent->palette();
+	p.setColor(QPalette::Base, QColor(255,120,120));
+	mParameterContent->setPalette(p);
+}
+
+
+/**
+ * Marks the background color of the text label white to show that the content
+ * originates from the observed Value.
+ */
+void ParameterPanel::markAsValueUpdated() {
+	QPalette p = mParameterContent->palette();
+	p.setColor(QPalette::Base, Qt::white);
+	mParameterContent->setPalette(p);
+}
+
 
 
 }

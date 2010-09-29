@@ -79,6 +79,10 @@ namespace nerd {
 	public slots:
 		void parameterContentChanged();
 
+    private slots:
+        void markAsValueEdited();
+		void markAsValueUpdated();
+
 	signals:
 		void parameterChanged(Value *parameter, const QString &name, const QString &content);
 
