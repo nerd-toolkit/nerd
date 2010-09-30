@@ -135,6 +135,8 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 
 	mSearchDialog = new NetworkSearchDialog(this);
 
+	renameCurrentNetwork("");
+
 }
 
 
@@ -160,7 +162,7 @@ void NeuralNetworkEditor::initialize() {
 }
 
 int NeuralNetworkEditor::addNetworkVisualization(const QString &name) {
-	NetworkVisualization *visu = new NetworkVisualization(name);
+	NetworkVisualization *visu = new NetworkVisualization(name, this);
 	visu->setVisualizationHandler(
 			new SimpleNetworkVisualizationHandler(name + "/Handler", visu));
 	int index = mMainPane->addTab(visu, name);
@@ -334,7 +336,9 @@ void NeuralNetworkEditor::destroyTab() {
 	removeNetworkVisualization(getNetworkVisualizationIndex(getCurrentNetworkVisualization()));
 }
 
-void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetwork *net, bool enableLogMessage) {
+void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetwork *net, 
+									  bool enableLogMessage, bool renamNetwork) 
+{
 
 	if(enableLogMessage) {
 		mMessageWidget->clear();
@@ -413,6 +417,10 @@ void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetw
 			mMessageWidget->addMessage(j.next());
 		}
 	}
+	
+	if(renamNetwork) {
+		renameCurrentNetwork(nameOfFile);
+	}
 
 	if(pauseValue != 0) {
 		pauseValue->set(paused);
@@ -423,6 +431,9 @@ void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetw
 // 	QString layoutFileName = nameOfFile.mid(0, nameOfFile.size() - 4).append(".lyt");
 // 	saveLayout(layoutFileName, false, net);
 }
+
+
+
 
 
 void NeuralNetworkEditor::saveSubNetwork(const QString &fileName) {
@@ -468,7 +479,7 @@ void NeuralNetworkEditor::saveSubNetwork(const QString &fileName) {
 		}
 	}
 
-	saveNetwork(fileName, net);
+	saveNetwork(fileName, net, true, false);
 	net->freeElements(false);
 
 	delete net;
@@ -687,6 +698,10 @@ void NeuralNetworkEditor::loadNetwork(const QString &fileName, bool addToNetwork
 			delete net;
 		}
 
+	}
+
+	if(!addToNetwork) {
+		renameCurrentNetwork(nameOfFile);
 	}
 
 	mMessageWidget->addMessage("Successfully loaded network from file [" + nameOfFile + "]!");
@@ -1537,6 +1552,11 @@ void NeuralNetworkEditor::keyReleaseEvent(QKeyEvent *event) {
 		if(visu != 0) {
 			visu->keyReleaseEvent(event);
 		}
+}
+
+void NeuralNetworkEditor::renameCurrentNetwork(const QString &name) {
+	mCurrentNetworkFileName = name;
+	setWindowTitle("Network Editor [" + mCurrentNetworkFileName + "]");
 }
 
 

@@ -79,7 +79,7 @@ namespace nerd {
 /**
  * Constructs a new NetworkVisualization.
  */
-NetworkVisualization::NetworkVisualization(const QString &name)
+NetworkVisualization::NetworkVisualization(const QString &name, NeuralNetworkEditor *owner)
 	: QGLWidget(),  ParameterizedObject(name), mDefaultPaintIterval(300),
 	  mInteractionPaintInterval(50),
 	  mCommandExecutor(0), mLastLeftMousePressedPosition(0, 0), 
@@ -89,7 +89,7 @@ NetworkVisualization::NetworkVisualization(const QString &name)
 	  mVisualizationOffset(QPointF(0.0, 0.0)), mScaling(1.0), mAlternativeScaling(0.2), mVisuHandler(0),
 	  mScaleFactor(0.9), mNetworkInvalid(true), mSelectionMutex(QMutex::Recursive),
 	  mModificationsEnabled(true), mPerformanceMode(0), mStasisMode(0),
-	  mNetworkStructureChangedEvent(0), mClearCommandExecutorStack(0)
+	  mNetworkStructureChangedEvent(0), mClearCommandExecutorStack(0), mOwner(owner)
 {
 	TRACE("NetworkVisualization::NetworkVisualization");
 	mSelectionRectangle = new SelectionRectItem();
@@ -372,6 +372,10 @@ void NetworkVisualization::paintNetworkView(QPainter &painter, QRectF visibleAre
 
 	painter.translate(-offset);
 	painter.scale(1.0 / scaling, 1.0 / scaling);
+}
+
+NeuralNetworkEditor* NetworkVisualization::getOwner() const {
+	return mOwner;
 }
 
 void NetworkVisualization::closeEvent(QCloseEvent*) {

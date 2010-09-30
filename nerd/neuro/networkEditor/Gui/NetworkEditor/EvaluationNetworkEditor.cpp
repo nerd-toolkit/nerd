@@ -82,7 +82,7 @@ namespace nerd {
  */
 EvaluationNetworkEditor::EvaluationNetworkEditor(bool enableManualStasisControl)
 	: NeuralNetworkEditor(0), mFileMenu(0), mFirstNetwork(true), 
-		mEnableManualStasisControl(enableManualStasisControl)
+		mEnableManualStasisControl(enableManualStasisControl), mSaveNetworkAction(0)
 {
 
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -230,6 +230,17 @@ int EvaluationNetworkEditor::addNetworkVisualization(const QString &name) {
 	return index;
 }
 
+void EvaluationNetworkEditor::renameCurrentNetwork(const QString &name) {
+	NeuralNetworkEditor::renameCurrentNetwork(name);
+	if(mSaveNetworkAction != 0) {
+		if(mCurrentNetworkFileName.trimmed() == "") {
+			mSaveNetworkAction->setEnabled(false);
+		}
+		else {
+			mSaveNetworkAction->setEnabled(true);
+		}
+	}
+}
 
 void EvaluationNetworkEditor::networksReplaced() {
 	TRACE("EvaluationNetworkEditor::networksReplaced");
@@ -287,6 +298,13 @@ void EvaluationNetworkEditor::destroyAllTabs() {
 }
 
 
+void EvaluationNetworkEditor::overwriteCurrentNetwork() {
+	if(mCurrentNetworkFileName != "") {
+		saveNetwork(mCurrentNetworkFileName, 0, true, true);
+	}
+}
+
+
 
 void EvaluationNetworkEditor::setupMenuBar() {
 	addFileMenu();
@@ -310,8 +328,14 @@ QMenu* EvaluationNetworkEditor::addFileMenu() {
 	connect(loadNetworkAction, SIGNAL(triggered()),
 			this, SLOT(loadNetwork()));
 
-	QAction *saveNetworkAction = mFileMenu->addAction("Save Network");
-	connect(saveNetworkAction, SIGNAL(triggered()),
+	mSaveNetworkAction = mFileMenu->addAction("&Save Network");
+	mSaveNetworkAction->setShortcut(tr("ctrl+s"));
+	mSaveNetworkAction->setEnabled(false);
+	connect(mSaveNetworkAction, SIGNAL(triggered()),
+			this, SLOT(overwriteCurrentNetwork()));
+
+	QAction *saveNetworkAsAction = mFileMenu->addAction("Save Network as...");
+	connect(saveNetworkAsAction, SIGNAL(triggered()),
 			this, SLOT(saveNetwork()));
 
 	mFileMenu->addSeparator();
@@ -377,7 +401,7 @@ QMenu* EvaluationNetworkEditor::addControlMenu() {
 	if(mEnableManualStasisControl) {
 		QAction *stasisAction = new BoolValueSwitcherAction("Stasis Mode", 
 									NeuralNetworkConstants::VALUE_EVO_STASIS_MODE);
-		stasisAction->setShortcut(tr("ctrl+s"));
+		stasisAction->setShortcut(tr("ctrl+t"));
 		controlMenu->addAction(stasisAction);
 	}
 

@@ -71,6 +71,7 @@
 namespace nerd {
 
 	class NetworkVisualizationHandler;
+	class NeuralNetworkEditor;
 
 	/**
 	 * NetworkVisualization.
@@ -83,7 +84,7 @@ namespace nerd {
 	Q_OBJECT
 
 	public:
-		NetworkVisualization(const QString &name);
+		NetworkVisualization(const QString &name, NeuralNetworkEditor *owner);
 		virtual ~NetworkVisualization();
 
 		virtual QString getName() const;
@@ -151,6 +152,8 @@ namespace nerd {
 
 		virtual void paintNetworkView(QPainter &painter, QRectF visibleArea, double scaling, QPointF offset);
 
+		NeuralNetworkEditor* getOwner() const;
+
 	public slots:
 		void paintTimerElapsed();	
 		void setDefaultPaintIterval(int interval);
@@ -212,6 +215,7 @@ namespace nerd {
 		BoolValue *mStasisMode;
 		Event *mNetworkStructureChangedEvent;
 		Event *mClearCommandExecutorStack;
+		NeuralNetworkEditor *mOwner;
 	};
 
 }

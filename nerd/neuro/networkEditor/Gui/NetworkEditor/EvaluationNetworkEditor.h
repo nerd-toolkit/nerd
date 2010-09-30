@@ -80,10 +80,13 @@ namespace nerd {
 
 		virtual int addNetworkVisualization(const QString &name);
 
+		virtual void renameCurrentNetwork(const QString &name);
+
 
 	public slots:
 		void networksReplaced();
 		void destroyAllTabs();
+		void overwriteCurrentNetwork();
 
 	signals:
 		void networksReplacedEvent();
@@ -106,6 +109,7 @@ namespace nerd {
 		QMenu *mFileMenu;
 		bool mFirstNetwork;
 		bool mEnableManualStasisControl;
+		QAction *mSaveNetworkAction;
 
 	};
 

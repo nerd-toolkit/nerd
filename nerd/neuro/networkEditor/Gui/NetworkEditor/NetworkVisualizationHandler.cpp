@@ -49,6 +49,7 @@
 #include "Core/Core.h"
 #include "Network/Neuro.h"
 #include "NeuralNetworkConstants.h"
+#include "Gui/NetworkEditor/NeuralNetworkEditor.h"
 
 
 using namespace std;
@@ -88,6 +89,9 @@ QString NetworkVisualizationHandler::getName() const {
 
 
 bool NetworkVisualizationHandler::setNeuralNetwork(ModularNeuralNetwork *network) {
+	if(mOwner != 0 && mOwner->getOwner() != 0 && network != mNeuralNetwork) {
+		mOwner->getOwner()->renameCurrentNetwork("");
+	}
 	mNeuralNetwork = network;
 	return true;
 }
