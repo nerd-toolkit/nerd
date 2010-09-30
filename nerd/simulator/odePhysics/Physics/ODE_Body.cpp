@@ -466,20 +466,46 @@ void ODE_Body::synchronizePositionAndOrientation(dGeomID odeGeom, SimBody *simBo
 			{
 				localPos = Vector3D(geom->getLocalPosition());
 			}
-// 			Vector3D pos(dGeomGetPosition(odeGeom)[0], dGeomGetPosition(odeGeom)[1], 
-// 				dGeomGetPosition(odeGeom)[2]);
-// 			simBody->getPositionValue()->set(pos.getX() - localPos.getX(), 
-// 				pos.getY() - localPos.getY(), pos.getZ() - localPos.getZ());
-			const dReal *geomPos = dGeomGetPosition(odeGeom);
-			simBody->getPositionValue()->set(geomPos[0] - localPos.getX(), 
-				geomPos[1] - localPos.getY(), geomPos[2] - localPos.getZ());
-	
+// // 			Vector3D pos(dGeomGetPosition(odeGeom)[0], dGeomGetPosition(odeGeom)[1], 
+// // 				dGeomGetPosition(odeGeom)[2]);
+// // 			simBody->getPositionValue()->set(pos.getX() - localPos.getX(), 
+// // 				pos.getY() - localPos.getY(), pos.getZ() - localPos.getZ());
+// 			const dReal *geomPos = dGeomGetPosition(odeGeom);
+// 			simBody->getPositionValue()->set(geomPos[0] - localPos.getX(), 
+// 				geomPos[1] - localPos.getY(), geomPos[2] - localPos.getZ());
+// 	
+// 			//Orientation
+// 			dQuaternion quaternion;
+// 			dGeomGetQuaternion(odeGeom, quaternion);
+// 			Quaternion quad(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
+// 			simBody->getQuaternionOrientationValue()->set(quad);
+// 			simBody->getOrientationValue()->set(quad.toAngles());
+
 			//Orientation
 			dQuaternion quaternion;
 			dGeomGetQuaternion(odeGeom, quaternion);
 			Quaternion quad(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
 			simBody->getQuaternionOrientationValue()->set(quad);
 			simBody->getOrientationValue()->set(quad.toAngles());
+
+
+			// Position
+			const dReal *bodyPos = dGeomGetPosition(odeGeom);
+			Vector3D pos(bodyPos[0], bodyPos[1], bodyPos[2]);
+			Vector3DValue *com = simBody->getCenterOfMassValue();
+			Quaternion comQuat(0.0, 
+							com->getX(), 
+							com->getY(), 
+							com->getZ());
+			Quaternion orientationInverse = 
+				simBody->getQuaternionOrientationValue()->get().getInverse();
+			Quaternion rotatedComQuat = simBody->getQuaternionOrientationValue()->get() 
+				* comQuat * orientationInverse;
+			Vector3D rotatedCom(rotatedComQuat.getX(), 
+									rotatedComQuat.getY(), 
+									rotatedComQuat.getZ());
+			simBody->getPositionValue()->set(pos.getX() + rotatedCom.getX(), 
+				pos.getY() + rotatedCom.getY(), pos.getZ() + rotatedCom.getZ());
 		}
 	} 
 	else {
