@@ -59,7 +59,7 @@ void TestInterfaceValue::testConstructor() {
 	InterfaceValue iv1("", "FirstInterfaceValue");
 	
 	QVERIFY(iv1.getName().compare("FirstInterfaceValue") == 0);
-	QVERIFY(iv1.getDescription() == "Interface");
+	QVERIFY(iv1.getTypeName() == "Interface");
 	QVERIFY(iv1.getMin() == 0.0);
 	QVERIFY(iv1.getMax() == 1.0);
 	QVERIFY(iv1.get() == 0.0);

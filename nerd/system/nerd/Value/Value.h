@@ -64,7 +64,7 @@ class Value : public virtual Object
 
 	public:
 		Value();
-		Value(const QString &description, bool notifyAllSetAttempts);
+		Value(const QString &typeName, bool notifyAllSetAttempts);
 		Value(const Value &value);
 		virtual ~Value();
 
@@ -72,10 +72,10 @@ class Value : public virtual Object
 
 		virtual QString getName() const;
 
-		virtual void setDescription(const QString &description);
-		virtual QString getDescription() const;
-        virtual void setDocumentation(const QString &documentation);
-        virtual QString getDocumentation() const;
+		virtual void setTypeName(const QString &typeName);
+		virtual QString getTypeName() const;
+        virtual void setDescription(const QString &description);
+        virtual QString getDescription() const;
         virtual QList<QString>& getOptionList();
 
 		virtual bool setValueFromString(const QString &value) ;
@@ -96,17 +96,17 @@ class Value : public virtual Object
 		virtual bool equals(const Value *value) const;
 
 	private:
-		void createValue(const QString &description, bool notifyAllSetAttempts);
+		void createValue(const QString &typeName, bool notifyAllSetAttempts);
 
 	private:
 		int mNotifyCount;
-		QString mDescription;
+		QString mTypeName;
 		ValueManager *mValueManager;
 		bool mMaintainNotificationStack;
 		QMutex mMutex;
 		QList<ValueChangedListener*> mValueChangedListeners;
 		QList<ValueChangedListener*> mChangedListenerBufferVector;
-        QString mDocumentation;
+        QString mDescription;
 
 	protected:
 		bool mNotifyAllSetAttempts;

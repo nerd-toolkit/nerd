@@ -64,7 +64,7 @@ void TestNormalizedDoubleValue::testConstructor(){
 	QCOMPARE(v1.getNormalizedMax(), 1.0);
 	QCOMPARE(v1.get(), 0.0);
 	
-	QVERIFY(v1.getDescription().compare("NormalizedDouble") == 0);
+	QVERIFY(v1.getTypeName().compare("NormalizedDouble") == 0);
 	QVERIFY(v1.getName().compare("NormalizedDouble") == 0);
 
 	NormalizedDoubleValue v2(0.7, -0.5, 0.8);
@@ -81,7 +81,7 @@ void TestNormalizedDoubleValue::testConstructor(){
 	QCOMPARE(v3.getNormalizedMax(), 2.2);
 	QCOMPARE(v3.get(), 0.5); //was truncated, because max is 0.5
 	
-	v3.setDescription("Desc1");
+	v3.setTypeName("Desc1");
 	
 	NormalizedDoubleValue *v4 = dynamic_cast<NormalizedDoubleValue*>(v3.createCopy());
 	
@@ -93,7 +93,7 @@ void TestNormalizedDoubleValue::testConstructor(){
 	QCOMPARE(v4->getNormalizedMin(), -1.1);
 	QCOMPARE(v4->getNormalizedMax(), 2.2);
 	QCOMPARE(v4->get(), 0.5);
-	QVERIFY(v4->getDescription().compare("Desc1") == 0);
+	QVERIFY(v4->getTypeName().compare("Desc1") == 0);
 	
 	delete v4;
 

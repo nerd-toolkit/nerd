@@ -46,15 +46,21 @@
 
 namespace nerd {
 
-StringValue::StringValue() : Value ("String", false) {
+StringValue::StringValue() 
+	: Value ("String", false), mUseAsFileName(false) 
+{
 	mValue = "";
 }
 
-StringValue::StringValue(const QString &value) : Value("String", false) {
+StringValue::StringValue(const QString &value) 
+	: Value("String", false), mUseAsFileName(false) 
+{
 	mValue = value;
 }
 
-StringValue::StringValue(const StringValue& rhs) : Object(), Value(rhs) {
+StringValue::StringValue(const StringValue& rhs) 
+	: Object(), Value(rhs), mUseAsFileName(rhs.mUseAsFileName) 
+{
 	mValue = rhs.mValue;
 }
 
@@ -81,6 +87,14 @@ QString StringValue::getValueAsString() const {
 bool StringValue::setValueFromString(const QString &value) {
 	set(value);
 	return true;
+}
+
+void StringValue::useAsFileName(bool useAsFilename) {
+	mUseAsFileName = useAsFilename;
+}
+
+bool StringValue::isUsedAsFileName() const {
+	return mUseAsFileName;
 }
 
 Value* StringValue::createCopy() {

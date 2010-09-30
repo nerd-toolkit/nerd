@@ -1,0 +1,3 @@
+
+
+cmake -G "KDevelop3" .

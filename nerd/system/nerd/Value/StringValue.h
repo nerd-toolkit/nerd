@@ -67,10 +67,14 @@ class StringValue : public Value {
 		virtual QString getValueAsString() const;
 		virtual bool setValueFromString(const QString &value);
 
+		virtual void useAsFileName(bool useAsFilename);
+		virtual bool isUsedAsFileName() const;
+
 		virtual bool equals(const Value *value) const;
 
 	private:
 		QString mValue;
+		bool mUseAsFileName;
 
 };
 

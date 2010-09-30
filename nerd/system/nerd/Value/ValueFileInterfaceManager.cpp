@@ -232,7 +232,7 @@ void ValueFileInterfaceManager::storeValueTypeInformation() {
 			output << "#Not found: " << valueName << "\n";
 		}
 		else {
-			output << valueName << "=" << value->getDescription() << "=" 
+			output << valueName << "=" << value->getTypeName() << "=" 
 				   << value->getProperties() << "\n";
 		}
 	}

@@ -117,12 +117,12 @@ void ValueDetailVisualization::fillContents() {
 	}
 
 	textEditContent.append("<b>Description:</b><br>");
-	QString description = mValue->getDescription();
-	if(description.isEmpty()) {
+	QString typeName = mValue->getTypeName();
+	if(typeName.isEmpty()) {
 		textEditContent.append("--<br>");
 	}
 	else {
-		textEditContent.append(mValue->getDescription()).append("<br>");
+		textEditContent.append(mValue->getTypeName()).append("<br>");
 	}
 
 	textEditContent.append("<b>CurrentValue:</b><br>");

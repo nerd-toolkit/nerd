@@ -109,7 +109,7 @@ class ValueManager {
 
 		bool addPrototype(Value *prototype);
 		const QList<Value*>& getPrototypes() const;
-		Value* createCopyOfPrototype(const QString &typeDescription) const;
+		Value* createCopyOfPrototype(const QString &typeName) const;
 
 		void printValues(const QString &valueNamePattern);
 

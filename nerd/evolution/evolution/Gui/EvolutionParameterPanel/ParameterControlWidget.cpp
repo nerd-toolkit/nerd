@@ -50,7 +50,9 @@
 #include <QLabel>
 #include "Math/Math.h"
 #include "Value/ChangeValueTask.h"
-
+#include "NerdConstants.h"
+#include "Util/NerdFileSelector.h"
+#include "Value/StringValue.h"
 
 using namespace std;
 
@@ -69,8 +71,8 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
 
 	QLabel *nameLabel = new QLabel(name);
 	QString toolTip = name;
-	if(value != 0 && value->getDocumentation() != "") {
-		toolTip += + "\n" + value->getDocumentation();
+	if(value != 0 && value->getDescription() != "") {
+		toolTip += + "\n" + value->getDescription();
 	}
 	nameLabel->setToolTip(toolTip);
 	nameLabel->setFixedWidth(mWidth);
@@ -85,6 +87,11 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
 		mValue->addValueChangedListener(this);
 		mValueBox->setEditText(mValue->getValueAsString());
 
+		StringValue *stringValue = dynamic_cast<StringValue*>(mValue);
+		if(stringValue != 0 && stringValue->isUsedAsFileName()) {
+			mValueBox->addItem(NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE);
+		}
+
 		QList<QString> options = mValue->getOptionList();
         for(QListIterator<QString> i(options); i.hasNext();) {
             mValueBox->addItem(i.next());
@@ -98,7 +105,7 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
 			this, SLOT(returnPressed()));
 	connect(mValueContent, SIGNAL(textEdited(const QString&)),
 			this, SLOT(valueTextChanged(const QString&)));
-    connect(mValueBox, SIGNAL(currentIndexChanged(const QString&)),
+    connect(mValueBox, SIGNAL(activated(const QString&)),
             this, SLOT(itemSelected(const QString&)));
 }
 
@@ -138,7 +145,16 @@ void ParameterControlWidget::cleadUp() {
 
 
 void ParameterControlWidget::itemSelected(const QString &item) {
-   returnPressed();
+	if(mValue != 0 && item == NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE) {
+		QString fileName = NerdFileSelector::getFileName("Select File", true, this);
+		if(fileName.trimmed() == "") {
+			mValueBox->setEditText(mValue->getValueAsString());
+			markAsValueUpdated();
+			return;
+		}
+		mValueBox->setEditText(fileName);
+	}
+	returnPressed();
 }
 
 void ParameterControlWidget::valueTextChanged(const QString&) {

@@ -84,7 +84,7 @@ void TestValueManager::testConstructor() {
 	QCOMPARE(prototypes.size(), 11);
 	QList<QString> valueNames;
 	for(int i = 0; i < prototypes.size(); ++i) {
-		valueNames.append(prototypes.at(i)->getDescription());
+		valueNames.append(prototypes.at(i)->getTypeName());
 	}
 
 	QVERIFY(valueNames.contains("Double"));
@@ -381,9 +381,9 @@ void TestValueManager::testPrototyping() {
 
 	DoubleValue *testPrototype = new DoubleValue(2.3);
 	
-	testPrototype->setDescription("Double");
+	testPrototype->setTypeName("Double");
 	QVERIFY(!vManager->addPrototype(testPrototype));
-	testPrototype->setDescription("TestDouble");
+	testPrototype->setTypeName("TestDouble");
 	QVERIFY(vManager->addPrototype(testPrototype));
 	QVERIFY(!vManager->addPrototype(testPrototype));
 

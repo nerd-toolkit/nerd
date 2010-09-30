@@ -52,14 +52,14 @@ namespace nerd {
 NormalizedDoubleValue::NormalizedDoubleValue()
 					: DoubleValue(), mMin(0.0), mMax(1.0), mNormalizedMin(0.0), mNormalizedMax(1.0)
 {
-	setDescription("NormalizedDouble");
+	setTypeName("NormalizedDouble");
 }
 
 NormalizedDoubleValue::NormalizedDoubleValue(double value, double min, double max)
 					: DoubleValue(), mMin(min), mMax(max),
 						mNormalizedMin(min), mNormalizedMax(max)
 {
-	setDescription("NormalizedDouble");
+	setTypeName("NormalizedDouble");
 	set(value);
 }
 
@@ -68,7 +68,7 @@ NormalizedDoubleValue::NormalizedDoubleValue(double value, double min, double ma
 					: mMin(min), mMax(max),
 						mNormalizedMin(normalizedMin), mNormalizedMax(normalizedMax)
 {
-	setDescription("NormalizedDouble");
+	setTypeName("NormalizedDouble");
 	set(value);
 }
 

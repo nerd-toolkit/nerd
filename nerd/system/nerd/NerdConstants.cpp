@@ -61,6 +61,13 @@ const QString NerdConstants::OBJECT_STATISTICS_MANAGER
 		= "StatisticsManager";
 
 //**************************************************************************
+//GUI Element Names
+//**************************************************************************
+
+const QString NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE
+		= "Select file ...";
+
+//**************************************************************************
 //Value names
 //**************************************************************************
 

@@ -78,13 +78,13 @@ void TestValue::testValue(){
 	Core::resetCore();
 	Value *value = new Value();
 
-	QCOMPARE ( QString("") , value->getDescription()); 
+	QCOMPARE ( QString("") , value->getTypeName()); 
 
-	value->setDescription ( "newValue" );
+	value->setTypeName ( "newValue" );
 
-	QCOMPARE ( QString("newValue") ,value->getDescription()); 
+	QCOMPARE ( QString("newValue") ,value->getTypeName()); 
 
-	QVERIFY ( "newValue" == value->getDescription() );
+	QVERIFY ( "newValue" == value->getTypeName() );
 
 	QVERIFY ( value->getValueChangedListeners().size() == 0 );
 	
@@ -203,7 +203,7 @@ void TestValue::testIntValue(){
 	IntValue *copyValue = dynamic_cast<IntValue*>(value->createCopy());
 	
 	
-	QCOMPARE(copyValue->getDescription() , QString("Int") );
+	QCOMPARE(copyValue->getTypeName() , QString("Int") );
 	QCOMPARE(copyValue->get() , 1018 );
 	
 	delete value;
@@ -224,7 +224,7 @@ void TestValue::testBoolValue(){
 	QVERIFY(copy->addValueChangedListener(&l1));
 	copy->setNotifyAllSetAttempts(true);
 	
-	QCOMPARE(copy->getDescription() , QString("Bool"));
+	QCOMPARE(copy->getTypeName() , QString("Bool"));
 	QCOMPARE (copy->getValueAsString() , QString("T"));
 	QVERIFY(copy->setValueFromString("false"));
 	QVERIFY(!copy->get());
@@ -319,7 +319,7 @@ void TestValue::testVector3DValue() {
 
 	//test constructos
 	QVERIFY(v1.getName().compare("Vector3D") == 0);
-	QVERIFY(v1.getDescription().compare("Vector3D") == 0);
+	QVERIFY(v1.getTypeName().compare("Vector3D") == 0);
 	QVERIFY(v1.getX() == 0.0);	
 	QVERIFY(v1.getY() == 0.0);
 	QVERIFY(v1.getZ() == 0.0);
@@ -344,11 +344,11 @@ void TestValue::testVector3DValue() {
 	QVERIFY(v2.getValueAsString().compare("(111.1,2.22,0.33)") == 0);
 
 	v2.setNotifyAllSetAttempts(true);
-	v2.setDescription("MyDesc");
+	v2.setTypeName("MyDesc");
 
 	QVERIFY(v2.isNotifyingAllSetAttempts() == true);
 	QVERIFY(v2.getName().compare("MyDesc") == 0);
-	QVERIFY(v2.getDescription().compare("MyDesc") == 0);
+	QVERIFY(v2.getTypeName().compare("MyDesc") == 0);
 
 	//Copy constructor
 	Vector3DValue v3(v2);
@@ -358,7 +358,7 @@ void TestValue::testVector3DValue() {
 	QVERIFY(v3.getValueAsString().compare("(111.1,2.22,0.33)") == 0);
 	QVERIFY(v3.isNotifyingAllSetAttempts() == true);
 	QVERIFY(v3.getName().compare("MyDesc") == 0);
-	QVERIFY(v3.getDescription().compare("MyDesc") == 0);
+	QVERIFY(v3.getTypeName().compare("MyDesc") == 0);
 
 	//createCopy()
 	Vector3DValue *v4 = dynamic_cast<Vector3DValue*>(v3.createCopy());
@@ -370,7 +370,7 @@ void TestValue::testVector3DValue() {
 	QVERIFY(v4->getValueAsString().compare("(111.1,2.22,0.33)") == 0);
 	QVERIFY(v4->isNotifyingAllSetAttempts() == true);
 	QVERIFY(v4->getName().compare("MyDesc") == 0);
-	QVERIFY(v4->getDescription().compare("MyDesc") == 0);
+	QVERIFY(v4->getTypeName().compare("MyDesc") == 0);
 	delete v4;
 
 	//test set and get and listeners
@@ -511,7 +511,7 @@ void TestValue::testMatrix3x3Value() {
 
 	//test constructos
 	QVERIFY(m1.getName().compare("Matrix3x3") == 0);
-	QVERIFY(m1.getDescription().compare("Matrix3x3") == 0);
+	QVERIFY(m1.getTypeName().compare("Matrix3x3") == 0);
 	QVERIFY(m1.get(1, 1) == 0.0);	
 	QVERIFY(m1.get(1, 2) == 0.0);
 	QVERIFY(m1.get(1, 3) == 0.0);
@@ -1135,11 +1135,11 @@ void TestValue::testValueEquality() {
 	QVERIFY(v1.equals(&v2) == true);
 	QVERIFY(v2.equals(&v1) == true);
 
-	v2.setDescription("MyDescription2");
+	v2.setTypeName("MyDescription2");
 	QVERIFY(v1.equals(&v2) == false);
 	QVERIFY(v2.equals(&v1) == false);
 
-	v1.setDescription("MyDescription2");
+	v1.setTypeName("MyDescription2");
 	QVERIFY(v1.equals(&v2) == true);
 
 	v2.setNotifyAllSetAttempts(false);
@@ -1166,7 +1166,7 @@ void TestValue::testValueEquality() {
 		bv2.set(false);
 		QVERIFY(bv1.equals(&bv2) == true);
 	
-		bv2.setDescription("SomeStuff");
+		bv2.setTypeName("SomeStuff");
 		QVERIFY(bv1.equals(&bv2) == false);
 	}
 
@@ -1187,7 +1187,7 @@ void TestValue::testValueEquality() {
 		cv2.set(10, 20, 30, 40);
 		QVERIFY(cv1.equals(&cv2) == true);
 	
-		cv2.setDescription("SomeStuff");
+		cv2.setTypeName("SomeStuff");
 		QVERIFY(cv1.equals(&cv2) == false);
 	}
 
@@ -1209,7 +1209,7 @@ void TestValue::testValueEquality() {
 		v2.set(123.4567);
 		QVERIFY(v1.equals(&v2) == true);
 	
-		v2.setDescription("SomeStuff");
+		v2.setTypeName("SomeStuff");
 		QVERIFY(v1.equals(&v2) == false);
 	}
 
@@ -1254,7 +1254,7 @@ void TestValue::testValueEquality() {
 		v2.setNormalizedMin(1.005);
 		QVERIFY(v1.equals(&v2) == true);
 	
-		v2.setDescription("SomeStuff");
+		v2.setTypeName("SomeStuff");
 		QVERIFY(v1.equals(&v2) == false);
 	}
 
@@ -1287,7 +1287,7 @@ void TestValue::testValueEquality() {
 		v2.setNormalizedMax(400.1);
 		QVERIFY(v1.equals(&v2) == true);
 	
-		v2.setDescription("SomeStuff");
+		v2.setTypeName("SomeStuff");
 		QVERIFY(v1.equals(&v2) == false);
 	}
 
@@ -1308,7 +1308,7 @@ void TestValue::testValueEquality() {
 		v2.set(124);
 		QVERIFY(v1.equals(&v2) == true);
 	
-		v2.setDescription("SomeStuff");
+		v2.setTypeName("SomeStuff");
 		QVERIFY(v1.equals(&v2) == false);
 	}
 
@@ -1343,7 +1343,7 @@ void TestValue::testValueEquality() {
 		v2.set(0.11, 0.21, 0.31, 0.41);
 		QVERIFY(v1.equals(&v2) == true);
 	
-		v2.setDescription("SomeStuff");
+		v2.setTypeName("SomeStuff");
 		QVERIFY(v1.equals(&v2) == false);
 	}
 
@@ -1364,7 +1364,7 @@ void TestValue::testValueEquality() {
 		v2.set("Ciao Welt");
 		QVERIFY(v1.equals(&v2) == true);
 	
-		v2.setDescription("SomeStuff");
+		v2.setTypeName("SomeStuff");
 		QVERIFY(v1.equals(&v2) == false);
 	}
 
@@ -1394,7 +1394,7 @@ void TestValue::testValueEquality() {
 		v2.set(0.11, 0.21, 0.31);
 		QVERIFY(v1.equals(&v2) == true);
 	
-		v2.setDescription("SomeStuff");
+		v2.setTypeName("SomeStuff");
 		QVERIFY(v1.equals(&v2) == false);
 	}
 	

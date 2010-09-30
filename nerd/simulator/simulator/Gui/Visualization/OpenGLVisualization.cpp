@@ -200,27 +200,27 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	mPublishValues = publishValues;
 
 	mStartOrientation = new Vector3DValue(-10.0, 0.3, 0.0);
-	mStartOrientation->setDocumentation("The camera orientation after view reset (STRG+V)");
+	mStartOrientation->setDescription("The camera orientation after view reset (STRG+V)");
 	mStartPosition = new Vector3DValue(0.0, 0.5, 1.5);
-	mStartPosition->setDocumentation("The camera position after view reset (STRG+V)");
+	mStartPosition->setDescription("The camera position after view reset (STRG+V)");
 	mCurrentOrientation = new Vector3DValue();
-	mCurrentOrientation->setDocumentation("The current camera orientation");
+	mCurrentOrientation->setDescription("The current camera orientation");
 	mCurrentPosition = new Vector3DValue();
-	mCurrentPosition->setDocumentation("The current camera position");
+	mCurrentPosition->setDescription("The current camera position");
 	mShowCoordinateSystemLines = new BoolValue(false);
-	mShowCoordinateSystemLines->setDocumentation("Enables/Disables the coordinate system lines.");
+	mShowCoordinateSystemLines->setDescription("Enables/Disables the coordinate system lines.");
 	mShowFramesPerSecond = new BoolValue(true);
-	mShowFramesPerSecond->setDocumentation("Displays the number of steps per second.");
+	mShowFramesPerSecond->setDescription("Displays the number of steps per second.");
 
 	mOpeningAngleValue = new DoubleValue(getDefaultOpeningAngle());
-	mOpeningAngleValue->setDocumentation("The opening angle of the camera.");
+	mOpeningAngleValue->setDescription("The opening angle of the camera.");
 	mMinDistanceCutoffValue = new DoubleValue(getDefaultMinCutoff());
-	mMinDistanceCutoffValue->setDocumentation("Only objects between min and max cuttoff range are shown.");
+	mMinDistanceCutoffValue->setDescription("Only objects between min and max cuttoff range are shown.");
 	mMaxDistanceCutoffValue = new DoubleValue(getDefaultMaxCutoff());
-	mMaxDistanceCutoffValue->setDocumentation("Only objects between min and max cuttoff range are shown.");
+	mMaxDistanceCutoffValue->setDescription("Only objects between min and max cuttoff range are shown.");
 
 	mReferenceBodyName = new StringValue("");
-	mReferenceBodyName->setDocumentation("The SimObject the camera is attached to. The name is without the leading /Sim.");
+	mReferenceBodyName->setDescription("The SimObject the camera is attached to. The name is without the leading /Sim.");
 	mReferenceBodyName->addValueChangedListener(this);
 
 	mOpeningAngle = mOpeningAngleValue->get();
@@ -228,19 +228,19 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	mMaxDistanceCutoff = mMaxDistanceCutoffValue->get();
 
 	mIsTranslationalValue = new BoolValue(false);
-	mIsTranslationalValue->setDocumentation("In translation mode, the camera is not following the orientation.");
+	mIsTranslationalValue->setDescription("In translation mode, the camera is not following the orientation.");
 	mUseAsFrameGrabber = new BoolValue(false);
-	mUseAsFrameGrabber->setDocumentation("In frame grabber mode the camera image is stored in a buffer file.");
+	mUseAsFrameGrabber->setDescription("In frame grabber mode the camera image is stored in a buffer file.");
 
 	mValuePrefix = "/OpenGLVisualization/";
 	mValuePrefix.append(name).append("/");
 
 	mDisplaySimulationTime = new BoolValue(false);
-    mDisplaySimulationTime->setDocumentation("Displays the simulation and acutally passed time.");
+    mDisplaySimulationTime->setDescription("Displays the simulation and acutally passed time.");
 	mTimeDisplaySize = new IntValue(10);
-	mTimeDisplaySize->setDocumentation("The font size of the simulation time display.");
+	mTimeDisplaySize->setDescription("The font size of the simulation time display.");
 	mTimeTextColorValue = new ColorValue("white");
-    mTimeTextColorValue->setDocumentation("The font color of the simulation time display");
+    mTimeTextColorValue->setDescription("The font color of the simulation time display");
 
 	addParameter("StartOrientation", mStartOrientation, publishValues);
 	addParameter("StartPosition", mStartPosition, publishValues);

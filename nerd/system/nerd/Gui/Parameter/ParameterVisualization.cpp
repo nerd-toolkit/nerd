@@ -53,6 +53,9 @@
 #include <iostream>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include "Value/StringValue.h"
+#include "Util/NerdFileSelector.h"
+#include "NerdConstants.h"
 
 using namespace std;
 
@@ -100,6 +103,10 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mValueBox->setEditable(true);
 
 	if(mValue != 0) {
+		StringValue *stringValue = dynamic_cast<StringValue*>(mValue);
+		if(stringValue != 0 && stringValue->isUsedAsFileName()) {
+			mValueBox->addItem(NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE);
+		}
         QList<QString> options = mValue->getOptionList();
         for(QListIterator<QString> i(options); i.hasNext();) {
             mValueBox->addItem(i.next());
@@ -113,8 +120,8 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mCloseButton->setWhatsThis("Remove this property from the list");
 
 	if(mValue != 0) {
-        mNameLabel->setWhatsThis(mValue->getDocumentation());
-        mValueBox->setWhatsThis(mValue->getDocumentation());
+        mNameLabel->setWhatsThis(mValue->getDescription());
+        mValueBox->setWhatsThis(mValue->getDescription());
 	}
 
 	mUpdateSnapshotButton = new QPushButton("Set Init");
@@ -127,7 +134,7 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 			this, SLOT(changeValue()));
 	connect(mValueField, SIGNAL(textEdited(const QString&)),
 			this, SLOT(markAsValueEdited()));
-    connect(mValueBox, SIGNAL(currentIndexChanged(const QString&)),
+    connect(mValueBox, SIGNAL(activated(const QString&)),
             this, SLOT(itemSelected(const QString&)));
 	connect(mCloseButton, SIGNAL(clicked()),
 			this, SLOT(destroy()));
@@ -355,7 +362,18 @@ QList<QString> ParameterVisualization::getOptions() const {
 
 
 void ParameterVisualization::itemSelected(const QString &item) {
-    mValueBox->setEditText(item);
+	QString currentText = item;
+	if(mValue != 0 && item == NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE) {
+		QString fileName = NerdFileSelector::getFileName("Select File", true, this);
+		if(fileName.trimmed() == "") {
+			mValueBox->setEditText(mValue->getValueAsString());
+			mValueModified = true;
+			markAsValueUpdated();
+			return;
+		}
+		currentText = fileName;
+	}
+    mValueBox->setEditText(currentText);
     mValueModified = true;
     changeValue();
 }

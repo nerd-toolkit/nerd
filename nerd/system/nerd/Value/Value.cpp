@@ -57,8 +57,8 @@ Value::Value() : Object() {
 	createValue("", false );
 }
 
-Value::Value(const QString &description, bool notifyAllSetAttempts) : Object() {
-	createValue(description, notifyAllSetAttempts);
+Value::Value(const QString &typeName, bool notifyAllSetAttempts) : Object() {
+	createValue(typeName, notifyAllSetAttempts);
 }
 
 /**
@@ -67,8 +67,8 @@ Value::Value(const QString &description, bool notifyAllSetAttempts) : Object() {
  * Therefore the new Value will have no ValueListeners attached.
  */
 Value::Value(const Value &value) : Object() {
-	createValue(value.mDescription, value.mNotifyAllSetAttempts);
-	mDocumentation = value.mDocumentation;
+	createValue(value.mTypeName, value.mNotifyAllSetAttempts);
+	mDescription = value.mDescription;
 	mOptionList = value.mOptionList;
 }
 
@@ -88,15 +88,15 @@ Value::~Value() {
 
 
 /**
- * Creates a new simple Value object with the given description and standard settings.
+ * Creates a new simple Value object with the given typeName and standard settings.
  * Since this value does NOT encapsulate any data, it is only usefule for test purposes.
  *
- * @param description the type description of the Value, e.g. Integer.
+ * @param typeName the type typeName of the Value, e.g. Integer.
  * @param notifyAllSetAttempty if true, then the ValueChangedListeners are notified at all calls of set(),
  *        even if the value is not changed by the method call.
  */
-void Value::createValue(const QString &description, bool notifyAllSetAttempts) {
-	mDescription = description;
+void Value::createValue(const QString &typeName, bool notifyAllSetAttempts) {
+	mTypeName = typeName;
 	mNotifyCount = 0;
 	mValueManager = Core::getInstance()->getValueManager();
 	mMaintainNotificationStack = false;
@@ -111,7 +111,7 @@ void Value::createValue(const QString &description, bool notifyAllSetAttempts) {
  * @return a new copy.
  */
 Value* Value::createCopy() {
-	return new Value(mDescription, mNotifyAllSetAttempts);
+	return new Value(mTypeName, mNotifyAllSetAttempts);
 }
 
 
@@ -141,31 +141,31 @@ bool Value::isNotifyingAllSetAttempts() const {
 
 
 /**
- * Returns the type description of the Value.
+ * Returns the type typeName of the Value.
  *
- * @return the description.
+ * @return the typeName.
  */
-QString Value::getDescription() const {
-	return mDescription;
+QString Value::getTypeName() const {
+	return mTypeName;
 }
 
 
 /**
- * Sets the description of the value type, like Integer, Double, etc.
+ * Sets the typeName of the value type, like Integer, Double, etc.
  *
- * @param description the value type description.
+ * @param typeName the value type typeName.
  */
+void Value::setTypeName(const QString &typeName) {
+	mTypeName = typeName;
+}
+
 void Value::setDescription(const QString &description) {
-	mDescription = description;
-}
-
-void Value::setDocumentation(const QString &documentation) {
-    mDocumentation = documentation;
+    mDescription = description;
 }
 
 
-QString Value::getDocumentation() const {
-    return mDocumentation;
+QString Value::getDescription() const {
+    return mDescription;
 }
 
 
@@ -295,11 +295,11 @@ void Value::notifyValueChanged() {
 
 
 /**
- * By default this method returns the same as getDescription().
+ * By default this method returns the same as getTypeName().
  * Subclasses may overwrite this method.
  */
 QString Value::getName() const {
-	return mDescription;
+	return mTypeName;
 }
 
 
@@ -335,7 +335,7 @@ bool Value::equals(const Value *value) const {
 	if(mNotifyAllSetAttempts != value->mNotifyAllSetAttempts) {
 		return false;
 	}
-	if(mDescription != value->mDescription) {
+	if(mTypeName != value->mTypeName) {
 		return false;
 	}
 	if(getName() != value->getName()) {

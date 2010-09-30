@@ -54,14 +54,14 @@ namespace nerd {
 InterfaceValue::InterfaceValue(const QString &prefix, const QString &name) 
 	: NormalizedDoubleValue(), mInterfaceName(name), mPrefix(prefix)
 {
-	setDescription("Interface");
+	setTypeName("Interface");
 }
 
 InterfaceValue::InterfaceValue(const QString &prefix, const QString &name, 
 							   double value, double min, double max)
 	: NormalizedDoubleValue(value, min, max), mInterfaceName(name), mPrefix(prefix)
 {
-	setDescription("Interface");
+	setTypeName("Interface");
 }
 
 InterfaceValue::InterfaceValue(const QString &prefix, const QString &name, 
@@ -70,7 +70,7 @@ InterfaceValue::InterfaceValue(const QString &prefix, const QString &name,
 	: NormalizedDoubleValue(value, min, max, normalizedMin, normalizedMax), 
 	  mInterfaceName(name), mPrefix(prefix)
 {
-	setDescription("Interface");
+	setTypeName("Interface");
 }
 
 InterfaceValue::InterfaceValue(const InterfaceValue &value)

@@ -75,6 +75,7 @@ CreateNetworkOperator::CreateNetworkOperator(const QString &name)
 	mActivationFunctionName = new StringValue("ASeries");
 	mSynapseFunctionName = new StringValue("ASeries");
 	mInitialNetworkXML = new StringValue("");
+	mInitialNetworkXML->useAsFileName(true);
 	mPreserveInitialNetworks = new BoolValue(true);
 
 	addParameter("InputNeurons", mNumberOfInputNeurons);

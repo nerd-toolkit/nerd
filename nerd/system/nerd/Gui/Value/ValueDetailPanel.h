@@ -66,7 +66,7 @@ namespace nerd {
 	 * This Widget allows the visualization of value properties of one or more values.
 	 * One or more values can be selected by a search pattern and/or a ComboBox and
 	 * added to a scrollable subwidget.
-	 * The subwidget shows the value with its properties "names", "description",
+	 * The subwidget shows the value with its properties "names", "typeName",
 	 * "currentValue", "valueChangedListeners" and "isNotifyingAllSetAttempts".
 	 * The values can be removed from the subwidget seperately or all at once by
 	 * PushButtons. Another PushButton allows the update of the displayed data.

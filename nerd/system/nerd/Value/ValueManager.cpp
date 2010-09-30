@@ -745,7 +745,7 @@ bool ValueManager::addPrototype(Value *prototype) {
 		return false;
 	}
 	for(int i = 0; i < mPrototypes.size(); i++) {
-		if(prototype->getDescription().compare(mPrototypes.at(i)->getDescription()) == 0) {
+		if(prototype->getTypeName().compare(mPrototypes.at(i)->getTypeName()) == 0) {
 			return false;
 		}
 	}
@@ -765,15 +765,15 @@ const QList<Value*>& ValueManager::getPrototypes() const {
 
 
 /**
- * Creates a copy of a prototype given its type description (e.g. Integer, Boolean).
+ * Creates a copy of a prototype given its type name (e.g. Integer, Boolean).
  *
- * @param typeDescription the type description of the desired value type.
+ * @param typeName the type name of the desired value type.
  * @return a copy of the corresponding prototype or NULL if no such prototype could be found.
  */
-Value* ValueManager::createCopyOfPrototype(const QString &typeDescription) const {
+Value* ValueManager::createCopyOfPrototype(const QString &typeName) const {
 	for(QListIterator<Value*> i(mPrototypes); i.hasNext();) {
 		Value *value = i.next();
-		if(value->getDescription() == typeDescription) {
+		if(value->getTypeName() == typeName) {
 			return value->createCopy();
 		}
 	}
