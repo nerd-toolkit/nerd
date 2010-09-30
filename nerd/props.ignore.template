@@ -1,0 +1,14 @@
+moc_*
+Makefile
+CMakeFiles
+*.cmake
+*.cbp
+config
+*.onn
+*.xml
+*.val
+CMakeCache.txt
+*.kdevelop.filelist
+*.kdevses
+*.kdevelop
+
