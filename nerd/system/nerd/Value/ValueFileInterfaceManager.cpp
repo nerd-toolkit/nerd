@@ -66,9 +66,12 @@ ValueFileInterfaceManager::ValueFileInterfaceManager(const QString &name,
 	  mStoreTriggerEventName(storeTriggerEventName)
 {
 	mAutoLoadValueFile = new StringValue(loadFileName);
+	mAutoLoadValueFile->useAsFileName(true);
 	mAutoStoreValueFile = new StringValue(storeFileName);
+	mAutoStoreValueFile->useAsFileName(true);
 	mAutoStoreValuePattern = new StringValue(storePattern);
 	mValueTypeFileName = new StringValue();
+	mValueTypeFileName->useAsFileName(true);
 	mEnableManager = new BoolValue(false);
 
 	addParameter("FileToLoad", mAutoLoadValueFile, true);

@@ -74,9 +74,11 @@ PictureSeriesCreator::PictureSeriesCreator()
 	mRunCreator = new BoolValue(false);
 	mFileNamePrefix = new StringValue("pic");
 	mTargetDirectory = new StringValue(Core::getInstance()->getConfigDirectoryPath() + "/picSeries");
+	mTargetDirectory->useAsFileName(true);
 	mTriggerEventName = new StringValue(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED);
 	mIterationsPerFrame = new IntValue(10);
 	mOutputFileName = new StringValue("output.avi");
+	mOutputFileName->useAsFileName(true);
 	mTryVideoCreation = new BoolValue(true);
 	mFramePerSecond = new IntValue(10);
 	mVideoCreationCommand = new StringValue("");

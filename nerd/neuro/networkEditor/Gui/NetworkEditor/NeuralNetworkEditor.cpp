@@ -123,6 +123,7 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 
 	mAutoSaveNetworkDirectory = new StringValue(
 			Core::getInstance()->getConfigDirectoryPath() + "/autoSave");
+	mAutoSaveNetworkDirectory->useAsFileName(true);
 	vm->addValue("/NetworkEditor/AutoSaveNetwork/Directory", mAutoSaveNetworkDirectory);
 
 	mAutoSaveNetworkTimerSeconds = new IntValue(30);

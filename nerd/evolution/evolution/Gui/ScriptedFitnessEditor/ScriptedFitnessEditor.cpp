@@ -127,6 +127,7 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 	mFitnessCode = vm->getStringValue(fitnessFunctionName + "/Code");
 	mErrorValue = vm->getStringValue(fitnessFunctionName + "/Config/ErrorState");
 	mCurrentFileName = vm->getStringValue(fitnessFunctionName + "/FileName");
+	mCurrentFileName->useAsFileName(true);
 	mCalculationModeValue = vm->getIntValue(fitnessFunctionName + "/Fitness/CalculationMode");
 
 	if(mFitnessCode == 0) {

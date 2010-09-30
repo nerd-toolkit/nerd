@@ -120,6 +120,7 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const ScriptedFitnessFunction &
 	mScriptCode = dynamic_cast<StringValue*>(getParameter("Code"));
 	mScriptCode->addValueChangedListener(this);
 	mScriptFileName = dynamic_cast<StringValue*>(getParameter("FileName"));
+	mScriptFileName->useAsFileName(true);
 }
 
 /**

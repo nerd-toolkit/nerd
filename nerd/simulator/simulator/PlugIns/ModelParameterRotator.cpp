@@ -71,6 +71,7 @@ ModelParameterRotator::ModelParameterRotator()
 	mEnableRotation = new BoolValue(false);
 	mParameterDirectory = new StringValue(Core::getInstance()->getConfigDirectoryPath() + "/"
 											+ "modelParameters");
+	mParameterDirectory->useAsFileName(true);
 	mCurrentSet = new StringValue();
 	mReloadParameterSets = new BoolValue(true);
 

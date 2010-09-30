@@ -86,6 +86,7 @@ SimpleObjectFileParser::SimpleObjectFileParser()
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/Physics/XmlEnvironmentFileToLoad", mXMLFileName);
 	mXMLFileName->addValueChangedListener(this);
+	mXMLFileName->useAsFileName(true);
 	
 }
 

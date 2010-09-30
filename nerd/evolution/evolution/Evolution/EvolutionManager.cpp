@@ -85,6 +85,7 @@ EvolutionManager::EvolutionManager()
 		QDir::currentPath().append("/")
 			.append(QDate::currentDate().toString("yyMMdd")).append("_")
 			.append(QTime::currentTime().toString("hhmmss")).append("/"));
+	mEvolutionWorkingDirectory->useAsFileName(true);
 	mEvoIndividualsCompletedCounter = new IntValue(0);
 	mEvalIndividualsCompletedCounter = new IntValue(0);
 

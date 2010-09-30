@@ -79,6 +79,7 @@ bool SettingsLogger::bind() {
 
 	mWorkingDirectory = vm->getStringValue(
 				EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY);
+	mWorkingDirectory->useAsFileName(true);
 	mCurrentGeneration = vm->getIntValue(
 				EvolutionConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
 

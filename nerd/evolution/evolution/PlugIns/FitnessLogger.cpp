@@ -63,6 +63,7 @@ FitnessLogger::FitnessLogger() : ParameterizedObject("FitnessLogger"), mFileName
 	Core::getInstance()->addSystemObject(this);
 	mMaxRetries = 10;
 	mFileName = new StringValue("");
+	mFileName->useAsFileName(true);
 	mIsLogging = new BoolValue(false);
 	addParameter("/FitnessLogger/FileName", mFileName, true);
 	addParameter("/FitnessLogger/IsLogging", mIsLogging, true);

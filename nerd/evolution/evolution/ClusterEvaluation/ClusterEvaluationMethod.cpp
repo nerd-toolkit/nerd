@@ -99,6 +99,7 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 			.append(EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY)
 			.append("] could not be found."));
 	}
+	mWorkingDir->useAsFileName(true);
 
 	mNextTry = mCore->getEventManager()->createEvent(NerdConstants::
 		EVENT_EXECUTION_NEXT_TRY);
@@ -148,8 +149,11 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 
 	mQsubPriority = new IntValue(0);
 	mJobScriptName = new StringValue("evalJob");
+	mJobScriptName->useAsFileName(true);
 	mQSubScriptName = new StringValue(qsubDirName + "qsubCaller.sh");
+	mQSubScriptName->useAsFileName(true);
 	mConfigFileName = new StringValue("config.val");
+	mConfigFileName->useAsFileName(true);
 	mNumberOfRetries = new IntValue(5);
 	mStatusMessageValue = new StringValue("");
 	mZipGenerations = new BoolValue(false);

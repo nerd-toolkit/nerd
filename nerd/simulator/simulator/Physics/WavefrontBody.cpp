@@ -62,6 +62,7 @@ WavefrontBody::WavefrontBody(const QString &name, const QString& filename, doubl
 {
 	mScale = new DoubleValue(scale);
 	mFilename = new StringValue(filename);
+	mFilename->useAsFileName(true);
 	mReferenceObjectName = new StringValue("");
 	mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
 	mLocalOrientation = new Vector3DValue(0.0, 0.0, 0.0);

@@ -78,6 +78,7 @@ ScriptingContext::ScriptingContext(const QString &name)
 	mScriptFileName = new StringValue("");
 	mScriptFileName->addValueChangedListener(this);
 	mScriptFileName->setNotifyAllSetAttempts(true);
+	mScriptFileName->useAsFileName(true);
 }
 
 
@@ -95,6 +96,7 @@ ScriptingContext::ScriptingContext(const ScriptingContext &other)
 	mScriptFileName = new StringValue("");
 	mScriptFileName->addValueChangedListener(this);
 	mScriptFileName->setNotifyAllSetAttempts(true);
+	mScriptFileName->useAsFileName(true);
 }
 
 /**

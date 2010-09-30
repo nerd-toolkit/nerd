@@ -71,6 +71,7 @@ KeyFramePlayer::KeyFramePlayer(const QString &groupName)
 			mKeyFrameFileToLoad);
 
 	mKeyFrameFileToLoad->addValueChangedListener(this);
+	mKeyFrameFileToLoad->useAsFileName(true);
 }
 
 KeyFramePlayer::~KeyFramePlayer() {

@@ -85,6 +85,7 @@ StatisticsLogger::StatisticsLogger(StringValue *loggerPathValue)
 	if(mLoggerPathValue != 0) {
 		setLoggerPath(loggerPathValue->get());
 		mLoggerPathValue->addValueChangedListener(this);
+		mLoggerPathValue->useAsFileName(true);
 	}
 
 	Core::getInstance()->addSystemObject(this);

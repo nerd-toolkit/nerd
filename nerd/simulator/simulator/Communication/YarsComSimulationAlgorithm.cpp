@@ -97,6 +97,7 @@ YarsComSimulationAlgorithm::YarsComSimulationAlgorithm()
 	mSocket = 0;
 	mEnvironmentXML = new StringValue("");
 	mEnvironmentXML->setNotifyAllSetAttempts(true);
+	mEnvironmentXML->useAsFileName(true);
 	mRobotStates = _STANDARD_ROBOT_STATE_ABORT;
 
 	addParameter("Yars/ConnectToYars", mConnectToYars);
