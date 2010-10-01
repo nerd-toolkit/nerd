@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 2.6)
+
+add_subdirectory(NetworkDynamicsDiagramPlotterLib)
+add_subdirectory(NetworkDynamicsDiagramPlotterApplication)
+
+add_dependencies(NetworkDynamicsDiagramPlotterApplication nerd evolution neuralNetwork networkEditor NetworkDynamicsDiagramPlotterLib)
+add_dependencies(NetworkDynamicsDiagramPlotterLib nerd evolution neuralNetwork networkEditor)
