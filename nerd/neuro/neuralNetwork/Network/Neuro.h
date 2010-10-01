@@ -60,7 +60,8 @@ namespace nerd {
 		static bool install();
 		static NeuralNetworkManager* getNeuralNetworkManager();
 		
-	private:		
+	private:
+		static NeuralNetworkManager *mGlobalManager;
 	};
 
 }

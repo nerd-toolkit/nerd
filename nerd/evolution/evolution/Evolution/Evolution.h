@@ -58,7 +58,8 @@ namespace nerd {
 		static bool install();
 		static EvolutionManager* getEvolutionManager();
 		
-	private:		
+	private:
+		static EvolutionManager *mGlobalEvolutionManager;
 	};
 
 }

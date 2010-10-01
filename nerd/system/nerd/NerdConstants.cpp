@@ -60,12 +60,18 @@ const QString NerdConstants::NERD_CONFIG_DIRECTORY
 const QString NerdConstants::OBJECT_STATISTICS_MANAGER
 		= "StatisticsManager";
 
+const QString NerdConstants::OBJECT_GUI_MANAGER
+		= "GuiManager";
+
 //**************************************************************************
 //GUI Element Names
 //**************************************************************************
 
 const QString NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE
 		= "Select file ...";
+
+const QString NerdConstants::GUI_MAIN_SIMULATION_WINDOW
+		= "MainSimulationWindow";
 
 //**************************************************************************
 //Value names

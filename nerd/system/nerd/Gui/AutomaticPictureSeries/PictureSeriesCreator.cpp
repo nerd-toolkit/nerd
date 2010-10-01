@@ -57,6 +57,9 @@
 #include <QProcess>
 #include <QStringList>
 #include <QDir>
+#include "Gui/GuiManager.h"
+#include <QCoreApplication>
+#include "Value/ChangeValueTask.h"
 
 using namespace std;
 
@@ -68,7 +71,7 @@ namespace nerd {
  */
 PictureSeriesCreator::PictureSeriesCreator()
 	: mTriggerEvent(0), mPictureCounter(0), mScreenshotInProgress(false), mCurrentIteration(0),
-		mCurrentWorkingDirectory("")
+		mCurrentWorkingDirectory(""), mFirstFrame(false)
 {
 	mScreenShotDelay = new IntValue(100);
 	mRunCreator = new BoolValue(false);
@@ -130,8 +133,8 @@ bool PictureSeriesCreator::init() {
 bool PictureSeriesCreator::bind() {
 	bool ok = true;
 
-	
-
+	mShutDownEvent = Core::getInstance()->getShutDownEvent();
+	mShutDownEvent->addEventListener(this);
 
 	return ok;
 }
@@ -175,10 +178,20 @@ void PictureSeriesCreator::eventOccured(Event *event) {
 			}
 		}
 	}
+	else if(event == mShutDownEvent) {
+		if(mRunCreator->get()) {
+			//make sure that the video is completed before shutdown.
+			deactivate();
+		}
+	}
 }
 
 void PictureSeriesCreator::createScreenshot() {
-	
+
+	if(mFirstFrame) {
+		guessMainSimulationWindowRectangle();
+		mFirstFrame = false;
+	}
 
 	QPixmap originalPixmap = QPixmap::grabWindow(QApplication::desktop()->winId());
 
@@ -205,32 +218,17 @@ void PictureSeriesCreator::activate() {
 	if(mTriggerEvent != 0) {
 		mTriggerEvent->removeEventListener(this);
 	}
-	
+
+	mCurrentWorkingDirectory = mTargetDirectory->get();
+
+	mFirstFrame = true;
+
 	EventManager *em = Core::getInstance()->getEventManager();
 	mTriggerEvent = em->registerForEvent(mTriggerEventName->get(), this);
 
 	if(mTriggerEvent == 0) {
 		Core::log("PictureSeriesCreator: Warning, could not switch to trigger event ["
 					+ mTriggerEventName->get() + "]");
-	}
-
-	mCurrentWorkingDirectory = mTargetDirectory->get();
-
-	//determine recording rectangle
-	mCurrentRecordingRectangle = QRect();
-	if(mRecordingRectangle->get() != 0) {
-		QString rectangleString = mRecordingRectangle->get();
-		if(rectangleString.startsWith("(") && rectangleString.endsWith(")")) {
-			QStringList coords = rectangleString.mid(1, rectangleString.size() - 2).split(",");
-			if(coords.size() == 4) {
-				double x1 = coords[0].toDouble();
-				double y1 = coords[1].toDouble();
-				double x2 = coords[2].toDouble();
-				double y2 = coords[3].toDouble();
-
-				mCurrentRecordingRectangle = QRect(QPoint(x1, y1), QPoint(x2, y2));
-			}
-		}
 	}
 }
 
@@ -303,6 +301,49 @@ void PictureSeriesCreator::deactivate() {
 		}
 	}
 }
+
+
+void PictureSeriesCreator::guessMainSimulationWindowRectangle() {
+
+	mCurrentRecordingRectangle = QRect();
+	QString rectangleString = mRecordingRectangle->get().trimmed();
+
+	if(rectangleString == "") {
+		QWidget *mainSimulationWidget = GuiManager::getGlobalGuiManager()
+					->getWidget(NerdConstants::GUI_MAIN_SIMULATION_WINDOW);
+		
+		if(mainSimulationWidget != 0 && mainSimulationWidget->isWindow()) {
+			if(!(mainSimulationWidget->isHidden() || !mainSimulationWidget->isVisible())) {
+				mCurrentRecordingRectangle = mainSimulationWidget->frameGeometry();
+		
+				Core::getInstance()->scheduleTask(new ChangeValueTask(mRecordingRectangle, 
+						QString("(" )
+							+ QString::number(mCurrentRecordingRectangle.x()) + ","
+							+ QString::number(mCurrentRecordingRectangle.y()) + ","
+							+ QString::number(mCurrentRecordingRectangle.bottomRight().x()) + ","
+							+ QString::number(mCurrentRecordingRectangle.bottomRight().y()) + ")"));
+			}
+		}
+	}
+
+	//determine recording rectangle
+	if(rectangleString != "") {
+		QString rectangleString = mRecordingRectangle->get();
+		if(rectangleString.startsWith("(") && rectangleString.endsWith(")")) {
+			QStringList coords = rectangleString.mid(1, rectangleString.size() - 2).split(",");
+			if(coords.size() == 4) {
+				double x1 = coords[0].toDouble();
+				double y1 = coords[1].toDouble();
+				double x2 = coords[2].toDouble();
+				double y2 = coords[3].toDouble();
+
+				mCurrentRecordingRectangle = QRect(QPoint(x1, y1), QPoint(x2, y2));
+			}
+		}
+	}
+
+}
+
 
 
 }

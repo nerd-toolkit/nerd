@@ -89,6 +89,7 @@ namespace nerd {
 	protected:
 		void activate();
 		void deactivate();
+		void guessMainSimulationWindowRectangle();
 
 	private:
 		IntValue *mScreenShotDelay;
@@ -110,6 +111,8 @@ namespace nerd {
 		int mCurrentIteration;
 		QString mCurrentWorkingDirectory;
 		QRect mCurrentRecordingRectangle;
+		bool mFirstFrame;
+		Event *mShutDownEvent;
 	};
 
 }

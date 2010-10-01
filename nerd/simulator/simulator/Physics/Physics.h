@@ -62,6 +62,10 @@ class Physics {
 	
 		static void translateSimObjects(QList<SimObject*> simObjects, Vector3D offset);
 		static void rotateSimObjects(QList<SimObject*> simObjects, Vector3D orientationOffset);
+	private:
+		static PhysicsManager *mGlobalPhysicsManager;
+		static CollisionManager *mGlobalCollisionMananger;
+		static SimulationEnvironmentManager *mGlobalSimulationEnvironmentManager;
 	};
 
 }

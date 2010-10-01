@@ -48,6 +48,8 @@
 
 namespace nerd {
 
+NeuralNetworkManager *Neuro::mGlobalManager = 0;
+
 Neuro::Neuro()
 {
 }
@@ -63,27 +65,24 @@ bool Neuro::install() {
 			->getGlobalObject(NeuralNetworkConstants::OBJECT_NEURAL_NETWORK_MANAGER));
 	if(nm == 0) {
 		nm = new NeuralNetworkManager();
-		core->addGlobalObject(NeuralNetworkConstants::OBJECT_NEURAL_NETWORK_MANAGER, nm);
+		if(!core->addGlobalObject(NeuralNetworkConstants::OBJECT_NEURAL_NETWORK_MANAGER, nm)) {
+			ok = false;
+		}
 	}
-	else if(dynamic_cast<NeuralNetworkManager*>(nm) == 0) {
-		Core::log(QString("Neuro::install() : There was a global object named [")
-				.append(NeuralNetworkConstants::OBJECT_NEURAL_NETWORK_MANAGER)
-				.append("] which is not a subclass of NeuralNetworkManager!"));
-		ok = false;
-	}
+	mGlobalManager = nm;
 	return ok;
 }
 
 
 NeuralNetworkManager* Neuro::getNeuralNetworkManager() {
-	NeuralNetworkManager *nm = dynamic_cast<NeuralNetworkManager*>(Core::getInstance()
-			->getGlobalObject(NeuralNetworkConstants::OBJECT_NEURAL_NETWORK_MANAGER));
-	if(nm == 0) {
-		Neuro::install();
-		nm = dynamic_cast<NeuralNetworkManager*>(Core::getInstance()
-			->getGlobalObject(NeuralNetworkConstants::OBJECT_NEURAL_NETWORK_MANAGER));
+	if(mGlobalManager == 0) {
+		NeuralNetworkManager *nm = dynamic_cast<NeuralNetworkManager*>(Core::getInstance()
+				->getGlobalObject(NeuralNetworkConstants::OBJECT_NEURAL_NETWORK_MANAGER));
+		if(nm == 0) {
+			Neuro::install();
+		}
 	}
-	return nm;
+	return mGlobalManager;
 }
 
 

@@ -60,6 +60,7 @@
 #include "SimulationConstants.h"
 #include "Gui/Control/NextStepTriggerAction.h"
 #include "Util/SetSnapshotValueTask.h"
+#include "Gui/GuiManager.h"
 
 
 using namespace std;
@@ -75,6 +76,8 @@ GuiMainWindow::GuiMainWindow(bool simulationIsControllable, bool enableDebugging
 	  mMotorControlGui(0), mParameterLists(0), mShutDownTriggered(false),
 	  mWindowToggleState(true)
 {
+	GuiManager::getGlobalGuiManager()->addWidget(NerdConstants::GUI_MAIN_SIMULATION_WINDOW, this);
+
 	setup(simulationIsControllable, enableDebugging);
 }
 

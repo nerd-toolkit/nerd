@@ -89,6 +89,7 @@ set(nerd_nerd_SRCS
 	Script/UniversalScriptingContext.cpp  
 	NerdConstants.cpp  
 	Util/NerdFileSelector.cpp
+	Gui/GuiManager.cpp
 )
 
 set(nerd_nerd_MOC_HDRS

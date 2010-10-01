@@ -47,6 +47,8 @@
 
 namespace nerd {
 
+EvolutionManager* Evolution::mGlobalEvolutionManager = 0;
+
 bool Evolution::install() {
 	bool ok = true;
 
@@ -54,27 +56,24 @@ bool Evolution::install() {
 			->getGlobalObject(EvolutionConstants::OBJECT_EVOLUTION_MANAGER));
 	if(em == 0) {
 		em = new EvolutionManager();
-		em->registerAsGlobalObject();
+		if(!em->registerAsGlobalObject()) {
+			ok = false;
+		}
 	}
-	else if(dynamic_cast<EvolutionManager*>(em) == 0) {
-		Core::log(QString("Evolution::install() : There was a global object named [")
-				.append(EvolutionConstants::OBJECT_EVOLUTION_MANAGER)
-				.append("] which is not a subclass of EvolutionManager!"));
-		ok = false;
-	}
+	mGlobalEvolutionManager = em;
 	return ok;
 }
 
 
 EvolutionManager* Evolution::getEvolutionManager() {
-	EvolutionManager *em = dynamic_cast<EvolutionManager*>(Core::getInstance()
-			->getGlobalObject(EvolutionConstants::OBJECT_EVOLUTION_MANAGER));
-	if(em == 0) {
-		Evolution::install();
-		em = dynamic_cast<EvolutionManager*>(Core::getInstance()
-			->getGlobalObject(EvolutionConstants::OBJECT_EVOLUTION_MANAGER));
+	if(mGlobalEvolutionManager == 0) {
+		EvolutionManager *em = dynamic_cast<EvolutionManager*>(Core::getInstance()
+				->getGlobalObject(EvolutionConstants::OBJECT_EVOLUTION_MANAGER));
+		if(em == 0) {
+			Evolution::install();
+		}
 	}
-	return em;
+	return mGlobalEvolutionManager;
 }
 
 

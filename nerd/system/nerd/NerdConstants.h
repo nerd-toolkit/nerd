@@ -66,12 +66,14 @@ namespace nerd {
 	//**************************************************************************
 
 		static const QString OBJECT_STATISTICS_MANAGER;
+		static const QString OBJECT_GUI_MANAGER;
 
 	//**************************************************************************
 	//GUI Element Names
 	//**************************************************************************
 
 		static const QString GUI_SELECT_FILE_FOR_STRING_VALUE;
+		static const QString GUI_MAIN_SIMULATION_WINDOW;
 
 	//**************************************************************************
 	//Value Names

@@ -48,6 +48,10 @@
 
 namespace nerd {
 
+PhysicsManager *Physics::mGlobalPhysicsManager = 0;
+CollisionManager *Physics::mGlobalCollisionMananger = 0;
+SimulationEnvironmentManager *Physics::mGlobalSimulationEnvironmentManager = 0;
+
 bool Physics::install() {
 	bool ok = true;
 	Core *core = Core::getInstance();
@@ -56,73 +60,68 @@ bool Physics::install() {
 			->getGlobalObject("PhysicsManager"));
 	if(pm == 0) {
 		pm = new PhysicsManager();
-		core->addGlobalObject("PhysicsManager", pm);
+		if(!core->addGlobalObject("PhysicsManager", pm)) {
+			ok = false;
+		}
 	}
-	else if(dynamic_cast<PhysicsManager*>(pm) == 0) {
-		Core::log("Physics::install() : There was a PhysicsManager which is not a"
-				" subclass of PhysicsManager!");
-		ok = false;
-	}
+	mGlobalPhysicsManager = pm;
 
 	CollisionManager *cm = dynamic_cast<CollisionManager*>(Core::getInstance()
 			->getGlobalObject("CollisionManager"));
 	if(cm == 0) {
 		cm = new CollisionManager();
-		core->addGlobalObject("CollisionManager", cm);
+		if(!core->addGlobalObject("CollisionManager", cm)) {
+			ok = false;
+		}
 	}
-	else if(dynamic_cast<CollisionManager*>(cm) == 0) {
-		Core::log("Physics::install() : There was a CollisionManager which is not a"
-				" subclass of CollisionManager!");
-		ok = false;
-	}
+	mGlobalCollisionMananger = cm;
 
 	SimulationEnvironmentManager *sm = dynamic_cast<SimulationEnvironmentManager*>(
 		Core::getInstance()->getGlobalObject("SimulationEnvironmentManager"));
 	if(sm == 0) {
 		sm = new SimulationEnvironmentManager();
-		core->addGlobalObject("SimulationEnvironmentManager", sm);
+		if(!core->addGlobalObject("SimulationEnvironmentManager", sm)) {
+			ok = false;
+		}
 	}
-	else if(dynamic_cast<SimulationEnvironmentManager*>(sm) == 0) {
-		Core::log("Physics::install() : There was a SimulationEnvironmentManager "
-			"which is not a subclass of CollisionManager!");
-		ok = false;
-	}
+	mGlobalSimulationEnvironmentManager = sm;
+
 	return ok;
 }
 
 PhysicsManager* Physics::getPhysicsManager() {
-	PhysicsManager *pm = dynamic_cast<PhysicsManager*>(Core::getInstance()
-		->getGlobalObject("PhysicsManager"));
-	if(pm == 0) {
-		Physics::install();
-		pm = dynamic_cast<PhysicsManager*>(Core::getInstance()
+	if(mGlobalPhysicsManager == 0) {
+		PhysicsManager *pm = dynamic_cast<PhysicsManager*>(Core::getInstance()
 			->getGlobalObject("PhysicsManager"));
+		if(pm == 0) {
+			Physics::install();
+		}
 	}
-	return pm;
+	return mGlobalPhysicsManager;
 }
 
 
 CollisionManager* Physics::getCollisionManager() {
-	CollisionManager *cm = dynamic_cast<CollisionManager*>(Core::getInstance()
-		->getGlobalObject("CollisionManager"));
-	if(cm == 0) {
-		Physics::install();
-		cm = dynamic_cast<CollisionManager*>(Core::getInstance()
-		->getGlobalObject("CollisionManager"));
+	if(mGlobalCollisionMananger == 0) {
+		CollisionManager *cm = dynamic_cast<CollisionManager*>(Core::getInstance()
+			->getGlobalObject("CollisionManager"));
+		if(cm == 0) {
+			Physics::install();
+		}
 	}
-	return cm;
+	return mGlobalCollisionMananger;
 }
 
 
 SimulationEnvironmentManager* Physics::getSimulationEnvironmentManager() {
-	SimulationEnvironmentManager *em = dynamic_cast<SimulationEnvironmentManager*>(
-			Core::getInstance()->getGlobalObject("SimulationEnvironmentManager"));
-	if(em == 0) {
-		Physics::install();
-		em = dynamic_cast<SimulationEnvironmentManager*>(
-			Core::getInstance()->getGlobalObject("SimulationEnvironmentManager"));
+	if(mGlobalSimulationEnvironmentManager == 0) {
+		SimulationEnvironmentManager *em = dynamic_cast<SimulationEnvironmentManager*>(
+				Core::getInstance()->getGlobalObject("SimulationEnvironmentManager"));
+		if(em == 0) {
+			Physics::install();
+		}
 	}
-	return em;
+	return mGlobalSimulationEnvironmentManager;
 }
 
 /**
