@@ -193,17 +193,22 @@ void ParameterVisualizationWindow::saveCurrentParameters(
 	output << "#Saved at: " << QDate::currentDate().toString("dd.MM.yyyy")
 					<< "  " << QTime::currentTime().toString("hh:mm:ss") << "\n";
 
-	for(QMap<QString, ParameterVisualization*>::iterator i = mValues.begin(); i != mValues.end(); ++i) {
-		QString valueName = i.key();
-		ParameterVisualization *visu = i.value();
+	
 
+
+	//for(QMap<QString, ParameterVisualization*>::iterator i = mValues.begin(); i != mValues.end(); ++i) {
+	//	QString valueName = i.key();
+	//	ParameterVisualization *visu = i.value();
+	for(int i = 0; i < mListLayout->count(); ++i) {
+		ParameterVisualization *visu = dynamic_cast<ParameterVisualization*>(mListLayout->itemAt(i)->widget());
+		
 		if(saveValueContent) {
-			Value *value = i.value()->getValue();
-			output << valueName << "=" << value->getValueAsString() << "\n";
+			Value *value = visu->getValue();
+			output << visu->getValueName() << "=" << value->getValueAsString() << "\n";
 		}
 		else {
-			QString valueContent = i.value()->getCurrentValue();
-			output << valueName << "=" << valueContent << "\n";
+			QString valueContent = visu->getCurrentValue();
+			output << visu->getValueName() << "=" << valueContent << "\n";
 		}
 		QList<QString> options = visu->getOptions();
         for(QListIterator<QString> o(options); o.hasNext();) {
@@ -494,6 +499,35 @@ void ParameterVisualizationWindow::loadSettings() {
 }
 
 
+void ParameterVisualizationWindow::moveParameterVisualization(ParameterVisualization *visu, bool up) {
+	if(visu == 0) {
+		return;
+	}
+
+	int currentIndex = 0;
+	for(; currentIndex < mListLayout->count(); ++currentIndex) {
+		if(mListLayout->itemAt(currentIndex)->widget() == visu) {
+			break;
+		}
+	}
+
+	if(up && currentIndex == 0) {
+		return;
+	}
+	if(!up && currentIndex >= (mListLayout->count() - 1)) {
+		return;
+	}
+	if(up) {
+		QLayoutItem *item = mListLayout->takeAt(currentIndex);
+		mListLayout->insertWidget(currentIndex - 1, item->widget());
+	}
+	else {
+		QLayoutItem *item = mListLayout->takeAt(currentIndex);
+		mListLayout->insertWidget(currentIndex + 1, item->widget());
+	}
+}
+
+
 void ParameterVisualizationWindow::showEvent(QShowEvent*) {
 	//Ensure that the comboBox is initially filled with the current parameter names.
 
@@ -659,6 +693,8 @@ ParameterVisualization* ParameterVisualizationWindow::showSelectedValue(const QS
 	//can occure between the deletion of the object and its method executions.
 	connect(newVis, SIGNAL(destroyThis(QString)),
 				this, SLOT(deleteValueFromList(QString)), Qt::QueuedConnection);
+	connect(newVis, SIGNAL(move(ParameterVisualization*, bool)),
+				this, SLOT(moveParameterVisualization(ParameterVisualization*, bool)));
 
     return newVis;
 }

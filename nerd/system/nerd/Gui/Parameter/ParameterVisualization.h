@@ -97,10 +97,13 @@ class ParameterVisualization : public QFrame, public virtual ValueChangedListene
 		void changeValue();
 		void setDoUpdateValue(int doUpdate);
 		void updateValueInEnvironmentManager();
+		void moveWidgetUp();
+		void moveWidgetDown();
 
 	signals:
 		void lineEditTextChanged(QString newText);
 		void destroyThis(QString valueName);
+		void move(ParameterVisualization *visu, bool up);
 
 	private slots:
 		void destroy();
@@ -117,6 +120,8 @@ class ParameterVisualization : public QFrame, public virtual ValueChangedListene
 		QLabel *mNameLabel;
 		QPushButton *mCloseButton;
 		QPushButton *mUpdateSnapshotButton;
+		QPushButton *mMoveUpButton;
+		QPushButton *mMoveDownButton;
 		QCheckBox *mUpdateValue;
 		bool mDoUpdateValue;
 		bool mValueModified;

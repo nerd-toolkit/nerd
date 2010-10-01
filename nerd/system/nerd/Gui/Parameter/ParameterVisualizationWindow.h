@@ -128,6 +128,7 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 		void updateLoggerButton(bool loggerActive);
 		void saveSettings();
 		void loadSettings();
+		void moveParameterVisualization(ParameterVisualization *visu, bool up);
 
 	protected:
 		virtual void showEvent(QShowEvent *event);

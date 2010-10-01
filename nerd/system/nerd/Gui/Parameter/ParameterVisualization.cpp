@@ -116,8 +116,12 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 
 	mValueField = mValueBox->lineEdit();
 	mCloseButton = new QPushButton("x");
-
 	mCloseButton->setWhatsThis("Remove this property from the list");
+
+	mMoveUpButton = new QPushButton();
+	mMoveUpButton->setWhatsThis("Moves this property up in the list");
+	mMoveDownButton = new QPushButton();
+	mMoveDownButton->setWhatsThis("Moves this property down in the list");
 
 	if(mValue != 0) {
         mNameLabel->setWhatsThis(mValue->getDescription());
@@ -146,6 +150,10 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 			this, SLOT(markAsValueUpdated()));
 	connect(mUpdateValue, SIGNAL(stateChanged(int)),
 			this, SLOT(setDoUpdateValue(int)));
+	connect(mMoveUpButton, SIGNAL(pressed()),
+			this, SLOT(moveWidgetUp()));
+	connect(mMoveDownButton, SIGNAL(pressed()),
+			this, SLOT(moveWidgetDown()));
 
 	lineEditTextChanged(mValue->getValueAsString());
 	mUpdateValue->setCheckState(Qt::Checked);
@@ -159,18 +167,27 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	QHBoxLayout *mFrameLayout = new QHBoxLayout();
 	layout->addLayout(mFrameLayout);
 
+	QVBoxLayout *moveLayout = new QVBoxLayout();
+	moveLayout->setContentsMargins(0, 0, 0, 0);
+	moveLayout->setSpacing(0);
+	//moveLayout->addStretch(1000);
+	moveLayout->addWidget(mMoveUpButton);
+	moveLayout->addWidget(mMoveDownButton);
+
 	mFrameLayout->setMargin(1);
 	mFrameLayout->addWidget(mUpdateValue);
-	//mFrameLayout->addWidget(mValueField);
 	mFrameLayout->addWidget(mValueBox);
 	if(mSetInitValueTaskPrototype != 0 && name.startsWith("/Sim/")) {
 		mFrameLayout->addWidget(mUpdateSnapshotButton);
 	}
 	mFrameLayout->addStretch(1000);
+	mFrameLayout->addLayout(moveLayout);
 	mFrameLayout->addWidget(mCloseButton);
 
 	mUpdateSnapshotButton->setFixedWidth(60);
 	mCloseButton->setFixedWidth(20);
+	mMoveUpButton->setFixedSize(15,13);
+	mMoveDownButton->setFixedSize(15,13);
 	mValueBox->setFixedWidth(260);
 
 	setFrameStyle(QFrame::Panel | QFrame::Plain);
@@ -230,6 +247,15 @@ void ParameterVisualization::updateValueInEnvironmentManager() {
 
 }
 
+
+void ParameterVisualization::moveWidgetUp() {
+	emit move(this, true);
+}
+
+
+void ParameterVisualization::moveWidgetDown() {
+	emit move(this, false);
+}
 
 
 

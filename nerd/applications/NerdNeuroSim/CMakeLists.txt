@@ -69,7 +69,7 @@ TARGET_LINK_LIBRARIES(NerdNeuroSim
 if(WIN32)
 elseif(UNIX)
 TARGET_LINK_LIBRARIES(NerdNeuroSim
-	libGLU.a
+	-lGLU
 )
 endif(WIN32)
 

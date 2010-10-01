@@ -70,7 +70,7 @@ TARGET_LINK_LIBRARIES(NerdNeuroEvo
 if(WIN32)
 elseif(UNIX)
 TARGET_LINK_LIBRARIES(NerdNeuroEvo
-	libGLU.a
+	-lGLU
 )
 endif(WIN32)
 
