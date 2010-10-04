@@ -63,11 +63,28 @@ const QString NeuralNetworkBDNExporter::STANDARD_POSITION_PROPERTY_NAME = "SPINA
 // Postfix of bytecodemappings for functions which can be flipped
 const QString NeuralNetworkBDNExporter::FLIP_TYPE = "_FLIP";
 
+// Flag which gets replaced in the byte code mappings by the execution position value
+const QString NeuralNetworkBDNExporter::BYTECODE_POS_FLAG = "<$POS>";
+
+// Flag which gets replaced in the byte code mappings of mirror neurons with the minimum value
+// the input 
+const QString NeuralNetworkBDNExporter::BYTECODE_MIN_FLAG = "<$MIN>";
+
+// Flag which gets replaced in the byte code mappings of mirror neurons with the maximum value
+// the input 
+const QString NeuralNetworkBDNExporter::BYTECODE_MAX_FLAG = "<$MAX>";
+		
 // Name of the neurontype which is used as input neuron mirror
 const QString NeuralNetworkBDNExporter::INPUT_MIRROR_GUID = "InputMirror";
 
 // Bytecode of the neurontype which is used as input neuron mirror
-const QString NeuralNetworkBDNExporter::INPUT_MIRROR_BYTE_CODE = "300:\nwrite Output, Input";
+const QString NeuralNetworkBDNExporter::INPUT_MIRROR_BYTE_CODE = QString::number(BDN_MIN_EXECUTION_POS + 1) + ":\nwrite Output, Input";
+
+// Name of the neurontype which is used as input neuron mirror
+const QString NeuralNetworkBDNExporter::INPUT_MIRROR_FLIP_GUID = "InputMirror" + FLIP_TYPE;
+
+const QString NeuralNetworkBDNExporter::INPUT_MIRROR_FLIP_BYTE_CODE =
+		QString::number(BDN_MIN_EXECUTION_POS + 1) + ":\nLOAD V1, -1.0\nMUL V0, Input, V1\nwrite Output, V0";
 
 // Length of the drawing area of the braindesigner in x direction.
 // Exported network get scaled to this maximum.
@@ -80,6 +97,12 @@ const int NeuralNetworkBDNExporter::BDN_DRAWING_AREA_Y_LENGTH = 4000;
 // distance for additional neurons in the BDN network to the base neuron
 const int NeuralNetworkBDNExporter::ADDITIONAL_BDN_NEURON_DISTANCE = 50;
 
+// minimal execution position for the byte code modules
+const int NeuralNetworkBDNExporter::BDN_MIN_EXECUTION_POS = 101;
+
+// maximal execution position for the byte code modules
+const int NeuralNetworkBDNExporter::BDN_MAX_EXECUTION_POS = 300;
+
 
 NeuralNetworkBDNExporter::NeuralNetworkBDNExporter(QString standardBiasSynapseType, QString robotType, QMap<QString, QString> byteCodeMapping)
 {
@@ -89,6 +112,8 @@ NeuralNetworkBDNExporter::NeuralNetworkBDNExporter(QString standardBiasSynapseTy
 	
 	m_extraSpinalCordMapping = QMap<QString, QString>();
 	m_xmlIdTable = QHash<NeuralNetworkElement*, int>();
+	m_executionPositionTable = QHash<NeuralNetworkElement*, int>();
+	m_byteCodeModulPositions = QMap<QString, QList<QString> >();
 	m_BDNNeuronInfoList 	= QList<BDNNeuronInfo*>();
 	m_BDNSynapseInfoList 	= QList<BDNSynapseInfo*>();
 	m_nextXmlId = 0;
@@ -102,12 +127,15 @@ NeuralNetworkBDNExporter::~NeuralNetworkBDNExporter()
 {
 	m_extraSpinalCordMapping.clear();
 	m_byteCodeMapping.clear();
+	
 	deleteWorkingVariables();
 }
 
 void NeuralNetworkBDNExporter::deleteWorkingVariables()
 {
 	m_xmlIdTable.clear();
+	m_executionPositionTable.clear();
+	m_byteCodeModulPositions.clear();
 	
 	QListIterator<BDNNeuronInfo*> BDNNeuronInfoIt(m_BDNNeuronInfoList);
 	while(BDNNeuronInfoIt.hasNext()) {
@@ -249,7 +277,10 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 	ok &= updateXmlIdTable(net, errorMsg);
 	if(ok == false){return QString::null;}
 	
-	ok &= calNeuronPositionValues(net, errorMsg);
+	ok &= calcNeuronPositionValues(net, errorMsg);
+	if(ok == false){return QString::null;}
+	
+	ok &= calcExecutionPositions(net, errorMsg);
 	if(ok == false){return QString::null;}
 	
 	//////////////////////////////////////////////////////////////////////
@@ -287,7 +318,7 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 	xmlRoot.setAttribute( "libraryname", networkName );
 	xmlDoc.appendChild( xmlRoot );
 	
-	ok &= addBDNHeadInformation(xmlRoot);
+	ok &= createBDNHeadInformation(xmlRoot);
 	if(ok == false){return QString::null;}	
 	
 	// add module with networkdescription
@@ -324,7 +355,7 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 /**
  * Fills Hashtable m_xmlIdTable with all neuron and synapse id's from the given network.
  */
-bool NeuralNetworkBDNExporter::updateXmlIdTable(ModularNeuralNetwork *net, QString*)
+bool NeuralNetworkBDNExporter::updateXmlIdTable(ModularNeuralNetwork *net, QString *errorMsg)
 {
 	m_xmlIdTable.clear();
 
@@ -361,7 +392,7 @@ bool NeuralNetworkBDNExporter::updateXmlIdTable(ModularNeuralNetwork *net, QStri
  * Needed because the braindesigner has only limited drawing area which is defined in
  * BDN_DRAWING_AREA_X_LENGTH and BDN_DRAWING_AREA_Y_LENGTH. 
  */
-bool NeuralNetworkBDNExporter::calNeuronPositionValues(ModularNeuralNetwork *net, QString*)
+bool NeuralNetworkBDNExporter::calcNeuronPositionValues(ModularNeuralNetwork *net, QString *errorMsg)
 {
 	int minX = std::numeric_limits<int>::max(); 
 	int minY = std::numeric_limits<int>::max();
@@ -401,7 +432,94 @@ bool NeuralNetworkBDNExporter::calNeuronPositionValues(ModularNeuralNetwork *net
 	return true;
 }
 
-bool NeuralNetworkBDNExporter::addBDNHeadInformation(QDomElement &xmlRoot)
+
+/**
+ * Calclates the execution position of the single neurons which is defined by the
+ * FAST property.
+ */
+bool NeuralNetworkBDNExporter::calcExecutionPositions(ModularNeuralNetwork *net, QString *errorMsg)
+{
+	m_executionPositionTable.clear();
+	
+	int currentNerdIteration = net->getMinimalStartIteration();
+	
+	// start execution position for BDN
+	// keep 3 places as buffer for input mirror synapses and neurons
+	// and synapses from mirror neurons to predecessor neurons 
+	int currentBdnIteration = BDN_MIN_EXECUTION_POS + 3;
+
+	QList<Neuron*> remainingNeurons = net->getNeurons();
+	QList<Neuron*> currentExecuteNeurons;
+	do {
+		
+		currentExecuteNeurons = net->getNeuronsWithIterationRequirement(currentNerdIteration);
+		
+		QListIterator<Neuron*> netNeuronIt(currentExecuteNeurons);
+		while(netNeuronIt.hasNext()) {
+			Neuron *netNeuron = netNeuronIt.next();
+
+			m_executionPositionTable.insert(netNeuron, currentBdnIteration);
+			
+			remainingNeurons.removeAll(netNeuron);
+		}
+
+		// increase BDN position by two, because a free position for the
+		// update position of the incoming synapses of the current neurons
+		// is needed
+		if(currentExecuteNeurons.length() > 0){
+			currentBdnIteration += 2;
+		}
+		
+		currentNerdIteration++;
+
+	} while(!remainingNeurons.empty());
+	
+	// highest execution position in the current network
+	int maxNetBDNExecutionPos = currentBdnIteration - 2;
+	
+	// error if the needed execution positions exceeds the possible number
+	// keep 3 as buffer for:
+	// 	- synapse to output computational neuron 
+	// 	- output computational neuron
+	// 	- synapse from output computational neuron to output neuron
+	if(maxNetBDNExecutionPos > BDN_MAX_EXECUTION_POS - 3)
+	{
+		*errorMsg = QString("The number of execution positions (n = %1) exceeds the possible number of execution positions (n = %2) for BDN files)!").arg(	
+												(maxNetBDNExecutionPos / 2),
+												 (BDN_MAX_EXECUTION_POS - 4) / 2); 
+		
+		return false;
+	}
+	
+	return true;
+}
+
+
+/**
+ * Adds the position information for the given byteCode Modul
+ * into the QMap m_byteCodeModulPositions if it does not exists.
+ */
+void NeuralNetworkBDNExporter::addByteCodePosition(const QString &modulName, const QString &position)
+{
+	// add new element if needed
+	if(m_byteCodeModulPositions.contains(modulName) == false)
+	{
+		QList<QString> newPosList;
+		newPosList.append(position);
+		
+		m_byteCodeModulPositions[modulName] = newPosList;
+	}
+	else
+	{ // update existing element if the position does not exist
+		
+		if( m_byteCodeModulPositions[modulName].contains(position) == false ){
+			m_byteCodeModulPositions[modulName].append(position);
+		}
+	}
+}
+
+
+bool NeuralNetworkBDNExporter::createBDNHeadInformation(QDomElement &xmlRoot)
 {
 	// Input Element
 	QDomElement xmlInputDescr =  xmlRoot.ownerDocument().createElement( "Module" );
@@ -476,55 +594,79 @@ bool NeuralNetworkBDNExporter::addBDNHeadInformation(QDomElement &xmlRoot)
 	xmlRoot.appendChild( xmlNeuronDescr );
 	
 	QDomElement bytecode = xmlRoot.ownerDocument().createElement( "bytecode" );
-	QDomText bytecodeText = xmlRoot.ownerDocument().createTextNode( INPUT_MIRROR_BYTE_CODE );
+	QDomText	bytecodeText = xmlRoot.ownerDocument().createTextNode( INPUT_MIRROR_BYTE_CODE );
+	bytecode.appendChild( bytecodeText );
+	xmlNeuronDescr.appendChild(bytecode);	
+	
+	// MirrorNeuron flipped description
+	xmlNeuronDescr = xmlRoot.ownerDocument().createElement( "Module" );
+	xmlNeuronDescr.setAttribute( "name", INPUT_MIRROR_FLIP_GUID );
+	xmlNeuronDescr.setAttribute( "type", "Unit" );
+	xmlNeuronDescr.setAttribute( "guid", INPUT_MIRROR_FLIP_GUID );
+	xmlRoot.appendChild( xmlNeuronDescr );
+	
+	bytecode = xmlRoot.ownerDocument().createElement( "bytecode" );
+	bytecodeText = xmlRoot.ownerDocument().createTextNode( INPUT_MIRROR_FLIP_BYTE_CODE );
 	bytecode.appendChild( bytecodeText );
 	xmlNeuronDescr.appendChild(bytecode);	
 	
 	// user defined descriptions
-	QMapIterator<QString, QString> byteCodeMappingIter(m_byteCodeMapping);
-	while (byteCodeMappingIter.hasNext()) {
-		byteCodeMappingIter.next();
+	
+	// byte code mappings
+	QMapIterator<QString, QList<QString> > modulPosIter(m_byteCodeModulPositions);
+	while (modulPosIter.hasNext()) {
+		
+		modulPosIter.next();
+		
+		// execution positions for each byte code mapping
+		for(int i = 0; i < modulPosIter.value().count(); i++ )
+		{
+			QString byteCodeMapping = m_byteCodeMapping[modulPosIter.key()];
+			byteCodeMapping.replace(BYTECODE_POS_FLAG, modulPosIter.value()[i]); 
+			
+			QString modulName = modulPosIter.key() + modulPosIter.value()[i];
 		
 		// if the key contains an ";", it is a neuron type, 
 		// otherwise it is a s synapse type
-		if(byteCodeMappingIter.key().contains(";"))
-		{
+			if(modulName.contains(";"))
+			{
 			// Neuron
-			QDomElement xmlNeuronDescr = xmlRoot.ownerDocument().createElement( "Module" );
-			xmlNeuronDescr.setAttribute( "name", byteCodeMappingIter.key() );
-			xmlNeuronDescr.setAttribute( "type", "Unit" );
-			xmlNeuronDescr.setAttribute( "guid", byteCodeMappingIter.key() );
-			xmlRoot.appendChild( xmlNeuronDescr );
+				QDomElement xmlNeuronDescr = xmlRoot.ownerDocument().createElement( "Module" );
+				xmlNeuronDescr.setAttribute( "name", modulName );
+				xmlNeuronDescr.setAttribute( "type", "Unit" );
+				xmlNeuronDescr.setAttribute( "guid", modulName );
+				xmlRoot.appendChild( xmlNeuronDescr );
 	
-			QDomElement bytecode = xmlRoot.ownerDocument().createElement( "bytecode" );
-			QDomText bytecodeText = xmlRoot.ownerDocument().createTextNode( byteCodeMappingIter.value() );
-			bytecode.appendChild( bytecodeText );
-			xmlNeuronDescr.appendChild(bytecode);
-		}else
-		{
+				QDomElement bytecode = xmlRoot.ownerDocument().createElement( "bytecode" );
+				QDomText bytecodeText = xmlRoot.ownerDocument().createTextNode( byteCodeMapping );
+				bytecode.appendChild( bytecodeText );
+				xmlNeuronDescr.appendChild(bytecode);
+			}else
+			{
 			// Synapse
-			QDomElement xmlSynapseDescr = xmlRoot.ownerDocument().createElement( "Module" );
-			xmlSynapseDescr.setAttribute( "name", byteCodeMappingIter.key() );
-			xmlSynapseDescr.setAttribute( "type", "Synapse" );
-			xmlSynapseDescr.setAttribute( "guid", byteCodeMappingIter.key() );
-			xmlRoot.appendChild( xmlSynapseDescr );
+				QDomElement xmlSynapseDescr = xmlRoot.ownerDocument().createElement( "Module" );
+				xmlSynapseDescr.setAttribute( "name", modulName );
+				xmlSynapseDescr.setAttribute( "type", "Synapse" );
+				xmlSynapseDescr.setAttribute( "guid", modulName );
+				xmlRoot.appendChild( xmlSynapseDescr );
 	
-			QDomElement bytecode = xmlRoot.ownerDocument().createElement( "bytecode" );
-			QDomText bytecodeText = xmlRoot.ownerDocument().createTextNode( byteCodeMappingIter.value() );
-			bytecode.appendChild( bytecodeText );
-			xmlSynapseDescr.appendChild(bytecode);
+				QDomElement bytecode = xmlRoot.ownerDocument().createElement( "bytecode" );
+				QDomText bytecodeText = xmlRoot.ownerDocument().createTextNode( byteCodeMapping );
+				bytecode.appendChild( bytecodeText );
+				xmlSynapseDescr.appendChild(bytecode);
 	
-			QDomElement xmlSynapseDescrIoLabelList = xmlRoot.ownerDocument().createElement( "IoLabelList" );
-			xmlSynapseDescrIoLabelList.setAttribute("name", "Parameters");
-			xmlSynapseDescr.appendChild(xmlSynapseDescrIoLabelList);
+				QDomElement xmlSynapseDescrIoLabelList = xmlRoot.ownerDocument().createElement( "IoLabelList" );
+				xmlSynapseDescrIoLabelList.setAttribute("name", "Parameters");
+				xmlSynapseDescr.appendChild(xmlSynapseDescrIoLabelList);
 	
-			QDomElement xmlSynapseDescrIoLabel = xmlRoot.ownerDocument().createElement( "IoLabel" );
-			xmlSynapseDescrIoLabel.setAttribute("name", "w");
-			xmlSynapseDescrIoLabel.setAttribute("standard", "1");
-			xmlSynapseDescrIoLabelList.appendChild(xmlSynapseDescrIoLabel);	
+				QDomElement xmlSynapseDescrIoLabel = xmlRoot.ownerDocument().createElement( "IoLabel" );
+				xmlSynapseDescrIoLabel.setAttribute("name", "w");
+				xmlSynapseDescrIoLabel.setAttribute("standard", "1");
+				xmlSynapseDescrIoLabelList.appendChild(xmlSynapseDescrIoLabel);	
+			}			
 		}
 	}
-	
+		
 	return true;
 }
 
@@ -562,15 +704,33 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 	inputInfo->SpinalCordAddress = getSpinalCordAddress(inNeuron, errorMsg);
 	if(inputInfo->SpinalCordAddress == QString::null) {return false;}
 	
-	// create mirror neuron if a bias is set 
-	if(inNeuron->getBiasValue().get() != 0.0)
+	// create mirror neuron if a bias is set or if the input is flipped
+	if(inNeuron->getBiasValue().get() != 0.0
+			|| inNeuron->isActivationFlipped())
 	{
 		inputInfo->ID = m_nextXmlId++;
 		
 		BDNNeuronInfo *mirrorInfo = new BDNNeuronInfo();
 		mirrorInfo->ID = m_xmlIdTable.value(inNeuron);
 		mirrorInfo->Type = "Unit";
-		mirrorInfo->Guid = INPUT_MIRROR_GUID; 
+		
+		if(inNeuron->getTransferFunction()->getLowerBound() != -1.0){
+			*errorMsg = QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has an invalid lower value of " + QString::number(inNeuron->getTransferFunction()->getLowerBound())+ ". The lower value must be -1.0.");
+					
+			return false;
+		}
+		
+		if(inNeuron->getTransferFunction()->getUpperBound() != 1.0){
+			*errorMsg = QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has an invalid upper value of " + QString::number(inNeuron->getTransferFunction()->getUpperBound())+ ". The upper value must be 1.0.");
+			
+			return false;
+		}
+		
+		mirrorInfo->Guid = INPUT_MIRROR_GUID;
+		if(inNeuron->isActivationFlipped()){
+			mirrorInfo->Guid = INPUT_MIRROR_FLIP_GUID;
+		}
+		
 		mirrorInfo->XPosition = inputInfo->XPosition + ADDITIONAL_BDN_NEURON_DISTANCE;
 		mirrorInfo->YPosition = inputInfo->YPosition;
 		mirrorInfo->RobotType = m_robotType;
@@ -578,14 +738,17 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 		mirrorInfo->InSynapseIDs.append(getBDNInSynapseInformation(inNeuron, errorMsg));
 		mirrorInfo->OutSynapseIDs.append(getBDNOutSynapseInformation(inNeuron, errorMsg));
 		
-		addBDNBiasInfo(mirrorInfo, inNeuron->getBiasValue().get());
+		if(inNeuron->getBiasValue().get() != 0.0 ){
+			addBDNBiasInfo(mirrorInfo, inNeuron->getBiasValue().get(), BDN_MIN_EXECUTION_POS);
+		}
 		
 		int inputMirrorSynapseID = m_nextXmlId++;
 		addBDNSynapseInfo(inputMirrorSynapseID, 
 											inputInfo->ID, 
 											mirrorInfo->ID, 
 											1.0, 
-											m_standardBiasSynapseType);
+											m_standardBiasSynapseType,
+										  BDN_MIN_EXECUTION_POS);
 		
 		mirrorInfo->InSynapseIDs.append(inputMirrorSynapseID);
 		inputInfo->OutSynapseIDs.append(inputMirrorSynapseID);
@@ -629,7 +792,8 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 		BDNNeuronInfo *preOutputInfo = new BDNNeuronInfo();
 		preOutputInfo->ID = m_xmlIdTable.value(outNeuron);
 		preOutputInfo->Type = "Unit";
-		preOutputInfo->Guid = getBDNNeuronType(outNeuron, errorMsg);
+		preOutputInfo->Guid = getBDNNeuronType(outNeuron, errorMsg) 
+				+ QString::number(BDN_MAX_EXECUTION_POS - 1);
 		preOutputInfo->XPosition = outputInfo->XPosition - ADDITIONAL_BDN_NEURON_DISTANCE;
 		preOutputInfo->YPosition = outputInfo->YPosition;
 		preOutputInfo->RobotType = m_robotType;
@@ -643,17 +807,21 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 												preOutputInfo->ID, 
 												outputInfo->ID, 
 												1.0, 
-												m_standardBiasSynapseType);
+												m_standardBiasSynapseType,
+										 		BDN_MAX_EXECUTION_POS);
 		
 		preOutputInfo->OutSynapseIDs.append(preOutputSynapseID);
 		outputInfo->InSynapseIDs.append(preOutputSynapseID);
 		
 		// create a bias neuron if needed
 		if(outNeuron->getBiasValue().get() != 0.0 ){
-			addBDNBiasInfo(preOutputInfo, outNeuron->getBiasValue().get());
+			addBDNBiasInfo(preOutputInfo, outNeuron->getBiasValue().get(),BDN_MAX_EXECUTION_POS - 2);
 		}
 		
 		m_BDNNeuronInfoList.append(preOutputInfo);
+		
+		addByteCodePosition(getBDNNeuronType(outNeuron, errorMsg),
+												QString::number(BDN_MAX_EXECUTION_POS - 1));
 	}
 	
 	return true;
@@ -665,7 +833,8 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 	
 	hiddenInfo->ID = m_xmlIdTable.value(hiddenNeuron);
 	hiddenInfo->Type = "Unit";
-	hiddenInfo->Guid = getBDNNeuronType(hiddenNeuron,errorMsg);
+	hiddenInfo->Guid = getBDNNeuronType(hiddenNeuron,errorMsg) 
+			+ QString::number(m_executionPositionTable[hiddenNeuron]);
 	hiddenInfo->XPosition = getBDNXPos(hiddenNeuron);
 	hiddenInfo->YPosition = getBDNYPos(hiddenNeuron);
 	hiddenInfo->RobotType = m_robotType;
@@ -674,10 +843,16 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 	
 	// create bias if needed
 	if(hiddenNeuron->getBiasValue().get() != 0.0 ){
-		addBDNBiasInfo(hiddenInfo, hiddenNeuron->getBiasValue().get());
+		addBDNBiasInfo(	hiddenInfo, 
+										hiddenNeuron->getBiasValue().get(), 
+									 	m_executionPositionTable[hiddenNeuron] - 1 );
 	}
 	
 	m_BDNNeuronInfoList.append(hiddenInfo);
+	
+	// add neuron position
+	addByteCodePosition(getBDNNeuronType(hiddenNeuron,errorMsg),
+											QString::number(m_executionPositionTable[hiddenNeuron]));
 	
 	return true;
 }
@@ -707,7 +882,8 @@ QString NeuralNetworkBDNExporter::getBDNNeuronType(Neuron *netNeuron, QString *e
 	return neuronType;
 }
 
-bool NeuralNetworkBDNExporter::addBDNBiasInfo(BDNNeuronInfo *target, double weight)
+
+bool NeuralNetworkBDNExporter::addBDNBiasInfo(BDNNeuronInfo *target, double weight, int position)
 {
 	BDNNeuronInfo *biasNeuronInfo = new BDNNeuronInfo();
 	
@@ -724,7 +900,8 @@ bool NeuralNetworkBDNExporter::addBDNBiasInfo(BDNNeuronInfo *target, double weig
 			biasNeuronInfo->ID,
 			target->ID,
 			weight,
-			m_standardBiasSynapseType);
+			m_standardBiasSynapseType,
+	 		position);
 	
 	biasNeuronInfo->OutSynapseIDs.append(synapseID);
 	target->InSynapseIDs.append(synapseID);
@@ -758,11 +935,16 @@ bool NeuralNetworkBDNExporter::addBDNSynapseInfo(Synapse *netSynapse, QString *e
 		return false;
 	}
 	
-	return addBDNSynapseInfo(m_xmlIdTable[netSynapse], sourceID, targetID, weight, type);
+	return addBDNSynapseInfo(	m_xmlIdTable[netSynapse], 
+														sourceID, 
+														targetID, 
+														weight, 
+														type,
+														m_executionPositionTable[netSynapse->getTarget()] - 1);
 }
 
 
-bool NeuralNetworkBDNExporter::addBDNSynapseInfo(int synapseID, int source, int target, double weight, QString type)
+bool NeuralNetworkBDNExporter::addBDNSynapseInfo(int synapseID, int source, int target, double weight, QString type, int executionPosition)
 {
 	BDNSynapseInfo *synapseInfo = new BDNSynapseInfo();
 	
@@ -770,14 +952,16 @@ bool NeuralNetworkBDNExporter::addBDNSynapseInfo(int synapseID, int source, int 
 	synapseInfo->TargetID = target;
 	synapseInfo->SourceID = source;
 	synapseInfo->Weight = weight;
-	synapseInfo->Type = type;
+	synapseInfo->Type = type + QString::number(executionPosition);
 	
 	m_BDNSynapseInfoList.append(synapseInfo);
+	
+	addByteCodePosition(type, QString::number(executionPosition));
 	
 	return true;
 }
 
-QList<int> NeuralNetworkBDNExporter::getBDNInSynapseInformation(Neuron *netNeuron, QString*)
+QList<int> NeuralNetworkBDNExporter::getBDNInSynapseInformation(Neuron *netNeuron, QString *errorMsg)
 {
 	QList<int> inSynapseInformation = QList<int>();
 	
@@ -799,7 +983,7 @@ QList<int> NeuralNetworkBDNExporter::getBDNInSynapseInformation(Neuron *netNeuro
 	return inSynapseInformation;
 }
 
-QList<int> NeuralNetworkBDNExporter::getBDNOutSynapseInformation(Neuron *netNeuron, QString*)
+QList<int> NeuralNetworkBDNExporter::getBDNOutSynapseInformation(Neuron *netNeuron, QString *errorMsg)
 {
 	QList<int> outSynapseInformation = QList<int>();
 	
@@ -1022,5 +1206,6 @@ QDomElement BDNSynapseInfo::toXML(QDomDocument &xmlDoc)
 	
 	return xmlSynapse;
 }
+
 
 }

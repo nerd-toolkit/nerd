@@ -78,16 +78,21 @@ QMap<QString, QString> NeuralNetworkIOMSeriesBDN::createByteCodeMapping()
 	
 	
 	// tanh function and flipped function
-	byteCodeMapping.insert("tanh;AdditiveTD", "300:\ntanh V0, Input\nwrite Output, V0");
+	byteCodeMapping.insert("tanh;AdditiveTD",
+												  NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+															+ ":\ntanh V0, Input\nwrite Output, V0");
 	
 	byteCodeMapping.insert(	"tanh;AdditiveTD" + NeuralNetworkBDNExporter::FLIP_TYPE, 	
-													"300:\ntanh V0, Input\nLOAD V1, -1.0\nMUL V1, V0, V1\nwrite Output, V1");
+													NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+														 + ":\ntanh V0, Input\nLOAD V1, -1.0\nMUL V1, V0, V1\nwrite Output, V1");
 		
 	// Synapsetypes
 	// 
 	// The type is defined by its SynapseFunction name.
 	// The format is: "<SynapseFunctionName>"
-	byteCodeMapping.insert("SimpleUpdateFunction", 	"200:\nmul   V0, Input, w\nwrite Output, V0");
+	byteCodeMapping.insert("SimpleUpdateFunction", 	
+												 NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+														+ ":\nmul   V0, Input, w\nwrite Output, V0");
 	
 	return byteCodeMapping;
 }

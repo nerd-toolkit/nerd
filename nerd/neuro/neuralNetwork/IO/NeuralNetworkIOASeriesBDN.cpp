@@ -74,18 +74,27 @@ QMap<QString, QString> NeuralNetworkIOASeriesBDN::createByteCodeMapping()
 	// 
 	// The type is defined by its TransferFunction and ActivationFunction name.
 	// The format is: "<TransferFunctionName>;<ActivationFunctionName>"
-	byteCodeMapping.insert("ASeriesTanh;ASeries", 	"300:\ntanh V0, Input\nwrite Output, V0");
+	byteCodeMapping.insert("ASeriesTanh;ASeries", 	
+												 NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+														 + ":\ntanh V0, Input\nwrite Output, V0");
 	
 	byteCodeMapping.insert(	"ASeriesTanh;ASeries" + NeuralNetworkBDNExporter::FLIP_TYPE, 	
-													"300:\ntanh V0, Input\nLOAD V1, -1.0\nMUL V1, V0, V1\nwrite Output, V1");
+													NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+															+ ":\ntanh V0, Input\nLOAD V1, -1.0\nMUL V1, V0, V1\nwrite Output, V1");
 
 	// Synapsetypes
 	// 
 	// The type is defined by its SynapseFunction name.
 	// The format is: "<SynapseFunctionName>"
-	byteCodeMapping.insert("SimpleUpdateFunction", 	"200:\nmul   V0, Input, w\nwrite Output, V0");
-	byteCodeMapping.insert("ASeries", 							"200:\nmul   V0, Input, w\nwrite Output, V0");
-	byteCodeMapping.insert("ASeriesMulti", 					"200:\nmul   V0, Input, w\nwrite Output, V0");
+	byteCodeMapping.insert("SimpleUpdateFunction", 	
+												 NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+														 + ":\nmul   V0, Input, w\nwrite Output, V0");
+	byteCodeMapping.insert("ASeries", 							
+												 NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+														 + ":\nmul   V0, Input, w\nwrite Output, V0");
+	byteCodeMapping.insert("ASeriesMulti", 					
+												 NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+														 + ":\nmul   V0, Input, w\nwrite Output, V0");
 
 	return byteCodeMapping;
 }

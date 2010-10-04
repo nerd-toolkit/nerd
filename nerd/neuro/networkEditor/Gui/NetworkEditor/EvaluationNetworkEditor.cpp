@@ -362,9 +362,9 @@ QMenu* EvaluationNetworkEditor::addFileMenu() {
 
 	QMenu *exportMenu = mFileMenu->addMenu("Export as");
 
-	QAction *exportByteCodeAction = exportMenu->addAction("A-Series Bytecode");
-	connect(exportByteCodeAction, SIGNAL(triggered()),
-					this, SLOT(exportByteCode()));
+// 	QAction *exportByteCodeAction = exportMenu->addAction("A-Series Bytecode");
+// 	connect(exportByteCodeAction, SIGNAL(triggered()),
+// 					this, SLOT(exportByteCode()));
 	
 	QAction *exportASeriesBDNAction = exportMenu->addAction("A-Series BDN");
 	connect(exportASeriesBDNAction, SIGNAL(triggered()),
@@ -378,9 +378,9 @@ QMenu* EvaluationNetworkEditor::addFileMenu() {
 	connect(exportAvgGraphicsAction, SIGNAL(triggered()),
 					this, SLOT(saveNetworkAsSvgGraphics()));
 
-	QAction *exportDebugMSeriesComponentsBDNAction = exportMenu->addAction("DEBUG - M-Series Components BDN");
-	connect(exportDebugMSeriesComponentsBDNAction, SIGNAL(triggered()),
-					this, SLOT(exportDebugMSeriesComponentsBDN()));
+// 	QAction *exportDebugMSeriesComponentsBDNAction = exportMenu->addAction("DEBUG - M-Series Components BDN");
+// 	connect(exportDebugMSeriesComponentsBDNAction, SIGNAL(triggered()),
+// 					this, SLOT(exportDebugMSeriesComponentsBDN()));
 	
 	mFileMenu->addSeparator();
 

@@ -98,14 +98,21 @@ namespace nerd {
 	class NeuralNetworkBDNExporter {
 		public:
 			static const QString FLIP_TYPE;
+			static const QString BYTECODE_POS_FLAG;
+			static const QString BYTECODE_MIN_FLAG;
+			static const QString BYTECODE_MAX_FLAG;
 			
 		private:
 			static const QString STANDARD_POSITION_PROPERTY_NAME;
 			static const QString INPUT_MIRROR_GUID;
 			static const QString INPUT_MIRROR_BYTE_CODE;
+			static const QString INPUT_MIRROR_FLIP_GUID;
+			static const QString INPUT_MIRROR_FLIP_BYTE_CODE;
 			static const int BDN_DRAWING_AREA_X_LENGTH;
 			static const int BDN_DRAWING_AREA_Y_LENGTH;
 			static const int ADDITIONAL_BDN_NEURON_DISTANCE;
+			static const int BDN_MIN_EXECUTION_POS;
+			static const int BDN_MAX_EXECUTION_POS;
 			
 			QString m_standardBiasSynapseType;
 			QString m_robotType;
@@ -113,6 +120,8 @@ namespace nerd {
 			QMap<QString, QString> m_extraSpinalCordMapping;
 			
 			QHash<NeuralNetworkElement*, int> m_xmlIdTable;
+			QHash<NeuralNetworkElement*, int> m_executionPositionTable;
+			QMap<QString, QList<QString> > m_byteCodeModulPositions;			
 			QList<BDNNeuronInfo*> m_BDNNeuronInfoList;
 			QList<BDNSynapseInfo*> m_BDNSynapseInfoList;
 			int m_nextXmlId;
@@ -136,18 +145,20 @@ namespace nerd {
 			
 		private:
 			bool updateXmlIdTable(ModularNeuralNetwork *net, QString *errorMsg);
-			bool calNeuronPositionValues(ModularNeuralNetwork *net, QString *errorMsg);
-			bool addBDNHeadInformation(QDomElement &xmlRoot);
+			bool calcNeuronPositionValues(ModularNeuralNetwork *net, QString *errorMsg);
+			bool calcExecutionPositions(ModularNeuralNetwork *net, QString *errorMsg);
+			bool createBDNHeadInformation(QDomElement &xmlRoot);
+			void addByteCodePosition(const QString &modulName, const QString &position);
 			
 			bool addBDNNeuronInfo(Neuron *netNeuron, QString *errorMsg);
 			bool addInputBDNNeuronInfo(Neuron *inNeuron, QString *errorMsg);
 			bool addOutputBDNNeuronInfo(Neuron *outNeuron, QString *errorMsg);
 			bool addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QString *errorMsg);
 			
-			bool addBDNBiasInfo(BDNNeuronInfo *target, double weight);
+			bool addBDNBiasInfo(BDNNeuronInfo *target, double weight, int position);
 			
 			bool addBDNSynapseInfo(Synapse *netSynapse, QString *errorMsg);
-			bool addBDNSynapseInfo(int synapseID, int source, int target, double weight, QString type);
+			bool addBDNSynapseInfo(int synapseID, int source, int target, double weight, QString type, int executionPosition);
 			
 			QList<int> getBDNInSynapseInformation(Neuron *netNeuron, QString *errorMsg);
 			QList<int> getBDNOutSynapseInformation(Neuron *netNeuron, QString *errorMsg);
@@ -163,6 +174,7 @@ namespace nerd {
 			
 			void deleteWorkingVariables();
 	};
+
 }
 
 #endif
