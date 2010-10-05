@@ -304,6 +304,13 @@ void EvaluationNetworkEditor::overwriteCurrentNetwork() {
 	}
 }
 
+void EvaluationNetworkEditor::activationVisualizationModeChanged() {
+	for(QListIterator<NetworkVisualization*> i(mNetworkVisualizations); i.hasNext();) {
+		NetworkVisualization *visu = i.next();
+		visu->setActivationVisualizationMode(mContinuousVisualizationModeAction->isChecked());
+	}
+}
+
 
 
 void EvaluationNetworkEditor::setupMenuBar() {
@@ -404,6 +411,13 @@ QMenu* EvaluationNetworkEditor::addControlMenu() {
 		stasisAction->setShortcut(tr("ctrl+t"));
 		controlMenu->addAction(stasisAction);
 	}
+
+	mContinuousVisualizationModeAction = controlMenu->addAction("Visualize Activity");
+	mContinuousVisualizationModeAction->setCheckable(true);
+	mContinuousVisualizationModeAction->setChecked(true);
+	connect(mContinuousVisualizationModeAction, SIGNAL(changed()),
+			this, SLOT(activationVisualizationModeChanged()));
+	
 
 	mainMenu->addMenu(controlMenu);
 

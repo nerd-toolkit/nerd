@@ -87,6 +87,7 @@ namespace nerd {
 		void networksReplaced();
 		void destroyAllTabs();
 		void overwriteCurrentNetwork();
+		void activationVisualizationModeChanged();
 
 	signals:
 		void networksReplacedEvent();
@@ -110,6 +111,7 @@ namespace nerd {
 		bool mFirstNetwork;
 		bool mEnableManualStasisControl;
 		QAction *mSaveNetworkAction;
+		QAction *mContinuousVisualizationModeAction;
 
 	};
 

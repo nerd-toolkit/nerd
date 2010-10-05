@@ -153,6 +153,9 @@ namespace nerd {
 		virtual void paintNetworkView(QPainter &painter, QRectF visibleArea, double scaling, QPointF offset);
 
 		NeuralNetworkEditor* getOwner() const;
+		
+		bool isVisualizingActivations() const;
+		bool setActivationVisualizationMode(bool visualize);
 
 	public slots:
 		void paintTimerElapsed();	
@@ -216,6 +219,8 @@ namespace nerd {
 		Event *mNetworkStructureChangedEvent;
 		Event *mClearCommandExecutorStack;
 		NeuralNetworkEditor *mOwner;
+		bool mActivationVisualiationMode;
+		bool mInteractionMode;
 	};
 
 }

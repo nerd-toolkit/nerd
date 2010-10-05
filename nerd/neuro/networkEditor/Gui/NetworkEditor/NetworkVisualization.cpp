@@ -89,7 +89,8 @@ NetworkVisualization::NetworkVisualization(const QString &name, NeuralNetworkEdi
 	  mVisualizationOffset(QPointF(0.0, 0.0)), mScaling(1.0), mAlternativeScaling(0.2), mVisuHandler(0),
 	  mScaleFactor(0.9), mNetworkInvalid(true), mSelectionMutex(QMutex::Recursive),
 	  mModificationsEnabled(true), mPerformanceMode(0), mStasisMode(0),
-	  mNetworkStructureChangedEvent(0), mClearCommandExecutorStack(0), mOwner(owner)
+	  mNetworkStructureChangedEvent(0), mClearCommandExecutorStack(0), mOwner(owner),
+	  mActivationVisualiationMode(true), mInteractionMode(false)
 {
 	TRACE("NetworkVisualization::NetworkVisualization");
 	mSelectionRectangle = new SelectionRectItem();
@@ -188,7 +189,9 @@ void NetworkVisualization::valueChanged(Value *value) {
 		else {
 			update();
 			//repaint();
-			mPaintTimer.start();
+			if(mActivationVisualiationMode || mInteractionMode) {
+				mPaintTimer.start();
+			}
 		}
 	}
 }
@@ -376,6 +379,14 @@ void NetworkVisualization::paintNetworkView(QPainter &painter, QRectF visibleAre
 
 NeuralNetworkEditor* NetworkVisualization::getOwner() const {
 	return mOwner;
+}
+
+bool NetworkVisualization::isVisualizingActivations() const {
+	return mActivationVisualiationMode;
+}
+
+bool NetworkVisualization::setActivationVisualizationMode(bool visualize) {
+	mActivationVisualiationMode = visualize;
 }
 
 void NetworkVisualization::closeEvent(QCloseEvent*) {
@@ -862,7 +873,12 @@ void NetworkVisualization::mousePressEvent(QMouseEvent *event) {
 		return;
 	}
 
+	mInteractionMode = true;
 	mPaintTimer.setInterval(mInteractionPaintInterval);
+
+	if(!mPaintTimer.isActive()) {
+		mPaintTimer.start();
+	}
 
 	setFocus();
 
@@ -965,8 +981,16 @@ void NetworkVisualization::mouseReleaseEvent(QMouseEvent *event) {
 		mSelectionRectangle->setHidden(true);
 	}
 	mMoveMode = false;
+	
+	mInteractionMode = false;
 
-	mPaintTimer.setInterval(mDefaultPaintIterval);
+	if(mActivationVisualiationMode) {
+		mPaintTimer.setInterval(mDefaultPaintIterval);
+	}
+	else {
+		mPaintTimer.stop();
+	}
+	
 }
 
 
@@ -1070,7 +1094,12 @@ void NetworkVisualization::paintTimerElapsed() {
 	//repaint();
 
 	//restart paint timer so that the new interval starts after painting.
-	mPaintTimer.start();
+	if(mActivationVisualiationMode || mInteractionMode) {
+		mPaintTimer.start();
+	}
+	else {
+		mPaintTimer.stop();
+	}
 }
 
 
