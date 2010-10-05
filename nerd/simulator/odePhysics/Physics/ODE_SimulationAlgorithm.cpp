@@ -204,31 +204,49 @@ dJointGroupID ODE_SimulationAlgorithm::getJointGroupID() const {
  */
 bool ODE_SimulationAlgorithm::executeSimulationStep(PhysicsManager *pManager) {
 	QTime time;
-	int durationMotorUpdate = 0;
-	int durationSensorUpdate = 0;
-	int durationStep = 0;
-	int durationCollision = 0;
+	bool measurePerformance = Core::getInstance()->isPerformanceMeasuringEnabled();
 
 	int iterationsPerStep = mIterationsPerStepValue->get();	
 
-	time.start();
+	if(measurePerformance) {
+		//Run physics with performance measuring.
 
-	for(int i = 0; i < iterationsPerStep; ++i) {
-		pManager->updateActuators();
-		durationMotorUpdate += time.restart();
-		mODECollisionHandler->clearContactList();
-		dSpaceCollide(mODEMainSpace, 0, &nearCallback);
-		durationCollision += time.restart();
-		dWorldStep(mODEWorld, mTimeStepSizeValue->get());
-		dJointGroupEmpty(mContactJointGroup);
-		durationStep += time.restart();
-		pManager->updateSensors();
-		durationSensorUpdate += time.restart();
+		int durationMotorUpdate = 0;
+		int durationSensorUpdate = 0;
+		int durationStep = 0;
+		int durationCollision = 0;
+
+		time.start();
+
+		for(int i = 0; i < iterationsPerStep; ++i) {
+			pManager->updateActuators();
+			durationMotorUpdate += time.restart();
+			mODECollisionHandler->clearContactList();
+			dSpaceCollide(mODEMainSpace, 0, &nearCallback);
+			durationCollision += time.restart();
+			dWorldStep(mODEWorld, mTimeStepSizeValue->get());
+			dJointGroupEmpty(mContactJointGroup);
+			durationStep += time.restart();
+			pManager->updateSensors();
+			durationSensorUpdate += time.restart();
+		}
+		mUpdateMotorsDurationValue->set(durationMotorUpdate);
+		mUpdateSensorsDurationValue->set(durationSensorUpdate);
+		mStepDurationValue->set(durationStep);
+		mStepCollisionDurationValue->set(durationCollision);
 	}
-	mUpdateMotorsDurationValue->set(durationMotorUpdate);
-	mUpdateSensorsDurationValue->set(durationSensorUpdate);
-	mStepDurationValue->set(durationStep);
-	mStepCollisionDurationValue->set(durationCollision);
+	else {
+		//Run physics without performance measuring.
+
+		for(int i = 0; i < iterationsPerStep; ++i) {
+			pManager->updateActuators();
+			mODECollisionHandler->clearContactList();
+			dSpaceCollide(mODEMainSpace, 0, &nearCallback);
+			dWorldStep(mODEWorld, mTimeStepSizeValue->get());
+			dJointGroupEmpty(mContactJointGroup);
+			pManager->updateSensors();
+		}
+	}
 
 	return true;
 }

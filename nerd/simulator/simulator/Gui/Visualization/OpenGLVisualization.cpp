@@ -152,7 +152,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
         mMinSideStepSize(0), mMaxSideStepSize(0), mMouseRotationStepSize(0), mSimulationTime(0),
         mRealTime(0), mTimeDisplaySize(0), mClearColorValue(0), mTimeTextColorValue(0),
 		mIsManipulatable(0), mPauseValue(0), mUseTexturesValue(0), mDisplaySimulationTime(0),
-		mChangeViewportTimer(0), mVisualizationTimer(0), mFramesPerSecondValue(0),
+		mChangeViewportTimer(0), mVisualizationTimer(0), mStepsPerSecondValue(0),
 		mRunInPerformanceMode(0), mGlIsUpdating(false), mUseAsFrameGrabber(0)
 {
 	setWhatsThis("Ctrl+Shift+v:	Save current position as new initial viewpoint.\nShift+v:"
@@ -209,8 +209,8 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	mCurrentPosition->setDescription("The current camera position");
 	mShowCoordinateSystemLines = new BoolValue(false);
 	mShowCoordinateSystemLines->setDescription("Enables/Disables the coordinate system lines.");
-	mShowFramesPerSecond = new BoolValue(true);
-	mShowFramesPerSecond->setDescription("Displays the number of steps per second.");
+	mShowStepsPerSecond = new BoolValue(true);
+	mShowStepsPerSecond->setDescription("Displays the number of steps per second.");
 
 	mOpeningAngleValue = new DoubleValue(getDefaultOpeningAngle());
 	mOpeningAngleValue->setDescription("The opening angle of the camera.");
@@ -247,7 +247,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	addParameter("CurrentPosition", mCurrentPosition, publishValues);
 	addParameter("CurrentOrientation", mCurrentOrientation, publishValues);
 	addParameter("ShowHelperCoordinates", mShowCoordinateSystemLines, publishValues);
-	addParameter("ShowFramesPerSecond", mShowFramesPerSecond, publishValues);
+	addParameter("ShowStepsPerSecond", mShowStepsPerSecond, publishValues);
 	addParameter("OpeningAngle", mOpeningAngleValue, publishValues);
 	addParameter("MinCutoff", mMinDistanceCutoffValue, publishValues);
 	addParameter("MaxCutoff", mMaxDistanceCutoffValue, publishValues);
@@ -546,7 +546,7 @@ void OpenGLVisualization::init() {
 
 	mSimulationTime = vm->getDoubleValue("/Simulation/SimulationTime");
 	mRealTime = vm->getDoubleValue("/Simulation/RealTime");
-	mFramesPerSecondValue = vm->getIntValue(NerdConstants::VALUE_NERD_FRAMES_PER_SECOND);
+	mStepsPerSecondValue = vm->getIntValue(NerdConstants::VALUE_NERD_STEPS_PER_SECOND);
 	mRunInPerformanceMode = vm->getBoolValue(NerdConstants::VALUE_RUN_IN_PERFORMANCE_MODE);
 	mPauseValue = vm->getBoolValue(SimulationConstants::VALUE_EXECUTION_PAUSE);
 
@@ -968,10 +968,10 @@ void OpenGLVisualization::paintGL() {
 				renderText(posX, 2 * posY, QString(": ")
 						.append(QString::number(mRealTime->get())), font);
 			}
-			if(mShowFramesPerSecond->get() && mFramesPerSecondValue != 0) {
-				renderText(5, 3 * posY, "FPS", font);
+			if(mShowStepsPerSecond->get() && mStepsPerSecondValue != 0) {
+				renderText(5, 3 * posY, "SPS", font);
 				renderText(posX, 3 * posY, QString(": ")
-						.append(QString::number(mFramesPerSecondValue->get())), font);
+						.append(QString::number(mStepsPerSecondValue->get())), font);
 			}
 		}
 	}

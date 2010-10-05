@@ -79,10 +79,11 @@ namespace nerd {
 	//Value Names
 	//**************************************************************************
 
+		static const QString VALUE_NERD_ENABLE_PERFORMANCE_MEASUREMENTS;
 // 		static const QString VALUE_NERD_SYSTEM_PAUSE;
 		static const QString VALUE_NERD_RECENT_LOGGER_MESSAGE;
 		static const QString VALUE_NERD_REPOSITORY_CHANGED_COUNTER;
-		static const QString VALUE_NERD_FRAMES_PER_SECOND;
+		static const QString VALUE_NERD_STEPS_PER_SECOND;
 		static const QString VALUE_RUN_IN_PERFORMANCE_MODE;
 		static const QString VALUE_EXECUTION_PAUSE;
 		static const QString VALUE_RANDOMIZATION_SIMULATION_SEED;

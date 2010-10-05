@@ -59,7 +59,6 @@
 #include "Math/Math.h"
 #include <QDir>
 #include <QDate>
-#include <QTime>
 #include "Util/Tracer.h"
 
 #define TRACE(message)
@@ -314,12 +313,17 @@ bool EvolutionManager::processNextGeneration() {
 	}
 
 	//start timers for performance measurements
+	bool measurePerformance = Core::getInstance()->isPerformanceMeasuringEnabled();
+
 	QTime entireGenerationTime;
 	QTime entireEvolutionTime;
 	QTime time;
-	entireGenerationTime.start();
-	entireEvolutionTime.start();
-	time.start();
+
+	if(measurePerformance) {
+		entireGenerationTime.start();
+		entireEvolutionTime.start();
+		time.start();
+	}
 
 	//increment current generation
 	int generationId = mCurrentGenerationNumberValue->get() + 1;
@@ -470,7 +474,9 @@ bool EvolutionManager::processNextGeneration() {
 	}
 
 	mSelectionCompletedEvent->trigger();
-	mSelectionDuration->set(time.restart());
+	if(measurePerformance) {
+		mSelectionDuration->set(time.restart());
+	}
 	core->executePendingTasks();
 
 	if(core->isShuttingDown()) {
@@ -536,8 +542,10 @@ bool EvolutionManager::processNextGeneration() {
 	}
 
 	mEvolutionAlgorithmCompletedEvent->trigger();
-	mEvolutionAlgorithmDuration->set(time.restart());;
-	mEvolutionDuration->set(entireEvolutionTime.elapsed());
+	if(measurePerformance) {
+		mEvolutionAlgorithmDuration->set(time.restart());;
+		mEvolutionDuration->set(entireEvolutionTime.elapsed());
+	}
 	core->executePendingTasks();
 
 	if(core->isShuttingDown()) {
@@ -646,7 +654,9 @@ bool EvolutionManager::processNextGeneration() {
 	}
 
 	mEvaluationCompletedEvent->trigger();
-	mEvaluationDuration->set(time.restart());
+	if(measurePerformance) {
+		mEvaluationDuration->set(time.restart());
+	}
 	core->executePendingTasks();
 
 	if(core->isShuttingDown()) {
@@ -658,7 +668,9 @@ bool EvolutionManager::processNextGeneration() {
 	}
 
 	mNextGenerationCompletedEvent->trigger();
-	mGenerationDuration->set(entireGenerationTime.elapsed());
+	if(measurePerformance) {
+		mGenerationDuration->set(entireGenerationTime.elapsed());
+	}
 	core->executePendingTasks();
 
 	if(core->isShuttingDown()) {

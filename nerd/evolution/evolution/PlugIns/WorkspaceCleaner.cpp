@@ -122,7 +122,12 @@ void WorkspaceCleaner::eventOccured(Event *event) {
 void WorkspaceCleaner::cleanUpWorkspace() {
 
 	QTime time;
-	time.start();
+
+	bool measurePerformance = Core::getInstance()->isPerformanceMeasuringEnabled();
+
+	if(measurePerformance) {
+		time.start();
+	}
 
 	EvolutionManager *em = Evolution::getEvolutionManager();
 
@@ -187,7 +192,12 @@ void WorkspaceCleaner::cleanUpWorkspace() {
 		}
 	}
 
-	mCleanUpTime->set(time.elapsed());
+	if(measurePerformance) {
+		mCleanUpTime->set(time.elapsed());
+	}
+	else {
+		mCleanUpTime->set(0);
+	}
 }
 
 void WorkspaceCleaner::deleteFilesRecursively(const QString &fileName) {

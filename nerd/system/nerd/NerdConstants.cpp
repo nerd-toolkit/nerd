@@ -77,6 +77,10 @@ const QString NerdConstants::GUI_MAIN_SIMULATION_WINDOW
 //Value names
 //**************************************************************************
 
+
+const QString NerdConstants::VALUE_NERD_ENABLE_PERFORMANCE_MEASUREMENTS
+		= "/Performance/EnablePerformanceMeasurements";
+
 // const QString NerdConstants::VALUE_NERD_SYSTEM_PAUSE
 // 		= "/Simulation/Pause";
 const QString NerdConstants::VALUE_NERD_RECENT_LOGGER_MESSAGE
@@ -85,8 +89,8 @@ const QString NerdConstants::VALUE_NERD_RECENT_LOGGER_MESSAGE
 const QString NerdConstants::VALUE_NERD_REPOSITORY_CHANGED_COUNTER
 		= "/ValueManager/RepositoryChangedCounter";
 
-const QString NerdConstants::VALUE_NERD_FRAMES_PER_SECOND
-		= "/Performance/FramesPerSecond";
+const QString NerdConstants::VALUE_NERD_STEPS_PER_SECOND
+		= "/Performance/StepsPerSecond";
 
 const QString NerdConstants::VALUE_RUN_IN_PERFORMANCE_MODE
 		= "/Performance/RunPerformanceMode";

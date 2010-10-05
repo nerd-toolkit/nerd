@@ -218,7 +218,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		BoolValue *mUseTexturesValue;
 		BoolValue *mDisplaySimulationTime;
 		BoolValue *mShowCoordinateSystemLines;
-		BoolValue *mShowFramesPerSecond;
+		BoolValue *mShowStepsPerSecond;
 
 		BoolValue *mIsTranslationalValue;
 
@@ -239,7 +239,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		QVector<SimBody*> mSimBodies;
 		QVector<SimJoint*> mSimJoints;
 
-		IntValue *mFramesPerSecondValue;
+		IntValue *mStepsPerSecondValue;
 		BoolValue *mRunInPerformanceMode;
 		bool mGlIsUpdating;
 

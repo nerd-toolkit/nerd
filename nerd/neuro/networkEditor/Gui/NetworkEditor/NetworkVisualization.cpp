@@ -385,7 +385,7 @@ bool NetworkVisualization::isVisualizingActivations() const {
 	return mActivationVisualiationMode;
 }
 
-bool NetworkVisualization::setActivationVisualizationMode(bool visualize) {
+void NetworkVisualization::setActivationVisualizationMode(bool visualize) {
 	mActivationVisualiationMode = visualize;
 }
 

@@ -58,7 +58,7 @@
 #include "Control/NetworkAgentControlParser.h"
 #include "Collections/StandardNeuralNetworkFunctions.h"
 #include "SimulationConstants.h"
-#include "PlugIns/FramesPerSecondCounter.h"
+#include "PlugIns/StepsPerSecondCounter.h"
 #include "Collections/TerminateTryCollisionRule.h"
 
 
@@ -92,7 +92,7 @@ bool ASeriesDirectPositionControlApplication::setupApplication()
 	new NetworkAgentControlParser();
 	StandardNeuralNetworkFunctions();
 
-	new FramesPerSecondCounter();
+	new StepsPerSecondCounter();
 
 	return true;
 }

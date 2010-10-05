@@ -82,7 +82,7 @@
 #include "Logging/SettingsLogger.h"
 #include "Statistics/StatisticsLogger.h"
 #include <QDir>
-#include "PlugIns/FramesPerSecondCounter.h"
+#include "PlugIns/StepsPerSecondCounter.h"
 #include "Gui/FitnessPlotter/OnlineFitnessPlotter.h"
 #include "Gui/PopulationOverview/MultiplePopulationOverviewWindowWidget.h"
 #include "Gui/Control/BoolValueSwitcherAction.h"
@@ -203,7 +203,7 @@ bool JanEvolution::setupApplication()
 	settingsLogger->addValues(".*Evo/.*Selection.*");
 	settingsLogger->addValues(".*Evo/.*Fitness.*");
 
-	new FramesPerSecondCounter();
+	new StepsPerSecondCounter();
 	new SimObjectGroupPrinter();
 	new SaveBestNetworksHandler(3); 
 

@@ -215,8 +215,13 @@ bool PhysicsManager::cleanUp() {
 bool PhysicsManager::resetSimulation() {
 	TRACE("PhysicsManager::resetSimulation");
 
+	bool measurePerformance = Core::getInstance()->isPerformanceMeasuringEnabled();
+
 	QTime time;
-	time.start();
+
+	if(measurePerformance) {
+		time.start();
+	}
 
 	bool resetOk = true;
 	if(mPhysicalSimulationAlgorithm == 0) {
@@ -244,17 +249,16 @@ bool PhysicsManager::resetSimulation() {
 
 	Physics::getCollisionManager()->updateCollisionModel();
 
-// 	QTime time2;
-// 	time2.start();
-
-
 	if(resetOk) {
 		mInitialResetDone = true;
 	}
 
-	mResetDuration->set(time.elapsed());
-	mCurrentSimulationTime->set(0.0);
-	mCurrentRealTime->set(0.0);
+	if(measurePerformance) {
+		mResetDuration->set(time.elapsed());
+		mCurrentSimulationTime->set(0.0);
+		mCurrentRealTime->set(0.0);
+	}
+
 	mStopwatch.start();
 
 	return resetOk;
@@ -263,15 +267,23 @@ bool PhysicsManager::resetSimulation() {
 bool PhysicsManager::executeSimulationStep() {
 
 	QTime stepTime;
-	stepTime.start();
-
 	QTime time;
-	time.start();
+
+	bool measurePerformance = Core::getInstance()->isPerformanceMeasuringEnabled();
+
+	if(measurePerformance) {
+		time.start();
+		stepTime.start();
+	}
 
 	bool executeStepOk = true;
 	if(mPhysicalSimulationAlgorithm != 0) {
 		mPhysicalSimulationAlgorithm->executeSimulationStep(this);
-		mPhysicalStepDuration->set(time.restart());
+
+		if(measurePerformance) {
+			mPhysicalStepDuration->set(time.restart());
+		}
+
 		//synchronize all SimObjects with the current state of the physical model.
 		if(mSynchronizeObjectsWithPhysicalModel) {
 			for(QList<SimObject*>::iterator i = mSimObjects.begin(); 
@@ -281,23 +293,33 @@ bool PhysicsManager::executeSimulationStep() {
 			}
 		}
 
-		mSynchronizationDuration->set(time.restart());
+		if(measurePerformance) {
+			mSynchronizationDuration->set(time.restart());
+		}
+
 		if(mCollisionManager !=  0 ) {
 			mCollisionManager->updateCollisionRules();
 		}
-		mCollisionHandlingDuration->set(time.restart());
-		mCurrentSimulationTime->set(mCurrentSimulationTime->get()
-			+ mPhysicalSimulationAlgorithm->getTimeStepSize()
-			* mPhysicalSimulationAlgorithm->getIterationsPerStep());
+
+		if(measurePerformance) {
+			mCollisionHandlingDuration->set(time.restart());
+			mCurrentSimulationTime->set(mCurrentSimulationTime->get()
+				+ mPhysicalSimulationAlgorithm->getTimeStepSize()
+				* mPhysicalSimulationAlgorithm->getIterationsPerStep());
+		}
 	}
 	else {
 		Core::log("PhysicsManager: Can not execute simulation step due to missing algorithm.");
 		executeStepOk = false;
 		mCurrentSimulationTime->set(0.0);
 	}
+	if(measurePerformance) {
+		mPostStepDuration->set(time.restart());
+		mStepExecutionDuration->set(stepTime.elapsed());
+	}
+
 	mCurrentRealTime->set(((double) mStopwatch.elapsed()) / 1000.0);
-	mPostStepDuration->set(time.restart());
-	mStepExecutionDuration->set(stepTime.elapsed());
+
 	return executeStepOk;
 }
 

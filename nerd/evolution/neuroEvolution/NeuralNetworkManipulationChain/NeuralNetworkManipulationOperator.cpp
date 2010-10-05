@@ -121,20 +121,28 @@ void NeuralNetworkManipulationOperator::resetOperator() {
 bool NeuralNetworkManipulationOperator::runOperator(Individual *individual, CommandExecutor *executor) {
 	
 	QTime time;
-	time.start();
+
+	bool measurePerformance = Core::getInstance()->isPerformanceMeasuringEnabled();
+
+	if(measurePerformance) {
+		time.start();
+	}
 
 	bool status = applyOperator(individual, executor);
 
-	int duration = time.elapsed();
-	mCumulatedTime += duration;
 	++mExecCounter;
-	if(mMaxTime < duration) {
-		mMaxTime = duration;
+
+	if(measurePerformance) {
+		int duration = time.elapsed();
+		mCumulatedTime += duration;
+		if(mMaxTime < duration) {
+			mMaxTime = duration;
+		}
+		if(mMinTime > duration) {
+			mMinTime = duration;
+		}
+		mLastSingleExecutionTime->set(duration);
 	}
-	if(mMinTime > duration) {
-		mMinTime = duration;
-	}
-	mLastSingleExecutionTime->set(duration);
 	return status;
 }
 

@@ -41,58 +41,109 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
+#include "StepsPerSecondCounter.h"
+#include <QCoreApplication>
+#include "Core/Core.h"
+#include "Value/ValueManager.h"
+#include "NerdConstants.h"
+#include "Event/EventManager.h"
+#include <iostream>
 
-#ifndef NERDFramesPerSecondCounter_H
-#define NERDFramesPerSecondCounter_H
+using namespace std;
 
-#include "Core/SystemObject.h"
-#include "Event/Event.h"
-#include "Event/EventListener.h"
-#include "Value/IntValue.h"
-#include <QTimer>
-#include <QObject>
 
 namespace nerd {
 
-	/**
-	 * FramesPerSecondCounter.
-	 */
-	class FramesPerSecondCounter : public QObject, public virtual SystemObject, 
-				public virtual EventListener 
-	{
-	Q_OBJECT
-	public:
-		FramesPerSecondCounter();
-		virtual ~FramesPerSecondCounter();
+StepsPerSecondCounter::StepsPerSecondCounter()
+	: mStepsPerSecond(0), mPrintToConsole(0), mTimer(0), mStepCounter(0), mStepCompletedEvent(0),
+	  mIndividualStartedEvent(0), mIndividualCompletedEvent(0)
+{
+	mStepsPerSecond = new IntValue(0);
+	mPrintToConsole = new BoolValue(false);
 
-		virtual QString getName() const;
+	ValueManager *vm = Core::getInstance()->getValueManager();
 
-		virtual bool init();
-		virtual bool bind();
-		virtual bool cleanUp();
+	vm->addValue(NerdConstants::VALUE_NERD_STEPS_PER_SECOND, mStepsPerSecond);
+	vm->addValue("/StepsPerSecondCounter/StepsPerSecond", mStepsPerSecond);
+	vm->addValue("/StepsPerSecondCounter/PrintToConsole", mPrintToConsole);
 
-		virtual void eventOccured(Event *event);
+	mTimer = new QTimer();
+	mTimer->moveToThread(QCoreApplication::instance()->thread());
+	mTimer->setInterval(1000);
 
-	signals:
-		void startTimer();
-		void stopTimer();
+	connect(this, SIGNAL(startTimer()),
+			mTimer, SLOT(start()));
+	connect(this, SIGNAL(stopTimer()),
+			mTimer, SLOT(stop()));
+	connect(mTimer, SIGNAL(timeout()),
+			this, SLOT(timerExpired()));
 
-	public slots:
-		void timerExpired();
-		
-	private:		
-		IntValue *mFramesPerSecond;
-		QTimer *mTimer;
-		int mStepCounter;
-		Event *mStepCompletedEvent;
-		Event *mIndividualStartedEvent;
-		Event *mIndividualCompletedEvent;
-		
-	};
-
+	Core::getInstance()->addSystemObject(this);
 }
 
-#endif
+StepsPerSecondCounter::~StepsPerSecondCounter() {
+	delete mTimer;
+}
+
+QString StepsPerSecondCounter::getName() const {
+	return "StepsPerSecondCounter";
+}
+
+bool StepsPerSecondCounter::init() {
+	bool ok = true;
+
+	return ok;
+}
+
+bool StepsPerSecondCounter::bind() {
+	bool ok = true;
+
+	EventManager *em = Core::getInstance()->getEventManager();
+
+	mStepCompletedEvent = em->registerForEvent(
+			NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, this);
+	mIndividualCompletedEvent = em->registerForEvent(
+			NerdConstants::EVENT_EXECUTION_NEXT_INDIVIDUAL, this);
+	mIndividualStartedEvent = em->registerForEvent(
+			NerdConstants::EVENT_EXECUTION_INDIVIDUAL_COMPLETED, this);
+
+	if(mStepCompletedEvent == 0
+		|| mIndividualCompletedEvent == 0 
+		|| mIndividualStartedEvent == 0)
+	{
+		Core::log("StepsPerSecondCounter: Could not find required Events. "
+				  "[FUNCTION DISABLED]");
+	}
+
+	emit startTimer();
+
+	return ok;
+}
+
+bool StepsPerSecondCounter::cleanUp() {
+	emit stopTimer();
+	return true;
+}
+
+
+void StepsPerSecondCounter::eventOccured(Event *event) {
+	if(event == 0) {
+		return;
+	}
+	else if(event == mStepCompletedEvent) {
+		mStepCounter++;
+	}
+}
+
+void StepsPerSecondCounter::timerExpired() {
+	mStepsPerSecond->set(mStepCounter);
+	if(mPrintToConsole->get()) {
+		cout << "SPS: " << mStepCounter << endl;
+	}
+	mStepCounter = 0;
+}
+
+}
 
 
 

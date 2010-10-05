@@ -167,6 +167,8 @@ class Core {
 		Event* getBindEvent() const;
 		Event* getShutDownEvent() const;
 
+		bool isPerformanceMeasuringEnabled() const;
+
 		Properties& getProperties();
 		QString getConfigDirectoryPath() const;
 		bool enforceDirectoryPath(const QString &path);
@@ -218,6 +220,7 @@ class Core {
 		QTextStream *mLogFileStream;
 
 		BoolValue *mRunInPerformanceMode;
+		BoolValue *mEnablePerformanceMeasures;
 
 		Event *mInitEvent;
 		Event *mInitCompletedEvent;

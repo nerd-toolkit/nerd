@@ -98,8 +98,6 @@ Value::~Value() {
 void Value::createValue(const QString &typeName, bool notifyAllSetAttempts) {
 	mTypeName = typeName;
 	mNotifyCount = 0;
-	mValueManager = Core::getInstance()->getValueManager();
-	mMaintainNotificationStack = false;
 	mNotifyAllSetAttempts = notifyAllSetAttempts;
 }
 
@@ -266,31 +264,16 @@ void Value::notifyValueChanged() {
 	QMutexLocker guard(&mMutex);
 
 	if(mNotifyCount <= 0) {
-		mChangedListenerBufferVector.clear();
+		//mChangedListenerBufferVector.clear();
 		mChangedListenerBufferVector = mValueChangedListeners;
 		mNotifyCount = 0;
 	}
-	if(mMaintainNotificationStack) {
-		mValueManager->pushToNotificationStack(this);
-	}
-
 	mNotifyCount++;
-	if(mMaintainNotificationStack) {
-		for(int i = 0; i < mChangedListenerBufferVector.size(); i++) {
-			mValueManager->pushToNotificationStack(mChangedListenerBufferVector.at(i));
-			mChangedListenerBufferVector.at(i)->valueChanged(this);
-			mValueManager->popFromNotificationStack();
-		}
-	}
-	else {
-		for(int i = 0; i < mChangedListenerBufferVector.size(); i++) {
-			mChangedListenerBufferVector.at(i)->valueChanged(this);
-		}
+
+	for(int i = 0; i < mChangedListenerBufferVector.size(); i++) {
+		mChangedListenerBufferVector.at(i)->valueChanged(this);
 	}
 	mNotifyCount--;
-	if(mMaintainNotificationStack) {
-		mValueManager->popFromNotificationStack();
-	}
 }
 
 

@@ -103,7 +103,7 @@ void Matrix::setDepth(int depth) {
 }
 
 void Matrix::resize(int width, int height, int depth) {
-	mMatrix.resize(depth);
+	mMatrix.resize(depth); 
 	for(int i = 0; i < mMatrix.size(); ++i) {
 		QVector<QVector<double> > &v1 = mMatrix[i];
 		v1.resize(height);

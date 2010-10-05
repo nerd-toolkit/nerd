@@ -155,7 +155,7 @@ namespace nerd {
 		NeuralNetworkEditor* getOwner() const;
 		
 		bool isVisualizingActivations() const;
-		bool setActivationVisualizationMode(bool visualize);
+		void setActivationVisualizationMode(bool visualize);
 
 	public slots:
 		void paintTimerElapsed();	

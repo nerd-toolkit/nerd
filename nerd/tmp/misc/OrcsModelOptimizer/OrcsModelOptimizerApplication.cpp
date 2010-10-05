@@ -52,7 +52,7 @@
 #include <iostream>
 #include "Core/Core.h"
 #include "Collections/ODE_Physics.h"
-#include "PlugIns/FramesPerSecondCounter.h"
+#include "PlugIns/StepsPerSecondCounter.h"
 #include "PlugIns/CommandLineArgument.h"
 #include "Physics/Physics.h"
 #include "Gui/Control/BoolValueSwitcherAction.h"
@@ -96,7 +96,7 @@ QString OrcsModelOptimizerApplication::getName() const {
 
 /**
  * Set up the GUI elements of the application.
- * The following elements are used: GuiMainWindow, FramesPerSecondCounter
+ * The following elements are used: GuiMainWindow, StepsPerSecondCounter
  */
 bool OrcsModelOptimizerApplication::setupGui() 
 {
@@ -158,7 +158,7 @@ bool OrcsModelOptimizerApplication::setupGui()
     mGuiMainWindow->getMenu("Optimization")->addAction(shutdownOptimizationChkBox);
 
     if(mEnableFps) {
-      new FramesPerSecondCounter();
+      new StepsPerSecondCounter();
     }  
   }
 
@@ -169,7 +169,7 @@ bool OrcsModelOptimizerApplication::setupGui()
 /**
  * Set up the components of the application.
  * The following components are used: ODE_Physics, SimpleObjectFileParser,
- * FramesPerSecondCounter 
+ * StepsPerSecondCounter 
  */
 bool OrcsModelOptimizerApplication::setupApplication() 
 {  

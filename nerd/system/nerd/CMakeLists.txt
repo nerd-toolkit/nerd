@@ -60,7 +60,7 @@ set(nerd_nerd_SRCS
 	Gui/ValuePlotter/ValuePlotterItem.cpp  
 	Util/FileLocker.cpp  
 	Statistics/StatisticsLogger.cpp  
-	PlugIns/FramesPerSecondCounter.cpp  
+	PlugIns/StepsPerSecondCounter.cpp  
 	Gui/Control/NextStepTriggerAction.cpp  
 	Gui/Containers/MainWindowContainer.cpp  
 	Command/Command.cpp  
@@ -122,7 +122,7 @@ set(nerd_nerd_MOC_HDRS
 	Gui/Parameter/MultipleParameterWindowWidget.h
 	Gui/Parameter/ParameterVisualization.h
 	Gui/Parameter/ParameterVisualizationWindow.h
-	PlugIns/FramesPerSecondCounter.h  
+	PlugIns/StepsPerSecondCounter.h  
 	Command/CommandExecutor.h   
 	Core/ShutDownGuard.h
 	Script/ScriptingContext.h

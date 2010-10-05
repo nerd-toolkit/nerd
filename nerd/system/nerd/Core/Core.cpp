@@ -105,7 +105,8 @@ Core::Core()
 		mValueManager(0), mEventManager(0), mPlugInManager(0), mSimulationDelay(0),
 		mInitializationDuration(0), mBindingDuration(0),
 		mCurrentLogMessage(0), mLogFile(0), mLogFileStream(0),
-		mRunInPerformanceMode(0), mInitEvent(0), mInitCompletedEvent(0), mBindEvent(0),
+		mRunInPerformanceMode(0), mEnablePerformanceMeasures(0), mInitEvent(0), 
+		mInitCompletedEvent(0), mBindEvent(0),
 		mShutDownEvent(0), mTasksExecutedEvent(0), mShutDownCompleted(false),
 		mIsShuttingDown(false)
 {
@@ -119,6 +120,8 @@ Core::Core()
 	if(commandLineArguments.contains("-enableLogging")) {
 		mIsUsingReducedFileWriting = false;
 	}
+
+	mEnablePerformanceMeasures = new BoolValue(false);
 
 	if(!mIsUsingReducedFileWriting) {
 		//setup log file.
@@ -280,6 +283,9 @@ void Core::setUpCore() {
 	mEventManager = new EventManager();
 	mValueManager = new ValueManager(mEventManager);
 	mPlugInManager = new PlugInManager();
+
+	mValueManager->addValue(NerdConstants::VALUE_NERD_ENABLE_PERFORMANCE_MEASUREMENTS, 
+							mEnablePerformanceMeasures);
 
 	//try to load default properties.
 	if(!mIsUsingReducedFileWriting) {
@@ -1031,6 +1037,11 @@ Event* Core::getBindEvent() const {
  */
 Event* Core::getShutDownEvent() const {
 	return mShutDownEvent;
+}
+
+
+bool Core::isPerformanceMeasuringEnabled() const {
+	return mEnablePerformanceMeasures->get();
 }
 
 

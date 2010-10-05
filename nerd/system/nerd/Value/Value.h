@@ -101,8 +101,6 @@ class Value : public virtual Object
 	private:
 		int mNotifyCount;
 		QString mTypeName;
-		ValueManager *mValueManager;
-		bool mMaintainNotificationStack;
 		QMutex mMutex;
 		QList<ValueChangedListener*> mValueChangedListeners;
 		QList<ValueChangedListener*> mChangedListenerBufferVector;

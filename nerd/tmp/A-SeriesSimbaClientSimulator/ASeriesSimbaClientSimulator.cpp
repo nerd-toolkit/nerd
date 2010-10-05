@@ -55,7 +55,7 @@
 #include "PlugIns/KeyFramePlayer.h"
 #include "Physics/Physics.h"
 #include "PlugIns/PlugInManager.h"
-#include "PlugIns/FramesPerSecondCounter.h"
+#include "PlugIns/StepsPerSecondCounter.h"
 #include <iostream>
 #include "Collections/ModelPrototypes.h"
 #include "PlugIns/SimObjectGroupPrinter.h"
@@ -100,7 +100,7 @@ bool ASeriesSimbaClientSimulator::setupSimulator() {
 
 	//install file parser
 	new SimpleObjectFileParser();
-	new FramesPerSecondCounter();
+	new StepsPerSecondCounter();
 	new SimObjectGroupPrinter();
 
 	return true;

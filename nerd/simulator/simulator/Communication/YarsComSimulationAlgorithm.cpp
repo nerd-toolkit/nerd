@@ -1459,8 +1459,8 @@ void YarsComSimulationAlgorithm::disconnectFromYars() {
 	}
 	mSendBuffer->clear();
 	
-	QTime time;
-	time.start();
+// 	QTime time;
+// 	time.start();
 // 	bool foundAck = false;
 //
 // 	while(time.elapsed() < 2000 && !foundAck) {

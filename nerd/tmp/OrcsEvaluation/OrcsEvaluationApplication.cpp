@@ -73,7 +73,7 @@
 #include "Collections/NeuroModuleCollection.h"
 #include "Collections/YarsCommunication.h"
 #include "PlugIns/NeuralNetworkAttributes.h"
-#include "PlugIns/FramesPerSecondCounter.h"
+#include "PlugIns/StepsPerSecondCounter.h"
 #include "Collections/StandardTagCollection.h"
 #include "PlugIns/ModelParameterRotator.h"
 #include "Gui/ScriptedFitnessEditor/MultipleScriptedFitnessEditor.h"
@@ -148,7 +148,7 @@ bool OrcsEvaluationApplication::setupApplication()
 		ODE_Physics();
 	}
 	
-	new FramesPerSecondCounter();
+	new StepsPerSecondCounter();
 
 
 	EvolutionSimulationPrototypes();
