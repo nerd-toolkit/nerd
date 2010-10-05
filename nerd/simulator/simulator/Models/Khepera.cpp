@@ -62,9 +62,14 @@ namespace nerd {
 
 Khepera::Khepera(const QString &name, bool useDistanceSensors,
 		bool useLightSensors)
-	: ModelInterface(name), mAgent(0), mUseDistanceSensors(useDistanceSensors),
-	  mUseLightSensors(useLightSensors)
+	: ModelInterface(name), mAgent(0), mUseDistanceSensors(0),
+	  mUseLightSensors(0)
 {
+	mUseDistanceSensors = new BoolValue(useDistanceSensors);
+	mUseLightSensors = new BoolValue(mUseLightSensors);
+
+	addParameter("UseDistanceSensors", mUseDistanceSensors);
+	addParameter("UseLightSensors", mUseLightSensors);
 }
 
 Khepera::Khepera(const Khepera &khepera)
@@ -72,6 +77,8 @@ Khepera::Khepera(const Khepera &khepera)
 	  mAgent(0), mUseDistanceSensors(khepera.mUseDistanceSensors),
 	  mUseLightSensors(khepera.mUseLightSensors)
 {
+	mUseDistanceSensors = dynamic_cast<BoolValue*>(getParameter("UseDistanceSensors"));
+	mUseLightSensors = dynamic_cast<BoolValue*>(getParameter("UseLightSensors"));
 }
 
 void Khepera::createModel() {
@@ -265,7 +272,7 @@ void Khepera::createModel() {
 	 * the real robot.  But until the RayGeom Visualization bug isn't fixed they
 	 * can't be used.
 	 */
-	if(mUseDistanceSensors) {
+	if(mUseDistanceSensors->get()) {
 		other = distance->createCopy();
 		mSimObjects.append(other);
 		PARAM(StringValue, other, "Name")->set("/Sensor0");
@@ -431,7 +438,7 @@ void Khepera::createModel() {
 		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
 	}
 
-	if(mUseLightSensors) {
+	if(mUseLightSensors->get()) {
 		other = light->createCopy();
 		mSimObjects.append(other);
 		PARAM(StringValue, other, "Name")->set("/LightLeft");

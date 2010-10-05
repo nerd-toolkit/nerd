@@ -41,34 +41,44 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#ifndef Khepera_H_
-#define Khepera_H_
 
-#include "Models/ModelInterface.h"
-#include "Physics/SimObjectGroup.h"
-#include "Value/BoolValue.h"
+#ifndef NERDPENDULUM_H_
+#define NERDPENDULUM_H_
+
+#include <QList>
+#include "ModelInterface.h"
+#include "Collision/CollisionObject.h"
+#include "Physics/BoxBody.h"
+#include "Physics/SphereBody.h"
 
 namespace nerd {
+	class ConfigurablePendulum : public ModelInterface {
+		public:
+			ConfigurablePendulum(const QString &groupName = "", int motorCount = 1, double weightMass = 1.0, double rodLength = 1.0);
+			ConfigurablePendulum(const ConfigurablePendulum &other);
+			virtual ~ConfigurablePendulum();
+			virtual SimObject* createCopy() const;
+			virtual void createModel();
 
-/**
- * A rough model of the Khepera I mobile robot according to the specifications
- * from its user manual at
- * http://ftp.k-team.com/khepera/documentation/KheperaUserManual.pdf
- */
-class Khepera : public ModelInterface {
-	public:
-		Khepera(const QString &name, bool useDistanceSensors, bool useLightSensors);
-		Khepera(const Khepera &khepera);
-		virtual void createModel();
-		virtual SimObject* createCopy() const;
+		protected:
+			virtual void layoutObjects();
+			void disableCollisions(SimBody *body1, SimBody *body2);
 
-	private:
-		SimObjectGroup *mAgent;
-		BoolValue *mUseDistanceSensors;
-		BoolValue *mUseLightSensors;
-};
+		private:
+			QString mGroupName;
+			QString mNamePrefix;
 
+			IntValue* mMotorCount;
+			DoubleValue* mWeightMass;
+			DoubleValue* mRodLength;
+
+			BoxBody *mRod;
+			BoxBody *mBase;
+			SphereBody *mWeight;
+
+			SimObject *mMotor;
+
+	};
 }
 
-#endif
-
+#endif /* PENDULUM_H_ */

@@ -54,6 +54,7 @@ class ODE_SimulationAlgorithm;
 class CollisionObject;
 class CollisionManager;
 class IBDS_Body;
+class MaterialProperties;
 
 /**
 * ODE specific CollisionHandler, which performes the collision handling and creates the required data structure that reports all collision-pairs as well as their contact points.
@@ -78,7 +79,7 @@ class ODE_CollisionHandler : public CollisionHandler {
 									bool disable);
 		virtual void updateCollisionHandler(CollisionManager *cManager); 
 
-		void mCollisionCallback (void *data, dGeomID o1, dGeomID o2);
+		void collisionCallback(void *data, dGeomID o1, dGeomID o2);
 		void clearContactList();	
 
 	private:
@@ -103,6 +104,7 @@ class ODE_CollisionHandler : public CollisionHandler {
 		int mMaxContactPoints;
 		QHash<dGeomID, CollisionObject*> mLookUpTable;
 		QHash<CollisionObject*, QList<CollisionObject*> > mAllowedCollisionPairs;
+		MaterialProperties *mGlobalMaterialProperties;
 };
 }
 #endif

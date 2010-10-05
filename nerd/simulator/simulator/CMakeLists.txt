@@ -130,6 +130,7 @@ set(nerd_simulator_SRCS
 	Util/SetSnapshotValueTask.cpp  
 	PlugIns/SimpleObjectFileParser.cpp  
 	Application/NerdBaseApplication.cpp
+	Models/ConfigurablePendulum.cpp
 )
 
 set(nerd_simulator_MOC_HDRS

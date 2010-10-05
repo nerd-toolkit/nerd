@@ -328,6 +328,19 @@ const QList<CollisionObject*>& SimBody::getCollisionObjects() const {
 }
 
 
+DoubleValue* SimBody::getElasticityValue() const {
+	return mElasticityValue;
+}
+
+DoubleValue* SimBody::getDynamicFrictionValue() const {
+	return mDynamicFrictionValue;
+}
+
+DoubleValue* SimBody::getStaticFrictionValue() const {
+	return mStaticFrictionValue;
+}
+
+
 
 
 

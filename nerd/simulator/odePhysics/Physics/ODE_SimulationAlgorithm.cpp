@@ -240,6 +240,9 @@ bool ODE_SimulationAlgorithm::executeSimulationStep(PhysicsManager *pManager) {
  * @param o2 
  */
 void ODE_SimulationAlgorithm::nearCallback (void *data, dGeomID o1, dGeomID o2) {
+
+	//CollisionHandler has to be referenced via global instance objects, since this
+	//is a static and not a member function.
 	ODE_CollisionHandler *handler = dynamic_cast<ODE_CollisionHandler*>(
 			Physics::getCollisionManager()->getCollisionHandler());
 	if(handler == 0) {
@@ -247,7 +250,7 @@ void ODE_SimulationAlgorithm::nearCallback (void *data, dGeomID o1, dGeomID o2) 
 			" an ODE_CollisionHandler (Skipping collision-callback).");
 		return;
 	}
-	handler->mCollisionCallback(data, o1, o2);
+	handler->collisionCallback(data, o1, o2);
 }
 
 }

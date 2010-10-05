@@ -105,6 +105,10 @@ class SimBody : public SimObject {
 		virtual bool removeCollisionObject(CollisionObject *object);
 		virtual const QList<CollisionObject*>& getCollisionObjects() const;
 
+		DoubleValue* getElasticityValue() const;
+		DoubleValue* getDynamicFrictionValue() const;
+		DoubleValue* getStaticFrictionValue() const;
+
 	protected:
 		ColorValue *mGeometryColorValue;
 		Vector3DValue *mPositionValue;

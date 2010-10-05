@@ -60,7 +60,7 @@ namespace nerd {
  * Constructor.
  */
 ODE_CollisionHandler::ODE_CollisionHandler() 
-	: mAlgorithm(0), mMaxContactPointsValue(0) 
+	: mAlgorithm(0), mMaxContactPointsValue(0), mGlobalMaterialProperties(0)
 {
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
@@ -247,6 +247,14 @@ void ODE_CollisionHandler::updateCollisionHandler(CollisionManager *cManager) {
 		}
 	}
 
+	CollisionManager *cm = Physics::getCollisionManager();
+	if(cm == 0) {
+		mGlobalMaterialProperties = 0;
+	}
+	else {
+		mGlobalMaterialProperties = cm->getMaterialProperties();
+	}
+
 	mSoftERP = mSoftERPValue->get();
 	mSoftCFM = mSoftCFMValue->get();
 	mBouncingVelocity = mBouncingVelocityValue->get();
@@ -261,7 +269,7 @@ void ODE_CollisionHandler::updateCollisionHandler(CollisionManager *cManager) {
  * @param o1 first ode geom that is involved in the contact.
  * @param o2 second ode geom that is involved in the contact.
  */
-void ODE_CollisionHandler::mCollisionCallback(void *data, dGeomID o1, dGeomID o2) {	
+void ODE_CollisionHandler::collisionCallback(void *data, dGeomID o1, dGeomID o2) {	
 
 	//TODO verify if this is correct (seems to be copied)
 
@@ -292,23 +300,36 @@ void ODE_CollisionHandler::mCollisionCallback(void *data, dGeomID o1, dGeomID o2
 		if(first->areCollisionsDisabled() || second->areCollisionsDisabled()) {
 			collisionAllowed = true;
 		}
-		else if(mAllowedCollisionPairs.contains(first)) {
+// 		else if(mAllowedCollisionPairs.contains(first)) {
+// 			QList<CollisionObject*> partners = mAllowedCollisionPairs.value(first);
+// 			if(partners.indexOf(second) != -1) {
+// 				collisionAllowed = true;
+// 			}	
+// 		}
+// 		if(mAllowedCollisionPairs.contains(second)) {
+// 			QList<CollisionObject*> partners = mAllowedCollisionPairs.value(second);
+// 			if(partners.indexOf(first) != -1) {
+// 				collisionAllowed = true;
+// 			}
+// 		}
+		else {
 			QList<CollisionObject*> partners = mAllowedCollisionPairs.value(first);
-			if(partners.indexOf(second) != -1) {
-				collisionAllowed = true;
-			}	
-		}
-		if(mAllowedCollisionPairs.contains(second)) {
-			QList<CollisionObject*> partners = mAllowedCollisionPairs.value(second);
-			if(partners.indexOf(first) != -1) {
+			if(partners.contains(second)) {
 				collisionAllowed = true;
 			}
+			else {
+				QList<CollisionObject*> partners = mAllowedCollisionPairs.value(second);
+				if(partners.contains(first)) {
+					collisionAllowed = true;
+				}
+			}	
 		}
+
   		// colliding two non-space geoms, so generate contact
   		// points between o1 and o2
 		// there are reported max: mMaxContactPointsValue->get() contact points.
 		dContact contact[mMaxContactPoints];
-  		int num_contact = dCollide(o1, o2, mMaxContactPointsValue->get(), 
+  		int num_contact = dCollide(o1, o2, mMaxContactPoints, 
 			&contact[0].geom, sizeof(dContact));
 
 		// TODO: maybe introduce getElasticity, getStaticFriction Methods to SimBody
@@ -340,38 +361,43 @@ void ODE_CollisionHandler::mCollisionCallback(void *data, dGeomID o1, dGeomID o2
 		// Determine the friction properties of the colliding SimBody objects, 
 		// in case one of the bodies has a unknown material property value.
 			if(first != 0 && second != 0) {
-				DoubleValue *restitutionValueOne = 
-					dynamic_cast<DoubleValue*>(host1->getParameter("Elasticity"));
-				DoubleValue *restitutionValueTwo = 
-					dynamic_cast<DoubleValue*>(host2->getParameter("Elasticity"));
-				if(restitutionValueOne != 0 && restitutionValueTwo != 0) {
-					restitution = restitutionValueOne->get() 
-						* restitutionValueTwo->get();
-				}
-				DoubleValue *staticFValueOne = 
-					dynamic_cast<DoubleValue*>(host1->getParameter("StaticFriction"));
-				DoubleValue *staticFValueTwo = 			
-					dynamic_cast<DoubleValue*>(host2->getParameter("StaticFriction"));
-				if(staticFValueOne != 0 && staticFValueTwo != 0) {
-					staticFriction = staticFValueOne->get() + staticFValueTwo->get();
-				}
-				DoubleValue *dynamicFValueOne = 
-					dynamic_cast<DoubleValue*>(host1->getParameter("DynamicFriction"));
-				DoubleValue *dynamicFValueTwo = 
-					dynamic_cast<DoubleValue*>(host2->getParameter("DynamicFriction"));
-				if(dynamicFValueOne != 0 && dynamicFValueTwo != 0) {
-					dynamicFriction = dynamicFValueOne->get() + dynamicFValueTwo->get();
-				}
+				restitution = host1->getElasticityValue()->get() 
+							+ host2->getElasticityValue()->get();
+				staticFriction = host1->getStaticFrictionValue()->get() 
+							+ host2->getStaticFrictionValue()->get();
+				dynamicFriction = host1->getDynamicFrictionValue()->get()
+							+ host2->getDynamicFrictionValue()->get();
+// 				DoubleValue *restitutionValueOne = 
+// 					dynamic_cast<DoubleValue*>(host1->getParameter("Elasticity"));
+// 				DoubleValue *restitutionValueTwo = 
+// 					dynamic_cast<DoubleValue*>(host2->getParameter("Elasticity"));
+// 				if(restitutionValueOne != 0 && restitutionValueTwo != 0) {
+// 					restitution = restitutionValueOne->get() 
+// 						* restitutionValueTwo->get();
+// 				}
+// 				DoubleValue *staticFValueOne = 
+// 					dynamic_cast<DoubleValue*>(host1->getParameter("StaticFriction"));
+// 				DoubleValue *staticFValueTwo = 			
+// 					dynamic_cast<DoubleValue*>(host2->getParameter("StaticFriction"));
+// 				if(staticFValueOne != 0 && staticFValueTwo != 0) {
+// 					staticFriction = staticFValueOne->get() + staticFValueTwo->get();
+// 				}
+// 				DoubleValue *dynamicFValueOne = 
+// 					dynamic_cast<DoubleValue*>(host1->getParameter("DynamicFriction"));
+// 				DoubleValue *dynamicFValueTwo = 
+// 					dynamic_cast<DoubleValue*>(host2->getParameter("DynamicFriction"));
+// 				if(dynamicFValueOne != 0 && dynamicFValueTwo != 0) {
+// 					dynamicFriction = dynamicFValueOne->get() + dynamicFValueTwo->get();
+// 				}
 			}
 		} 
 		else {
 			//Determine the friction properties in case both SimBody objects have valid material types.
-			restitution = Physics::getCollisionManager()->getMaterialProperties()->
-				getRestitution(material1, material2);
-			dynamicFriction = Physics::getCollisionManager()->getMaterialProperties()->
-				getDynamicFriction(material1, material2);
-			staticFriction = Physics::getCollisionManager()->getMaterialProperties()->
-				getStaticFriction(material1, material2);
+			if(mGlobalMaterialProperties != 0) {
+				restitution = mGlobalMaterialProperties->getRestitution(material1, material2);
+				dynamicFriction = mGlobalMaterialProperties->getDynamicFriction(material1, material2);
+				staticFriction = mGlobalMaterialProperties->getStaticFriction(material1, material2);
+			}
 		}
 
 		dynamicFriction = dynamicFriction * mFrictionScalingFactor;
@@ -393,9 +419,7 @@ void ODE_CollisionHandler::mCollisionCallback(void *data, dGeomID o1, dGeomID o2
 		
 			dContactGeom contactGeom = contact[i].geom;
 			// add contact point to list of contact points.
-			Vector3D contactPoint = Vector3D(contactGeom.pos[0], contactGeom.pos[1], 
-				contactGeom.pos[2]);
-			contactPoints.push_back(contactPoint);
+			contactPoints.push_back(Vector3D(contactGeom.pos[0], contactGeom.pos[1], contactGeom.pos[2]));
 
 			// If the two collision objects are allowed to collide, no contact joint is created.
 			if(collisionAllowed) {
@@ -403,15 +427,13 @@ void ODE_CollisionHandler::mCollisionCallback(void *data, dGeomID o1, dGeomID o2
 			}
 			// set the friction coefficient depending on the velocity in the friction directions 
 			// (TODO: needs to be confirmed)
-			if(Math::compareDoubles(contact[i].surface.motion1, 0.0,  mStaticFrictionAccuracy) == true) 
-			{
+			if(Math::compareDoubles(contact[i].surface.motion1, 0.0,  mStaticFrictionAccuracy) == true) {
 				contact[i].surface.mu = staticFriction;
 			}
 			else {
     			contact[i].surface.mu = dynamicFriction;
 			}
-			if(Math::compareDoubles(contact[i].surface.motion2, 0.0, mStaticFrictionAccuracy) == true) 
-			{
+			if(Math::compareDoubles(contact[i].surface.motion2, 0.0, mStaticFrictionAccuracy) == true) {
 				contact[i].surface.mu2 = staticFriction;
 			}
 			else {

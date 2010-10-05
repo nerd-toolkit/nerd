@@ -67,6 +67,7 @@
 #include "Models/CantileverArm.h"
 
 #include "Models/MSeriesV2Model_Obsolete.h"
+#include "Models/ConfigurablePendulum.h"
 
 namespace nerd{
 
@@ -90,12 +91,12 @@ ModelPrototypes::ModelPrototypes() {
 
 	pm->addPrototype("Prototypes/Khepera", 
 				new Khepera(SimulationConstants::PROTOTYPE_KHEPERA, true, true));
-	pm->addPrototype("Prototypes/KheperaDist", 
-				new Khepera(SimulationConstants::PROTOTYPE_KHEPERA, true, false));
-	pm->addPrototype("Prototypes/KheperaLight", 
-				new Khepera(SimulationConstants::PROTOTYPE_KHEPERA, false, true));
-	pm->addPrototype("Prototypes/KheperaRestrictedSensors", 
-				new Khepera(SimulationConstants::PROTOTYPE_KHEPERA, false, false));
+// 	pm->addPrototype("Prototypes/KheperaDist", 
+// 				new Khepera(SimulationConstants::PROTOTYPE_KHEPERA, true, false));
+// 	pm->addPrototype("Prototypes/KheperaLight", 
+// 				new Khepera(SimulationConstants::PROTOTYPE_KHEPERA, false, true));
+// 	pm->addPrototype("Prototypes/KheperaRestrictedSensors", 
+// 				new Khepera(SimulationConstants::PROTOTYPE_KHEPERA, false, false));
 
 	ListSwitchControlParameter *lscp = new ListSwitchControlParameter("ControlParameter");
 	pm->addPrototype("Prototypes/ListSwitchControlParameter", 
@@ -157,6 +158,9 @@ ModelPrototypes::ModelPrototypes() {
 
 	pm->addPrototype("Prototypes/CantileverArm",
 				new CantileverArm("CantileverArm"));
+
+	pm->addPrototype("Prototypes/ConfigurablePendulum",
+				new ConfigurablePendulum("ConfigurablePendulum"));
 
 }
 
