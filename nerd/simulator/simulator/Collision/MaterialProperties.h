@@ -78,8 +78,8 @@ class MaterialProperties {
 		int getTextureIndex(const QString &textureName);
 
 	private:
-		QMap <QString, int> mMaterialLookUp;
-		QList <QString> mTextureLookUp;
+		QMap<QString, int> mMaterialLookUp;
+		QList<QString> mTextureLookUp;
 
 		double** mStaticFrictionMatrix;
 		double** mDynamicFrictionMatrix;

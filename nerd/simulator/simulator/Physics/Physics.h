@@ -56,6 +56,7 @@ namespace nerd {
 class Physics {
 	public:
 		static bool install();
+		static void reset();
 		static PhysicsManager* getPhysicsManager();
 		static CollisionManager* getCollisionManager();
 		static SimulationEnvironmentManager* getSimulationEnvironmentManager();	

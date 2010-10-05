@@ -89,6 +89,12 @@ bool Physics::install() {
 	return ok;
 }
 
+void Physics::reset() {
+	mGlobalPhysicsManager = 0;
+	mGlobalCollisionMananger = 0;
+	mGlobalSimulationEnvironmentManager = 0;
+}
+
 PhysicsManager* Physics::getPhysicsManager() {
 	if(mGlobalPhysicsManager == 0) {
 		PhysicsManager *pm = dynamic_cast<PhysicsManager*>(Core::getInstance()

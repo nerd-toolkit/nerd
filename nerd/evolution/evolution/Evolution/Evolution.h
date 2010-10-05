@@ -56,6 +56,7 @@ namespace nerd {
 	class Evolution {
 	public:
 		static bool install();
+		static void reset();
 		static EvolutionManager* getEvolutionManager();
 		
 	private:

@@ -65,6 +65,11 @@ bool Evolution::install() {
 }
 
 
+void Evolution::reset() {
+	mGlobalEvolutionManager = 0;
+}
+
+
 EvolutionManager* Evolution::getEvolutionManager() {
 	if(mGlobalEvolutionManager == 0) {
 		EvolutionManager *em = dynamic_cast<EvolutionManager*>(Core::getInstance()

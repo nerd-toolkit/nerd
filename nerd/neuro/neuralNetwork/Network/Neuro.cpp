@@ -50,12 +50,6 @@ namespace nerd {
 
 NeuralNetworkManager *Neuro::mGlobalManager = 0;
 
-Neuro::Neuro()
-{
-}
-
-Neuro::~Neuro() {
-}
 
 bool Neuro::install() {
 	bool ok = true;
@@ -71,6 +65,10 @@ bool Neuro::install() {
 	}
 	mGlobalManager = nm;
 	return ok;
+}
+
+void Neuro::reset() {
+	mGlobalManager = 0;
 }
 
 

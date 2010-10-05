@@ -402,7 +402,8 @@ void TestValueManager::testRemoveValuesByList() {
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 
-	QCOMPARE(vm->getValues().size(), 5);
+	int defaultNumberOfValues = 6;
+	QCOMPARE(vm->getValues().size(), defaultNumberOfValues);
 
 	Value *v1 = new Value();
 	Value *v2 = new Value();
@@ -423,7 +424,7 @@ void TestValueManager::testRemoveValuesByList() {
 
 	QCOMPARE(v1->getValueChangedListeners().size(), 2);
 	QCOMPARE(v2->getValueChangedListeners().size(), 1);
-	QCOMPARE(vm->getValues().size(), 9);
+	QCOMPARE(vm->getValues().size(), defaultNumberOfValues + 4);
 	QVERIFY(vm->getValue("Value1") == v1);
 	QVERIFY(vm->getValue("Value2") == v2);
 	QVERIFY(vm->getValue("Value1Again") == v1);
@@ -438,7 +439,7 @@ void TestValueManager::testRemoveValuesByList() {
 	//values are removed and all listeners are also removed.
 	QCOMPARE(v1->getValueChangedListeners().size(), 0);
 	QCOMPARE(v2->getValueChangedListeners().size(), 0);
-	QCOMPARE(vm->getValues().size(), 5);
+	QCOMPARE(vm->getValues().size(), defaultNumberOfValues);
 	QVERIFY(vm->getValue("Value1") == 0);
 	QVERIFY(vm->getValue("Value2") == 0);
 	QVERIFY(vm->getValue("Value1Again") == 0);

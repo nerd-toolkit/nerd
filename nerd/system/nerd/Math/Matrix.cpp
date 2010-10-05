@@ -47,6 +47,7 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
+#include "Math/Math.h"
 
 using namespace std;
 
@@ -88,21 +89,24 @@ Matrix& Matrix::operator=(const Matrix &other) {
 }
 
 void Matrix::setWidth(int width) {
-	mWidth = width;
+	mWidth = Math::max(0, width);
 	resize(mWidth, mHeight, mDepth);
 }
 
 void Matrix::setHeight(int height) {
-	mHeight = height;
+	mHeight = Math::max(0, height);
 	resize(mWidth, mHeight, mDepth);
 }
 
 void Matrix::setDepth(int depth) {
-	mDepth = depth;
+	mDepth = Math::max(0, depth);
 	resize(mWidth, mHeight, mDepth);
 }
 
 void Matrix::resize(int width, int height, int depth) {
+	width = Math::max(0, width);
+	height = Math::max(0, height);
+	depth = Math::max(0, depth);
 	mMatrix.resize(depth); 
 	for(int i = 0; i < mMatrix.size(); ++i) {
 		QVector<QVector<double> > &v1 = mMatrix[i];

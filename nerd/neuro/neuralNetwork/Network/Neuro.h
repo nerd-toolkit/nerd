@@ -54,10 +54,8 @@ namespace nerd {
 	 */
 	class Neuro {
 	public:
-		Neuro();
-		virtual ~Neuro();
-
 		static bool install();
+		static void reset();
 		static NeuralNetworkManager* getNeuralNetworkManager();
 		
 	private:

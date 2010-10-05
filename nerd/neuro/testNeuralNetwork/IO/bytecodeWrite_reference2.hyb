@@ -4,7 +4,7 @@ _ABAL:
 
 weight 0
 bias
-weight 3.24
+weight -3.24
 read 39
 mac
 tanh
@@ -42,10 +42,10 @@ res 38
 
 weight 0
 bias
-weight -3.32
+weight 3.32
 read 115
 mac
-weight -3.3
+weight 3.3
 read 39
 mac
 tanh
@@ -388,70 +388,3 @@ weight 0
 bias
 tanh
 res 81
-
-weight 0
-bias
-tanh
-res 82
-
-weight 0
-bias
-tanh
-res 93
-
-weight 0
-bias
-tanh
-res 94
-
-weight 0
-bias
-tanh
-res 95
-
-_ABML:
-
-_ABSR:
-
-weight 0
-bias
-weight 2.11
-read 38
-mac
-weight -2.12
-read 39
-mac
-weight 2.13
-read 40
-mac
-weight 2.14
-read 41
-mac
-tanh
-res 16
-
-weight 0
-bias
-tanh
-res 17
-
-weight 0
-bias
-tanh
-res 18
-
-weight 0
-bias
-tanh
-res 29
-
-weight 0
-bias
-tanh
-res 30
-
-weight 0
-bias
-tanh
-res 31
-

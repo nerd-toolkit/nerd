@@ -55,6 +55,7 @@
 #include "Event/TriggerEventTask.h"
 #include "Network/NeuroTagManager.h"
 #include "NeuralNetworkConstants.h"
+#include "Network/Neuro.h"
 
 
 #define TRACE(message)
@@ -145,6 +146,9 @@ NeuralNetworkManager::~NeuralNetworkManager() {
 		mSynapseFunctionPrototypes.removeAll(sf);
 		delete sf;
 	}
+
+	//clear helper class.
+	Neuro::reset();
 }
 
 QString NeuralNetworkManager::getName() const {

@@ -59,6 +59,7 @@
 #include "NerdConstants.h"
 #include "Event/EventListenerAdapter.h"
 #include "Event/EventManager.h"
+#include "Network/Neuro.h"
 
 using namespace std;
 using namespace nerd;
@@ -377,7 +378,7 @@ void TestNeuralNetworkManager::testBehavior() {
 	NeuralNetworkAdapter *nn2 = new NeuralNetworkAdapter(ActivationFunctionAdapter(""),
 			TransferFunctionAdapter("", 0.2, 0.8), SynapseFunctionAdapter(""));
 	
-	NeuralNetworkManager *nnm = new NeuralNetworkManager();
+	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
 	nnm->registerAsGlobalObject();
 	
 	//add some networks

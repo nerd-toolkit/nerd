@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<net version="ORCS XML V1.0" >
+<net version="NERD XML V1.0" >
     <defaultTransferFunction name="ramp[0,1]" >
         <param value="432.1" name="TestParam2" />
         <param value="1711" name="TestParam4" />

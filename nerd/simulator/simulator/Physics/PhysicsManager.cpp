@@ -101,6 +101,9 @@ PhysicsManager::~PhysicsManager()
 	delete mPhysicalSimulationAlgorithm;
 	destroySimObjects();
 	destroyPrototypes();
+
+	//clear Physics helper class.
+	Physics::reset();
 }
 
 

@@ -60,6 +60,7 @@
 #include <QDir>
 #include <QDate>
 #include "Util/Tracer.h"
+#include "Evolution/Evolution.h"
 
 #define TRACE(message)
 //#define TRACE(message) Tracer _ttt_(message);
@@ -172,6 +173,8 @@ EvolutionManager::~EvolutionManager() {
 	delete mEvolutionAlgorithmDuration;
 	delete mEvaluationDuration;
 	delete mDefaultEvaluationMethod;
+
+	Evolution::reset();
 }
 
 QString EvolutionManager::getName() const {
