@@ -131,6 +131,7 @@ set(nerd_simulator_SRCS
 	PlugIns/SimpleObjectFileParser.cpp  
 	Application/NerdBaseApplication.cpp
 	Models/ConfigurablePendulum.cpp
+	Models/CustomModel.cpp
 )
 
 set(nerd_simulator_MOC_HDRS

@@ -79,8 +79,8 @@ SimJoint::SimJoint(const SimJoint &joint)
 	mFirstBodyName = dynamic_cast<StringValue*>(getParameter("FirstBody"));
 	mSecondBodyName = dynamic_cast<StringValue*>(getParameter("SecondBody"));
 
-	mFirstBodyName->set("");
-	mSecondBodyName->set("");
+// 	mFirstBodyName->set("");
+// 	mSecondBodyName->set("");
 }
 
 

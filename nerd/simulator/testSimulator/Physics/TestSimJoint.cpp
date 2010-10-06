@@ -178,8 +178,8 @@ void TestSimJoint::testConstructorAndSetBodies(){
 	QVERIFY(name4 != 0);
 	QVERIFY(name1 != name3);
 	QVERIFY(name2 != name4);
-	QVERIFY(name3->get().compare("") == 0);
-	QVERIFY(name4->get().compare("") == 0);
+	QVERIFY(name3->get().compare("Box3") == 0);
+	QVERIFY(name4->get().compare("Box1") == 0);
 	
 	delete sj2;
 	
@@ -240,7 +240,7 @@ void TestSimJoint::testSliderJoint() {
 
 	SliderJoint *copy = dynamic_cast<SliderJoint*>(slider->createCopy());
 	QVERIFY(copy != 0);
-	QCOMPARE(copy->getParameter("FirstBody")->getValueAsString(), QString(""));
+	QCOMPARE(copy->getParameter("FirstBody")->getValueAsString(), QString("Body1"));
 	QCOMPARE(copy->getParameter("MinPosition")->getValueAsString(), QString("2.1"));
 	QCOMPARE(dynamic_cast<DoubleValue*>(copy->getParameter("MaxPosition"))->get(), std::numeric_limits<double>::max());
 	QCOMPARE(copy->getParameter("AxisPoint1")->getValueAsString(), QString("(1,0,2.2)"));

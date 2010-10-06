@@ -42,75 +42,62 @@
  ***************************************************************************/
 
 
-#ifndef SimpleObjectFileParser_H_
-#define SimpleObjectFileParser_H_
+#ifndef ORCSCustomModel_H
+#define ORCSCustomModel_H
 
-#include "Core/SystemObject.h"
-#include <QFile>
-#include <qxml.h>
-#include <QDir>
-#include <QDomDocument>
-#include "Physics/SimBody.h"
+#include <QString>
+#include <QHash>
 #include "Models/ModelInterface.h"
-#include "PlugIns/CommandLineArgument.h"
-#include "Value/StringValue.h"
-#include "Event/Event.h"
-#include "Event/EventListener.h"
-#include "Value/ValueChangedListener.h"
-
-/**
-* SimpleObjectFileParser. This plugin reacts on a specific commandline parameter to load simple environment objects from a user choosen file. 
-* The SimpleObjectFileParser reacts to the commandline argument -env/-loadEnvironment. This commandline argument has one parameter which specifies the file to be loaded as environment file. The parsing of the xml-environment file takes place during the init-phase of the simulation setup and creates all simulation objects and rules which are defines via the given xml. There are currently to Versions 1.0/1.1 which are supported by the parser. V1.1 allows the definition of SimBody-objects and models (both based on prototypes that are known in the simulation), definition of Ccollision rules and randomization rules.
-* Due to the fact, that the randomization rules are parsed after the environment, model and collision rule definitions were parsed, also values and parameters of models and environment objects defined in the xml can be randomized.
-**/
+#include <QList>
+#include "Physics/SimObject.h"
+#include "Physics/SimObjectGroup.h"
 
 namespace nerd {
 
-class SimpleObjectFileParser : public virtual SystemObject, public virtual EventListener,
-								public virtual ValueChangedListener 
-{
+	class CustomModelVariable {
+		public:
+			CustomModelVariable(const QString &name, const QString &value, bool publicVar, bool eval)
+				: mName(name), mExpression(value), mValue(value), mPublic(publicVar), mEvaluate(eval) {}
 
+			QString mName;
+			QString mExpression;
+			QString mValue;
+			bool mPublic;
+			bool mEvaluate;
+	};
+
+	/**
+	 * CustomModel.
+	 *
+	 */
+	class CustomModel : public ModelInterface {
 	public:
-		SimpleObjectFileParser();
-		~SimpleObjectFileParser();
+		CustomModel(const QString &name);
+		CustomModel(const CustomModel &other);
+		virtual ~CustomModel();
 
-		virtual bool init();
-		virtual bool bind();
-		virtual bool cleanUp();
-		virtual QString getName() const;
+		virtual SimObject* createCopy() const;
+		virtual void createModel();
 
-		virtual void eventOccured(Event *event);
-		virtual void valueChanged(Value *value);
+		bool addSimObject(SimObject *object);
+		QList<SimObject*> getSimObjects() const;
 
-	private:
-		bool loadXmlDescription();
-		SimObject* generateEnvironmentObject(QDomElement element, bool addToEnvironmentObjects = true);
-		bool generateEnvironmentObjectChain(QDomElement element);
-		bool generateEnvironmentObjects(QDomElement element);
+		bool addVariable(CustomModelVariable *variable);
+		QList<CustomModelVariable*> getVariables() const;
 
-		bool createAgents(QDomElement element);
-		bool createPrototypes(QDomElement element);
-		void parseEventCollisionRule(QDomElement ruleNode);
-		void parseCollisionRule(QDomElement collisionRuleNode);
+	protected:
+		virtual void layoutObjects();
 
-		void parseRandomiseListDefinition(QDomElement mainNode);
-		void parseRandomiseDefinition(QDomElement mainNode);
-		void parseList(Value *value, QDomElement mainNode);
-		void parseInfoNeuronDeclaration(QDomElement mainNode);
-		void parseValueDefinition(QDomElement valueNode);
-	
-	private:
-		QString mFileName;
-		QString mVersion;
-		CommandLineArgument *mEnvironmentCommandLineArgument;
-		QVector<SimObject*> mObjectsToAdd;
-		QVector<ModelInterface*> mAgentsToAdd;
-		StringValue *mXMLFileName;
-		QString mLastXMLFileName;
-		Event *mLoadEnvironmentXMLEvent;
-		QList<SimObject*> mSimObjectTrash;
-		QList<SimObjectGroup*> mSimObjectGroupTrash;
-};
+	protected:
+		QList<SimObject*> mSimObjects;
+		SimObjectGroup *mAgent;
+		QList<CustomModelVariable*> mVariables;
+		QHash<QString, CustomModelVariable*> mVariableLookUp;
+	};
+
 }
+
 #endif
+
+
 

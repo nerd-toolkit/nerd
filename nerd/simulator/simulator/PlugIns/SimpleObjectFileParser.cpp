@@ -62,6 +62,7 @@
 #include "Value/ValueManager.h"
 #include <QMutexLocker>
 #include "Models/DummyModel.h"
+#include "Models/CustomModel.h"
 
 
 using namespace std;
@@ -102,12 +103,16 @@ bool SimpleObjectFileParser::init() {
 
 	if(mEnvironmentCommandLineArgument->getParameterValue()->get() != "") {
 		QStringList fileNames = mEnvironmentCommandLineArgument->getEntries();
+
 		if(!fileNames.empty()) {
 			mXMLFileName->set(fileNames.at(0));
 			mLastXMLFileName = fileNames.at(0);
 		}
 		for(int i = 0; i < fileNames.size(); ++i) {
 			mFileName = fileNames.at(i);
+
+			Core::log("Trying to load file " + mFileName, true);
+
 			if(!loadXmlDescription()) {
 				cerr << "There was an error while parsing environment file. "
 					 << "See log file for details." << endl;
@@ -182,15 +187,22 @@ bool SimpleObjectFileParser::loadXmlDescription() {
 	while(!n.isNull()) {
 		QDomElement e = n.toElement();
 		if(!e.isNull()) {
-			if (((e.tagName().compare("Agent") == 0 
+			if (((e.tagName().toLower().compare("agent") == 0 
 				&& mVersion.compare("Environment XML V1.0") == 0) 
-				|| (e.tagName().compare("Models") == 0 
+				|| (e.tagName().toLower().compare("models") == 0 
 				&& mVersion.compare("Environment XML V1.1") == 0)) 
 				&& successful) 
 			{
 				if(!createAgents(e)) {
 					Core::log("SimpleObjectFileParser: Could not load xml-File: " 
 						+ mFileName.trimmed() + ". Error while reading agent definitions.", true);
+					successful = false;
+				}
+			}
+			else if((e.tagName().toLower()  == "prototypes") && successful) {
+				if(!createPrototypes(e)) {
+					Core::log("SimpleObjectFileParser: Could not load xml-File: " 
+						+ mFileName.trimmed() + ". Error while reading prototype definitions.", true);
 					successful = false;
 				}
 			}
@@ -223,7 +235,7 @@ bool SimpleObjectFileParser::loadXmlDescription() {
 		QDomElement e = n.toElement();
 		if(!e.isNull()) {
 			if(e.tagName().compare("Environment") == 0 && successful) {
-				if(!generateEnvironmentObjects(e)) {
+				if(generateEnvironmentObjects(e) == 0) {
 					Core::log("SimpleObjectFileParser: Could not load xml-File: " 
 						+ mFileName.trimmed() + ". Error while reading object definitions.", true);
 					successful = false;
@@ -367,12 +379,12 @@ bool SimpleObjectFileParser::generateEnvironmentObjects(QDomElement element) {
 		QDomElement e = n.toElement();
 		if(!e.isNull()) {
 			if(e.tagName().compare("object") == 0) {
-				if(!generateEnvironmentObject(e)) {
+				if(generateEnvironmentObject(e) == 0) {
 					return false;
 				}
 			}
 			else if(e.tagName().compare("objectChain") == 0) {
-				if(!generateEnvironmentObjectChain(e)) {
+				if(generateEnvironmentObjectChain(e) == 0) {
 					return false;
 				}
 			}
@@ -519,6 +531,57 @@ bool SimpleObjectFileParser::createAgents(QDomElement element) {
 	return true;
 }
 
+bool SimpleObjectFileParser::createPrototypes(QDomElement element) {
+	QDomNode protoNode = element.firstChild();
+	while(!protoNode.isNull()) {
+		QDomElement protoElement = protoNode.toElement(); 
+
+		if(!protoElement.isNull()) {
+			if(protoElement.tagName() == "prototype") {
+				QString prototypeName = "Default";
+				if(protoElement.hasAttribute("name")) {
+					prototypeName = protoElement.attributeNode("name").value();
+					protoElement.removeAttribute("name");
+				}
+				else {
+					Core::log("SimpleObjectFileParser: Could not finde attribute "
+						"<name> while parsing prototype definition.", true);
+				}
+
+				PhysicsManager *pm = Physics::getPhysicsManager();
+				
+				CustomModel *model = new CustomModel(prototypeName);
+
+
+				QDomNode n = protoElement.firstChild();
+
+				while(!n.isNull()) {
+					QDomElement e = n.toElement();
+					if(!e.isNull()) {
+
+						if(e.tagName().compare("object") == 0) {
+							SimObject *object = generateEnvironmentObject(e, false);
+
+							if(object != 0) {
+								Core::log("Got: " + object->getName(), true);
+								model->addSimObject(object);
+							}
+							else {
+								return false;
+							}
+						}
+					}
+					n = n.nextSibling();
+				}
+
+				pm->addPrototype(model->getName(), model);
+			}
+		}
+		protoNode = protoNode.nextSibling();
+  	}
+	return true;
+}
+
 
 /**
  * Parsing of a single object definition. 
@@ -526,180 +589,20 @@ bool SimpleObjectFileParser::createAgents(QDomElement element) {
  * @return The boolean return value states, whether the parsing of the 
  * object definition has been successfull or not.
  */
-bool SimpleObjectFileParser::generateEnvironmentObject(QDomElement element) {
+SimObject* SimpleObjectFileParser::generateEnvironmentObject(QDomElement element, bool addToEnvironmentObjects) {
 	if(element.tagName().compare("object") != 0) {
 		Core::log("SimpleObjectFileParser: Wrong tag name.", true);
-		return false;
+		return 0;
 	}
 	QDomAttr a = element.attributeNode("type"); 
 	if(mVersion.compare("Environment XML V1.0") == 0) {
-// 		SimBody *body;
-// 		if(a.value().compare("box") == 0) {
-// 			element.removeAttribute("type");
-// 			body = new ODE_BoxBody("Box");
-// 			if(element.hasAttribute("dimension")) {
-// 				QDomAttr orientation = element.attributeNode("dimension");
-// 				Vector3DValue dimensionValue;
-// 				if(dimensionValue.setValueFromString(orientation.value())) {
-// 					DoubleValue *width = dynamic_cast<DoubleValue*>(
-// 						body->getParameter("Width"));
-// 					if(width != 0) {
-// 						width->set(dimensionValue.getX());
-// 					}
-// 					DoubleValue *height= dynamic_cast<DoubleValue*>(
-// 						body->getParameter("Height"));
-// 					if(height != 0) {
-// 						height->set(dimensionValue.getY());
-// 					}
-// 					DoubleValue *depth = dynamic_cast<DoubleValue*>(
-// 						body->getParameter("Depth"));
-// 					if(depth != 0) {
-// 						depth->set(dimensionValue.getZ());
-// 					}
-// 					element.removeAttribute("dimension");
-// 				} 
-// 				else {
-// 					Core::log("SimpleObjectFileParser: Error in parameter \"dimension\".", true);
-// 					delete body;
-// 					return false;
-// 				}
-// 			}
-// 			else {
-// 				Core::log("SimpleObjectFileParser: Could not find parameter dimension.", true);
-// 				delete body;
-// 				return false;
-// 			}		
-// 		}
-// 		else if(a.value().compare("sphere") == 0) {
-// 			element.removeAttribute("type");
-// 			body = new ODE_SphereBody("Sphere");
-// 			body->getParameter("Dynamic")->setValueFromString("false");
-// 			if(element.hasAttribute("dimension")) {
-// 				QDomAttr dimension = element.attributeNode("dimension");
-// 				DoubleValue *radius = dynamic_cast<DoubleValue*>(
-// 					body->getParameter("Radius"));
-// 				if(radius != 0) {
-// 					if(!radius->setValueFromString(dimension.value())) {
-// 						Core::log("SimpleObjectFileParser: Error in parameter"
-// 							" \"dimension\".", true);
-// 						delete body;
-// 						return false;
-// 					}
-// 				}
-// 				element.removeAttribute("dimension");
-// 			}
-// 			else{
-// 				Core::log("SimpleObjectFileParser: Could not find parameter dimension.", true);
-// 				delete body;
-// 				return false;
-// 			}
-// 		}
-// 		else {
-// 			Core::log("SimpleObjectFileParser: Found an unknow object name.", true);
-// 			return false;
-// 		}
-// 		if(element.hasAttribute("position")) {
-// 			QDomAttr position = element.attributeNode("position");
-// 			if(!body->getParameter("Position")->setValueFromString(position.value())) {
-// 				Core::log("SimpleObjectFileParser: Error in parameter \"position\".", true);
-// 				delete body;
-// 				return false;
-// 			}
-// 			element.removeAttribute("position");
-// 		}
-// 		else {
-// 			Core::log("SimpleObjectFileParser: Could not find parameter position.", true);
-// 			delete body;
-// 			return false;
-// 		}
-// 		if(element.hasAttribute("color")) {
-// 			QDomAttr colorAttr = element.attributeNode("color");
-// 			ColorValue color;
-// 			if(!color.setValueFromString(colorAttr.value())) {
-// 				Core::log("SimpleObjectFileParser: Error in parameter \"color\".", true);
-// 				delete body;
-// 				return false;
-// 			}
-// 			body->getGeometries().at(0)->setColor(color.get());
-// 			element.removeAttribute("color");
-// 		}
-// 		if(element.hasAttribute("dynamic")) {
-// 			QDomAttr dynamicAttr = element.attributeNode("dynamic");	
-// 			if(!body->getParameter("Dynamic")->setValueFromString(dynamicAttr.value())) {
-// 				Core::log("SimpleObjectFileParser: Error in parameter \"dynamic\".", true);
-// 				delete body;
-// 				return false;
-// 			}
-// 			element.removeAttribute("dynamic");
-// 		} 
-// 		else {
-// 			body->getParameter("Dynamic")->setValueFromString("false");
-// 		}
-// 		if(element.hasAttribute("mass")) {
-// 			if(dynamic_cast<BoolValue*>(body->getParameter("Dynamic"))->get()) {
-// 				QDomAttr massAttr = element.attributeNode("mass");
-// 				if(dynamic_cast<DoubleValue*>(body->getParameter("Mass")) != 0) {
-// 					if(!dynamic_cast<DoubleValue*>(
-// 						body->getParameter("Mass"))->setValueFromString(massAttr.value())) {
-// 						Core::log("SimpleObjectFileParser: Error in parameter \"mass\".", true);
-// 						delete body;
-// 						return false;
-// 					}
-// 				}
-// 			}
-// 			element.removeAttribute("mass");
-// 		}
-// 		else {
-// 			if(dynamic_cast<BoolValue*>(body->getParameter("Dynamic"))->get()) {
-// 				Core::log("SimpleObjectFileParser: Could not find parameter mass.", true);
-// 				delete body;
-// 				return false;
-// 			}
-// 		}
-// 		if(element.hasAttribute("orientation")) {
-// 			QDomAttr orientation = element.attributeNode("orientation");
-// 			if(!body->getParameter("Orientation")->setValueFromString(orientation.value())) {
-// 				Core::log("SimpleObjectFileParser: Error in parameter \"orientation\".", true);
-// 				delete body;
-// 				return false;
-// 			}
-// 			element.removeAttribute("orientation");
-// 		} 	
-// 	
-// 		if(element.hasAttribute("material")) {
-// 			QDomAttr orientation = element.attributeNode("material");
-// 			if(!body->getParameter("Material")->setValueFromString(orientation.value())) {
-// 				Core::log("SimpleObjectFileParser: Error in parameter \"material\".", true);
-// 				delete body;
-// 				return false;
-// 			}
-// 			element.removeAttribute("material");
-// 		}
-// 		else {
-// 			body->getParameter("Material")->setValueFromString("Default");
-// 		}
-// 		if(element.hasAttribute("texture")) {
-// 			QDomAttr orientation = element.attributeNode("texture");
-// 			body->getParameter("Texture")->setValueFromString(orientation.value());
-// 			element.removeAttribute("texture");
-// 		}
-// 		if(element.hasAttribute("name")) {
-// 			QDomAttr nameAttr = element.attributeNode("name");
-// 			body->setName(nameAttr.value());	
-// 			element.removeAttribute("name");
-// 		}
-// 		if(element.attributes().size() > 0) {
-// 			delete body;
-// 			Core::log("SimpleObjectFileParser: Wrong number of attributes for object.", true);
-// 			return false;
-// 		}
-// 		mObjectsToAdd.push_back(body);
-		return true;
+		Core::log("SimpleObjectFileParser: XML V1.0 is not supported any more.", true);
+		return 0;
 	}
 	else if(mVersion.compare("Environment XML V1.1") == 0) {
 		if(element.tagName().compare("object") != 0) {
 			Core::log("SimpleObjectFileParser: Invalid tag name for object definition.", true);
-			return false;
+			return 0;
 		}
 		QDomAttr a = element.attributeNode("type"); 
 		SimObject *object = 0;
@@ -708,13 +611,13 @@ bool SimpleObjectFileParser::generateEnvironmentObject(QDomElement element) {
 		if(bodyPrototype == 0) {
 			Core::log(QString("SimpleObjectFileParser: Could not find prototype of object \"")
 				.append(a.value()).append("\""), true);
-			return false;
+			return 0;
 		}
 		object = bodyPrototype->createCopy();
 		if(object == 0) {
 			Core::log(QString("SimpleObjectFileParser: Error while copying prototpye \"")
 				.append(a.value()).append("\""), true);
-			return false;
+			return 0;
 		}
 		element.removeAttribute("type");	
 		QDomNamedNodeMap attributes = element.attributes();
@@ -723,18 +626,21 @@ bool SimpleObjectFileParser::generateEnvironmentObject(QDomElement element) {
 			if(object->getParameter(attribute.name()) == 0) {
 				Core::log(QString("SimpleObjectFileParser: Attribute \" ")
 					.append(attribute.name()).append( "\" does not exist!"), true);
-				return false;
+				return 0;
 			}
 			if(!object->getParameter(attribute.name())->setValueFromString(attribute.value())) {
 				Core::log(QString("SimpleObjectFileParser: Could not set value \" ")
 					.append(attribute.name()).append( "\" of object \"").append(a.value())
 					.append("\"!"), true);
-				return false;
+				return 0;
 			}
 		}
-		mObjectsToAdd.push_back(object);
+		if(addToEnvironmentObjects) {
+			mObjectsToAdd.push_back(object);
+		}
+		return object;
 	}
-	return true;
+	return 0;
 }
 
 

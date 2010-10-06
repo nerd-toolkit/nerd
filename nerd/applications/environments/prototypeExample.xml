@@ -1,0 +1,21 @@
+ <NERD version="Environment XML V1.1"> 
+
+	<Prototypes>
+		<prototype name="MyTestPrototype">
+			<var name="size" public="false" value="15.0" eval="t" />
+
+
+			<object type="Box" Name="UpperBox" Position="(0,1,0)" Orientation="(0,0,0)" Width="0.4" Height="0.4" Depth="0.4" Color="red"/>
+			<object type="Box" Name="LowerBox" Position="(0,2,0)" Orientation="(0,0,0)" Width="0.4" Height="0.4" Depth="0.4" Color="red"/>
+			<object type="HingeJoint" Name="Connex" AxisPoint1="(0,0.5,0)" AxisPoint2="(0.5,0.5,0)" FirstBody="$name$/UpperBox" SecondBody="$name$/LowerBox"/>
+
+		</prototype>
+	</Prototypes>
+
+	<Models> 
+		<model prototype="Ground" name="Ground" />
+   		<model prototype="MyTestPrototype" name="Test" orientation="(45, 45, 45)" />  
+	</Models>
+
+
+</NERD>
