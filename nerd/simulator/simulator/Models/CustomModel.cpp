@@ -93,8 +93,13 @@ SimObject* CustomModel::createCopy() const {
 
 
 void CustomModel::createModel() {
+	createModel(false);
+}
+
+void CustomModel::createModel(bool ignorePhysicsManager) {
 
 	mAgent = new SimObjectGroup(getName(), "Agent");
+
 	QString pathName = "/";
 	pathName = pathName.append(getName());
 
@@ -102,23 +107,27 @@ void CustomModel::createModel() {
 		SimObject *object = i.next();
 		object->setName(object->getName().prepend("/"));
 
-		QList<Value*> parameters = object->getParameters();
-		for(QListIterator<Value*> j(parameters); j.hasNext();) {
-			StringValue *stringValue = dynamic_cast<StringValue*>(j.next());
-			if(stringValue != 0) {
-				Core::log("Found: " + stringValue->get() + "  ", true);
-				if(stringValue->get().contains("$name$")) {
-					QString replacedString = stringValue->get().replace("$name$", pathName);
-					Core::log("Replaced: " + stringValue->get() + " " +  replacedString, true);
-					stringValue->set(replacedString);
+		if(!ignorePhysicsManager) {
+			QList<Value*> parameters = object->getParameters();
+			for(QListIterator<Value*> j(parameters); j.hasNext();) {
+				StringValue *stringValue = dynamic_cast<StringValue*>(j.next());
+				if(stringValue != 0) {
+					if(stringValue->get().contains("$name$")) {
+						QString replacedString = stringValue->get().replace("$name$", pathName);
+						stringValue->set(replacedString);
+					}
 				}
 			}
 		}
-
 		mAgent->addObject(object);
 	}
 
-	Physics::getPhysicsManager()->addSimObjectGroup(mAgent);
+	if(!ignorePhysicsManager) {
+		Physics::getPhysicsManager()->addSimObjectGroup(mAgent);
+	}
+	else {
+		delete mAgent;
+	}
 }
 
 bool CustomModel::addSimObject(SimObject *object) {
@@ -144,6 +153,46 @@ void CustomModel::layoutObjects() {
 }
 
 
+void CustomModel::addSimObjectPrefix(const QString &prefix) {
+
+	QList<StringValue*> stringValues;
+
+	QHash<QString, QString> nameLookup;
+	for(QListIterator<SimObject*> i(mSimObjects); i.hasNext();) {
+		SimObject *object = i.next();
+		QString name = object->getName();
+		object->setName(prefix + name);
+		Core::log("Renaming: " + name + " with " + prefix + " to " + object->getName(), true);
+		nameLookup.insert(name, object->getName());
+
+		QList<Value*> objectParameters = object->getParameters();
+		for(QListIterator<Value*> j(objectParameters); j.hasNext();) {
+			StringValue *sv = dynamic_cast<StringValue*>(j.next());
+			if(sv != 0) {
+				stringValues.append(sv);
+			}
+		}
+	}
+	//check if there are strings to change.
+	for(QListIterator<StringValue*> i(stringValues); i.hasNext();) {
+		StringValue *sv = i.next();
+		QString value = sv->get();
+		bool hasNameMacro = false;
+		if(value.startsWith("$name$")) {
+			hasNameMacro = true;
+			value = value.mid(6);
+		}
+		if(nameLookup.contains(value)) {
+			QString prefix = "";
+			if(hasNameMacro) {
+				prefix = "$name$/";
+			}
+			sv->set(prefix + nameLookup.value(value));
+		}
+	}
+	//TODO change variable names
+}
+
 bool CustomModel::addVariable(CustomModelVariable *variable) {
 	if(variable == 0 || mVariables.contains(variable) || mVariableLookUp.contains(variable->mName)) {
 		return false;
@@ -153,6 +202,12 @@ bool CustomModel::addVariable(CustomModelVariable *variable) {
 	return true;
 }
 
+void CustomModel::addVariablePrefix(const QString &prefix) {
+	for(QListIterator<CustomModelVariable*> i(mVariables); i.hasNext();) {
+		CustomModelVariable *var = i.next();
+		var->mName = var->mName.prepend(prefix + "/");
+	}
+}
 
 QList<CustomModelVariable*> CustomModel::getVariables() const {
 	return mVariables;

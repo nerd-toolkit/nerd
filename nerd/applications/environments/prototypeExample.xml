@@ -7,14 +7,23 @@
 
 			<object type="Box" Name="UpperBox" Position="(0,1,0)" Orientation="(0,0,0)" Width="0.4" Height="0.4" Depth="0.4" Color="red"/>
 			<object type="Box" Name="LowerBox" Position="(0,2,0)" Orientation="(0,0,0)" Width="0.4" Height="0.4" Depth="0.4" Color="red"/>
-			<object type="HingeJoint" Name="Connex" AxisPoint1="(0,0.5,0)" AxisPoint2="(0.5,0.5,0)" FirstBody="$name$/UpperBox" SecondBody="$name$/LowerBox"/>
+			<object type="Dynamixel" Name="Connex" AxisPoint1="(0,1.5,0)" AxisPoint2="(0.5,1.5,0)" FirstBody="$name$/UpperBox" SecondBody="$name$/LowerBox"/>
+
+		</prototype>
+		<prototype name="LargerThing">
+			<var name="size" public="false" value="15.0" eval="t" />
+
+			<model prototype="MyTestPrototype" name="HingeDing" orientation="(0,0,45)" position="(0,0,0)" />
+
+			<object type="FixedJoint" Name="Fixing" FirstBody="$name$/HingeDing/UpperBox"/>
 
 		</prototype>
 	</Prototypes>
 
 	<Models> 
 		<model prototype="Ground" name="Ground" />
-   		<model prototype="MyTestPrototype" name="Test" orientation="(45, 45, 45)" />  
+   		<model prototype="LargerThing" name="TestObj" orientation="(0,0,0)" position="(0,-1,0)" />  
+		<!--<model prototype="MyTestPrototype" name="Test" orientation="(45, 45, 45)" position="(0,0,0)" />-->
 	</Models>
 
 

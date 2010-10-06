@@ -78,18 +78,20 @@ namespace nerd {
 
 		virtual SimObject* createCopy() const;
 		virtual void createModel();
+		virtual void createModel(bool ignorePhysicsManager);
 
 		bool addSimObject(SimObject *object);
 		QList<SimObject*> getSimObjects() const;
 
 		bool addVariable(CustomModelVariable *variable);
+		void addVariablePrefix(const QString &prefix);
 		QList<CustomModelVariable*> getVariables() const;
 
-	protected:
 		virtual void layoutObjects();
 
+		void addSimObjectPrefix(const QString &prefix);
+
 	protected:
-		QList<SimObject*> mSimObjects;
 		SimObjectGroup *mAgent;
 		QList<CustomModelVariable*> mVariables;
 		QHash<QString, CustomModelVariable*> mVariableLookUp;

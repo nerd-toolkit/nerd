@@ -409,121 +409,126 @@ bool SimpleObjectFileParser::createAgents(QDomElement element) {
 				parseInfoNeuronDeclaration(modelElement);
 			}
 			else {
-				QString modelName;
-				if(mVersion.compare("Environment XML V1.0") == 0) {
-					modelName = modelElement.tagName();
-				}
-				else if (mVersion.compare("Environment XML V1.1") == 0
-					&& modelElement.tagName().compare("model") == 0) 
-				{
-					if(modelElement.hasAttribute("prototype")) {
-						modelName = modelElement.attributeNode("prototype").value();
-						modelElement.removeAttribute("prototype");
-					}
-					else {
-						Core::log("SimpleObjectFileParser: Could not finde attribute "
-							"prototype while parsing model definition.", true);
-					}
-				}
-				else {
-					Core::log("SimpleObjectFileParser: Wrong environment file version! Could "
-						"not parse model-definition.", true);
-				}
-				PhysicsManager *pm = Physics::getPhysicsManager();
-				SimObject *model  = pm->getPrototype("Prototypes/"+ modelName);
-				if(model != 0 && dynamic_cast<ModelInterface*>(model) != 0) {
-					QString name;
-					QDomAttr a = modelElement.attributeNode("name"); 
-					name = a.value();
-					modelElement.removeAttribute("name");
-					Vector3DValue position(0.0, 0.0, 0.0);
-					if(modelElement.hasAttribute("position")) {
-						a = modelElement.attributeNode("position"); 
-						modelElement.removeAttribute("position");	
-						if(position.setValueFromString(a.value()) == false) {
-							Core::log("SimpleObjectFileParser: Position tag could not be"
-								" parsed.", true);
-							return false;
-						}
-					}
-					Vector3DValue orientation(0.0, 0.0, 0.0);
-					if(modelElement.hasAttribute("orientation")) {
-						a = modelElement.attributeNode("orientation"); 
-						modelElement.removeAttribute("orientation");	
-						if(orientation.setValueFromString(a.value()) == false) {
-							Core::log("SimpleObjectFileParser: Orientation tag could not be "
-								"parsed.", true);
-							return false;
-						}
-					}
-			
-					ModelInterface *agentModel = dynamic_cast<ModelInterface*>(
-						model->createCopy());
-					agentModel->setName(name);
-					if(!agentModel->getParameter("Position")
-						->setValueFromString(position.getValueAsString())) 
-					{
-						Core::log("SimpleObjectFileParser: Could not set position.", true);
-						return false;
-					}
-					agentModel->getParameter("Orientation")
-						->setValueFromString(orientation.getValueAsString());
-					QDomNode transformation = modelElement.firstChild();
-					while(!transformation.isNull()) {
-						QDomElement transformationElement = transformation.toElement();
-						if(!transformationElement.isNull()) {
-							if(transformationElement.tagName().compare("rotation") == 0) {
-								QDomAttr value = transformationElement.attributeNode("value");
-								Vector3DValue rotation;
-								if(!rotation.setValueFromString(value.value())) {
-									Core::log("SimpleObjectFileParser: Error while parsing "
-										"transformation tag of simualtion model.", true);
-									return false;
-								}
-								agentModel->addTransformation("rotation", rotation.get());
-							}
-							else if(transformationElement.tagName().compare("translation") == 0) {
-								QDomAttr value = transformationElement.attributeNode("value");
-								Vector3DValue translation;
-								if(!translation.setValueFromString(value.value())) {
-									Core::log("SimpleObjectFileParser: Error while parsing "
-										"transformation tag of simualtion model.", true);
-									return false;
-								}
-								agentModel->addTransformation("translation", translation.get());
-							}
-							else {
-								Core::log("SimpleObjectFileParser: Found a tag, that is no "
-									"transformation tag: " + transformationElement.tagName(), true);
-								return false;
-							}
-						}
-						transformation = transformation.nextSibling();
-					}
-					
-					QDomNamedNodeMap attributes = modelElement.attributes();
-					for(uint i = 0; i < attributes.length(); i++) {
-						QDomAttr attribute = attributes.item(i).toAttr();	
-						if(agentModel->getParameter(attribute.name()) == 0) {
-							Core::log(QString("SimpleObjectFileParser: Attribute \" ")
-								.append(attribute.name()).append( "\" does not exist!"), true);
-							return false;
-						}
-						if(!agentModel->getParameter(attribute.name())->setValueFromString(attribute.value())) {
-							Core::log(QString("SimpleObjectFileParser: Could not set value \" ")
-								.append(attribute.name()).append( "\" of object \"").append(a.value())
-								.append("\"!"), true);
-							return false;
-						}
-					}
-
-					mAgentsToAdd.push_back(agentModel);
-				}
-				else {
-					Core::log(QString("SimpleObjectFileParser: Could not find prototype of"
-						" model \"").append(modelName.toStdString().c_str()).append("\""), true);
+// 				QString modelName;
+// 				if(mVersion.compare("Environment XML V1.0") == 0) {
+// 					modelName = modelElement.tagName();
+// 				}
+// 				else if (mVersion.compare("Environment XML V1.1") == 0
+// 					&& modelElement.tagName().compare("model") == 0) 
+// 				{
+// 					if(modelElement.hasAttribute("prototype")) {
+// 						modelName = modelElement.attributeNode("prototype").value();
+// 						modelElement.removeAttribute("prototype");
+// 					}
+// 					else {
+// 						Core::log("SimpleObjectFileParser: Could not finde attribute "
+// 							"prototype while parsing model definition.", true);
+// 					}
+// 				}
+// 				else {
+// 					Core::log("SimpleObjectFileParser: Wrong environment file version! Could "
+// 						"not parse model-definition.", true);
+// 				}
+// 				PhysicsManager *pm = Physics::getPhysicsManager();
+// 				SimObject *model  = pm->getPrototype("Prototypes/"+ modelName);
+// 				if(model != 0 && dynamic_cast<ModelInterface*>(model) != 0) {
+// 					QString name;
+// 					QDomAttr a = modelElement.attributeNode("name"); 
+// 					name = a.value();
+// 					modelElement.removeAttribute("name");
+// 					Vector3DValue position(0.0, 0.0, 0.0);
+// 					if(modelElement.hasAttribute("position")) {
+// 						a = modelElement.attributeNode("position"); 
+// 						modelElement.removeAttribute("position");	
+// 						if(position.setValueFromString(a.value()) == false) {
+// 							Core::log("SimpleObjectFileParser: Position tag could not be"
+// 								" parsed.", true);
+// 							return false;
+// 						}
+// 					}
+// 					Vector3DValue orientation(0.0, 0.0, 0.0);
+// 					if(modelElement.hasAttribute("orientation")) {
+// 						a = modelElement.attributeNode("orientation"); 
+// 						modelElement.removeAttribute("orientation");	
+// 						if(orientation.setValueFromString(a.value()) == false) {
+// 							Core::log("SimpleObjectFileParser: Orientation tag could not be "
+// 								"parsed.", true);
+// 							return false;
+// 						}
+// 					}
+// 			
+// 					ModelInterface *agentModel = dynamic_cast<ModelInterface*>(
+// 						model->createCopy());
+// 					agentModel->setName(name);
+// 					if(!agentModel->getParameter("Position")
+// 						->setValueFromString(position.getValueAsString())) 
+// 					{
+// 						Core::log("SimpleObjectFileParser: Could not set position.", true);
+// 						return false;
+// 					}
+// 					agentModel->getParameter("Orientation")
+// 						->setValueFromString(orientation.getValueAsString());
+// 					QDomNode transformation = modelElement.firstChild();
+// 					while(!transformation.isNull()) {
+// 						QDomElement transformationElement = transformation.toElement();
+// 						if(!transformationElement.isNull()) {
+// 							if(transformationElement.tagName().compare("rotation") == 0) {
+// 								QDomAttr value = transformationElement.attributeNode("value");
+// 								Vector3DValue rotation;
+// 								if(!rotation.setValueFromString(value.value())) {
+// 									Core::log("SimpleObjectFileParser: Error while parsing "
+// 										"transformation tag of simualtion model.", true);
+// 									return false;
+// 								}
+// 								agentModel->addTransformation("rotation", rotation.get());
+// 							}
+// 							else if(transformationElement.tagName().compare("translation") == 0) {
+// 								QDomAttr value = transformationElement.attributeNode("value");
+// 								Vector3DValue translation;
+// 								if(!translation.setValueFromString(value.value())) {
+// 									Core::log("SimpleObjectFileParser: Error while parsing "
+// 										"transformation tag of simualtion model.", true);
+// 									return false;
+// 								}
+// 								agentModel->addTransformation("translation", translation.get());
+// 							}
+// 							else {
+// 								Core::log("SimpleObjectFileParser: Found a tag, that is no "
+// 									"transformation tag: " + transformationElement.tagName(), true);
+// 								return false;
+// 							}
+// 						}
+// 						transformation = transformation.nextSibling();
+// 					}
+// 					
+// 					QDomNamedNodeMap attributes = modelElement.attributes();
+// 					for(uint i = 0; i < attributes.length(); i++) {
+// 						QDomAttr attribute = attributes.item(i).toAttr();	
+// 						if(agentModel->getParameter(attribute.name()) == 0) {
+// 							Core::log(QString("SimpleObjectFileParser: Attribute \" ")
+// 								.append(attribute.name()).append( "\" does not exist!"), true);
+// 							return false;
+// 						}
+// 						if(!agentModel->getParameter(attribute.name())->setValueFromString(attribute.value())) {
+// 							Core::log(QString("SimpleObjectFileParser: Could not set value \" ")
+// 								.append(attribute.name()).append( "\" of object \"").append(a.value())
+// 								.append("\"!"), true);
+// 							return false;
+// 						}
+// 					}
+// 
+// 					mAgentsToAdd.push_back(agentModel);
+// 				}
+// 				else {
+// 					Core::log(QString("SimpleObjectFileParser: Could not find prototype of"
+// 						" model \"").append(modelName.toStdString().c_str()).append("\""), true);
+// 					return false;
+// 				}
+				ModelInterface *model = generateModel(modelElement);
+				if(model == 0) {
 					return false;
 				}
+				mAgentsToAdd.push_back(model);
 			}
 		}
 		modelNode = modelNode.nextSibling();
@@ -552,23 +557,39 @@ bool SimpleObjectFileParser::createPrototypes(QDomElement element) {
 				
 				CustomModel *model = new CustomModel(prototypeName);
 
-
 				QDomNode n = protoElement.firstChild();
-
 				while(!n.isNull()) {
 					QDomElement e = n.toElement();
 					if(!e.isNull()) {
-
-						if(e.tagName().compare("object") == 0) {
+						if(e.tagName().toLower() == "object") {
 							SimObject *object = generateEnvironmentObject(e, false);
-
 							if(object != 0) {
-								Core::log("Got: " + object->getName(), true);
 								model->addSimObject(object);
 							}
 							else {
 								return false;
 							}
+						}
+						else if(e.tagName().toLower() == "model") {
+							CustomModel *childModel = dynamic_cast<CustomModel*>(generateModel(e));
+							if(childModel == 0) {
+								return false;
+							}
+							childModel->createModel(true);
+							childModel->layoutObjects();
+							childModel->performTransformations();
+							childModel->addVariablePrefix(childModel->getName());
+							childModel->addSimObjectPrefix(childModel->getName());
+
+							QList<SimObject*> simObjects = childModel->getSimObjects();
+							for(QListIterator<SimObject*> k(simObjects); k.hasNext();) {
+								model->addSimObject(k.next());
+							}
+							QList<CustomModelVariable*> variables = childModel->getVariables();
+							for(QListIterator<CustomModelVariable*> k(variables); k.hasNext();) {
+								model->addVariable(k.next());
+							}
+							delete childModel;
 						}
 					}
 					n = n.nextSibling();
@@ -641,6 +662,127 @@ SimObject* SimpleObjectFileParser::generateEnvironmentObject(QDomElement element
 		return object;
 	}
 	return 0;
+}
+
+ModelInterface* SimpleObjectFileParser::generateModel(QDomElement modelElement) {
+
+	QString modelName;
+	if(mVersion.compare("Environment XML V1.0") == 0) {
+		modelName = modelElement.tagName();
+	}
+	else if (mVersion.compare("Environment XML V1.1") == 0
+		&& modelElement.tagName().compare("model") == 0) 
+	{
+		if(modelElement.hasAttribute("prototype")) {
+			modelName = modelElement.attributeNode("prototype").value();
+			modelElement.removeAttribute("prototype");
+		}
+		else {
+			Core::log("SimpleObjectFileParser: Could not finde attribute "
+				"prototype while parsing model definition.", true);
+		}
+	}
+	else {
+		Core::log("SimpleObjectFileParser: Wrong environment file version! Could "
+			"not parse model-definition.", true);
+	}
+	PhysicsManager *pm = Physics::getPhysicsManager();
+	SimObject *model  = pm->getPrototype("Prototypes/" + modelName);
+	if(model != 0 && dynamic_cast<ModelInterface*>(model) != 0) {
+		QString name;
+		QDomAttr a = modelElement.attributeNode("name"); 
+		name = a.value();
+		modelElement.removeAttribute("name");
+		Vector3DValue position(0.0, 0.0, 0.0);
+		if(modelElement.hasAttribute("position")) {
+			a = modelElement.attributeNode("position"); 
+			modelElement.removeAttribute("position");	
+			if(position.setValueFromString(a.value()) == false) {
+				Core::log("SimpleObjectFileParser: Position tag could not be"
+					" parsed.", true);
+				return 0;
+			}
+		}
+		Vector3DValue orientation(0.0, 0.0, 0.0);
+		if(modelElement.hasAttribute("orientation")) {
+			a = modelElement.attributeNode("orientation"); 
+			modelElement.removeAttribute("orientation");	
+			if(orientation.setValueFromString(a.value()) == false) {
+				Core::log("SimpleObjectFileParser: Orientation tag could not be parsed.", true);
+				return 0;
+			}
+		}
+
+		ModelInterface *agentModel = dynamic_cast<ModelInterface*>(model->createCopy());
+		agentModel->setName(name);
+		if(!agentModel->getParameter("Position")
+					->setValueFromString(position.getValueAsString())) 
+		{
+			Core::log("SimpleObjectFileParser: Could not set position.", true);
+			return 0;
+		}
+		if(!agentModel->getParameter("Orientation")
+			->setValueFromString(orientation.getValueAsString()))
+		{
+			Core::log("SimpleObjectFileParser: Could not set orientation.", true);
+			return 0;
+		}
+		QDomNode transformation = modelElement.firstChild();
+		while(!transformation.isNull()) {
+			QDomElement transformationElement = transformation.toElement();
+			if(!transformationElement.isNull()) {
+				if(transformationElement.tagName().compare("rotation") == 0) {
+					QDomAttr value = transformationElement.attributeNode("value");
+					Vector3DValue rotation;
+					if(!rotation.setValueFromString(value.value())) {
+						Core::log("SimpleObjectFileParser: Error while parsing "
+							"transformation tag of simualtion model.", true);
+						return 0;
+					}
+					agentModel->addTransformation("rotation", rotation.get());
+				}
+				else if(transformationElement.tagName().compare("translation") == 0) {
+					QDomAttr value = transformationElement.attributeNode("value");
+					Vector3DValue translation;
+					if(!translation.setValueFromString(value.value())) {
+						Core::log("SimpleObjectFileParser: Error while parsing "
+							"transformation tag of simualtion model.", true);
+						return 0;
+					}
+					agentModel->addTransformation("translation", translation.get());
+				}
+				else {
+					Core::log("SimpleObjectFileParser: Found a tag, that is no "
+						"transformation tag: " + transformationElement.tagName(), true);
+					return 0;
+				}
+			}
+			transformation = transformation.nextSibling();
+		}
+		
+		QDomNamedNodeMap attributes = modelElement.attributes();
+		for(uint i = 0; i < attributes.length(); i++) {
+			QDomAttr attribute = attributes.item(i).toAttr();	
+			if(agentModel->getParameter(attribute.name()) == 0) {
+				Core::log(QString("SimpleObjectFileParser: Attribute \" ")
+					.append(attribute.name()).append( "\" does not exist!"), true);
+				return 0;
+			}
+			if(!agentModel->getParameter(attribute.name())->setValueFromString(attribute.value())) {
+				Core::log(QString("SimpleObjectFileParser: Could not set value \" ")
+					.append(attribute.name()).append( "\" of object \"").append(a.value())
+					.append("\"!"), true);
+				return 0;
+			}
+		}
+
+		return agentModel;
+	}
+	else {
+		Core::log(QString("SimpleObjectFileParser: Could not find prototype of"
+			" model \"").append(modelName.toStdString().c_str()).append("\""), true);
+		return 0;
+	}
 }
 
 

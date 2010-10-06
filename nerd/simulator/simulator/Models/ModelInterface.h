@@ -79,7 +79,6 @@ class ModelInterface : public SimObject, public virtual EventListener {
 		void switchInput(const QString &simObjectName, const QString &valueName, bool makeInfo);
 		void switchInputs();
 
-	protected:
 		virtual void performTransformations();
 		virtual void layoutObjects();
 

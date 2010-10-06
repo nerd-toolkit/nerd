@@ -85,6 +85,7 @@ class SimpleObjectFileParser : public virtual SystemObject, public virtual Event
 	private:
 		bool loadXmlDescription();
 		SimObject* generateEnvironmentObject(QDomElement element, bool addToEnvironmentObjects = true);
+		ModelInterface* generateModel(QDomElement modelElement);
 		bool generateEnvironmentObjectChain(QDomElement element);
 		bool generateEnvironmentObjects(QDomElement element);
 
