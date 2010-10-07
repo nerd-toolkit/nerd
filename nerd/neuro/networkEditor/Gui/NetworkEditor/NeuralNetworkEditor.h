@@ -102,6 +102,9 @@ namespace nerd {
 
 		void triggerEnableNetworkModification(bool enable);
 
+		virtual void renameCurrentNetwork(const QString &name);
+		virtual void updateRecentNetworkMenu(const QString &fileName);
+
 	signals:
 		void tabSelectionChanged(int index);
 		void enableNetworkModifications(bool enable);
@@ -114,7 +117,7 @@ namespace nerd {
 		void createTab();
 		void destroyTab();
 		void saveNetwork(const QString &fileName = "", ModularNeuralNetwork *net = 0, 
-						 bool enableLogMessage = true, bool renamNetwork = true);
+						 bool enableLogMessage = true, bool renameNetwork = true);
 		void saveSubNetwork(const QString &fileName = "");
 		void loadNetwork(const QString &fileName = "", bool addToNetwork = false);
 		void addSubNetwork(const QString &fileName = "");
@@ -133,7 +136,7 @@ namespace nerd {
 		void toggleTimerExpired();
 		void autoSaveTimerExpired();
 
-		virtual void renameCurrentNetwork(const QString &name);
+		
 
 	protected:
 		virtual void setupMenuBar();
@@ -165,6 +168,7 @@ namespace nerd {
 		IntValue *mAutoSaveNetworkTimerSeconds;
 		StringValue *mAutoSaveNetworkDirectory;
 		QString mCurrentNetworkFileName;
+		QMenu *mRecentNetworksMenu;
 		
 	};
 

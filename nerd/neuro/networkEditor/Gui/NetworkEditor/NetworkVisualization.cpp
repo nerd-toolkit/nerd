@@ -1182,6 +1182,18 @@ double NetworkVisualization::getScaling() const {
 	return mScaling;
 }
 
+void NetworkVisualization::setScaling(double scaling) {
+	mScaling = scaling;
+}
+
+QPointF NetworkVisualization::getVisualizationOffset() const {
+	return mVisualizationOffset;
+}
+
+void NetworkVisualization::setVisualizationOffset(QPointF offset) {
+	mVisualizationOffset = offset;
+}
+
 
 QList<PaintItem*> NetworkVisualization::getPaintItems(QList<NeuralNetworkElement*> elements) {
 	QList<PaintItem*> items;

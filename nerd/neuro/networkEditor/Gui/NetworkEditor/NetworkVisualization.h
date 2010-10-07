@@ -147,6 +147,9 @@ namespace nerd {
 
 		QMutex* getSelectionMutex();
 		double getScaling() const;
+		void setScaling(double scaling);
+		QPointF getVisualizationOffset() const;
+		void setVisualizationOffset(QPointF offset);
 
 		QList<PaintItem*> getPaintItems(QList<NeuralNetworkElement*> elements);
 

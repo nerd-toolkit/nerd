@@ -86,6 +86,7 @@
 #include "Math/Math.h"
 #include "Gui/NetworkEditor/NetworkSearchDialog.h"
 #include "Util/NerdFileSelector.h"
+#include "Gui/NetworkEditor/LoadRecentNetworkAction.h"
 
 using namespace std;
 
@@ -111,6 +112,8 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 
 	mUndoAction = new ActionWrapper("Undo", this);
 	mRedoAction = new ActionWrapper("Redo", this);
+
+	mRecentNetworksMenu = new QMenu("Load Recent Network ...");
 
 	setCentralWidget(mMainPane);
 
@@ -306,6 +309,18 @@ void NeuralNetworkEditor::triggerEnableNetworkModification(bool enable) {
 }
 
 
+void NeuralNetworkEditor::renameCurrentNetwork(const QString &name) {
+	mCurrentNetworkFileName = name;
+	setWindowTitle("Network Editor [" + mCurrentNetworkFileName + "]");
+}
+
+void NeuralNetworkEditor::updateRecentNetworkMenu(const QString &fileName) { 
+	
+
+	LoadRecentNetworkAction *loadAction = new LoadRecentNetworkAction(fileName, this);
+	mRecentNetworksMenu->addAction(loadAction);
+}
+
 void NeuralNetworkEditor::undoCommand() {
 	NetworkVisualization *visu = getCurrentNetworkVisualization();
 	if(visu != 0) {
@@ -337,7 +352,7 @@ void NeuralNetworkEditor::destroyTab() {
 }
 
 void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetwork *net, 
-									  bool enableLogMessage, bool renamNetwork) 
+									  bool enableLogMessage, bool renameNetwork) 
 {
 
 	if(enableLogMessage) {
@@ -377,12 +392,20 @@ void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetw
 	ModularNeuralNetwork *network = net;
 	NetworkVisualizationHandler *handler = 0;
 
-	if(getCurrentNetworkVisualization() != 0 
-		&& getCurrentNetworkVisualization()->getVisualizationHander() != 0) 
+	NetworkVisualization *visu = getCurrentNetworkVisualization();
+	if(visu != 0 
+		&& visu->getVisualizationHander() != 0) 
 	{
 		handler = getCurrentNetworkVisualization()->getVisualizationHander();
 		if(network == 0 && handler != 0) {
 			network = handler->getNeuralNetwork();
+
+			if(network != 0) {
+				QPointF viewport = visu->getVisualizationOffset();
+				network->setProperty("_Viewport", QString::number(viewport.x()) + ","
+							+ QString::number(viewport.y()) + "," 
+							+ QString::number(visu->getScaling()));
+			}
 		}
 	}
 
@@ -418,8 +441,9 @@ void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetw
 		}
 	}
 	
-	if(renamNetwork) {
+	if(renameNetwork) {
 		renameCurrentNetwork(nameOfFile);
+		updateRecentNetworkMenu(nameOfFile);
 	}
 
 	if(pauseValue != 0) {
@@ -688,6 +712,19 @@ void NeuralNetworkEditor::loadNetwork(const QString &fileName, bool addToNetwork
 			//update visualization
 			visu->setNeuralNetwork(currentNetwork); 
 
+			if(!addToNetwork && currentNetwork->hasProperty("_Viewport")) {
+				//Try to set viewport
+				QString viewport = currentNetwork->getProperty("_Viewport");
+				QStringList viewportElements = viewport.split(",");
+				if(viewportElements.size() == 3) {
+					double x = viewportElements.at(0).toDouble();
+					double y = viewportElements.at(1).toDouble();
+					double scaling = viewportElements.at(2).toDouble();
+					visu->setVisualizationOffset(QPointF(x, y));
+					visu->setScaling(scaling);
+				}
+			}
+
 			visu->getVisualizationHander()->rebuildView();
 			nnm->triggerNetworkStructureChangedEvent();
 			visu->notifyNeuralNetworkModified();
@@ -702,6 +739,7 @@ void NeuralNetworkEditor::loadNetwork(const QString &fileName, bool addToNetwork
 
 	if(!addToNetwork) {
 		renameCurrentNetwork(nameOfFile);
+		updateRecentNetworkMenu(nameOfFile);
 	}
 
 	mMessageWidget->addMessage("Successfully loaded network from file [" + nameOfFile + "]!");
@@ -1386,7 +1424,7 @@ void NeuralNetworkEditor::autoSaveTimerExpired() {
 
 		ModularNeuralNetwork *net = visu->getNeuralNetwork();
 		if(net != 0) {
-			saveNetwork(fileName, net, false);
+			saveNetwork(fileName, net, false, false);
 		}
 		index++;
 	}
@@ -1554,10 +1592,7 @@ void NeuralNetworkEditor::keyReleaseEvent(QKeyEvent *event) {
 		}
 }
 
-void NeuralNetworkEditor::renameCurrentNetwork(const QString &name) {
-	mCurrentNetworkFileName = name;
-	setWindowTitle("Network Editor [" + mCurrentNetworkFileName + "]");
-}
+
 
 
 

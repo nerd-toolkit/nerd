@@ -335,13 +335,17 @@ QMenu* EvaluationNetworkEditor::addFileMenu() {
 	connect(loadNetworkAction, SIGNAL(triggered()),
 			this, SLOT(loadNetwork()));
 
+	mFileMenu->addMenu(mRecentNetworksMenu);
+
+	mFileMenu->addSeparator();
+
 	mSaveNetworkAction = mFileMenu->addAction("&Save Network");
 	mSaveNetworkAction->setShortcut(tr("ctrl+s"));
 	mSaveNetworkAction->setEnabled(false);
 	connect(mSaveNetworkAction, SIGNAL(triggered()),
 			this, SLOT(overwriteCurrentNetwork()));
 
-	QAction *saveNetworkAsAction = mFileMenu->addAction("Save Network as...");
+	QAction *saveNetworkAsAction = mFileMenu->addAction("Save Network As...");
 	connect(saveNetworkAsAction, SIGNAL(triggered()),
 			this, SLOT(saveNetwork()));
 

@@ -76,6 +76,7 @@ set(nerd_networkEditor_SRCS
 	Gui/FirstReturnMap/FirstReturnMapPlotter.cpp  
 	Gui/FirstReturnMap/FirstReturnMapPlotterWidget.cpp  
 	Gui/NetworkEditorTools/AddFirstReturnMapPlotterAction.cpp
+	Gui/NetworkEditor/LoadRecentNetworkAction.cpp
 )
 
 set(nerd_networkEditor_MOC_HDRS
@@ -110,6 +111,7 @@ set(nerd_networkEditor_MOC_HDRS
 	Gui/NetworkEditor/NetworkSearchDialog.h  
 	Gui/FirstReturnMap/FirstReturnMapPlotter.h  
 	Gui/NetworkEditorTools/AddFirstReturnMapPlotterAction.h
+	Gui/NetworkEditor/LoadRecentNetworkAction.h
 )
 
 set(nerd_networkEditor_RCS
