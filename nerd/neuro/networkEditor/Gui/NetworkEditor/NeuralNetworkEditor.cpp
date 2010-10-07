@@ -162,6 +162,10 @@ void NeuralNetworkEditor::initialize() {
 		connect(&mWindowToggleTimer, SIGNAL(timeout()),
 				this, SLOT(toggleTimerExpired()));
 	}
+	mShutDownEvent = Core::getInstance()->getShutDownEvent();
+	mShutDownEvent->addEventListener(this);
+
+	loadRecentNetworkFileNames();
 }
 
 int NeuralNetworkEditor::addNetworkVisualization(const QString &name) {
@@ -270,6 +274,15 @@ void NeuralNetworkEditor::valueChanged(Value *value) {
 }
 
 
+void NeuralNetworkEditor::eventOccured(Event *event) {
+	if(event == 0) {
+		return;
+	}
+	if(event == mShutDownEvent) {
+		saveRecentNetworkFileNames();
+	}
+}
+
 
 QString NeuralNetworkEditor::getName() const {
 	return "NeuralNetworkEditor";
@@ -316,9 +329,33 @@ void NeuralNetworkEditor::renameCurrentNetwork(const QString &name) {
 
 void NeuralNetworkEditor::updateRecentNetworkMenu(const QString &fileName) { 
 	
-
+	QList<QAction*> actions = mRecentNetworksMenu->actions();
+	for(QListIterator<QAction*> i(actions); i.hasNext();) {
+		LoadRecentNetworkAction *action = dynamic_cast<LoadRecentNetworkAction*>(i.next());
+		if(action->getFileName() == fileName) {
+			if(actions.size() <= 1) {
+				return;
+			}
+			mRecentNetworksMenu->removeAction(action);
+			mRecentNetworksMenu->insertAction(mRecentNetworksMenu->actions().first(), action);
+			return;
+		}
+	}
+	//if not found, then add a new loader action.
 	LoadRecentNetworkAction *loadAction = new LoadRecentNetworkAction(fileName, this);
-	mRecentNetworksMenu->addAction(loadAction);
+	if(mRecentNetworksMenu->actions().empty()) {
+		mRecentNetworksMenu->addAction(loadAction);
+		return;
+	}
+	else {
+		mRecentNetworksMenu->insertAction(mRecentNetworksMenu->actions().first(), loadAction);
+	}
+	//check if there are networks to remove.
+	while(mRecentNetworksMenu->actions().size() > 10) {
+		QAction *action = mRecentNetworksMenu->actions().last();
+		mRecentNetworksMenu->removeAction(action);
+		delete action;
+	}
 }
 
 void NeuralNetworkEditor::undoCommand() {
@@ -1592,6 +1629,47 @@ void NeuralNetworkEditor::keyReleaseEvent(QKeyEvent *event) {
 		}
 }
 
+void NeuralNetworkEditor::saveRecentNetworkFileNames() {
+	QString filePrefix = Core::getInstance()->getConfigDirectoryPath() + "/properties";
+	Core::getInstance()->enforceDirectoryPath(filePrefix);
+	QList<QAction*> loadRecentActions = mRecentNetworksMenu->actions();
+	if(!loadRecentActions.empty()) {
+		QFile file(filePrefix + "/recentNetworks.txt");
+		if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+			file.close();
+			return;
+		}
+		QTextStream output(&file);
+		for(QListIterator<QAction*> i(loadRecentActions); i.hasNext();) {
+			LoadRecentNetworkAction *action = dynamic_cast<LoadRecentNetworkAction*>(i.next());
+			if(action != 0) {
+				output << action->getFileName() << endl;
+			}
+		}
+		file.close();
+	}
+}
+
+
+void NeuralNetworkEditor::loadRecentNetworkFileNames() {
+	QString filePrefix = Core::getInstance()->getConfigDirectoryPath() + "/properties";
+	QFile file(filePrefix + "/recentNetworks.txt");
+	if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		file.close();
+		return;
+	}
+	QList<QString> fileNames;
+
+	QTextStream input(&file);
+	while (!input.atEnd()) {
+		fileNames.append(input.readLine());
+	}
+	file.close();
+	
+	for(int i = fileNames.size() - 1; i >= 0; --i) {
+		updateRecentNetworkMenu(fileNames.at(i));
+	}
+}
 
 
 

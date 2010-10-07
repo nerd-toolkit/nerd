@@ -183,6 +183,7 @@ QString EvaluationNetworkEditor::getName() const {
 
 void EvaluationNetworkEditor::eventOccured(Event *event) {
 	TRACE("EvaluationNetworkEditor::eventOccured");
+	NeuralNetworkEditor::eventOccured(event);
 	if(event == 0) {
 		return;
 	}

@@ -61,6 +61,8 @@
 #include "Value/BoolValue.h"
 #include "Value/IntValue.h"
 #include "Value/StringValue.h"
+#include "Event/EventListener.h"
+#include "Event/Event.h"
 
 
 namespace nerd {
@@ -73,7 +75,9 @@ namespace nerd {
 	 * NeuralNetworkEditor.
 	 *
 	 */
-	class NeuralNetworkEditor : public QMainWindow, public virtual ValueChangedListener {
+	class NeuralNetworkEditor : public QMainWindow, public virtual ValueChangedListener,
+								public virtual EventListener 
+	{
 	Q_OBJECT
 	public:
 		NeuralNetworkEditor(QWidget *parent);
@@ -96,6 +100,7 @@ namespace nerd {
 		EditorMessageWidget* getMessageWidget() const;
 
 		virtual void valueChanged(Value *value);
+		virtual void eventOccured(Event *event);
 		virtual QString getName() const;
 
 		void bringToolWidgetToFront(EditorToolWidget *widget);
@@ -151,6 +156,8 @@ namespace nerd {
 
 	private:
 		//QString getFileName(const QString &fileChooserTitle, bool existingFilesOnly);
+		void saveRecentNetworkFileNames();
+		void loadRecentNetworkFileNames();
 		
 	protected:
 		QTabWidget *mMainPane;
@@ -169,6 +176,7 @@ namespace nerd {
 		StringValue *mAutoSaveNetworkDirectory;
 		QString mCurrentNetworkFileName;
 		QMenu *mRecentNetworksMenu;
+		Event *mShutDownEvent;
 		
 	};
 
