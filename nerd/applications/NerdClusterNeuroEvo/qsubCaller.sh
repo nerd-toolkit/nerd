@@ -13,18 +13,18 @@ DIRECTORY=/dev/null
 # -sync y: submit the job "synchronized" -> execution blocks until the job is terminated.
 # -l arch=\"lx24-amd64\": ensure, that jobs or tasks of an array job are only sent to 64bit machines.
 # -cwd: use current directory as working directory.
-QSUB_OPTIONS="-q nkg -r y -sync y -l arch=\"lx24-amd64\" -cwd "
+QSUB_OPTIONS="-q nkg -r y -sync y -l arch=lx24-amd64 -cwd "
 GROUP_NAME=nkg;
 
 
 if  [ $START_INDEX -eq $END_INDEX ]
 then
 #Start a normal job, if there is only one evaluation to be done.
-/usr/bin/sg $GROUP_NAME -c "qsub $QSUB_OPTIONS -e $DIRECTORY -o $DIRECTORY -N $JOBNAME $JOBFILE $START_INDEX"
+qsub $QSUB_OPTIONS -e $DIRECTORY -o $DIRECTORY -N $JOBNAME $JOBFILE $START_INDEX
 
 else
 # Start an array job.
-/usr/bin/sg $GROUP_NAME -c "qsub $QSUB_OPTIONS -e $DIRECTORY -o $DIRECTORY -N $JOBNAME -t $START_INDEX-$END_INDEX:1 $JOBFILE"
+qsub $QSUB_OPTIONS -e $DIRECTORY -o $DIRECTORY -N $JOBNAME -t $START_INDEX-$END_INDEX:1 $JOBFILE
 
 fi
 exit 0
