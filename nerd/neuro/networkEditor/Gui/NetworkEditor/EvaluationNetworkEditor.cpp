@@ -234,7 +234,8 @@ int EvaluationNetworkEditor::addNetworkVisualization(const QString &name) {
 void EvaluationNetworkEditor::renameCurrentNetwork(const QString &name) {
 	NeuralNetworkEditor::renameCurrentNetwork(name);
 	if(mSaveNetworkAction != 0) {
-		if(mCurrentNetworkFileName.trimmed() == "") {
+		NetworkVisualization *visu = getCurrentNetworkVisualization();
+		if(visu != 0 && visu->getCurrentNetworkFileName().trimmed() == "") {
 			mSaveNetworkAction->setEnabled(false);
 		}
 		else {
@@ -300,8 +301,14 @@ void EvaluationNetworkEditor::destroyAllTabs() {
 
 
 void EvaluationNetworkEditor::overwriteCurrentNetwork() {
-	if(mCurrentNetworkFileName != "") {
-		saveNetwork(mCurrentNetworkFileName, 0, true, true);
+	NetworkVisualization *visu = getCurrentNetworkVisualization();
+	if(visu != 0 && visu->getCurrentNetworkFileName().trimmed() != "") {
+		QString fileName = visu->getCurrentNetworkFileName();
+		if(fileName.endsWith("*")) {
+			fileName = fileName.mid(0, fileName.size() - 1);
+		}
+		saveNetwork(fileName, 0, true, true);
+		visu->setCurrentNetworkFileName(fileName);
 	}
 }
 

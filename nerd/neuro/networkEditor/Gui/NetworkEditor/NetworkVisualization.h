@@ -160,6 +160,9 @@ namespace nerd {
 		bool isVisualizingActivations() const;
 		void setActivationVisualizationMode(bool visualize);
 
+		void setCurrentNetworkFileName(const QString &fileName);
+		QString getCurrentNetworkFileName() const;
+
 	public slots:
 		void paintTimerElapsed();	
 		void setDefaultPaintIterval(int interval);
@@ -224,6 +227,7 @@ namespace nerd {
 		NeuralNetworkEditor *mOwner;
 		bool mActivationVisualiationMode;
 		bool mInteractionMode;
+		QString mCurrentNetworkFile;
 	};
 
 }

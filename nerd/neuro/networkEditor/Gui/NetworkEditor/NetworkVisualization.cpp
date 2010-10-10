@@ -64,6 +64,7 @@
 #include "Gui/NetworkEditor/ModuleItem.h"
 #include "Gui/NetworkEditor/GroupItem.h"
 #include "Network/Neuro.h"
+#include "Gui/NetworkEditor/NeuralNetworkEditor.h"
 
 
 using namespace std;
@@ -228,6 +229,8 @@ bool NetworkVisualization::setNeuralNetwork(ModularNeuralNetwork *network) {
 
 	clearSelection();
 
+	mCurrentNetworkFile = "";
+
 	emit neuralNetworkChanged(network);
 	return mNetworkInvalid;
 }
@@ -387,6 +390,14 @@ bool NetworkVisualization::isVisualizingActivations() const {
 
 void NetworkVisualization::setActivationVisualizationMode(bool visualize) {
 	mActivationVisualiationMode = visualize;
+}
+
+void NetworkVisualization::setCurrentNetworkFileName(const QString &fileName) {
+	mCurrentNetworkFile = fileName;
+}
+
+QString NetworkVisualization::getCurrentNetworkFileName() const {
+	return mCurrentNetworkFile;
 }
 
 void NetworkVisualization::closeEvent(QCloseEvent*) {
@@ -672,6 +683,7 @@ void NetworkVisualization::notifySelectionListeners() {
 
 void NetworkVisualization::notifyNeuralNetworkModified() {
 	TRACE("NetworkVisualization::notifyNeuralNetworkModified");
+
 	emit triggerUpdateVisualizationHandler();
 	emit neuralNetworkModified(getNeuralNetwork());
 	//repaint();

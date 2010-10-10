@@ -174,7 +174,6 @@ namespace nerd {
 		NetworkSearchDialog *mSearchDialog;
 		IntValue *mAutoSaveNetworkTimerSeconds;
 		StringValue *mAutoSaveNetworkDirectory;
-		QString mCurrentNetworkFileName;
 		QMenu *mRecentNetworksMenu;
 		Event *mShutDownEvent;
 		

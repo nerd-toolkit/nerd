@@ -323,8 +323,11 @@ void NeuralNetworkEditor::triggerEnableNetworkModification(bool enable) {
 
 
 void NeuralNetworkEditor::renameCurrentNetwork(const QString &name) {
-	mCurrentNetworkFileName = name;
-	setWindowTitle("Network Editor [" + mCurrentNetworkFileName + "]");
+	NetworkVisualization *visu = getCurrentNetworkVisualization();
+	if(visu != 0) {
+		visu->setCurrentNetworkFileName(name);
+	}
+	setWindowTitle("Network Editor [" + name + "]");
 }
 
 void NeuralNetworkEditor::updateRecentNetworkMenu(const QString &fileName) { 
@@ -1426,6 +1429,7 @@ void NeuralNetworkEditor::currentTabChanged(int index) {
 	NetworkVisualization *visu = getCurrentNetworkVisualization();
 	if(visu != 0) {
 		visu->setFocus();
+		setWindowTitle("Network Editor [" + visu->getCurrentNetworkFileName() + "]");
 	}
 	emit tabSelectionChanged(index);
 }

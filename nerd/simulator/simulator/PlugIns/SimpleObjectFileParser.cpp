@@ -182,55 +182,8 @@ bool SimpleObjectFileParser::loadXmlDescription() {
 	//are ignored as well. Thereby, if there is one error in the xml-file, nothing will 
 	//be added to the simulation at all. 
 
-	//parse models and agents
-	QDomNode n = startNode;
-	while(!n.isNull()) {
-		QDomElement e = n.toElement();
-		if(!e.isNull()) {
-			if (((e.tagName().toLower().compare("agent") == 0 
-				&& mVersion.compare("Environment XML V1.0") == 0) 
-				|| (e.tagName().toLower().compare("models") == 0 
-				&& mVersion.compare("Environment XML V1.1") == 0)) 
-				&& successful) 
-			{
-				if(!createAgents(e)) {
-					Core::log("SimpleObjectFileParser: Could not load xml-File: " 
-						+ mFileName.trimmed() + ". Error while reading agent definitions.", true);
-					successful = false;
-				}
-			}
-			else if((e.tagName().toLower()  == "prototypes") && successful) {
-				if(!createPrototypes(e)) {
-					Core::log("SimpleObjectFileParser: Could not load xml-File: " 
-						+ mFileName.trimmed() + ". Error while reading prototype definitions.", true);
-					successful = false;
-				}
-			}
-		}
-		n = n.nextSibling();
-	}
-	if(successful) {
-		//in case of a successful parsing of the whole xml-file, all objects, 
-		//models and rules previously parsed are added to the simulation.
-		PhysicsManager *pm = Physics::getPhysicsManager();
-		for(int i = 0; i < mAgentsToAdd.size(); i++) {
-			mAgentsToAdd.at(i)->setup();
-			//TODO check how to do this better (is for randomization)
-			pm->addSimObject(mAgentsToAdd.at(i)); 
-		}
-	}
-	else {
-		//In case of an error during parsing all parsed objects are ignored.
-		while(mAgentsToAdd.size() > 0) {
-			delete mAgentsToAdd.at(0);
-			mAgentsToAdd.pop_front();
-		}
-		file.close();
-		return false;
-	}
-
 	//parse environment objects
-	n = startNode;
+	QDomNode n = startNode;
 	while(!n.isNull()) {
 		QDomElement e = n.toElement();
 		if(!e.isNull()) {
@@ -285,6 +238,54 @@ bool SimpleObjectFileParser::loadXmlDescription() {
 	QDomNodeList valueDefinitions = docElem.elementsByTagName("value");
 	for(unsigned int i = 0; i < valueDefinitions.length(); i++) {
 		parseValueDefinition(valueDefinitions.item(i).toElement());
+	}
+
+	successful = true;
+	//parse models and agents
+	n = startNode;
+	while(!n.isNull()) {
+		QDomElement e = n.toElement();
+		if(!e.isNull()) {
+			if (((e.tagName().toLower().compare("agent") == 0 
+				&& mVersion.compare("Environment XML V1.0") == 0) 
+				|| (e.tagName().toLower().compare("models") == 0 
+				&& mVersion.compare("Environment XML V1.1") == 0)) 
+				&& successful) 
+			{
+				if(!createAgents(e)) {
+					Core::log("SimpleObjectFileParser: Could not load xml-File: " 
+						+ mFileName.trimmed() + ". Error while reading agent definitions.", true);
+					successful = false;
+				}
+			}
+			else if((e.tagName().toLower()  == "prototypes") && successful) {
+				if(!createPrototypes(e)) {
+					Core::log("SimpleObjectFileParser: Could not load xml-File: " 
+						+ mFileName.trimmed() + ". Error while reading prototype definitions.", true);
+					successful = false;
+				}
+			}
+		}
+		n = n.nextSibling();
+	}
+	if(successful) {
+		//in case of a successful parsing of the whole xml-file, all objects, 
+		//models and rules previously parsed are added to the simulation.
+		PhysicsManager *pm = Physics::getPhysicsManager();
+		for(int i = 0; i < mAgentsToAdd.size(); i++) {
+			mAgentsToAdd.at(i)->setup();
+			//TODO check how to do this better (is for randomization)
+			pm->addSimObject(mAgentsToAdd.at(i)); 
+		}
+	}
+	else {
+		//In case of an error during parsing all parsed objects are ignored.
+		while(mAgentsToAdd.size() > 0) {
+			delete mAgentsToAdd.at(0);
+			mAgentsToAdd.pop_front();
+		}
+		file.close();
+		return false;
 	}
 
 	Physics::getSimulationEnvironmentManager()->createSnapshot();
@@ -387,6 +388,16 @@ bool SimpleObjectFileParser::generateEnvironmentObjects(QDomElement element) {
 				if(generateEnvironmentObjectChain(e) == 0) {
 					return false;
 				}
+			}
+			else if(e.tagName().compare("switchInput") == 0) {
+				parseInfoNeuronDeclaration(e);
+			}
+			else if(e.tagName().compare("model") == 0) {
+				ModelInterface *model = generateModel(e);
+				if(model == 0) {
+					return false;
+				}
+				mAgentsToAdd.push_back(model);
 			}
 		}
 		n = n.nextSibling();
