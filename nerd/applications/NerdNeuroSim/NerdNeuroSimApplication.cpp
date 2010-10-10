@@ -79,6 +79,7 @@
 #include "Gui/ScriptedFitnessEditor/MultipleScriptedFitnessEditor.h"
 #include "Gui/AutomaticPictureSeries/PictureSeriesCreator.h"
 #include "Collections/UniversalNeuroScriptLoader.h"
+#include "Collections/ScriptedModelLoader.h"
 
 using namespace std;
 
@@ -173,6 +174,7 @@ bool NerdNeuroSimApplication::setupApplication()
 	Statistics::getStatisticsManager();
 
 	UniversalNeuroScriptLoader();
+	ScriptedModelLoader();
 
 	return true;
 }

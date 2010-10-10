@@ -67,7 +67,7 @@ namespace nerd {
 	Q_PROPERTY(QString stringBuffer WRITE setStringBuffer READ getStringBuffer);
 
 	public:
-		ScriptingContext(const QString &name);
+		ScriptingContext(const QString &name, const QString &mainContextName = "nerd");
 		ScriptingContext(const ScriptingContext &other);
 		virtual ~ScriptingContext();
 
@@ -82,6 +82,9 @@ namespace nerd {
 		virtual bool setScriptCode(const QString &code);
 		virtual QString getScriptCode() const;
 		virtual bool loadScriptCode(bool replaceExistingCode);
+
+		void setMainContextName(const QString &contextName);
+		QString getMainContextName() const;
 
 	public slots:
 		void setStringBuffer(const QString &string);
@@ -114,6 +117,7 @@ namespace nerd {
 		QHash<QString, QString> mPersistentParameters;
 		StringValue *mScriptCode;
 		StringValue *mScriptFileName;
+		QString mMainContextName;
 	};
 
 }

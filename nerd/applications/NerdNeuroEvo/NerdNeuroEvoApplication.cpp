@@ -105,6 +105,7 @@
 #include "PlugIns/ModelParameterRotator.h"
 #include "Collections/EvolutionPropertyPanelCollection.h"
 #include "Collections/UniversalNeuroScriptLoader.h"
+#include "Collections/ScriptedModelLoader.h"
 
 
 using namespace std;
@@ -251,6 +252,7 @@ bool NerdNeuroEvoApplication::setupApplication()
 	new NetworkAgentControlParser();
 
 	UniversalNeuroScriptLoader();
+	ScriptedModelLoader();
 
 	if(!buildSimulationModel()) {
 		Core::log("NerdNeuroEvo: "

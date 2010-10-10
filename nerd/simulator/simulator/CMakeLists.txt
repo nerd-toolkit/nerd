@@ -132,6 +132,8 @@ set(nerd_simulator_SRCS
 	Application/NerdBaseApplication.cpp
 	Models/ConfigurablePendulum.cpp
 	Models/CustomModel.cpp
+	Models/ScriptedModel.cpp
+	Collections/ScriptedModelLoader.cpp
 )
 
 set(nerd_simulator_MOC_HDRS
@@ -150,6 +152,7 @@ set(nerd_simulator_MOC_HDRS
 	Gui/Visualization/VisualizationChooser.h  
 	Application/ODCP_StandardGuiApplication.h  
 	Application/OSP_StandardGuiApplication.h  
+	Models/ScriptedModel.h
 )
 
 set(nerd_simulator_RCS
@@ -164,6 +167,7 @@ FIND_PACKAGE(Qt4)
 set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTXML TRUE)
+set(QT_USE_QTSCRIPT TRUE)
 include(${QT_USE_FILE})
 
 

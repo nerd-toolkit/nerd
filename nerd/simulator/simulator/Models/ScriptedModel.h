@@ -42,53 +42,84 @@
  ***************************************************************************/
 
 
-#ifndef NERDBoxBody_H
-#define NERDBoxBody_H
+#ifndef ORCSScriptedModel_H
+#define ORCSScriptedModel_H
 
-#include "SimBody.h"
-#include "TriangleGeom.h"
-#include "BoxGeom.h"
-#include "Collision/CollisionObject.h"
+#include <QString>
+#include <QHash>
+#include "Script/ScriptingContext.h"
+#include "Models/ModelInterface.h"
+#include "Physics/SimObject.h"
+#include "Physics/SimObjectGroup.h"
 
 namespace nerd {
 
-
-/**
- * A BoxBody represents an object shaped like a box, whose appearance
- * can be modified by three parameters: width, height, depth. 
- * The center of the box is defined as the position of the object. This 
- * center can be obtained by method getPositionValue(). 
- * The center of mass initially is located in the same center. 
- * However the center of mass can be moved to any point relative to the 
- * object position. 
- *
- * Parameters of BoxBody (in addition to those inherited by SimBody):
- * Width, Height, Depth: Define the geometric properties of the box object.
- */
-class BoxBody : public SimBody {
-
+	/**
+	 * ScriptedModel.
+	 *
+	 */
+	class ScriptedModel : public ScriptingContext, public ModelInterface {
+	Q_OBJECT
+	Q_PROPERTY(QString prototypeName WRITE setPrototypeName READ getPrototypeName);
+	Q_PROPERTY(QString modelName WRITE setModelName READ getModelName);
 	public:
-		BoxBody(const QString &name, double width = 0.01, double height = 0.01, double depth = 0.01);
-		BoxBody(const BoxBody &body);
-		virtual ~BoxBody();
-    
-		virtual SimBody* createCopy() const;
-		
-		virtual void setup();
-		virtual void clear();
-		
-		virtual void valueChanged(Value *value);
+		ScriptedModel(const QString &name, const QString &script = "");
+		ScriptedModel(const ScriptedModel &other);
+		virtual ~ScriptedModel();
 
-	private:		
-		void createBoxGeom();
+		virtual QString getName() const;
+		virtual void valueChanged(Value *value);
+		virtual void eventOccured(Event *event);
+
+		virtual void loadScriptFromFile(const QString &fileName);
+
+		virtual SimObject* createCopy() const;
+		virtual void createModel();
+		virtual void layoutObjects();
+
+	public slots:
+		void setPrototypeName(const QString &name);
+		QString getPrototypeName() const;
+		void setModelName(const QString &name);
+		QString getModelName() const;
+
+		void definePrototypeParameter(const QString &name, const QString &initialValue);
+
+		int createObject(const QString &prototypeName, const QString &name);
+		int copyObject(int objectId, const QString &name);
+		bool setProperty(int objectId, const QString &propertyName, const QString &value);
+		bool hasProperty(int objectId, const QString &propertyName);
+		QString getProperty(int objectId, const QString &propertyName);
 		
+		bool makeCurrent(int objectId);
+		int getCurrent();
+		bool setP(const QString &propertyName, const QString &value);
+
+		bool allowCollisions(int objectId1, int objectId2, bool allow);
+
+		QString toVector3DString(double x, double y, double z);
+		QString toColorString(double r, double g, double b, double t);
+
 	protected:
-		DoubleValue *mWidth;
-		DoubleValue *mHeight;
-		DoubleValue *mDepth;
-	
-};
+		virtual void reportError(const QString &message);
+		virtual void importVariables();
+		virtual void addCustomScriptContextStructures();
+		
+
+	protected:
+		QString mPrototypeName;
+		int mIdCounter;
+		QHash<int, SimObject*> mSimObjectsLookup;
+		SimObjectGroup *mAgent;
+		SimObject *mCurrentSimObject;
+		QHash<StringValue*, QString> mPrototypeParameters;
+
+		
+	};
 
 }
 
 #endif
+
+
+

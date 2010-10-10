@@ -42,53 +42,29 @@
  ***************************************************************************/
 
 
-#ifndef NERDBoxBody_H
-#define NERDBoxBody_H
+#ifndef ORCSScriptedModelLoader_H
+#define ORCSScriptedModelLoader_H
 
-#include "SimBody.h"
-#include "TriangleGeom.h"
-#include "BoxGeom.h"
-#include "Collision/CollisionObject.h"
+#include <QString>
+#include <QHash>
 
 namespace nerd {
 
-
-/**
- * A BoxBody represents an object shaped like a box, whose appearance
- * can be modified by three parameters: width, height, depth. 
- * The center of the box is defined as the position of the object. This 
- * center can be obtained by method getPositionValue(). 
- * The center of mass initially is located in the same center. 
- * However the center of mass can be moved to any point relative to the 
- * object position. 
- *
- * Parameters of BoxBody (in addition to those inherited by SimBody):
- * Width, Height, Depth: Define the geometric properties of the box object.
- */
-class BoxBody : public SimBody {
-
+	/**
+	 * ScriptedModelLoader.
+	 *
+	 */
+	class ScriptedModelLoader {
 	public:
-		BoxBody(const QString &name, double width = 0.01, double height = 0.01, double depth = 0.01);
-		BoxBody(const BoxBody &body);
-		virtual ~BoxBody();
-    
-		virtual SimBody* createCopy() const;
-		
-		virtual void setup();
-		virtual void clear();
-		
-		virtual void valueChanged(Value *value);
+		ScriptedModelLoader();
+		virtual ~ScriptedModelLoader();
 
-	private:		
-		void createBoxGeom();
-		
-	protected:
-		DoubleValue *mWidth;
-		DoubleValue *mHeight;
-		DoubleValue *mDepth;
-	
-};
+	private:
+	};
 
 }
 
 #endif
+
+
+

@@ -1,0 +1,101 @@
+
+model.prototypeName = "TrackDrive";
+
+model.definePrototypeParameter("NumberOfLinks", "10");
+model.definePrototypeParameter("LinkLength", "0.3");
+model.definePrototypeParameter("LinkWidth", "0.5");
+model.definePrototypeParameter("LinkDepth", "0.05");
+model.definePrototypeParameter("Radius", "0.5");
+model.definePrototypeParameter("BoxColor", "yellow");
+model.definePrototypeParameter("BoxMass", "0.01");
+model.definePrototypeParameter("CloseRing", "T");
+model.definePrototypeParameter("MinAngle", "-15");
+
+
+function createModel() {
+
+	var noOfLinks = parseFloat(NumberOfLinks);
+	var linkLength = parseFloat(LinkLength);
+	var linkWidth = parseFloat(LinkWidth);
+	var linkDepth = parseFloat(LinkDepth);
+	var radius = parseFloat(Radius);
+
+	var elementAngle = 360.0 / noOfLinks;
+	var elementAngleRad = (360.0 / noOfLinks) * Math.PI / 360.0 * 2;
+
+	var currentAngle = 0.0;
+	var currentX = 0.0;
+	var currentY = radius;
+
+	var currentAxisX = 0.0;
+	var currentAxisY = Math.sqrt(radius * radius + (0.5 * linkLength) * (0.5 * linkLength));
+	var currentAxisXNew = currentAxisX * Math.cos(elementAngleRad / 2.0) - currentAxisY * Math.sin(elementAngleRad / 2.0);
+	var currentAxisYNew = currentAxisX * Math.sin(elementAngleRad / 2.0) + currentAxisY * Math.cos(elementAngleRad / 2.0);
+	currentAxisX = currentAxisXNew;
+	currentAxisY = currentAxisYNew;
+
+	var firstBody = 0;
+	var previousBody = 0;
+
+	for(var i = 0; i < noOfLinks; i++) {
+
+		//create object
+		var obj = model.createObject("Box", "Box".concat(i.toString()));
+		makeCurrent(obj);
+		setP("Position", model.toVector3DString(currentX, currentY, 0.0));
+		setP("Orientation", model.toVector3DString(0.0, 0.0, currentAngle));
+		setP("Width", linkLength.toString());
+		setP("Height", linkDepth.toString());
+		setP("Depth", linkWidth.toString());
+		setP("Color", BoxColor);
+		setP("Mass", BoxMass);
+
+		currentAngle = currentAngle + elementAngle;
+
+		//x' = (x-u) cos(beta) - (y-v) sin(beta) + u
+		//y' = (x-u) sin(beta) + (y-v) cos(beta) + v 
+		var currentXNew = currentX * Math.cos(elementAngleRad) - currentY * Math.sin(elementAngleRad);
+		var currentYNew = currentX * Math.sin(elementAngleRad) + currentY * Math.cos(elementAngleRad);
+
+		currentX = currentXNew;
+		currentY = currentYNew;
+
+		if(firstBody == 0) {
+			firstBody = obj;
+		}
+
+		if(previousBody != 0) {
+			//add link motor
+			
+			var link = model.createObject("Dynamixel", "Motor".concat((i - 1).toString()));
+			makeCurrent(link);
+			setP("FirstBody", model.modelName.concat("/Box", (i - 1).toString()));
+			setP("SecondBody", model.modelName.concat("/Box", (i).toString()));
+			setP("AxisPoint1", model.toVector3DString(currentAxisX, currentAxisY, 0));
+			setP("AxisPoint2", model.toVector3DString(currentAxisX, currentAxisY, 0.1));
+			setP("MinAngle", MinAngle);
+
+			currentAxisXNew = currentAxisX * Math.cos(elementAngleRad) - currentAxisY * Math.sin(elementAngleRad);
+			currentAxisYNew = currentAxisX * Math.sin(elementAngleRad) + currentAxisY * Math.cos(elementAngleRad);
+			currentAxisX = currentAxisXNew;
+			currentAxisY = currentAxisYNew;
+		}
+		previousBody = obj;
+
+		if(i == noOfLinks - 1 && CloseRing == "T") {
+			var link = model.createObject("Dynamixel", "Motor".concat(i.toString()));
+			makeCurrent(link);
+			setP("FirstBody", model.modelName.concat("/Box", (i).toString()));
+			setP("SecondBody", model.modelName.concat("/Box0"));
+			setP("AxisPoint1", model.toVector3DString(currentAxisX, currentAxisY, 0));
+			setP("AxisPoint2", model.toVector3DString(currentAxisX, currentAxisY, 0.1));
+			setP("MinAngle", MinAngle);
+		}
+		
+	}
+}
+
+function layoutModel() {
+	print("Layout");
+}
+

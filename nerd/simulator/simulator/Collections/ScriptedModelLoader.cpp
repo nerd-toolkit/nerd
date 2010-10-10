@@ -42,53 +42,71 @@
  ***************************************************************************/
 
 
-#ifndef NERDBoxBody_H
-#define NERDBoxBody_H
 
-#include "SimBody.h"
-#include "TriangleGeom.h"
-#include "BoxGeom.h"
-#include "Collision/CollisionObject.h"
+#include "ScriptedModelLoader.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "PlugIns/CommandLineArgument.h"
+#include "Models/ScriptedModel.h"
+#include "PlugIns/PlugInManager.h"
+#include "Physics/Physics.h"
+#include "Physics/PhysicsManager.h"
+
+using namespace std;
 
 namespace nerd {
 
 
 /**
- * A BoxBody represents an object shaped like a box, whose appearance
- * can be modified by three parameters: width, height, depth. 
- * The center of the box is defined as the position of the object. This 
- * center can be obtained by method getPositionValue(). 
- * The center of mass initially is located in the same center. 
- * However the center of mass can be moved to any point relative to the 
- * object position. 
- *
- * Parameters of BoxBody (in addition to those inherited by SimBody):
- * Width, Height, Depth: Define the geometric properties of the box object.
+ * Constructs a new ScriptedModelLoader.
  */
-class BoxBody : public SimBody {
+ScriptedModelLoader::ScriptedModelLoader()
+{
+	CommandLineArgument *scriptLoaderArgument = new CommandLineArgument(
+		"installScriptedModel", "ism", "<FileName> [<PrototypeName>]", 
+		QString("Installs a new scripted model from file name <FileName>\n.")
+		+ "during the start-up phase.", 1, 1, true);
 
-	public:
-		BoxBody(const QString &name, double width = 0.01, double height = 0.01, double depth = 0.01);
-		BoxBody(const BoxBody &body);
-		virtual ~BoxBody();
-    
-		virtual SimBody* createCopy() const;
-		
-		virtual void setup();
-		virtual void clear();
-		
-		virtual void valueChanged(Value *value);
+	int numberOfScriptsToInstall = scriptLoaderArgument->getNumberOfEntries();
+	for(int i = 0; i < numberOfScriptsToInstall; ++i) {
+		QList<QString> entryParams = scriptLoaderArgument->getEntryParameters(i);
 
-	private:		
-		void createBoxGeom();
-		
-	protected:
-		DoubleValue *mWidth;
-		DoubleValue *mHeight;
-		DoubleValue *mDepth;
-	
-};
+		QString fileName = entryParams.at(0);
+		QString prototypeName = "";
+		if(entryParams.size() > 1) {
+			fileName = entryParams.at(1);
+		}
+		if(fileName != "") {
+			ScriptedModel *model = new ScriptedModel(prototypeName);
+			model->loadScriptFromFile(fileName);
+			if(model->getName() != "") {
+				Core::log("ScriptedModelLoader: Installed model prototype ["
+						+ model->getName() + "] from file [" + fileName + "]");
+
+				Physics::getPhysicsManager()->addPrototype(model->getName(), model);
+			}
+			else {
+				Core::log("ScriptedModelLoader: Failed installing model prototype ["
+						+ model->getName() + "] from file [" + fileName + "]!", true);
+
+				delete model;
+			}
+		}
+	}
+}
+
+
+/**
+ * Destructor.
+ */
+ScriptedModelLoader::~ScriptedModelLoader() {
+}
+
+
+
 
 }
 
-#endif
+
+

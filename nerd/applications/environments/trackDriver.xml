@@ -1,0 +1,19 @@
+ <NERD version="Environment XML V1.1"> 
+
+	<Models> 
+		<model prototype="Ground" name="Ground" />
+   		<model prototype="TrackDrive" name="TrackDriver" orientation="(0,0,0)" position="(0,2,0)" MinAngle="-20" LinkLength="0.6" Radius="1"/>  
+	</Models>
+
+	<Environment> 
+		<object type="Box" Name="Box1" Position="(1.2, 0.2, 0.0)" Orientation="(0,0,0)" Color="red" Width="0.3" Height="0.16" Depth="0.8" Dynamic="F"/> 
+		<object type="Box" Name="Box2" Position="(2.5, 0.2, 0.0)" Orientation="(0,0,0)" Color="red" Width="0.3" Height="0.1" Depth="0.8" Dynamic="F"/> 
+		<object type="Box" Name="Box3" Position="(3.7, 0.2, 0.0)" Orientation="(0,0,0)" Color="red" Width="0.3" Height="0.19" Depth="0.8" Dynamic="F"/> 
+		<object type="Box" Name="Box4" Position="(4.2, 0.2, 0.0)" Orientation="(0,0,0)" Color="red" Width="0.3" Height="0.1" Depth="0.8" Dynamic="F"/> 
+		<object type="Box" Name="Box5" Position="(5, 0.2, 0.0)" Orientation="(0,0,0)" Color="red" Width="0.3" Height="0.1" Depth="0.8" Dynamic="F"/> 
+		<object type="Box" Name="Box6" Position="(5.2, 0.2, 0.0)" Orientation="(0,0,0)" Color="red" Width="0.3" Height="0.15" Depth="0.8" Dynamic="F"/> 
+		<object type="Box" Name="Box7" Position="(5.4, 0.2, 0.0)" Orientation="(0,0,0)" Color="red" Width="0.3" Height="0.3" Depth="0.8" Dynamic="F"/> 
+		<object type="Box" Name="Box8" Position="(5.9, 0.2, 0.0)" Orientation="(0,0,0)" Color="red" Width="0.3" Height="0.5" Depth="0.8" Dynamic="F"/> 
+	</Environment>
+
+</NERD>

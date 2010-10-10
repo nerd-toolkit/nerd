@@ -69,8 +69,8 @@ namespace nerd {
 /**
  * Constructs a new ScriptingContext.
  */
-ScriptingContext::ScriptingContext(const QString &name)
-	: mName(name), mScript(0), mScriptCode(0), mScriptFileName(0)
+ScriptingContext::ScriptingContext(const QString &name, const QString &mainContextName)
+	: mName(name), mScript(0), mScriptCode(0), mScriptFileName(0), mMainContextName(mainContextName)
 {
 	mScriptCode = new StringValue();
 	mScriptCode->addValueChangedListener(this);
@@ -88,15 +88,22 @@ ScriptingContext::ScriptingContext(const QString &name)
  * @param other the ScriptingContext object to copy.
  */
 ScriptingContext::ScriptingContext(const ScriptingContext &other) 
-	: QObject(), mName(other.mName), mScript(0), mScriptCode(0), mScriptFileName(0)
+	: QObject(), mName(other.mName), mScript(0), mScriptCode(0), mScriptFileName(0), 
+	  mMainContextName(other.mMainContextName)
 {
-	mScriptCode = new StringValue();
+	mScriptCode = new StringValue(other.mScriptCode->get());
 	mScriptCode->addValueChangedListener(this);
 
-	mScriptFileName = new StringValue("");
+	mScriptFileName = new StringValue(other.mScriptFileName->get());
 	mScriptFileName->addValueChangedListener(this);
 	mScriptFileName->setNotifyAllSetAttempts(true);
 	mScriptFileName->useAsFileName(true);
+
+	//copy persitent variables
+	for(QHashIterator<QString, QString> i(other.mPersistentParameters); i.hasNext();) {
+		i.next();
+		mPersistentParameters.insert(i.key(), i.value());
+	}
 }
 
 /**
@@ -172,7 +179,7 @@ void ScriptingContext::resetScriptContext() {
 			 				//QScriptEngine::ExcludeSuperClassMethods |
 							//QScriptEngine::ExcludeSuperClassProperties |
 							QScriptEngine::ExcludeChildObjects);
-	mScript->globalObject().setProperty("nerd", nerdScriptObj);
+	mScript->globalObject().setProperty(mMainContextName, nerdScriptObj);
 	mScript->globalObject().setProperty("orcs", nerdScriptObj); //for backwards compatibility with ORCS 2.5
 
 	//add function wrappers
@@ -184,7 +191,7 @@ void ScriptingContext::resetScriptContext() {
 					  + "    print('defVar: Invalid use of parameters!');"
 					  + "    throw TypeError('defVar: requires two string parameters!');"
 					  + "  }"
-					  + "  nerd.defineVariable(varName, valueName);"
+					  + "  " + mMainContextName + ".defineVariable(varName, valueName);"
 					  + "}");
 	if(mScript->hasUncaughtException()) {
 		reportError(QString("Could not add defVar function. ") 
@@ -200,7 +207,7 @@ void ScriptingContext::resetScriptContext() {
 					  + "    print('defVarR: Invalid use of parameters!');"
 					  + "    throw TypeError('defVarR: requires two string parameters!');"
 					  + "  }"
-					  + "  nerd.defineReadOnlyVariable(varName, valueName);"
+					  + "  " + mMainContextName + ".defineReadOnlyVariable(varName, valueName);"
 					  + "}");
 	if(mScript->hasUncaughtException()) {
 		reportError(QString("Could not add defVarR function. ") 
@@ -216,7 +223,7 @@ void ScriptingContext::resetScriptContext() {
 					  + "    print('defStatic: Invalid use of parameters!');"
 					  + "    throw TypeError('defStatic: requires two string parameters!');"
 					  + "  }"
-					  + "  nerd.definePersistentParameter(varName, initValue);"
+					  + "  " + mMainContextName + ".definePersistentParameter(varName, initValue);"
 					  + "}");
 	if(mScript->hasUncaughtException()) {
 		reportError(QString("Could not add defVar function. ") 
@@ -232,7 +239,7 @@ void ScriptingContext::resetScriptContext() {
 					  + "    print('defEvent: Invalid use of parameters!');"
 					  + "    throw TypeError('defEvent: requires two string parameters!');"
 					  + "  }"
-					  + "  nerd.defineEvent(varName, eventName); "
+					  + "  " + mMainContextName + ".defineEvent(varName, eventName); "
 					  + "}");
 	if(mScript->hasUncaughtException()) {
 		reportError(QString("Could not add defEvent function. ") 
@@ -253,7 +260,7 @@ void ScriptingContext::resetScriptContext() {
 
 	//evaluate basic programCode to make functions and global variables useable.
 	error = mScript->evaluate(programCode);
-	
+
 	if(mScript->hasUncaughtException()) {
 		QStringList backtrace = mScript->uncaughtExceptionBacktrace();
 		QString errorMessage = QString("~ScriptingContext [") + getName() + 
@@ -390,6 +397,15 @@ bool ScriptingContext::loadScriptCode(bool replaceExistingCode) {
 			  + mScriptFileName->get() + "].");
 
 	return true;
+}
+
+void ScriptingContext::setMainContextName(const QString &contextName) {
+	mMainContextName = contextName;
+}
+
+
+QString ScriptingContext::getMainContextName() const {
+	return mMainContextName;
 }
 
 void ScriptingContext::setStringBuffer(const QString &string) {
@@ -651,11 +667,11 @@ void ScriptingContext::exportVariables() {
 			if(dynamic_cast<DoubleValue*>(v) != 0	
 				|| dynamic_cast<IntValue*>(v) != 0)
 			{
-				mScript->evaluate("nerd.stringBuffer = " + i.key() + ".toString();");
+				mScript->evaluate(mMainContextName + ".stringBuffer = " + i.key() + ".toString();");
 				v->setValueFromString(mVariableBuffer);
 			}
 			else if(dynamic_cast<BoolValue*>(v) != 0) {
-				mScript->evaluate("nerd.stringBuffer = " + i.key() + ".toString();");
+				mScript->evaluate(mMainContextName + ".stringBuffer = " + i.key() + ".toString();");
 				if(mVariableBuffer == "true") {
 					v->setValueFromString("true");
 				}
@@ -668,7 +684,8 @@ void ScriptingContext::exportVariables() {
 				for(int j = 0; j < mpv->getNumberOfValueParts(); ++j) {
 					Value *part = mpv->getValuePart(j);
 			
-					QScriptValue error = mScript->evaluate("nerd.stringBuffer = " + i.key() + "." + mpv->getValuePartName(j) + ".toString();");
+					QScriptValue error = mScript->evaluate(mMainContextName+ ".stringBuffer = " 
+											+ i.key() + "." + mpv->getValuePartName(j) + ".toString();");
 
 					part->setValueFromString(mVariableBuffer);
 					
@@ -679,7 +696,7 @@ void ScriptingContext::exportVariables() {
 				}
 			}
 			else {
-				mScript->evaluate("nerd.stringBuffer = " + i.key() + ".toString();");
+				mScript->evaluate(mMainContextName + ".stringBuffer = " + i.key() + ".toString();");
 				v->setValueFromString(mVariableBuffer);
 			}
 		}
@@ -688,7 +705,7 @@ void ScriptingContext::exportVariables() {
 		for(QHash<QString, QString>::iterator i = mPersistentParameters.begin(); 
 			i != mPersistentParameters.end(); i++) 
 		{
-			mScript->evaluate("nerd.stringBuffer = " + i.key() + ".toString();");
+			mScript->evaluate(mMainContextName + ".stringBuffer = " + i.key() + ".toString();");
 			mPersistentParameters.insert(i.key(), mVariableBuffer);
 		}
 
