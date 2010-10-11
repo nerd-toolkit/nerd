@@ -221,8 +221,6 @@ bool NeatEvolutionAlgorithm::createNextGeneration(QList<Individual*> &trashcan) 
 		Population *pop = i.next();
 		QList<Individual*> individuals = pop->getIndividuals();
 
-		cerr << "Got individuals: " << individuals.size() << endl;
-
 		for(QListIterator<Individual*> j(individuals); j.hasNext();) {
 
 			Core::getInstance()->executePendingTasks();

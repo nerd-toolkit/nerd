@@ -197,7 +197,7 @@ bool ClusterEvaluationMethod::evaluateIndividuals() {
 		mEvalCurrentDirectory.append("/");
 	}
 	mEvalCurrentDirectory.append(EvolutionConstants::GENERATION_DIRECTORY_PREFIX)
-		.append(mCurrentGenerationID->getValueAsString()).append("/eval");
+		.append(mCurrentGenerationID->getValueAsString());//.append("/eval");
 	mCore->enforceDirectoryPath(mEvalCurrentDirectory);
 
 	mCore->executePendingTasks();

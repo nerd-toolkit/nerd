@@ -61,12 +61,12 @@ namespace nerd {
  */
 UniversalNeuroScriptingContext::UniversalNeuroScriptingContext(const QString &name, 
 			const QString &fileName, const QString &triggerEventName, 
-			const QString &resetEventName)
+			const QString &resetEventName, const QString &agentName)
 	: UniversalScriptingContext(name, fileName, triggerEventName, resetEventName)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 
-	mNameOfAgentInterface = new StringValue("");
+	mNameOfAgentInterface = new StringValue(agentName);
 	
 	Core::getInstance()->getValueManager()
 		->addValue("/UniversalScripting/" + name + "/NetworkAgent", mNameOfAgentInterface);
@@ -96,13 +96,9 @@ void UniversalNeuroScriptingContext::addCustomScriptContextStructures() {
 	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
 	QList<NeuralNetwork*> networks = nnm->getNeuralNetworks();
 
-	cerr << "Have networks: " << networks.size() << endl;
-
 	for(QListIterator<NeuralNetwork*> i(networks); i.hasNext();) {
 		ModularNeuralNetwork *modNet = dynamic_cast<ModularNeuralNetwork*>(i.next());
 		ControlInterface *interface = modNet->getControlInterface();
-
-		cerr << "Got1: " << interface->getName().toStdString().c_str() << endl;
 
 		if(interface->getName() == mNameOfAgentInterface->get()) {
 			mNetworkManipulator->setNeuralNetwork(modNet);

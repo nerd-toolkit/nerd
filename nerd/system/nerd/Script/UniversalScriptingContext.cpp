@@ -118,6 +118,8 @@ bool UniversalScriptingContext::bind() {
 	mInitialized = true;
 	setResetEventName(mResetEventName->get());
 	setTriggerEventName(mTriggerEventName->get());
+
+	mScriptFileName->set(mScriptFileName->get());
 	
 	return ok;
 }
@@ -153,7 +155,7 @@ void UniversalScriptingContext::eventOccured(Event *event) {
 			//try to do a reset on the fly
 			resetScriptContext();
 		}
-		executeScriptFunction("exec()");
+		executeScriptFunction("exec();");
 	}
 	else if(event == mResetEvent) {
 		resetScriptContext();

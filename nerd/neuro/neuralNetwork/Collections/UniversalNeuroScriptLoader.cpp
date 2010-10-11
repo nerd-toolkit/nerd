@@ -62,10 +62,11 @@ namespace nerd {
 UniversalNeuroScriptLoader::UniversalNeuroScriptLoader()
 {
 	CommandLineArgument *scriptLoaderArgument = new CommandLineArgument(
-		"installScript", "is", "<ScriptName> [<ScriptFileName> <TriggerEvent> <ResetEvent>]", 
+		"installScript", "is", "<ScriptName> [<ScriptFileName> <TriggerEvent> <ResetEvent> <AgentInterface>]", 
 		QString("Installs a new script with name <ScriptName>, that loads file <ScriptFileName>\n.")
 		+ "during the bind phase. The script is reset by <ResetEvent> and executed each\n"
-		+ "time <TriggerEvent> is triggered.", 1, 3, true);
+		+ "time <TriggerEvent> is triggered. The <AgentInterface>\n"
+		+ "specifies the agents whose neural network can be changed.", 1, 4, true);
 
 	QList<QString> scriptNames;
 
@@ -86,9 +87,13 @@ UniversalNeuroScriptLoader::UniversalNeuroScriptLoader()
 		if(entryParams.size() > 3) {
 			resetEvent = entryParams.at(3);
 		}
+		QString agentName = "";
+		if(entryParams.size() > 4) {
+			agentName = entryParams.at(4);
+		}
 
 		if(name != "" && !scriptNames.contains(name)) {
-			new UniversalNeuroScriptingContext(name, fileName, triggerEvent, resetEvent);
+			new UniversalNeuroScriptingContext(name, fileName, triggerEvent, resetEvent, agentName);
 			scriptNames.append(name);
 			Core::log("UniversalScriptLoader: Installed UniversalScriptingContext ["
 						+ name + "]");

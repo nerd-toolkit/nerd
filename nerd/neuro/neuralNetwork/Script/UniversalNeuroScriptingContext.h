@@ -62,7 +62,7 @@ namespace nerd {
 
 	public:
 		UniversalNeuroScriptingContext(const QString &name, const QString &fileName = "",
-				const QString &triggerEventName = "", const QString &resetEventName = "");
+				const QString &triggerEventName = "", const QString &resetEventName = "", const QString &agentName = "");
 		virtual ~UniversalNeuroScriptingContext();
 
 	protected:
