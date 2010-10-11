@@ -131,6 +131,11 @@ SimpleNetworkVisualizationHandler::SimpleNetworkVisualizationHandler(const Simpl
  */
 SimpleNetworkVisualizationHandler::~SimpleNetworkVisualizationHandler() {
 	TRACE("SimpleNetworkVisualizationHandler::~SimpleNetworkVisualizationHandler");
+
+	delete mNeuronItemPrototype;
+	delete mSynapseItemPrototype;
+	delete mModuleItemPrototype;
+	delete mGroupItemPrototype;
 }
 
 

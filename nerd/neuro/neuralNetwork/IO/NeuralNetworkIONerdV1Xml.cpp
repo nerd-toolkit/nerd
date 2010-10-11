@@ -958,6 +958,13 @@ void NeuralNetworkIONerdV1Xml::createGroupsAndModulesFromXML(
 			}
 		}
 	}
+	//destroy id containers
+	QList<QList<qulonglong>*> idList = subModuleIds.values();
+	while(!idList.isEmpty()) {
+		QList<qulonglong> *list = idList.first();
+		idList.removeAll(list);
+		delete list;
+	}
 }
 
 TransferFunction* NeuralNetworkIONerdV1Xml::createTransferFunctionFromXML(

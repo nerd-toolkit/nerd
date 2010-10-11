@@ -152,6 +152,10 @@ NetworkVisualization::~NetworkVisualization() {
 	if(mPerformanceMode != 0) {
 		mPerformanceMode->removeValueChangedListener(this);
 	}
+
+	//destroy local visus.
+	delete mElementPairVisualization;
+	delete mSelectionRectangle;
 }
 
 

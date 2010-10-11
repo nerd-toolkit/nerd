@@ -101,6 +101,7 @@ PhysicsManager::~PhysicsManager()
 	delete mPhysicalSimulationAlgorithm;
 	destroySimObjects();
 	destroyPrototypes();
+	destroySimObjectGroups();
 
 	//clear Physics helper class.
 	Physics::reset();
@@ -258,9 +259,9 @@ bool PhysicsManager::resetSimulation() {
 
 	if(measurePerformance) {
 		mResetDuration->set(time.elapsed());
-		mCurrentSimulationTime->set(0.0);
 		mCurrentRealTime->set(0.0);
 	}
+	mCurrentSimulationTime->set(0.0);
 
 	mStopwatch.start();
 
@@ -306,10 +307,10 @@ bool PhysicsManager::executeSimulationStep() {
 
 		if(measurePerformance) {
 			mCollisionHandlingDuration->set(time.restart());
-			mCurrentSimulationTime->set(mCurrentSimulationTime->get()
+		}
+		mCurrentSimulationTime->set(mCurrentSimulationTime->get()
 				+ mPhysicalSimulationAlgorithm->getTimeStepSize()
 				* mPhysicalSimulationAlgorithm->getIterationsPerStep());
-		}
 	}
 	else {
 		Core::log("PhysicsManager: Can not execute simulation step due to missing algorithm.");

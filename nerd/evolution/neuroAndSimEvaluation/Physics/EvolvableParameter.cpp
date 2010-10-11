@@ -134,6 +134,8 @@ EvolvableParameter::~EvolvableParameter() {
 	if(mSetEvolvedParametersEvent != 0) {
 		mSetEvolvedParametersEvent->removeEventListener(this);
 	}
+	//TODO destroy InterfaceValue
+	delete mInterfaceValue;
 }
 
 

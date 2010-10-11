@@ -136,6 +136,8 @@ LightSensor::LightSensor(const LightSensor &other)
  * Destructor.
  */
 LightSensor::~LightSensor() {
+	//TODO destroy mSensorObject?
+	delete mSensorObject;
 }
 
 

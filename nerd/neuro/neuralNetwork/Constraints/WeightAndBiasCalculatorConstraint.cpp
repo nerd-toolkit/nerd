@@ -188,12 +188,12 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 		return true;
 	}
 
-	QScriptEngine *calc = new QScriptEngine();
+	QScriptEngine calc;
 
 	for(QHashIterator<QString, QString> i(variables); i.hasNext();) {
 		i.next();
-		QScriptValue error = calc->evaluate(QString("var ") + i.key() + " = " + i.value() + ";");
-		if(calc->hasUncaughtException()) {
+		QScriptValue error = calc.evaluate(QString("var ") + i.key() + " = " + i.value() + ";");
+		if(calc.hasUncaughtException()) {
 			QString message = QString("Could not define variable ") + i.key() + " to value " + i.value();
 			mErrorMessage.append(message).append("\n");
 			Core::log("WeightAndBiasCalculatorConstraint: " + message);
@@ -202,8 +202,8 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 	}
 	for(QHashIterator<NeuralNetworkElement*, QString> i(equations); i.hasNext();) {
 		i.next();
-		QScriptValue result = calc->evaluate(i.value());
-		if(calc->hasUncaughtException()) {
+		QScriptValue result = calc.evaluate(i.value());
+		if(calc.hasUncaughtException()) {
 			QString message = QString("Could not evaluate equation ") + i.value() 
 								 + " of element [" + QString::number(i.key()->getId()) + "]";
 			mErrorMessage.append(message + "\n");

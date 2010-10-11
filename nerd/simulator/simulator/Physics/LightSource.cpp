@@ -129,6 +129,8 @@ LightSource::LightSource(const LightSource &other)
  * Destructor.
  */
 LightSource::~LightSource() {
+	//TODO delete CollisionObjects?
+	delete mBodyCollisionObject;
 }
 
 

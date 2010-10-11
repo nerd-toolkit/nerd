@@ -170,7 +170,7 @@ bool  NerdNeuroEvoApplication::setupGui() {
 		overview->getAction()->setShortcut(tr("Ctrl+Shift+p"));
 		mGuiMainWindow->getMenu("Evolution")->addAction(overview->getAction());
 
-		new EvolutionPropertyPanelCollection(mGuiMainWindow->getMenu("Evolution"), 
+		EvolutionPropertyPanelCollection(mGuiMainWindow->getMenu("Evolution"), 
 											"Evolution Parameters");
 
 		BoolValueSwitcherAction *runEvolutionButton = new BoolValueSwitcherAction("&Run Evolution",
@@ -178,7 +178,7 @@ bool  NerdNeuroEvoApplication::setupGui() {
 		runEvolutionButton->setShortcut(tr("Ctrl+e"));
 		mGuiMainWindow->getMenu("Evolution")->addAction(runEvolutionButton);
 
-		new NetworkEditorCollection(mGuiMainWindow->getMenu("Tools"), "Network Editor");
+		NetworkEditorCollection(mGuiMainWindow->getMenu("Tools"), "Network Editor");
 	}
 	return true;
 }
@@ -284,7 +284,7 @@ bool NerdNeuroEvoApplication::buildEvolutionSystem() {
 	Evolution::install();
 
 	//install evolution system with local simulator evolution.
-	new NeuroEvolutionSelector(new LocalNetworkInSimulationEvaluationMethod());
+	NeuroEvolutionSelector(new LocalNetworkInSimulationEvaluationMethod());
 
 	return true;
 }
