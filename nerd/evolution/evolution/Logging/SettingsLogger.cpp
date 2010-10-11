@@ -48,16 +48,29 @@
 #include "Core/Core.h"
 #include <QVector>
 #include <algorithm>
+#include "Value/ValueManager.h"
+#include "Value/StringValue.h"
+#include <QTextStream>
+#include <QDate>
+#include <QTime>
 
 namespace nerd {
 
 /**
  * The logger tries to register as global objefct automatically.
  */
-SettingsLogger::SettingsLogger()
-	: mEvolutionCompletedEvent(0), mCurrentGeneration(0), mWorkingDirectory(0)
+SettingsLogger::SettingsLogger(bool activateStaticLogger, bool activateIncrementalLogger)
+	: mEvolutionCompletedEvent(0), mCurrentGeneration(0), mWorkingDirectory(0),
+	  mIncrementalLogFileEnabled(activateIncrementalLogger), mStaticLogFileEnabled(activateStaticLogger),
+	  mIncrementalFileName("")
 {
 	Core::getInstance()->addGlobalObject(EvolutionConstants::OBJECT_SETTINGS_LOGGER, this);
+
+	mCommentValue = new StringValue("");
+	mCommentValue->addValueChangedListener(this);
+
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	vm->addValue(EvolutionConstants::VALUE_INCREMENTAL_LOGGER_COMMENT, mCommentValue);
 }
 
 
@@ -103,6 +116,10 @@ bool SettingsLogger::bind() {
 				.append("working directory.! [DISABLING FUNCTION] "));
 	}
 
+	if(mIncrementalLogFileEnabled && mWorkingDirectory != 0 && mCurrentGeneration != 0) {
+		mIncrementalFileName = mWorkingDirectory->get().append("/Evolution.log");
+	}
+
 	return ok;
 }
 
@@ -123,10 +140,23 @@ void SettingsLogger::eventOccured(Event *event) {
 		return;
 	}
 	else if(event == mEvolutionCompletedEvent) {
-		writeSettingsLogFile();
+		if(mStaticLogFileEnabled) {
+			writeSettingsLogFile();
+		}
+		if(mIncrementalLogFileEnabled) {
+			writeIncrementalLogFile();
+		}
 	}
 }
 
+void SettingsLogger::valueChanged(Value *value) {
+	if(value == 0) {
+		return;
+	}
+	if(value == mCommentValue && mIncrementalLogFileEnabled) {
+		Core::getInstance()->scheduleTask(new LogCommentTask(this, mCommentValue->get()));
+	}
+}
 
 
 void SettingsLogger::addValues(const QString &regularExpression) {
@@ -167,6 +197,91 @@ bool SettingsLogger::writeSettingsLogFile() {
 
 
 	return vm->saveValues(fileName, valueNames, "Automated settings log of NERD evolution.");
+}
+
+bool SettingsLogger::writeIncrementalLogFile() {	
+
+	QMap<Value*, QString> changedValues;
+	ValueManager *vm = Core::getInstance()->getValueManager();
+
+	if(mObservedValues.empty()) {
+		//collect all observed values
+		QList<QString> valueNames;
+		for(QListIterator<QString> i(mValuesToStore); i.hasNext();) {
+			valueNames << vm->getValueNamesMatchingPattern(i.next(), false);
+			//TODO make unique
+		}
+		for(QListIterator<QString> i(valueNames); i.hasNext();) {
+			QString name = i.next();
+			Value *value = vm->getValue(name);
+			if(mObservedValues.contains(value)) {
+				continue;
+			}
+			mObservedValues.insert(value, name);
+			changedValues.insert(value, name);
+			mVariableMemory.insert(value, value->getValueAsString());
+		}
+	}
+	else {
+		QHash<Value*, QString> variableMemory = mVariableMemory;
+		for(QHashIterator<Value*, QString> i(variableMemory); i.hasNext();) {
+			i.next();
+			if(i.key()->getValueAsString() != i.value()) {
+				changedValues.insert(i.key(), mObservedValues.value(i.key()));
+				mVariableMemory.insert(i.key(), i.key()->getValueAsString());
+			}
+		}
+	}
+
+	QFile file(mIncrementalFileName);
+
+	if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+		Core::log(QString("Could not open file ").append(mIncrementalFileName).append(" to write incremental log."));
+		file.close();
+		return false;
+	}
+
+	QTextStream output(&file);
+	output << "#" << endl
+		   << "#-------------------------------------------------------------------------------------------" << endl
+		   << "#!! Generation: " << mCurrentGeneration->get() << endl
+		   << "#-------------------------------------------------------------------------------------------" << endl
+		   << "# Date: " << QDate::currentDate().toString("dd.MM.yyyy")
+					<< "  " << QTime::currentTime().toString("hh:mm:ss") << endl;
+	output << "#" << endl;
+
+	for(QMapIterator<Value*, QString> i(changedValues); i.hasNext();) {
+		i.next();
+		output << i.value() << "=" << i.key()->getValueAsString() << "\n";
+	}
+	file.close();
+
+	return true;
+	
+}
+
+bool SettingsLogger::addCommentToFile(const QString &comment) {
+	
+	QFile file(mIncrementalFileName);
+
+	if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+		Core::log(QString("Could not open file ").append(mIncrementalFileName).append(" to write incremental log."));
+		file.close();
+		return false;
+	}
+
+	QString correctedComment = "# " + comment;
+	correctedComment.replace("\n", "\n# ");
+
+	QTextStream output(&file);
+	output << "#" << endl
+		   << "#**********************************************************" << endl
+		   << "#>> Comment: " << " at " << QDate::currentDate().toString("dd.MM.yyyy")
+		   << "  " << QTime::currentTime().toString("hh:mm:ss") << endl
+		   << "# " << endl << correctedComment << endl
+		   << "#**********************************************************" << endl;
+
+	return true;
 }
 
 

@@ -125,6 +125,8 @@ namespace nerd {
 		static const QString VALUE_EXECUTION_PAUSE;
 		static const QString VALUE_TIME_STEP_SIZE;
 
+		static const QString VALUE_INCREMENTAL_LOGGER_COMMENT;
+
 	//**************************************************************************
 	//Tag Names
 	//**************************************************************************

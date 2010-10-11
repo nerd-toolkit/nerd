@@ -83,6 +83,7 @@
 #include "PlugIns/WorkspaceCleaner.h"
 #include "PlugIns/EvolutionTerminationTrigger.h"
 #include "Collections/EvolutionPropertyPanelCollection.h"
+#include "Logging/SettingsLogger.h"
 
 
 using namespace std;
@@ -167,6 +168,11 @@ bool NerdClusterNeuroEvoApplication::setupApplication()
 	NeuroFitnessPrototypes();
 
 // 	Statistics::install();
+	SettingsLogger *settingsLogger = new SettingsLogger();
+	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/Algorithm/.*");
+	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/Pop/.*");
+	settingsLogger->addValues("/Control/NumberOfSteps");
+	settingsLogger->addValues("/Control/NumberOfTries");
 
 	//Install statistics logger to save the current statistics to a file.
 	new StatisticsLogger(Evolution::getEvolutionManager()->getEvolutionWorkingDirectoryValue());
