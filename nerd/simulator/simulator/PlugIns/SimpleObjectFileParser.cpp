@@ -223,23 +223,6 @@ bool SimpleObjectFileParser::loadXmlDescription() {
 		}
 	}
 
-	//If the parsing of environment definitions, model definitions and 
-	//model definitions was successful finally the randomization rules are parsed.
-	QDomNodeList randomizeListDefinitions = docElem.elementsByTagName("randomizeList");
-	for(unsigned int i = 0; i < randomizeListDefinitions.length(); i++) {
-		parseRandomiseListDefinition(randomizeListDefinitions.item(i).toElement());
-	}
-	
-	QDomNodeList randomizeDefinitions = docElem.elementsByTagName("randomize");
-	for(unsigned int i = 0; i < randomizeDefinitions.length(); i++) {
-		parseRandomiseDefinition(randomizeDefinitions.item(i).toElement());
-	}
-
-	QDomNodeList valueDefinitions = docElem.elementsByTagName("value");
-	for(unsigned int i = 0; i < valueDefinitions.length(); i++) {
-		parseValueDefinition(valueDefinitions.item(i).toElement());
-	}
-
 	successful = true;
 	//parse models and agents
 	n = startNode;
@@ -286,6 +269,23 @@ bool SimpleObjectFileParser::loadXmlDescription() {
 		}
 		file.close();
 		return false;
+	}
+
+	//If the parsing of environment definitions, model definitions and 
+	//model definitions was successful finally the randomization rules are parsed.
+	QDomNodeList randomizeListDefinitions = docElem.elementsByTagName("randomizeList");
+	for(unsigned int i = 0; i < randomizeListDefinitions.length(); i++) {
+		parseRandomiseListDefinition(randomizeListDefinitions.item(i).toElement());
+	}
+	
+	QDomNodeList randomizeDefinitions = docElem.elementsByTagName("randomize");
+	for(unsigned int i = 0; i < randomizeDefinitions.length(); i++) {
+		parseRandomiseDefinition(randomizeDefinitions.item(i).toElement());
+	}
+
+	QDomNodeList valueDefinitions = docElem.elementsByTagName("value");
+	for(unsigned int i = 0; i < valueDefinitions.length(); i++) {
+		parseValueDefinition(valueDefinitions.item(i).toElement());
 	}
 
 	Physics::getSimulationEnvironmentManager()->createSnapshot();
