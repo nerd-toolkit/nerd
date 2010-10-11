@@ -42,86 +42,110 @@
  ***************************************************************************/
 
 
-#ifndef NERDSettingsLogger_H
-#define NERDSettingsLogger_H
 
-#include "Core/SystemObject.h"
-#include "Event/EventListener.h"
-#include "Event/Event.h"
-#include "Value/StringValue.h"
-#include "Value/IntValue.h"
-#include "Core/Task.h"
-#include "Value/ValueChangedListener.h"
-#include <QFile>
-#include <QHash>
-#include "Value/IntValue.h"
-#include "Value/DoubleValue.h"
+#include "CommentWidget.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include <QVBoxLayout>
+#include <QSplitter>
+#include "EvolutionConstants.h"
 
+
+using namespace std;
 
 namespace nerd {
 
 
-	/**
-	 * SettingsLogger.
-	 */
-	class SettingsLogger : public virtual SystemObject, public virtual EventListener, 
-						   public virtual ValueChangedListener 
-	{
-	public:
-		SettingsLogger(bool activateStaticLogger = true, bool activateIncrementalLogger = true);
-		virtual ~SettingsLogger();
+/**
+ * Constructs a new CommentWidget.
+ */
+CommentWidget::CommentWidget(QWidget *owner)
+	: QWidget(owner)
+{
+	QVBoxLayout *layout = new QVBoxLayout(this);
+	setLayout(layout);
 
-		virtual bool init();
-		virtual bool bind();
-		virtual bool cleanUp();
+	QSplitter *splitter = new QSplitter();
+	splitter->setOrientation(Qt::Vertical);
 
-		virtual QString getName() const;
-		virtual void eventOccured(Event *event);
-		virtual void valueChanged(Value *value);
+	mCommentHistoryArea = new QTextEdit();
+	mCommentHistoryArea->setReadOnly(true);
 
-		void addValues(const QString &regularExpression);
-		const QList<QString>& getValuesToStore() const;
+	mCommentEdit = new QTextEdit();
 
-		QList<QString> getCommentHistory() const;
+	splitter->addWidget(mCommentHistoryArea);
+	splitter->addWidget(mCommentEdit);
+	splitter->setStretchFactor(0, 1000);
+	splitter->setStretchFactor(1, 1);
 
-		bool writeSettingsLogFile();
-		bool writeIncrementalLogFile();
-		bool addCommentToFile(const QString &comment);
+	layout->addWidget(splitter);
 
-		Event* getCommentHistoryUpdatedEvent() const;
-		
-	private:
-		QList<QString> mValuesToStore;
-		Event *mEvolutionCompletedEvent;
-		IntValue *mCurrentGeneration;
-		StringValue *mWorkingDirectory;
-		bool mIncrementalLogFileEnabled;
-		bool mStaticLogFileEnabled;
-		StringValue *mCommentValue;
-		QString mIncrementalFileName;
-		QHash<Value*, QString> mObservedValues;
-		QHash<Value*, QString> mVariableMemory;
-		QList<QString> mCommentHistory;
-		Event *mLoggerCommentHistoryUpdatedEvent;
-		QList<IntValue*> mNumberOfIndividualsValues;
-		QList<DoubleValue*> mBestFitnessValues;
-		IntValue *mNumberOfSteps;
-		IntValue *mNumberOfTrys;
+	mSubmitCommentButton = new QPushButton("Submit Comment");
+	layout->addWidget(mSubmitCommentButton);
 
-	};
+	connect(mSubmitCommentButton, SIGNAL(pressed()),
+			this, SLOT(submitButtonPressed()));
+	connect(this, SIGNAL(commentHistoryUpdated(QString)),
+			this, SLOT(updateCommentHistory(QString)));
 
-	class LogCommentTask : public Task {
-		public:
-			LogCommentTask(SettingsLogger *logger, const QString &comment) : mLogger(logger), mComment(comment) {}
-			virtual bool runTask() { mLogger->addCommentToFile(mComment); return true; }
-		private:
-			SettingsLogger *mLogger;
-			QString mComment;
+	
+	//bind to required objects 
+	mLogger = dynamic_cast<SettingsLogger*>(Core::getInstance()->getGlobalObject(
+				EvolutionConstants::OBJECT_SETTINGS_LOGGER));
+	mLoggerValue = Core::getInstance()->getValueManager()->getStringValue(
+				EvolutionConstants::VALUE_INCREMENTAL_LOGGER_COMMENT);
+	
+	if(mLogger != 0) {
+		mLoggerCommentHistoryUpdatedEvent = mLogger->getCommentHistoryUpdatedEvent();
+		mLoggerCommentHistoryUpdatedEvent->addEventListener(this);
+	}
+}
 
-	};
+
+/**
+ * Destructor.
+ */
+CommentWidget::~CommentWidget() {
+}
+
+
+QString CommentWidget::getName() const {
+	return "CommentWidget";
+}
+
+
+void CommentWidget::eventOccured(Event *event) {
+	if(event == 0) {
+		return;
+	}
+	else if(event == mLoggerCommentHistoryUpdatedEvent && mLogger != 0) {
+		QList<QString> history = mLogger->getCommentHistory();
+		QString comments;
+		for(int i = history.size() - 1; i >= 0; --i) {
+			comments = comments.append(history[i]);
+		}
+		emit commentHistoryUpdated(comments);
+	}
+}
+
+
+void CommentWidget::submitButtonPressed() {
+	QString comment = mCommentEdit->document()->toPlainText();
+	mCommentEdit->clear();
+	if(mLoggerValue != 0) {
+		mLoggerValue->set(comment);
+	}
+}
+
+
+void CommentWidget::updateCommentHistory(QString history) {
+	mCommentHistoryArea->setText(history);
+}
+
+
 
 }
 
-#endif
 
 

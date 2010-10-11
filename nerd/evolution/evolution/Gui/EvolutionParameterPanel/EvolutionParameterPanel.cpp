@@ -64,6 +64,7 @@
 #include <QMenuBar>
 #include "Value/ChangeValueTask.h"
 #include <QMessageBox>
+#include "Gui/CommentWidget/CommentWidget.h"
 
 using namespace std;
 
@@ -261,6 +262,10 @@ void EvolutionParameterPanel::initializePanel() {
 	popOverview->show();
 
 	mTabWidget->addTab(new MultipleScriptedFitnessEditor("/Evo/Pop/.*/Fitness/.*/Code", true), "Fitness");
+
+	CommentWidget *commentWidget = new CommentWidget();
+	mTabWidget->addTab(commentWidget, "Journal");
+
 	mTabWidget->addTab(popOverview, "Overview");
 
 	if(mRunEvolutionValue != 0) {

@@ -58,6 +58,7 @@ set(nerd_evolution_SRCS
 	Application/EvaluationBaseApplication.cpp  
 	FitnessFunctions/ScriptedFitnessFunction.cpp  
 	Gui/EvolutionProgressBar/EvolutionProgressBar.cpp
+	Gui/CommentWidget/CommentWidget.cpp
 )
 
 set(nerd_evolution_MOC_HDRS
@@ -76,6 +77,7 @@ set(nerd_evolution_MOC_HDRS
 	ClusterEvaluation/ClusterEvaluationMethod.h  
 	Gui/EvolutionProgressBar/EvolutionProgressBar.h
 	FitnessFunctions/ScriptedFitnessFunction.h
+	Gui/CommentWidget/CommentWidget.h
 )
 
 set(nerd_evolution_RCS

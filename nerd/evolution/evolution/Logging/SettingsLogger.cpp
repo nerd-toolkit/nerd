@@ -53,6 +53,9 @@
 #include <QTextStream>
 #include <QDate>
 #include <QTime>
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
@@ -62,7 +65,7 @@ namespace nerd {
 SettingsLogger::SettingsLogger(bool activateStaticLogger, bool activateIncrementalLogger)
 	: mEvolutionCompletedEvent(0), mCurrentGeneration(0), mWorkingDirectory(0),
 	  mIncrementalLogFileEnabled(activateIncrementalLogger), mStaticLogFileEnabled(activateStaticLogger),
-	  mIncrementalFileName("")
+	  mIncrementalFileName(""), mNumberOfSteps(0), mNumberOfTrys(0)
 {
 	Core::getInstance()->addGlobalObject(EvolutionConstants::OBJECT_SETTINGS_LOGGER, this);
 
@@ -71,6 +74,9 @@ SettingsLogger::SettingsLogger(bool activateStaticLogger, bool activateIncrement
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue(EvolutionConstants::VALUE_INCREMENTAL_LOGGER_COMMENT, mCommentValue);
+
+	mLoggerCommentHistoryUpdatedEvent = Core::getInstance()->getEventManager()
+										->createEvent("LoggerCommenHistoryUpdated");
 }
 
 
@@ -117,8 +123,27 @@ bool SettingsLogger::bind() {
 	}
 
 	if(mIncrementalLogFileEnabled && mWorkingDirectory != 0 && mCurrentGeneration != 0) {
-		mIncrementalFileName = mWorkingDirectory->get().append("/Evolution.log");
+		mIncrementalFileName = mWorkingDirectory->get().append("Evolution.log");
+		Core::getInstance()->enforceDirectoryPath(mWorkingDirectory->get());
 	}
+
+	QList<QString> numberOfIndividualsNames = vm->getValueNamesMatchingPattern(".*/Evo/.*/PopulationSize");
+	for(QListIterator<QString> i(numberOfIndividualsNames); i.hasNext();) {
+		IntValue *value = vm->getIntValue(i.next());
+		if(value != 0) {
+			mNumberOfIndividualsValues.append(value);
+		}
+	}
+	QList<QString> bestFitnessNames = vm->getValueNamesMatchingPattern(".*/Fitness/.*/Fitness/MaxFitness");
+	for(QListIterator<QString> i(bestFitnessNames); i.hasNext();) {
+		DoubleValue *value = vm->getDoubleValue(i.next());
+		if(value != 0) {
+			mBestFitnessValues.append(value);
+		}
+	}
+
+	mNumberOfSteps = vm->getIntValue(EvolutionConstants::VALUE_EXECUTION_NUMBER_OF_STEPS);
+	mNumberOfTrys = vm->getIntValue(EvolutionConstants::VALUE_EXECUTION_NUMBER_OF_TRIES);
 
 	return ok;
 }
@@ -127,7 +152,6 @@ bool SettingsLogger::bind() {
 bool SettingsLogger::cleanUp() {
 	return true;
 }
-
 
 
 QString SettingsLogger::getName() const {
@@ -169,6 +193,10 @@ void SettingsLogger::addValues(const QString &regularExpression) {
 
 const QList<QString>& SettingsLogger::getValuesToStore() const {
 	return mValuesToStore;
+}
+
+QList<QString> SettingsLogger::getCommentHistory() const {
+	return mCommentHistory;
 }
 
 bool SettingsLogger::writeSettingsLogFile() {
@@ -244,8 +272,24 @@ bool SettingsLogger::writeIncrementalLogFile() {
 	QTextStream output(&file);
 	output << "#" << endl
 		   << "#-------------------------------------------------------------------------------------------" << endl
-		   << "#!! Generation: " << mCurrentGeneration->get() << endl
-		   << "#-------------------------------------------------------------------------------------------" << endl
+		   << "#!! Generation: " << mCurrentGeneration->get() 
+		   << "\t\tSize:";
+	for(QListIterator<IntValue*> i(mNumberOfIndividualsValues); i.hasNext();) {
+		output << i.next()->getValueAsString();
+		if(i.hasNext()) {
+			output << ",";
+		}
+	}
+	output << "  Steps:" << mNumberOfSteps->getValueAsString() << "  Trys:" << mNumberOfTrys->getValueAsString();
+	output  << "  Best:";
+	for(QListIterator<DoubleValue*> i(mBestFitnessValues); i.hasNext();) {
+		output << i.next()->getValueAsString();
+		if(i.hasNext()) {
+			output << ",";
+		}
+	}
+	output << endl;
+	output << "#-------------------------------------------------------------------------------------------" << endl
 		   << "# Date: " << QDate::currentDate().toString("dd.MM.yyyy")
 					<< "  " << QTime::currentTime().toString("hh:mm:ss") << endl;
 	output << "#" << endl;
@@ -273,17 +317,33 @@ bool SettingsLogger::addCommentToFile(const QString &comment) {
 	QString correctedComment = "# " + comment;
 	correctedComment.replace("\n", "\n# ");
 
+	QString message = QString("#\n")
+		   + "#**********************************************************\n"
+		   + "# Comment: " + " at " + QDate::currentDate().toString("dd.MM.yyyy")
+		   + "  " + QTime::currentTime().toString("hh:mm:ss") + "\n"
+		   + "# \n" + correctedComment +
+		   + "\n#**********************************************************\n";
+
+	mCommentHistory.append(message);
+
 	QTextStream output(&file);
-	output << "#" << endl
-		   << "#**********************************************************" << endl
-		   << "#>> Comment: " << " at " << QDate::currentDate().toString("dd.MM.yyyy")
-		   << "  " << QTime::currentTime().toString("hh:mm:ss") << endl
-		   << "# " << endl << correctedComment << endl
-		   << "#**********************************************************" << endl;
+	output << message;
+// 	output << "#" << endl
+// 		   << "#**********************************************************" << endl
+// 		   << "#>> Comment: " << " at " << QDate::currentDate().toString("dd.MM.yyyy")
+// 		   << "  " << QTime::currentTime().toString("hh:mm:ss") << endl
+// 		   << "# " << endl << correctedComment << endl
+// 		   << "#**********************************************************" << endl;
+
+	mLoggerCommentHistoryUpdatedEvent->trigger();
 
 	return true;
 }
 
+
+Event* SettingsLogger::getCommentHistoryUpdatedEvent() const {
+	return mLoggerCommentHistoryUpdatedEvent;
+}
 
 }
 

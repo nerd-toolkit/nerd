@@ -42,86 +42,53 @@
  ***************************************************************************/
 
 
-#ifndef NERDSettingsLogger_H
-#define NERDSettingsLogger_H
+#ifndef ORCSCommentWidget_H
+#define ORCSCommentWidget_H
 
-#include "Core/SystemObject.h"
+#include <QString>
+#include <QHash>
+#include <QWidget>
+#include <QTextEdit>
+#include <QPushButton>
+#include "Value/StringValue.h"
+#include "Logging/SettingsLogger.h"
 #include "Event/EventListener.h"
 #include "Event/Event.h"
-#include "Value/StringValue.h"
-#include "Value/IntValue.h"
-#include "Core/Task.h"
-#include "Value/ValueChangedListener.h"
-#include <QFile>
-#include <QHash>
-#include "Value/IntValue.h"
-#include "Value/DoubleValue.h"
-
 
 namespace nerd {
 
-
 	/**
-	 * SettingsLogger.
+	 * CommentWidget.
+	 *
 	 */
-	class SettingsLogger : public virtual SystemObject, public virtual EventListener, 
-						   public virtual ValueChangedListener 
-	{
+	class CommentWidget : public QWidget, public virtual EventListener {
+	Q_OBJECT
 	public:
-		SettingsLogger(bool activateStaticLogger = true, bool activateIncrementalLogger = true);
-		virtual ~SettingsLogger();
-
-		virtual bool init();
-		virtual bool bind();
-		virtual bool cleanUp();
+		CommentWidget(QWidget *owner = 0);
+		virtual ~CommentWidget();
 
 		virtual QString getName() const;
 		virtual void eventOccured(Event *event);
-		virtual void valueChanged(Value *value);
 
-		void addValues(const QString &regularExpression);
-		const QList<QString>& getValuesToStore() const;
+	public slots:
+		void submitButtonPressed();
+		void updateCommentHistory(QString history);
 
-		QList<QString> getCommentHistory() const;
+	signals:
+		void commentHistoryUpdated(QString history);
 
-		bool writeSettingsLogFile();
-		bool writeIncrementalLogFile();
-		bool addCommentToFile(const QString &comment);
-
-		Event* getCommentHistoryUpdatedEvent() const;
-		
 	private:
-		QList<QString> mValuesToStore;
-		Event *mEvolutionCompletedEvent;
-		IntValue *mCurrentGeneration;
-		StringValue *mWorkingDirectory;
-		bool mIncrementalLogFileEnabled;
-		bool mStaticLogFileEnabled;
-		StringValue *mCommentValue;
-		QString mIncrementalFileName;
-		QHash<Value*, QString> mObservedValues;
-		QHash<Value*, QString> mVariableMemory;
-		QList<QString> mCommentHistory;
+		QTextEdit *mCommentHistoryArea;
+		QTextEdit *mCommentEdit;
+		QPushButton *mSubmitCommentButton;
+		SettingsLogger *mLogger;
 		Event *mLoggerCommentHistoryUpdatedEvent;
-		QList<IntValue*> mNumberOfIndividualsValues;
-		QList<DoubleValue*> mBestFitnessValues;
-		IntValue *mNumberOfSteps;
-		IntValue *mNumberOfTrys;
-
-	};
-
-	class LogCommentTask : public Task {
-		public:
-			LogCommentTask(SettingsLogger *logger, const QString &comment) : mLogger(logger), mComment(comment) {}
-			virtual bool runTask() { mLogger->addCommentToFile(mComment); return true; }
-		private:
-			SettingsLogger *mLogger;
-			QString mComment;
-
+		StringValue *mLoggerValue;
 	};
 
 }
 
 #endif
+
 
 
