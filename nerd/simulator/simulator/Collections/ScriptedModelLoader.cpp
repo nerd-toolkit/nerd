@@ -100,6 +100,7 @@ ScriptedModelLoader::ScriptedModelLoader()
 
 				delete model;
 			}
+			Physics::getSimulationEnvironmentManager()->createSnapshot();
 		}
 	}
 }

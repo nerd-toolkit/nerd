@@ -419,8 +419,6 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 					mGroup2->addNeuron(rNeuron);
 				}
 
-				cerr << "Added new neuron" << endl;
-
 				//set position
 				setElementPosition(rNeuron, group2Origin, oNeuron->getPosition() - group1Origin);
 

@@ -150,6 +150,11 @@ void ScriptedModel::createEnvironment() {
 
 	QList<SimObject*> objects = mEnvironmentObjectLookup.values();
 	for(QListIterator<SimObject*> i(objects); i.hasNext();) {
+		SimObject *obj = i.next();
+		ModelInterface *model = dynamic_cast<ModelInterface*>(obj);
+		if(model != 0) {
+			model->setup();
+		}
 		pm->addSimObject(i.next());
 	}
 }
