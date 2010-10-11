@@ -63,7 +63,7 @@ namespace nerd {
  */
 ScriptedModel::ScriptedModel(const QString &name, const QString &script)
 	: ScriptingContext(name, "model"), ModelInterface(name), mPrototypeName(""), mIdCounter(1), mAgent(0),
-		mCurrentSimObject(0)
+		mCurrentSimObject(0), mEnvironmentMode(false)
 {
 }
 
@@ -75,7 +75,7 @@ ScriptedModel::ScriptedModel(const QString &name, const QString &script)
  */
 ScriptedModel::ScriptedModel(const ScriptedModel &other) 
 	: ScriptingContext(other), ModelInterface(other), mPrototypeName(other.mPrototypeName), 
-		mIdCounter(other.mIdCounter), mAgent(0), mCurrentSimObject(0)
+		mIdCounter(other.mIdCounter), mAgent(0), mCurrentSimObject(0), mEnvironmentMode(false)
 {
 	for(QHashIterator<StringValue*, QString> i(other.mPrototypeParameters); i.hasNext();) {
 		i.next();
@@ -140,6 +140,20 @@ void ScriptedModel::layoutObjects() {
 	executeScriptFunction("layoutModel();") ;
 }
 
+void ScriptedModel::createEnvironment() {
+	mCurrentSimObject = 0;
+	mEnvironmentMode = true;
+	executeScriptFunction("createEnvironment();");
+	mEnvironmentMode = false;
+
+	PhysicsManager *pm = Physics::getPhysicsManager();
+
+	QList<SimObject*> objects = mEnvironmentObjectLookup.values();
+	for(QListIterator<SimObject*> i(objects); i.hasNext();) {
+		pm->addSimObject(i.next());
+	}
+}
+
 
 int ScriptedModel::createObject(const QString &prototypeName, const QString &name) {
 	SimObject *obj = Physics::getPhysicsManager()->getPrototype("Prototypes/" + prototypeName);
@@ -148,27 +162,49 @@ int ScriptedModel::createObject(const QString &prototypeName, const QString &nam
 	}
 	SimObject *newObject = obj->createCopy();
 	int id = mIdCounter++;
-	mSimObjectsLookup.insert(id, newObject);
+	if(mEnvironmentMode) {
+		mEnvironmentObjectLookup.insert(id, newObject);
+	}
+	else {
+		mSimObjectsLookup.insert(id, newObject);
+	}
 	newObject->setName(name);
 	return id;
 }
 
 int ScriptedModel::copyObject(int objectId, const QString &name) {
-	SimObject *obj = mSimObjectsLookup.value(objectId);
+	SimObject *obj = 0;
+	if(mEnvironmentMode) {
+		obj = mEnvironmentObjectLookup.value(objectId);
+	}
+	else {
+		obj = mSimObjectsLookup.value(objectId);
+	}
 	if(obj == 0) {
 		return 0;
 	}
 	else {
 		SimObject *newObject = obj->createCopy();
 		int id = mIdCounter++;
-		mSimObjectsLookup.insert(id, newObject);
+		if(mEnvironmentMode) {
+			mEnvironmentObjectLookup.insert(id, newObject);
+		}
+		else {
+			mSimObjectsLookup.insert(id, newObject);
+		}
 		newObject->setName(name);
 		return id;
 	}
 }
 
 bool ScriptedModel::setProperty(int objectId, const QString &propertyName, const QString &value) {
-	SimObject *obj = mSimObjectsLookup.value(objectId);
+	SimObject *obj = 0;
+	if(mEnvironmentMode) {
+		obj = mEnvironmentObjectLookup.value(objectId);
+	}
+	else {
+		obj = mSimObjectsLookup.value(objectId);
+	}
 	if(obj == 0) {
 		return false;
 	}
@@ -180,7 +216,13 @@ bool ScriptedModel::setProperty(int objectId, const QString &propertyName, const
 }
 
 bool ScriptedModel::hasProperty(int objectId, const QString &propertyName) {
-	SimObject *obj = mSimObjectsLookup.value(objectId);
+	SimObject *obj = 0;
+	if(mEnvironmentMode) {
+		obj = mEnvironmentObjectLookup.value(objectId);
+	}
+	else {
+		obj = mSimObjectsLookup.value(objectId);
+	}
 	if(obj == 0) {
 		return false;
 	}
@@ -192,7 +234,13 @@ bool ScriptedModel::hasProperty(int objectId, const QString &propertyName) {
 }
 
 QString ScriptedModel::getProperty(int objectId, const QString &propertyName) {
-	SimObject *obj = mSimObjectsLookup.value(objectId);
+	SimObject *obj = 0;
+	if(mEnvironmentMode) {
+		obj = mEnvironmentObjectLookup.value(objectId);
+	}
+	else {
+		obj = mSimObjectsLookup.value(objectId);
+	}
 	if(obj == 0) {
 		return "";
 	}
@@ -205,7 +253,13 @@ QString ScriptedModel::getProperty(int objectId, const QString &propertyName) {
 
 
 bool ScriptedModel::makeCurrent(int objectId) {
-	SimObject *obj = mSimObjectsLookup.value(objectId);
+	SimObject *obj = 0;
+	if(mEnvironmentMode) {
+		obj = mEnvironmentObjectLookup.value(objectId);
+	}
+	else {
+		obj = mSimObjectsLookup.value(objectId);
+	}
 	if(obj == 0) {
 		mCurrentSimObject = 0;
 		return false;
@@ -218,10 +272,20 @@ int ScriptedModel::getCurrent() {
 	if(mCurrentSimObject == 0) {
 		return 0;
 	}
-	for(QHashIterator<int, SimObject*> i(mSimObjectsLookup); i.hasNext();) {
-		i.next();
-		if(i.value() == mCurrentSimObject) {
-			return i.key();
+	if(mEnvironmentMode) {
+		for(QHashIterator<int, SimObject*> i(mEnvironmentObjectLookup); i.hasNext();) {
+			i.next();
+			if(i.value() == mCurrentSimObject) {
+				return i.key();
+			}
+		}
+	}
+	else {
+		for(QHashIterator<int, SimObject*> i(mSimObjectsLookup); i.hasNext();) {
+			i.next();
+			if(i.value() == mCurrentSimObject) {
+				return i.key();
+			}
 		}
 	}
 	return 0;
@@ -241,8 +305,18 @@ bool ScriptedModel::setP(const QString &propertyName, const QString &value) {
 
 bool ScriptedModel::allowCollisions(int objectId1, int objectId2, bool allow) {
 
-	SimBody *obj1 = dynamic_cast<SimBody*>(mSimObjectsLookup.value(objectId1));
-	SimBody *obj2 = dynamic_cast<SimBody*>(mSimObjectsLookup.value(objectId2));
+	SimBody *obj1 = 0;
+	SimBody *obj2 = 0;
+
+	if(mEnvironmentMode) {
+		obj1 = dynamic_cast<SimBody*>(mEnvironmentObjectLookup.value(objectId1));
+		obj2 = dynamic_cast<SimBody*>(mEnvironmentObjectLookup.value(objectId2));
+	}
+	else {
+		obj1 = dynamic_cast<SimBody*>(mSimObjectsLookup.value(objectId1));
+		obj2 = dynamic_cast<SimBody*>(mSimObjectsLookup.value(objectId2));
+	}
+	
 
 	if(obj1 == 0 || obj2 == 0) {
 		Core::log("ScriptedModel::allowCollisions: Could not find required bodies ["
@@ -266,6 +340,32 @@ QString ScriptedModel::toColorString(double r, double g, double b, double t) {
 			+ "," + QString::number(b) + "," + QString::number(t) + ")";
 }
 
+bool ScriptedModel::hasEnvironmentSection() {
+	if(mScript != 0) {
+		mScript->evaluate("createEnvironment.toString();");
+		if(mScript->hasUncaughtException()) {
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+
+bool ScriptedModel::hasModelSection() {
+	if(mScript != 0) {
+		mScript->evaluate("createModel.toString();");
+		if(mScript->hasUncaughtException()) {
+			return false;
+		}
+		mScript->evaluate("layoutModel.toString();");
+		if(mScript->hasUncaughtException()) {
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
 
 
 /**

@@ -76,6 +76,7 @@ namespace nerd {
 		virtual SimObject* createCopy() const;
 		virtual void createModel();
 		virtual void layoutObjects();
+		virtual void createEnvironment();
 
 	public slots:
 		void setPrototypeName(const QString &name);
@@ -100,6 +101,9 @@ namespace nerd {
 		QString toVector3DString(double x, double y, double z);
 		QString toColorString(double r, double g, double b, double t);
 
+		bool hasEnvironmentSection();
+		bool hasModelSection();
+
 	protected:
 		virtual void reportError(const QString &message);
 		virtual void importVariables();
@@ -110,10 +114,11 @@ namespace nerd {
 		QString mPrototypeName;
 		int mIdCounter;
 		QHash<int, SimObject*> mSimObjectsLookup;
+		QHash<int, SimObject*> mEnvironmentObjectLookup;
 		SimObjectGroup *mAgent;
 		SimObject *mCurrentSimObject;
 		QHash<StringValue*, QString> mPrototypeParameters;
-
+		bool mEnvironmentMode;
 		
 	};
 

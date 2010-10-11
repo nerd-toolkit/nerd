@@ -84,7 +84,15 @@ ScriptedModelLoader::ScriptedModelLoader()
 				Core::log("ScriptedModelLoader: Installed model prototype ["
 						+ model->getName() + "] from file [" + fileName + "]");
 
-				Physics::getPhysicsManager()->addPrototype(model->getName(), model);
+				if(model->hasModelSection()) {
+					Physics::getPhysicsManager()->addPrototype(model->getName(), model);
+				}
+				if(model->hasEnvironmentSection()) {
+					model->createEnvironment();
+				}
+				if(!model->hasModelSection()) {
+					delete model;
+				}
 			}
 			else {
 				Core::log("ScriptedModelLoader: Failed installing model prototype ["
