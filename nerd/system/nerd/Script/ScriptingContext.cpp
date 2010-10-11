@@ -379,6 +379,12 @@ bool ScriptingContext::loadScriptCode(bool replaceExistingCode) {
 		return false;
 	}
 
+	mWrittenVariables.clear();
+	mReadVariables.clear();
+	mEventNames.clear();
+	mEventOccurences.clear();
+	mPersistentParameters.clear();
+
 	QFile file(mScriptFileName->get());
 
 	if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {

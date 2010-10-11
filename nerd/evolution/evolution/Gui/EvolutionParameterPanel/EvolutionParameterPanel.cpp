@@ -455,6 +455,8 @@ QList<QString> EvolutionParameterPanel::getParameterValueNames() {
 	valueNames << vm->getValueNamesMatchingPattern(
 					"(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/Pop/.*");
 	valueNames << vm->getValueNamesMatchingPattern("/Evo/.*/Fitness/.*/Fitness/CalculationMode");
+	valueNames.append("/Control/NumberOfSteps");
+	valueNames.append("/Control/NumberOfTries");
 
 	return valueNames;
 }

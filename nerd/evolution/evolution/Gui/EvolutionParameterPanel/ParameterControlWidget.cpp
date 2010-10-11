@@ -85,7 +85,8 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
 
 	if(mValue != 0) {
 		mValue->addValueChangedListener(this);
-		mValueBox->setEditText(mValue->getValueAsString());
+
+		QString value = mValue->getValueAsString();
 
 		StringValue *stringValue = dynamic_cast<StringValue*>(mValue);
 		if(stringValue != 0 && stringValue->isUsedAsFileName()) {
@@ -96,6 +97,7 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
         for(QListIterator<QString> i(options); i.hasNext();) {
             mValueBox->addItem(i.next());
         }
+		mValueBox->setEditText(value);
 	}
 
 	layout->addWidget(nameLabel);
