@@ -93,6 +93,19 @@ bool NetworkVisualizationHandler::setNeuralNetwork(ModularNeuralNetwork *network
 		mOwner->getOwner()->renameCurrentNetwork("");
 	}
 	mNeuralNetwork = network;
+
+	if(mNeuralNetwork != 0 && mNeuralNetwork->hasProperty("_Viewport") && mOwner != 0) {
+		//Try to set viewport
+		QString viewport = mNeuralNetwork->getProperty("_Viewport");
+		QStringList viewportElements = viewport.split(",");
+		if(viewportElements.size() == 3) {
+			double x = viewportElements.at(0).toDouble();
+			double y = viewportElements.at(1).toDouble();
+			double scaling = viewportElements.at(2).toDouble();
+			mOwner->setVisualizationOffset(QPointF(x, y));
+			mOwner->setScaling(scaling);
+		}
+	}
 	return true;
 }
 

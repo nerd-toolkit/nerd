@@ -752,18 +752,18 @@ void NeuralNetworkEditor::loadNetwork(const QString &fileName, bool addToNetwork
 			//update visualization
 			visu->setNeuralNetwork(currentNetwork); 
 
-			if(!addToNetwork && currentNetwork->hasProperty("_Viewport")) {
-				//Try to set viewport
-				QString viewport = currentNetwork->getProperty("_Viewport");
-				QStringList viewportElements = viewport.split(",");
-				if(viewportElements.size() == 3) {
-					double x = viewportElements.at(0).toDouble();
-					double y = viewportElements.at(1).toDouble();
-					double scaling = viewportElements.at(2).toDouble();
-					visu->setVisualizationOffset(QPointF(x, y));
-					visu->setScaling(scaling);
-				}
-			}
+// 			if(!addToNetwork && currentNetwork->hasProperty("_Viewport")) {
+// 				//Try to set viewport
+// 				QString viewport = currentNetwork->getProperty("_Viewport");
+// 				QStringList viewportElements = viewport.split(",");
+// 				if(viewportElements.size() == 3) {
+// 					double x = viewportElements.at(0).toDouble();
+// 					double y = viewportElements.at(1).toDouble();
+// 					double scaling = viewportElements.at(2).toDouble();
+// 					visu->setVisualizationOffset(QPointF(x, y));
+// 					visu->setScaling(scaling);
+// 				}
+// 			}
 
 			visu->getVisualizationHander()->rebuildView();
 			nnm->triggerNetworkStructureChangedEvent();
