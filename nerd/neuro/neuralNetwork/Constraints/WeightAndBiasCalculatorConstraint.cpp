@@ -52,6 +52,7 @@
 #include "NeuralNetworkConstants.h"
 #include <QScriptEngine>
 #include "Network/NeuroTagManager.h"
+#include "Math/Math.h"
 
 using namespace std;
 
@@ -127,6 +128,9 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 		QString eq = neuron->getProperty(NeuralNetworkConstants::TAG_ELEMENT_VARIABLE_SLAVE);
 
 		if(var.trimmed() != "") {
+			//makes sure the variable carrier has a variable accuracy matching the string context.
+			neuron->getBiasValue().setValueFromString(neuron->getBiasValue().getValueAsString());
+
 			if(variables.keys().contains(var)) {
 				QString message = QString("Variable [") 
 							+ var + "] was declared multiple times!";
@@ -158,6 +162,10 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 		QString eq = synapse->getProperty(NeuralNetworkConstants::TAG_ELEMENT_VARIABLE_SLAVE);
 
 		if(var.trimmed() != "") {
+			//makes sure the variable carrier has a variable accuracy matching the string context.
+			synapse->getStrengthValue().setValueFromString(synapse->getStrengthValue().getValueAsString());
+
+
 			if(variables.keys().contains(var)) {
 				QString message = QString("Variable [") 
 							+ var + "] was declared multiple times!";
@@ -216,7 +224,7 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 			if(neuron != 0) {
 				double oldVal = neuron->getBiasValue().get();
 				neuron->getBiasValue().set(value);
-				if(oldVal != neuron->getBiasValue().get()) {
+				if(!Math::compareDoubles(oldVal, neuron->getBiasValue().get(), 0.00000001)) {
 					networkChanged = true;
 				}
 			}
@@ -225,7 +233,7 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 				if(synapse != 0) {
 					double oldVal = synapse->getStrengthValue().get();
 					synapse->getStrengthValue().set(value);
-					if(oldVal != synapse->getStrengthValue().get()) {
+					if(!Math::compareDoubles(oldVal, synapse->getStrengthValue().get(), 0.00000001)) {
 						networkChanged = true;
 					}
 				}

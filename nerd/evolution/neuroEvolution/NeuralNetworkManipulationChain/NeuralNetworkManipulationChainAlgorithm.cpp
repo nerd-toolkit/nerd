@@ -259,6 +259,10 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 						if(!op->runOperator(ind, 0)) { //TODO use command executor
 							//if false the genome was rejected by the operator.
 							modificationValid = false;
+
+							if(verbose) {
+								Core::log("NNChain: Failed executing operator [" + op->getName() + "]", true);
+							}
 						}
 
 						if(mVerboseState->get()) {

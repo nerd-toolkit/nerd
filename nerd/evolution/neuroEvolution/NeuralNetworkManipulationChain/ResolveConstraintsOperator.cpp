@@ -89,6 +89,8 @@ NeuralNetworkManipulationOperator* ResolveConstraintsOperator::createCopy() cons
 bool ResolveConstraintsOperator::applyOperator(Individual *individual, CommandExecutor*) 
 {
 
+	bool verbose = false;
+
 	ModularNeuralNetwork *net = dynamic_cast<ModularNeuralNetwork*>(individual->getGenome());
 	QList<NeuralNetworkElement*> trashcan;
 
@@ -99,6 +101,10 @@ bool ResolveConstraintsOperator::applyOperator(Individual *individual, CommandEx
 	}
 
 	const QList<NeuronGroup*> &groups = net->getNeuronGroups();
+
+	if(verbose) {
+		Core::log("ConstraintResolver: Checking for validity", true);
+	}
 
 	{
 		for(QListIterator<NeuronGroup*> g(groups); g.hasNext();) {
@@ -127,6 +133,10 @@ bool ResolveConstraintsOperator::applyOperator(Individual *individual, CommandEx
 	int i = 0;
 	for(; i < mMaxNumberOfResolverIterations->get(); ++i) {
 
+		if(verbose) {
+			Core::log("ConstraintResolver: Starting Resolver Iteration " + QString::number(i), true);
+		}
+
 		constraintsResolved = true;
 		
 		for(QListIterator<NeuronGroup*> g(groups); g.hasNext();) {
@@ -139,6 +149,10 @@ bool ResolveConstraintsOperator::applyOperator(Individual *individual, CommandEx
 
 				if(!constraint->applyConstraint(group, 0, trashcan)) { //TODO add executor
 					constraintsResolved = false;
+					
+					if(verbose) {
+						Core::log("ConstraintResolver: Failed resolving [" + constraint->getName() + "]", true);
+					}
 				}
 			}
 		}

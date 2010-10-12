@@ -182,6 +182,7 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 {
 
 	if(!isValid(owner)) {
+		mErrorMessage = "Constraint was not valid!";
 		return false;
 	}
 
