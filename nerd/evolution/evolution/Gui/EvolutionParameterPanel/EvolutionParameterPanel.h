@@ -55,6 +55,7 @@
 #include "Value/ValueChangedListener.h"
 #include "Value/BoolValue.h"
 #include <QMainWindow>
+#include <QLineEdit>
 
 
 namespace nerd {
@@ -68,7 +69,7 @@ namespace nerd {
 	{
 	Q_OBJECT
 	public:
-		EvolutionParameterPanel();
+		EvolutionParameterPanel(bool includeStarterButtonToMainControlPanel = false);
 		virtual ~EvolutionParameterPanel();
 
 		virtual QString getName() const;
@@ -89,6 +90,7 @@ namespace nerd {
 		void pauseButtonToggled(bool);
 		void loadSettings();
 		void saveSettings();
+		void previewIndividual();
 
 	protected:
 		
@@ -105,6 +107,11 @@ namespace nerd {
 		BoolValue *mRunEvolutionValue;
 		BoolValue *mRestartGenerationValue;
 		BoolValue *mPauseEvaluationValue;
+		StringValue *mCurrentEvoWorkingDirectory;
+		IntValue *mCurrentGenerationNumber;
+		bool mIncludeStarterButtonToMainControlPanel;
+		QPushButton *mStartIndividualScriptButton;
+		QLineEdit *mIndividualSelectionEdit;
 	};
 
 }

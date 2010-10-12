@@ -58,9 +58,9 @@ namespace nerd {
  * Constructs a new EvolutionPropertyPanelCollection.
  */
 EvolutionPropertyPanelCollection::EvolutionPropertyPanelCollection(
-				QMenu *targetMenu, const QString &name)
+				QMenu *targetMenu, const QString &name, bool clusterEvolution)
 {
-	EvolutionParameterPanel *evoPanel = new EvolutionParameterPanel();
+	EvolutionParameterPanel *evoPanel = new EvolutionParameterPanel(clusterEvolution);
 	evoPanel->resize(600, 800);
 
 	if(targetMenu != 0) {

@@ -74,10 +74,12 @@ namespace nerd {
 /**
  * Constructs a new EvolutionParameterPanel.
  */
-EvolutionParameterPanel::EvolutionParameterPanel()
+EvolutionParameterPanel::EvolutionParameterPanel(bool includeStarterButtonToMainControlPanel)
 	: QMainWindow(), mTabWidget(0), mRunEvolutionButton(0), mRestartGenerationButton(0), 
 		mPauseEvaluationButton(0), mRunEvolutionValue(0), mRestartGenerationValue(0), 
-		mPauseEvaluationValue(0)
+		mPauseEvaluationValue(0), mCurrentEvoWorkingDirectory(0), mCurrentGenerationNumber(0),
+		mIncludeStarterButtonToMainControlPanel(includeStarterButtonToMainControlPanel),
+		mStartIndividualScriptButton(0), mIndividualSelectionEdit(0)
 {
 	setWindowTitle("Evolution Parameter Panel");
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -140,6 +142,8 @@ bool EvolutionParameterPanel::bind() {
 	mRunEvolutionValue = vm->getBoolValue(EvolutionConstants::VALUE_EVO_RUN_EVOLUTION);
 	mRestartGenerationValue = vm->getBoolValue(EvolutionConstants::VALUE_EVO_RESTART_GENERATION);
 	mPauseEvaluationValue = vm->getBoolValue(EvolutionConstants::VALUE_EXECUTION_PAUSE);
+	mCurrentEvoWorkingDirectory = vm->getStringValue(EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY);
+	mCurrentGenerationNumber = vm->getIntValue(EvolutionConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
 
 	if(mRunEvolutionValue != 0) {
 		mRunEvolutionValue->addValueChangedListener(this);
@@ -226,14 +230,42 @@ void EvolutionParameterPanel::initializePanel() {
 
 	mRestartGenerationButton = new QPushButton("RestartGeneration");
 	mRestartGenerationButton->setCheckable(true);
-	
-	mPauseEvaluationButton = new QPushButton("Pause");
-	mPauseEvaluationButton->setCheckable(true);
+
+	if(mIncludeStarterButtonToMainControlPanel) {
+		mStartIndividualScriptButton = new QPushButton("Preview");
+		mStartIndividualScriptButton->setMaximumWidth(80);
+		connect(mStartIndividualScriptButton, SIGNAL(pressed()),
+				this, SLOT(previewIndividual()));
+		mIndividualSelectionEdit = new QLineEdit("1");
+		mIndividualSelectionEdit->setMaximumWidth(50);
+	}
+	else {
+		mPauseEvaluationButton = new QPushButton("Pause");
+		mPauseEvaluationButton->setCheckable(true);
+		connect(mPauseEvaluationButton, SIGNAL(toggled(bool)),
+				this, SLOT(pauseButtonToggled(bool)));
+	}
 
 	QHBoxLayout *buttonLayout = new QHBoxLayout();
 	buttonLayout->addWidget(mRunEvolutionButton);
+	buttonLayout->setStretchFactor(mRunEvolutionButton, 100);
 	buttonLayout->addWidget(mRestartGenerationButton);
-	buttonLayout->addWidget(mPauseEvaluationButton);
+	buttonLayout->setStretchFactor(mRestartGenerationButton, 100);
+
+	if(mPauseEvaluationButton != 0) {
+		buttonLayout->addWidget(mPauseEvaluationButton);
+		buttonLayout->setStretchFactor(mPauseEvaluationButton, 100);
+	}
+	if(mStartIndividualScriptButton != 0 && mIndividualSelectionEdit != 0) {
+		QHBoxLayout *starterLayout = new QHBoxLayout();
+		starterLayout->addStretch(10);
+		starterLayout->addSpacing(30);
+		starterLayout->addWidget(mIndividualSelectionEdit);
+		starterLayout->addWidget(mStartIndividualScriptButton);
+		starterLayout->setSpacing(2);
+		buttonLayout->addLayout(starterLayout);
+		buttonLayout->setStretchFactor(starterLayout, 10);
+	}
 
 	layout->addLayout(buttonLayout);
 
@@ -241,8 +273,7 @@ void EvolutionParameterPanel::initializePanel() {
 			this, SLOT(runEvolutionButtonToggled(bool)));
 	connect(mRestartGenerationButton, SIGNAL(toggled(bool)),
 			this, SLOT(restartEvolutionButtonToggled(bool)));
-	connect(mPauseEvaluationButton, SIGNAL(toggled(bool)),
-			this, SLOT(pauseButtonToggled(bool)));
+	
 
 	//Create main control parameter panel.
 	EvolutionMainControlParameterPanel *mainPanel = new EvolutionMainControlParameterPanel();
@@ -271,7 +302,7 @@ void EvolutionParameterPanel::initializePanel() {
 	if(mRunEvolutionValue != 0) {
 		mRunEvolutionButton->setChecked(mRunEvolutionValue->get());
 	}
-	if(mPauseEvaluationValue != 0) {
+	if(mPauseEvaluationValue != 0 && mPauseEvaluationButton != 0) {
 		mPauseEvaluationButton->setChecked(mPauseEvaluationValue->get());
 	}
 }
@@ -297,7 +328,7 @@ void EvolutionParameterPanel::restartEvolutionButtonToggled(bool) {
 }
 
 void EvolutionParameterPanel::pauseButtonToggled(bool) {
-	if(mPauseEvaluationValue == 0) {
+	if(mPauseEvaluationValue == 0 || mPauseEvaluationButton == 0) {
 		return;
 	}
 	if(mPauseEvaluationValue->get() != mPauseEvaluationButton->isChecked()) {
@@ -413,6 +444,13 @@ void EvolutionParameterPanel::saveSettings() {
 		fileName.append(".val");
 	}
 	saveCurrentParameters(fileName);
+}
+
+void EvolutionParameterPanel::previewIndividual() {
+	if(mCurrentEvoWorkingDirectory == 0 || mCurrentGenerationNumber == 0) {
+		return;
+	}
+	cerr << "Preview " << endl;
 }
 
 void EvolutionParameterPanel::saveCurrentParameters(const QString &fileName) {

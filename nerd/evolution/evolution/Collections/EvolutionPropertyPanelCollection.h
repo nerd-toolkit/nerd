@@ -58,7 +58,7 @@ namespace nerd {
 	 */
 	class EvolutionPropertyPanelCollection {
 	public:
-		EvolutionPropertyPanelCollection(QMenu *targetMenu, const QString &name);
+		EvolutionPropertyPanelCollection(QMenu *targetMenu, const QString &name, bool clusterEvolution = false);
 		virtual ~EvolutionPropertyPanelCollection();
 
 	private:

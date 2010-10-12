@@ -125,7 +125,22 @@ QString GuiMainWindow::getIconName() {
 
 void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 
-	setWindowTitle("NERD");
+	CommandLineArgument *windowTitleArg = new CommandLineArgument("setTitle", "setTitle", "", 
+						"Sets the title of the main application.", 1, 10, false, false);
+	if(windowTitleArg->getNumberOfEntries() > 0) {
+		QStringList titleFragments = windowTitleArg->getEntryParameters(0);
+		QString title = "";
+		for(QListIterator<QString> i(titleFragments); i.hasNext();) {
+			title += i.next();
+			if(i.hasNext()) {
+				title += " ";
+			}
+		}
+		setWindowTitle(title);
+	}
+	else {
+		setWindowTitle("NERD");
+	}
 	QPixmap image;
 	QImage jpgImage;
 

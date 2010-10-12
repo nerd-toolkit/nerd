@@ -141,7 +141,7 @@ bool NerdClusterNeuroEvoApplication::setupGui() {
 		mMainGui->getMenu("Evolution")->addAction(plotterButton->getAction());
 
 		new EvolutionPropertyPanelCollection(mMainGui->getMenu("Evolution"), 
-											"Evolution Parameters");
+											"Evolution Parameters", true);
 
 		connect(this, SIGNAL(showGui()), mMainGui, SLOT(show()));
 	}
