@@ -516,6 +516,7 @@ void EvolutionParameterPanel::previewFinished(int state) {
 	if(state != 0) {
 		Core::log("ERR: " + QString(mPreviewProcess->readAllStandardError()), true);
 	}
+	Core::log("COUT: " + QString(mPreviewProcess->readAllStandardOutput()), true);
 	if(mPreviewProcess != 0) {
 		mPreviewProcess->close();
 	}
