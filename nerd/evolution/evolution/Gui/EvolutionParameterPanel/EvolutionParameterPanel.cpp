@@ -65,6 +65,8 @@
 #include "Value/ChangeValueTask.h"
 #include <QMessageBox>
 #include "Gui/CommentWidget/CommentWidget.h"
+#include "PlugIns/PlugInManager.h"
+#include "PlugIns/CommandLineArgument.h"
 
 using namespace std;
 
@@ -77,9 +79,11 @@ namespace nerd {
 EvolutionParameterPanel::EvolutionParameterPanel(bool includeStarterButtonToMainControlPanel)
 	: QMainWindow(), mTabWidget(0), mRunEvolutionButton(0), mRestartGenerationButton(0), 
 		mPauseEvaluationButton(0), mRunEvolutionValue(0), mRestartGenerationValue(0), 
-		mPauseEvaluationValue(0), mCurrentEvoWorkingDirectory(0), mCurrentGenerationNumber(0),
+		mPauseEvaluationValue(0), mCurrentStartScriptValue(0), mCurrentGenerationValue(0),
+		mAllowMultiplePreviews(0),
 		mIncludeStarterButtonToMainControlPanel(includeStarterButtonToMainControlPanel),
-		mStartIndividualScriptButton(0), mIndividualSelectionEdit(0)
+		mStartIndividualScriptButton(0), mIndividualSelectionEdit(0), mPreviewProcess(0),
+		mTogglePreview(false)
 {
 	setWindowTitle("Evolution Parameter Panel");
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -103,6 +107,9 @@ EvolutionParameterPanel::EvolutionParameterPanel(bool includeStarterButtonToMain
 
 	connect(this, SIGNAL(initialize()),
 			this, SLOT(initializePanel()));
+
+	mAllowMultiplePreviews = new BoolValue(true);
+	Core::getInstance()->getValueManager()->addValue("/Evolution/Preview/AllowMultiplePreviews", mAllowMultiplePreviews);
 
 	Core::getInstance()->addSystemObject(this);
 }
@@ -142,8 +149,8 @@ bool EvolutionParameterPanel::bind() {
 	mRunEvolutionValue = vm->getBoolValue(EvolutionConstants::VALUE_EVO_RUN_EVOLUTION);
 	mRestartGenerationValue = vm->getBoolValue(EvolutionConstants::VALUE_EVO_RESTART_GENERATION);
 	mPauseEvaluationValue = vm->getBoolValue(EvolutionConstants::VALUE_EXECUTION_PAUSE);
-	mCurrentEvoWorkingDirectory = vm->getStringValue(EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY);
-	mCurrentGenerationNumber = vm->getIntValue(EvolutionConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
+	mCurrentStartScriptValue = vm->getStringValue(EvolutionConstants::VALUE_CURRENT_INDIVIDUAL_EVALUATION_START_SCRIPT);
+	mCurrentGenerationValue = vm->getIntValue(EvolutionConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
 
 	if(mRunEvolutionValue != 0) {
 		mRunEvolutionValue->addValueChangedListener(this);
@@ -162,6 +169,11 @@ bool EvolutionParameterPanel::bind() {
 	}
 	else {
 		Core::log("EvolutionMainControlParameterPanel: Could not find mPauseEvaluationValue.", true);
+	}
+
+	CommandLineArgument *toggleArg = Core::getInstance()->getPlugInManager()->getCommandLineArgument("toggle");
+	if(toggleArg != 0 && toggleArg->getNumberOfEntries() > 0) {
+		mTogglePreview = true;
 	}
 	
 	emit initialize();
@@ -231,10 +243,10 @@ void EvolutionParameterPanel::initializePanel() {
 	mRestartGenerationButton = new QPushButton("RestartGeneration");
 	mRestartGenerationButton->setCheckable(true);
 
-	if(mIncludeStarterButtonToMainControlPanel) {
+	if(mIncludeStarterButtonToMainControlPanel && mCurrentStartScriptValue != 0) {
 		mStartIndividualScriptButton = new QPushButton("Preview");
 		mStartIndividualScriptButton->setMaximumWidth(80);
-		connect(mStartIndividualScriptButton, SIGNAL(pressed()),
+		connect(mStartIndividualScriptButton, SIGNAL(released()),
 				this, SLOT(previewIndividual()));
 		mIndividualSelectionEdit = new QLineEdit("1");
 		mIndividualSelectionEdit->setMaximumWidth(50);
@@ -447,10 +459,58 @@ void EvolutionParameterPanel::saveSettings() {
 }
 
 void EvolutionParameterPanel::previewIndividual() {
-	if(mCurrentEvoWorkingDirectory == 0 || mCurrentGenerationNumber == 0) {
+	if(mCurrentStartScriptValue == 0 || mStartIndividualScriptButton == 0 
+		|| mIndividualSelectionEdit == 0 || mCurrentGenerationValue == 0) 
+	{
 		return;
 	}
-	cerr << "Preview " << endl;
+	QString startScript = mCurrentStartScriptValue->get();
+
+	int indNumber = mIndividualSelectionEdit->text().toInt();
+	if(indNumber < 1) {
+		Core::log("Selected individual id is not valid for preview.", true);
+		return;
+	}
+
+	if(startScript.trimmed() == "") {
+		mStartIndividualScriptButton->setEnabled(true);
+		Core::log("Preview is not possible right now. Is an evolution running?", true);
+		return;
+	}
+	if(mPreviewProcess != 0) {
+		//TODO figure out how to terminate the preview (terminating the bash process does not work).
+		mPreviewProcess->terminate();
+		mPreviewProcess->waitForFinished(1000);
+		if(mPreviewProcess->state() != QProcess::NotRunning) {
+			mPreviewProcess->kill();
+		}
+		delete mPreviewProcess;
+		mPreviewProcess = 0;
+	}
+
+	//set up process
+	QStringList args;
+	args << startScript << QString::number(indNumber) << "-test" << "-gui";
+	if(mTogglePreview) {
+		args << "-toggle";
+	}
+	args << QString("-setTitle Preview Gen: ").append(mCurrentGenerationValue->getValueAsString())
+			.append(" Ind: ").append(QString::number(indNumber));
+	mPreviewProcess = new QProcess();
+	connect(mPreviewProcess, SIGNAL(finished(int)),
+			this, SLOT(previewFinished(int)));
+	mPreviewProcess->start("/bin/bash", args);
+	
+}
+
+void EvolutionParameterPanel::previewFinished(int state) {
+	if(state != 0) {
+		Core::log("ERR: " + QString(mPreviewProcess->readAllStandardError()), true);
+	}
+	if(mPreviewProcess != 0) {
+		mPreviewProcess->close();
+	}
+	mStartIndividualScriptButton->setEnabled(true);
 }
 
 void EvolutionParameterPanel::saveCurrentParameters(const QString &fileName) {

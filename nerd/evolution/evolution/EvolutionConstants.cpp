@@ -179,6 +179,11 @@ const QString EvolutionConstants::VALUE_NUMBER_OF_COMPLETED_INDIVIDUALS_EVAL
 		= "/Evolution/EvalCompletedIndividuals";
 
 
+const QString EvolutionConstants::VALUE_CURRENT_GENERATION_DIRECTORY
+		= "/Evolution/CurrentGenerationDirectory";
+
+const QString EvolutionConstants::VALUE_CURRENT_INDIVIDUAL_EVALUATION_START_SCRIPT
+		= "/Evolution/CurrentIndividualEvaluationStartScript";
 
 const QString EvolutionConstants::VALUE_EXECUTION_NUMBER_OF_INDIVIDUALS
 		= "/Control/NumberOfIndividuals";

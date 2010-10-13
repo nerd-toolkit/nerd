@@ -123,16 +123,15 @@ NeuroEvolutionSelector::NeuroEvolutionSelector(EvaluationMethod *evaluationMetho
 		"Uses the evolution algorithm with the given <algorithmName>.", 1, 0, true);
 
 	QList<QString> evoArguments = evoAlgorithmArg->getEntryParameters(0);
-	if(evoArguments.size() < 1 
-		|| (evoArguments.size() == 1 && evoArguments.at(0).trimmed() == "ens3"))
+	if(evoArguments.size() == 1 && evoArguments.at(0).trimmed() == "ens3")
 	{
 		ENS3EvolutionAlgorithm evo(world);
 	}
 	else if(evoArguments.size() == 1 && evoArguments.at(0).trimmed() == "neat") {
 		NeatAlgorithm evo(world);
 	}
-	else if(evoArguments.size() == 1 
-			&& (evoArguments.at(0).trimmed() == "mens" || evoArguments.at(0).trimmed() == "icone"))
+	else if(evoArguments.size() < 1 || (evoArguments.size() == 1 
+			&& (evoArguments.at(0).trimmed() == "mens" || evoArguments.at(0).trimmed() == "icone")))
 	{
 		ModularNeuroEvolution1 evo(world);
 	}

@@ -84,6 +84,9 @@ class ClusterEvaluationMethod : public EvaluationMethod {
 
 		virtual bool evaluateIndividuals();
 		virtual bool reset();
+
+		void setCurrentIndividualStartScriptName(const QString &fullScriptPathName);
+		QString getCurrentIndividualStartScriptName() const;
 	
 	protected:
 		virtual bool prepareEvaluation() = 0;
@@ -118,6 +121,8 @@ class ClusterEvaluationMethod : public EvaluationMethod {
 		IntValue *mNumberOfTries;
 		IntValue *mCurrentTry;
 		BoolValue *mZipGenerations;
+		StringValue *mCurrentGenerationDirectory;
+		StringValue *mCurrentStartScriptFullFileName;
 	
 		QList<QString> mConfigValues;
 		QString mJobScriptContent;

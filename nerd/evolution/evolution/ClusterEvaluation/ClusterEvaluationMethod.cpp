@@ -78,7 +78,8 @@ void QSubRunner::run() {
 
 
 ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
-		: EvaluationMethod(name), mQSubScriptName(0), mClusterJobSubmitted(0)
+		: EvaluationMethod(name), mQSubScriptName(0), mClusterJobSubmitted(0),
+		  mCurrentGenerationDirectory(0), mCurrentStartScriptFullFileName(0)
 {
 	mCore = Core::getInstance();
 	ValueManager *vm = Core::getInstance()->getValueManager();
@@ -157,6 +158,8 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 	mNumberOfRetries = new IntValue(5);
 	mStatusMessageValue = new StringValue("");
 	mZipGenerations = new BoolValue(false);
+	mCurrentGenerationDirectory = new StringValue("");
+	mCurrentStartScriptFullFileName = new StringValue("");
 
 	setPrefix(getName() + "/");
 
@@ -167,6 +170,10 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 	addParameter("NumberOfResubmits", mNumberOfRetries, true);
 	addParameter("EvaluationStatus", mStatusMessageValue, true);
 	addParameter("ZipGenerations", mZipGenerations, true);
+	addParameter("CurrentGenerationDirectory", mCurrentGenerationDirectory, true);
+	vm->addValue(EvolutionConstants::VALUE_CURRENT_GENERATION_DIRECTORY, mCurrentGenerationDirectory);
+	addParameter("CurrentStartScript", mCurrentStartScriptFullFileName);
+	vm->addValue(EvolutionConstants::VALUE_CURRENT_INDIVIDUAL_EVALUATION_START_SCRIPT, mCurrentStartScriptFullFileName);
 }
 
 
@@ -199,6 +206,7 @@ bool ClusterEvaluationMethod::evaluateIndividuals() {
 	mEvalCurrentDirectory.append(EvolutionConstants::GENERATION_DIRECTORY_PREFIX)
 		.append(mCurrentGenerationID->getValueAsString());//.append("/eval");
 	mCore->enforceDirectoryPath(mEvalCurrentDirectory);
+	mCurrentGenerationDirectory->set(mEvalCurrentDirectory);
 
 	mCore->executePendingTasks();
 
@@ -357,6 +365,14 @@ bool ClusterEvaluationMethod::reset() {
 	return ok;
 }
 
+void ClusterEvaluationMethod::setCurrentIndividualStartScriptName(const QString &fullScriptPathName) {
+	mCurrentStartScriptFullFileName->set(fullScriptPathName);
+}
+
+QString ClusterEvaluationMethod::getCurrentIndividualStartScriptName() const {
+	return mCurrentStartScriptFullFileName->get();
+}
+
 bool ClusterEvaluationMethod::createConfigList() {
 	bool ok = true;
 	mConfigValues.append(EvolutionConstants::VALUE_EXECUTION_NUMBER_OF_TRIES);
@@ -449,6 +465,9 @@ bool ClusterEvaluationMethod::saveJobScript() {
 	output <<  mJobScriptContent << "\n";
 	file.setPermissions(file.permissions() | QFile::ExeOwner | QFile::ExeGroup);
 	file.close();
+
+	mCurrentStartScriptFullFileName->set(fileName);
+	Core::log("Setting script: " + mCurrentStartScriptFullFileName->get(), true);
 
 	return ok;
 }

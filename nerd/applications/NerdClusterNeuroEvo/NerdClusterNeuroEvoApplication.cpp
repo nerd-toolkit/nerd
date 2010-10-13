@@ -190,6 +190,10 @@ bool NerdClusterNeuroEvoApplication::setupApplication()
 	new WorkspaceCleaner(EvolutionConstants::EVENT_EVO_EVALUATION_STARTED);
 	new EvolutionTerminationTrigger();
 
+	//enable toggle mode for preview windows.
+	new CommandLineArgument("toggle", "toggle", "", 
+						"Makes the OpenGL windows toggle.", 0, 0, true, false);
+
 	return ok;
 }
 

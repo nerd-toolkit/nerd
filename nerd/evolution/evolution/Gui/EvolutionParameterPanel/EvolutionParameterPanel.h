@@ -56,7 +56,7 @@
 #include "Value/BoolValue.h"
 #include <QMainWindow>
 #include <QLineEdit>
-
+#include <QProcess>
 
 namespace nerd {
 
@@ -91,6 +91,7 @@ namespace nerd {
 		void loadSettings();
 		void saveSettings();
 		void previewIndividual();
+		void previewFinished(int);
 
 	protected:
 		
@@ -107,11 +108,14 @@ namespace nerd {
 		BoolValue *mRunEvolutionValue;
 		BoolValue *mRestartGenerationValue;
 		BoolValue *mPauseEvaluationValue;
-		StringValue *mCurrentEvoWorkingDirectory;
-		IntValue *mCurrentGenerationNumber;
+		StringValue *mCurrentStartScriptValue;
+		IntValue *mCurrentGenerationValue;
+		BoolValue *mAllowMultiplePreviews;
 		bool mIncludeStarterButtonToMainControlPanel;
 		QPushButton *mStartIndividualScriptButton;
 		QLineEdit *mIndividualSelectionEdit;
+		QProcess *mPreviewProcess;
+		bool mTogglePreview;
 	};
 
 }
