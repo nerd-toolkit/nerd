@@ -63,6 +63,7 @@
 #include "Util/Tracer.h"
 #include <QDir>
 #include <QTextStream>
+#include "NerdConstants.h"
 
 
 #define TRACE(message)
@@ -121,6 +122,9 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const ScriptedFitnessFunction &
 	mScriptCode->addValueChangedListener(this);
 	mScriptFileName = dynamic_cast<StringValue*>(getParameter("FileName"));
 	mScriptFileName->useAsFileName(true);
+
+	mBindPhaseEvent = Core::getInstance()->getEventManager()->registerForEvent(
+						NerdConstants::EVENT_NERD_SYSTEM_BIND, this);
 }
 
 /**
@@ -220,7 +224,12 @@ void ScriptedFitnessFunction::eventOccured(Event *event) {
 	if(event == 0) {
 		return;
 	}
-	if(event == mSimEnvironmentChangedEvent) {
+	else if(event == mSimEnvironmentChangedEvent) {
+		resetScriptContext();
+	}
+	else if(event == mBindPhaseEvent) {
+		//make sure scripts are reloaded during bind phase if created before 
+		//(so that all values and events are available).
 		resetScriptContext();
 	}
 }

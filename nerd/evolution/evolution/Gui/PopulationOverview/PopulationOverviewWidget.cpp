@@ -47,13 +47,17 @@
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QLabel>
+#include "Gui/PopulationOverview/IndividualPreviewButton.h"
+#include "PlugIns/PlugInManager.h"
+#include "PlugIns/CommandLineArgument.h"
 
 namespace nerd {
 
 PopulationOverviewWidget::PopulationOverviewWidget(QWidget *parent) : QWidget(parent), 
 		mPopulation(0), mUpdateTriggerEvent(0), mMainLayout(0), 
 		mIndividualPropertiesList(0), mSelectVisiblePropertiesButton(0), 
-		mPropertiesSelectionWidget(0), mPropertyListLayout(0), mTableInitialized(false)
+		mPropertiesSelectionWidget(0), mPropertyListLayout(0), mTableInitialized(false),
+		mCurrentStartScriptValue(0), mCurrentGenerationValue(0)
 {
 	setup();
 	emit overviewChanged();
@@ -63,7 +67,8 @@ PopulationOverviewWidget::PopulationOverviewWidget(QWidget *parent) : QWidget(pa
 PopulationOverviewWidget::PopulationOverviewWidget(Population *population, QWidget *parent) 
 		: QWidget(parent), mUpdateTriggerEvent(0), mMainLayout(0), 
 		mIndividualPropertiesList(0), mSelectVisiblePropertiesButton(0), 
-		mPropertiesSelectionWidget(0), mPropertyListLayout(0), mTableInitialized(false)
+		mPropertiesSelectionWidget(0), mPropertyListLayout(0), mTableInitialized(false),
+		mCurrentStartScriptValue(0), mCurrentGenerationValue(0)
 {
 	setup();
 	setPopulation(population);
@@ -120,6 +125,18 @@ void PopulationOverviewWidget::setup() {
 	buttonLayout->addWidget(applyPropertySelection);
 	connect(applyPropertySelection, SIGNAL(clicked()),this, SLOT(updateSelection()));
 	connect(changeAllSelections, SIGNAL(clicked()),this, SLOT(changeSelection()));
+
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	mCurrentStartScriptValue = vm->getStringValue(EvolutionConstants::VALUE_CURRENT_INDIVIDUAL_EVALUATION_START_SCRIPT);
+	mCurrentGenerationValue = vm->getIntValue(EvolutionConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
+
+	CommandLineArgument *toggleArg = Core::getInstance()->getPlugInManager()->getCommandLineArgument("toggle");
+	if(toggleArg != 0 && toggleArg->getNumberOfEntries() > 0) {
+		mTogglePreviews = true;
+	}
+	else {
+		mTogglePreviews = false;
+	}
 }
 
 void PopulationOverviewWidget::setPopulation(Population *population) {
@@ -193,7 +210,7 @@ void PopulationOverviewWidget::updateGenerationData() {
 		mGenerationData.push_back(individualProperties);
 	}
 	// check, whether there are properties from the old table, that do no longer exist in any individual.
-	for(int i = 0; i < mPropertiesToVisualize.size(); i++) {
+	for(int i = 1; i < mPropertiesToVisualize.size(); i++) {
 		if(!individualProperties.contains(mPropertiesToVisualize.at(i))) {
 			tablePropertyNames.removeAt(tablePropertyNames.indexOf(mPropertiesToVisualize.at(i)));
 		}
@@ -227,21 +244,36 @@ void PopulationOverviewWidget::updateTable() {
 	mIndividualPropertiesList->setSortingEnabled(false);
 	mIndividualPropertiesList->setRowCount(0);
 
-	mIndividualPropertiesList->setColumnCount(mPropertiesToVisualize.size());
+	mIndividualPropertiesList->setColumnCount(mPropertiesToVisualize.size() + 1);
 	
 	mIndividualPropertiesList->setRowCount(mGenerationData.size());
-	mIndividualPropertiesList->setHorizontalHeaderLabels(mPropertiesToVisualize);
+	QStringList headers;
+	headers << "Preview" << mPropertiesToVisualize;
+	mIndividualPropertiesList->setHorizontalHeaderLabels(headers);
 	for(int i = 0; i < mGenerationData.size(); i++) {
 		QHash<QString, QString> properties = mGenerationData.at(i);
 		QHash<QString, QString>::iterator iterate;
  		for(iterate = properties.begin(); iterate != properties.end(); ++iterate) {
 			QString name = iterate.key();
+			if(name == "FileName") {
+				if(mCurrentStartScriptValue != 0 && mCurrentGenerationValue != 0) {
+					IndividualPreviewButton *button = new IndividualPreviewButton(
+							mCurrentStartScriptValue->get(), mCurrentGenerationValue->get() - 1, i + 1, mTogglePreviews);
+					connect(button, SIGNAL(released()), button, SLOT(previewIndividual()));
+					mIndividualPropertiesList->setCellWidget(i, 0, button);
+				}
+				else {
+					QPushButton *button = new QPushButton("View");
+					button->setEnabled(false);
+					mIndividualPropertiesList->setCellWidget(i, 0, button);
+				}
+			}
 			if(mPropertiesToVisualize.contains(name)) {
 				int index = mPropertiesToVisualize.indexOf(name);
 				QTableWidgetItem *item = new QTableWidgetItem(iterate.value());
 				item->setData(Qt::DisplayRole, QVariant(iterate.value()));
 		
-				mIndividualPropertiesList->setItem(i, index, item);
+				mIndividualPropertiesList->setItem(i, index + 1, item);
 			}
 		}
 	}

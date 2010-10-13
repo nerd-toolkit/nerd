@@ -59,6 +59,7 @@ set(nerd_evolution_SRCS
 	FitnessFunctions/ScriptedFitnessFunction.cpp  
 	Gui/EvolutionProgressBar/EvolutionProgressBar.cpp
 	Gui/CommentWidget/CommentWidget.cpp
+	Gui/PopulationOverview/IndividualPreviewButton.cpp
 )
 
 set(nerd_evolution_MOC_HDRS
@@ -78,6 +79,7 @@ set(nerd_evolution_MOC_HDRS
 	Gui/EvolutionProgressBar/EvolutionProgressBar.h
 	FitnessFunctions/ScriptedFitnessFunction.h
 	Gui/CommentWidget/CommentWidget.h
+	Gui/PopulationOverview/IndividualPreviewButton.h
 )
 
 set(nerd_evolution_RCS

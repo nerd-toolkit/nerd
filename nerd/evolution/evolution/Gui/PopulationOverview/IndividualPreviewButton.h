@@ -42,73 +42,35 @@
  ***************************************************************************/
 
 
-
-#ifndef NERDScriptedFitnessFunction_H
-#define NERDScriptedFitnessFunction_H
+#ifndef ORCSIndividualPreviewButton_H
+#define ORCSIndividualPreviewButton_H
 
 #include <QString>
 #include <QHash>
-#include <QScriptEngine>
-#include <QObject>
-#include "PlugIns/CommandLineArgument.h"
-#include <QVariantList>
-#include "Script/ScriptingContext.h"
-#include "Fitness/ControllerFitnessFunction.h"
-
+#include <QPushButton>
 
 namespace nerd {
 
 	/**
-	 * ScriptedFitnessFunction.
+	 * IndividualPreviewButton.
 	 *
 	 */
-	class ScriptedFitnessFunction : public ScriptingContext, public ControllerFitnessFunction
-	{
+	class IndividualPreviewButton : public QPushButton {
 	Q_OBJECT
-
-	Q_PROPERTY(double fitness WRITE setFitnessBuffer READ getFitnessBuffer);
-
 	public:
-		ScriptedFitnessFunction(const QString &name);
-		ScriptedFitnessFunction(const ScriptedFitnessFunction &other);
-		virtual ~ScriptedFitnessFunction();
-
-		virtual FitnessFunction* createCopy() const;
-
-		virtual QString getName() const;
-
-		virtual void attachToSystem();
-		virtual void detachFromSystem();
-
-		virtual void setControlInterface(ControlInterface *controlInterface);
-
-		virtual void valueChanged(Value *value);	
-		virtual void eventOccured(Event *event);
-
-		virtual void resetScriptContext();
-		virtual double calculateCurrentFitness();
-
-		virtual void prepareNextTry();
+		IndividualPreviewButton(const QString &startScriptFullFileName, int generation, int id, bool toggle = false);
+		virtual ~IndividualPreviewButton();
 
 	public slots:
-		void terminateCurrentTry();
-		double getDoubleValue(const QString &valueName);
-		QString getStringValue(const QString &valueName);
+		void previewIndividual();
 
-		void setFitnessBuffer(double currentFitness);
-		double getFitnessBuffer() const;
-
-	protected:
-		virtual void reportError(const QString &message);
-		virtual void addCustomScriptContextStructures();
-
-	protected:
-		double mFitnessBuffer;
-		CommandLineArgument *mScriptFileNameArg;
-		Event *mSimEnvironmentChangedEvent;
-		Event *mBindPhaseEvent;
+	private:
+		QStringList mArguments;
 	};
 
 }
 
 #endif
+
+
+

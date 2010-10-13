@@ -139,9 +139,9 @@ void WorkspaceCleaner::cleanUpWorkspace() {
 
 	//zip previous directory.
 	{
-		if(currentGeneration > 1) {
-			Core::log("Trying to zip " + QString::number(currentGeneration - 1), true);
-			QString currentFileName = "gen" + QString::number(currentGeneration - 1);
+		if(currentGeneration > 2) {
+			Core::log("Trying to zip " + QString::number(currentGeneration - 2), false);
+			QString currentFileName = "gen" + QString::number(currentGeneration - 2);
 			QProcess zipProc;
 			zipProc.setWorkingDirectory(workingDirectory);
 			QStringList args;
@@ -152,7 +152,7 @@ void WorkspaceCleaner::cleanUpWorkspace() {
 	}
 
 
-	int startGeneration = currentGeneration - (currentGeneration % stepSizeIncrement) - 1;
+	int startGeneration = currentGeneration - (currentGeneration % stepSizeIncrement) - 2;
 	for(int i = startGeneration; i > 0; --i) {
 		//keep generation in certain intervals	
 		if(i == 1) {

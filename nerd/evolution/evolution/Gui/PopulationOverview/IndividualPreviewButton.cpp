@@ -43,72 +43,55 @@
 
 
 
-#ifndef NERDScriptedFitnessFunction_H
-#define NERDScriptedFitnessFunction_H
+#include "IndividualPreviewButton.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include <QProcess>
 
-#include <QString>
-#include <QHash>
-#include <QScriptEngine>
-#include <QObject>
-#include "PlugIns/CommandLineArgument.h"
-#include <QVariantList>
-#include "Script/ScriptingContext.h"
-#include "Fitness/ControllerFitnessFunction.h"
-
+using namespace std;
 
 namespace nerd {
 
-	/**
-	 * ScriptedFitnessFunction.
-	 *
-	 */
-	class ScriptedFitnessFunction : public ScriptingContext, public ControllerFitnessFunction
-	{
-	Q_OBJECT
 
-	Q_PROPERTY(double fitness WRITE setFitnessBuffer READ getFitnessBuffer);
+/**
+ * Constructs a new IndividualPreviewButton.
+ */
+IndividualPreviewButton::IndividualPreviewButton(const QString &startScriptFullFileName, int generation, int id, bool toggle)
+	: QPushButton("G: " + QString::number(generation) + " I:" + QString::number(id))
+{
+	mArguments << startScriptFullFileName << QString::number(id) << "-test" << "-gui";
+	if(toggle) {
+		mArguments << "-toggle";
+	}
+	mArguments << QString("-setTitle Preview Gen: ").append(QString::number(generation))
+			.append(" Ind: ").append(QString::number(id));
 
-	public:
-		ScriptedFitnessFunction(const QString &name);
-		ScriptedFitnessFunction(const ScriptedFitnessFunction &other);
-		virtual ~ScriptedFitnessFunction();
+	setToolTip("Preview Ind. " + QString::number(id));
+}
 
-		virtual FitnessFunction* createCopy() const;
 
-		virtual QString getName() const;
+/**
+ * Destructor.
+ */
+IndividualPreviewButton::~IndividualPreviewButton() {
+}
 
-		virtual void attachToSystem();
-		virtual void detachFromSystem();
+void IndividualPreviewButton::previewIndividual() {
+	QProcess p;
+	p.start("/bin/bash", mArguments);
+	p.waitForStarted(10000);
 
-		virtual void setControlInterface(ControlInterface *controlInterface);
+// 	QString command;
+// 	for(QListIterator<QString> i(mArguments); i.hasNext();) { command.append(" ").append(i.next()); }
+// 	Core::log("CMD: " + command, true);
 
-		virtual void valueChanged(Value *value);	
-		virtual void eventOccured(Event *event);
+	p.waitForFinished(1000);
+	p.close();
+}
 
-		virtual void resetScriptContext();
-		virtual double calculateCurrentFitness();
-
-		virtual void prepareNextTry();
-
-	public slots:
-		void terminateCurrentTry();
-		double getDoubleValue(const QString &valueName);
-		QString getStringValue(const QString &valueName);
-
-		void setFitnessBuffer(double currentFitness);
-		double getFitnessBuffer() const;
-
-	protected:
-		virtual void reportError(const QString &message);
-		virtual void addCustomScriptContextStructures();
-
-	protected:
-		double mFitnessBuffer;
-		CommandLineArgument *mScriptFileNameArg;
-		Event *mSimEnvironmentChangedEvent;
-		Event *mBindPhaseEvent;
-	};
 
 }
 
-#endif
+
+

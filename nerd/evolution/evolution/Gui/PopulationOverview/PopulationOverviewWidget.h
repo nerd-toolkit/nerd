@@ -51,6 +51,8 @@
 #include <QPushButton>
 #include "Evolution/Population.h"
 #include "Event/EventListener.h"
+#include "Value/StringValue.h"
+#include "Value/IntValue.h"
 
 namespace nerd {
 
@@ -108,6 +110,10 @@ class PopulationOverviewWidget : public QWidget, public virtual EventListener {
 		QList<QHash<QString, QString> > mGenerationData;
 
 		bool mTableInitialized;
+
+		StringValue *mCurrentStartScriptValue;
+		IntValue *mCurrentGenerationValue;
+		bool mTogglePreviews;
 };
 }
 #endif
