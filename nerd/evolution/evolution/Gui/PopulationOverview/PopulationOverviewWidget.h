@@ -57,6 +57,14 @@
 namespace nerd {
 
 
+class OverviewTableItem : public QTableWidgetItem {
+	public:
+		OverviewTableItem(const QString &text);
+
+		virtual bool operator<(const QTableWidgetItem & other) const;
+};
+
+
 /**
  * PopulationOverviewWidget
 **/

@@ -53,6 +53,22 @@
 
 namespace nerd {
 
+OverviewTableItem::OverviewTableItem(const QString &text) 
+	: QTableWidgetItem(text)
+{
+}
+
+bool OverviewTableItem::operator<(const QTableWidgetItem & other) const {
+	bool ok1 = true;
+	bool ok2 = true;
+	double d1 = text().toDouble(&ok1);
+	double d2 = other.text().toDouble(&ok2);
+	if(ok1 && ok2) {
+		return d1 < d2;
+	}
+	return text() < other.text();
+}
+
 PopulationOverviewWidget::PopulationOverviewWidget(QWidget *parent) : QWidget(parent), 
 		mPopulation(0), mUpdateTriggerEvent(0), mMainLayout(0), 
 		mIndividualPropertiesList(0), mSelectVisiblePropertiesButton(0), 
@@ -270,7 +286,7 @@ void PopulationOverviewWidget::updateTable() {
 			}
 			if(mPropertiesToVisualize.contains(name)) {
 				int index = mPropertiesToVisualize.indexOf(name);
-				QTableWidgetItem *item = new QTableWidgetItem(iterate.value());
+				QTableWidgetItem *item = new OverviewTableItem(iterate.value());
 				item->setData(Qt::DisplayRole, QVariant(iterate.value()));
 		
 				mIndividualPropertiesList->setItem(i, index + 1, item);
