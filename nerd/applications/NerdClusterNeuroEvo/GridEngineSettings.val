@@ -1,0 +1,4 @@
+/Evaluation/AgentInterfaces=ASeries
+/Evaluation/Application=NerdNeuroSim -env /home/chris/work/ttt/alear/nerd/TRUNK/nerd/applications/environments/ASeries.xml 
+/Evaluation/JobName=AS1
+

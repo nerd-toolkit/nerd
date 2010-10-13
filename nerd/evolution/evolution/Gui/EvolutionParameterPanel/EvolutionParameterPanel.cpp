@@ -477,6 +477,7 @@ void EvolutionParameterPanel::previewIndividual() {
 		Core::log("Preview is not possible right now. Is an evolution running?", true);
 		return;
 	}
+	mStartIndividualScriptButton->setEnabled(false);
 	if(mPreviewProcess != 0) {
 		//TODO figure out how to terminate the preview (terminating the bash process does not work).
 		mPreviewProcess->terminate();
@@ -488,6 +489,8 @@ void EvolutionParameterPanel::previewIndividual() {
 		mPreviewProcess = 0;
 	}
 
+	
+
 	//set up process
 	QStringList args;
 	args << startScript << QString::number(indNumber) << "-test" << "-gui";
@@ -496,6 +499,12 @@ void EvolutionParameterPanel::previewIndividual() {
 	}
 	args << QString("-setTitle Preview Gen: ").append(mCurrentGenerationValue->getValueAsString())
 			.append(" Ind: ").append(QString::number(indNumber));
+
+	QString command = "/bin/bash";
+	for(QListIterator<QString> i(args); i.hasNext();) { command.append(" ").append(i.next()); }
+
+	Core::log("Previewing with : " + command , true);
+
 	mPreviewProcess = new QProcess();
 	connect(mPreviewProcess, SIGNAL(finished(int)),
 			this, SLOT(previewFinished(int)));
