@@ -467,7 +467,7 @@ bool ClusterEvaluationMethod::saveJobScript() {
 	file.close();
 
 	mCurrentStartScriptFullFileName->set(fileName);
-	Core::log("Setting script: " + mCurrentStartScriptFullFileName->get(), true);
+	//Core::log("Setting script: " + mCurrentStartScriptFullFileName->get(), true);
 
 	return ok;
 }

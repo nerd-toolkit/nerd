@@ -500,10 +500,10 @@ void EvolutionParameterPanel::previewIndividual() {
 	args << QString("-setTitle Preview Gen: ").append(mCurrentGenerationValue->getValueAsString())
 			.append(" Ind: ").append(QString::number(indNumber));
 
-	QString command = "/bin/bash";
-	for(QListIterator<QString> i(args); i.hasNext();) { command.append(" ").append(i.next()); }
-
-	Core::log("Previewing with : " + command , true);
+// 	QString command = "/bin/bash";
+// 	for(QListIterator<QString> i(args); i.hasNext();) { command.append(" ").append(i.next()); }
+// 
+// 	Core::log("Previewing with : " + command , true);
 
 	mPreviewProcess = new QProcess();
 	connect(mPreviewProcess, SIGNAL(finished(int)),
@@ -516,7 +516,7 @@ void EvolutionParameterPanel::previewFinished(int state) {
 	if(state != 0) {
 		Core::log("ERR: " + QString(mPreviewProcess->readAllStandardError()), true);
 	}
-	Core::log("COUT: " + QString(mPreviewProcess->readAllStandardOutput()), true);
+	//Core::log("COUT: " + QString(mPreviewProcess->readAllStandardOutput()), true);
 	if(mPreviewProcess != 0) {
 		mPreviewProcess->close();
 	}
