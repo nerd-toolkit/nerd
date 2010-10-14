@@ -45,52 +45,28 @@
  ***************************************************************************/
 
 
-
-#ifndef NERDOnlinePlotter_H
-#define NERDOnlinePlotter_H
+#ifndef ORCSBasinOfAttraction_Calculator_H
+#define ORCSBasinOfAttraction_Calculator_H
 
 #include <QString>
-#include <QWidget>
-#include "Value/ValueManager.h"
-#include "Value/Value.h"
-#include "Value/MatrixValue.h"
-#include "Value/ValueChangedListener.h"
-#include "Core/SystemObject.h"
-#include "Event/EventListener.h"
-#include "Value/StringValue.h"
+#include <QHash>
 
-namespace nerd {
+
+
+namespace orcs {
 
 	/**
-	 * OnlinePlotter.
+	 * BasinOfAttraction_Calculator.
 	 *
 	 */
-	class OnlinePlotter : public QWidget, public virtual SystemObject, public virtual EventListener  {//unused:, public virtual ValueChangedListener
-		Q_OBJECT
+	class BasinOfAttraction_Calculator {
 		public:
-			OnlinePlotter();
-			virtual ~OnlinePlotter();
-			virtual QString getName() const;
-			virtual bool init();
-			virtual bool bind();
-			virtual bool cleanUp();
-			virtual void eventOccured(Event *event);
+			BasinOfAttraction_Calculator();
+			virtual ~BasinOfAttraction_Calculator();
 
-		signals:
-			void dataPrepared(QString name, MatrixValue *dataMatrix);
-			
-		protected:
-			ValueManager *mVM;
 
 		private:
-			Value *mPlotterProgramValue;
-			Value *mActiveCalculatorValue;
-			QString mRunningCalculator;
-			
-			Event *mStartEvent;
-			Event *mFinishEvent;
-
-			void prepareData(QString calculator);
+		
 	};
 
 }

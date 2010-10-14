@@ -2,7 +2,7 @@
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
  *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   till.faber@uni-osnabrueck.de
+ *   tfaber@uni-osnabrueck.de
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
@@ -83,8 +83,6 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	addParameter("Performance/ExecutionTime", mExecutionTime, true);
 
 }
-
-
 
 /**
  * Destructor.
