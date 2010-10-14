@@ -270,7 +270,7 @@ void GuiMainWindow::createBasicControlMenu() {
 	controlMenu->addSeparator();
 
 	//Add realtime checkbox
-	QAction *realTimeAction = new BoolValueSwitcherAction("Realtime", "/Simulation/RunAtRealtime");
+	QAction *realTimeAction = new BoolValueSwitcherAction("Realtime", SimulationConstants::VALUE_RUN_SIMULATION_IN_REALTIME);
 	realTimeAction->setWhatsThis("Toggles realtime mode on and off. In realtime mode "
 								"the system tries to hold an update frequency based on the "
 								"current step size to simulate the agents in realtime.");

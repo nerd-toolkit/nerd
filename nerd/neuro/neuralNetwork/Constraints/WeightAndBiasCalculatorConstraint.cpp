@@ -129,7 +129,7 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 
 		if(var.trimmed() != "") {
 			//makes sure the variable carrier has a variable accuracy matching the string context.
-			neuron->getBiasValue().setValueFromString(neuron->getBiasValue().getValueAsString());
+			neuron->getBiasValue().setValueFromString(normalizeAccuracy(neuron->getBiasValue().get()));
 
 			if(variables.keys().contains(var)) {
 				QString message = QString("Variable [") 
@@ -163,7 +163,7 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 
 		if(var.trimmed() != "") {
 			//makes sure the variable carrier has a variable accuracy matching the string context.
-			synapse->getStrengthValue().setValueFromString(synapse->getStrengthValue().getValueAsString());
+			synapse->getStrengthValue().setValueFromString(normalizeAccuracy(synapse->getStrengthValue().get()));
 
 
 			if(variables.keys().contains(var)) {
@@ -242,6 +242,17 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 	}
 
 	return !networkChanged;
+}
+
+QString WeightAndBiasCalculatorConstraint::normalizeAccuracy(double value) {
+
+// 	QString reducedAccuracy = value;
+// 	int indexOfDot = reducedAccuracy.indexOf(".");
+// 	if(indexOfDot >= 0 &&  indexOfDot < reducedAccuracy.length() - 6) {
+// 		reducedAccuracy = reducedAccuracy.mid(0, Math::min(reducedAccuracy.length(), indexOfDot + 6));
+// 	}
+// 	return reducedAccuracy;
+	return QString::number(value, 'f', 6);
 }
 		
 bool WeightAndBiasCalculatorConstraint::equals(GroupConstraint *constraint) {

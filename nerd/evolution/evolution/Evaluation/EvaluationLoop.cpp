@@ -58,6 +58,7 @@
 #include "Math/Math.h"
 #include "Util/Tracer.h"
 #include <iostream>
+#include "EvolutionConstants.h"
 
 
 #define TRACE(message)
@@ -71,7 +72,7 @@ EvaluationLoop::EvaluationLoop(int numberOfSteps, int numberOfTries)
 	: mNextTryEvent(0), mTryCompletedEvent(0), mNextStepEvent(0),
 		mStepCompletedEvent(0), mShutDownEvent(0), mResetEvent(0), mResetFinalizedEvent(0), 
 		mCurrentStep(0), mPauseSimulation(0), mNumberOfTries(0), mNumberOfSteps(0), 
-		mDoShutDown(false), mTerminateTry(false), mSimulationState(false), mCurrentTry(0), 
+		mDoShutDown(false), mTerminateTry(false), mSimulationState(false), mCurrentTry(0), mRunInRealTime(0),
 		mIsEvolutionMode(true), mInitialNumberOfTries(numberOfTries),
 		mInitialNumberOfSteps(numberOfSteps)
 {
@@ -204,6 +205,9 @@ bool EvaluationLoop::bind() {
 	mNextTryEvent->addEventListener(this);
 	mTryCompletedEvent->addEventListener(this);
 	mStepCompletedEvent->addEventListener(this);
+
+	mRunInRealTime = Core::getInstance()->getValueManager()->getBoolValue(
+				EvolutionConstants::VALUE_RUN_SIMULATION_IN_REALTIME);
 	
 	return bindOk;
 }
@@ -274,6 +278,10 @@ void EvaluationLoop::valueChanged(Value *value) {
 
 void EvaluationLoop::executeEvaluationLoop() {
 	TRACE("EvaluationLoop::executeEvaluationLoop");
+
+	if(!mIsEvolutionMode && mRunInRealTime != 0) {
+		mRunInRealTime->set(true);
+	}
 
 	bool unboundedNumberOfTries = false;
 	if(mNumberOfTries == -1) {

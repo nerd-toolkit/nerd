@@ -104,6 +104,7 @@ class EvaluationLoop : public virtual SystemObject,
 		bool mTerminateTry;
 		bool mSimulationState;
 		IntValue *mCurrentTry;
+		BoolValue *mRunInRealTime;
 	
 		bool mIsEvolutionMode;
 		int mInitialNumberOfTries;

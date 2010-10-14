@@ -163,6 +163,8 @@ namespace nerd {
 		void setCurrentNetworkFileName(const QString &fileName);
 		QString getCurrentNetworkFileName() const;
 
+		void setHomeBookmark(double x, double y, double scale);
+
 	public slots:
 		void paintTimerElapsed();	
 		void setDefaultPaintIterval(int interval);

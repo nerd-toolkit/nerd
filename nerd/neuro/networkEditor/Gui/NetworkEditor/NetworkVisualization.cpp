@@ -404,6 +404,13 @@ QString NetworkVisualization::getCurrentNetworkFileName() const {
 	return mCurrentNetworkFile;
 }
 
+/**
+ * The HOME bookmark is the viewport position specified by the optional _Viewport property of the current network.
+ */
+void NetworkVisualization::setHomeBookmark(double x, double y, double scale) {
+	mBookmarks.insert(Qt::Key_F8, Vector3D(x, y, scale));	
+}
+
 void NetworkVisualization::closeEvent(QCloseEvent*) {
 	TRACE("NetworkVisualization::closeEvent");
 	Core::getInstance()->scheduleTask(new ShutDownTask());

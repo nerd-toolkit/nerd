@@ -71,6 +71,9 @@ const QString SimulationConstants::VALUE_EXECUTION_CURRENT_STEP
 const QString SimulationConstants::VALUE_NNM_BYPASS_NETWORKS
 		= "/NeuralNetwork/BypassNetworks";
 
+const QString SimulationConstants::VALUE_RUN_SIMULATION_IN_REALTIME
+		= "/Simulation/RunAtRealtime";
+
 //**************************************************************************
 //Event names
 //**************************************************************************

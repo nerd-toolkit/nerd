@@ -102,8 +102,7 @@ bool NetworkVisualizationHandler::setNeuralNetwork(ModularNeuralNetwork *network
 			double x = viewportElements.at(0).toDouble();
 			double y = viewportElements.at(1).toDouble();
 			double scaling = viewportElements.at(2).toDouble();
-			mOwner->setVisualizationOffset(QPointF(x, y));
-			mOwner->setScaling(scaling);
+			mOwner->setHomeBookmark(x, y, scaling);
 		}
 	}
 	return true;

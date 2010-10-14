@@ -178,11 +178,11 @@ void TestBoxBody::testBoxBody() {
 	
 	DoubleValue *defaultwidth = dynamic_cast<DoubleValue*>(defaultBox->getParameter("Width"));
 	QVERIFY(defaultwidth != 0);
-	QCOMPARE(defaultwidth->get(), 0.0);
+	QCOMPARE(defaultwidth->get(), 0.01);
 	defaultBox->setup();
-	QCOMPARE(defaultBoxGeom->getPoint(0).getX(), 0.0);
+	QCOMPARE(defaultBoxGeom->getPoint(0).getX(), -0.005);
 	defaultwidth->set(5);
-	QCOMPARE(defaultBoxGeom->getPoint(0).getX(), 0.0);
+	QCOMPARE(defaultBoxGeom->getPoint(0).getX(), -0.005);
 	defaultBox->setup();
 	QCOMPARE(defaultBoxGeom->getPoint(0).getX(), -2.5);
 

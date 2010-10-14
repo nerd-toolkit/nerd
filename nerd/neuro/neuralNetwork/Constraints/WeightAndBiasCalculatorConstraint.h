@@ -72,6 +72,7 @@ namespace nerd {
 		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor, 
 									 QList<NeuralNetworkElement*> &trashcan);
 		
+		QString normalizeAccuracy(double value);
 		virtual bool equals(GroupConstraint *constraint);
 
 	private:

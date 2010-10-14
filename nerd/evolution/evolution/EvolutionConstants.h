@@ -129,6 +129,7 @@ namespace nerd {
 		static const QString VALUE_TIME_STEP_SIZE;
 
 		static const QString VALUE_INCREMENTAL_LOGGER_COMMENT;
+		static const QString VALUE_RUN_SIMULATION_IN_REALTIME;
 
 	//**************************************************************************
 	//Tag Names

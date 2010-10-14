@@ -208,6 +208,9 @@ const QString EvolutionConstants::VALUE_TIME_STEP_SIZE
 const QString EvolutionConstants::VALUE_INCREMENTAL_LOGGER_COMMENT
 		= "/Logging/IncrementalLogger/Comment";
 
+const QString EvolutionConstants::VALUE_RUN_SIMULATION_IN_REALTIME
+		= "/Simulation/RunAtRealtime";
+
 //**************************************************************************
 //Tag Names
 //**************************************************************************

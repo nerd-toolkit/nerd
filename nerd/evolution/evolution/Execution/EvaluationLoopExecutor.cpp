@@ -76,7 +76,7 @@ EvaluationLoopExecutor::EvaluationLoopExecutor() : EvaluationLoop(), mRealTimeSu
 
 	mUseRealtimeValue = new BoolValue(false);
 	mUseRealtimeValue->addValueChangedListener(this);
-	manager->addValue("/Simulation/RunAtRealtime", mUseRealtimeValue);
+	manager->addValue(EvolutionConstants::VALUE_RUN_SIMULATION_IN_REALTIME, mUseRealtimeValue);
 
 	mRealTimeTrigger.moveToThread(QCoreApplication::instance()->thread());
 	connect(&mRealTimeTrigger, SIGNAL(timeout()),

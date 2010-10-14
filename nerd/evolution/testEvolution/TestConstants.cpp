@@ -107,7 +107,8 @@ void TestConstants::testConstants() {
 	QVERIFY(SimulationConstants::EVENT_PHYSICS_ENVIRONMENT_CHANGED
 		== EvolutionConstants::EVENT_PHYSICS_ENVIRONMENT_CHANGED);
 
-
+	QVERIFY(SimulationConstants::VALUE_RUN_SIMULATION_IN_REALTIME
+		== EvolutionConstants::VALUE_RUN_SIMULATION_IN_REALTIME);
 
 	QVERIFY(SimulationConstants::EVENT_EXECUTION_TERMINATE_TRY
 		== EvolutionConstants::EVENT_EXECUTION_TERMINATE_TRY);

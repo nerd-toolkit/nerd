@@ -68,7 +68,7 @@ SimulationLoop::SimulationLoop() : mSimulationDelay(0), mPauseSimulation(0),
 
 	mUseRealtimeValue = new BoolValue(false);
 	mUseRealtimeValue->addValueChangedListener(this);
-	manager->addValue("/Simulation/RunAtRealtime", mUseRealtimeValue);
+	manager->addValue(SimulationConstants::VALUE_RUN_SIMULATION_IN_REALTIME, mUseRealtimeValue);
 
 	mRealTimeTrigger.moveToThread(QCoreApplication::instance()->thread());
 	connect(&mRealTimeTrigger, SIGNAL(timeout()), this, SLOT(realTimeStepExpired()));
