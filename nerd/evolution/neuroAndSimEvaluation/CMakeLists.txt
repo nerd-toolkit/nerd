@@ -10,6 +10,7 @@ set(nerd_neuroAndSimEvaluation_SRCS
 	Collections/EvolutionSimulationPrototypes.cpp  
 	Control/NetworkAgentControlParser.cpp  
 	Gui/SimpleEvolutionMainWindow/SimpleEvolutionMainWindow.cpp
+	ClusterEvaluation/MultiCoreNetworkInSimulationEvaluationMethod.cpp
 )
 
 set(nerd_neuroAndSimEvaluation_MOC_HDRS

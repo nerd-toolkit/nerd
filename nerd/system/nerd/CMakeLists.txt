@@ -150,13 +150,11 @@ QT4_WRAP_UI(nerd_nerd_UI_HDRS ${nerd_nerd_UIS})
 
 #Create subversion revision number for version string in Core.cpp.
 find_package(Subversion)
-#if(Subversion_FOUND)
-if(FALSE)
+if(Subversion_FOUND)
   Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} ER)
   set(SUBVERSION_REVISION ${ER_WC_REVISION})
-#endif(Subversion_FOUND)
-endif(FALSE)
-ADD_DEFINITIONS(-DVER=1234)
+endif(Subversion_FOUND)
+ADD_DEFINITIONS(-D'VER="${SUBVERSION_REVISION}"')
 
 #Create library.
 add_library(nerd STATIC ${nerd_nerd_SRCS} ${nerd_nerd_MOC_SRCS} ${nerd_nerd_RC_SRCS} ${nerd_nerd_UI_HDRS})

@@ -42,7 +42,7 @@
  ***************************************************************************/
 
 #include <QCoreApplication>
-#include "Core.h"
+#include "Core.h" 
 #include "Event/EventManager.h"
 #include "Event/Event.h"
 #include "Value/ValueManager.h"
@@ -59,7 +59,7 @@
 #include <QMutex>
 #include <iostream>
 #include "NerdConstants.h"
-#include "PlugIns/PlugInManager.h"
+#include "PlugIns/PlugInManager.h"  
 #include <QPluginLoader>
 #include "PlugIns/PlugIn.h"
 #include <QStringList>
@@ -1217,7 +1217,7 @@ QString Core::getVersionString() {
 	//add SVN revision number (requires QMake to be configured to provide this macro (VER)!
 	QString buildNumber(VER);
 	//buildNumber = buildNumber.mid(0, buildNumber.size() - 1);
-	version = version.append(" (").append(buildNumber).append(")");
+	version = version.append(" Rev. ").append(buildNumber);
 	return version;
 }
 

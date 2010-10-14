@@ -392,12 +392,12 @@ bool ClusterEvaluationMethod::submitJob(int startIndex, int endIndex) {
 	if(!outputDirectory.endsWith("/")) {
 		outputDirectory.append("/");
 	}
-	outputDirectory.append("QOutput");
-	if(!mCore->enforceDirectoryPath(outputDirectory)) {
-		Core::log("ClusterEvaluationMethod: Directory to store Grid Engine output could "
-			"not be created/found. Writing Grid Engine output to \"/dev/null\"!");
-		outputDirectory = "/dev/null";
-	}
+// 	outputDirectory.append("QOutput");
+// 	if(!mCore->enforceDirectoryPath(outputDirectory)) {
+// 		Core::log("ClusterEvaluationMethod: Directory to store Grid Engine output could "
+// 			"not be created/found. Writing Grid Engine output to \"/dev/null\"!");
+// 		outputDirectory = "/dev/null";
+// 	}
 	QString jobName = mJobScriptName->get();
 	jobName.append(QString::number(mCurrentGenerationID->get()));
 	

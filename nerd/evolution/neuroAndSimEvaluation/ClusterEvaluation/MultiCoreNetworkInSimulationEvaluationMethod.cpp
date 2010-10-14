@@ -43,43 +43,34 @@
 
 
 
-#ifndef NERDNerdClusterNeuroEvoApplication_H
-#define NERDNerdClusterNeuroEvoApplication_H
+#include "MultiCoreNetworkInSimulationEvaluationMethod.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
 
-#include "Application/BaseApplication.h"
-#include "Execution/EvolutionRunner.h"
-#include "ClusterEvaluation/ClusterNetworkInSimEvaluationMethod.h"
-#include "Gui/SimpleEvolutionMainWindow/SimpleEvolutionMainWindow.h"
-#include "Evolution/Population.h"
+using namespace std;
 
 namespace nerd {
 
-	/**
-	 * ASeriesDirectPositionControlApplication
-	 */
-	class NerdClusterNeuroEvoApplication  : public BaseApplication {
-	Q_OBJECT
-	public:
-		NerdClusterNeuroEvoApplication();
-		virtual ~NerdClusterNeuroEvoApplication();
-		
-		virtual QString getName() const;
 
-	protected:
-		virtual bool setupGui();
-		virtual bool setupApplication();
-		virtual bool runApplication();
-		virtual bool buildEvolutionSystem();
-
-	private:		
-		EvolutionRunner *mRunner;
-		SimpleEvolutionMainWindow *mMainGui;
-
-	};
-
+/**
+ * Constructs a new MultiCoreNetworkInSimulationEvaluationMethod.
+ */
+MultiCoreNetworkInSimulationEvaluationMethod::MultiCoreNetworkInSimulationEvaluationMethod()
+{
 }
 
-#endif
+
+/**
+ * Destructor.
+ */
+MultiCoreNetworkInSimulationEvaluationMethod::~MultiCoreNetworkInSimulationEvaluationMethod() {
+}
+
+
+
+
+}
 
 
 
