@@ -56,6 +56,7 @@
 #include "DynamicsPlot/StandardBifurcation_Calculator.h"
 #include "DynamicsPlot/Transients_Calculator.h"
 #include "DynamicsPlot/Isoperiod_Calculator.h"
+#include "DynamicsPlot/BasinOfAttraction_Calculator.h"
 #include "Event/EventManager.h"
 
 using namespace std;
@@ -73,6 +74,7 @@ DynamicsPlotCollection::DynamicsPlotCollection()
 	new StandardBifurcation_Calculator();
 	new Transients_Calculator();
 	new Isoperiod_Calculator();
+	new BasinOfAttraction_Calculator();
 	
 }
 

@@ -77,7 +77,7 @@ namespace nerd {
 		mPlotPixelsX = new IntValue(600); //accuracy of x-parameter variation, no. of pixels in x-dimension of diagram
 		mPlotPixelsY = new IntValue(500); //same for y
 		mResetToInitState = new BoolValue(false); // reset to initial activity state after every parameter change; if false: uses last state ("follows attractor")
-		mMaxPeriod = new IntValue(250); // defines size of max. periodicity that can be found
+		mMaxSteps = new IntValue(250); // defines maximal number of steps that are executed
 		mTolerance = new DoubleValue(0.000001);//Specifies how large the margin is, such that the two outputs count as the same one 
 
 		addParameter("Data", mData, true);
@@ -91,7 +91,7 @@ namespace nerd {
 		addParameter("PlotPixelsY", mPlotPixelsY, true); 
 		addParameter("Tolerance", mTolerance, true); 
 		addParameter("ResetToInitState", mResetToInitState, true);
-		addParameter("MaxPeriod", mMaxPeriod, true);
+		addParameter("MaxSteps", mMaxSteps, true);
 	}
 
 
@@ -160,7 +160,7 @@ namespace nerd {
 		
 		//prepare variables for evaluations
 		int numberNeurons = network->getNeurons().count();
-		int maxPeriod = mMaxPeriod->get();
+		int maxSteps = mMaxSteps->get();
 		bool resetToInitState = mResetToInitState->get();
 
 		int plotPixelsX = mPlotPixelsX->get();
@@ -215,7 +215,7 @@ namespace nerd {
 			oldValuesY.append(getVariedNetworkElementValue(vElemsListY[j]));
 		}
 		
-		double tempMatrix[maxPeriod][numberNeurons];
+		double tempMatrix[maxSteps][numberNeurons];
 		bool attractorFound = false;
 		int periodLength = 0;
 
@@ -251,7 +251,7 @@ namespace nerd {
 				}
 				
 				attractorFound = false;
-				for(int j = 0; j < maxPeriod && attractorFound == false; j++){//look for attractor	
+				for(int j = 0; j < maxSteps && attractorFound == false; j++){//look for attractor	
 					//this executes the neural network once.
 					mEvaluateNetworkEvent->trigger();
 					

@@ -87,7 +87,7 @@ namespace nerd {
 			DoubleValue *mTolerance;
 			IntValue *mPlotPixelsY;		
 			BoolValue *mResetToInitState;
-			IntValue *mMaxPeriod;
+			IntValue *mMaxSteps;
 			
 			
 	};

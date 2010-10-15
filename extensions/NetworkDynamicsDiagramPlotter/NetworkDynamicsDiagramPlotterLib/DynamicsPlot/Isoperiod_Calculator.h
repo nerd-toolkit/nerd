@@ -89,7 +89,7 @@ namespace nerd {
 			DoubleValue *mTolerance;
 
 			BoolValue *mResetToInitState;
-			IntValue *mMaxPeriod;
+			IntValue *mMaxSteps;
 			
 			
 	};

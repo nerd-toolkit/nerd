@@ -17,6 +17,7 @@ set(nerd_dynamicsPlotLib_SRCS
 	DynamicsPlot/OnlinePlotter/MouseMoveLabel.cpp  
 	DynamicsPlot/Transients_Calculator.cpp  
 	DynamicsPlot/Isoperiod_Calculator.cpp
+	DynamicsPlot/BasinOfAttraction_Calculator.cpp
 )
 
 set(nerd_dynamicsPlotLib_MOC_HDRS

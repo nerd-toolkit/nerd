@@ -50,22 +50,49 @@
 
 #include <QString>
 #include <QHash>
+#include <QString>
+#include <QHash>
+#include "DynamicsPlot/DynamicsPlotter.h"
+#include "Value/IntValue.h"
+#include "Value/MatrixValue.h"
+#include "Value/ULongLongValue.h"
 
 
 
-namespace orcs {
+namespace nerd {
 
 	/**
 	 * BasinOfAttraction_Calculator.
 	 *
 	 */
-	class BasinOfAttraction_Calculator {
+	class BasinOfAttraction_Calculator : public DynamicsPlotter {
 		public:
 			BasinOfAttraction_Calculator();
+			
 			virtual ~BasinOfAttraction_Calculator();
-
-
+			
+			virtual void calculateData();
 		private:
+			IntValue *mCalculationTime;
+		
+			MatrixValue *mData;
+			IntValue *mPlotPixelsX;
+			IntValue *mPlotPixelsY;	
+		
+			StringValue *mIdsOfVariedNeuronsX;
+			StringValue *mMinimaOfVariedNeuronsX;
+			StringValue *mMaximaOfVariedNeuronsX;
+	
+			StringValue *mIdsOfVariedNeuronsY;
+			StringValue *mMinimaOfVariedNeuronsY;
+			StringValue *mMaximaOfVariedNeuronsY;
+	
+			ULongLongValue *mIdOfObservedNeuron;
+			DoubleValue *mTolerance;
+
+			BoolValue *mResetToInitState;
+			IntValue *mMaxSteps;
+			IntValue *mMaxPeriod;
 		
 	};
 

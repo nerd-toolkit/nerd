@@ -49,19 +49,49 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
-
+#include "math.h"
 
 using namespace std;
 
-namespace orcs {
+namespace nerd {
 
 
 /**
  * Constructs a new BasinOfAttraction_Calculator.
  */
-	BasinOfAttraction_Calculator::BasinOfAttraction_Calculator()
+	BasinOfAttraction_Calculator::BasinOfAttraction_Calculator() : DynamicsPlotter("BasinOfAttraction_Calculator")
 	{
+		mData = new MatrixValue(); //data matrix
 		
+		// IDs, minima, maxima for network elements, that will be plotted on x-axis:
+		mIdsOfVariedNeuronsX = new StringValue("0, 0 | 0");
+		mMinimaOfVariedNeuronsX = new StringValue("0 , 0, 0");
+		mMaximaOfVariedNeuronsX = new StringValue("1, 1, 1");
+		// same for y-axis:
+		mIdsOfVariedNeuronsY = new StringValue("0");
+		mMinimaOfVariedNeuronsY = new StringValue("0");
+		mMaximaOfVariedNeuronsY = new StringValue("1");
+		
+		mPlotPixelsX = new IntValue(600); //accuracy of x-parameter variation, no. of pixels in x-dimension of diagram
+		mPlotPixelsY = new IntValue(500); //same for y
+		mResetToInitState = new BoolValue(false); // reset to initial activity state after every parameter change; if false: uses last state ("follows attractor")
+		mMaxSteps = new IntValue(250); // defines size of maximal steps that are executed
+		mTolerance = new DoubleValue(0.000001);//Specifies how large the margin is, such that the two outputs count as the same one 
+		mMaxPeriod = new IntValue(16); //max. size of period that can be found
+
+		addParameter("Data", mData, true);
+		addParameter("XIdsOfVariedNeurons", mIdsOfVariedNeuronsX, true);
+		addParameter("XMinimaOfVariedNeurons", mMinimaOfVariedNeuronsX, true);
+		addParameter("XMaximaOfVariedNeurons", mMaximaOfVariedNeuronsX, true);
+		addParameter("YIdsOfVariedNeurons", mIdsOfVariedNeuronsY, true);
+		addParameter("YMinimaOfVariedNeurons", mMinimaOfVariedNeuronsY, true);
+		addParameter("YMaximaOfVariedNeurons", mMaximaOfVariedNeuronsY, true);
+		addParameter("PlotPixelsX", mPlotPixelsX, true); 
+		addParameter("PlotPixelsY", mPlotPixelsY, true); 
+		addParameter("Tolerance", mTolerance, true); 
+		addParameter("ResetToInitState", mResetToInitState, true);
+		addParameter("MaxSteps", mMaxSteps, true);
+		addParameter("MaxPeriod", mMaxPeriod, true);
 	}
 
 
@@ -72,6 +102,209 @@ namespace orcs {
 	BasinOfAttraction_Calculator::~BasinOfAttraction_Calculator() {
 	}
 
+		/**
+	 * Calculates the output data
+		 */
+	void BasinOfAttraction_Calculator::calculateData() {
+		if(mNextStepEvent == 0 || mResetEvent == 0 || mEvaluateNetworkEvent == 0) {
+			return;
+		}
+
+		NeuralNetwork *network = getCurrentNetwork();
+
+		if(network == 0) {
+			Core::log("BasinOfAttractionCalculator: Could not find a modular neural network!", true);
+			return;
+		}
+		
+		QList<ULongLongValue*>vIdsListX = createListOfIds(mIdsOfVariedNeuronsX);//list of IDs of varied elements
+		QList<double> vMinsListX = createListOfDoubles(mMinimaOfVariedNeuronsX);
+		QList<double> vMaxsListX = createListOfDoubles(mMaximaOfVariedNeuronsX);
+		
+		QList<ULongLongValue*>vIdsListY = createListOfIds(mIdsOfVariedNeuronsY);//list of IDs of varied elements
+		QList<double> vMinsListY = createListOfDoubles(mMinimaOfVariedNeuronsY);
+		QList<double> vMaxsListY = createListOfDoubles(mMaximaOfVariedNeuronsY);
+		
+		//check IDs, minima, and maxima
+		if(!checkStringlistsItemCount(mIdsOfVariedNeuronsX, mMinimaOfVariedNeuronsX, mMaximaOfVariedNeuronsX)){
+			Core::log("BasinOfAttractionCalculator: The number of IDs, minima and maxima (x-axis parameters) must be the same!", true);		
+			return;
+		}
+		if(!checkStringlistsItemCount(mIdsOfVariedNeuronsY, mMinimaOfVariedNeuronsY, mMaximaOfVariedNeuronsY)){
+			Core::log("BasinOfAttractionCalculator: The number of IDs, minima and maxima (y-axis parameters) must be the same!", true);		
+			return;
+		}
+		
+		int noOfvNeuronsX = vIdsListX.size();//No. of neurons
+		int noOfvNeuronsY = vIdsListY.size();
+		
+		QList<Neuron*> vNeuronsListX; //list of neurons
+		QList<Neuron*> vNeuronsListY;
+		
+		
+		
+		//get pointer to the varied neurons on the x-axis
+		for(int j = 0; j < noOfvNeuronsX; j++){
+			vNeuronsListX.append(NeuralNetwork::selectNeuronById(vIdsListX[j]->get(), network->getNeurons()));	
+			if(vNeuronsListX[j] == 0){
+				Core::log("BasinOfAttractionCalculator: Could not find required (varied) neurons (x-axis)!", true);		
+				return;	
+			}
+		}
+		//y-axis
+		for(int j = 0; j < noOfvNeuronsY; j++){
+			vNeuronsListY.append(NeuralNetwork::selectNeuronById(vIdsListY[j]->get(), network->getNeurons()));	
+			if(vNeuronsListY[j] == 0){
+				Core::log("BasinOfAttractionCalculator: Could not find required (varied) neurons(y-axis)!", true);		
+				return;	
+			}
+		}	
+		
+		//prepare variables for evaluations
+		int numberNeurons = network->getNeurons().count();
+		int maxSteps = mMaxSteps->get();
+		int maxPeriod = mMaxPeriod->get();
+		bool resetToInitState = mResetToInitState->get();
+
+		int plotPixelsX = mPlotPixelsX->get();
+		int plotPixelsY = mPlotPixelsY->get();		
+		
+		if(plotPixelsX < 2){
+			Core::log("BasinOfAttractionCalculator: Size of diagram must be over 1 pixel (x-axis).", true);
+			return;
+		}
+		if(plotPixelsY < 2){
+			Core::log("BasinOfAttractionCalculator: Size of diagram must be over 1 pixel (y-axis).", true);
+			return;
+		}	
+
+		QList<double> xIncrements; //range of pixels
+		QList<double> yIncrements;
+		for(int j = 0; j < noOfvNeuronsX; j++){
+			xIncrements.append((vMaxsListX[j] - vMinsListX[j]) / ((double) plotPixelsX - 1)); //'-1' to include min and max values in steps
+		}
+		for(int j = 0; j < noOfvNeuronsY; j++){
+			yIncrements.append((vMaxsListY[j] - vMinsListY[j]) / ((double) plotPixelsY - 1)); //'-1' to include min and max values in steps
+		}	
+
+		QList<double> rListX; // running parameters for varied elements
+		QList<double> rListY;
+		for(int j = 0; j < noOfvNeuronsX; j++){
+			if(vMinsListX[j] != vMaxsListX[j]){
+				rListX.append(vMinsListX[j]);
+			}else{
+				Core::log("BasinOfAttractionCalculator: Minimum of variation must not be equal to maximum.", true);
+				return;
+			}
+		}
+		for(int j = 0; j < noOfvNeuronsY; j++){
+			if(vMinsListY[j] != vMaxsListY[j]){
+				rListY.append(vMinsListY[j]);
+			}else{
+				Core::log("BasinOfAttractionCalculator: Minimum of variation must not be equal to maximum.", true);
+				return;
+			}
+		}
+		
+		Core *core = Core::getInstance();
+
+		
+		double tempMatrix[maxSteps][numberNeurons];
+		bool attractorFound = false;
+		int periodLength = 0;
+
+		QList<Neuron*> neuronsList = network->getNeurons();
+		
+		//set up matrix:
+		mData->resize(1, 1, 1); //clear matrix 
+		//matrix is as large as diagram (in pixels) + 1
+		mData->resize(plotPixelsX + 1, plotPixelsY + 1, 1); //first dimension = no. of parameter changes; second dimension = number of output buckets
+		
+		storeCurrentNetworkActivities();
+		//evaluate
+		for(int i = 0;  i < plotPixelsX; i++) { //runs through x-parameter changes
+			
+
+			
+			
+			//set first matrix row: indices of x-axis 
+			if(noOfvNeuronsX == 1){
+				mData->set(rListX[0], i + 1, 0, 0);//if only one parameter is changed, take its values
+			}else{
+				mData->set(i + 1, i + 1, 0, 0); //if more, take pixelcount
+			}
+			for(int l = 0; l < plotPixelsY; l++){//runs through y-parameter changes	
+				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last activity state is used 
+				for(int j = 0; j < noOfvNeuronsY; j++){//set activities of varied neurons
+					vNeuronsListY[j]->getActivationValue().set(rListY[j]); 
+				}
+				for(int j = 0; j < noOfvNeuronsX; j++){
+					vNeuronsListX[j]->getActivationValue().set(rListX[j]); 
+				}
+				
+				if(i == 0 && noOfvNeuronsY == 1){ //set first matrix column
+					mData->set(rListY[0], 0, l + 1, 0);//if only one parameter is changed, take its values
+				}else if(i == 0){
+					mData->set(l + 1, 0, l + 1, 0); //if more, take pixelcount
+				}
+				
+				attractorFound = false;
+				for(int j = 0; j < maxSteps && attractorFound == false; j++){//look for attractor	
+					//this executes the neural network once.
+					mEvaluateNetworkEvent->trigger();
+					
+					for(int k = 0; k < numberNeurons; k++){ //add all neuron activations to temporary matrix
+						tempMatrix[j][k] = neuronsList.at(k)->getOutputActivationValue().get(); 
+					}
+	
+					for(int m = j - 1; m > j - maxPeriod && m >= 0 && attractorFound == false;--m){ //check if network state appeared before
+						attractorFound = true;
+						for(int k = 0; k < numberNeurons && attractorFound == true; k++){
+							if(fabs(tempMatrix[m][k] - tempMatrix[j][k]) > fabs(mTolerance->get())){ // if one neuron's output is unequal to its output at the respective former time step
+								attractorFound = false;	// break inner for-loop
+							}
+						}
+						periodLength = j - m;
+					}
+					//This is important: allows to quit the application while the plotter is running.
+					if(core->isShuttingDown()) {
+						return;
+					}			
+					//This is important: it keeps the system alive!
+					core->executePendingTasks();
+				}//attractor loop
+				
+				
+				for(int j = 0; j < noOfvNeuronsY; j++){
+					rListY[j] = rListY[j] + yIncrements[j]; 
+				}
+				for(int j = 0; j < noOfvNeuronsX; j++){
+					rListX[j] = rListX[j] + xIncrements[j]; 
+				}
+				
+				if(attractorFound){//update data matrix
+					mData->set(periodLength, i + 1, l + 1, 0); 
+				}else{
+					mData->set(0, i + 1, l + 1, 0); 	
+				}
+				
+				
+			}//for-loop: y-params
+		
+							
+			//This is important: allows to quit the application while the plotter is running.
+			if(Core::getInstance()->isShuttingDown()) {
+				return;
+			}
+
+			//This is important: it keeps the system alive!
+			core->executePendingTasks();
+
+			
+		} //for-loop: x-params
+		
+		restoreCurrentNetworkActivites();
+	}
 
 }
 

@@ -81,7 +81,7 @@ namespace nerd {
 		mMaxOutputRange = new DoubleValue(1.0); // -- " --
 		mPlotPixelsY = new IntValue(500); // number of values the output is discretized/rounded to (is number of pixels on y-axis)
 		mResetToInitState = new BoolValue(false); // reset to initial activity state after every parameter change; if false: uses last state ("follows attractor")
-		mMaxPeriod = new IntValue(500); // defines size of max. periodicity that can be found.
+		mMaxSteps = new IntValue(500); // defines maximal number of steps that are executed
 		mTolerance = new DoubleValue(0.00001);//Specifies how large the margin is, such that the two outputs count as the same one:   x = x +/- mTolerance
 
 		addParameter("Data", mData, true);
@@ -97,7 +97,7 @@ namespace nerd {
 		addParameter("PlotPixelsY", mPlotPixelsY, true); 
 		addParameter("Tolerance", mTolerance, true); 
 		addParameter("ResetToInitState", mResetToInitState, true);
-		addParameter("MaxPeriod", mMaxPeriod, true);
+		addParameter("MaxSteps", mMaxSteps, true);
 	}
 
 
@@ -159,7 +159,7 @@ namespace nerd {
 		
 		//prepare variables for evaluations
 		int numberNeurons = network->getNeurons().count(); //no. of neurons in network
-		int maxPeriod = mMaxPeriod->get();
+		int maxSteps = mMaxSteps->get();
 		bool resetToInitState = mResetToInitState->get();
 
 		//bias paramater variables
@@ -208,7 +208,7 @@ namespace nerd {
 		//prepare variables needed in calculations:
 		double neuronOutput = 0.0;
 		double temp = 0.0;
-		double tempMatrix[maxPeriod][numberNeurons];
+		double tempMatrix[maxSteps][numberNeurons];
 		bool attractorFound = false;
 		int periodLength = 0;
 		double doubleMod = 0.0;
@@ -251,7 +251,7 @@ namespace nerd {
 			if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last value is used 
 			
 			attractorFound = false;
-			for(int j = 0; j < maxPeriod && attractorFound == false; j++){ //evaluate network with current parameters
+			for(int j = 0; j < maxSteps && attractorFound == false; j++){ //evaluate network with current parameters
 				//this executes the neural network once.
 				mEvaluateNetworkEvent->trigger();
 				
@@ -306,7 +306,7 @@ namespace nerd {
 				}
 			}else{
 				//no attractor found - plot all activations of output neuron
-				for(int j = 0; j < maxPeriod; j++){
+				for(int j = 0; j < maxSteps; j++){
 					neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
 					if(neuronOutput < minOutputRange || neuronOutput > maxOutputRange){
 						//do nothing
