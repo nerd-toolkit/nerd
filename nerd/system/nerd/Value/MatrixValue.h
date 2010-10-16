@@ -78,6 +78,10 @@ namespace nerd {
 		virtual bool setValueFromString(const QString &value);
 		virtual QString getValueAsString() const;
 
+		void fill(double value);
+		void clear();
+		QVector<QVector<QVector<double> > > getData() const;
+
 		virtual bool equals(const Value *value) const;
 
 	protected:

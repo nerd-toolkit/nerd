@@ -160,6 +160,20 @@ QString MatrixValue::getValueAsString() const {
 	return valueString;
 }
 
+void MatrixValue::fill(double value) {
+	mValue.fill(value);
+}
+
+
+void MatrixValue::clear() {
+	mValue.clear();
+}
+
+QVector<QVector<QVector<double> > > MatrixValue::getData() const {
+	return mValue.getData();
+}
+
+
 bool MatrixValue::equals(const Value *value) const {
 	if(!Value::equals(value)) {
 		return false;
