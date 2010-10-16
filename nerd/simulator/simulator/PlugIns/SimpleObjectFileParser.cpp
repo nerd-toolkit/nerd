@@ -101,6 +101,9 @@ SimpleObjectFileParser::~SimpleObjectFileParser() {
  */
 bool SimpleObjectFileParser::init() {
 
+	StringValue *scriptedModelArgument = Core::getInstance()->getValueManager()
+				->getStringValue("/CommandLineArguments/installScriptedModel");
+
 	if(mEnvironmentCommandLineArgument->getParameterValue()->get() != "") {
 		QStringList fileNames = mEnvironmentCommandLineArgument->getEntries();
 
@@ -120,7 +123,7 @@ bool SimpleObjectFileParser::init() {
 		}
 		Physics::getSimulationEnvironmentManager()->createSnapshot();
 	}
-	else {
+	else if(scriptedModelArgument == 0 || scriptedModelArgument->get().trimmed() == "") {
 		PhysicsManager *pm = Physics::getPhysicsManager();
 		DummyModel *dummy = new DummyModel("Dummy");
 		dummy->setup();

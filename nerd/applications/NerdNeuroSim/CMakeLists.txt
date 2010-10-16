@@ -46,6 +46,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simulator)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/odePhysics)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simple2DPhysics)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/neuralNetwork)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/networkEditor)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../evolution/evolution)
@@ -61,6 +62,7 @@ TARGET_LINK_LIBRARIES(NerdNeuroSim
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/odePhysics/libodePhysics.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simple2DPhysics/libsimple2DPhysics.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
 	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}

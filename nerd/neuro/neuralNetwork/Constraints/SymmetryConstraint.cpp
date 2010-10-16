@@ -483,7 +483,6 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 
 	mNetworkElementPairs = elementPairs;
 
-	
 	//check for synapses
 	QList<Synapse*> allSynapses;
 	QList<Neuron*> allNeurons = mGroup1->getAllEnclosedNeurons();

@@ -225,6 +225,9 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 				double oldVal = neuron->getBiasValue().get();
 				neuron->getBiasValue().set(value);
 				if(!Math::compareDoubles(oldVal, neuron->getBiasValue().get(), 0.00000001)) {
+
+					//Core::log("BCC 1: " + QString::number(oldVal, 'f', 20) + " " + QString::number(value, 'f', 20), true);
+
 					networkChanged = true;
 				}
 			}
@@ -234,6 +237,9 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 					double oldVal = synapse->getStrengthValue().get();
 					synapse->getStrengthValue().set(value);
 					if(!Math::compareDoubles(oldVal, synapse->getStrengthValue().get(), 0.00000001)) {
+
+						//Core::log("BCC 2: " + QString::number(oldVal, 'f', 20) + " " + QString::number(value, 'f', 20), true);
+
 						networkChanged = true;
 					}
 				}

@@ -106,6 +106,7 @@
 #include "Collections/EvolutionPropertyPanelCollection.h"
 #include "Collections/UniversalNeuroScriptLoader.h"
 #include "Collections/ScriptedModelLoader.h"
+#include "Collections/Simple2D_Physics.h"
 
 
 using namespace std;
@@ -197,6 +198,11 @@ bool NerdNeuroEvoApplication::setupApplication()
 			&& physicsArg->getEntryParameters(0).at(0).trimmed() == "yars")
 	{
 		YarsCommunication();
+	}
+	else if(physicsArg->getNumberOfEntries() != 0 && !physicsArg->getEntryParameters(0).empty()
+			&& physicsArg->getEntryParameters(0).at(0).trimmed() == "s2d")
+	{
+		Simple2D_Physics();
 	}
 	else {
 		//install ODE PhysicsLayer

@@ -137,10 +137,15 @@ void ScriptedModel::createModel() {
 void ScriptedModel::layoutObjects() {
 	mCurrentSimObject = 0;
 
+	mScript->evaluate("layoutModel.toString();");
+	if(mScript->hasUncaughtException()) {
+		mScript->evaluate("function layoutModel() { };");
+	}
 	executeScriptFunction("layoutModel();") ;
 }
 
 void ScriptedModel::createEnvironment() {
+
 	mCurrentSimObject = 0;
 	mEnvironmentMode = true;
 	executeScriptFunction("createEnvironment();");
@@ -155,7 +160,7 @@ void ScriptedModel::createEnvironment() {
 		if(model != 0) {
 			model->setup();
 		}
-		pm->addSimObject(i.next());
+		pm->addSimObject(obj);
 	}
 }
 
@@ -163,6 +168,7 @@ void ScriptedModel::createEnvironment() {
 int ScriptedModel::createObject(const QString &prototypeName, const QString &name) {
 	SimObject *obj = Physics::getPhysicsManager()->getPrototype("Prototypes/" + prototypeName);
 	if(obj == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not find prototype [" + prototypeName + "]");
 		return 0;
 	}
 	SimObject *newObject = obj->createCopy();
@@ -360,10 +366,6 @@ bool ScriptedModel::hasEnvironmentSection() {
 bool ScriptedModel::hasModelSection() {
 	if(mScript != 0) {
 		mScript->evaluate("createModel.toString();");
-		if(mScript->hasUncaughtException()) {
-			return false;
-		}
-		mScript->evaluate("layoutModel.toString();");
 		if(mScript->hasUncaughtException()) {
 			return false;
 		}
