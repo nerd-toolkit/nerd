@@ -78,10 +78,24 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 
 	mActiveValue = new BoolValue(false);
 	mExecutionTime = new IntValue(0);
-
+	//****Till****//
+	mData = new MatrixValue(); //data matrix
+	mOutputPath = new StringValue(); //string giving the path to the output file, if an external plotting program is used
+// 	mPlotPixelsX = new IntValue(600); //accuracy of x-parameter variation, no. of pixels in x-dimension of diagram
+// 	mPlotPixelsY = new IntValue(500); //same for y
+	mData->setDescription("Matrix containing the output data, do not change.");
+	mOutputPath->setDescription("Path to the output file for exported data.");
+	//***/Till****//
+	
+	
 	addParameter("Config/Activate", mActiveValue, true);
 	addParameter("Performance/ExecutionTime", mExecutionTime, true);
-
+	//****Till****//
+	addParameter("Data", mData, true);
+	addParameter("OutputPath", mOutputPath, true);
+// 	addParameter("PlotPixelsX", mPlotPixelsX, true); 
+// 	addParameter("PlotPixelsY", mPlotPixelsY, true); 
+	//***/Till****//
 }
 
 /**
@@ -176,10 +190,16 @@ void DynamicsPlotter::execute() {
 		mStasisValue->set(previousStasisSetting);
 	}
 	//****Till***//
+	//set calculator inactive after every run:
+	QString path = QString("/DynamicsPlotters/") + mValueManager->getValue("/DynamicsPlotters/ActiveCalculator")->getValueAsString() + QString("/Config/Activate");
+	mValueManager->getValue(path)->setValueFromString("F"); 
+	
 	mValueManager = Core::getInstance()->getValueManager();
 	mValueManager->getValue("/DynamicsPlotters/ActiveCalculator")->setValueFromString(""); //weg?
 	Core::getInstance()->executePendingTasks();
 	mFinishEvent->trigger();
+	
+	
 	//***/Till***//
 	mExecutionTime->set(currentTime.elapsed());
 	

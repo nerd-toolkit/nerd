@@ -73,8 +73,8 @@ namespace nerd {
 			virtual void calculateData();
 
 		private:
-			IntValue *mCalculationTime;
-			MatrixValue *mData;
+// 			IntValue *mCalculationTime;
+// 			MatrixValue *mData;
 			IntValue *mPlotPixelsX;
 			
 			StringValue *mIdsOfVariedNetworkElements;
@@ -88,7 +88,7 @@ namespace nerd {
 			IntValue *mPlotPixelsY;		
 			BoolValue *mResetToInitState;
 			IntValue *mMaxSteps;
-			
+			BoolValue *mBidirectional;
 			
 	};
 	

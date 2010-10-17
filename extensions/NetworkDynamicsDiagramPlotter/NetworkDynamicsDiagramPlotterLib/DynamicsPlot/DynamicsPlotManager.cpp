@@ -66,9 +66,12 @@ DynamicsPlotManager::DynamicsPlotManager()
 {
 	//**************Till**************//
 	mValueManager = Core::getInstance()->getValueManager();
-	mPlotterProgram = new StringValue("matlab");
+	mPlotterProgram = new StringValue("Inbuilt");
 	mActivePlotter = new StringValue(0);
 
+	mPlotterProgram->setDescription("Specifies the output program, for example the inbuilt plotters or external ones like Matlab");
+	mPlotterProgram->getOptionList().append("Inbuilt");
+	mPlotterProgram->getOptionList().append("Matlab");
 	mValueManager->addValue("/DynamicsPlotters/PlotterProgram", mPlotterProgram);
 	mValueManager->addValue("/DynamicsPlotters/ActiveCalculator", mActivePlotter);
 	

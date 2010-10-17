@@ -62,16 +62,21 @@ namespace nerd {
  */
 	Transients_Calculator::Transients_Calculator(): DynamicsPlotter("Transients_Calculator")
 	{
-		mData = new MatrixValue();
+// 		mData = new MatrixValue();
 		mIdOfObservedNeuron = new ULongLongValue(0);
-		mNoOfStepsX = new IntValue(600); // No. of time steps, x-size of plot in pixels
+		mPlotPixelsX = new IntValue(600); // No. of time steps, x-size of plot in pixels
 		mMinOutputRange = new DoubleValue(-1.0); //in case other transfer function than tanh - is now set for tanh
 		mMaxOutputRange = new DoubleValue(1.0); // -- " --
 		mPlotPixelsY = new IntValue(500); // number of values the output is discretized/rounded to (is number of pixels)
 		
-		addParameter("Data", mData, true);
+		mIdOfObservedNeuron->setDescription("Id of observed neuron");
+		mPlotPixelsX->setDescription("Horizontal size of plot, also determines the step size of the parameter change (max - min)/plotPixels");
+		mPlotPixelsY->setDescription("Vertical size of plot, also determines the number of output buckets to which the output is discretesized to.");
+		mMinOutputRange->setDescription("Minimum of output range");
+		mMaxOutputRange->setDescription("Maximum of output range");
+		
 		addParameter("IdOfObservedNeuron", mIdOfObservedNeuron, true);	
-		addParameter("NoOfStepsX", mNoOfStepsX, true);
+		addParameter("NoOfStepsX", mPlotPixelsX, true);
 		addParameter("MinOutputRange", mMinOutputRange, true); 
 		addParameter("MaxOutputRange", mMaxOutputRange, true);
 		addParameter("PlotPixelsY", mPlotPixelsY, true); 
@@ -113,14 +118,15 @@ namespace nerd {
 		}
 		double minOutputRange = mMinOutputRange->get();
 		double maxOutputRange = mMaxOutputRange->get();
-		int plotPixelsX = mNoOfStepsX->get(); //No. of pixels on x-axis
+		int plotPixelsX = mPlotPixelsX->get(); //No. of pixels on x-axis
 		int plotPixelsY = mPlotPixelsY->get();
 		double yIncrement = (maxOutputRange - minOutputRange) / ((double) plotPixelsY - 1); //'-1' to include min and max; gives the increment of each pixel in y-dimension
 
 		//set up matrix:
-		mData->resize(1, 1, 1); //clear matrix //nötig? gibts clear
+		mData->clear();
 		//matrix is as large as diagram (in pixels) + 1
 		mData->resize(plotPixelsX + 1, plotPixelsY + 1, 1); //first dimension = no. of parameter changes; second dimension = number of output buckets
+		mData->fill(0);
 		for(int j = 1; j < plotPixelsY + 1; ++j){
 			mData->set(minOutputRange + (j - 1) * yIncrement, 0, j, 0); //set first matrix column: indices	
 		}

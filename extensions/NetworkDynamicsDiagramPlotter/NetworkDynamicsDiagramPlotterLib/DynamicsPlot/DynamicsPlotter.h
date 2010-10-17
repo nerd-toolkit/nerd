@@ -54,6 +54,7 @@
 #include "Core/SystemObject.h"
 #include "Core/ParameterizedObject.h"
 #include "Value/BoolValue.h"
+#include "Value/MatrixValue.h"
 #include "Value/ULongLongValue.h"
 #include "Network/NeuralNetwork.h"
 
@@ -109,6 +110,11 @@ namespace nerd {
 		IntValue *mExecutionTime;
 		QHash<qulonglong, double> mNetworkActivities;
 		//****Till****//
+		MatrixValue *mData;
+// 		IntValue *mPlotPixelsX;
+// 		IntValue *mPlotPixelsY;	
+		StringValue *mOutputPath;
+		
 		Event *mStartEvent;
 		Event *mFinishEvent;
 		//***/Till****//

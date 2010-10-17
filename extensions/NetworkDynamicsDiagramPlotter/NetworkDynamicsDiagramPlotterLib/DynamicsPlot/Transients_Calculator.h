@@ -71,10 +71,10 @@ namespace nerd {
 			virtual void calculateData();
 
 		private:
-			IntValue *mCalculationTime;
+// 			IntValue *mCalculationTime;
 			
-			MatrixValue *mData;
-			IntValue *mNoOfStepsX;
+// 			MatrixValue *mData;
+			IntValue *mPlotPixelsX;
 			ULongLongValue *mIdOfObservedNeuron;
 			DoubleValue *mMaxOutputRange;
 			DoubleValue *mMinOutputRange;

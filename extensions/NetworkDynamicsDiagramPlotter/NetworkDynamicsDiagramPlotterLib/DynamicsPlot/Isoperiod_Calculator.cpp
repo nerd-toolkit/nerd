@@ -63,7 +63,7 @@ namespace nerd {
  */
 	Isoperiod_Calculator::Isoperiod_Calculator(): DynamicsPlotter("Isoperiod_Calculator")
 	{
-		mData = new MatrixValue(); //data matrix
+// 		mData = new MatrixValue(); //data matrix
 		
 		// IDs, minima, maxima for network elements, that will be plotted on x-axis:
 		mIdsOfVariedNetworkElementsX = new StringValue("0, 0 | 0");
@@ -80,7 +80,23 @@ namespace nerd {
 		mMaxSteps = new IntValue(250); // defines maximal number of steps that are executed
 		mTolerance = new DoubleValue(0.000001);//Specifies how large the margin is, such that the two outputs count as the same one 
 
-		addParameter("Data", mData, true);
+		
+		mIdsOfVariedNetworkElementsX->setDescription("Comma-separated list of IDs of the neurons that are varied (x-axis).");
+// 		mIdsOfVariedNetwor->setDescription("List of the IDs of the network elements (neurons or synapse) which are varied separated by commas or '|'.");
+		mMinimaOfVariedNetworkElementsX->setDescription("Comma-separated list of the minimal values of the varied network elements (x-axis)");
+		mMaximaOfVariedNetworkElementsX->setDescription("Comma-separated list of the maximal values of the varied network elements (x-axis)");
+		mIdsOfVariedNetworkElementsY->setDescription("Comma-separated list of IDs of the neurons that are varied (y-axis).");
+		mMinimaOfVariedNetworkElementsY->setDescription("Comma-separated list of the minimal values of the varied network elements (y-axis)");
+		mMaximaOfVariedNetworkElementsY->setDescription("Comma-separated list of the maximal values of the varied network elements (y-axis)");
+		mPlotPixelsX->setDescription("Horizontal size of plot, also determines the step size of the parameter change (max - min)/plotPixels");
+		mPlotPixelsY->setDescription("Vertical size of plot, also determines the step size of the parameter change (max - min)/plotPixels");
+		mResetToInitState->setDescription("If TRUE then the network activity is reset after every network step.");
+		mMaxSteps->setDescription("Maximal number of steps taken, if no attractor is found");
+		mTolerance->setDescription("Tolerance for that two values are taken as the same; x = x +/- tol");
+		
+		
+		
+// 		addParameter("Data", mData, true);
 		addParameter("XIdsOfVariedNetworkElements", mIdsOfVariedNetworkElementsX, true);
 		addParameter("XMinimaOfVariedNetworkElements", mMinimaOfVariedNetworkElementsX, true);
 		addParameter("XMaximaOfVariedNetworkElements", mMaximaOfVariedNetworkElementsX, true);
@@ -222,9 +238,10 @@ namespace nerd {
 		QList<Neuron*> neuronsList = network->getNeurons();
 		
 		//set up matrix:
-		mData->resize(1, 1, 1); //clear matrix 
+		mData->clear();
 		//matrix is as large as diagram (in pixels) + 1
 		mData->resize(plotPixelsX + 1, plotPixelsY + 1, 1); //first dimension = no. of parameter changes; second dimension = number of output buckets
+		mData->fill(0);
 		
 		storeCurrentNetworkActivities();
 		//evaluate

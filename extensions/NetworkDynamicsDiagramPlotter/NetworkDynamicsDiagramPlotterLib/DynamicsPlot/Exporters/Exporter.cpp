@@ -156,7 +156,11 @@ namespace nerd {
 				outV[l * height + height - 1][width - 1] = outV[l * height + height -1][width - 1].simplified() + QString("}");
 			}
 			outV[0][0] = "\"" + mRunningCalculator + "\" "; // add name of calculator; add quotation marks to keep text together
-			writeToFile(outV, "matlabExport");
+			if(vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("OutputPath")))->getValueAsString() == ""){
+				writeToFile(outV, "matlabExport");
+			}else{
+				writeToFile(outV, vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("OutputPath")))->getValueAsString());
+			}
 		}
 		
 	}

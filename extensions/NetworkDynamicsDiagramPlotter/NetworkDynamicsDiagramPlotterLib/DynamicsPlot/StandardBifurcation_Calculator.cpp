@@ -69,7 +69,7 @@ namespace nerd {
 	StandardBifurcation_Calculator::StandardBifurcation_Calculator()
 	: DynamicsPlotter("StandardBifurcation_Calculator")
 	{
-		mData = new MatrixValue();
+// 		mData = new MatrixValue();
 		mIdOfObservedNeuron = new ULongLongValue(0);
 		
 		mIdsOfVariedNetworkElements = new StringValue("0"); //comma or |-separated list of network element (either neuron or synapse) IDs.
@@ -83,8 +83,23 @@ namespace nerd {
 		mResetToInitState = new BoolValue(false); // reset to initial activity state after every parameter change; if false: uses last state ("follows attractor")
 		mMaxSteps = new IntValue(500); // defines maximal number of steps that are executed
 		mTolerance = new DoubleValue(0.00001);//Specifies how large the margin is, such that the two outputs count as the same one:   x = x +/- mTolerance
+		mBidirectional = new BoolValue(false);
 
-		addParameter("Data", mData, true);
+		
+		mIdOfObservedNeuron->setDescription("ID of the neuron that is observed.");
+		mIdsOfVariedNetworkElements->setDescription("List of the IDs of the network elements (neurons or synapse) which are varied separated by commas or '|'.");
+		mMinimaOfVariedNetworkElements->setDescription("Comma-separated list of the minimal values of the varied network elements");
+		mMaximaOfVariedNetworkElements->setDescription("Comma-separated list of the maximal values of the varied network elements");
+		mPlotPixelsX->setDescription("Horizontal size of plot, also determines the step size of the parameter change (max - min)/plotPixels");
+		mPlotPixelsY->setDescription("Vertical size of plot, also determines the number of output buckets to which the output is discretesized to.");
+		mResetToInitState->setDescription("If TRUE then the network activity is reset after every network step.");
+		mMaxSteps->setDescription("Maximal number of steps taken, if no attractor is found");
+		mTolerance->setDescription("Tolerance for that two values are taken as the same; x = x +/- tol");
+		mMinOutputRange->setDescription("Minimum of output range");
+		mMaxOutputRange->setDescription("Maximum of output range");
+		mBidirectional->setDescription("If TRUE, the calculator runs twice. After the standard run, parameter min and max are switched, thus the algorithm is backwards.");
+		
+// 		addParameter("Data", mData, true);
 		addParameter("IdOfObservedNeuron", mIdOfObservedNeuron, true);	
 		
 		addParameter("IdsOfVariedNetworkElements", mIdsOfVariedNetworkElements, true);
@@ -98,6 +113,7 @@ namespace nerd {
 		addParameter("Tolerance", mTolerance, true); 
 		addParameter("ResetToInitState", mResetToInitState, true);
 		addParameter("MaxSteps", mMaxSteps, true);
+		addParameter("Bidirectional", mBidirectional, true);
 	}
 
 
@@ -226,9 +242,10 @@ namespace nerd {
 		}
 		
 		//set up matrix:
-		mData->resize(1, 1, 1); //clear matrix 
-		//matrix is as large as diagram (in pixels) + 1:
+		mData->clear();
+		//matrix is as large as diagram (in pixels) + 1
 		mData->resize(plotPixelsX + 1, plotPixelsY + 1, 1); //first dimension = no. of parameter changes; second dimension = number of output buckets
+		mData->fill(0);
 		for(int j = 1; j < plotPixelsY + 1; ++j){
 			mData->set(minOutputRange + (j - 1) * yIncrement, 0, j, 0); //set first matrix column: indices
 		}
@@ -340,13 +357,126 @@ namespace nerd {
 			core->executePendingTasks();
 
 		} //for-loop
+		
+		if(mBidirectional->get()){
+// 			restoreCurrentNetworkActivites(); //??
+			//Prepare parameters:
+			rList.clear();
+			for(int j = 0; j < noOfvElems; j++){
+				rList.append(vMaxsList[j]);
+				xIncrements[j] = -xIncrements[j];
+			}
+			
+			
+			for(int i = plotPixelsX - 1;  i >= 0 ; i--) { //runs through parameter changes
+			//change parameter:
+				for(int j = 0; j < noOfvElems; j++){ 
+					setVariedNetworkElementValue(vElemsList[j], rList[j]); //inherited by parent class DynamicsPlotter
+				}		
+			
+				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last value is used 
+			
+				attractorFound = false;
+				for(int j = 0; j < maxSteps && attractorFound == false; j++){ //evaluate network with current parameters
+				//this executes the neural network once.
+					mEvaluateNetworkEvent->trigger();
+				
+					for(int k = 0; k < numberNeurons; k++){ //add all neuron activations to temporary matrix
+						tempMatrix[j][k] = neuronsList.at(k)->getOutputActivationValue().get(); 
+					}
+				
+				//check if network state appeared before:
+					for(int m = j - 1; m >= 0 && attractorFound == false;--m){ 
+						attractorFound = true;
+						for(int k = 0; k < numberNeurons && attractorFound == true; k++){
+							if(fabs(tempMatrix[m][k] - tempMatrix[j][k]) > fabs(mTolerance->get())){ // if one neuron's output is unequal to its output at the respective former time step
+								attractorFound = false;	// break inner for-loop
+							}
+						}
+						periodLength = j - m; //period length of found attractor
+					}
+					numberOfSteps = j; 
+
+
+
+				//This is important: allows to quit the application while the plotter is running.
+					if(core->isShuttingDown()) {
+						return;
+					}			
+				//This is important: it keeps the system alive!
+					core->executePendingTasks();
+			
+				}//for-loop: evaluation
+
+		
+				if(attractorFound){
+				//save outputs from the last step to the one where the repetition was found
+					for(int j = numberOfSteps - periodLength + 1; j <= numberOfSteps; j++){
+						neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+					//find pixel for neuronOutput:
+					//calculate double modulus: thx to http://bytes.com/topic/c/answers/495889-modulus-double-variables ??@chris -> so was in Refs?
+						if(neuronOutput < minOutputRange || neuronOutput > maxOutputRange){
+						}else{
+							temp = static_cast<int>( (neuronOutput - minOutputRange) / yIncrement); //how often fits the bucket in neuronOutput (starting at minOutputRange)
+							doubleMod = neuronOutput - minOutputRange - static_cast<double>(temp) * yIncrement; //get modulus neuronOutput%yIncrement
+						//round:
+							if (doubleMod < 0.5 * yIncrement){
+								neuronOutput = neuronOutput  - doubleMod; //round to a multiple of yIncrement (starting at minOutputRange)
+							}else{ 
+								neuronOutput = neuronOutput + yIncrement- doubleMod;
+							}
+						
+						
+							mData->set(1, i + 1, int((neuronOutput + yIncrement - minOutputRange)/yIncrement + 0.5), 0); 
+						}
+					}
+				}else{
+				//no attractor found - plot all activations of output neuron
+					for(int j = 0; j < maxSteps; j++){
+						neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+						if(neuronOutput < minOutputRange || neuronOutput > maxOutputRange){
+						//do nothing
+						}else{
+						//find pixel for neuronOutput:
+						//calculate double modulus: thx to http://bytes.com/topic/c/answers/495889-modulus-double-variables ??@chris -> so was in Refs?
+							temp = static_cast<int>( (neuronOutput - minOutputRange) / yIncrement);
+							doubleMod = neuronOutput - minOutputRange - static_cast<double>(temp) * yIncrement;
+						//round:
+							if (doubleMod < 0.5 * yIncrement){
+								neuronOutput = neuronOutput  - doubleMod;
+							}else{ 
+								neuronOutput = neuronOutput + yIncrement- doubleMod;
+							}
+						
+							mData->set(1, i + 1, int((neuronOutput + yIncrement - minOutputRange)/yIncrement + 0.5), 0); 
+						}
+					}
+				}//if-statement
+	
+				for(int j = 0; j < noOfvElems; j++){
+					rList[j] = rList[j] + xIncrements[j]; //set new parameter values
+				}
+			
+			//This is important: allows to quit the application while the plotter is running.
+				if(Core::getInstance()->isShuttingDown()) {
+					return;
+				}
+
+			//This is important: it keeps the system alive!
+				core->executePendingTasks();
+
+			} //for-loop
+			
+		}//if-clause: bidirectional
+		
 		restoreCurrentNetworkActivites();
 		
 		//restore former bias values and synapse strengths
 		for(int j = 0; j < noOfvElems; j++){
 			setVariedNetworkElementValue(vElemsList[j], oldValues[j]);
 		}
-	}
+		
+	}//calculateData()
 
 
 }

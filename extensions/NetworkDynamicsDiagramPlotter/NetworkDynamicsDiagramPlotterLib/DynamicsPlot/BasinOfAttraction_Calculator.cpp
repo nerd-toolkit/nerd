@@ -61,7 +61,7 @@ namespace nerd {
  */
 	BasinOfAttraction_Calculator::BasinOfAttraction_Calculator() : DynamicsPlotter("BasinOfAttraction_Calculator")
 	{
-		mData = new MatrixValue(); //data matrix
+
 		
 		// IDs, minima, maxima for network elements, that will be plotted on x-axis:
 		mIdsOfVariedNeuronsX = new StringValue("0, 0 | 0");
@@ -79,7 +79,24 @@ namespace nerd {
 		mTolerance = new DoubleValue(0.000001);//Specifies how large the margin is, such that the two outputs count as the same one 
 		mMaxPeriod = new IntValue(16); //max. size of period that can be found
 
-		addParameter("Data", mData, true);
+		
+		mIdsOfVariedNeuronsX->setDescription("Comma-separated list of IDs of the neurons that are varied (x-axis).");
+// 		mIdsOfVariedNetwor->setDescription("List of the IDs of the network elements (neurons or synapse) which are varied separated by commas or '|'.");
+		mMinimaOfVariedNeuronsX->setDescription("Comma-separated list of the minimal values of the varied network elements (x-axis)");
+		mMaximaOfVariedNeuronsX->setDescription("Comma-separated list of the maximal values of the varied network elements (x-axis)");
+		mIdsOfVariedNeuronsY->setDescription("Comma-separated list of IDs of the neurons that are varied (y-axis).");
+		mMinimaOfVariedNeuronsY->setDescription("Comma-separated list of the minimal values of the varied network elements (y-axis)");
+		mMaximaOfVariedNeuronsY->setDescription("Comma-separated list of the maximal values of the varied network elements (y-axis)");
+		mPlotPixelsX->setDescription("Horizontal size of plot, also determines the step size of the parameter change (max - min)/plotPixels");
+		mPlotPixelsY->setDescription("Vertical size of plot, also determines the step size of the parameter change (max - min)/plotPixels");
+		mResetToInitState->setDescription("If TRUE then the network activity is reset after every network step.");
+		mMaxSteps->setDescription("Maximal number of steps taken, if no attractor is found");
+		mTolerance->setDescription("Tolerance for that two values are taken as the same; x = x +/- tol");
+		mMaxPeriod->setDescription("Maximal size of period that will be found.");
+		
+		
+		
+		
 		addParameter("XIdsOfVariedNeurons", mIdsOfVariedNeuronsX, true);
 		addParameter("XMinimaOfVariedNeurons", mMinimaOfVariedNeuronsX, true);
 		addParameter("XMaximaOfVariedNeurons", mMaximaOfVariedNeuronsX, true);
@@ -102,9 +119,9 @@ namespace nerd {
 	BasinOfAttraction_Calculator::~BasinOfAttraction_Calculator() {
 	}
 
-		/**
+	/**
 	 * Calculates the output data
-		 */
+	 */
 	void BasinOfAttraction_Calculator::calculateData() {
 		if(mNextStepEvent == 0 || mResetEvent == 0 || mEvaluateNetworkEvent == 0) {
 			return;
@@ -138,6 +155,14 @@ namespace nerd {
 		int noOfvNeuronsX = vIdsListX.size();//No. of neurons
 		int noOfvNeuronsY = vIdsListY.size();
 		
+		for(int j = 0; j < noOfvNeuronsX; j++){
+			for(int k = 0; k < noOfvNeuronsY; k++){
+				if(vIdsListX[j]->get() == vIdsListY[k]->get()){
+					Core::log("BasinOfAttraction_Calculator: Warning! IDs should not be used in both parameters!", true);
+				}
+			}
+		}
+		
 		QList<Neuron*> vNeuronsListX; //list of neurons
 		QList<Neuron*> vNeuronsListY;
 		
@@ -164,6 +189,10 @@ namespace nerd {
 		int numberNeurons = network->getNeurons().count();
 		int maxSteps = mMaxSteps->get();
 		int maxPeriod = mMaxPeriod->get();
+		if(maxPeriod > maxSteps){
+			Core::log("BasinOfAttractionCalculator: MaxPeriod must not be larger that max steps.", true);
+			return;	
+		}
 		bool resetToInitState = mResetToInitState->get();
 
 		int plotPixelsX = mPlotPixelsX->get();
@@ -216,17 +245,14 @@ namespace nerd {
 		QList<Neuron*> neuronsList = network->getNeurons();
 		
 		//set up matrix:
-		mData->resize(1, 1, 1); //clear matrix 
+		mData->clear();
 		//matrix is as large as diagram (in pixels) + 1
 		mData->resize(plotPixelsX + 1, plotPixelsY + 1, 1); //first dimension = no. of parameter changes; second dimension = number of output buckets
+		mData->fill(0);
 		
 		storeCurrentNetworkActivities();
 		//evaluate
 		for(int i = 0;  i < plotPixelsX; i++) { //runs through x-parameter changes
-			
-
-			
-			
 			//set first matrix row: indices of x-axis 
 			if(noOfvNeuronsX == 1){
 				mData->set(rListX[0], i + 1, 0, 0);//if only one parameter is changed, take its values
@@ -247,6 +273,7 @@ namespace nerd {
 				}else if(i == 0){
 					mData->set(l + 1, 0, l + 1, 0); //if more, take pixelcount
 				}
+
 				
 				attractorFound = false;
 				for(int j = 0; j < maxSteps && attractorFound == false; j++){//look for attractor	
@@ -278,9 +305,7 @@ namespace nerd {
 				for(int j = 0; j < noOfvNeuronsY; j++){
 					rListY[j] = rListY[j] + yIncrements[j]; 
 				}
-				for(int j = 0; j < noOfvNeuronsX; j++){
-					rListX[j] = rListX[j] + xIncrements[j]; 
-				}
+
 				
 				if(attractorFound){//update data matrix
 					mData->set(periodLength, i + 1, l + 1, 0); 
@@ -290,7 +315,9 @@ namespace nerd {
 				
 				
 			}//for-loop: y-params
-		
+			for(int j = 0; j < noOfvNeuronsX; j++){
+				rListX[j] = rListX[j] + xIncrements[j]; 
+			}
 							
 			//This is important: allows to quit the application while the plotter is running.
 			if(Core::getInstance()->isShuttingDown()) {
