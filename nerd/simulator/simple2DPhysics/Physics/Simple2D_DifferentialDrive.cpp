@@ -43,10 +43,12 @@
 
 
 
-#include "Simple2D_BoxBody.h"
+#include "Simple2D_DifferentialDrive.h"
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
+#include "Math/Math.h"
+
 
 using namespace std;
 
@@ -54,16 +56,29 @@ namespace nerd {
 
 
 /**
- * Constructs a new Simple2D_BoxBody.
+ * Constructs a new Simple2D_DifferentialDrive.
  */
-Simple2D_BoxBody::Simple2D_BoxBody(const QString &name)
-	: BoxBody(name), Simple2D_Body()
+Simple2D_DifferentialDrive::Simple2D_DifferentialDrive(const QString &name)
+	: SimBody(name), Simple2D_Body(), mLeftVelocity(0), mRightVelocity(0), 
+		mWidth(0), mMinVelocity(0), mMaxVelocity(0)
 {
-}
+	mMinVelocity = new DoubleValue(-0.01);
+	mMaxVelocity = new DoubleValue(0.01);
+	mWidth = new DoubleValue(0.2);
 
-Simple2D_BoxBody::Simple2D_BoxBody(const QString &name, double width, double height, double depth)
-	: BoxBody(name, width, height, depth), Simple2D_Body()
-{
+	mLeftVelocity = new InterfaceValue(getName(), "LeftVelocity", 0.0, mMinVelocity->get(), 
+									   mMaxVelocity->get());
+	mRightVelocity = new InterfaceValue(getName(), "RightVelocity", 0.0, mMinVelocity->get(), 
+									   mMaxVelocity->get());
+
+	addParameter("MinVelocity", mMinVelocity);
+	addParameter("MaxVelocity", mMaxVelocity);
+	addParameter("Width", mWidth);
+	addParameter("LeftVelocity", mLeftVelocity);
+	addParameter("RightVelocity", mRightVelocity);
+
+	mInputValues.append(mLeftVelocity);
+	mInputValues.append(mRightVelocity);
 
 }
 
@@ -71,67 +86,93 @@ Simple2D_BoxBody::Simple2D_BoxBody(const QString &name, double width, double hei
 /**
  * Copy constructor. 
  * 
- * @param other the Simple2D_BoxBody object to copy.
+ * @param other the Simple2D_DifferentialDrive object to copy.
  */
-Simple2D_BoxBody::Simple2D_BoxBody(const Simple2D_BoxBody &other) 
-	: ValueChangedListener(), BoxBody(other), Simple2D_Body(other)
+Simple2D_DifferentialDrive::Simple2D_DifferentialDrive(const Simple2D_DifferentialDrive &other) 
+	: Object(), ValueChangedListener(), SimBody(other), SimActuator(), Simple2D_Body(other)
 {
+	mMinVelocity = dynamic_cast<DoubleValue*>(getParameter("MinVelocity"));
+	mMaxVelocity = dynamic_cast<DoubleValue*>(getParameter("MaxVelocity"));
+	mWidth = dynamic_cast<DoubleValue*>(getParameter("Width"));
+	mLeftVelocity = dynamic_cast<InterfaceValue*>(getParameter("LeftVelocity"));
+	mRightVelocity = dynamic_cast<InterfaceValue*>(getParameter("RightVelocity"));
+
+	mInputValues.clear();
+	mInputValues.append(mLeftVelocity);
+	mInputValues.append(mRightVelocity);
 }
 
 /**
  * Destructor.
  */
-Simple2D_BoxBody::~Simple2D_BoxBody() {
-}
-
-SimBody* Simple2D_BoxBody::createCopy() const {
-	return new Simple2D_BoxBody(*this);
+Simple2D_DifferentialDrive::~Simple2D_DifferentialDrive() {
 }
 
 
-void Simple2D_BoxBody::setup() {
-	BoxBody::setup();
+SimObject* Simple2D_DifferentialDrive::createCopy() const {
+	return new Simple2D_DifferentialDrive(*this);
 }
 
+void Simple2D_DifferentialDrive::updateActuators() {
 
-void Simple2D_BoxBody::clear() {
-	BoxBody::clear();
-	clearChildBodies();
-}
+	double velRight = mRightVelocity->get();
+	double velLeft = mLeftVelocity->get();
+	
+	double x = 0.0;
+	double y = 0.0;
+	double angle = mOrientationValue->getY();
+	double angleDiff = 0.0;
 
-
-void Simple2D_BoxBody::synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm *psa) {
-	BoxBody::synchronizeWithPhysicalModel(psa);
-}
-
-
-void Simple2D_BoxBody::valueChanged(Value *value) {
-	BoxBody::valueChanged(value);
-	if(value == 0) {
+	if(mWidth->get() == 0) {
+		//prevent division by zero.
 		return;
+	}
+
+	double globalAngleRad = ((angle) / 180.0 * Math::PI);
+	double th = ((velRight - velLeft) / mWidth->get());
+		
+	x = (velRight + velLeft) / 2.0 * Math::cos(th + globalAngleRad);
+	y = (velRight + velLeft) / 2.0 * Math::sin(th + globalAngleRad);
+
+	if(x != 0.0 || y != 0.0) {
+		addTranslation(x, -y);
+	}
+	if(th != 0.0) {
+		addRotation(th, mPositionValue->getX(), mPositionValue->getZ());
 	}
 }
 
-bool Simple2D_BoxBody::addParameter(const QString &name, Value *value) {
-	return BoxBody::addParameter(name, value);
+
+bool Simple2D_DifferentialDrive::addParameter(const QString &name, Value *value) {
+	return SimBody::addParameter(name, value);
 }
 
 
-Value* Simple2D_BoxBody::getParameter(const QString &name) const {
-	return BoxBody::getParameter(name);
+Value* Simple2D_DifferentialDrive::getParameter(const QString &name) const {
+	return SimBody::getParameter(name);
 }
 
-
-Vector3DValue* Simple2D_BoxBody::getPositionValue() const {
+Vector3DValue* Simple2D_DifferentialDrive::getPositionValue() const {
 	return mPositionValue;
 }
 
 
-Vector3DValue* Simple2D_BoxBody::getOrientationValue() const {
+Vector3DValue* Simple2D_DifferentialDrive::getOrientationValue() const {
 	return mOrientationValue;
 }
 
-
+void Simple2D_DifferentialDrive::valueChanged(Value *value) {
+	SimBody::valueChanged(value);
+	if(value == 0) {
+		return;
+	}
+	else if(value == mMinVelocity || value == mMaxVelocity) {
+		mLeftVelocity->setMin(mMinVelocity->get());
+		mLeftVelocity->setMax(mMaxVelocity->get());
+		mRightVelocity->setMin(mMinVelocity->get());
+		mRightVelocity->setMax(mMaxVelocity->get());
+	}
+}
 
 
 }

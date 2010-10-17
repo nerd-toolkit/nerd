@@ -42,67 +42,53 @@
  ***************************************************************************/
 
 
-#ifndef NERDMath_H
-#define NERDMath_H
+#ifndef ORCSSimple2D_DifferentialDrive_H
+#define ORCSSimple2D_DifferentialDrive_H
 
-#include <QVector>
-#include <QPoint>
-#include <QPointF>
-#include "Math/Vector3D.h"
+#include <QString>
+#include <QHash>
+#include "Physics/SimBody.h"
+#include "Physics/SimActuator.h"
+#include "Value/InterfaceValue.h"
+#include "Value/DoubleValue.h"
+#include "Physics/Simple2D_Body.h"
+
 
 namespace nerd {
 
 	/**
-	 * Math.
+	 * Simple2D_DifferentialDrive.
 	 *
-	 * Provides some mathematical methods for convenience.
 	 */
-	class Math {
+	class Simple2D_DifferentialDrive : public SimBody, public SimActuator, public Simple2D_Body {
 	public:
-		Math();
-		virtual ~Math();
+		Simple2D_DifferentialDrive(const QString &name);
+		Simple2D_DifferentialDrive(const Simple2D_DifferentialDrive &other);
+		virtual ~Simple2D_DifferentialDrive();
 
-		static double round(double value, int numberOfDigits = 5);
-		static bool compareDoubles(double value1, double value2, 
-						int precision = 5, bool verbose = false);
-		static bool compareDoubles(double value1, double value2, 
-						double maxError);
-		static int forceToRange(int value, int min, int max);
-		static double forceToRangeDouble(double value, double min, double max);
-		static double forceToDegreeRange(double value);
-		static double forceToRadRange(double value);
+		virtual SimObject* createCopy() const;
 
-		static int abs(int value);
-		static double abs(double value);
+		virtual void updateActuators();
 
-		static double min(double value1, double value2);
-		static int min(int value1, int value2);
-		static qulonglong min(qulonglong value1, qulonglong value2);
-		static double max(double value1, double value2);
-		static int max(int value1, int value2);
-		static qulonglong max(qulonglong value1, qulonglong value2);
+		virtual bool addParameter(const QString &name, Value *value);
+		virtual Value* getParameter(const QString &name) const;
 
-		static double calculateGaussian(double mean, double deviation);
-		static double calculateUniformNoise(double mean, double range);
-		static double getNextUniformlyDistributedValue(double range);
-		static double getNextGaussianDistributedValue(double deviation);
+		virtual Vector3DValue* getPositionValue() const;
+		virtual Vector3DValue* getOrientationValue() const;
 
-		static double distance(const QPoint &p1, const QPoint &p2);
-		static double distance(const QPointF &p1, const QPointF &p2);
-		static double distance(const Vector3D &p1, const Vector3D &p2);
+		virtual void valueChanged(Value *value);
 
-		static double sin(double value);
-		static double cos(double value);
-
-		static QPointF centerOfLine(const QPointF &p1, const QPointF &p2, double offset = 0.0);
-
-	public:
-		static const double PI;
-
+	private:
+		InterfaceValue *mLeftVelocity;
+		InterfaceValue *mRightVelocity;
+		DoubleValue *mWidth;
+		DoubleValue *mMinVelocity;
+		DoubleValue *mMaxVelocity;
 	};
 
 }
 
 #endif
+
 
 

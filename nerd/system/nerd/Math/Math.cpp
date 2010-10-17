@@ -159,6 +159,21 @@ double Math::forceToRangeDouble(double value, double min, double max) {
 	return value;
 }
 
+double Math::forceToDegreeRange(double value) {
+	while(value < 0) {
+		value += 360.0;
+	}
+	while(value >= 360.0) {
+		value -= 360.0;
+	}
+	return value;
+}
+
+
+double Math::forceToRadRange(double value) {
+	return forceToDegreeRange(value / Math::PI * 180.0) * Math::PI / 180.0;
+}
+
 int Math::abs(int value) {
 	if(value < 0) {
 		return -value;
@@ -273,6 +288,10 @@ double  Math::distance(const QPoint &p1, const QPoint &p2) {
 
 double Math::sin(double value) {
 	return ::sin(value);
+}
+
+double Math::cos(double value) {
+	return ::cos(value);
 }
 
 double Math::distance(const QPointF &p1, const QPointF &p2) {

@@ -140,6 +140,8 @@ namespace nerd {
 		static const QString PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_3;
 		static const QString PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_4;
 
+		static const QString PROTOTYPE_DIFFERENTIAL_DRIVE;
+
 	};
 
 }

@@ -48,6 +48,7 @@
 #include <QList>
 #include "Core/Core.h"
 #include "Physics/SimBody.h"
+#include "Math/Math.h"
 
 using namespace std;
 
@@ -58,16 +59,10 @@ namespace nerd {
  * Constructs a new Simple2D_Body.
  */
 Simple2D_Body::Simple2D_Body()
-	: mLocalPosition(0), mLocalOrientation(0)
+	: mParent(0), mLocalPosition(0), mLocalOrientation(0)
 {
 	mLocalPosition = new Vector3DValue();
 	mLocalOrientation = new Vector3DValue();
-
-	SimBody *simBody = dynamic_cast<SimBody*>(this);
-	if(simBody != 0) {
-		simBody->addParameter("LocalPosition", mLocalPosition);
-		simBody->addParameter("LocalOrientation", mLocalOrientation);
-	}
 }
 
 
@@ -77,13 +72,10 @@ Simple2D_Body::Simple2D_Body()
  * @param other the Simple2D_Body object to copy.
  */
 Simple2D_Body::Simple2D_Body(const Simple2D_Body &other) 
-	: mLocalPosition(0), mLocalOrientation(0)
+	: mParent(0), mLocalPosition(0), mLocalOrientation(0)
 {
-	SimBody *simBody = dynamic_cast<SimBody*>(this);
-	if(simBody != 0) {
-		mLocalPosition = dynamic_cast<Vector3DValue*>(simBody->getParameter("LocalPosition"));
-		mLocalOrientation = dynamic_cast<Vector3DValue*>(simBody->getParameter("LocalOrientation"));
-	}
+	mLocalPosition = new Vector3DValue();
+	mLocalOrientation = new Vector3DValue();
 }
 
 /**
@@ -134,19 +126,65 @@ Vector3DValue* Simple2D_Body::getLocalOrientationValue() const {
 	return mLocalOrientation;
 }
 
-void Simple2D_Body::addRotation(double xRad, double yRad, const QPointF &origin) {
+void Simple2D_Body::addRotation(double rad, double x, double y) {
 
+	if(rad == 0.0) {
+		return;
+	}
+
+	Vector3DValue *position = getPositionValue();
+	Vector3DValue *orientation = getOrientationValue();
+
+	if(position == 0 || orientation == 0) {
+		Core::log("Simple2D_Body: Could not find required position or orientation parameter.");
+		return;
+	}
+
+	double posX = ((position->getX() - x) * Math::cos(-rad)) 
+				 - ((position->getZ() - y) * Math::sin(-rad))
+				 + x;
+	double posY = ((position->getX() - x) * Math::sin(-rad)) 
+				 + ((position->getZ() - y) * Math::cos(-rad))
+				 + y;
+
+	double newAngle = Math::forceToRadRange((orientation->getY() / 180.0 * Math::PI) + rad);
+
+	orientation->set(orientation->getX(), 
+						newAngle * 180.0 / Math::PI, 
+						orientation->getZ());
+	position->set(posX, position->getY(), posY);
+
+	for(QListIterator<Simple2D_Body*> i(mChildBodies); i.hasNext();) {
+		Simple2D_Body *body = i.next();
+		body->addRotation(rad, x, y);
+	}
+
+	//x' = (x-u) cos(beta) - (y-v) sin(beta) + u
+	//y' = (x-u) sin(beta) + (y-v) cos(beta) + v 
 }
 
 void Simple2D_Body::addTranslation(double x, double y) {
-	SimBody *body = dynamic_cast<SimBody*>(this);
-	if(body != 0) {
-		Vector3DValue *pos = body->getPositionValue();
-		body->getPositionValue()->set(pos->getX() + x, pos->getY(), pos->getZ() + y);
+
+	Vector3DValue *position = getPositionValue();
+	if(position != 0) {
+		position->set(position->getX() + x, position->getY(), position->getZ() + y);
 	}
 	else {
-		Core::log("Simple2D_Body: This object is not a SimBody!");
+		Core::log("Simple2D_Body: This object is not a SimBody!", true);
+	}
+	for(QListIterator<Simple2D_Body*> i(mChildBodies); i.hasNext();) {
+		Simple2D_Body *body = i.next();
+		body->addTranslation(x, y);
 	}
 }
 
+
+Vector3DValue* Simple2D_Body::getLocalPosition() {
+	return mLocalPosition;
+}
+
+
+Vector3DValue* Simple2D_Body::getLocalOrientation() {
+	return mLocalOrientation;
+}
 }

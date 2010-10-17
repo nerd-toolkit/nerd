@@ -55,6 +55,7 @@
 #include "Physics/Simple2D_BoxBody.h"
 #include "Physics/Simple2D_FixedJoint.h"
 #include "Physics/Simple2D_SliderMotor.h"
+#include "Physics/Simple2D_DifferentialDrive.h"
 
 using namespace std;
 
@@ -82,6 +83,9 @@ Simple2D_Physics::Simple2D_Physics()
 
 	pm->addPrototype(SimulationConstants::PROTOTYPE_SLIDER_MOTOR,
 		new Simple2D_SliderMotor(SimulationConstants::PROTOTYPE_SLIDER_MOTOR));
+
+	pm->addPrototype(SimulationConstants::PROTOTYPE_DIFFERENTIAL_DRIVE,
+		new Simple2D_DifferentialDrive(SimulationConstants::PROTOTYPE_DIFFERENTIAL_DRIVE));
 }
 
 /**

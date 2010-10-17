@@ -47,6 +47,8 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
+#include "Physics/SimBody.h"
+#include "Physics/Simple2D_Body.h"
 
 using namespace std;
 
@@ -85,6 +87,35 @@ SimObject* Simple2D_FixedJoint::createCopy() const {
 		
 void Simple2D_FixedJoint::setup() {
 	FixedJoint::setup();
+
+	Simple2D_Body *parentBody = dynamic_cast<Simple2D_Body*>(getFirstBody());
+	Simple2D_Body *child = dynamic_cast<Simple2D_Body*>(getSecondBody());
+
+	if(child != 0 && parentBody != 0) {
+		if(child->getParent() != 0 && child->getParent() != parentBody) {
+			Core::log("Simple2D_FixedJoint::setup(): Warning, child ["
+				+ getSecondBody()->getName() + "] has multiple parents!");
+			return;
+		}
+		parentBody->addChildBody(child);
+		child->setParent(parentBody);
+
+		//calculate local orientation and position
+		Vector3DValue *globalChildPosition = child->getPositionValue();
+		Vector3DValue *globalChildOrientation = child->getOrientationValue();
+		Vector3DValue *localChildPosition = child->getLocalPosition();
+		Vector3DValue *localChildOrientation = child->getLocalOrientation();
+		Vector3DValue *globalParentPosition = parentBody->getPositionValue();
+		Vector3DValue *globalParentOrientation = parentBody->getOrientationValue();
+
+		localChildPosition->set(globalChildPosition->getX() - globalParentPosition->getX(),
+								globalChildPosition->getY() - globalParentPosition->getY(),
+								globalChildPosition->getZ() - globalParentPosition->getZ());
+		localChildOrientation->set(globalChildOrientation->getX() - globalParentOrientation->getX(),
+								globalChildOrientation->getY() - globalParentOrientation->getY(),
+								globalChildOrientation->getZ() - globalParentOrientation->getZ());
+	}
+	
 }
 
 

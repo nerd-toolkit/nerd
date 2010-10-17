@@ -73,8 +73,16 @@ namespace nerd {
 		Vector3DValue* getLocalPositionValue() const;
 		Vector3DValue* getLocalOrientationValue() const;
 		
-		void addRotation(double xRad, double yRad, const QPointF &origin);
+		void addRotation(double rad, double x, double y);
 		void addTranslation(double x, double y);
+
+		virtual bool addParameter(const QString &name, Value *value) = 0;
+		virtual Value* getParameter(const QString &name) const = 0;
+
+		virtual Vector3DValue* getPositionValue() const = 0;
+		virtual Vector3DValue* getOrientationValue() const = 0;
+		Vector3DValue* getLocalPosition();
+		Vector3DValue* getLocalOrientation();
 
 	private:
 		QList<Simple2D_Body*> mChildBodies;

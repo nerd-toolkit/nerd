@@ -56,7 +56,7 @@ namespace nerd {
 	 * Simple2D_BoxBody.
 	 *
 	 */
-	class Simple2D_BoxBody : public BoxBody, public Simple2D_Body {
+	class Simple2D_BoxBody : public virtual BoxBody, public virtual Simple2D_Body {
 	public:
 		Simple2D_BoxBody(const QString &name);
 		Simple2D_BoxBody(const QString &name, double width, double height, double depth);
@@ -69,6 +69,12 @@ namespace nerd {
 		virtual void synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm *psa);
 
 		virtual void valueChanged(Value *value);
+
+		virtual bool addParameter(const QString &name, Value *value);
+		virtual Value* getParameter(const QString &name) const;
+
+		virtual Vector3DValue* getPositionValue() const;
+		virtual Vector3DValue* getOrientationValue() const;
 
 	private:
 	};

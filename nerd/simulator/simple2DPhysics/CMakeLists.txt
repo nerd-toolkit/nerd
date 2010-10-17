@@ -10,6 +10,7 @@ set(nerd_simple2DPhysics_SRCS
 	Physics/Simple2D_FixedJoint.cpp
 	Physics/Simple2D_Body.cpp
 	Physics/Simple2D_SliderMotor.cpp
+	Physics/Simple2D_DifferentialDrive.cpp
 )
 
 set(nerd_simple2DPhysics_MOC_HDRS

@@ -156,3 +156,5 @@ const QString SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_1 =
 const QString SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_2 = "Prototypes/MSeriesTorqueDynamixelMotor2";
 const QString SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_3 = "Prototypes/MSeriesTorqueDynamixelMotor3";
 const QString SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_4 = "Prototypes/MSeriesTorqueDynamixelMotor4";
+
+const QString SimulationConstants::PROTOTYPE_DIFFERENTIAL_DRIVE = "Prototypes/DifferentialDrive";
