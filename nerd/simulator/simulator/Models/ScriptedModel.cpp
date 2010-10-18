@@ -180,6 +180,9 @@ int ScriptedModel::createObject(const QString &prototypeName, const QString &nam
 		mSimObjectsLookup.insert(id, newObject);
 	}
 	newObject->setName(name);
+
+	//by default the new object is the current object.
+	mCurrentSimObject = newObject;
 	return id;
 }
 

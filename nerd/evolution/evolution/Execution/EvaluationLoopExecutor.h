@@ -93,7 +93,7 @@ class EvaluationLoopExecutor : public QThread, public EvaluationLoop, public vir
 		void quitMainApplication();
 
 	private:
-
+		bool mInitialized;
 		bool mRealTimeSupport;
 		QTimer mRealTimeTrigger;
 		IntValue *mSimulationDelay;

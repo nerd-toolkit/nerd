@@ -290,7 +290,11 @@ void LightSource::createCollisionObject() {
 		mBodyCollisionObject = new CollisionObject(SphereGeom(this, mRange->get()));
 	}
 	else {
-		mBodyCollisionObject = new CollisionObject(CylinderGeom(this, mRange->get(), 0.05));
+		CylinderGeom geom(this, mRange->get(), 0.05);	
+		Quaternion orientation;
+		orientation.setFromAngles(90.0, 0.0, 0.0);
+		geom.setLocalOrientation(orientation);
+		mBodyCollisionObject = new CollisionObject(geom);
 	}
 	addGeometry(mBodyCollisionObject->getGeometry());
 	mBodyCollisionObject->setMaterialType("Light");

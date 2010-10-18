@@ -64,7 +64,8 @@ using namespace std;
 namespace nerd{
 
 
-EvaluationLoopExecutor::EvaluationLoopExecutor() : EvaluationLoop(), mRealTimeSupport(true), 
+EvaluationLoopExecutor::EvaluationLoopExecutor() : EvaluationLoop(), mInitialized(false),
+				mRealTimeSupport(true), 
 				mSimulationDelay(0), mUseRealtimeValue(0), mTimeStepSizeValue(0), 
 				mNextIndividualEvent(0), mIndividualCompletedEvent(0), mCurrentIndividual(0) 
 {
@@ -104,7 +105,7 @@ void EvaluationLoopExecutor::valueChanged(Value *value) {
 		return;
 	}
 	else if(value == mUseRealtimeValue && mRealTimeSupport) {
-		if(mUseRealtimeValue->get()) {
+		if(mUseRealtimeValue->get() && mInitialized) {
 			emit startRealtime((int) (mTimeStepSizeValue->get() * 1000.0));
 		}
 		else {
@@ -125,6 +126,11 @@ QString EvaluationLoopExecutor::getName() const{
 void EvaluationLoopExecutor::run() {
 	//set the running thread as main execution thread.
 	Core::getInstance()->setMainExecutionThread();
+
+	mInitialized = true;
+	if(mUseRealtimeValue->get()) {
+		emit startRealtime((int) (mTimeStepSizeValue->get() * 1000.0));
+	}
 
 	int numberOfIndividuals = mNumberOfIndividuals->get();
 	bool unboundedNumberOfIndividuals = false;

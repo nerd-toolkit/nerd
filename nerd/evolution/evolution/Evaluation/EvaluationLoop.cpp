@@ -209,6 +209,10 @@ bool EvaluationLoop::bind() {
 	mRunInRealTime = Core::getInstance()->getValueManager()->getBoolValue(
 				EvolutionConstants::VALUE_RUN_SIMULATION_IN_REALTIME);
 	
+	if(!mIsEvolutionMode && mRunInRealTime != 0) {
+		mRunInRealTime->set(true);
+	}
+
 	return bindOk;
 }
 
@@ -278,10 +282,6 @@ void EvaluationLoop::valueChanged(Value *value) {
 
 void EvaluationLoop::executeEvaluationLoop() {
 	TRACE("EvaluationLoop::executeEvaluationLoop");
-
-	if(!mIsEvolutionMode && mRunInRealTime != 0) {
-		mRunInRealTime->set(true);
-	}
 
 	bool unboundedNumberOfTries = false;
 	if(mNumberOfTries == -1) {

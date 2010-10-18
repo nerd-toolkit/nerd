@@ -97,7 +97,7 @@ namespace nerd{
 #define SKY_SIZE          800
 #define HEIGHT_SKY        15
 #define SCALE_SKY         5
-#define PLANE_SIZE				10
+#define PLANE_SIZE        50
 
 
 class ChangeVectorValueTask : public Task {
