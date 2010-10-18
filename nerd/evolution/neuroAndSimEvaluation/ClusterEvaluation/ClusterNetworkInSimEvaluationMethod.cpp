@@ -59,6 +59,7 @@
 #include <iostream>
 #include "Util/Tracer.h"
 #include <QCoreApplication>
+#include <QDir>
 
 #define TRACE(message)
 //#define TRACE(message) Tracer _ttt_(message);
@@ -427,6 +428,9 @@ bool ClusterNetworkInSimEvaluationMethod::createJobScript() {
 	mJobScriptContent = "";
 	QTextStream script(&mJobScriptContent, QIODevice::WriteOnly | QIODevice::Truncate);
 
+	QString applicationCall = mApplication->get();
+	applicationCall = applicationCall.replace("$HOME$", QDir::currentPath());
+
 	script << "#!/bin/sh" << endl << endl;
 	script << "TASK_ID=$1" << endl;
 	script << "ARGUMENT_POSTFIX=" << endl << endl;
@@ -457,7 +461,7 @@ bool ClusterNetworkInSimEvaluationMethod::createJobScript() {
 	script << "then shift" << endl;
 	script << "fi" << endl;
 	script << "cd $EVAL_DIR" << endl;
-	script << mApplication->get() << mApplicationParameter << " -nogui -disableLogging $ARGUMENT_POSTFIX $* " << endl << endl;
+	script << applicationCall << mApplicationParameter << " -nogui -disableLogging $ARGUMENT_POSTFIX $* " << endl << endl;
 	script << "exit 0" << endl;
 	return ok;
 }
