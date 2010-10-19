@@ -63,7 +63,8 @@ using namespace std;
 namespace nerd {
 
 PlotterWidget::PlotterWidget(QWidget *parent)
-	: QFrame(parent), mPlotStaticItems(true), mPlotLegend(true), mPerformanceMode(0)
+	: QFrame(parent), mHistorySize(0), mPlotStaticItems(true), mPlotLegend(true), 
+	  mPerformanceMode(0)
 {
 	moveToThread(QCoreApplication::instance()->thread());
 
@@ -130,6 +131,11 @@ bool PlotterWidget::addPlotterItem(PlotterItem *item) {
 		return false;
 	}
 	mPlotterItems.append(item);
+
+	if(item->getHistoryCapacity() > mHistorySize) {
+		mHistorySize = item->getHistoryCapacity(); //TODO rescale all other capacities?
+	}
+
 	//TODO update.
 	emit plotterItemCollectionChanged();
 	return true;
@@ -173,6 +179,8 @@ int PlotterWidget::getNumberOfValuesToPlot() const {
 void PlotterWidget::setHistoryCapacity(int size) {
 	//Lock the PlotterItem list.
 	QMutexLocker guard(&mUpdateMutex);
+
+	mHistorySize = size;
 
 	//Add the names of the PlotterItems.
 	for(int i = 0; i < mPlotterItems.size(); ++i) {
@@ -488,7 +496,13 @@ double PlotterWidget::translateValue(double value, double localOffsetV,
 			* (mDrawableHeight / 2.0)) + 10.0;
 }
 
-
+void PlotterWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+	if(width() == 0) {
+		return;
+	}
+	double xPos = (((double) width()) - ((double) event->x())) * (((double) mHistorySize) / ((double) width()));
+	cerr << "X-Pos: " << xPos << endl;
+}
 
 
 }

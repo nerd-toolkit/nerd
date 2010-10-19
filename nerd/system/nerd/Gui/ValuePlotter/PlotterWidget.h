@@ -107,6 +107,7 @@ namespace nerd {
 		virtual void drawCoordinateRanges(QPainter &painter);
 		virtual void drawLegend(QPainter &painter);
 		virtual double translateValue(double value, double localOffsetV, double localScaleV);
+		virtual void mouseDoubleClickEvent(QMouseEvent *event);
 
 	protected:
 		QList<PlotterItem*> mPlotterItems;
@@ -118,6 +119,7 @@ namespace nerd {
 		double mUserOffsetV;
 		int mMaxValueNameSize;
 		int mNumberOfValuesToPlot;
+		int mHistorySize;
 		QMutex mUpdateMutex;
 		bool mPlotStaticItems;
 		bool mPlotLegend;
