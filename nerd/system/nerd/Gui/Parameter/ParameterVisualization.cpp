@@ -103,6 +103,9 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mValueBox->setEditable(true);
 
 	if(mValue != 0) {
+
+		QString value = mValue->getValueAsString();
+
 		StringValue *stringValue = dynamic_cast<StringValue*>(mValue);
 		if(stringValue != 0 && stringValue->isUsedAsFileName()) {
 			mValueBox->addItem(NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE);
@@ -111,6 +114,7 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
         for(QListIterator<QString> i(options); i.hasNext();) {
             mValueBox->addItem(i.next());
         }
+		mValueBox->setEditText(value);
 	}
 
 
@@ -155,7 +159,7 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	connect(mMoveDownButton, SIGNAL(pressed()),
 			this, SLOT(moveWidgetDown()));
 
-	lineEditTextChanged(mValue->getValueAsString());
+	//lineEditTextChanged(mValue->getValueAsString());
 	mUpdateValue->setCheckState(Qt::Checked);
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
@@ -370,12 +374,17 @@ QString ParameterVisualization::getCurrentValue() const {
 }
 
 void ParameterVisualization::addOption(const QString &optionText) {
+	if(mValue == 0) {
+		return;
+	}
 	for(int i = 0; i < mValueBox->count(); ++i) {
         if(mValueBox->itemText(i) == optionText) {
             return;
         }
 	}
+	QString currentValue = mValueBox->currentText();
 	mValueBox->addItem(optionText);
+	mValueBox->setEditText(currentValue);
 }
 
 QList<QString> ParameterVisualization::getOptions() const {
