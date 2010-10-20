@@ -56,6 +56,8 @@
 
 namespace nerd {
 
+	class NeuralNetworkToolbox;
+
 	/**
 	 * GuessModulePairs.
 	 *
@@ -65,7 +67,7 @@ namespace nerd {
 	{
 	Q_OBJECT
 	public:
-		GuessModulePairs(NeuralNetworkEditor *editor, QObject *owner);
+		GuessModulePairs(NeuralNetworkEditor *editor, NeuralNetworkToolbox *owner);
 		virtual ~GuessModulePairs();
 
 		virtual void clear();
@@ -83,6 +85,9 @@ namespace nerd {
 		
 
 		void createPairString();
+
+	signals:
+		void showElementPairs();
 
 	private:
 		NeuralNetworkEditor *mEditor;

@@ -42,105 +42,66 @@
  ***************************************************************************/
 
 
-
-#ifndef NERDNeuralNetworkToolbox_H
-#define NERDNeuralNetworkToolbox_H
+#ifndef ORCSGuessModulePairsByPosition_H
+#define ORCSGuessModulePairsByPosition_H
 
 #include <QString>
 #include <QHash>
-#include <QObject>
-#include <QMenu>
-#include "Gui/NetworkEditor/NeuralNetworkEditor.h"
 #include "Gui/NetworkEditorTools/NetworkManipulationTool.h"
-#include "Gui/NetworkEditorTools/InsertNeuronNetworkTool.h"
-#include "Gui/NetworkEditorTools/InsertModuleNetworkTool.h"
-#include "Gui/NetworkEditorTools/InsertSynapseNetworkTool.h"
-#include "Gui/NetworkEditorTools/RemoveObjectsNetworkTool.h"
-#include "Gui/NetworkEditorTools/RemoveSelectedObjectsNetworkTool.h"
-#include "Gui/NetworkEditorTools/GrabNetworkElementIdTool.h"
-#include "Gui/NetworkEditor/ModuleItem.h"
-#include "Gui/NetworkEditorTools/ShowElementPairTool.h"
-#include "Gui/NetworkEditorTools/CopyPasteNetworkTool.h"
-#include "Gui/NetworkEditorTools/ReconnectSynapseNetworkTool.h"
-#include "Gui/NetworkEditorTools/ReplaceModuleTool.h"
-#include "Gui/NetworkEditorTools/GuessModulePairs.h"
-#include "Gui/NetworkEditorTools/GuessModulePairsByPosition.h"
-
-
+#include "Gui/NetworkEditor/VisualizationMouseListener.h"
+#include "ModularNeuralNetwork/NeuronGroup.h"
+#include "Value/StringValue.h"
+#include "Gui/NetworkEditor/NeuralNetworkEditor.h"
+#include "Network/Neuron.h"
 
 namespace nerd {
 
+	class NeuralNetworkToolbox;
+
 	/**
-	 * NeuralNetworkToolbox.
+	 * GuessModulePairsByPosition.
 	 *
 	 */
-	class NeuralNetworkToolbox : public QObject {
+	class GuessModulePairsByPosition  : public NetworkManipulationTool, 
+									    public VisualizationMouseListener
+	{
 	Q_OBJECT
 	public:
-		enum {NoTool, InsertNeuronTool, RemoveNeuronTool, InsertSynapseTool};
+		GuessModulePairsByPosition(NeuralNetworkEditor *editor, NeuralNetworkToolbox *owner);
+		virtual ~GuessModulePairsByPosition();
 
-	public:
-		NeuralNetworkToolbox(NeuralNetworkEditor *owner);
-		virtual ~NeuralNetworkToolbox();
+	virtual void clear();
+		virtual void activate(NetworkVisualization *visu);
+		virtual QString getStatusMessage();
 
-	public slots:
-		void editorTabChanged(int index);
-		void toolIsDone();
-		void useInsertNeuronTool();
-		void useInsertModuleTool();
-		void useInsertSynapseTool();
-		void useRemoveObjectsTool();
-		void useRemoveSelectedObjectsTool();
-		void useGrabIdTool();
-		void useCopyPasteTool();
-		void resetCurrentNetwork();
-		void enableModifications(bool enable);
-		void alignAllSynapses();
-		void alignSelectedSynapses();
-		void setAllLocationProperties();
-		void alignNetworkElementsAccordingToLocationProperties();
-		void alignNeuronsHoriztonally();
-		void alignNeuronsVertically();
-		void alignNeuronDistanceHorizontally();
-		void alignNeuronDistanceVertically();
-		void useVisualizeElementPairTool();
-		void useReconnectSynapseTool();
-		void useReplaceModuleTool();
-		void useGuessGroupIdsTool();
-		void useGuessGroupIdsByPositionTool();
+		virtual void mouseButtonPressed(NetworkVisualization *source, 
+					QMouseEvent *event, const QPointF &globalPosition);
+		virtual void mouseButtonReleased(NetworkVisualization *source, 
+					QMouseEvent *event, const QPointF &globalPosition);
+		virtual void mouseDoubleClicked(NetworkVisualization *source,
+					QMouseEvent *event, const QPointF &globalPosition);
+		virtual void mouseDragged(NetworkVisualization *source, 
+					QMouseEvent *event, const QPointF &globalDistance);
+		
 
-	protected:
-		virtual void addNetworkMenu();
-		void setTool(NetworkManipulationTool *currentTool);
+		void createPairString();
+
+	signals:
+		void showElementPairs();
 
 	private:
-		void alignNeurons(bool horizontally, bool adjustDistance);
-// 		void setLocation(PaintItem *item, const QString &location);
-// 		void setLocationSize(ModuleItem *item, const QString &location);
-
-	private:
-		NeuralNetworkEditor *mOwner;
-		NetworkManipulationTool *mCurrentTool;
-		InsertNeuronNetworkTool *mInsertNeuronTool;
-		InsertModuleNetworkTool *mInsertModuleTool;
-		InsertSynapseNetworkTool *mInsertSynapseTool;	
-		RemoveObjectsNetworkTool *mRemoveObjectsTool;
-		RemoveSelectedObjectsNetworkTool *mRemoveSelectedObjectsTool;
-		GrabNetworkElementIdTool *mGrabIdTool;
-		ShowElementPairTool *mShowElementPairTool;
-		CopyPasteNetworkTool *mCopyPasteTool;
-		ReconnectSynapseNetworkTool *mReconnectSynapseTool;
-		bool mModificationsEnabled;
-		QMenu *mNetworkMenu;
-		ReplaceModuleTool *mReplaceModuleTool;
-		GuessModulePairs *mGuessGroupPairsTool;
-		GuessModulePairsByPosition *mGuessGroupPairsByPositionTool;
+		NeuralNetworkEditor *mEditor;
+		NeuronGroup *mGroup1;
+		NeuronGroup *mGroup2;
+		int mCurrentState;
+		Neuron *mReferenceNeuron1;
+		Neuron *mReferenceNeuron2;
+		StringValue *mPositionTransformation;
 	};
 
 }
 
 #endif
-
 
 
 

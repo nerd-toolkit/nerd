@@ -95,6 +95,7 @@ NeuralNetworkToolbox::NeuralNetworkToolbox(NeuralNetworkEditor *owner)
 	mReconnectSynapseTool = new ReconnectSynapseNetworkTool(this);
 	mReplaceModuleTool = new ReplaceModuleTool(this);
 	mGuessGroupPairsTool = new GuessModulePairs(owner, this);
+	mGuessGroupPairsByPositionTool = new GuessModulePairsByPosition(owner, this);
 
 	addNetworkMenu();
 }
@@ -348,6 +349,10 @@ void NeuralNetworkToolbox::useGuessGroupIdsTool() {
 	setTool(mGuessGroupPairsTool);
 }
 
+void NeuralNetworkToolbox::useGuessGroupIdsByPositionTool() {
+	setTool(mGuessGroupPairsByPositionTool);
+}
+
 
 void NeuralNetworkToolbox::addNetworkMenu() {
 	if(mOwner == 0) {
@@ -491,6 +496,10 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	QAction *guessGroupIdsAction = mNetworkMenu->addAction("Guess Group Ids");
 	connect(guessGroupIdsAction, SIGNAL(triggered()),
 			this, SLOT(useGuessGroupIdsTool()));
+
+	QAction *guessGroupIdsByPositionAction = mNetworkMenu->addAction("Guess Group Ids By Location");
+	connect(guessGroupIdsByPositionAction, SIGNAL(triggered()),
+			this, SLOT(useGuessGroupIdsByPositionTool()));
 
 }
 
