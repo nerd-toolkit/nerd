@@ -382,7 +382,16 @@ bool SimpleObjectFileParser::generateEnvironmentObjects(QDomElement element) {
 	while(!n.isNull()) {
 		QDomElement e = n.toElement();
 		if(!e.isNull()) {
-			if(e.tagName().compare("object") == 0) {
+			if(e.tagName().compare("model") == 0) {
+				ModelInterface *model = generateModel(e);
+				if(model == 0) {
+					return false;
+				}
+				mNewAgents.push_back(model);
+				model->setup();
+				Physics::getPhysicsManager()->addSimObject(model);
+			}
+			else if(e.tagName().compare("object") == 0) {
 				if(generateEnvironmentObject(e) == 0) {
 					return false;
 				}
@@ -394,13 +403,6 @@ bool SimpleObjectFileParser::generateEnvironmentObjects(QDomElement element) {
 			}
 			else if(e.tagName().compare("switchInput") == 0) {
 				parseInfoNeuronDeclaration(e);
-			}
-			else if(e.tagName().compare("model") == 0) {
-				ModelInterface *model = generateModel(e);
-				if(model == 0) {
-					return false;
-				}
-				mAgentsToAdd.push_back(model);
 			}
 		}
 		n = n.nextSibling();
@@ -543,6 +545,7 @@ bool SimpleObjectFileParser::createAgents(QDomElement element) {
 					return false;
 				}
 				mAgentsToAdd.push_back(model);
+				mNewAgents.append(model);
 			}
 		}
 		modelNode = modelNode.nextSibling();
@@ -1137,8 +1140,8 @@ void SimpleObjectFileParser::parseInfoNeuronDeclaration(QDomElement mainNode) {
 		}
 	}
 
-	for(int i = 0; i < mAgentsToAdd.size(); ++i) {
-		ModelInterface *agent = mAgentsToAdd.at(i);
+	for(int i = 0; i < mNewAgents.size(); ++i) {
+		ModelInterface *agent = mNewAgents.at(i);
 		if(agent->getName() == agentName) {
 			agent->switchInput(target, targetValue, disable);
 			break;

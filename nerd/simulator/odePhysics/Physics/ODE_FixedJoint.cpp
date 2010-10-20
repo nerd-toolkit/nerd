@@ -43,6 +43,10 @@
 
 #include "ODE_FixedJoint.h"
 #include "Core/Core.h"
+#include <iostream>
+#include "Physics/SimBody.h"
+
+using namespace std;
 
 namespace nerd {
 
@@ -75,7 +79,7 @@ void ODE_FixedJoint::setup() {
 	
 	mJoint = (dJointID) ODE_Joint::createJoint();
 	if(mJoint == 0) {
-		Core::log("ODE_FixedJoint: dJoint could  not be created.");
+		Core::log("ODE_FixedJoint: dJoint could  not be created.", true);
 		return;
 	}
 }

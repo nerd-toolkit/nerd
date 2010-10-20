@@ -106,6 +106,7 @@ class SimpleObjectFileParser : public virtual SystemObject, public virtual Event
 		CommandLineArgument *mEnvironmentCommandLineArgument;
 		QVector<SimObject*> mObjectsToAdd;
 		QVector<ModelInterface*> mAgentsToAdd;
+		QList<ModelInterface*> mNewAgents;
 		StringValue *mXMLFileName;
 		QString mLastXMLFileName;
 		Event *mLoadEnvironmentXMLEvent;

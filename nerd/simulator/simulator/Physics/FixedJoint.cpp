@@ -42,6 +42,9 @@
  ***************************************************************************/
 
 #include "FixedJoint.h"
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
@@ -57,7 +60,8 @@ FixedJoint::FixedJoint(const QString &name) : SimJoint(name) {
  * @param joint 
  */
 FixedJoint::FixedJoint(const FixedJoint &joint) 
-		: Object(), ValueChangedListener(), SimJoint(joint) {
+		: Object(), ValueChangedListener(), SimJoint(joint) 
+{
 }
 
 FixedJoint::~FixedJoint() {
