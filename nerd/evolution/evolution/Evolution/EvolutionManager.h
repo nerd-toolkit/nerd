@@ -129,6 +129,8 @@ namespace nerd {
 		EvaluationMethod *mDefaultEvaluationMethod;
 		IntValue *mEvoIndividualsCompletedCounter;
 		IntValue *mEvalIndividualsCompletedCounter;
+
+		QString mPreviousWorkingDirectory;
 	
 	};
 

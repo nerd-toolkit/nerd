@@ -100,7 +100,9 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 			.append(EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY)
 			.append("] could not be found."));
 	}
-	mWorkingDir->useAsFileName(true);
+	else {
+		mWorkingDir->useAsFileName(true);
+	}
 
 	mNextTry = mCore->getEventManager()->createEvent(NerdConstants::
 		EVENT_EXECUTION_NEXT_TRY);

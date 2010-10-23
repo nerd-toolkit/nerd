@@ -128,6 +128,7 @@ class ClusterEvaluationMethod : public EvaluationMethod {
 		QString mJobScriptContent;
 		QList<int> mOpenEvaluations;
 		Core *mCore;
+
 };
 }
 #endif

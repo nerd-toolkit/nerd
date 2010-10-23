@@ -171,7 +171,7 @@ void EvolutionTerminationTrigger::eventOccured(Event *event) {
 		if(mNumberOfGenerationsWithoutImprovement > mMaxNumberOfGenerationsWithoutFitnessImprovement->get()) {
 			message.append("Max number of generations without improvement (")
 					.append(QString::number(mMaxNumberOfGenerationsWithoutFitnessImprovement->get()))
-						.append(") exceeded! Max Fitness was ").append(QString::number(mCurrentBestFitness));
+						.append(") exceeded!");
 			quitApplication = true;
 		}
 
@@ -179,10 +179,11 @@ void EvolutionTerminationTrigger::eventOccured(Event *event) {
 
 
 		if(quitApplication) {
-			if(mQuitApplicationAtTermination->get()) {
-				Core::log(QString("EvolutionTerminationTrigger in generation ")
+			message += QString("\nMax Fitness: ") + QString::number(mCurrentBestFitness) + QString("\n\n");
+			Core::log(QString("EvolutionTerminationTrigger in generation ")
 					.append(QString::number(em->getCurrentGenerationValue()->get()))
 					.append(": ").append(message), true);
+			if(mQuitApplicationAtTermination->get()) {
 				Core::getInstance()->scheduleTask(new ShutDownTask());
 			}
 			else {

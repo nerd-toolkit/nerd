@@ -74,7 +74,7 @@ EvolutionManager::EvolutionManager()
 	: mInitialized(false), mGenerationDuration(0), mEvolutionDuration(0), 
 	  mSelectionDuration(0), mEvolutionAlgorithmDuration(0), mEvaluationDuration(0),
 	  mRestartGenerationValue(0), mRestartGeneration(false), mEvolutionWorkingDirectory(0),
-	  mDefaultEvaluationMethod(0)
+	  mDefaultEvaluationMethod(0), mPreviousWorkingDirectory("")
 {
 	ValueManager *vm = Core::getInstance()->getValueManager();
 
@@ -303,6 +303,11 @@ bool EvolutionManager::processNextGeneration() {
 
 	if(!mInitialized) {
 		return false;
+	}
+
+	if(mEvolutionWorkingDirectory->get() != mPreviousWorkingDirectory) {
+		mPreviousWorkingDirectory = mEvolutionWorkingDirectory->get();
+		Core::log("Current evolution dir: " + mPreviousWorkingDirectory, true);
 	}
 
 	bool verbose = false;
@@ -865,6 +870,7 @@ void EvolutionManager::setCurrentNumberOfCompletedIndividualsDuringEvaluation(in
 }
 
 void EvolutionManager::initEvolution() {
+	mPreviousWorkingDirectory = "";
 	mEvolutionWorkingDirectory->set(
 		QDir::currentPath().append("/")
 			.append(QDate::currentDate().toString("yyMMdd")).append("_")
