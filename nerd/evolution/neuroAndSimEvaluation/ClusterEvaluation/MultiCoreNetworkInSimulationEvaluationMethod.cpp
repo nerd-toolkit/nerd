@@ -56,10 +56,17 @@ namespace nerd {
 /**
  * Constructs a new MultiCoreNetworkInSimulationEvaluationMethod.
  */
-MultiCoreNetworkInSimulationEvaluationMethod::MultiCoreNetworkInSimulationEvaluationMethod()
+MultiCoreNetworkInSimulationEvaluationMethod::MultiCoreNetworkInSimulationEvaluationMethod(const QString &name)
+	: ClusterEvaluationMethod(name)
 {
 }
 
+MultiCoreNetworkInSimulationEvaluationMethod::MultiCoreNetworkInSimulationEvaluationMethod(
+				const MultiCoreNetworkInSimulationEvaluationMethod &other)
+	 : Object(), ValueChangedListener(), EventListener(), ClusterEvaluationMethod(other)
+{
+
+}
 
 /**
  * Destructor.
@@ -68,7 +75,65 @@ MultiCoreNetworkInSimulationEvaluationMethod::~MultiCoreNetworkInSimulationEvalu
 }
 
 
+EvaluationMethod* MultiCoreNetworkInSimulationEvaluationMethod::createCopy() {
+	return new MultiCoreNetworkInSimulationEvaluationMethod(*this);
+}
 
+
+
+bool MultiCoreNetworkInSimulationEvaluationMethod::reset() {
+}
+
+
+
+void MultiCoreNetworkInSimulationEvaluationMethod::stopEvaluation() {
+}
+
+
+
+
+QString MultiCoreNetworkInSimulationEvaluationMethod::getName() const {
+}
+
+
+
+void MultiCoreNetworkInSimulationEvaluationMethod::eventOccured(Event *event) {
+}
+
+
+
+
+bool MultiCoreNetworkInSimulationEvaluationMethod::readEvaluationResults() {
+}
+
+
+
+bool MultiCoreNetworkInSimulationEvaluationMethod::prepareEvaluation() {
+}
+
+
+
+bool MultiCoreNetworkInSimulationEvaluationMethod::createConfigList() {
+}
+
+
+
+bool MultiCoreNetworkInSimulationEvaluationMethod::createJobScript() {
+}
+
+
+
+
+bool MultiCoreNetworkInSimulationEvaluationMethod::createFitnessInformation() {
+}
+
+
+
+void MultiCoreNetworkInSimulationEvaluationMethod::performNeccessaryReSubmits() {
+}
+
+
+	
 
 }
 

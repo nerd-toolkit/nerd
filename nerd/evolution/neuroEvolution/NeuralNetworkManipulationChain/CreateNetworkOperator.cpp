@@ -321,7 +321,7 @@ void CreateNetworkOperator::eventOccured(Event *event) {
 		return;
 	}
 	else if(event == mEvolutionRestartedEvent) {
-		//7cerr << "CreateNetworkOp: destroy templates" << endl;
+		//cerr << "CreateNetworkOp: destroy templates" << endl;
 		//destroy network templates
 		while(!mInitialNetworks.empty()) {
 			NeuralNetwork *net = mInitialNetworks.first();

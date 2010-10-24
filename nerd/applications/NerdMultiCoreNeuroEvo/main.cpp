@@ -43,59 +43,84 @@
 
 
 
-#ifndef NERDProperties_H
-#define NERDProperties_H
+#include "Core/Core.h"
+#include <QCoreApplication>
+#include <QApplication>
+#include "NerdMultiCoreNeuroEvoApplication.h"
+#include <iostream>
+#include "PlugIns/PlugInManager.h"
 
-#include <QString>
-#include <QHash>
+#ifdef _WIN32
+#include <Windows.h>
+#include <Mmsystem.h>
+#endif
 
-namespace nerd {
+using namespace std;
+using namespace nerd;
+
+int main(int argc, char *argv[])
+{
+#ifdef _WIN32
+	timeBeginPeriod(1);
+#endif
+
+	//initialize ressources (compiled images, etc.)
+	Q_INIT_RESOURCE(resources);
+
+	Core::resetCore();
+
+	//Start QApplication with or without GUI support.
+	bool useGui = true;
+	for(int i = 0; i < argc; ++i) {
+		if(QString(argv[i]) == "-nogui") {
+			useGui = false;
+		}
+		else if(QString(argv[i]) == "-gui") {
+			useGui = true;
+		}
+	}
+	QCoreApplication *app = 0;
+	if(useGui) {
+		app = new QApplication(argc, argv);
+	}
+	else {
+		app = new QCoreApplication(argc, argv); 
+	}
+
+	NerdMultiCoreNeuroEvoApplication *nerd = 
+			new NerdMultiCoreNeuroEvoApplication();
+
+
+#ifdef _WIN32
+	Core::log("Cluster Evolution can not be used in Windows! Quitting execution!");
+	timeEndPeriod(1);
+	return 1;
+#else
+	nerd->startApplication();
 	
-	class PropertyChangedListener;
+	app->exec();
 
-	/**
-	 * Properties.
-	 *
-	 * Properties is a class similar to Properties at Java. Properties are
-	 * QString pairs, one QString acting as a key, the other as value.
-	 *
- 	 * Properties can be stored to and loaded from files in a simple char based format.
-	 */
-	class Properties {
-	public:
-		Properties();
-		Properties(const Properties &other);
-		virtual ~Properties();
+	Core::getInstance()->waitForAllThreadsToComplete(); 
 
-		virtual void setOptionalHiddenPrefixes(const QList<QString> &prefixes);
-		virtual QList<QString> getOptionalHiddenPrefixes() const;
+	bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
 
-		virtual void setProperty(const QString &name, const QString &value = QString(""));
-		virtual QString getProperty(const QString &name) const;
-		virtual bool hasExactProperty(const QString &prefixedName) const;
-		virtual bool hasProperty(const QString &name) const;
-		virtual void removeProperty(const QString &name);
+	Core::resetCore();
 
-		virtual const QList<QString> getPropertyNames() const;
+	delete app;
 
-		virtual QString getPropertyList() const;
-		virtual bool saveToFile(const QString &fileName);
-		virtual bool loadFromFile(const QString &fileName);
+	Q_CLEANUP_RESOURCE(resources);
 
-		bool addPropertyChangedListener(PropertyChangedListener *listener);
-		bool removePropertyChangedListener(PropertyChangedListener *listener);
+	//TODO This is to circumvent a problem with hanging applications when a plugin is loaded. 
+	//The reason for the hanging could not be found and solved yet!
+	if(hasPlugins) {
+		abort();
+	}
 
-		virtual bool equals(Properties *properties) const;
-
-	private:
-		QHash<QString, QString> mProperties;
-		QList<PropertyChangedListener*> mListeners;
-		QList<QString> mOptionalHiddenPrefixes;
-	};
-
-}
+	return 0;
 
 #endif
 
 
+
+}
 

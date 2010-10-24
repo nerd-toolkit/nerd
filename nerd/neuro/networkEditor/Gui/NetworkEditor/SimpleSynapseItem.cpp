@@ -103,6 +103,11 @@ QRectF SimpleSynapseItem::getBoundingBox() {
 }
 
 QRectF SimpleSynapseItem::getPaintingBox() {
+
+	if(mForcedHidden) {
+		return QRectF();
+	}
+
 	QPointF pos = getGlobalPosition();
 	double minX = pos.x() - (mSize.width() / 2.0) - 30.0;
 	double maxX = pos.x() + (mSize.width() / 2.0) + 30.0;
@@ -144,6 +149,11 @@ QRectF SimpleSynapseItem::getPaintingBox() {
 
 
 bool SimpleSynapseItem::isHit(const QPointF &point, Qt::MouseButtons, double) {
+
+	if(mForcedHidden) {
+		return false;
+	}
+
 	QRectF boundingBox(getGlobalPosition() - QPoint(mSize.width() / 2.0, mSize.height() / 2.0), mSize);
 	if(boundingBox.contains(point)) {
 		return true;
@@ -161,7 +171,7 @@ void SimpleSynapseItem::mouseMoved(const QPointF &distance, Qt::MouseButtons mou
 
 void SimpleSynapseItem::paintSelf(QPainter *painter) {
 	if(mHidden || !mActive || painter == 0 || mSynapse == 0 
-		|| (mHideUnselectedElements && !mSelected)) 
+		|| (mHideUnselectedElements && !mSelected) || mForcedHidden) 
 	{
 		return;
 	}

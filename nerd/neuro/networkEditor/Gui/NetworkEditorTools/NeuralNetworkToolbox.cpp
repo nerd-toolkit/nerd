@@ -353,6 +353,10 @@ void NeuralNetworkToolbox::useGuessGroupIdsByPositionTool() {
 	setTool(mGuessGroupPairsByPositionTool);
 }
 
+void NeuralNetworkToolbox::updateViewMode() {
+
+}
+
 
 void NeuralNetworkToolbox::addNetworkMenu() {
 	if(mOwner == 0) {
@@ -401,44 +405,6 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	connect(removeSelectedObjectsAction, SIGNAL(triggered()),
 			this, SLOT(useRemoveSelectedObjectsTool()));
 
-	mNetworkMenu->addSeparator();
-
-	QAction *grabIdAction = mNetworkMenu->addAction("&Grab ID");
-	grabIdAction->setShortcut(tr("ctrl+g"));
-	connect(grabIdAction, SIGNAL(triggered()),
-			this, SLOT(useGrabIdTool()));
-
-	QAction *showElementPairsAction = mNetworkMenu->addAction("&Show Element Pairs");
-	showElementPairsAction->setShortcut(tr("ctrl+shift+p"));
-	connect(showElementPairsAction, SIGNAL(triggered()),
-			this, SLOT(useVisualizeElementPairTool()));
-
-	mNetworkMenu->addSeparator();
-	
-	QAction *resetNetworkAction = mNetworkMenu->addAction("&Reset Network");
-	resetNetworkAction->setShortcut(tr("ctrl+r"));
-	connect(resetNetworkAction, SIGNAL(triggered()),
-			this, SLOT(resetCurrentNetwork()));
-
-	mNetworkMenu->addSeparator();
-
-	//add constraint resolvers
-
-	QAction *runAllConstraintsAction = new RunConstraintsAction("&Resolve All Constraints",
-							true, 25, mOwner);
-	runAllConstraintsAction->setShortcut(tr("ctrl+shift+r"));	
-	mNetworkMenu->addAction(runAllConstraintsAction);
-
-	QAction *runConstraintsStepAction = new RunConstraintsAction("&Resolve All Constraints (Step)",
-							true, 1, mOwner);
-	runConstraintsStepAction->setShortcut(tr("ctrl+shift+alt+r"));	
-	mNetworkMenu->addAction(runConstraintsStepAction);
-
-	QAction *runSelectedConstraintsStepAction = new RunConstraintsAction(
-										"&Resolve Selected Constraints (Step)",
-							false, 1, mOwner);
-	runSelectedConstraintsStepAction->setShortcut(tr("ctrl+shift+alt+s"));	
-	mNetworkMenu->addAction(runSelectedConstraintsStepAction);
 
 	mNetworkMenu->addSeparator();
 
@@ -476,15 +442,17 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	connect(alignSelectedSynapses, SIGNAL(triggered()),
 			this, SLOT(alignSelectedSynapses()));
 
-	QAction *alignAccordingToLocations = mNetworkMenu->addAction("Align to Location Properties");
-	alignAccordingToLocations->setShortcut(tr("ctrl+shift+alt+a"));
-	connect(alignAccordingToLocations, SIGNAL(triggered()),
-			this, SLOT(alignNetworkElementsAccordingToLocationProperties()));
+// 	QAction *alignAccordingToLocations = mNetworkMenu->addAction("Align to Location Properties");
+// 	alignAccordingToLocations->setShortcut(tr("ctrl+shift+alt+a"));
+// 	connect(alignAccordingToLocations, SIGNAL(triggered()),
+// 			this, SLOT(alignNetworkElementsAccordingToLocationProperties()));
+// 
+// 	QAction *setAllLocationProperties = mNetworkMenu->addAction("Sync Location Properties");
+// 	setAllLocationProperties->setShortcut(tr("ctrl+shift+alt+s"));
+// 	connect(setAllLocationProperties, SIGNAL(triggered()),
+// 			this, SLOT(setAllLocationProperties()));
 
-	QAction *setAllLocationProperties = mNetworkMenu->addAction("Sync Location Properties");
-	setAllLocationProperties->setShortcut(tr("ctrl+shift+alt+s"));
-	connect(setAllLocationProperties, SIGNAL(triggered()),
-			this, SLOT(setAllLocationProperties()));
+	mNetworkMenu->addSeparator();
 
 	QAction *replaceModuleAction = mNetworkMenu->addAction("Replace Modules");
 	replaceModuleAction->setShortcut(tr("x"));
@@ -493,13 +461,57 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 
 	mNetworkMenu->addSeparator();
 	
-	QAction *guessGroupIdsAction = mNetworkMenu->addAction("Guess Group Ids");
+	QAction *resetNetworkAction = mNetworkMenu->addAction("&Reset Network");
+	resetNetworkAction->setShortcut(tr("ctrl+r"));
+	connect(resetNetworkAction, SIGNAL(triggered()),
+			this, SLOT(resetCurrentNetwork()));
+
+
+	mToolsMenu = menuBar->addMenu("Tools");
+
+	//add constraint resolvers
+
+	QAction *runAllConstraintsAction = new RunConstraintsAction("&Resolve All Constraints",
+							true, 25, mOwner);
+	runAllConstraintsAction->setShortcut(tr("ctrl+shift+r"));	
+	mToolsMenu->addAction(runAllConstraintsAction);
+
+	QAction *runConstraintsStepAction = new RunConstraintsAction("&Resolve All Constraints (Step)",
+							true, 1, mOwner);
+	runConstraintsStepAction->setShortcut(tr("ctrl+shift+alt+r"));	
+	mToolsMenu->addAction(runConstraintsStepAction);
+
+	QAction *runSelectedConstraintsStepAction = new RunConstraintsAction(
+										"&Resolve Selected Constraints (Step)",
+							false, 1, mOwner);
+	runSelectedConstraintsStepAction->setShortcut(tr("ctrl+shift+alt+s"));	
+	mToolsMenu->addAction(runSelectedConstraintsStepAction);
+
+	mToolsMenu->addSeparator();
+	
+	QAction *guessGroupIdsAction = mToolsMenu->addAction("Guess Group Ids");
 	connect(guessGroupIdsAction, SIGNAL(triggered()),
 			this, SLOT(useGuessGroupIdsTool()));
 
-	QAction *guessGroupIdsByPositionAction = mNetworkMenu->addAction("Guess Group Ids By Location");
+	QAction *guessGroupIdsByPositionAction = mToolsMenu->addAction("Guess Group Ids By Location");
 	connect(guessGroupIdsByPositionAction, SIGNAL(triggered()),
 			this, SLOT(useGuessGroupIdsByPositionTool()));
+
+	mToolsMenu->addSeparator();
+
+	QAction *grabIdAction = mToolsMenu->addAction("&Grab ID");
+	grabIdAction->setShortcut(tr("ctrl+g"));
+	connect(grabIdAction, SIGNAL(triggered()),
+			this, SLOT(useGrabIdTool()));
+
+	QAction *showElementPairsAction = mToolsMenu->addAction("&Show Element Pairs");
+	showElementPairsAction->setShortcut(tr("ctrl+shift+p"));
+	connect(showElementPairsAction, SIGNAL(triggered()),
+			this, SLOT(useVisualizeElementPairTool()));
+
+
+	mViewMenu = menuBar->addMenu("View");
+
 
 }
 

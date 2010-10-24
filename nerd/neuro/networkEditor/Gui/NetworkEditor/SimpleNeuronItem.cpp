@@ -270,6 +270,8 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 		
 	}
 	if(mShowModuleInputOutputMarker) {
+		QString outputLevelString;
+		QString inputLevelString;
 		if(getNeuron()->hasProperty(NeuralNetworkConstants::TAG_MODULE_OUTPUT)) {
 			QPainterPath blackCircle;
 			blackCircle.addEllipse(pos.x() - 10.0, pos.y() - 10.0, 20.0, 20.0);
@@ -277,16 +279,34 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 			QPainterPath whiteCircle;
 			whiteCircle.addEllipse(pos.x() - 6.0, pos.y() - 6.0, 12.0, 12.0);
 			painter->fillPath(whiteCircle, QColor(255, 255, 255, 255));
+
+			outputLevelString = getNeuron()->getProperty(NeuralNetworkConstants::TAG_MODULE_OUTPUT);
 		}
 		if(getNeuron()->hasProperty(NeuralNetworkConstants::TAG_MODULE_INPUT)) {
 			painter->fillRect(QRectF(pos.x() - 2.0, pos.y() - 8.5, 5.0, 17.0), 
 								QColor(0, 0, 0, 255));
+		
+			inputLevelString = getNeuron()->getProperty(NeuralNetworkConstants::TAG_MODULE_INPUT);
 		}
 		if(getNeuron()->hasProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE)) {
 			int level = getNeuron()->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE)
 							.toInt();
 			painter->drawText(pos.x() - 49.0, pos.y() - (mRadius / 2.0) - 22.0, 100.0, 20.0, 
 				Qt::AlignCenter, QString::number(level));
+		}
+		else {
+			QString outputString;
+			if(inputLevelString != "") {
+				outputString += "I:" + inputLevelString;
+			}
+			if(outputLevelString != "") {
+				if(outputString != "") {
+					outputString += " ";
+				}
+				outputString += "O:" + outputLevelString;
+			}
+			painter->drawText(pos.x() - 99.0, pos.y() - (mRadius / 2.0) - 22.0, 200.0, 20.0, 
+				Qt::AlignCenter, outputString);
 		}
 	}
 

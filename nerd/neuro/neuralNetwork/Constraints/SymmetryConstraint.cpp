@@ -339,6 +339,18 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 					}
 				}
 			}
+			//check for marked (+) properties (also in structure mode)
+			QList<QString> props = oModule->getPropertyNames();
+			for(QListIterator<QString> kk(props); kk.hasNext();) {
+				QString prop = kk.next();
+				if(prop.startsWith("+")) {
+					QString content = oModule->getProperty(prop);
+					if(!rModule->hasProperty(prop) || rModule->getProperty(prop) != content) {
+						rModule->setProperty(prop, content);
+						networkWasModified = true;
+					}
+				}
+			}
 		}
 		if(pair.mOwnerElement != 0 && pair.mReferenceElement != 0) {
 			elementPairs.append(pair);
@@ -455,7 +467,28 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 				}
 				//do not check for flipped state.
 
-				//do not check for properties
+				//check for marked (+) properties (also in structure mode)
+				QList<QString> props = oNeuron->getPropertyNames();
+				for(QListIterator<QString> kk(props); kk.hasNext();) {
+					QString prop = kk.next();
+					if(prop.startsWith("+")) {
+						QString content = oNeuron->getProperty(prop);
+						if(!rNeuron->hasProperty(prop) || rNeuron->getProperty(prop) != content) {
+							rNeuron->setProperty(prop, content);
+							networkWasModified = true;
+						}
+					}
+				}
+// 				//remove all marked (+) properties not in the original neuron //TODO is currently deactivated.
+// 				QList<QString> rProps = rNeuron->getPropertyNames();
+// 				for(QListIterator<QString> kk(rProps); kk.hasNext();) {
+// 					QString prop = kk.next();
+// 					if(prop.startsWith("+")) {
+// 						if(!props.contains(prop)) {
+// 							rNeuron->removeProperty(prop);
+// 						}
+// 					}
+// 				}
 
 				//check if neurons are in the correct modules / groups
 				NeuroModule *ownerModule = dynamic_cast<NeuroModule*>(
@@ -557,6 +590,35 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 				networkWasModified = true;
 			}
 		}
+
+		//check for marked (+) properties (also in structure mode)
+		QList<QString> props = synapse->getPropertyNames();
+		for(QListIterator<QString> kk(props); kk.hasNext();) {
+			QString prop = kk.next();
+			if(prop.startsWith("+")) {
+				QString content = synapse->getProperty(prop);
+				if(!refSynapse->hasProperty(prop) || refSynapse->getProperty(prop) != content) {
+					refSynapse->setProperty(prop, content);
+					networkWasModified = true;
+				}
+			}
+		}
+		for(QListIterator<QString> kk(props); kk.hasNext();) {
+			QString prop = kk.next();
+			if(prop.startsWith("+")) {
+				refSynapse->setProperty(prop, synapse->getProperty(prop));
+			}
+		}
+		//remove all marked (+) properties not in the original neuron //TODO is currently deactivated.
+// 		QList<QString> rProps = synapse->getPropertyNames();
+// 		for(QListIterator<QString> kk(rProps); kk.hasNext();) {
+// 			QString prop = kk.next();
+// 			if(prop.startsWith("+")) {
+// 				if(!props.contains(prop)) {
+// 					synapse->removeProperty(prop);
+// 				}
+// 			}
+// 		}
 
 		if(allNeurons.contains(synapse->getSource()) 
 			&& (allNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget())) 

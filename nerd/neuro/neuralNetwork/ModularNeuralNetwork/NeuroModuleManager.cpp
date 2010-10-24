@@ -90,10 +90,12 @@ NeuroModuleManager::NeuroModuleManager()
 	NeuroTagManager *ntm = NeuroTagManager::getInstance();
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_MODULE_INPUT, 
 						 NeuralNetworkConstants::TAG_TYPE_MODULE,
-						 "Indicates that a neuron is part of the interface of a module (input)"));
+						 "Indicates that a neuron is part of the interface of a module (input)."
+						 "\nAn optional number deterines the visibility depth."));
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_MODULE_OUTPUT, 
 						 NeuralNetworkConstants::TAG_TYPE_MODULE,
-						 "Indicates that a neuron is part of the interface of a module (output)"));
+						 "Indicates that a neuron is part of the interface of a module (output)."
+						 "\nAn optional number deterines the visibility depth."));
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE,
 						 NeuralNetworkConstants::TAG_TYPE_MODULE,
 						 "Indicates that a neuron is an input / output also for its parent modules."));

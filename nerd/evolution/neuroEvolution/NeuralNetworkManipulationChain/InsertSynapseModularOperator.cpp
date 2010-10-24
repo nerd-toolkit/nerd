@@ -554,21 +554,26 @@ int InsertSynapseModularOperator::getInterfaceLevel(Neuron *neuron, const QStrin
 	if(moduleInterfaceType == "") {
 		return 0;
 	}
-	bool neuronIsInterfaceInputNeuron = neuron->hasProperty(moduleInterfaceType);
+	bool neuronIsInterfaceNeuron = neuron->hasProperty(moduleInterfaceType);
 	bool neuronIsExtendedInterfaceNeuron = 
 			neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
+	QString levelString = neuron->getProperty(moduleInterfaceType);
+	if(neuronIsExtendedInterfaceNeuron) {
+		levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
+	}
 
 	int interfaceLevel = 0;
-	if(neuronIsInterfaceInputNeuron) {
+	if(neuronIsInterfaceNeuron) {
 		interfaceLevel = 1;
 
-		if(neuronIsExtendedInterfaceNeuron) {
-			QString level = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
-			if(level.trimmed() == "") {
-				interfaceLevel = numeric_limits<int>::max();
-			}
-			else  {
-				interfaceLevel = level.toInt() + 1; //TODO adapt neuroModule::getInput/Outputs
+		if(neuronIsExtendedInterfaceNeuron && levelString.trimmed() == "") {
+			interfaceLevel = numeric_limits<int>::max();
+		}
+		else {
+			bool ok = true;
+			int level = levelString.toInt(&ok);
+			if(ok) {
+				interfaceLevel =  level + 1; //TODO adapt neuroModule::getInput/Outputs
 			}
 		}
 	}

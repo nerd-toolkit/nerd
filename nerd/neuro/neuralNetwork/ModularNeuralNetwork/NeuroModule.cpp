@@ -250,20 +250,45 @@ const QList<Neuron*> NeuroModule::getInputNeurons(int startLevel) const {
 		QList<Neuron*> inputNeurons = module->getInputNeurons(startLevel + 1);
 		for(QListIterator<Neuron*> j(inputNeurons); j.hasNext();) {
 			Neuron *neuron = j.next();
+			
+			int level = 1;
+			bool isExtendedInterface = false;
+			QString levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_INPUT);
+
 			if(neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE)) {
-				int level = 1;
-				QString levelString = 
-						neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
-				if(levelString.trimmed() == "") {
+				levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
+				isExtendedInterface = true;
+			}
+					
+			if(levelString.trimmed() == "") {
+				if(isExtendedInterface) {
 					level = numeric_limits<int>::max();
 				}
-				else {
-					level = levelString.toInt();
-				}
-				if(level > startLevel) {
-					neurons.append(neuron);
+			}
+			else {
+				bool ok = true;
+				int interfaceLevel = levelString.toInt(&ok);
+				if(ok) {
+					level = interfaceLevel;
 				}
 			}
+			if(level > startLevel) {
+				neurons.append(neuron);
+			}
+// 			if(neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE)) {
+// 				int level = 1;
+// 				QString levelString = 
+// 						neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
+// 				if(levelString.trimmed() == "") {
+// 					level = numeric_limits<int>::max();
+// 				}
+// 				else {
+// 					level = levelString.toInt();
+// 				}
+// 				if(level > startLevel) {
+// 					neurons.append(neuron);
+// 				}
+// 			}
 		}
 	}
 
@@ -314,20 +339,45 @@ const QList<Neuron*> NeuroModule::getOutputNeurons(int startLevel) const {
 		QList<Neuron*> outputNeurons = module->getOutputNeurons(startLevel + 1);
 		for(QListIterator<Neuron*> j(outputNeurons); j.hasNext();) {
 			Neuron *neuron = j.next();
+
 			int level = 1;
+			bool isExtendedInterface = false;
+			QString levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_INPUT);
+
 			if(neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE)) {
-				QString levelString = 
-						neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
-				if(levelString.trimmed() == "") {
+				levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
+				isExtendedInterface = true;
+			}
+					
+			if(levelString.trimmed() == "") {
+				if(isExtendedInterface) {
 					level = numeric_limits<int>::max();
 				}
-				else {
-					level = levelString.toInt();
-				}
-				if(level > startLevel) {
-					neurons.append(neuron);
+			}
+			else {
+				bool ok = true;
+				int interfaceLevel = levelString.toInt(&ok);
+				if(ok) {
+					level = interfaceLevel;
 				}
 			}
+			if(level > startLevel) {
+				neurons.append(neuron);
+			}
+// 			int level = 1;
+// 			if(neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE)) {
+// 				QString levelString = 
+// 						neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
+// 				if(levelString.trimmed() == "") {
+// 					level = numeric_limits<int>::max();
+// 				}
+// 				else {
+// 					level = levelString.toInt();
+// 				}
+// 				if(level > startLevel) {
+// 					neurons.append(neuron);
+// 				}
+// 			}
 		}
 	}
 

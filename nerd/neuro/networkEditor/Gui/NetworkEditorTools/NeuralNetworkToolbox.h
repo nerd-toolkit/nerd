@@ -108,6 +108,7 @@ namespace nerd {
 		void useReplaceModuleTool();
 		void useGuessGroupIdsTool();
 		void useGuessGroupIdsByPositionTool();
+		void updateViewMode();
 
 	protected:
 		virtual void addNetworkMenu();
@@ -132,9 +133,12 @@ namespace nerd {
 		ReconnectSynapseNetworkTool *mReconnectSynapseTool;
 		bool mModificationsEnabled;
 		QMenu *mNetworkMenu;
+		QMenu *mToolsMenu;
+		QMenu *mViewMenu;
 		ReplaceModuleTool *mReplaceModuleTool;
 		GuessModulePairs *mGuessGroupPairsTool;
 		GuessModulePairsByPosition *mGuessGroupPairsByPositionTool;
+		
 	};
 
 }

@@ -64,6 +64,10 @@ NeuralNetworkElement::NeuralNetworkElement()
 	: mStartIteration(0), mRequiredIterations(1), mCopyPtr(0)
 {
 	addPropertyChangedListener(this);
+
+	QList<QString> optionalPrefixes;
+	optionalPrefixes.append("+");
+	setOptionalHiddenPrefixes(optionalPrefixes);
 }
 
 NeuralNetworkElement::NeuralNetworkElement(const NeuralNetworkElement &other) 

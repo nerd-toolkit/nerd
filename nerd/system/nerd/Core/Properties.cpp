@@ -77,12 +77,23 @@ Properties::Properties(const Properties &other) {
 		QString propName = i.next();
 		mProperties.insert(propName, other.mProperties.value(propName));
 	}
+	mOptionalHiddenPrefixes = other.mOptionalHiddenPrefixes;
 }
 
 /**
  * Destructor.
  */
 Properties::~Properties() {
+}
+
+
+void Properties::setOptionalHiddenPrefixes(const QList<QString> &prefixes) {
+	mOptionalHiddenPrefixes = prefixes;
+}
+
+
+QList<QString> Properties::getOptionalHiddenPrefixes() const {
+	return mOptionalHiddenPrefixes;
 }
 
 
@@ -119,6 +130,9 @@ QString Properties::getProperty(const QString &name) const {
 	return "";
 }
 
+bool Properties::hasExactProperty(const QString &prefixedName) const {
+	return mProperties.contains(prefixedName);
+}
 
 /**
  * Return ture if this Properties list contains a property with the given name.
@@ -127,7 +141,28 @@ QString Properties::getProperty(const QString &name) const {
  * @return true if the property exists, otherwise false.
  */
 bool Properties::hasProperty(const QString &name) const {
-	return mProperties.contains(name);
+	QString propName = name;
+	for(QListIterator<QString> j(mOptionalHiddenPrefixes); j.hasNext();) {
+		QString prefix = j.next();
+		if(propName.startsWith(prefix)) {
+			propName = propName.mid(prefix.size());
+			break;
+		}
+	}
+	for(QHashIterator<QString, QString> i(mProperties); i.hasNext();) {
+		QString prop = i.next().key();
+		for(QListIterator<QString> j(mOptionalHiddenPrefixes); j.hasNext();) {
+			QString prefix = j.next();
+			if(prop.startsWith(prefix)) {
+				prop = prop.mid(prefix.size());
+				break;
+			}
+		}
+		if(prop == propName) {
+			return true;
+		}
+	}
+	return false;
 }
 
 

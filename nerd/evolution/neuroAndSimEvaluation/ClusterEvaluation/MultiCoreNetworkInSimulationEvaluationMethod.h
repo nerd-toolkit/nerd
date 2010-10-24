@@ -47,17 +47,64 @@
 
 #include <QString>
 #include <QHash>
+#include "ClusterEvaluation/ClusterEvaluationMethod.h"
+#include "Event/EventListener.h"
+#include <QStringList>
+#include "Event/Event.h"
+#include "Value/IntValue.h"
+#include "Value/BoolValue.h"
 
 namespace nerd {
+
+	class Population;
+
 
 	/**
 	 * MultiCoreNetworkInSimulationEvaluationMethod.
 	 *
 	 */
-	class MultiCoreNetworkInSimulationEvaluationMethod {
+	class MultiCoreNetworkInSimulationEvaluationMethod : public ClusterEvaluationMethod, public virtual EventListener
+	{
 	public:
-		MultiCoreNetworkInSimulationEvaluationMethod();
+		MultiCoreNetworkInSimulationEvaluationMethod(const QString &name);
+		MultiCoreNetworkInSimulationEvaluationMethod(const MultiCoreNetworkInSimulationEvaluationMethod &other);
 		virtual ~MultiCoreNetworkInSimulationEvaluationMethod();
+
+		virtual EvaluationMethod* createCopy();
+		virtual bool reset();
+		virtual void stopEvaluation();
+
+		virtual QString getName() const;
+		virtual void eventOccured(Event *event);
+
+	protected:
+		virtual bool readEvaluationResults();
+		virtual bool prepareEvaluation();
+		virtual bool createConfigList();
+		virtual bool createJobScript();
+
+	private:
+		bool createFitnessInformation();
+		void performNeccessaryReSubmits();		
+
+	private:
+		QString mFitnessParameter;
+		QString mFitnessFileName;
+		QStringList mAgentInterfaces;
+		QString mApplicationParameter;
+
+		StringValue *mAgentInterfaceNames;
+		StringValue *mApplication;
+		StringValue *mHostWithGuiName;
+
+		Event *mNextStep;
+		Event *mStepCompleted;
+		Event *mGenerationStartedEvent;
+		IntValue *mNumberOfSteps;
+		IntValue *mCurrentStep;
+		IntValue *mGenerationSimulationSeed;
+		BoolValue *mRandomizeSeed;
+		BoolValue *mPauseSimulation;
 
 	private:
 	};

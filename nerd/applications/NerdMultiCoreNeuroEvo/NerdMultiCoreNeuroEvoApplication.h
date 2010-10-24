@@ -42,55 +42,40 @@
  ***************************************************************************/
 
 
-
-#ifndef NERDProperties_H
-#define NERDProperties_H
+#ifndef ORCSNerdMultiCoreNeuroEvoApplication_H
+#define ORCSNerdMultiCoreNeuroEvoApplication_H
 
 #include <QString>
 #include <QHash>
+#include "Application/BaseApplication.h"
+#include "Execution/EvolutionRunner.h"
+#include "ClusterEvaluation/ClusterNetworkInSimEvaluationMethod.h"
+#include "Gui/SimpleEvolutionMainWindow/SimpleEvolutionMainWindow.h"
+#include "Evolution/Population.h"
 
 namespace nerd {
-	
-	class PropertyChangedListener;
 
 	/**
-	 * Properties.
+	 * NerdMultiCoreNeuroEvoApplication.
 	 *
-	 * Properties is a class similar to Properties at Java. Properties are
-	 * QString pairs, one QString acting as a key, the other as value.
-	 *
- 	 * Properties can be stored to and loaded from files in a simple char based format.
 	 */
-	class Properties {
+	class NerdMultiCoreNeuroEvoApplication : public BaseApplication {
+	Q_OBJECT
 	public:
-		Properties();
-		Properties(const Properties &other);
-		virtual ~Properties();
+		NerdMultiCoreNeuroEvoApplication();
+		virtual ~NerdMultiCoreNeuroEvoApplication();
 
-		virtual void setOptionalHiddenPrefixes(const QList<QString> &prefixes);
-		virtual QList<QString> getOptionalHiddenPrefixes() const;
+		virtual QString getName() const;
 
-		virtual void setProperty(const QString &name, const QString &value = QString(""));
-		virtual QString getProperty(const QString &name) const;
-		virtual bool hasExactProperty(const QString &prefixedName) const;
-		virtual bool hasProperty(const QString &name) const;
-		virtual void removeProperty(const QString &name);
+	protected:
+		virtual bool setupGui();
+		virtual bool setupApplication();
+		virtual bool runApplication();
+		virtual bool buildEvolutionSystem();
 
-		virtual const QList<QString> getPropertyNames() const;
-
-		virtual QString getPropertyList() const;
-		virtual bool saveToFile(const QString &fileName);
-		virtual bool loadFromFile(const QString &fileName);
-
-		bool addPropertyChangedListener(PropertyChangedListener *listener);
-		bool removePropertyChangedListener(PropertyChangedListener *listener);
-
-		virtual bool equals(Properties *properties) const;
-
-	private:
-		QHash<QString, QString> mProperties;
-		QList<PropertyChangedListener*> mListeners;
-		QList<QString> mOptionalHiddenPrefixes;
+	private:		
+		EvolutionRunner *mRunner;
+		SimpleEvolutionMainWindow *mMainGui;
 	};
 
 }
