@@ -68,7 +68,7 @@
 #include "Collections/DynamicsPlotCollection.h"
 #include "Gui/Control/BoolValueSwitcherAction.h"
 #include "DynamicsPlotConstants.h"
-
+#include <QTimer>
 
 
 
@@ -128,6 +128,9 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 	connect(op, SIGNAL(dataPrepared(QString, MatrixValue*)), opw, SLOT(printData(QString, MatrixValue*)));
 
 
+	timer = new QTimer();
+	timer->start(500);
+	connect(timer, SIGNAL(timeout()), opw, SLOT(updateData()));
 	//***/Till****//
 	
 	return true;

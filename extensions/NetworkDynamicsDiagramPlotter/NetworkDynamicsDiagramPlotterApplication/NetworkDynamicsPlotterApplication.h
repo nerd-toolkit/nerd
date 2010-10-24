@@ -51,6 +51,7 @@
 
 #include <QString>
 #include <QHash>
+#include <QTimer>
 #include "Application/BaseApplication.h"
 #include "Gui/DynamicsPlotterMainWindow.h"
 #include "Execution/PlotterExecutionLoop.h"
@@ -79,6 +80,7 @@ namespace nerd {
 		OnlinePlotter *op;
 		OnlinePlotterWindow *opw;
 		Exporter *exporter;
+		QTimer *timer;
 	};
 
 }
