@@ -76,7 +76,7 @@ namespace nerd {
 			
 		public slots:
 			void printData(QString name, MatrixValue *dataMatrix);
-			
+			void updateData();
 
 		private:
 			MouseMoveLabel *mLabel;
@@ -90,17 +90,18 @@ namespace nerd {
 			QLabel *mInInLowLeftLabel;
 			QLabel *mInInLowMiddleLabel;
 			QLabel *mInInLowRightLabel;
-			
-			
+			QLabel *mMessageLabel;
+			QLabel *mBlankLabel2;
+			QLabel *mXMaxLabel;
+			QLabel *mXMinLabel;
+			QLabel *mYMaxLabel;
+			QLabel *mYMinLabel;
 			
 			QVBoxLayout *mMainLayout;
-			QHBoxLayout *mUpperHLayout;
-			QHBoxLayout *mLowerHLayout;
-			QHBoxLayout *mInLowInRightUpperHLayout;
-			QVBoxLayout *mInUppVLayout;
-			QVBoxLayout *mInLowRightVLayout;
+			QGridLayout *mOuterLayout;
+			QGridLayout *mInnerLayout;
 			
-			
+			Value *mPlotterOnlineValue;			
 			
 			void setupGUI();
 			

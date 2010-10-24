@@ -60,6 +60,7 @@
 #include <QLineEdit>
 #include "Core/Core.h"
 #include "Value/MatrixValue.h"
+#include "Value/BoolValue.h"
 #include "QHBoxLayout"
 #include "QVBoxLayout"
 #include "QGridLayout"
@@ -97,6 +98,9 @@ namespace nerd {
 
 	bool OnlinePlotterWindow::bind() {
 		bool ok = true;
+		ValueManager *mVM = Core::getInstance()->getValueManager();
+		mPlotterOnlineValue = mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline");
+		
 		return ok;
 	}
 
@@ -124,51 +128,61 @@ namespace nerd {
 		
 		mLabel = new MouseMoveLabel(this);
 		mTitleLabel = new QLabel( this);
-		mYLabel = new QLabel("Neuron\nOutput", this);
-		mXLabel = new QLabel("Parameter", this);
+		mYLabel = new QLabel("Y-Parameter(s)", this);
+		mXLabel = new QLabel("X-Parameter(s)", this);
 		mBlankLabel = new QLabel(this);
-		mInInUppTopLabel = new QLabel(this);
-		mInInUppMidLabel = new QLabel(this);
-		mInInUppLowLabel = new QLabel(this);
-		mInInLowLeftLabel = new QLabel(this);
-		mInInLowMiddleLabel = new QLabel(this);
-		mInInLowRightLabel = new QLabel(this);
+		mBlankLabel2 = new QLabel(this);
+		mMessageLabel = new QLabel("<font color='red'>Placeholder, here a nice message should appear</font>", this);
+		mXMaxLabel = new QLabel(this);
+		mXMinLabel = new QLabel(this);
+		mYMaxLabel = new QLabel(this);
+		mYMinLabel = new QLabel(this);
 		
 		
 		mMainLayout = new QVBoxLayout();
-		mUpperHLayout = new QHBoxLayout();
-		mLowerHLayout = new QHBoxLayout();
-		mInLowInRightUpperHLayout = new QHBoxLayout();
-		mInUppVLayout = new QVBoxLayout();
-		mInLowRightVLayout = new QVBoxLayout();
-		
+		mOuterLayout = new QGridLayout();
+		mInnerLayout = new QGridLayout();
 		mMainLayout->setContentsMargins(0, 0, 0, 0);
-		mUpperHLayout->setContentsMargins(0, 0, 0, 0);
 		
+		mTitleLabel->setAlignment(Qt::AlignHCenter);
+		mLabel->setAlignment(Qt::AlignTop);
 		mYLabel->setAlignment(Qt::AlignRight);
-		mXLabel->setAlignment(Qt::AlignCenter);
-		mInInUppTopLabel->setAlignment(Qt::AlignRight);
-		mInInUppLowLabel->setAlignment(Qt::AlignRight);
-		mInInLowRightLabel->setAlignment(Qt::AlignRight);
-		mInInLowLeftLabel->setAlignment(Qt::AlignLeft);
+		mYLabel->setAlignment(Qt::AlignVCenter);
+		mXLabel->setAlignment(Qt::AlignHCenter);
 		
-		mUpperHLayout->addWidget(mYLabel);
-		mInUppVLayout->addWidget(mInInUppTopLabel);
-		mInUppVLayout->addWidget(mInInUppMidLabel);
-		mInUppVLayout->addWidget(mInInUppLowLabel);
-		mUpperHLayout->addLayout(mInUppVLayout);
-		mUpperHLayout->addWidget(mLabel);
-		mLowerHLayout->addWidget(mBlankLabel);
-		mInLowInRightUpperHLayout->addWidget(mInInLowLeftLabel);
-		mInLowInRightUpperHLayout->addWidget(mInInLowMiddleLabel);
-		mInLowInRightUpperHLayout->addWidget(mInInLowRightLabel);
-		mInLowRightVLayout->addLayout(mInLowInRightUpperHLayout);
-		mInLowRightVLayout->addWidget(mXLabel);
-		mLowerHLayout->addLayout(mInLowRightVLayout);
+		mYMaxLabel->setAlignment(Qt::AlignRight);
+		mYMaxLabel->setAlignment(Qt::AlignTop);
+		mYMinLabel->setAlignment(Qt::AlignRight);
+		mYMinLabel->setAlignment(Qt::AlignBottom);
+		mXMinLabel->setAlignment(Qt::AlignLeft);
+		mXMaxLabel->setAlignment(Qt::AlignRight);
+				
+		mInnerLayout->addWidget(mYMaxLabel, 0, 0, Qt::AlignRight);
+		mInnerLayout->addWidget(mYMinLabel, 1, 0);
+		mInnerLayout->addWidget(mBlankLabel2, 2, 0);
+		mInnerLayout->addWidget(mLabel, 0, 1, 2, 2);
+		mInnerLayout->addWidget(mXMinLabel, 2, 1);
+		mInnerLayout->addWidget(mXMaxLabel, 2, 2);
+		mInnerLayout->setColumnStretch(0, 0);
+		mInnerLayout->setColumnStretch(1, 1);
+		mInnerLayout->setRowStretch(1, 0);
+		mInnerLayout->setRowStretch(0, 1);
+		
+		mOuterLayout->addWidget(mYLabel, 0, 0);
+		mOuterLayout->addLayout(mInnerLayout, 0, 1);
+		mOuterLayout->addWidget(mBlankLabel, 1, 0);
+		mOuterLayout->addWidget(mXLabel, 1, 1);
+		mOuterLayout->setColumnStretch(0, 0);
+		mOuterLayout->setColumnStretch(1, 1);
+		mOuterLayout->setRowStretch(1, 0);
+		mOuterLayout->setRowStretch(0, 1);
+		
 		mMainLayout->addWidget(mTitleLabel);
-		mMainLayout->addLayout(mUpperHLayout);
-		mMainLayout->addLayout(mLowerHLayout);
-
+		mMainLayout->addLayout(mOuterLayout);
+		mMainLayout->addWidget(mMessageLabel);
+		mMainLayout->setStretch(0, 0);
+		mMainLayout->setStretch(1, 1);
+		mMainLayout->setStretch(2, 0);
 		setLayout(mMainLayout);
 		
 	}
@@ -206,27 +220,23 @@ namespace nerd {
 				}else if(dataMatrix->get(j, k, 0) == 1){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 0));
 				}else if(dataMatrix->get(j, k, 0) == 2){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(100, 100, 100));
-				}else if(dataMatrix->get(j, k, 0) == 3){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(100, 0, 0));
-				}else if(dataMatrix->get(j, k, 0) == 4){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 100, 0));
-				}else if(dataMatrix->get(j, k, 0) == 5){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 100));
-				}else if(dataMatrix->get(j, k, 0) == 6){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(100, 100, 0));
-				}else if(dataMatrix->get(j, k, 0) == 7){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(100, 0, 100));
-				}else if(dataMatrix->get(j, k, 0) == 8){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 100, 100));
-				}else if(dataMatrix->get(j, k, 0) == 9){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 255));
-				}else if(dataMatrix->get(j, k, 0) == 10){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 0));
-				}else if(dataMatrix->get(j, k, 0) == 11){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 0));
+				}else if(dataMatrix->get(j, k, 0) == 3){
+					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 0));
+				}else if(dataMatrix->get(j, k, 0) == 4){
+					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 255));
+				}else if(dataMatrix->get(j, k, 0) == 5){
+					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 255, 0));
+				}else if(dataMatrix->get(j, k, 0) == 6){
+					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 255));
+				}else if(dataMatrix->get(j, k, 0) == 7){
+					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 255));
+				}else if(dataMatrix->get(j, k, 0) == 8){
+					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(150, 0, 255));
+				}else if(dataMatrix->get(j, k, 0) == 9){
+					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 160, 0));
 				}else{
-					image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(230, 230, 230));//period to high
+					image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(220, 220, 220));//period to high
 				}
 			} 
 		}
@@ -235,13 +245,13 @@ namespace nerd {
 	
 		mTitleLabel->setText(name);
 		//Print parameter/output range min. & max. to labels
-		mInInUppTopLabel->setText(QString("yMax: " + QString("%1").arg(dataMatrix->get(0, height -1, 0))));
-		mInInUppLowLabel->setText(QString("yMin: " + QString("%1").arg(dataMatrix->get(0, 1, 0))));
-		mInInLowLeftLabel->setText(QString("xMin: " + QString("%1").arg(dataMatrix->get(1, 0, 0))));
-		mInInLowRightLabel->setText(QString("xMax: " + QString("%1").arg(dataMatrix->get(width - 1, 0, 0))));
+		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(dataMatrix->get(0, height -1, 0))));
+		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(dataMatrix->get(0, 1, 0))));
+		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(dataMatrix->get(1, 0, 0))));
+		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(dataMatrix->get(width - 1, 0, 0))));
 		
 		mLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-		mUpperHLayout->setSizeConstraint(QLayout::SetMinimumSize);
+// 		mUpperHLayout->setSizeConstraint(QLayout::SetMinimumSize);
 		
 		mLabel->clear();
 		mLabel->setMatrix(dataMatrix);
@@ -251,6 +261,14 @@ namespace nerd {
 
 // 		update();
  		show();
+	}
+	void OnlinePlotterWindow::updateData(){
+// 		cerr<<"update received";
+		if(static_cast<BoolValue>(mPlotterOnlineValue).get() == false){
+			return;
+		}else{
+			
+		}
 	}
 }
 
