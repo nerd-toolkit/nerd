@@ -66,6 +66,7 @@ set(nerd_neuralNetwork_SRCS
 	Collections/UniversalNeuroScriptLoader.cpp  
 	Script/UniversalNeuroScriptingContext.cpp  
 	IO/NeuralNetworkIONerdV1Xml.cpp
+	Constraints/FeedForwardConstraint.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

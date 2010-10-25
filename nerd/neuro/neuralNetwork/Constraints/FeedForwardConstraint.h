@@ -42,41 +42,36 @@
  ***************************************************************************/
 
 
-
-#ifndef NERDNeuralNetworkUtil_H
-#define NERDNeuralNetworkUtil_H
+#ifndef ORCSFeedForwardConstraint_H
+#define ORCSFeedForwardConstraint_H
 
 #include <QString>
 #include <QHash>
-#include "Network/NeuralNetworkElement.h"
-#include "ModularNeuralNetwork/NeuroModule.h"
-#include <QPointF>
-#include <QSizeF>
+#include "Constraints/GroupConstraint.h"
+#include "Value/IntValue.h"
+#include "Value/BoolValue.h"
+#include "Value/StringValue.h"
 
 namespace nerd {
 
-	class Synapse;
-
 	/**
-	 * NeuralNetworkUtil.
+	 * FeedForwardConstraint.
 	 *
 	 */
-	class NeuralNetworkUtil {
+	class FeedForwardConstraint : public GroupConstraint {
 	public:
-		static void setNetworkElementLocationProperty(NeuralNetworkElement *elem, 
-													  double x, double y, double z);
-		static void setNetworkElementLocationProperty(NeuralNetworkElement *elem, const QPointF &pos);
-		static void setNeuroModuleLocationSizeProperty(NeuroModule *module, double width, double height);
-		static void setNeuroModuleLocationSizeProperty(NeuroModule *module, const QSizeF &size);
+		FeedForwardConstraint();
+		FeedForwardConstraint(const FeedForwardConstraint &other);
+		virtual ~FeedForwardConstraint();
 
-		static QPointF getPosition(const QString &locationProperty, bool *ok = 0);
-		static QPointF getPosition(const NeuralNetworkElement *element);
-		static QSizeF getModuleSize(const NeuroModule *module, bool *ok = 0);
+		virtual GroupConstraint* createCopy() const;
 
-		static QList<Neuron*> getConnectedNeurons(Synapse *synapse);
-		static QList<Synapse*> getDependentSynapses(Synapse *synapse);
+		virtual bool isValid(NeuronGroup *owner);
+		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor, 
+									 QList<NeuralNetworkElement*> &trashcan);
+		
+		virtual bool equals(GroupConstraint *constraint);
 
-		static QList<Synapse*> getRecurrenceChain(Neuron *neuron, Neuron *currentNeuron, QList<Neuron*> allConsideredNeurons);
 	private:
 	};
 

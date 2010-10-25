@@ -510,7 +510,7 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 			this, SLOT(useVisualizeElementPairTool()));
 
 
-	mViewMenu = menuBar->addMenu("View");
+	//mViewMenu = menuBar->addMenu("View");
 
 
 }

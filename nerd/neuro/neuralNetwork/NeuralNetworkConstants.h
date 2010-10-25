@@ -89,6 +89,7 @@ namespace nerd {
 
 		static const QString VALUE_EVO_STASIS_MODE;
 		static const QString VALUE_NNM_BYPASS_NETWORKS;
+		static const QString VALUE_EVO_CURRENT_GENERATION_NUMBER;
 
 	//**************************************************************************
 	//Tag Names
@@ -140,6 +141,7 @@ namespace nerd {
 		static const QString TAG_CREATION_DATE;
 		static const QString TAG_ELEMENT_VARIABLE_MASTER;
 		static const QString TAG_ELEMENT_VARIABLE_SLAVE; 
+		
 	};
 
 }

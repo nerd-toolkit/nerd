@@ -43,46 +43,122 @@
 
 
 
-#ifndef NERDNeuralNetworkUtil_H
-#define NERDNeuralNetworkUtil_H
+#include "FeedForwardConstraint.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
+#include "Util/Util.h"
+#include "Util/NeuralNetworkUtil.h"
+#include "NeuralNetworkConstants.h"
 
-#include <QString>
-#include <QHash>
-#include "Network/NeuralNetworkElement.h"
-#include "ModularNeuralNetwork/NeuroModule.h"
-#include <QPointF>
-#include <QSizeF>
+using namespace std;
 
 namespace nerd {
 
-	class Synapse;
 
-	/**
-	 * NeuralNetworkUtil.
-	 *
-	 */
-	class NeuralNetworkUtil {
-	public:
-		static void setNetworkElementLocationProperty(NeuralNetworkElement *elem, 
-													  double x, double y, double z);
-		static void setNetworkElementLocationProperty(NeuralNetworkElement *elem, const QPointF &pos);
-		static void setNeuroModuleLocationSizeProperty(NeuroModule *module, double width, double height);
-		static void setNeuroModuleLocationSizeProperty(NeuroModule *module, const QSizeF &size);
-
-		static QPointF getPosition(const QString &locationProperty, bool *ok = 0);
-		static QPointF getPosition(const NeuralNetworkElement *element);
-		static QSizeF getModuleSize(const NeuroModule *module, bool *ok = 0);
-
-		static QList<Neuron*> getConnectedNeurons(Synapse *synapse);
-		static QList<Synapse*> getDependentSynapses(Synapse *synapse);
-
-		static QList<Synapse*> getRecurrenceChain(Neuron *neuron, Neuron *currentNeuron, QList<Neuron*> allConsideredNeurons);
-	private:
-	};
-
+/**
+ * Constructs a new FeedForwardConstraint.
+ */
+FeedForwardConstraint::FeedForwardConstraint()
+	: GroupConstraint("FeedForward")
+{
 }
 
-#endif
+
+/**
+ * Copy constructor. 
+ * 
+ * @param other the FeedForwardConstraint object to copy.
+ */
+FeedForwardConstraint::FeedForwardConstraint(const FeedForwardConstraint &other)
+	: Object(), ValueChangedListener(), GroupConstraint(other) 
+{
+}
+
+/**
+ * Destructor.
+ */
+FeedForwardConstraint::~FeedForwardConstraint() {
+}
+
+GroupConstraint* FeedForwardConstraint::createCopy() const {
+	return new FeedForwardConstraint(*this);
+}
+
+bool FeedForwardConstraint::isValid(NeuronGroup*) {
+	return true;
+}
+
+
+bool FeedForwardConstraint::applyConstraint(NeuronGroup *owner, 
+									CommandExecutor*, 
+									QList<NeuralNetworkElement*> &trashcan)
+{
+	if(owner == 0) {
+		//do not do anything.
+		return true;
+	}
+
+	bool networkChanged = false;
+
+	ModularNeuralNetwork *net = owner->getOwnerNetwork();
+
+	IntValue *currentGenerationValue = Core::getInstance()->getValueManager()->getIntValue(
+								NeuralNetworkConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
+	int currentGeneration = 0;
+	if(currentGenerationValue != 0) {
+		currentGeneration = currentGenerationValue->get();
+	}
+
+	QList<Neuron*> neurons = owner->getNeurons();
+	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
+		Neuron *neuron = i.next();
+
+		QList<Synapse*> recurrentChain = NeuralNetworkUtil::getRecurrenceChain(neuron, neuron, neurons);
+
+		if(!recurrentChain.empty()) {
+			
+			for(QListIterator<Synapse*> j(recurrentChain); j.hasNext();) {
+				Synapse *synapse = j.next();
+				if(synapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
+					|| synapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECT_EXISTENCE))
+				{
+					continue;
+				}
+				QString date = synapse->getProperty(NeuralNetworkConstants::TAG_CREATION_DATE);
+				if(date != "") {
+					int generation = date.toInt();
+					if(generation == currentGeneration) {
+						trashcan <<  net->savelyRemoveNetworkElement(synapse);
+					}
+				}
+			}
+			mErrorMessage = QString("There was a loop of size ") 
+							+ QString::number(recurrentChain.size()) 
+							+ QString(" detected!");
+			networkChanged = true;
+		}
+	}
+
+	return !networkChanged;
+}
+		
+bool FeedForwardConstraint::equals(GroupConstraint *constraint) {
+	if(!GroupConstraint::equals(constraint)) {
+		return false;
+	}
+	FeedForwardConstraint *cc = 
+					dynamic_cast<FeedForwardConstraint*>(constraint);
+
+	if(cc == 0) {
+		return false;
+	}
+	return true;
+}
+
+
+}
 
 
 

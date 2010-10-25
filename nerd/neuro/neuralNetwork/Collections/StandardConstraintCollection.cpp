@@ -50,6 +50,7 @@
 #include "Constraints/PreventMutualConnectionsConstraint.h"
 #include "Constraints/ConnectionSymmetryConstraint.h"
 #include "Constraints/WeightAndBiasCalculatorConstraint.h"
+#include "Constraints/FeedForwardConstraint.h"
 
 namespace nerd {
 
@@ -64,6 +65,7 @@ StandardConstraintCollection::StandardConstraintCollection()
 	cm->addConstraintPrototype(new PreventMutualConnectionsConstraint());
 	cm->addConstraintPrototype(new ConnectionSymmetryConstraint());
 	cm->addConstraintPrototype(new WeightAndBiasCalculatorConstraint());
+	cm->addConstraintPrototype(new FeedForwardConstraint());
 }
 
 StandardConstraintCollection::~StandardConstraintCollection() {
