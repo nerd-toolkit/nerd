@@ -220,7 +220,7 @@ QList<Synapse*> NeuralNetworkUtil::getDependentSynapses(Synapse *synapse) {
 }
 
 QList<Synapse*> NeuralNetworkUtil::getRecurrenceChain(Neuron *neuron, Neuron *currentNeuron, 
-									QList<Neuron*> allConsideredNeurons) 
+									QList<Neuron*> allConsideredNeurons, QList<Neuron*> visitedNeurons) 
 {
 	
 	QList<Synapse*> chain;
@@ -233,6 +233,10 @@ QList<Synapse*> NeuralNetworkUtil::getRecurrenceChain(Neuron *neuron, Neuron *cu
 		Synapse *synapse = i.next();
 
 		Neuron *source = synapse->getSource();
+		if(source == 0 || visitedNeurons.contains(source)) {
+			return chain;
+		}
+
 		if(source == neuron) {
 			chain.append(synapse);
 			return chain;
@@ -241,9 +245,11 @@ QList<Synapse*> NeuralNetworkUtil::getRecurrenceChain(Neuron *neuron, Neuron *cu
 		if(!allConsideredNeurons.contains(source)) {
 			return chain; //empty;
 		}
+
+		visitedNeurons.append(source);
 		
 		QList<Synapse*> currentChain = 
-				NeuralNetworkUtil::getRecurrenceChain(neuron, synapse->getSource(), allConsideredNeurons);
+				NeuralNetworkUtil::getRecurrenceChain(neuron, source, allConsideredNeurons, visitedNeurons);
 
 		if(!currentChain.empty()) {
 			currentChain.append(synapse);

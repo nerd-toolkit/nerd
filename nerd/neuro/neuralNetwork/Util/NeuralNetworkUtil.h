@@ -76,7 +76,8 @@ namespace nerd {
 		static QList<Neuron*> getConnectedNeurons(Synapse *synapse);
 		static QList<Synapse*> getDependentSynapses(Synapse *synapse);
 
-		static QList<Synapse*> getRecurrenceChain(Neuron *neuron, Neuron *currentNeuron, QList<Neuron*> allConsideredNeurons);
+		static QList<Synapse*> getRecurrenceChain(Neuron *neuron, Neuron *currentNeuron, 
+							QList<Neuron*> allConsideredNeurons, QList<Neuron*> visitedNeurons = QList<Neuron*>());
 	private:
 	};
 
