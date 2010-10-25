@@ -177,6 +177,17 @@ void EvolutionTerminationTrigger::eventOccured(Event *event) {
 
 		//TODO add other criteria
 
+		QFile overviewFile("evolutionSummary.txt");
+		if(overviewFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+			QTextStream output(&overviewFile);
+			output << "Evolution in directory: " << endl;
+			output << em->getEvolutionWorkingDirectory() << endl;
+			output << "Terminated Evolution at generation " 
+					<< QString::number(em->getCurrentGenerationValue()->get()) << endl;
+			output << "Best Fitness: " << QString::number(mCurrentBestFitness) << endl << endl;
+		}
+		overviewFile.close();
+
 
 		if(quitApplication) {
 			message += QString("\nMax Fitness: ") + QString::number(mCurrentBestFitness) + QString("\n\n");
