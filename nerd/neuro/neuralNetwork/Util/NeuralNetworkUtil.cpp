@@ -233,7 +233,7 @@ QList<Synapse*> NeuralNetworkUtil::getRecurrenceChain(Neuron *neuron, Neuron *cu
 		Synapse *synapse = i.next();
 
 		Neuron *source = synapse->getSource();
-		if(source == 0 || visitedNeurons.contains(source)) {
+		if(source == 0) {
 			return chain;
 		}
 
@@ -244,6 +244,10 @@ QList<Synapse*> NeuralNetworkUtil::getRecurrenceChain(Neuron *neuron, Neuron *cu
 
 		if(!allConsideredNeurons.contains(source)) {
 			return chain; //empty;
+		}
+
+		if(visitedNeurons.contains(source)) {
+			return chain;
 		}
 
 		visitedNeurons.append(source);
