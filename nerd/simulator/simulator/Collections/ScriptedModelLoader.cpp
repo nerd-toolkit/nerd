@@ -95,9 +95,13 @@ ScriptedModelLoader::ScriptedModelLoader()
 				}
 			}
 			else {
-				Core::log("ScriptedModelLoader: Failed installing model prototype ["
-						+ model->getName() + "] from file [" + fileName + "]!", true);
-
+				if(model->hasEnvironmentSection()) {
+					model->createEnvironment();
+				}
+				else {
+					Core::log("ScriptedModelLoader: Failed installing model prototype ["
+							+ model->getName() + "] from file [" + fileName + "]!", true);
+				}
 				delete model;
 			}
 			Physics::getSimulationEnvironmentManager()->createSnapshot();
