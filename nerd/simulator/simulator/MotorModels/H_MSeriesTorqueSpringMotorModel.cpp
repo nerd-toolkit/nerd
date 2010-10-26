@@ -135,6 +135,7 @@ H_MSeriesTorqueSpringMotorModel::H_MSeriesTorqueSpringMotorModel(const H_MSeries
 	mSpringDampingConstantForRigidCoupling = dynamic_cast<DoubleValue*>(getParameter("SpringDampingConstantForRigidCoupling"));
 	mJointCoulombFriction = dynamic_cast<DoubleValue*>(getParameter("JointCoulombFriction"));
 	mGearEfficiencyFactor = dynamic_cast<DoubleValue*>(getParameter("GearEfficiencyFactor"));
+	
 }
 
 /**
@@ -228,6 +229,7 @@ void H_MSeriesTorqueSpringMotorModel::updateOutputValues() {
  */
 double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 
+
 	double jointTorque = 0.0;
 
 	TorqueDynamixelMotorAdapter *owner = dynamic_cast<TorqueDynamixelMotorAdapter*>(mOwner);
@@ -238,6 +240,7 @@ double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 		const QList<InterfaceValue*> freerunInputValues = owner->getFreerunInputValues();
 		const QList<DoubleValue*> currentConsumptionValues = owner->getCurrentConsumptionValues();
 		const QList<BoolValue*> flippedStateValues = owner->getMotorFlipStateValues();
+		const QList<DoubleValue*> individualMotorTorqueValues = owner->getIndividualMotorTorqueValues();
 
 		// Get timeStepSize for speed and acceleration calculation
 		double timeStepSize = Core::getInstance()->getValueManager()->getDoubleValue(SimulationConstants::VALUE_TIME_STEP_SIZE)->get();
@@ -342,6 +345,11 @@ double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 			// this torque to the total joint torque
 			double torqueFromCurrentMotor = torqueSpring / mMotorToJointTransmissionRatio->get();
 			jointTorque += torqueFromCurrentMotor;
+
+			if(i < individualMotorTorqueValues.size()) {
+				individualMotorTorqueValues[i]->set(torqueFromCurrentMotor);
+			}
+	
 
 			// Compute the current consumption value for this motor
 			if(currentConsumptionValues.size() > 0) {

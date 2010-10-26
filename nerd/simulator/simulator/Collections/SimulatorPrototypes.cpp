@@ -114,28 +114,28 @@ namespace nerd{
 	// springToJointTransmissionRatio 1:1.
 	pm->addPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_TEST,
 		new TorqueDynamixelMotorAdapter(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_TEST, 
-										1, true, true, true, false));
+										1, true, true, true, false, true));
 
 	pm->addPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_MULTIPLE_TEST,
 		new TorqueDynamixelMotorAdapter(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_MULTIPLE_TEST, 
-										2, true, true, true, false));
+										2, true, true, true, false, true));
 
 	// Joint Motors for M-Series
 	pm->addPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_0,
 		new TorqueDynamixelMotorAdapter(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_0,
-										0, true, false, false, false));
+										0, true, false, false, false, true));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_1,
 		new TorqueDynamixelMotorAdapter(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_1,
-										1, true, true, true, true));
+										1, true, true, true, true, true));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_2,
 		new TorqueDynamixelMotorAdapter(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_2,
-										2, true, true, true, true));
+										2, true, true, true, true, true));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_3,
 		new TorqueDynamixelMotorAdapter(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_3,
-										3, true, true, true, true));
+										3, true, true, true, true, true));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_4,
 		new TorqueDynamixelMotorAdapter(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_4,
-										4, true, true, true, true));
+										4, true, true, true, true, true));
 
     pm->addPrototype("Prototypes/DynamixelMotorAdapter",
         new DynamixelMotorAdapter("Prototypes/DynamixelMotorAdapter", 

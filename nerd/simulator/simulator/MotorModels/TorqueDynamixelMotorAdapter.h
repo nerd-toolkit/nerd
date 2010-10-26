@@ -61,15 +61,17 @@ namespace nerd {
 		TorqueDynamixelMotorAdapter(const QString &name, 
 									int numberOfTorqueInputValues, bool useJointAngleSensor = false,
 									bool useMotorAngleSensors = false, bool useFreerunInputValues = false,
-									bool useCurrentConsumptionSensors = false);
+									bool useCurrentConsumptionSensors = false, 
+									bool useIndividualMotorTorqueValues = false);
 		TorqueDynamixelMotorAdapter(const TorqueDynamixelMotorAdapter &other);
 
-		const QList<InterfaceValue*>& getTorqueInputValues() const;
+		QList<InterfaceValue*> getTorqueInputValues() const;
 		InterfaceValue* getJointAngleSensorValue() const;
-		const QList<InterfaceValue*>& getMotorAngleSensorValues() const;
-		const QList<InterfaceValue*>& getFreerunInputValues() const;
-		const QList<DoubleValue*>& getCurrentConsumptionValues() const;
-		const QList<BoolValue*>& getMotorFlipStateValues() const;
+		QList<InterfaceValue*> getMotorAngleSensorValues() const;
+		QList<InterfaceValue*> getFreerunInputValues() const;
+		QList<DoubleValue*> getIndividualMotorTorqueValues() const;
+		QList<DoubleValue*> getCurrentConsumptionValues() const;
+		QList<BoolValue*> getMotorFlipStateValues() const;
 		DoubleValue* getJointAngleOffsetValue() const;
 
 		int getNumberOfTorqueInputValues() const;
@@ -77,6 +79,7 @@ namespace nerd {
 		bool isUsingJointAngleSensor() const;
 		bool isUsingMotorAngleSensor() const;
 		bool isUsingFreerunInputValues() const;
+		bool isUsingIndividualMotorTorqueValues() const;
 		bool isUsingCurrentConsumptionSensors() const;
 
 		virtual ~TorqueDynamixelMotorAdapter();
@@ -97,6 +100,8 @@ namespace nerd {
 		QList<InterfaceValue*> mFreerunInputValues;
 		bool mUseCurrentConsumptionSensors;
 		QList<DoubleValue*> mCurrentConsumptionValues;
+		bool mUseIndiviualMotorTorqueValues;
+		QList<DoubleValue*> mIndividualMotorTorqueValues;
 		QList<BoolValue*> mMotorFlipStateValues;
 		DoubleValue *mJointAngleSensorOffset;
 	};

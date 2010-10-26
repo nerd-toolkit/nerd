@@ -60,10 +60,12 @@ namespace nerd {
 TorqueDynamixelMotorAdapter::TorqueDynamixelMotorAdapter(
 									const QString &name, int numberOfTorqueInputValues, bool useJointAngleSensor,
 									bool useMotorAngleSensors, bool useFreerunInputValues,
-									bool useCurrentConsumptionSensors)
+									bool useCurrentConsumptionSensors, bool useIndividualMotorTorqueValues)
 	: HingeJointMotorAdapter(name), 
 		mNumberOfTorqueInputValues(numberOfTorqueInputValues), mUseJointAngleSensor(useJointAngleSensor), mJointAngleSensorValue(0),
-		mUseMotorAngleSensors(useMotorAngleSensors), mUseFreerunInputValues(useFreerunInputValues), mUseCurrentConsumptionSensors(useCurrentConsumptionSensors)
+		mUseMotorAngleSensors(useMotorAngleSensors), mUseFreerunInputValues(useFreerunInputValues), 
+		mUseCurrentConsumptionSensors(useCurrentConsumptionSensors),
+		mUseIndiviualMotorTorqueValues(useIndividualMotorTorqueValues)
 {
 	// Create Joint Angle Sensor and add it to the OutputValues if used
 	if(mUseJointAngleSensor) {
@@ -102,6 +104,12 @@ TorqueDynamixelMotorAdapter::TorqueDynamixelMotorAdapter(
 			addParameter("ReleaseMode" + QString::number(i), freerunValue);
 		}
 
+		if(mUseIndiviualMotorTorqueValues) {
+			DoubleValue *indTorqueValue = new DoubleValue();
+			mIndividualMotorTorqueValues.append(indTorqueValue);
+			addParameter("IndividualMotorTorque" + QString::number(i), indTorqueValue);
+		}
+
 		// Create Current Consumption Values
 		if(mUseCurrentConsumptionSensors) {
 			DoubleValue *currentConsumptionValue = new DoubleValue(0.0);
@@ -126,7 +134,8 @@ TorqueDynamixelMotorAdapter::TorqueDynamixelMotorAdapter(const TorqueDynamixelMo
 	: SimSensor(other), SimActuator(other), Object(other), ValueChangedListener(other), HingeJointMotorAdapter(other),
 		mNumberOfTorqueInputValues(other.mNumberOfTorqueInputValues), mUseJointAngleSensor(other.mUseJointAngleSensor), mJointAngleSensorValue(0),
 		mUseMotorAngleSensors(other.mUseMotorAngleSensors), mUseFreerunInputValues(other.mUseFreerunInputValues),
-		mUseCurrentConsumptionSensors(other.mUseCurrentConsumptionSensors)
+		mUseCurrentConsumptionSensors(other.mUseCurrentConsumptionSensors),
+		mUseIndiviualMotorTorqueValues(other.mUseIndiviualMotorTorqueValues)
 {
 	// Get Joint Angle Sensor and add it to the OutputValues if used
 	if(mUseJointAngleSensor) {
@@ -155,6 +164,11 @@ TorqueDynamixelMotorAdapter::TorqueDynamixelMotorAdapter(const TorqueDynamixelMo
 			InterfaceValue *freerunValue = dynamic_cast<InterfaceValue*>(getParameter("ReleaseMode" + QString::number(i)));
 			mFreerunInputValues.append(freerunValue);
 			mInputValues.append(freerunValue);
+		}
+
+		if(mUseIndiviualMotorTorqueValues) {
+			DoubleValue *indTorqueValue = dynamic_cast<DoubleValue*>(getParameter("IndividualMotorTorque" + QString::number(i)));
+			mIndividualMotorTorqueValues.append(indTorqueValue);
 		}
 
 		// Get Current Consumption Parameters
@@ -197,11 +211,15 @@ bool TorqueDynamixelMotorAdapter::isUsingFreerunInputValues() const {
 	return mUseFreerunInputValues;
 }
 
+bool TorqueDynamixelMotorAdapter::isUsingIndividualMotorTorqueValues() const {
+	return mUseIndiviualMotorTorqueValues;
+}
+
 bool TorqueDynamixelMotorAdapter::isUsingCurrentConsumptionSensors() const {
 	return mUseCurrentConsumptionSensors;
 }
 
-const QList<InterfaceValue*>& TorqueDynamixelMotorAdapter::getTorqueInputValues() const {
+QList<InterfaceValue*> TorqueDynamixelMotorAdapter::getTorqueInputValues() const {
 	return mTorqueInputValues;
 }
 
@@ -209,19 +227,23 @@ InterfaceValue* TorqueDynamixelMotorAdapter::getJointAngleSensorValue() const {
 	return mJointAngleSensorValue;
 }
 
-const QList<InterfaceValue*>& TorqueDynamixelMotorAdapter::getMotorAngleSensorValues() const {
+QList<InterfaceValue*> TorqueDynamixelMotorAdapter::getMotorAngleSensorValues() const {
 	return mMotorAngleSensorValues;
 }
 
-const QList<InterfaceValue*>& TorqueDynamixelMotorAdapter::getFreerunInputValues() const {
+QList<InterfaceValue*> TorqueDynamixelMotorAdapter::getFreerunInputValues() const {
 	return mFreerunInputValues;
 }
 
-const QList<DoubleValue*>& TorqueDynamixelMotorAdapter::getCurrentConsumptionValues() const {
+QList<DoubleValue*> TorqueDynamixelMotorAdapter::getIndividualMotorTorqueValues() const {
+	return mIndividualMotorTorqueValues;
+}
+
+QList<DoubleValue*> TorqueDynamixelMotorAdapter::getCurrentConsumptionValues() const {
 	return mCurrentConsumptionValues;
 }
 
-const QList<BoolValue*>& TorqueDynamixelMotorAdapter::getMotorFlipStateValues() const {
+QList<BoolValue*> TorqueDynamixelMotorAdapter::getMotorFlipStateValues() const {
 	return mMotorFlipStateValues;
 }
 
