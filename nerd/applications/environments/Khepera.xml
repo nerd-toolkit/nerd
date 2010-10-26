@@ -1,0 +1,10 @@
+ <ORCS version="Environment XML V1.1"> 
+
+  <Models> 
+   <model prototype="Ground" name="Ground" />  
+   <model prototype="Khepera" name="Khepera" position="(0,0.01,0)" orientation="(0,0,0)" DistanceSensorLayout="01001000" >
+   </model>
+  </Models> 
+
+ </ORCS>
+

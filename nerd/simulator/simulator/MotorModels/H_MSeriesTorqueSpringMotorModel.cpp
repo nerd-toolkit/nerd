@@ -136,6 +136,7 @@ H_MSeriesTorqueSpringMotorModel::H_MSeriesTorqueSpringMotorModel(const H_MSeries
 	mJointCoulombFriction = dynamic_cast<DoubleValue*>(getParameter("JointCoulombFriction"));
 	mGearEfficiencyFactor = dynamic_cast<DoubleValue*>(getParameter("GearEfficiencyFactor"));
 	
+	
 }
 
 /**
@@ -159,6 +160,16 @@ bool H_MSeriesTorqueSpringMotorModel::setOwner(MotorAdapter *owner) {
 			mLastMotorPositions.append(0.0);
 			mCurrentMotorSpeeds.append(0.0);
 			mLastSpringTensions.append(0.0);
+
+			//TODO remove after model tests.
+			mTmpTorqueSpring.append(new DoubleValue());
+			addParameter("tmp/TorqueSpring" + QString::number(i), mTmpTorqueSpring.last(), true);
+			mTmpTorqueComplete.append(new DoubleValue());
+			addParameter("tmp/TorqueComplete" + QString::number(i), mTmpTorqueComplete.last(), true);
+			mTmpTorquWithoutFriction.append(new DoubleValue());
+			addParameter("tmp/TorqueWithoutFriction" + QString::number(i), mTmpTorquWithoutFriction.last(), true);
+			mTmpTorqueFromMotor.append(new DoubleValue());
+			addParameter("tmp/TorqueFromMotor" + QString::number(i), mTmpTorqueFromMotor.last(), true);
 
 			DoubleValue *jointToMotorDisplacement = dynamic_cast<DoubleValue*>(getParameter("JointToMotorDisplacement" + QString::number(i)));
 			if(jointToMotorDisplacement == 0) {
@@ -261,6 +272,8 @@ double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 			} else {
 				torqueSpring = currentSpringTension * mSpringConstantForRigidCoupling->get() + springTensionSpeed * mSpringDampingConstantForRigidCoupling->get();
 			}
+			mTmpTorqueSpring.at(i)->set(torqueSpring); //TODO remove
+
 			// 4. Compute the torque that the motor produces itself depending on the freerunValue
 			double torqueFromMotor;
 			if(owner->isUsingFreerunInputValues() && freerunInputValues.at(i)->get() > 0) {	// Freerun used and set?
@@ -268,6 +281,7 @@ double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 			} else {
 				torqueFromMotor = mTorqueConstant->get() * (torqueInputValues.at(i)->get() * flipFactor) * mVoltage->get() - mSpeedConstant->get() * mCurrentMotorSpeeds.at(i);
 			}
+			mTmpTorqueFromMotor.at(i)->set(torqueFromMotor); //TODO remove
 			// 5. Compute the complete torque that is applied to the motor without friction. This is the torque from the motor itself and the torque
 			// of the spring
 			double torqueWithoutFriction = 0.0;
@@ -283,6 +297,7 @@ double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 				} else {
 					torqueWithoutFriction = torqueFromMotor - torqueSpring;
 				}
+				mTmpTorquWithoutFriction.at(i)->set(torqueWithoutFriction); //TODO remove
 				// 6. Compute resulting complete torque with friction
 				double torqueComplete;
 				if(Math::abs(mCurrentMotorSpeeds.at(i)) < mStaticToDynamicFrictionSpeedThreshold->get()) {	// Static Friction?
@@ -295,6 +310,7 @@ double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 				} else {
 					torqueComplete = torqueWithoutFriction - mDynamicFrictionConstant->get() * mCurrentMotorSpeeds.at(i);
 				}
+				mTmpTorqueComplete.at(i)->set(torqueComplete); //TODO remove
 				// 7. Compute the current acceleration of the current motor from the diff-equation J*acc = torqueComplete
 				double currentAcc = torqueComplete / mMotorInertia->get();
 				// Cut of unrealistic accelerations

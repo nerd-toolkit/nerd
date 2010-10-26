@@ -129,6 +129,11 @@ namespace nerd {
 		DoubleValue *mGearEfficiencyFactor;		// This is the efficiency factor of the motor gear. This is escpecially important if
 												// on motor works against another or if an external force works against a motor.
 
+		QList<DoubleValue*> mTmpTorqueSpring;
+		QList<DoubleValue*> mTmpTorqueFromMotor;
+		QList<DoubleValue*> mTmpTorqueComplete;
+		QList<DoubleValue*> mTmpTorquWithoutFriction;
+
 	};
 
 }
