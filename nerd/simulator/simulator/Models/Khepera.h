@@ -66,6 +66,7 @@ class Khepera : public ModelInterface {
 		SimObjectGroup *mAgent;
 		BoolValue *mUseDistanceSensors;
 		BoolValue *mUseLightSensors;
+		StringValue *mDistanceSensorLayout;
 };
 
 }

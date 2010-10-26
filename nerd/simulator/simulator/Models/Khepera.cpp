@@ -67,9 +67,11 @@ Khepera::Khepera(const QString &name, bool useDistanceSensors,
 {
 	mUseDistanceSensors = new BoolValue(useDistanceSensors);
 	mUseLightSensors = new BoolValue(mUseLightSensors);
+	mDistanceSensorLayout = new StringValue("11111111");
 
 	addParameter("UseDistanceSensors", mUseDistanceSensors);
 	addParameter("UseLightSensors", mUseLightSensors);
+	addParameter("DistanceSensorLayout", mDistanceSensorLayout);
 }
 
 Khepera::Khepera(const Khepera &khepera)
@@ -79,6 +81,7 @@ Khepera::Khepera(const Khepera &khepera)
 {
 	mUseDistanceSensors = dynamic_cast<BoolValue*>(getParameter("UseDistanceSensors"));
 	mUseLightSensors = dynamic_cast<BoolValue*>(getParameter("UseLightSensors"));
+	mDistanceSensorLayout = dynamic_cast<StringValue*>(getParameter("DistanceSensorLayout"));
 }
 
 void Khepera::createModel() {
@@ -273,169 +276,198 @@ void Khepera::createModel() {
 	 * can't be used.
 	 */
 	if(mUseDistanceSensors->get()) {
-		other = distance->createCopy();
-		mSimObjects.append(other);
-		PARAM(StringValue, other, "Name")->set("/Sensor0");
-		PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
-//		PARAM(Vector3DValue, other, "LocalPosition")->set(0.023, 0, 0.0095);
-//		PARAM(QuaternionValue, other, "LocalOrientation")
-//				->set(Quaternion(0.7071067811865476, 0, 0, 0.7071067811865475)
-//				* p);
-		PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
-		PARAM(QuaternionValue, other, "LocalOrientation")
-				->set(Quaternion(0.8311919617091449, 0, 0, 0.5559855418894484)
-				* p);
-		PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
-		PARAM(DoubleValue, other, "MaxRange")
-				->set(distanceSensorRange + bodyRadius);
-		PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
-		PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
-		PARAM(ColorValue, other, "ActiveColor")->set(active);
-		PARAM(ColorValue, other, "InactiveColor")->set(inactive);
-		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+		
+		QString sensorLayout = mDistanceSensorLayout->get();
+		if(sensorLayout.length() != 8) {
+			sensorLayout = "11111111";
+		}
 
-		other = distance->createCopy();
-		mSimObjects.append(other);
-		PARAM(StringValue, other, "Name")->set("/Sensor1");
-		PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
-//		PARAM(Vector3DValue, other, "LocalPosition")->set(0.0175, 0, 0.018);
-//		PARAM(QuaternionValue, other, "LocalOrientation")
-//				->set(Quaternion(0.9238795325112867, 0, 0, 0.3826834323650898)
-//				* p);
-		PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
-		PARAM(QuaternionValue, other, "LocalOrientation")
-				->set(Quaternion(0.9265513797988838, 0, 0, 0.3761682344281408)
-				* p);
-		PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
-		PARAM(DoubleValue, other, "MaxRange")
-				->set(distanceSensorRange + bodyRadius);
-		PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
-		PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
-		PARAM(ColorValue, other, "ActiveColor")->set(active);
-		PARAM(ColorValue, other, "InactiveColor")->set(inactive);
-		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+		if(sensorLayout.at(0) == '1') {
 
-		other = distance->createCopy();
-		mSimObjects.append(other);
-		PARAM(StringValue, other, "Name")->set("/Sensor2");
-		PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
-//		PARAM(Vector3DValue, other, "LocalPosition")->set(0.0055, 0, 0.0245);
-//		PARAM(QuaternionValue, other, "LocalOrientation")
-//				->set(Quaternion(1, 0, 0, 0) * p);
-		PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
-		PARAM(QuaternionValue, other, "LocalOrientation")
-				->set(Quaternion(0.9939105221531691, 0, 0, 0.11019017176325077)
-				* p);
-		PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
-		PARAM(DoubleValue, other, "MaxRange")
-				->set(distanceSensorRange + bodyRadius);
-		PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
-		PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
-		PARAM(ColorValue, other, "ActiveColor")->set(active);
-		PARAM(ColorValue, other, "InactiveColor")->set(inactive);
-		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+			other = distance->createCopy();
+			mSimObjects.append(other);
+			PARAM(StringValue, other, "Name")->set("/Sensor0");
+			PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
+	//		PARAM(Vector3DValue, other, "LocalPosition")->set(0.023, 0, 0.0095);
+	//		PARAM(QuaternionValue, other, "LocalOrientation")
+	//				->set(Quaternion(0.7071067811865476, 0, 0, 0.7071067811865475)
+	//				* p);
+			PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
+			PARAM(QuaternionValue, other, "LocalOrientation")
+					->set(Quaternion(0.8311919617091449, 0, 0, 0.5559855418894484)
+					* p);
+			PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
+			PARAM(DoubleValue, other, "MaxRange")
+					->set(distanceSensorRange + bodyRadius);
+			PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
+			PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
+			PARAM(ColorValue, other, "ActiveColor")->set(active);
+			PARAM(ColorValue, other, "InactiveColor")->set(inactive);
+			PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+		}
+		if(sensorLayout.at(1) == '1') {
 
-		other = distance->createCopy();
-		mSimObjects.append(other);
-		PARAM(StringValue, other, "Name")->set("/Sensor3");
-		PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
-//		PARAM(Vector3DValue, other, "LocalPosition")->set(-0.0055, 0, 0.0245);
-//		PARAM(QuaternionValue, other, "LocalOrientation")
-//				->set(Quaternion(1, 0, 0, 0) * p);
-		PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
-		PARAM(QuaternionValue, other, "LocalOrientation")
-				->set(Quaternion(0.9939105221531691, 0, 0, -0.11019017176325077)
-				* p);
-		PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
-		PARAM(DoubleValue, other, "MaxRange")
-				->set(distanceSensorRange + bodyRadius);
-		PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
-		PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
-		PARAM(ColorValue, other, "ActiveColor")->set(active);
-		PARAM(ColorValue, other, "InactiveColor")->set(inactive);
-		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+			other = distance->createCopy();
+			mSimObjects.append(other);
+			PARAM(StringValue, other, "Name")->set("/Sensor1");
+			PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
+	//		PARAM(Vector3DValue, other, "LocalPosition")->set(0.0175, 0, 0.018);
+	//		PARAM(QuaternionValue, other, "LocalOrientation")
+	//				->set(Quaternion(0.9238795325112867, 0, 0, 0.3826834323650898)
+	//				* p);
+			PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
+			PARAM(QuaternionValue, other, "LocalOrientation")
+					->set(Quaternion(0.9265513797988838, 0, 0, 0.3761682344281408)
+					* p);
+			PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
+			PARAM(DoubleValue, other, "MaxRange")
+					->set(distanceSensorRange + bodyRadius);
+			PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
+			PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
+			PARAM(ColorValue, other, "ActiveColor")->set(active);
+			PARAM(ColorValue, other, "InactiveColor")->set(inactive);
+			PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
 
-		other = distance->createCopy();
-		mSimObjects.append(other);
-		PARAM(StringValue, other, "Name")->set("/Sensor4");
-		PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
-//		PARAM(Vector3DValue, other, "LocalPosition")->set(-0.0175, 0, 0.018);
-//		PARAM(QuaternionValue, other, "LocalOrientation")
-//				->set(Quaternion(0.9238795325112867, 0, 0, -0.3826834323650898)
-//				* p);
-		PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
-		PARAM(QuaternionValue, other, "LocalOrientation")
-				->set(Quaternion(0.9265513797988838, 0, 0, -0.3761682344281408)
-				* p);
-		PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
-		PARAM(DoubleValue, other, "MaxRange")
-				->set(distanceSensorRange + bodyRadius);
-		PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
-		PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
-		PARAM(ColorValue, other, "ActiveColor")->set(active);
-		PARAM(ColorValue, other, "InactiveColor")->set(inactive);
-		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+		}
+		if(sensorLayout.at(2) == '1') {
 
-		other = distance->createCopy();
-		mSimObjects.append(other);
-		PARAM(StringValue, other, "Name")->set("/Sensor5");
-		PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
-//		PARAM(Vector3DValue, other, "LocalPosition")->set(-0.023, 0, 0.0095);
-//		PARAM(QuaternionValue, other, "LocalOrientation")
-//				->set(Quaternion(0.7071067811865476, 0, 0, -0.7071067811865475)
-//				* p);
-		PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
-		PARAM(QuaternionValue, other, "LocalOrientation")
-				->set(Quaternion(0.8311919617091449, 0, 0, -0.5559855418894484)
-				* p);
-		PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
-		PARAM(DoubleValue, other, "MaxRange")
-				->set(distanceSensorRange + bodyRadius);
-		PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
-		PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
-		PARAM(ColorValue, other, "ActiveColor")->set(active);
-		PARAM(ColorValue, other, "InactiveColor")->set(inactive);
-		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+			other = distance->createCopy();
+			mSimObjects.append(other);
+			PARAM(StringValue, other, "Name")->set("/Sensor2");
+			PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
+	//		PARAM(Vector3DValue, other, "LocalPosition")->set(0.0055, 0, 0.0245);
+	//		PARAM(QuaternionValue, other, "LocalOrientation")
+	//				->set(Quaternion(1, 0, 0, 0) * p);
+			PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
+			PARAM(QuaternionValue, other, "LocalOrientation")
+					->set(Quaternion(0.9939105221531691, 0, 0, 0.11019017176325077)
+					* p);
+			PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
+			PARAM(DoubleValue, other, "MaxRange")
+					->set(distanceSensorRange + bodyRadius);
+			PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
+			PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
+			PARAM(ColorValue, other, "ActiveColor")->set(active);
+			PARAM(ColorValue, other, "InactiveColor")->set(inactive);
+			PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
 
-		other = distance->createCopy();
-		mSimObjects.append(other);
-		PARAM(StringValue, other, "Name")->set("/Sensor6");
-		PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
-//		PARAM(Vector3DValue, other, "LocalPosition")->set(-0.0095, 0, -0.023);
-//		PARAM(QuaternionValue, other, "LocalOrientation")
-//				->set(Quaternion(0, 0, 0, 1) * p);
-		PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
-		PARAM(QuaternionValue, other, "LocalOrientation")
-				->set(Quaternion(0.1946003256805792, 0, 0, 0.9808826195039917)
-				* p);
-		PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
-		PARAM(DoubleValue, other, "MaxRange")
-				->set(distanceSensorRange + bodyRadius);
-		PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
-		PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
-		PARAM(ColorValue, other, "ActiveColor")->set(active);
-		PARAM(ColorValue, other, "InactiveColor")->set(inactive);
-		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+		}
+		if(sensorLayout.at(3) == '1') {
 
-		other = distance->createCopy();
-		mSimObjects.append(other);
-		PARAM(StringValue, other, "Name")->set("/Sensor7");
-		PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
-//		PARAM(Vector3DValue, other, "LocalPosition")->set(0.0095, 0, -0.023);
-//		PARAM(QuaternionValue, other, "LocalOrientation")
-//				->set(Quaternion(0, 0, 0, 1) * p);
-		PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
-		PARAM(QuaternionValue, other, "LocalOrientation")
-				->set(Quaternion(0.1946003256805792, 0, 0, -0.9808826195039917)
-				* p);
-		PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
-		PARAM(DoubleValue, other, "MaxRange")
-				->set(distanceSensorRange + bodyRadius);
-		PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
-		PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
-		PARAM(ColorValue, other, "ActiveColor")->set(active);
-		PARAM(ColorValue, other, "InactiveColor")->set(inactive);
-		PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+			other = distance->createCopy();
+			mSimObjects.append(other);
+			PARAM(StringValue, other, "Name")->set("/Sensor3");
+			PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
+	//		PARAM(Vector3DValue, other, "LocalPosition")->set(-0.0055, 0, 0.0245);
+	//		PARAM(QuaternionValue, other, "LocalOrientation")
+	//				->set(Quaternion(1, 0, 0, 0) * p);
+			PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
+			PARAM(QuaternionValue, other, "LocalOrientation")
+					->set(Quaternion(0.9939105221531691, 0, 0, -0.11019017176325077)
+					* p);
+			PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
+			PARAM(DoubleValue, other, "MaxRange")
+					->set(distanceSensorRange + bodyRadius);
+			PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
+			PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
+			PARAM(ColorValue, other, "ActiveColor")->set(active);
+			PARAM(ColorValue, other, "InactiveColor")->set(inactive);
+			PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+
+		}
+		if(sensorLayout.at(4) == '1') {
+
+			other = distance->createCopy();
+			mSimObjects.append(other);
+			PARAM(StringValue, other, "Name")->set("/Sensor4");
+			PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
+	//		PARAM(Vector3DValue, other, "LocalPosition")->set(-0.0175, 0, 0.018);
+	//		PARAM(QuaternionValue, other, "LocalOrientation")
+	//				->set(Quaternion(0.9238795325112867, 0, 0, -0.3826834323650898)
+	//				* p);
+			PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
+			PARAM(QuaternionValue, other, "LocalOrientation")
+					->set(Quaternion(0.9265513797988838, 0, 0, -0.3761682344281408)
+					* p);
+			PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
+			PARAM(DoubleValue, other, "MaxRange")
+					->set(distanceSensorRange + bodyRadius);
+			PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
+			PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
+			PARAM(ColorValue, other, "ActiveColor")->set(active);
+			PARAM(ColorValue, other, "InactiveColor")->set(inactive);
+			PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+
+		}
+		if(sensorLayout.at(5) == '1') {
+
+			other = distance->createCopy();
+			mSimObjects.append(other);
+			PARAM(StringValue, other, "Name")->set("/Sensor5");
+			PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
+	//		PARAM(Vector3DValue, other, "LocalPosition")->set(-0.023, 0, 0.0095);
+	//		PARAM(QuaternionValue, other, "LocalOrientation")
+	//				->set(Quaternion(0.7071067811865476, 0, 0, -0.7071067811865475)
+	//				* p);
+			PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
+			PARAM(QuaternionValue, other, "LocalOrientation")
+					->set(Quaternion(0.8311919617091449, 0, 0, -0.5559855418894484)
+					* p);
+			PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
+			PARAM(DoubleValue, other, "MaxRange")
+					->set(distanceSensorRange + bodyRadius);
+			PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
+			PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
+			PARAM(ColorValue, other, "ActiveColor")->set(active);
+			PARAM(ColorValue, other, "InactiveColor")->set(inactive);
+			PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+
+		}
+		if(sensorLayout.at(6) == '1') {
+
+			other = distance->createCopy();
+			mSimObjects.append(other);
+			PARAM(StringValue, other, "Name")->set("/Sensor6");
+			PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
+	//		PARAM(Vector3DValue, other, "LocalPosition")->set(-0.0095, 0, -0.023);
+	//		PARAM(QuaternionValue, other, "LocalOrientation")
+	//				->set(Quaternion(0, 0, 0, 1) * p);
+			PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
+			PARAM(QuaternionValue, other, "LocalOrientation")
+					->set(Quaternion(0.1946003256805792, 0, 0, 0.9808826195039917)
+					* p);
+			PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
+			PARAM(DoubleValue, other, "MaxRange")
+					->set(distanceSensorRange + bodyRadius);
+			PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
+			PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
+			PARAM(ColorValue, other, "ActiveColor")->set(active);
+			PARAM(ColorValue, other, "InactiveColor")->set(inactive);
+			PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+
+		}
+		if(sensorLayout.at(7) == '1') {
+
+			other = distance->createCopy();
+			mSimObjects.append(other);
+			PARAM(StringValue, other, "Name")->set("/Sensor7");
+			PARAM(StringValue, other, "HostBody")->set(pathName + "/Body");
+	//		PARAM(Vector3DValue, other, "LocalPosition")->set(0.0095, 0, -0.023);
+	//		PARAM(QuaternionValue, other, "LocalOrientation")
+	//				->set(Quaternion(0, 0, 0, 1) * p);
+			PARAM(Vector3DValue, other, "LocalPosition")->set(0, 0, 0);
+			PARAM(QuaternionValue, other, "LocalOrientation")
+					->set(Quaternion(0.1946003256805792, 0, 0, -0.9808826195039917)
+					* p);
+			PARAM(DoubleValue, other, "AngleOfAperture")->set(distanceSensorAngle);
+			PARAM(DoubleValue, other, "MaxRange")
+					->set(distanceSensorRange + bodyRadius);
+			PARAM(DoubleValue, other, "MinRange")->set(bodyRadius);
+			PARAM(IntValue, other, "NumberOfRays")->set(distanceSensorRays);
+			PARAM(ColorValue, other, "ActiveColor")->set(active);
+			PARAM(ColorValue, other, "InactiveColor")->set(inactive);
+			PARAM(DoubleValue, other, "Noise")->set(distanceSensorNoise);
+		}
 	}
 
 	if(mUseLightSensors->get()) {
