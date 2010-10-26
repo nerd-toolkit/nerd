@@ -99,7 +99,7 @@ namespace nerd {
 	bool OnlinePlotterWindow::bind() {
 		bool ok = true;
 		ValueManager *mVM = Core::getInstance()->getValueManager();
-		mPlotterOnlineValue = mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline");
+		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
 		
 		return ok;
 	}
@@ -199,41 +199,41 @@ namespace nerd {
 			Core::log("OnlinePlotterWindow: Couldn't find data Matrix or Name");
 			return;
 		}		
-		
+		mMatrix = dataMatrix;
+		hide();
 
-
-		int width = dataMatrix->getMatrixWidth();
-		int height = dataMatrix->getMatrixHeight();
-// 		int depth = dataMatrix->getMatrixDepth();
+		int width = mMatrix->getMatrixWidth();
+		int height = mMatrix->getMatrixHeight();
+// 		int depth = mMatrix->getMatrixDepth();
 		
 
 		//create a QImage-object to be printed on the label
 		QImage image(width, height, QImage::Format_RGB32);
 		image.fill(qRgb(255, 255, 255));
-		resize(width, height);
+// 		resize(width, height);
 		
 		//set pixels black, when entry in matrix = 1, else print them white
 		for(int j = 1; j <= width; j++){
 			for (int k = 1; k <= height; k++){
-				if(dataMatrix->get(j, k, 0) == 0){
+				if(mMatrix->get(j, k, 0) == 0){
 					image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(255, 255, 255)); //no attractor
-				}else if(dataMatrix->get(j, k, 0) == 1){
+				}else if(mMatrix->get(j, k, 0) == 1){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 0));
-				}else if(dataMatrix->get(j, k, 0) == 2){
+				}else if(mMatrix->get(j, k, 0) == 2){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 0));
-				}else if(dataMatrix->get(j, k, 0) == 3){
+				}else if(mMatrix->get(j, k, 0) == 3){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 0));
-				}else if(dataMatrix->get(j, k, 0) == 4){
+				}else if(mMatrix->get(j, k, 0) == 4){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 255));
-				}else if(dataMatrix->get(j, k, 0) == 5){
+				}else if(mMatrix->get(j, k, 0) == 5){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 255, 0));
-				}else if(dataMatrix->get(j, k, 0) == 6){
+				}else if(mMatrix->get(j, k, 0) == 6){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 255));
-				}else if(dataMatrix->get(j, k, 0) == 7){
+				}else if(mMatrix->get(j, k, 0) == 7){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 255));
-				}else if(dataMatrix->get(j, k, 0) == 8){
+				}else if(mMatrix->get(j, k, 0) == 8){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(150, 0, 255));
-				}else if(dataMatrix->get(j, k, 0) == 9){
+				}else if(mMatrix->get(j, k, 0) == 9){
 					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 160, 0));
 				}else{
 					image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(220, 220, 220));//period to high
@@ -242,19 +242,18 @@ namespace nerd {
 		}
 	
 
-	
 		mTitleLabel->setText(name);
 		//Print parameter/output range min. & max. to labels
-		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(dataMatrix->get(0, height -1, 0))));
-		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(dataMatrix->get(0, 1, 0))));
-		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(dataMatrix->get(1, 0, 0))));
-		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(dataMatrix->get(width - 1, 0, 0))));
+		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, height -1, 0))));
+		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(mMatrix->get(0, 1, 0))));
+		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(mMatrix->get(1, 0, 0))));
+		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(width - 1, 0, 0))));
 		
 		mLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 // 		mUpperHLayout->setSizeConstraint(QLayout::SetMinimumSize);
 		
 		mLabel->clear();
-		mLabel->setMatrix(dataMatrix);
+		mLabel->setMatrix(mMatrix);
 		mLabel->resize(width, height);
 		mLabel->setPixmap(QPixmap::fromImage(image)); //print QImage on label
 		mLabel->show();
@@ -267,8 +266,60 @@ namespace nerd {
 		if(static_cast<BoolValue>(mPlotterOnlineValue).get() == false){
 			return;
 		}else{
+			int width = mMatrix->getMatrixWidth();
+			int height = mMatrix->getMatrixHeight();
+	
+			//create a QImage-object to be printed on the label
+			QImage image(width, height, QImage::Format_RGB32);
+			image.fill(qRgb(255, 255, 255));
+			resize(width, height);
+			mMessageLabel->setText("<font color='red'>Updating...</font>");
+			for(int j = 1; j <= width; j++){
+				for (int k = 1; k <= height; k++){
+					if(mMatrix->get(j, k, 0) == 0){
+						image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(255, 255, 255)); //no attractor
+					}else if(mMatrix->get(j, k, 0) == 1){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 0));
+					}else if(mMatrix->get(j, k, 0) == 2){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 0));
+					}else if(mMatrix->get(j, k, 0) == 3){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 0));
+					}else if(mMatrix->get(j, k, 0) == 4){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 255));
+					}else if(mMatrix->get(j, k, 0) == 5){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 255, 0));
+					}else if(mMatrix->get(j, k, 0) == 6){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 255));
+					}else if(mMatrix->get(j, k, 0) == 7){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 255));
+					}else if(mMatrix->get(j, k, 0) == 8){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(150, 0, 255));
+					}else if(mMatrix->get(j, k, 0) == 9){
+						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 160, 0));
+					}else{
+						image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(220, 220, 220));//period to high
+					}
+				} 
+			}//for
 			
-		}
+			mLabel->clear();
+			mLabel->setMatrix(mMatrix);
+/*			mLabel->resize(width, height);*/
+			mLabel->setPixmap(QPixmap::fromImage(image)); //print QImage on label
+			mLabel->show();
+			show();
+		}//if
+	}//updateData()
+	
+	
+	void OnlinePlotterWindow::finishedProcessing(){
+		mMessageLabel->setText("<font color='red'>Done!</font>");
+	}
+	void OnlinePlotterWindow::processing(){
+		mMessageLabel->setText("<font color='red'>Calculating... Please wait! </font>");
+		mMessageLabel->show();
+// 		show();
+	
 	}
 }
 

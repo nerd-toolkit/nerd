@@ -51,6 +51,7 @@
 #include "Core/Core.h"
 #include "Value/ValueManager.h"
 #include "Value/MatrixValue.h"
+#include "Value/BoolValue.h"
 #include "Event/EventManager.h"
 
 using namespace std;
@@ -92,7 +93,7 @@ namespace nerd {
 		mVM = Core::getInstance()->getValueManager();
 		mActiveCalculatorValue = mVM->getValue("/DynamicsPlotters/ActiveCalculator");
 		mPlotterProgramValue = mVM->getValue("/DynamicsPlotters/PlotterProgram");		
-
+		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
 		if(em != 0){
 			em->registerForEvent("calculatorStarts", this);
 			em->registerForEvent("calculatorFinishes", this);
@@ -116,12 +117,18 @@ namespace nerd {
 		}else if(event == mStartEvent) {
 			if(mPlotterProgramValue->getValueAsString().contains("inbuilt", Qt::CaseInsensitive)){
 				mRunningCalculator = dynamic_cast<StringValue*>(mActiveCalculatorValue)->get();//vM->getValue("/DynamicsPlotters/ActiveCalculator")->getValueAsString();
+				emit startProcessing();
+				if(mPlotterOnlineValue->get() == true){
+					
+					prepareData(mRunningCalculator);
+				}
 			}
 
 		}else if(event == mFinishEvent){
 			if(mPlotterProgramValue->getValueAsString().contains("inbuilt", Qt::CaseInsensitive)){//if the calculator stopped running:			 
 				if(qPrintable(mRunningCalculator) != 0){
 					 prepareData(mRunningCalculator);
+					 emit finishedProcessing();
 				}
 				
 			}
@@ -146,7 +153,7 @@ namespace nerd {
 			if(dataMatrixValue == 0){
 				Core::log("OnlinePlotter: Couldn't find data Matrix");
 			}
-			emit dataPrepared(pathToValues, dataMatrixValue);//supposed to call OnlinePlotterWindow::printData(...)
+			emit dataPrepared(pathToValues, dataMatrixValue);//calls OnlinePlotterWindow::printData(...)
 		}else{
 			Core::log("OnlinePlotter: Unknown calculator name: " + calculator, true);
 		}

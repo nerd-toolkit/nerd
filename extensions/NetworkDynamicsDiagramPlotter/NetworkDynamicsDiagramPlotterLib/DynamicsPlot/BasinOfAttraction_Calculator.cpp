@@ -261,11 +261,11 @@ namespace nerd {
 			}
 			for(int l = 0; l < plotPixelsY; l++){//runs through y-parameter changes	
 				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last activity state is used 
-				for(int j = 0; j < noOfvNeuronsY; j++){//set activities of varied neurons
-					vNeuronsListY[j]->getActivationValue().set(rListY[j]); 
+				for(int j = 0; j < noOfvNeuronsY; j++){//set outputs of varied neurons
+					vNeuronsListY[j]->getOutputActivationValue().set(rListY[j]); 
 				}
 				for(int j = 0; j < noOfvNeuronsX; j++){
-					vNeuronsListX[j]->getActivationValue().set(rListX[j]); 
+					vNeuronsListX[j]->getOutputActivationValue().set(rListX[j]); 
 				}
 				
 				if(i == 0 && noOfvNeuronsY == 1){ //set first matrix column

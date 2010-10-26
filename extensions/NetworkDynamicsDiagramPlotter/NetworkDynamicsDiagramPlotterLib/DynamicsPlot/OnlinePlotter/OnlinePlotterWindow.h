@@ -77,7 +77,8 @@ namespace nerd {
 		public slots:
 			void printData(QString name, MatrixValue *dataMatrix);
 			void updateData();
-
+			void finishedProcessing();
+			void processing();
 		private:
 			MouseMoveLabel *mLabel;
 			QLabel *mYLabel;
@@ -101,7 +102,9 @@ namespace nerd {
 			QGridLayout *mOuterLayout;
 			QGridLayout *mInnerLayout;
 			
-			Value *mPlotterOnlineValue;			
+			BoolValue *mPlotterOnlineValue;			
+			
+			MatrixValue *mMatrix;
 			
 			void setupGUI();
 			

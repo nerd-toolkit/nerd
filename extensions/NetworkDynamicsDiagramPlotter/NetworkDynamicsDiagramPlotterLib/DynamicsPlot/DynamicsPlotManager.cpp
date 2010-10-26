@@ -68,13 +68,15 @@ DynamicsPlotManager::DynamicsPlotManager()
 	mValueManager = Core::getInstance()->getValueManager();
 	mPlotterProgram = new StringValue("Inbuilt");
 	mActivePlotter = new StringValue(0);
-
+	mInbuiltPlotterOnline = new BoolValue(true);
+	
+	mInbuiltPlotterOnline->setDescription("If TRUE, the inbuilt diagram is updated during calculation.");
 	mPlotterProgram->setDescription("Specifies the output program, for example the inbuilt plotters or external ones like Matlab");
 	mPlotterProgram->getOptionList().append("Inbuilt");
 	mPlotterProgram->getOptionList().append("Matlab");
 	mValueManager->addValue("/DynamicsPlotters/PlotterProgram", mPlotterProgram);
 	mValueManager->addValue("/DynamicsPlotters/ActiveCalculator", mActivePlotter);
-	
+	mValueManager->addValue("/DynamicsPlotters/InbuiltPlotterOnline", mInbuiltPlotterOnline);
 	//**************/Till**************//
 	
 	

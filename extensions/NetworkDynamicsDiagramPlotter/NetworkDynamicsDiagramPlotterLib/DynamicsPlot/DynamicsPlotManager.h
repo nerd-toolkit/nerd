@@ -83,6 +83,7 @@ namespace nerd {
 		//**************Till**************//
 		StringValue *mPlotterProgram;
 		StringValue *mActivePlotter;
+		BoolValue *mInbuiltPlotterOnline;
 		//**************/Till**************//
 		
 	//**Till**//

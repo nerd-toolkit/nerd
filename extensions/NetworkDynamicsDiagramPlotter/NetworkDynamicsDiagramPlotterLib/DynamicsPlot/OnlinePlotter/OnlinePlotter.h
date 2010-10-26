@@ -78,6 +78,8 @@ namespace nerd {
 
 		signals:
 			void dataPrepared(QString name, MatrixValue *dataMatrix);
+			void finishedProcessing();
+			void startProcessing();
 			
 		protected:
 			ValueManager *mVM;
@@ -86,7 +88,7 @@ namespace nerd {
 			Value *mPlotterProgramValue;
 			Value *mActiveCalculatorValue;
 			QString mRunningCalculator;
-			
+			BoolValue *mPlotterOnlineValue;
 			Event *mStartEvent;
 			Event *mFinishEvent;
 
