@@ -41,4 +41,4 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#define NERD_VERSION "3.0"
+#define NERD_VERSION "3.1"

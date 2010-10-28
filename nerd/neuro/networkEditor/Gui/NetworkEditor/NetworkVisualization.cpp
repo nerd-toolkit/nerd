@@ -1054,7 +1054,8 @@ void NetworkVisualization::keyPressEvent(QKeyEvent *event) {
 		scaleVisualization(mScaleFactor);
 	}
 	else if(event->key() == Qt::Key_F2) {
-		mVisualizationOffset += ((mLastMousePosition - QPointF(width() / 2.0, height() / 2.0)) * mScaling);
+		//cerr << "Mousepos: " << mLastMousePosition.x() << "," << mLastMousePosition.y() << " " << mScaling << "  Off: " << mVisualizationOffset.x() << "," << mVisualizationOffset.y() <<  endl;
+		//mVisualizationOffset += (mLastMousePosition * mScaling);
 		double scaling = mAlternativeScaling;
 		mAlternativeScaling = mScaling;
 		setVisualizationScale(scaling);
@@ -1181,6 +1182,20 @@ void NetworkVisualization::updateNetworkElementPositionProperties(const QList<Pa
 		}
 	}
 
+}
+
+void NetworkVisualization::setVisualizationCenter(double x, double y) {
+	
+	double halfWidth = ((double) width()) / 2.0;
+	double halfHeight = ((double) height()) / 2.0;
+
+// 	mVisualizationOffset = QPointF(
+// 			(mVisualizationOffset.x() - (halfWidth / oldScaling)) + (halfWidth / mScaling),
+// 			(mVisualizationOffset.y() - (halfHeight / oldScaling)) + (halfHeight / mScaling));
+	setVisualizationOffset(QPointF(
+			(mVisualizationOffset.x() + (x / mScaling)),
+			(mVisualizationOffset.y() + (y / mScaling))));
+// 			(mVisualizationOffset.y() - (halfHeight / oldScaling)) + (halfHeight / mScaling));
 }
 
 

@@ -169,6 +169,7 @@ namespace nerd {
 		void paintTimerElapsed();	
 		void setDefaultPaintIterval(int interval);
 		void updateNetworkElementPositionProperties(const QList<PaintItem*> &affectedItems);
+		void setVisualizationCenter(double x, double y);
 
 	protected:
 		virtual void mouseDoubleClickEvent(QMouseEvent *event);	

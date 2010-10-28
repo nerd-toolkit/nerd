@@ -88,8 +88,8 @@ namespace nerd {
 
 		BoolValue *mUseSpringCouplings;			// Bool Value: Use Spring Coupling or Rigid Coupling between Motor and Joint
 		
-		DoubleValue *mTorqueConstant;	// TorqueConstant from the formula above
-		DoubleValue *mSpeedConstant;	// SpeedConstant from the formula above
+		DoubleValue *mTorqueConstant;	// TorqueConstant from the formula above (Torque originating from electronics.)
+		DoubleValue *mSpeedConstant;	// SpeedConstant from the formula above (BackEMF (Gegenspannung) (rotation horizontally)
 		DoubleValue *mMotorInertia;		// Intertia of a single motor (incl. spring and motor_intern * gear_transmission_ratio)
 
 		DoubleValue *mVoltage;			// Absolute value of voltage supplied to the motor. This could be feeded by
