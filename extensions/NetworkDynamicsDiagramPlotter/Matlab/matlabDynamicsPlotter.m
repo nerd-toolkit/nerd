@@ -37,7 +37,23 @@ end
 % truesize                      % Display at resolution of one screen pixel per image pixel
 
 
-calcName = t{1}{1};
+stringInfos = t{1}{1};
+index = findstr(stringInfos, ';;');
+if length(index) == 2
+    calcName = stringInfos(1:index(1));
+    xDescr = stringInfos(index(1) + 2:index(2));
+    yDescr = stringInfos(index(2) + 2:end);
+elseif lenth(index) == 3
+    calcName = stringInfos(1:index(1));
+    xDescr = stringInfos(index(1) + 2:index(2));
+    yDescr = stringInfos(index(2) + 2:index(3));
+    zDescr = stringInfos(index(3) + 2:end);
+elseif isempty(index)
+    calcName = stringInfos;
+    xDescr = 'x';
+    yDescr = 'y';
+end
+
 t{1}{1} = '0';
 calcName = strrep(calcName, '_', '\_');
 %strrep(t{1}{1}, t{1}{1}, '0');        
@@ -81,7 +97,7 @@ matrix = zeros(width, height, depth);
 for j = 2:width + 1
     for l = 1:depth
         for k = 1:height
-            matrix(j - 1, k, l) = str2double(t{k + (l - 1) * height + 1}{j}) + 1;
+            matrix(j - 1, k, l) = str2double(t{k + (l - 1) * height + 1}{j});
         end
     end
 end
@@ -94,10 +110,11 @@ fclose(fileID);
 if depth == 1
     imHandle = imagesc(xAxis, yAxis, matrix');
     %create color map
-    cmap = rand(3, 32);
+    cmap = rand(3, 33);
     cmap(1:3, 1:9) = [1 1 1; 0 0 0; 1 0 0; 0 0 1; 0.75 0 0; 0.6 0.6 0.5; 0 1 0; 0.3 1 0.6; 0.5 0 0]';
     cmp(1:3, 17) = [0.25 0 0]';
     colormap(cmap');
+    caxis([0 32]);
     colorbar
     
 else
@@ -107,7 +124,8 @@ end
 
 % axHandle = findobj(gcf,'type','axes');
 title(calcName);
-
+set(get(get(gcf,'CurrentAxes'), 'XLabel'), 'String', xDescr)
+set(get(get(gcf,'CurrentAxes'), 'YLabel'), 'String', yDescr)
 
 
 
