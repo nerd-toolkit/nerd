@@ -153,7 +153,11 @@ namespace nerd {
 			if(dataMatrixValue == 0){
 				Core::log("OnlinePlotter: Couldn't find data Matrix");
 			}
-			emit dataPrepared(pathToValues, dataMatrixValue);//calls OnlinePlotterWindow::printData(...)
+			QString xDescr = mVM->getValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("xAxisDescription")))->getValueAsString(); //Description for x-axis
+			QString yDescr = mVM->getValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("yAxisDescription")))->getValueAsString();		
+		
+			
+			emit dataPrepared(pathToValues, dataMatrixValue, xDescr, yDescr);//calls OnlinePlotterWindow::printData(...)
 		}else{
 			Core::log("OnlinePlotter: Unknown calculator name: " + calculator, true);
 		}

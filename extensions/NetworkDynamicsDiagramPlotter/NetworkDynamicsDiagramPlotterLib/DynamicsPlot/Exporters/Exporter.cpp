@@ -155,7 +155,9 @@ namespace nerd {
 				outV[l * height + 1][1] = QString("{") + outV[l * height + 1][1];
 				outV[l * height + height - 1][width - 1] = outV[l * height + height -1][width - 1].simplified() + QString("}");
 			}
-			outV[0][0] = "\"" + mRunningCalculator + "\" "; // add name of calculator; add quotation marks to keep text together
+			QString xDescr = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("xAxisDescription")))->getValueAsString(); //Description for x-axis
+			QString yDescr = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("yAxisDescription")))->getValueAsString();
+			outV[0][0] = "\"" + mRunningCalculator + " ;; " + xDescr + " ;; " + yDescr + "\" "; // add name of calculator; add quotation marks to keep text together
 			if(vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("OutputPath")))->getValueAsString() == ""){
 				writeToFile(outV, "matlabExport");
 			}else{
@@ -172,7 +174,7 @@ namespace nerd {
 	void Exporter::writeToFile(QVector<QVector<QString> > outV, QString fileName ){
 		QFile file(fileName);
 		if (!file.open(QIODevice::WriteOnly)) {
-			Core::log("Exporter: Cannot write to file.", true);
+			Core::log("Exporter: Cannot write to file. Please check the file path and make sure you have writing permission for the specified directory.", true);
 			return;
 		}
 		QTextStream out(&file);

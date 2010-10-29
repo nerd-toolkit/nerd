@@ -98,7 +98,7 @@ namespace nerd {
 
 	bool OnlinePlotterWindow::bind() {
 		bool ok = true;
-		ValueManager *mVM = Core::getInstance()->getValueManager();
+		mVM = Core::getInstance()->getValueManager();
 		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
 		
 		return ok;
@@ -128,8 +128,9 @@ namespace nerd {
 		
 		mLabel = new MouseMoveLabel(this);
 		mTitleLabel = new QLabel( this);
-		mYLabel = new QLabel("Y-Parameter(s)", this);
-		mXLabel = new QLabel("X-Parameter(s)", this);
+
+		mYLabel = new QLabel("", this);
+		mXLabel = new QLabel("", this);
 		mBlankLabel = new QLabel(this);
 		mBlankLabel2 = new QLabel(this);
 		mMessageLabel = new QLabel("<font color='red'>Placeholder, here a nice message should appear</font>", this);
@@ -185,6 +186,7 @@ namespace nerd {
 		mMainLayout->setStretch(2, 0);
 		setLayout(mMainLayout);
 		
+		int mDots = 3;//number of dots in "updating..."
 	}
 
 	/**
@@ -194,7 +196,7 @@ namespace nerd {
 	 * @param dataMatrix Matrix with data from active calculator
 	 * 
 	*/
-	void OnlinePlotterWindow::printData(QString name, MatrixValue *dataMatrix){
+	void OnlinePlotterWindow::printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr){
 		if(dataMatrix == 0 || name == 0){
 			Core::log("OnlinePlotterWindow: Couldn't find data Matrix or Name");
 			return;
@@ -202,123 +204,167 @@ namespace nerd {
 		mMatrix = dataMatrix;
 		hide();
 
-		int width = mMatrix->getMatrixWidth();
-		int height = mMatrix->getMatrixHeight();
-// 		int depth = mMatrix->getMatrixDepth();
-		
+		mWidth = mMatrix->getMatrixWidth();
+		mHeight = mMatrix->getMatrixHeight();
 
 		//create a QImage-object to be printed on the label
-		QImage image(width, height, QImage::Format_RGB32);
+		QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
 		image.fill(qRgb(255, 255, 255));
-// 		resize(width, height);
 		
-		//set pixels black, when entry in matrix = 1, else print them white
-		for(int j = 1; j <= width; j++){
-			for (int k = 1; k <= height; k++){
+		//set pixels black, when entry in matrix = 1, or if = 0 print them white, else other colors
+		for(int j = 1; j < mWidth; j++){
+			for (int k = 1; k < mHeight; k++){
 				if(mMatrix->get(j, k, 0) == 0){
-					image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(255, 255, 255)); //no attractor
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 255)); //no attractor
 				}else if(mMatrix->get(j, k, 0) == 1){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 0));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 0));
 				}else if(mMatrix->get(j, k, 0) == 2){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 0));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 0));
 				}else if(mMatrix->get(j, k, 0) == 3){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 0));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 0));
 				}else if(mMatrix->get(j, k, 0) == 4){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 255));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 255));
 				}else if(mMatrix->get(j, k, 0) == 5){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 255, 0));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 0));
 				}else if(mMatrix->get(j, k, 0) == 6){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 255));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 255));
 				}else if(mMatrix->get(j, k, 0) == 7){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 255));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 255));
 				}else if(mMatrix->get(j, k, 0) == 8){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(150, 0, 255));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(150, 0, 255));
 				}else if(mMatrix->get(j, k, 0) == 9){
-					image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 160, 0));
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 160, 0));
 				}else{
-					image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(220, 220, 220));//period to high
+					image.setPixel(j - 1,  mHeight - k - 1, qRgb(220, 220, 220));//period to high
 				}
 			} 
 		}
 	
 
-		mTitleLabel->setText(name);
+		mTitleLabel->setText(QString("<b><big>") + name + QString("<\big><\b>"));
 		//Print parameter/output range min. & max. to labels
-		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, height -1, 0))));
+		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, mHeight -1, 0))));
 		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(mMatrix->get(0, 1, 0))));
 		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(mMatrix->get(1, 0, 0))));
-		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(width - 1, 0, 0))));
+		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(mWidth - 1, 0, 0))));
 		
 		mLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-// 		mUpperHLayout->setSizeConstraint(QLayout::SetMinimumSize);
+		mYLabel->setText(yDescr);
+		mXLabel->setText(xDescr);
+		
+
 		
 		mLabel->clear();
 		mLabel->setMatrix(mMatrix);
-		mLabel->resize(width, height);
+		mLabel->resize(mWidth, mHeight);
 		mLabel->setPixmap(QPixmap::fromImage(image)); //print QImage on label
 		mLabel->show();
 
 // 		update();
  		show();
 	}
+	
+	/**
+	 * Updates the diagram during calculation. 
+	 *
+	 */
 	void OnlinePlotterWindow::updateData(){
 // 		cerr<<"update received";
 		if(static_cast<BoolValue>(mPlotterOnlineValue).get() == false){
+			if(mDots == 0){
+				mMessageLabel->setText("<font color='red'>Please wait! Calculating</font>");			
+				mDots = 1;
+			}else if(mDots == 1){
+				mMessageLabel->setText("<font color='red'>Please wait! Calculating.</font>");
+				mDots = 2;
+			}else if(mDots == 2){
+				mMessageLabel->setText("<font color='red'>Please wait! Calculating..</font>");			
+				mDots = 3;
+			}else{
+				mMessageLabel->setText("<font color='red'>Please wait! Calculating...</font>");
+				mDots = 0;
+			}
 			return;
 		}else{
-			int width = mMatrix->getMatrixWidth();
-			int height = mMatrix->getMatrixHeight();
+			mYMaxLabel->setText(QString(""));
+			mYMinLabel->setText(QString(""));
+			mXMinLabel->setText(QString(""));
+			mXMaxLabel->setText(QString(""));
+			
+// 			int width = mMatrix->getMatrixWidth();
+// 			int height = mMatrix->getMatrixHeight();
 	
 			//create a QImage-object to be printed on the label
-			QImage image(width, height, QImage::Format_RGB32);
-			image.fill(qRgb(255, 255, 255));
-			resize(width, height);
-			mMessageLabel->setText("<font color='red'>Updating...</font>");
-			for(int j = 1; j <= width; j++){
-				for (int k = 1; k <= height; k++){
+			QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
+			image.fill(qRgb(255, 0, 0));
+			resize(mWidth - 1, mHeight - 1);
+			if(mDots == 0){
+				mMessageLabel->setText("<font color='red'>Updating</font>");
+				mDots = 1;
+			}else if(mDots == 1){
+				mMessageLabel->setText("<font color='red'>Updating.</font>");
+				mDots = 2;
+			}else if(mDots == 2){
+				mMessageLabel->setText("<font color='red'>Updating..</font>");
+				mDots = 3;
+			}else{
+				mMessageLabel->setText("<font color='red'>Updating...</font>");	
+				mDots = 0;
+			}
+				
+			
+			for(int j = 1; j < mWidth; j++){
+				for (int k = 1; k < mHeight; k++){
 					if(mMatrix->get(j, k, 0) == 0){
-						image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(255, 255, 255)); //no attractor
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 255)); //no attractor
 					}else if(mMatrix->get(j, k, 0) == 1){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 0));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 0));
 					}else if(mMatrix->get(j, k, 0) == 2){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 0));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 0));
 					}else if(mMatrix->get(j, k, 0) == 3){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 0));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 0));
 					}else if(mMatrix->get(j, k, 0) == 4){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 0, 255));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 255));
 					}else if(mMatrix->get(j, k, 0) == 5){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 255, 0));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 0));
 					}else if(mMatrix->get(j, k, 0) == 6){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(0, 255, 255));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 255));
 					}else if(mMatrix->get(j, k, 0) == 7){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 0, 255));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 255));
 					}else if(mMatrix->get(j, k, 0) == 8){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(150, 0, 255));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(150, 0, 255));
 					}else if(mMatrix->get(j, k, 0) == 9){
-						image.setPixel(j - 1,  height - k + 1 - 1, qRgb(255, 160, 0));
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 160, 0));
 					}else{
-						image.setPixel(j - 1,  height - k  + 1 - 1, qRgb(220, 220, 220));//period to high
+						image.setPixel(j - 1,  mHeight - k - 1, qRgb(220, 220, 220));//period to high
 					}
 				} 
 			}//for
-			
+						
 			mLabel->clear();
 			mLabel->setMatrix(mMatrix);
-/*			mLabel->resize(width, height);*/
 			mLabel->setPixmap(QPixmap::fromImage(image)); //print QImage on label
 			mLabel->show();
 			show();
 		}//if
 	}//updateData()
 	
-	
+	/**
+	 * Sets message label to 'Done' when finished. 
+	 * 
+	 */
 	void OnlinePlotterWindow::finishedProcessing(){
 		mMessageLabel->setText("<font color='red'>Done!</font>");
 	}
+	
+	/**
+	 * Sets message label to 'Calculating...' while running the calculator not in online mode. 
+	 *
+	 */
 	void OnlinePlotterWindow::processing(){
-		mMessageLabel->setText("<font color='red'>Calculating... Please wait! </font>");
+
+		mMessageLabel->setText("<font color='red'>Please wait! Calculating...</font>");
 		mMessageLabel->show();
-// 		show();
 	
 	}
 }

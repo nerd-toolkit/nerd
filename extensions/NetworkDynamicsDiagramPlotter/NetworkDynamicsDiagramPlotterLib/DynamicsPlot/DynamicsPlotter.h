@@ -111,9 +111,9 @@ namespace nerd {
 		QHash<qulonglong, double> mNetworkActivities;
 		//****Till****//
 		MatrixValue *mData;
-// 		IntValue *mPlotPixelsX;
-// 		IntValue *mPlotPixelsY;	
 		StringValue *mOutputPath;
+		StringValue *mXAxisDescription;
+		StringValue *mYAxisDescription;
 		
 		Event *mStartEvent;
 		Event *mFinishEvent;

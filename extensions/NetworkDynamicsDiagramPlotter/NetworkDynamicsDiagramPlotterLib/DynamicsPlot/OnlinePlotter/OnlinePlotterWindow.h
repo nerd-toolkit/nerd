@@ -75,7 +75,7 @@ namespace nerd {
 			virtual QString getName() const;
 			
 		public slots:
-			void printData(QString name, MatrixValue *dataMatrix);
+			void printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr);
 			void updateData();
 			void finishedProcessing();
 			void processing();
@@ -101,13 +101,15 @@ namespace nerd {
 			QVBoxLayout *mMainLayout;
 			QGridLayout *mOuterLayout;
 			QGridLayout *mInnerLayout;
-			
+			int mDots;
+			int mHeight;
+			int mWidth;
 			BoolValue *mPlotterOnlineValue;			
 			
 			MatrixValue *mMatrix;
 			
 			void setupGUI();
-			
+			ValueManager *mVM;
 			
 			
 	};

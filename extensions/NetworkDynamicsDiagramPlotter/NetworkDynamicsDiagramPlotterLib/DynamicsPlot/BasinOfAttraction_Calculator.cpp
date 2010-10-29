@@ -78,10 +78,10 @@ namespace nerd {
 		mMaxSteps = new IntValue(250); // defines size of maximal steps that are executed
 		mTolerance = new DoubleValue(0.000001);//Specifies how large the margin is, such that the two outputs count as the same one 
 		mMaxPeriod = new IntValue(16); //max. size of period that can be found
-
+		mXAxisDescription->set("Param. 1");//setting initial axes descriptions
+		mYAxisDescription->set("Param. 2");
 		
 		mIdsOfVariedNeuronsX->setDescription("Comma-separated list of IDs of the neurons that are varied (x-axis).");
-// 		mIdsOfVariedNetwor->setDescription("List of the IDs of the network elements (neurons or synapse) which are varied separated by commas or '|'.");
 		mMinimaOfVariedNeuronsX->setDescription("Comma-separated list of the minimal values of the varied network elements (x-axis)");
 		mMaximaOfVariedNeuronsX->setDescription("Comma-separated list of the maximal values of the varied network elements (x-axis)");
 		mIdsOfVariedNeuronsY->setDescription("Comma-separated list of IDs of the neurons that are varied (y-axis).");

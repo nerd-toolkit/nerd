@@ -80,6 +80,8 @@ namespace nerd {
 		mMaxSteps = new IntValue(250); // defines maximal number of steps that are executed
 		mTolerance = new DoubleValue(0.000001);//Specifies how large the margin is, such that the two outputs count as the same one 
 
+		mXAxisDescription->set("Param. 1");//setting initial axes descriptions
+		mYAxisDescription->set("Param. 2");
 		
 		mIdsOfVariedNetworkElementsX->setDescription("Comma-separated list of IDs of the neurons that are varied (x-axis).");
 // 		mIdsOfVariedNetwor->setDescription("List of the IDs of the network elements (neurons or synapse) which are varied separated by commas or '|'.");

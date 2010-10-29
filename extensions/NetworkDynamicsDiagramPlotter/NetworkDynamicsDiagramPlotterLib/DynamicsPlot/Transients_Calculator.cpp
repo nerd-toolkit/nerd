@@ -68,6 +68,8 @@ namespace nerd {
 		mMinOutputRange = new DoubleValue(-1.0); //in case other transfer function than tanh - is now set for tanh
 		mMaxOutputRange = new DoubleValue(1.0); // -- " --
 		mPlotPixelsY = new IntValue(500); // number of values the output is discretized/rounded to (is number of pixels)
+		mXAxisDescription->set("Time");//setting initial axes descriptions
+		mYAxisDescription->set("Output");
 		
 		mIdOfObservedNeuron->setDescription("Id of observed neuron");
 		mPlotPixelsX->setDescription("Horizontal size of plot, also determines the step size of the parameter change (max - min)/plotPixels");
