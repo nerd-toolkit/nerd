@@ -79,8 +79,15 @@ namespace nerd {
 			void updateData();
 			void finishedProcessing();
 			void processing();
+			
+		signals:
+			void timerStart();
+			
+		protected:
+			void resizeEvent(QResizeEvent * event);
 		private:
 			MouseMoveLabel *mLabel;
+			QPixmap mPixmap;
 			QLabel *mYLabel;
 			QLabel *mXLabel;
 			QLabel *mTitleLabel;
@@ -104,8 +111,10 @@ namespace nerd {
 			int mDots;
 			int mHeight;
 			int mWidth;
+			int mWidgetWidth;
+			int mWidgetHeight;
 			BoolValue *mPlotterOnlineValue;			
-			
+			bool mIsSetUp;
 			MatrixValue *mMatrix;
 			
 			void setupGUI();

@@ -127,7 +127,7 @@ namespace nerd {
 		}else if(event == mFinishEvent){
 			if(mPlotterProgramValue->getValueAsString().contains("inbuilt", Qt::CaseInsensitive)){//if the calculator stopped running:			 
 				if(qPrintable(mRunningCalculator) != 0){
-					 prepareData(mRunningCalculator);
+// 					 prepareData(mRunningCalculator);
 					 emit finishedProcessing();
 				}
 				

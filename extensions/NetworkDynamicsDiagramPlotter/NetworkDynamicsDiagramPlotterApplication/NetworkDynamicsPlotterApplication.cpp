@@ -132,7 +132,7 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 // 	timer->start(500);
 	timer->setInterval(500);
 	connect(timer, SIGNAL(timeout()), opw, SLOT(updateData()));
-	connect(op, SIGNAL(dataPrepared(QString, MatrixValue*, QString, QString)), timer, SLOT(start()));
+	connect(opw, SIGNAL(timerStart()), timer, SLOT(start()));
 	connect(op, SIGNAL(startProcessing()), opw, SLOT(processing()));
 	connect(op, SIGNAL(finishedProcessing()), timer, SLOT(stop()));
 	connect(op, SIGNAL(finishedProcessing()), opw, SLOT(finishedProcessing()));

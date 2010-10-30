@@ -80,6 +80,7 @@ namespace nerd {
 	MouseMoveLabel::~MouseMoveLabel() {
 	}
 	
+	
 /**
 	 * Prints coordinates (of cursor respective to label) to cursor position when mouse hovers over the label. 
  */
