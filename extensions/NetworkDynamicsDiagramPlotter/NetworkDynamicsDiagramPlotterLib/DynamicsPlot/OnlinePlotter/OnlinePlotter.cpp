@@ -118,10 +118,7 @@ namespace nerd {
 			if(mPlotterProgramValue->getValueAsString().contains("inbuilt", Qt::CaseInsensitive)){
 				mRunningCalculator = dynamic_cast<StringValue*>(mActiveCalculatorValue)->get();//vM->getValue("/DynamicsPlotters/ActiveCalculator")->getValueAsString();
 				emit startProcessing();
-				if(mPlotterOnlineValue->get() == true){
-					
-					prepareData(mRunningCalculator);
-				}
+				prepareData(mRunningCalculator);
 			}
 
 		}else if(event == mFinishEvent){

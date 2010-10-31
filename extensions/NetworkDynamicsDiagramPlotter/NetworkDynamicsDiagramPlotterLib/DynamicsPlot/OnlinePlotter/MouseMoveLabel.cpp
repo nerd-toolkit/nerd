@@ -65,7 +65,7 @@ namespace nerd {
 	{
 		setMouseTracking(true);
 		if(parent == 0){
-			Core::log("MouseMoveLabel: Must have have a mParent window!", true);
+			Core::log("MouseMoveLabel: Must have have a parent window!", true);
 			return;
 		}else{
 			mPar = parent;
@@ -91,9 +91,15 @@ namespace nerd {
 		if(mMatrix == 0){
 			QToolTip::showText(absPos, QString("[" + QString::number(pos.x()) + ", " + QString::number(pos.y()) + "]"), this);
 		}else{
-			double xValue = mMatrix->get(pos.x() + 1, 0, 0);
-			double yValue = mMatrix->get(0, mMatrix->getMatrixHeight() - pos.y(), 0);
-			QToolTip::showText(absPos, QString("(" + QString::number(xValue) + ", " + QString::number(yValue) + ") -> " + QString::number(mMatrix->get(pos.x() + 1, mMatrix->getMatrixHeight() - pos.y(), 0))), this);
+			int matrixWidth = mMatrix->getMatrixWidth() - 1; //matrix width without axes descriptions
+			int matrixHeight = mMatrix->getMatrixHeight() - 1;
+			int labelWidth = width();
+			int labelHeight = height();
+			double xFactor = static_cast<double>(labelWidth) / static_cast<double>(matrixWidth);
+			double yFactor = static_cast<double>(labelHeight) / static_cast<double>(matrixHeight);
+			double xValue = mMatrix->get(static_cast<int>((pos.x() + 1) / xFactor + 0.5), 0, 0);
+			double yValue = mMatrix->get(0, matrixHeight - static_cast<int>((pos.y() + 1) / yFactor + 0.5), 0);
+			QToolTip::showText(absPos, QString("(" + QString::number(xValue) + ", " + QString::number(yValue) + ") -> " + QString::number(mMatrix->get(static_cast<int>((pos.x() + 1) / xFactor + 0.5), mMatrix->getMatrixHeight() - static_cast<int>((pos.y() + 1)/yFactor + 0.5) + 1, 0))), this);
 		}
 	}
 	

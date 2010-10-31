@@ -85,6 +85,7 @@ namespace nerd {
 			
 		protected:
 			void resizeEvent(QResizeEvent * event);
+			void paintEvent ( QPaintEvent * event );
 		private:
 			MouseMoveLabel *mLabel;
 			QPixmap mPixmap;
@@ -115,6 +116,7 @@ namespace nerd {
 			int mWidgetHeight;
 			BoolValue *mPlotterOnlineValue;			
 			bool mIsSetUp;
+			bool mForceUpdate;
 			MatrixValue *mMatrix;
 			
 			void setupGUI();
