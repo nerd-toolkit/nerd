@@ -153,8 +153,9 @@ void EventDetailPanel::createControlButtonView() {
 void EventDetailPanel::showMatchingEvents() {
 	QVector<QString> selectedEvents;
 	QString temp = mEventLineEdit->text();
-	temp.append(".*");
-	QVector<Event*> events = mEventManager->getEventsMatchingPattern(temp);
+	temp.replace("**", ".*");
+	temp.append(".*").prepend(".*");
+	QVector<Event*> events = mEventManager->getEventsMatchingPattern(temp, false);
 	for(int i = 0; i < events.size(); i++) {
 		Event *event = events.at(i);
 		QMap<Event*, EventDetailVisualization*>::iterator index =
@@ -199,8 +200,9 @@ void EventDetailPanel::updateData() {
  */
 void EventDetailPanel::fillEventList(const QString &text) {
 	QString temp = text;
-	temp.append(".*");
-	QVector<Event*> events = mEventManager->getEventsMatchingPattern(temp);
+	temp = temp.replace("**", ".*");
+	temp.append(".*").prepend(".*");
+	QVector<Event*> events = mEventManager->getEventsMatchingPattern(temp, false);
 	mEventComboBox->clear();
 	for(int i = 0; i < events.size(); i++) {
 		Event *event = events.at(i);

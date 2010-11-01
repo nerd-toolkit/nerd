@@ -63,7 +63,7 @@ namespace nerd {
  */
 ScriptedModel::ScriptedModel(const QString &name, const QString &script)
 	: ScriptingContext(name, "model"), ModelInterface(name), mPrototypeName(""), mIdCounter(1), mAgent(0),
-		mCurrentSimObject(0), mEnvironmentMode(false)
+		mCurrentSimObject(0), mEnvironmentMode(false), mSetupEnvironmentMode(false)
 {
 }
 
@@ -75,7 +75,8 @@ ScriptedModel::ScriptedModel(const QString &name, const QString &script)
  */
 ScriptedModel::ScriptedModel(const ScriptedModel &other) 
 	: ScriptingContext(other), ModelInterface(other), mPrototypeName(other.mPrototypeName), 
-		mIdCounter(other.mIdCounter), mAgent(0), mCurrentSimObject(0), mEnvironmentMode(false)
+		mIdCounter(other.mIdCounter), mAgent(0), mCurrentSimObject(0), mEnvironmentMode(false),
+		mSetupEnvironmentMode(false)
 {
 	for(QHashIterator<StringValue*, QString> i(other.mPrototypeParameters); i.hasNext();) {
 		i.next();
@@ -162,13 +163,16 @@ void ScriptedModel::createEnvironment() {
 		}
 		pm->addSimObject(obj);
 	}
+	mSetupEnvironmentMode = true;
+	executeScriptFunction("setupEnvironment();");
+	mSetupEnvironmentMode = false;
 }
 
 
 int ScriptedModel::createObject(const QString &prototypeName, const QString &name) {
 	SimObject *obj = Physics::getPhysicsManager()->getPrototype("Prototypes/" + prototypeName);
 	if(obj == 0) {
-		Core::log("ScriptedModel (" + getName() + "): Could not find prototype [" + prototypeName + "]");
+		Core::log("ScriptedModel (" + getName() + "): Could not find prototype [" + prototypeName + "]", true);
 		return 0;
 	}
 	SimObject *newObject = obj->createCopy();
@@ -212,14 +216,19 @@ int ScriptedModel::copyObject(int objectId, const QString &name) {
 }
 
 bool ScriptedModel::setProperty(int objectId, const QString &propertyName, const QString &value) {
-	SimObject *obj = 0;
+	ParameterizedObject *obj = 0;
 	if(mEnvironmentMode) {
 		obj = mEnvironmentObjectLookup.value(objectId);
+	}
+	else if(mSetupEnvironmentMode) {
+		obj = mCollisionRulesLookup.value(objectId);
 	}
 	else {
 		obj = mSimObjectsLookup.value(objectId);
 	}
 	if(obj == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not find object [" 
+				+ QString::number(objectId) + "] to set property [" + propertyName + "]", true);
 		return false;
 	}
 	Value *prop = obj->getParameter(propertyName);
@@ -317,6 +326,190 @@ bool ScriptedModel::setP(const QString &propertyName, const QString &value) {
 }
 
 
+int ScriptedModel::createCollisionRule(const QString &name, const QString &prototypeName) {
+	if(!mSetupEnvironmentMode) {
+		Core::log("ScriptedModel (" + getName() 
+				+ "): Called createCollisionRule outside of setupEnvironment() function!", true);
+		return 0;
+	}
+	
+	CollisionManager *cm = Physics::getCollisionManager();
+
+	CollisionRule *prototype = cm->getCollisionRulePrototype(prototypeName);
+
+	if(prototype == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not find collision rule prototype [" 
+				+ prototypeName + "]", true);
+		return 0;
+	}
+	CollisionRule *rule = prototype->createCopy();
+	rule->setName(name);
+	cm->addCollisionRule(rule, false);
+	int id = mIdCounter++;
+	mCollisionRulesLookup.insert(id, rule);
+	return id;
+}
+
+
+bool ScriptedModel::crAddSource(int collisionRule, int bodyId) {
+	if(!mSetupEnvironmentMode) {
+		Core::log("ScriptedModel (" + getName() 
+				+ "): Called crAddSource() outside of setupEnvironment() function!", true);
+		return false;
+	}
+	CollisionRule *rule = mCollisionRulesLookup.value(collisionRule);
+	if(rule == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not reference collision rule with id [" 
+				+ QString::number(collisionRule) + "]", true);
+		return false;
+	}
+	SimBody *body = dynamic_cast<SimBody*>(mSimObjectsLookup.value(bodyId));
+	if(body == 0) {
+		body = dynamic_cast<SimBody*>(mEnvironmentObjectLookup.value(bodyId));
+	}
+	if(body == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not reference body with id [" 
+				+ QString::number(bodyId) + "]", true);
+		return false;
+	}
+	cerr << "Adding source" << endl;
+	for(int i = 0; i < body->getCollisionObjects().size(); i++) {
+		rule->addToSourceGroup(body->getCollisionObjects().at(i));
+	}
+	return true;
+}
+
+bool ScriptedModel::crAddSource(int collisionRule, const QString &bodyRegExp) {
+	if(!mSetupEnvironmentMode) {
+		Core::log("ScriptedModel (" + getName() 
+				+ "): Called crAddSource() outside of setupEnvironment() function!", true);
+		return false;
+	}
+
+	CollisionRule *rule = mCollisionRulesLookup.value(collisionRule);
+	if(rule == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not reference collision rule with id [" 
+				+ QString::number(collisionRule) + "]", true);
+		return false;
+	}
+
+	QString sourceName = bodyRegExp;
+	sourceName.replace("**", ".*");
+
+	if(!sourceName.startsWith("/")) {
+		sourceName.prepend("/");
+	}
+
+	QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
+					->getSimObjects(sourceName);
+	for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
+		SimBody *sourceObject = dynamic_cast<SimBody*>(j.next());
+		if(sourceObject != 0) {
+			for(int i = 0; i < sourceObject->getCollisionObjects().size(); i++) {
+				rule->addToSourceGroup(sourceObject->getCollisionObjects().at(i));
+			}
+		}
+	}
+	return true;
+}
+
+
+bool ScriptedModel::crAddTarget(int collisionRule, int bodyId) {
+	if(!mSetupEnvironmentMode) {
+		Core::log("ScriptedModel (" + getName() 
+				+ "): Called crAddTarget() outside of setupEnvironment() function!", true);
+		return false;
+	}
+
+	CollisionRule *rule = mCollisionRulesLookup.value(collisionRule);
+	if(rule == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not reference collision rule with id [" 
+				+ QString::number(collisionRule) + "]", true);
+		return false;
+	}
+	SimBody *body = dynamic_cast<SimBody*>(mSimObjectsLookup.value(bodyId));
+	if(body == 0) {
+		body = dynamic_cast<SimBody*>(mEnvironmentObjectLookup.value(bodyId));
+	}
+	if(body == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not reference body with id [" 
+				+ QString::number(bodyId) + "]", true);
+		return false;
+	}
+	for(int i = 0; i < body->getCollisionObjects().size(); i++) {
+		rule->addToTargetGroup(body->getCollisionObjects().at(i));
+	}
+	return true;
+}
+
+bool ScriptedModel::crAddTarget(int collisionRule, const QString &bodyRegExp) {
+	if(!mSetupEnvironmentMode) {
+		Core::log("ScriptedModel (" + getName() 
+				+ "): Called crAddTarget() outside of setupEnvironment() function!", true);
+		return false;
+	}
+
+	CollisionRule *rule = mCollisionRulesLookup.value(collisionRule);
+	if(rule == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not reference collision rule with id [" 
+				+ QString::number(collisionRule) + "]", true);
+		return false;
+	}
+
+	QString targetName = bodyRegExp;
+	targetName.replace("**", ".*");
+
+	if(!targetName.startsWith("/")) {
+		targetName.prepend("/");
+	}
+
+	QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
+					->getSimObjects(targetName);
+	for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
+		SimBody *targetObject = dynamic_cast<SimBody*>(j.next());
+		if(targetObject != 0) {
+			for(int i = 0; i < targetObject->getCollisionObjects().size(); i++) {
+				rule->addToTargetGroup(targetObject->getCollisionObjects().at(i));
+			}
+		}
+	}
+	return true;
+}
+
+void ScriptedModel::crNegateRule(int collisionRule, bool negate) {
+	if(!mSetupEnvironmentMode) {
+		Core::log("ScriptedModel (" + getName() 
+				+ "): Called crNegateRule() outside of setupEnvironment() function!", true);
+		return;
+	}
+
+	CollisionRule *rule = mCollisionRulesLookup.value(collisionRule);
+	if(rule == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not reference collision rule with id [" 
+				+ QString::number(collisionRule) + "]", true);
+		return;
+	}
+	rule->negateRule(negate);
+}
+
+
+bool ScriptedModel::crIsNegated(int collisionRule) const {
+	if(!mSetupEnvironmentMode) {
+		Core::log("ScriptedModel (" + getName() 
+				+ "): Called crIsNegated() outside of setupEnvironment() function!", true);
+		return false;
+	}
+
+	CollisionRule *rule = mCollisionRulesLookup.value(collisionRule);
+	if(rule == 0) {
+		Core::log("ScriptedModel (" + getName() + "): Could not reference collision rule with id [" 
+				+ QString::number(collisionRule) + "]", true);
+		return false;
+	}
+	return rule->isNegated();
+}
+
+
 bool ScriptedModel::allowCollisions(int objectId1, int objectId2, bool allow) {
 
 	SimBody *obj1 = 0;
@@ -334,7 +527,7 @@ bool ScriptedModel::allowCollisions(int objectId1, int objectId2, bool allow) {
 
 	if(obj1 == 0 || obj2 == 0) {
 		Core::log("ScriptedModel::allowCollisions: Could not find required bodies ["
-				+ QString::number(objectId1) + ", " + QString::number(objectId2) + "]");
+				+ QString::number(objectId1) + ", " + QString::number(objectId2) + "]", true);
 		return false;
 	}
 	
@@ -407,7 +600,7 @@ void ScriptedModel::definePrototypeParameter(const QString &name, const QString 
 
 		if(getParameter(name) != 0) {
 			Core::log(QString("ScriptedModel::definePrototypeParameter: Could not add prototpye parameter because ")
-					+ "there was already a parameter with name [" + name + "]");
+					+ "there was already a parameter with name [" + name + "]", true);
 			return;
 		}
 		StringValue *param = new StringValue(initialValue);
@@ -450,9 +643,16 @@ void ScriptedModel::addCustomScriptContextStructures() {
 						+ error.toString());
 		return;
 	}
-
+	error = mScript->evaluate(QString("function set(name, content) {")
+					  + mMainContextName + ".setP(name, content) };");
+	if(mScript->hasUncaughtException()) {
+		reportError(QString("Could not add setP function. ") 
+						+ error.toString());
+		return;
+	}
 	
 }
+
 
 }
 

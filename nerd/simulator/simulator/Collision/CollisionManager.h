@@ -105,6 +105,7 @@ public:
 
 	bool addCollisionRulePrototype(const QString &name, CollisionRule *rule);
 	CollisionRule* getCollisionRulePrototype(const QString &protoypeName);
+	QHash<QString, CollisionRule*> getCollisionRulePrototypes() const;
 
 	void updateCollisionRules();
 	

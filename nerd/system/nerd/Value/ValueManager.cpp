@@ -413,9 +413,15 @@ QList<Value*> ValueManager::getValues() {
  * @param pattern the regular expression to select the Values.
  * @return a list with all matching Values.
  */
-QList<Value*> ValueManager::getValuesMatchingPattern(const QString &pattern) {
+QList<Value*> ValueManager::getValuesMatchingPattern(const QString &pattern, bool caseSensitive) {
 	QList<Value*> values;
 	QRegExp expr(pattern);
+	if(caseSensitive) {
+		expr.setCaseSensitivity(Qt::CaseSensitive);
+	}
+	else {
+		expr.setCaseSensitivity(Qt::CaseInsensitive);
+	}
 
 	QMap<QString, Value*>::iterator index;
 	for(index = mValues.begin(); index != mValues.end(); index++) {

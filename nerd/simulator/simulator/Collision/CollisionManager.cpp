@@ -202,17 +202,23 @@ void CollisionManager::addCollisionRule(CollisionRule *rule, bool enforceUniqueN
 			return;
 		}
 	}
+	rule->setPrefix("/CollisionRules/" + rule->getName() + "/");
+	rule->publishAllParameters();
 	mCollisionRules.push_back(rule);
 }
 
 void CollisionManager::removeCollisionRule(CollisionRule *rule) {
+	if(rule == 0) {
+		return;
+	}
+	rule->unpublishAllParameters();
 	mCollisionRules.removeAll(rule);
 }
 
 void CollisionManager::removeCollisionRule(const QString &ruleName) {
 	for(int i = 0; i < mCollisionRules.size(); i++) {
 		if(mCollisionRules.at(i)->getName().compare(ruleName) == 0) {
-			mCollisionRules.removeAt(i);
+			removeCollisionRule(mCollisionRules.at(i));
 			return;
 		}
 	}
@@ -339,6 +345,10 @@ bool CollisionManager::addCollisionRulePrototype(const QString &name, CollisionR
 
 CollisionRule* CollisionManager::getCollisionRulePrototype(const QString &prototypeName) {
 	return mCollisionRulePrototypes.value(prototypeName);
+}
+
+QHash<QString, CollisionRule*> CollisionManager::getCollisionRulePrototypes() const {
+	return mCollisionRulePrototypes;
 }
 
 

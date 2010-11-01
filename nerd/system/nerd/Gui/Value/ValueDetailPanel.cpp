@@ -151,8 +151,9 @@ void ValueDetailPanel::createControlButtonView() {
 void ValueDetailPanel::showMatchingValues() {
 	QVector<QString> selectedValues;
 	QString temp = mValueLineEdit->text();
-	temp.append(".*");
-	QList<Value*> values = mValueManager->getValuesMatchingPattern(temp);
+	temp = temp.replace("**", ".*");
+	temp.append(".*").prepend(".*");
+	QList<Value*> values = mValueManager->getValuesMatchingPattern(temp, false);
 
 	if(values.size() > 100) {
 		QMessageBox::information(this, "Too many selected values.",
@@ -207,8 +208,9 @@ void ValueDetailPanel::updateData() {
  */
 void ValueDetailPanel::fillValueList(const QString &text) {
 	QString temp = text;
-	temp.append(".*");
-	QList<Value*> values = mValueManager->getValuesMatchingPattern(temp);
+	temp = temp.replace("**", ".*");
+	temp.append(".*").prepend(".*");
+	QList<Value*> values = mValueManager->getValuesMatchingPattern(temp, false);
 	mValueComboBox->clear();
 	for(int i = 0; i < values.size(); i++) {
 		Value *value = values.at(i);

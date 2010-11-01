@@ -87,7 +87,7 @@ class ValueManager {
 
 
 		QList<Value*> getValues();
-		QList<Value*> getValuesMatchingPattern(const QString &pattern);
+		QList<Value*> getValuesMatchingPattern(const QString &pattern, bool caseSensitive = true);
 		QList<QString> getNamesOfValue(const Value *value);
 		QList<QString> getValueNames() ;
 		QList<QString> getValueNamesMatchingPattern(const QString &name, 

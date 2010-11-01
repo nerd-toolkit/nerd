@@ -180,8 +180,9 @@ void EventVisualizationWindow::createControlButtonView() {
 void EventVisualizationWindow::showMatchingEvents() {
 	QVector<QString> selectedEvents;
 	QString temp = mEventLineEdit->text();
-	temp.append(".*");
-	QVector<Event*> events = mEventManager->getEventsMatchingPattern(temp);
+	temp = temp.replace("**", ".*");
+	temp.append(".*").prepend(".*");
+	QVector<Event*> events = mEventManager->getEventsMatchingPattern(temp, false);
 
 	for(int i = 0; i < events.size(); i++) {
 		Event *event = events.at(i);
@@ -215,8 +216,9 @@ bool EventVisualizationWindow::eventFilter(QObject *object, QEvent *event) {
 
 void EventVisualizationWindow::fillEventList(const QString  &text) {
 	QString temp = text;
-	temp.append(".*");
-	QVector<Event*> events = mEventManager->getEventsMatchingPattern(temp);
+	temp = temp.replace("**", ".*");
+	temp.append(".*").prepend(".*");
+	QVector<Event*> events = mEventManager->getEventsMatchingPattern(temp, false);
 	mEventComboBox->clear();
 	for(int i = 0; i < events.size(); i++) {
 		Event *event = events.at(i);

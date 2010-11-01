@@ -51,6 +51,8 @@
 #include "Models/ModelInterface.h"
 #include "Physics/SimObject.h"
 #include "Physics/SimObjectGroup.h"
+#include "Collision/CollisionRule.h"
+#include "Physics/SimBody.h"
 
 namespace nerd {
 
@@ -96,6 +98,14 @@ namespace nerd {
 		int getCurrent();
 		bool setP(const QString &propertyName, const QString &value);
 
+		int createCollisionRule(const QString &name, const QString &prototypeName = "EventCollisionRule");
+		bool crAddSource(int collisionRule, int bodyId);
+		bool crAddSource(int collisionRule, const QString &bodyRegExp);
+		bool crAddTarget(int collisionRule, int bodyId);
+		bool crAddTarget(int collisionRule, const QString &bodyRegExp);
+		void crNegateRule(int collisionRule, bool negate);
+		bool crIsNegated(int collisionRule) const;
+
 		bool allowCollisions(int objectId1, int objectId2, bool allow);
 
 		QString toVector3DString(double x, double y, double z);
@@ -108,17 +118,18 @@ namespace nerd {
 		virtual void reportError(const QString &message);
 		virtual void importVariables();
 		virtual void addCustomScriptContextStructures();
-		
 
 	protected:
 		QString mPrototypeName;
 		int mIdCounter;
 		QHash<int, SimObject*> mSimObjectsLookup;
 		QHash<int, SimObject*> mEnvironmentObjectLookup;
+		QHash<int, CollisionRule*> mCollisionRulesLookup;
 		SimObjectGroup *mAgent;
 		SimObject *mCurrentSimObject;
 		QHash<StringValue*, QString> mPrototypeParameters;
 		bool mEnvironmentMode;
+		bool mSetupEnvironmentMode;
 		
 	};
 

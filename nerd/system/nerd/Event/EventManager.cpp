@@ -212,9 +212,17 @@ bool EventManager::deregisterFromEvent(const QString &name, EventListener *liste
  * @param regularExpression the regularExpression to describe the desired names.
  * @return a vector with all matching Events.
  */
-QVector<Event*> EventManager::getEventsMatchingPattern(const QString &regularExpression) const {
+QVector<Event*> EventManager::getEventsMatchingPattern(const QString &regularExpression, 
+													   bool caseSensitive) const 
+{
 	QVector<Event*> objects;
 	QRegExp expr(regularExpression);
+	if(caseSensitive) {
+		expr.setCaseSensitivity(Qt::CaseSensitive);
+	}
+	else {
+		expr.setCaseSensitivity(Qt::CaseInsensitive);
+	}
 
 	for(int i = 0; i < mEvents.size(); i++) {
 		Event *event = mEvents.at(i);
@@ -242,9 +250,18 @@ QVector<Event*> EventManager::getEventsMatchingPattern(const QString &regularExp
  * @param regularExpression the regularExpression to describe the matching names.
  * @return a vector with all matching names of Events.
  */
-QVector<QString> EventManager::getNamesMatchingPattern(const QString &regularExpression) const {
+QVector<QString> EventManager::getNamesMatchingPattern(const QString &regularExpression, 
+													   bool caseSensitive) const 
+{
 	QVector<QString> objects;
 	QRegExp expr(regularExpression);
+
+	if(caseSensitive) {
+		expr.setCaseSensitivity(Qt::CaseSensitive);
+	}
+	else {
+		expr.setCaseSensitivity(Qt::CaseInsensitive);
+	}
 
 	for(int i = 0; i < mEvents.size(); i++) {
 		Event *event = mEvents.at(i);
