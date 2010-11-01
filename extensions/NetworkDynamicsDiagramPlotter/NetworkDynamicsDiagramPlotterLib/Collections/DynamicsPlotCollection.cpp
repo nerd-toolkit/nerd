@@ -50,7 +50,7 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
-#include "DynamicsPlot/StandardBifurcation_Calculator.h"
+#include "DynamicsPlot/Bifurcation_Calculator.h"
 #include "DynamicsPlot/Transients_Calculator.h"
 #include "DynamicsPlot/Isoperiod_Calculator.h"
 #include "DynamicsPlot/BasinOfAttraction_Calculator.h"
@@ -66,7 +66,7 @@ namespace nerd {
  */
 DynamicsPlotCollection::DynamicsPlotCollection()
 {
-	new StandardBifurcation_Calculator();
+	new Bifurcation_Calculator();
 	new Transients_Calculator();
 	new Isoperiod_Calculator();
 	new BasinOfAttraction_Calculator();

@@ -46,7 +46,7 @@
 
 
 
-#include "StandardBifurcation_Calculator.h"
+#include "Bifurcation_Calculator.h"
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
@@ -64,10 +64,10 @@ namespace nerd {
 
 
 	/**
-	 * Constructs a new StandardBifurcation_Calculator.
+	 * Constructs a new Bifurcation_Calculator.
  	 */
-	StandardBifurcation_Calculator::StandardBifurcation_Calculator()
-	: DynamicsPlotter("StandardBifurcation_Calculator")
+	Bifurcation_Calculator::Bifurcation_Calculator()
+	: DynamicsPlotter("Bifurcation_Calculator")
 	{
 // 		mData = new MatrixValue();
 		mIdOfObservedNeuron = new ULongLongValue(0);
@@ -123,7 +123,7 @@ namespace nerd {
 /**
 	 * Destructor.
  */
-	StandardBifurcation_Calculator::~StandardBifurcation_Calculator() {
+	Bifurcation_Calculator::~Bifurcation_Calculator() {
 	}
 
 
@@ -131,7 +131,7 @@ namespace nerd {
 /**
 	 * Calculates the output data
  */
-	void StandardBifurcation_Calculator::calculateData() {
+	void Bifurcation_Calculator::calculateData() {
 		if(mNextStepEvent == 0 || mResetEvent == 0 || mEvaluateNetworkEvent == 0) {
 			return;
 		}
@@ -139,7 +139,7 @@ namespace nerd {
 		NeuralNetwork *network = getCurrentNetwork();
 
 		if(network == 0) {
-			Core::log("StandardBifurcation_Calculator: Could not find a modular neural network!", true);
+			Core::log("Bifurcation_Calculator: Could not find a modular neural network!", true);
 			return;
 		}
 		
@@ -148,7 +148,7 @@ namespace nerd {
 		QList<double> vMaxsList = createListOfDoubles(mMaximaOfVariedNetworkElements);
 		//check IDs, minima, and maxima
 		if(!checkStringlistsItemCount(mIdsOfVariedNetworkElements, mMinimaOfVariedNetworkElements, mMaximaOfVariedNetworkElements)){
-			Core::log("StandardBifurcation_Calculator: The number of IDs, minima and maxima must be the same!", true);		
+			Core::log("Bifurcation_Calculator: The number of IDs, minima and maxima must be the same!", true);		
 			return;
 		}
 		int noOfvElems = vIdsList.size();//No. of varied elements
@@ -158,7 +158,7 @@ namespace nerd {
 		for(int j = 0; j < noOfvElems; j++){
 			vElemsList.append(getVariedNetworkElement(vIdsList[j]));	
 			if(getVariedNetworkElement(vIdsList[j]) == 0){
-				Core::log("StandardBifurcation_Calculator: Could not find required (varied) neurons!", true);		
+				Core::log("Bifurcation_Calculator: Could not find required (varied) neurons!", true);		
 				return;	
 			}
 		}
@@ -170,7 +170,7 @@ namespace nerd {
 				network->getNeurons());
 		
 		if(observedNeuron == 0) {
-			Core::log("StandardBifurcation_Calculator: Could not find required neurons (observed)!", true);		
+			Core::log("Bifurcation_Calculator: Could not find required neurons (observed)!", true);		
 			return;
 		}
 		
@@ -182,7 +182,7 @@ namespace nerd {
 		//bias paramater variables
 		int plotPixelsX = mPlotPixelsX->get();	
 		if(plotPixelsX < 2){
-			Core::log("StandardBifurcation_Calculator: Size of diagram must be over 1 pixel", true);
+			Core::log("Bifurcation_Calculator: Size of diagram must be over 1 pixel", true);
 			return;
 		}
 		
@@ -196,7 +196,7 @@ namespace nerd {
 			if(vMinsList[j] != vMaxsList[j]){
 				rList.append(vMinsList[j]);
 			}else{
-				Core::log("StandardBifurcation_Calculator: Minimum of variation must not be equal to maximum.", true);
+				Core::log("Bifurcation_Calculator: Minimum of variation must not be equal to maximum.", true);
 				return;
 			}
 		}
@@ -204,13 +204,13 @@ namespace nerd {
 		//output-range variables:
 		int plotPixelsY = mPlotPixelsY->get(); 
 		if(plotPixelsY < 2){ // must > 1 for division (avoid division by 0)
-			Core::log("StandardBifurcation_Calculator: Size of diagram must be over 1 pixel", true);
+			Core::log("Bifurcation_Calculator: Size of diagram must be over 1 pixel", true);
 			return;
 		}
 		double minOutputRange = mMinOutputRange->get();
 		double maxOutputRange = mMaxOutputRange->get();
 		if(minOutputRange > maxOutputRange){ 
-			Core::log("StandardBifurcation_Calculator: Minimal value for output range must be smaller than maximal value", true);
+			Core::log("Bifurcation_Calculator: Minimal value for output range must be smaller than maximal value", true);
 			return;
 		}
 		double yIncrement = (maxOutputRange - minOutputRange) / ((double) plotPixelsY - 1); //'-1' to include min and max; gives the range of each pixel in y-dimension

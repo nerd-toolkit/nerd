@@ -145,7 +145,7 @@ namespace nerd {
 		ValueManager *vM = Core::getInstance()->getValueManager();
 		QString pathToValues = "/DynamicsPlotters/" + calculator + "/";
 		if(calculator == 0)return;
-		else if(calculator == "StandardBifurcation_Calculator" || calculator == "Transients_Calculator" || calculator == "Isoperiod_Calculator" || calculator == "BasinOfAttraction_Calculator"){
+		else if(calculator == "Bifurcation_Calculator" || calculator == "Transients_Calculator" || calculator == "Isoperiod_Calculator" || calculator == "BasinOfAttraction_Calculator"){
  			MatrixValue *dataMatrixValue = dynamic_cast<MatrixValue*>(vM->getValue(QString(pathToValues + QString("Data"))));
 			if(dataMatrixValue == 0){
 				Core::log("OnlinePlotter: Couldn't find data Matrix");

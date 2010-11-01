@@ -46,8 +46,8 @@
 
 
 
-#ifndef NERDStandardBifurcation_Calculator_H
-#define NERDStandardBifurcation_Calculator_H
+#ifndef NERDBifurcation_Calculator_H
+#define NERDBifurcation_Calculator_H
 
 #include <QString>
 #include <QHash>
@@ -65,10 +65,10 @@ namespace nerd {
 	 * is observed. The plotter consists of three parts, one to extract the data,
 	 * one to export it and an external script to create the diagram.
 	 */
-	class StandardBifurcation_Calculator: public DynamicsPlotter {
+	class Bifurcation_Calculator: public DynamicsPlotter {
 		public:
-			StandardBifurcation_Calculator();
-			virtual ~StandardBifurcation_Calculator();
+			Bifurcation_Calculator();
+			virtual ~Bifurcation_Calculator();
 
 			virtual void calculateData();
 

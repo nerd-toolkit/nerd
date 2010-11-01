@@ -8,7 +8,7 @@ set(nerd_dynamicsPlotLib_SRCS
 	DynamicsPlotConstants.cpp  
 	DynamicsPlot/DynamicsPlotter.cpp  
 	Collections/DynamicsPlotCollection.cpp  
-	DynamicsPlot/StandardBifurcation_Calculator.cpp  
+	DynamicsPlot/Bifurcation_Calculator.cpp  
 	DynamicsPlot/Exporters/Exporter.cpp  
 	DynamicsPlot/OnlinePlotter/OnlinePlotter.cpp  
 	DynamicsPlot/OnlinePlotter/OnlinePlotterWindow.cpp  
