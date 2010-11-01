@@ -91,6 +91,7 @@ namespace nerd {
 		int createObject(const QString &prototypeName, const QString &name);
 		int copyObject(int objectId, const QString &name);
 		bool setProperty(int objectId, const QString &propertyName, const QString &value);
+		bool setProperty(const QString &fullPropertyName, const QString &value);
 		bool hasProperty(int objectId, const QString &propertyName);
 		QString getProperty(int objectId, const QString &propertyName);
 		
@@ -104,7 +105,7 @@ namespace nerd {
 		bool crAddTarget(int collisionRule, int bodyId);
 		bool crAddTarget(int collisionRule, const QString &bodyRegExp);
 		void crNegateRule(int collisionRule, bool negate);
-		bool crIsNegated(int collisionRule) const;
+		bool crIsNegated(int collisionRule);
 
 		bool allowCollisions(int objectId1, int objectId2, bool allow);
 

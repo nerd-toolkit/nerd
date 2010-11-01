@@ -71,12 +71,12 @@ namespace nerd {
  */
 PictureSeriesCreator::PictureSeriesCreator()
 	: mTriggerEvent(0), mPictureCounter(0), mScreenshotInProgress(false), mCurrentIteration(0),
-		mCurrentWorkingDirectory(""), mFirstFrame(false)
+		mCurrentWorkingDirectory(""), mFirstFrame(false), mInitialized(false)
 {
 	mScreenShotDelay = new IntValue(100);
 	mRunCreator = new BoolValue(false);
 	mFileNamePrefix = new StringValue("pic");
-	mTargetDirectory = new StringValue(Core::getInstance()->getConfigDirectoryPath() + "/picSeries");
+	mTargetDirectory = new StringValue(Core::getInstance()->getConfigDirectoryPath() + "/video");
 	mTargetDirectory->useAsFileName(true);
 	mTriggerEventName = new StringValue(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED);
 	mIterationsPerFrame = new IntValue(10);
@@ -135,6 +135,13 @@ bool PictureSeriesCreator::bind() {
 
 	mShutDownEvent = Core::getInstance()->getShutDownEvent();
 	mShutDownEvent->addEventListener(this);
+
+	mInitialized = true;
+
+	if(mRunCreator) {
+		//make sure that the activation is not done before bind().
+		activate();
+	}
 
 	return ok;
 }
@@ -226,9 +233,9 @@ void PictureSeriesCreator::activate() {
 	EventManager *em = Core::getInstance()->getEventManager();
 	mTriggerEvent = em->registerForEvent(mTriggerEventName->get(), this);
 
-	if(mTriggerEvent == 0) {
+	if(mTriggerEvent == 0 && mInitialized) {
 		Core::log("PictureSeriesCreator: Warning, could not switch to trigger event ["
-					+ mTriggerEventName->get() + "]");
+					+ mTriggerEventName->get() + "]", true);
 	}
 }
 

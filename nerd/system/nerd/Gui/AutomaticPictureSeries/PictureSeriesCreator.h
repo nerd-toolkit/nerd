@@ -113,6 +113,7 @@ namespace nerd {
 		QRect mCurrentRecordingRectangle;
 		bool mFirstFrame;
 		Event *mShutDownEvent;
+		bool mInitialized;
 	};
 
 }
