@@ -482,6 +482,10 @@ bool Core::isInitialized() const {
 bool Core::init() {
 	TRACE("Core::init");
 
+	//temorarily make the current thread the main execution thread.
+	//after initialzation this may change!
+	setMainExecutionThread();
+
 	bool ok = true;
 	bool helpMessageRequest = false;
 	bool quitApplication = false;

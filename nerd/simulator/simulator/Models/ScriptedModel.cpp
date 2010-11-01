@@ -164,7 +164,10 @@ void ScriptedModel::createEnvironment() {
 		pm->addSimObject(obj);
 	}
 	mSetupEnvironmentMode = true;
-	executeScriptFunction("setupEnvironment();");
+	mScript->evaluate("setupEnvironment.toString();");
+	if(!mScript->hasUncaughtException()) {
+		executeScriptFunction("setupEnvironment();");
+	}
 	mSetupEnvironmentMode = false;
 }
 

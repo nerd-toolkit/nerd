@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 		}
 		else if(QString(argv[i]) == "-gui") {
 			useGui = true;
+			break;
 		}
 	}
 	QCoreApplication *app = 0;

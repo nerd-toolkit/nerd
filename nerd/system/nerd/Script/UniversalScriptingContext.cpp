@@ -78,6 +78,7 @@ UniversalScriptingContext::UniversalScriptingContext(const QString &name,
 
 	mScriptCode->set("function exec() { }");
 	mScriptFileName->set(fileName);
+	mScriptFileName->setNotifyAllSetAttempts(true);
 
 	Core::getInstance()->addSystemObject(this);
 }
@@ -120,6 +121,12 @@ bool UniversalScriptingContext::bind() {
 	setTriggerEventName(mTriggerEventName->get());
 
 	mScriptFileName->set(mScriptFileName->get());
+
+	//if no trigger event is given, execute once during bind() phase.
+	if(mTriggerEvent == 0) {
+		resetScriptContext();
+		executeScriptFunction("exec();");
+	}
 	
 	return ok;
 }
@@ -175,7 +182,7 @@ void UniversalScriptingContext::setTriggerEventName(const QString &triggerEventN
 		mTriggerEvent = Core::getInstance()->getEventManager()
 				->registerForEvent(triggerEventName, this);
 
-		if(mTriggerEvent == 0) {
+		if(mTriggerEvent == 0 && mTriggerEventName->get().trimmed() != "") {
 			reportError("UniversalScriptingContext [" + getName() + "]: "
 				+ "Could not find trigger event [" + triggerEventName + "]");
 		}
@@ -200,7 +207,7 @@ void UniversalScriptingContext::setResetEventName(const QString &resetEventName)
 		mResetEvent = Core::getInstance()->getEventManager()
 				->registerForEvent(resetEventName, this);
 
-		if(mResetEvent == 0) {
+		if(mResetEvent == 0 && mResetEventName->get().trimmed() != "") {
 			reportError("UniversalScriptingContext [" + getName() + "]: "
 				+ "Could not find reset event [" + resetEventName + "]");
 		}

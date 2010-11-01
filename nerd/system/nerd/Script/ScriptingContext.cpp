@@ -583,7 +583,7 @@ QString ScriptingContext::loadFileToString(const QString &fileName) {
  */
 void ScriptingContext::reportError(const QString &message) {
 	QString msg = message;
-	Core::log(QString("ScriptingContext [") + getName() + "]: " + message);
+	Core::log(QString("ScriptingContext [") + getName() + "]: " + message, true);
 }
 
 /**
