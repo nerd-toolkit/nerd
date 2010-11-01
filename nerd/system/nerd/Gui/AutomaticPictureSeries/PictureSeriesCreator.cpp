@@ -138,7 +138,7 @@ bool PictureSeriesCreator::bind() {
 
 	mInitialized = true;
 
-	if(mRunCreator) {
+	if(mRunCreator->get()) {
 		//make sure that the activation is not done before bind().
 		activate();
 	}

@@ -121,7 +121,7 @@ void Simple2D_DifferentialDrive::updateActuators() {
 	double x = 0.0;
 	double y = 0.0;
 	double angle = mOrientationValue->getY();
-	double angleDiff = 0.0;
+	//double angleDiff = 0.0;
 
 	if(mWidth->get() == 0) {
 		//prevent division by zero.
