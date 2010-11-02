@@ -64,6 +64,8 @@
 #include "Event/Event.h"
 #include <QImage>
 #include <QGLFramebufferObject>
+#include "PlugIns/CommandLineArgument.h"
+
 
 namespace nerd{
 
@@ -246,6 +248,8 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		QList<Event*> mTriggerPaintEvents;
 		QGLFramebufferObject *mFrameBuffer;
 		BoolValue *mUseAsFrameGrabber;
+
+		CommandLineArgument *mDisableTexturesArg;
 };
 
 }

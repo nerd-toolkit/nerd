@@ -73,6 +73,7 @@
 #include <iostream>
 #include <QMutex>
 #include <QMutexLocker>
+#include "PlugIns/CommandLineArgument.h"
 
 using namespace std;
 
@@ -153,7 +154,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
         mRealTime(0), mTimeDisplaySize(0), mClearColorValue(0), mTimeTextColorValue(0),
 		mIsManipulatable(0), mPauseValue(0), mUseTexturesValue(0), mDisplaySimulationTime(0),
 		mChangeViewportTimer(0), mVisualizationTimer(0), mStepsPerSecondValue(0),
-		mRunInPerformanceMode(0), mGlIsUpdating(false), mUseAsFrameGrabber(0)
+		mRunInPerformanceMode(0), mGlIsUpdating(false), mUseAsFrameGrabber(0), mDisableTexturesArg(0)
 {
 	setWhatsThis("Ctrl+Shift+v:	Save current position as new initial viewpoint.\nShift+v:"
 		" 	Restore initial viewpoint.\nCtrl+x:	Show/Hide Textures.\nCtrl+t: 	"
@@ -170,6 +171,12 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 		mReferenceBodyOrientation = new QuaternionValue();
 	}
 	setWindowTitle(title);
+
+
+	mDisableTexturesArg = new CommandLineArgument("disableTextures", "", "",
+					"Disables textures. This is useful for computers with mesa texture problems.",
+					0, 0, true, true);
+
 
 	mLightChanged = false;
 	mInitSuccessful = false;
@@ -456,7 +463,10 @@ void OpenGLVisualization::setUp() {
 	addParameter("MaxSideStepSize", mMaxSideStepSize, mPublishValues);
 	addParameter("MouseRotationStepSize", mMouseRotationStepSize, mPublishValues);
 
-	loadTextures();
+	//load textures if textures are not disabled
+	if(mDisableTexturesArg->getNumberOfEntries() <= 0) {
+		loadTextures();
+	}
 
 }
 
