@@ -47,6 +47,7 @@
 #define MaterialProperties_H_
 #include <QString>
 #include <QMap>
+#include "Value/DoubleValue.h"
 
 namespace nerd {
 
@@ -61,6 +62,8 @@ namespace nerd {
 class MaterialProperties {
 	public:
 		static int MATERIAL_NUMBER_LIGHT;
+		static int MATERIAL_NUMBER_CUSTOM1;
+		static int MATERIAL_NUMBER_CUSTOM2;
 
 	public:
 		MaterialProperties();
@@ -84,6 +87,13 @@ class MaterialProperties {
 		double** mStaticFrictionMatrix;
 		double** mDynamicFrictionMatrix;
 		double** mRestitutionMatrix;
+		DoubleValue *mMaterialDynamicFrictionCustom1;
+		DoubleValue *mMaterialStaticFrictionCustom1;
+		DoubleValue *mMaterialRestitutionCustom1;
+		DoubleValue *mMaterialDynamicFrictionCustom2;
+		DoubleValue *mMaterialStaticFrictionCustom2;
+		DoubleValue *mMaterialRestitutionCustom2;
+	
 };
 }
 #endif

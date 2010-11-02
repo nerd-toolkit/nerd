@@ -44,17 +44,37 @@
 
 
 #include "MaterialProperties.h"
+#include "Core/Core.h"
+#include "Value/ValueManager.h"
 
 namespace nerd {
 
 
 int MaterialProperties::MATERIAL_NUMBER_LIGHT = 8;
+int MaterialProperties::MATERIAL_NUMBER_CUSTOM1 = 9;
+int MaterialProperties::MATERIAL_NUMBER_CUSTOM2 = 10;
 
 // TODO: read settings from a Material-file
 /**
  * Constructor. Fills the Lookup-table with default material names and friction coefficients.
  */
 MaterialProperties::MaterialProperties() {
+
+	mMaterialDynamicFrictionCustom1 = new DoubleValue(0.8);
+	mMaterialStaticFrictionCustom1 = new DoubleValue(1.2);
+	mMaterialRestitutionCustom1 = new DoubleValue(0.5);
+	mMaterialDynamicFrictionCustom2 = new DoubleValue(0.8);
+	mMaterialStaticFrictionCustom2 = new DoubleValue(1.2);
+	mMaterialRestitutionCustom2 = new DoubleValue(0.5);
+
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	vm->addValue("/MaterialProperties/Custom1/DynamicFriction", mMaterialDynamicFrictionCustom1);
+	vm->addValue("/MaterialProperties/Custom1/StateFriction", mMaterialStaticFrictionCustom1);
+	vm->addValue("/MaterialProperties/Custom1/Restitution", mMaterialRestitutionCustom1);
+	vm->addValue("/MaterialProperties/Custom2/DynamicFriction", mMaterialDynamicFrictionCustom2);
+	vm->addValue("/MaterialProperties/Custom2/StateFriction", mMaterialStaticFrictionCustom2);
+	vm->addValue("/MaterialProperties/Custom2/Restitution", mMaterialRestitutionCustom2);
+
 	mMaterialLookUp["PlasticsWhite"] = 0;
 	mMaterialLookUp["PlasticsGray"] = 1;
 	mMaterialLookUp["ABS"] = 2;
@@ -64,6 +84,8 @@ MaterialProperties::MaterialProperties() {
 	mMaterialLookUp["Carpet"] = 6;
 	mMaterialLookUp["Default"] = 7;
 	mMaterialLookUp["Light"] = MATERIAL_NUMBER_LIGHT; //8
+	mMaterialLookUp["Custom1"] = MATERIAL_NUMBER_CUSTOM1;
+	mMaterialLookUp["Custom2"] = MATERIAL_NUMBER_CUSTOM2;
 
 	addTexture("PlasticsWhite");
 	addTexture("PlasticsGray");
@@ -73,6 +95,8 @@ MaterialProperties::MaterialProperties() {
 	addTexture("Wood");
 	addTexture("Carpet");
 	addTexture("Default");
+	addTexture("Custom1");
+	addTexture("Custom2");
 	
 	mStaticFrictionMatrix = new double*[mMaterialLookUp.size()];
 	for(int i = 0; i < mMaterialLookUp.size(); i++) {
@@ -284,6 +308,12 @@ int MaterialProperties::getMaterialType(const QString &materialName) {
  * @return The static friction coefficient for the two materials.
  */
 double MaterialProperties::getStaticFriction(int material1, int material2) {
+	if(material1 == MATERIAL_NUMBER_CUSTOM1 || material2 == MATERIAL_NUMBER_CUSTOM1) {
+		return mMaterialStaticFrictionCustom1->get();
+	}
+	if(material1 == MATERIAL_NUMBER_CUSTOM2 || material2 == MATERIAL_NUMBER_CUSTOM2) {
+		return mMaterialStaticFrictionCustom2->get();
+	}
 	if(mMaterialLookUp.size() > material1 && mMaterialLookUp.size() > material2) {
 		return mStaticFrictionMatrix[material1][material2];
 	}
@@ -297,6 +327,12 @@ double MaterialProperties::getStaticFriction(int material1, int material2) {
  * @return The dynamic friction coefficient for the two materials.
  */
 double MaterialProperties::getDynamicFriction(int material1, int material2) {
+	if(material1 == MATERIAL_NUMBER_CUSTOM1 || material2 == MATERIAL_NUMBER_CUSTOM1) {
+		return mMaterialDynamicFrictionCustom1->get();
+	}
+	if(material1 == MATERIAL_NUMBER_CUSTOM2 || material2 == MATERIAL_NUMBER_CUSTOM2) {
+		return mMaterialDynamicFrictionCustom2->get();
+	}
 	if(mMaterialLookUp.size() > material1 && mMaterialLookUp.size() > material2) {
 		return mDynamicFrictionMatrix[material1][material2];
 	}
@@ -310,6 +346,12 @@ double MaterialProperties::getDynamicFriction(int material1, int material2) {
  * @return The restitution value for the two materials.
  */
 double MaterialProperties::getRestitution(int material1, int material2) {
+	if(material1 == MATERIAL_NUMBER_CUSTOM1 || material2 == MATERIAL_NUMBER_CUSTOM1) {
+		return mMaterialRestitutionCustom1->get();
+	}
+	if(material1 == MATERIAL_NUMBER_CUSTOM2 || material2 == MATERIAL_NUMBER_CUSTOM2) {
+		return mMaterialRestitutionCustom2->get();
+	}
 	if(mMaterialLookUp.size() > material1 && mMaterialLookUp.size() > material2) {
 		return mRestitutionMatrix[material1][material2];
 	}
