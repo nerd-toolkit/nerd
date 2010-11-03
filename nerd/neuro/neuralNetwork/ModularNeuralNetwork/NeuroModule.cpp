@@ -251,7 +251,7 @@ const QList<Neuron*> NeuroModule::getInputNeurons(int startLevel) const {
 		for(QListIterator<Neuron*> j(inputNeurons); j.hasNext();) {
 			Neuron *neuron = j.next();
 			
-			int level = 1;
+			int level = 0;
 			bool isExtendedInterface = false;
 			QString levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_INPUT);
 
@@ -340,7 +340,7 @@ const QList<Neuron*> NeuroModule::getOutputNeurons(int startLevel) const {
 		for(QListIterator<Neuron*> j(outputNeurons); j.hasNext();) {
 			Neuron *neuron = j.next();
 
-			int level = 1;
+			int level = 0;
 			bool isExtendedInterface = false;
 			QString levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_INPUT);
 

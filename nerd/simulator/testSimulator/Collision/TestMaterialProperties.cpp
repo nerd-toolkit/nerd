@@ -51,7 +51,7 @@ namespace nerd {
 void TestMaterialProperties::testPhysicalProperties() {
 	Core::resetCore();
 	MaterialProperties *mProp = new MaterialProperties();
-	QCOMPARE(mProp->getNumberOfMaterials(), 9);
+	QCOMPARE(mProp->getNumberOfMaterials(), 11);
 	QVERIFY(mProp->getMaterialType("ABS") != -1);
 	QVERIFY(mProp->getMaterialType("ABS2") == -1);
 

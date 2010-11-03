@@ -69,6 +69,7 @@ NeuralNetworkManager::NeuralNetworkManager()
 	: mStepStartedEvent(0), mStepCompletedEvent(0), mResetEvent(0),
  	  mCurrentNetworksReplacedEvent(0), mNetworkEvaluationStarted(0), 
 	  mNetworkEvaluationCompleted(0), mNetworkStructuresChanged(0), 
+	  mNetworkIterationCompleted(0),
 	  mNetworkExecutionMutex(QMutex::Recursive), mBypassNetworkValue(0)
 {
 	EventManager *em = Core::getInstance()->getEventManager();
@@ -360,8 +361,8 @@ void NeuralNetworkManager::triggerNetworkStructureChangedEvent() {
 }
 
 void NeuralNetworkManager::triggerNetworkIterationCompleted() {
-	if(mNetworkIterationCompleted != 0) {
-		if(Core::getInstance()->isMainExecutionThread()) {
+	if(Core::getInstance()->isMainExecutionThread()) {
+		if(mNetworkIterationCompleted != 0) {
 			mNetworkIterationCompleted->trigger();
 		}
 	}

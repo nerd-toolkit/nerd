@@ -121,6 +121,8 @@ void TestNeuroModule::testDuplicationAndEquals() {
 	QVERIFY(module->addParameter("TestParam", testIntValue));
 	QVERIFY(module->addSubModule(subModule));
 
+	QCOMPARE(module->getInputNeurons().size(), 1);
+
 	//create copy
 	NeuroModule *copy = dynamic_cast<NeuroModule*>(module->createCopy());
 
