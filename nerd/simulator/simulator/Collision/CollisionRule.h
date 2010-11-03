@@ -50,6 +50,7 @@
 #include "Value/StringValue.h"
 #include "Contact.h"
 #include "Core/ParameterizedObject.h"
+#include "Value/StringValue.h"
 
 namespace nerd {
 
@@ -60,6 +61,7 @@ namespace nerd {
 class Event;
 class EventManager;
 class CollisionObject;
+class SimBody;
 
 class CollisionRule : public ParameterizedObject {
 
@@ -69,6 +71,8 @@ class CollisionRule : public ParameterizedObject {
 		virtual ~CollisionRule();
 	
 		virtual CollisionRule* createCopy() const = 0;
+
+		virtual void valueChanged(Value *value);
 		
 		virtual void set(const QList<CollisionObject*> &sourceGroup, 
 						const QList<CollisionObject*> &targetGroup);
@@ -91,12 +95,20 @@ class CollisionRule : public ParameterizedObject {
 		virtual bool init();
 		virtual bool bind();
 		virtual bool cleanUp();
+
+		StringValue* getSourceList() const;
+		StringValue* getTargetList() const;
+
+	protected:
+		void updateObjectList(bool source);
 	
 		
 	protected:
 		QString mRuleName;
 		QList<CollisionObject*> mSourceGroup;
 		QList<CollisionObject*> mTargetGroup;
+		StringValue *mSourceList;
+		StringValue *mTargetList;
 		bool mNegateRule;
 };
 

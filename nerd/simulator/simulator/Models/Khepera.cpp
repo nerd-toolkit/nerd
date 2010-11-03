@@ -48,6 +48,10 @@
 #include "SimulationConstants.h"
 #include <iostream>
 #include "Physics/SphereGeom.h"
+#include "Core/Core.h"
+#include "Physics/SphereGeom.h"
+
+
 
 using namespace std;
 
@@ -147,6 +151,12 @@ void Khepera::createModel() {
 	PARAM(DoubleValue, body, "Mass")->set(0.08);
 	PARAM(Vector3DValue, body, "CenterOfMass")->set(0, 0, 0);
 	PARAM(BoolValue, body, "Dynamic")->set(true);
+
+	CollisionObject *bodySphereCollisionObject = new CollisionObject(SphereGeom(body, bodyRadius), body);
+	bodySphereCollisionObject->getGeometry()->setLocalPosition(Vector3D(0.0, 0.0,bodyRadius - (bodyHeight / 2.0)));
+	bodySphereCollisionObject->getGeometry()->setColor(0, 0, 0, 0);
+	bodySphereCollisionObject->getGeometry()->setAutomaticColor(false);
+	body->addCollisionObject(bodySphereCollisionObject);
 
 	//add an invidible sphere as collision object between Kheperas (because cylinders do not collide)
 // 	CollisionObject *sphereCollisionObject = new CollisionObject(SphereGeom(body, 

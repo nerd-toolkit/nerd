@@ -47,6 +47,8 @@
 #include "Event/EventManager.h"
 #include "Physics/SimBody.h"
 #include "Physics/Physics.h"
+#include "Physics/SimBody.h"
+#include <QStringList>
 
 namespace nerd {
 
@@ -59,7 +61,11 @@ namespace nerd {
 CollisionRule::CollisionRule(const QString &ruleName, bool negateRule) 
 		: ParameterizedObject(ruleName), mNegateRule(negateRule) 
 {
+	mSourceList = new StringValue();
+	mTargetList = new StringValue();
 
+	addParameter("SourceList", mSourceList);
+	addParameter("TargetList", mTargetList);
 }
 
 CollisionRule::CollisionRule(const CollisionRule &rule) : Object(), ValueChangedListener(), 
@@ -67,9 +73,25 @@ CollisionRule::CollisionRule(const CollisionRule &rule) : Object(), ValueChanged
 {
 	mSourceGroup = rule.getSourceGroup();
 	mTargetGroup = rule.getTargetGroup();
+
+	mSourceList = dynamic_cast<StringValue*>(getParameter("SourceList"));
+	mTargetList = dynamic_cast<StringValue*>(getParameter("TargetList"));
 }
 
 CollisionRule::~CollisionRule() {
+}
+
+void CollisionRule::valueChanged(Value *value) {
+	if(value == 0) {
+		return;
+	}
+	ParameterizedObject::valueChanged(value);
+	if(value == mSourceList) {
+		updateObjectList(true);
+	}
+	else if(value == mTargetList) {
+		updateObjectList(false);
+	}
 }
 
 
@@ -158,5 +180,54 @@ bool CollisionRule::cleanUp() {
 	Physics::getCollisionManager()->removeCollisionRule(this);
 	return ok;
 }
+
+StringValue* CollisionRule::getSourceList() const {
+	return mSourceList;
+}
+
+
+StringValue* CollisionRule::getTargetList() const {
+	return mTargetList;
+}
+
+void CollisionRule::updateObjectList(bool source) {
+	
+	if(source) {
+		mSourceGroup.clear();
+	}
+	else {
+		mTargetGroup.clear();
+	}
+	QString listDesc = source ? mSourceList->get() : mTargetList->get();
+	QStringList regExpressions = listDesc.split(",");
+
+	for(QListIterator<QString> i(regExpressions); i.hasNext();) {
+		QString targetName = i.next();
+		targetName.replace("**", ".*");
+	
+		if(!targetName.startsWith("/")) {
+			targetName.prepend("/");
+		}
+	
+		
+	
+		QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
+						->getSimObjects(targetName);
+		for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
+			SimBody *object = dynamic_cast<SimBody*>(j.next());
+			if(object != 0) {
+				for(int i = 0; i < object->getCollisionObjects().size(); i++) {
+					if(source) {
+						addToSourceGroup(object->getCollisionObjects().at(i));
+					}
+					else {
+						addToTargetGroup(object->getCollisionObjects().at(i));
+					}
+				}
+			}
+		}
+	}
+}
+
 
 }

@@ -1609,8 +1609,9 @@ void MSeriesV2Model::createModel() {
 	disableCollisions(mRightUpperArm, mUpperBody);
 
 	if(mFirstLayout) {
-		mFirstLayout = false;
 		initializeMotorModels();
+		layoutObjects();
+		mFirstLayout = false;
 	}
 }
 
@@ -2126,18 +2127,23 @@ void MSeriesV2Model::layoutObjects() {
 		// UpperFoot (main body of foot) Body	
 		PARAM(Vector3DValue, mRightFoot, "Position")->set(rightUpperFootX, upperFootY, upperFootZ);
 //		PARAM(Vector3DValue, mRightFoot, "CenterOfMass")->set(rightFootComX - rightUpperFootX, rightFootComY - upperFootY, rightFootComZ - upperFootZ);
-		PARAM(Vector3DValue, mRightFoot, "CenterOfMass")->set(rightFootComX, rightFootComY, rightFootComZ);
 		PARAM(DoubleValue, mRightFoot, "Width")->set(upperFootWidth);
 		PARAM(DoubleValue, mRightFoot, "Height")->set(upperFootHeight);
 		PARAM(DoubleValue, mRightFoot, "Depth")->set(upperFootDepth);
-		PARAM(DoubleValue, mRightFoot, "Mass")->set(footWeight);
-		PARAM(ColorValue, mRightFoot, "Color")->set(absColor);
-		PARAM(StringValue, mRightFoot, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mRightFoot, "InertiaTensor")->set(rightFootInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightFoot, "CenterOfMass")->set(rightFootComX, rightFootComY, rightFootComZ);
+			PARAM(DoubleValue, mRightFoot, "Mass")->set(footWeight);
+			PARAM(ColorValue, mRightFoot, "Color")->set(absColor);
+			PARAM(StringValue, mRightFoot, "Material")->set("ABS");
+		}
+		
 
 		// SoleOfFoot is a box body under the UpperFoot body, over the FootForceSensors and between the heel cylinder and the toes
-		mRightSoleOfFoot->setMass(0.0);
-		mRightSoleOfFoot->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightSoleOfFoot->setMass(0.0);
+			mRightSoleOfFoot->setMaterialType("Latex");
+		}
 		BoxGeom *rightSoleOfFootGeom = dynamic_cast<BoxGeom*>(mRightSoleOfFoot->getGeometry());
 		rightSoleOfFootGeom->setSize(soleWidth, soleHeight, soleDepth);
 		rightSoleOfFootGeom->setAutomaticColor(false);
@@ -2147,8 +2153,10 @@ void MSeriesV2Model::layoutObjects() {
 													   soleZ - upperFootZ));
 
 		// Heel Force Sensors are cylinder bodies before the sole
-		mRightHeelRightForceSensorCollObj->setMass(0.0);
-		mRightHeelRightForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightHeelRightForceSensorCollObj->setMass(0.0);
+			mRightHeelRightForceSensorCollObj->setMaterialType("Latex");
+		}
 		CylinderGeom *rightHeelRightForceSensorGeom = dynamic_cast<CylinderGeom*>(mRightHeelRightForceSensorCollObj->getGeometry());
 		rightHeelRightForceSensorGeom->setRadius(mHeelRadius->get());
 		rightHeelRightForceSensorGeom->setLength(mLegWidth->get() / 2.0);
@@ -2159,8 +2167,10 @@ void MSeriesV2Model::layoutObjects() {
 																heelZ - upperFootZ));
 		rightHeelRightForceSensorGeom->setLocalOrientation(Quaternion(0.707, 0.0, 0.707, 0.0));
 
-		mRightHeelLeftForceSensorCollObj->setMass(0.0);
-		mRightHeelLeftForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightHeelLeftForceSensorCollObj->setMass(0.0);
+			mRightHeelLeftForceSensorCollObj->setMaterialType("Latex");
+		}
 		CylinderGeom *rightHeelLeftForceSensorGeom = dynamic_cast<CylinderGeom*>(mRightHeelLeftForceSensorCollObj->getGeometry());
 		rightHeelLeftForceSensorGeom->setRadius(mHeelRadius->get());
 		rightHeelLeftForceSensorGeom->setLength(mLegWidth->get() / 2.0);
@@ -2172,8 +2182,10 @@ void MSeriesV2Model::layoutObjects() {
 		rightHeelLeftForceSensorGeom->setLocalOrientation(Quaternion(0.707, 0.0, 0.707, 0.0));
 
 		// Sole of Foot Force Sensors are box bodies behind the heel and under the sole
-		mRightSoleOfFootRightForceSensorCollObj->setMass(0.0);
-		mRightSoleOfFootRightForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightSoleOfFootRightForceSensorCollObj->setMass(0.0);
+			mRightSoleOfFootRightForceSensorCollObj->setMaterialType("Latex");
+		}
 		BoxGeom *rightSoleOfFootRightForceSensorGeom = dynamic_cast<BoxGeom*>(mRightSoleOfFootRightForceSensorCollObj->getGeometry());
 		rightSoleOfFootRightForceSensorGeom->setSize(mLegWidth->get() / 2.0, mFootForceSensorHeight->get(), mSoleOfFootForceSensorDepth->get());
 		rightSoleOfFootRightForceSensorGeom->setAutomaticColor(false);
@@ -2182,8 +2194,10 @@ void MSeriesV2Model::layoutObjects() {
 													   footForceSensorY - upperFootY, 
 													   soleOfFootForceSensorZ - upperFootZ));
 
-		mRightSoleOfFootLeftForceSensorCollObj->setMass(0.0);
-		mRightSoleOfFootLeftForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightSoleOfFootLeftForceSensorCollObj->setMass(0.0);
+			mRightSoleOfFootLeftForceSensorCollObj->setMaterialType("Latex");
+		}
 		BoxGeom *rightSoleOfFootLeftForceSensorGeom = dynamic_cast<BoxGeom*>(mRightSoleOfFootLeftForceSensorCollObj->getGeometry());
 		rightSoleOfFootLeftForceSensorGeom->setSize(mLegWidth->get() / 2.0, mFootForceSensorHeight->get(), mSoleOfFootForceSensorDepth->get());
 		rightSoleOfFootLeftForceSensorGeom->setAutomaticColor(false);
@@ -2193,8 +2207,10 @@ void MSeriesV2Model::layoutObjects() {
 													   soleOfFootForceSensorZ - upperFootZ));
 
 		// Ball of Foot Force Sensors are box bodies before the toes and under the sole
-		mRightBallOfFootRightForceSensorCollObj->setMass(0.0);
-		mRightBallOfFootRightForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightBallOfFootRightForceSensorCollObj->setMass(0.0);
+			mRightBallOfFootRightForceSensorCollObj->setMaterialType("Latex");
+		}
 		BoxGeom *rightBallOfFootRightForceSensorGeom = dynamic_cast<BoxGeom*>(mRightBallOfFootRightForceSensorCollObj->getGeometry());
 		rightBallOfFootRightForceSensorGeom->setSize(mLegWidth->get() / 2.0, mFootForceSensorHeight->get(), mBallOfFootForceSensorDepth->get());
 		rightBallOfFootRightForceSensorGeom->setAutomaticColor(false);
@@ -2203,8 +2219,10 @@ void MSeriesV2Model::layoutObjects() {
 														footForceSensorY - upperFootY,
 														ballOfFootForceSensorZ - upperFootZ));
 
-		mRightBallOfFootLeftForceSensorCollObj->setMass(0.0);
-		mRightBallOfFootLeftForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightBallOfFootLeftForceSensorCollObj->setMass(0.0);
+			mRightBallOfFootLeftForceSensorCollObj->setMaterialType("Latex");
+		}
 		BoxGeom *rightBallOfFootLeftForceSensorGeom = dynamic_cast<BoxGeom*>(mRightBallOfFootLeftForceSensorCollObj->getGeometry());
 		rightBallOfFootLeftForceSensorGeom->setSize(mLegWidth->get() / 2.0, mFootForceSensorHeight->get(), mBallOfFootForceSensorDepth->get());
 		rightBallOfFootLeftForceSensorGeom->setAutomaticColor(false);
@@ -2217,18 +2235,22 @@ void MSeriesV2Model::layoutObjects() {
 		// Toe Body
 		PARAM(Vector3DValue, mRightToes, "Position")->set(rightToesX, toesY, toesZ);
 //		PARAM(Vector3DValue, mRightToes, "CenterOfMass")->set(rightToesComX - rightToesX, rightToesComY - toesY, rightToesComZ - toesZ);
-		PARAM(Vector3DValue, mRightToes, "CenterOfMass")->set(rightToesComX, rightToesComY, rightToesComZ);
 		PARAM(DoubleValue, mRightToes, "Width")->set(toesWidth);
 		PARAM(DoubleValue, mRightToes, "Height")->set(toesHeight);
 		PARAM(DoubleValue, mRightToes, "Depth")->set(mToesDepth->get());
-		PARAM(DoubleValue, mRightToes, "Mass")->set(toesWeight);
-		PARAM(ColorValue, mRightToes, "Color")->set(absColor);
-		PARAM(StringValue, mRightToes, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mRightToes, "InertiaTensor")->set(rightToesInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightToes, "CenterOfMass")->set(rightToesComX, rightToesComY, rightToesComZ);
+			PARAM(DoubleValue, mRightToes, "Mass")->set(toesWeight);
+			PARAM(ColorValue, mRightToes, "Color")->set(absColor);
+			PARAM(StringValue, mRightToes, "Material")->set("ABS");
+		}
 
 		// TipToes is a cylinder body behind the toes
-		mRightTipToes->setMass(tipToesWeight);
-		mRightTipToes->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightTipToes->setMass(tipToesWeight);
+			mRightTipToes->setMaterialType("Latex");
+		}
 		CylinderGeom *rightTipToesGeom = dynamic_cast<CylinderGeom*>(mRightTipToes->getGeometry());
 		rightTipToesGeom->setRadius(mTipToesRadius->get());
 		rightTipToesGeom->setLength(tipToesWidth);
@@ -2242,31 +2264,38 @@ void MSeriesV2Model::layoutObjects() {
 	// Right Ankle is a small BoxInertiaBody not visible from outside connecting the Tibia and the Foot
 		PARAM(Vector3DValue, mRightAnkle, "Position")->set(rightAnkleX, mAnkleJointY->get(), 0.0);
 //		PARAM(Vector3DValue, mRightAnkle, "CenterOfMass")->set(rightAnkleComX - rightAnkleX, rightAnkleComY - mAnkleJointY->get(), rightAnkleComZ);
-		PARAM(Vector3DValue, mRightAnkle, "CenterOfMass")->set(rightAnkleComX, rightAnkleComY, rightAnkleComZ);
 		PARAM(DoubleValue, mRightAnkle, "Width")->set(0.01);
 		PARAM(DoubleValue, mRightAnkle, "Height")->set(0.01);
 		PARAM(DoubleValue, mRightAnkle, "Depth")->set(0.01);
-		PARAM(DoubleValue, mRightAnkle, "Mass")->set(ankleWeight);
-		PARAM(ColorValue, mRightAnkle, "Color")->set(absColor);
-		PARAM(StringValue, mRightAnkle, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mRightAnkle, "InertiaTensor")->set(rightAnkleInertia);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mRightAnkle, "Mass")->set(ankleWeight);
+			PARAM(ColorValue, mRightAnkle, "Color")->set(absColor);
+			PARAM(StringValue, mRightAnkle, "Material")->set("ABS");
+			PARAM(Vector3DValue, mRightAnkle, "CenterOfMass")->set(rightAnkleComX, rightAnkleComY, rightAnkleComZ);
+		}
 
 	// Right Tibia (Tibia consist of a long box (the tibia) and a cylinder on top of the box (the knee joint)
 		// Tibia Body
 		PARAM(Vector3DValue, mRightTibia, "Position")->set(rightTibiaX, tibiaY, 0.0);
 //		PARAM(Vector3DValue, mRightTibia, "CenterOfMass")->set(rightTibiaComX - rightTibiaX, rightTibiaComY - tibiaY, rightTibiaComZ);
-		PARAM(Vector3DValue, mRightTibia, "CenterOfMass")->set(rightTibiaComX, rightTibiaComY, rightTibiaComZ);
 		PARAM(DoubleValue, mRightTibia, "Width")->set(tibiaWidth);
 		PARAM(DoubleValue, mRightTibia, "Height")->set(tibiaHeight);
 		PARAM(DoubleValue, mRightTibia, "Depth")->set(tibiaDepth);
-		PARAM(DoubleValue, mRightTibia, "Mass")->set(tibiaWeight);
-		PARAM(ColorValue, mRightTibia, "Color")->set(absColor);
-		PARAM(StringValue, mRightTibia, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mRightTibia, "InertiaTensor")->set(rightTibiaInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightTibia, "CenterOfMass")->set(rightTibiaComX, rightTibiaComY, rightTibiaComZ);
+			PARAM(DoubleValue, mRightTibia, "Mass")->set(tibiaWeight);
+			PARAM(ColorValue, mRightTibia, "Color")->set(absColor);
+			PARAM(StringValue, mRightTibia, "Material")->set("ABS");
+		}
+		
 
 		// Knee is a cylinder body on top of the tibia
-		mRightKnee->setMass(kneeWeight);
-		mRightKnee->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightKnee->setMass(kneeWeight);
+			mRightKnee->setMaterialType("Latex");
+		}
 		CylinderGeom *rightKneeGeom = dynamic_cast<CylinderGeom*>(mRightKnee->getGeometry());
 		rightKneeGeom->setRadius(mKneeRadius->get());
 		rightKneeGeom->setLength(kneeWidth);
@@ -2281,46 +2310,56 @@ void MSeriesV2Model::layoutObjects() {
 		// Femur Body
 		PARAM(Vector3DValue, mRightFemur, "Position")->set(rightFemurX, femurY, 0.0);
 //		PARAM(Vector3DValue, mRightFemur, "CenterOfMass")->set(rightFemurComX - rightFemurX, rightFemurComY - femurY, rightFemurComZ);
-		PARAM(Vector3DValue, mRightFemur, "CenterOfMass")->set(rightFemurComX, rightFemurComY, rightFemurComZ);
 		PARAM(DoubleValue, mRightFemur, "Width")->set(mLegWidth->get());
 		PARAM(DoubleValue, mRightFemur, "Height")->set(femurHeight);
 		PARAM(DoubleValue, mRightFemur, "Depth")->set(mLegDepth->get());
-		PARAM(DoubleValue, mRightFemur, "Mass")->set(femurWeight);
-		PARAM(ColorValue, mRightFemur, "Color")->set(absColor);
-		PARAM(StringValue, mRightFemur, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mRightFemur, "InertiaTensor")->set(rightFemurInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightFemur, "CenterOfMass")->set(rightFemurComX, rightFemurComY, rightFemurComZ);
+			PARAM(DoubleValue, mRightFemur, "Mass")->set(femurWeight);
+			PARAM(ColorValue, mRightFemur, "Color")->set(absColor);
+			PARAM(StringValue, mRightFemur, "Material")->set("ABS");
+		}
+		
 	}
 	if(mIncludeHip) {
 	// Right HipCross. HipCross is a small body not visible from outside the robot connecting the
 	// Hip and the Femur. It can be rotated by the HipRollJoint
 		PARAM(Vector3DValue, mRightHipCross, "Position")->set(rightHipCrossX, hipPitchRollJointY, 0.0);
 //		PARAM(Vector3DValue, mRightHipCross, "CenterOfMass")->set(rightHipCrossComX - rightHipCrossX, rightHipCrossComY - hipPitchRollJointY, rightHipCrossComZ);
-		PARAM(Vector3DValue, mRightHipCross, "CenterOfMass")->set(rightHipCrossComX, rightHipCrossComY, rightHipCrossComZ);
 		PARAM(DoubleValue, mRightHipCross, "Width")->set(0.01);
 		PARAM(DoubleValue, mRightHipCross, "Height")->set(0.01);
 		PARAM(DoubleValue, mRightHipCross, "Depth")->set(0.01);
-		PARAM(DoubleValue, mRightHipCross, "Mass")->set(hipCrossWeight);
-		PARAM(ColorValue, mRightHipCross, "Color")->set(absColor);
-		PARAM(StringValue, mRightHipCross, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mRightHipCross, "InertiaTensor")->set(rightHipCrossInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightHipCross, "CenterOfMass")->set(rightHipCrossComX, rightHipCrossComY, rightHipCrossComZ);
+			PARAM(DoubleValue, mRightHipCross, "Mass")->set(hipCrossWeight);
+			PARAM(ColorValue, mRightHipCross, "Color")->set(absColor);
+			PARAM(StringValue, mRightHipCross, "Material")->set("ABS");
+		}
 	}
 	if(mIncludeLeftLeg) {
 	// Left Foot
 		// UpperFoot (main body of foot) Body
 		PARAM(Vector3DValue, mLeftFoot, "Position")->set(leftUpperFootX, upperFootY, upperFootZ);
 //		PARAM(Vector3DValue, mLeftFoot, "CenterOfMass")->set(leftFootComX - leftUpperFootX, leftFootComY - upperFootY, leftFootComZ - upperFootZ);
-		PARAM(Vector3DValue, mLeftFoot, "CenterOfMass")->set(leftFootComX, leftFootComY, leftFootComZ);
 		PARAM(DoubleValue, mLeftFoot, "Width")->set(upperFootWidth);
 		PARAM(DoubleValue, mLeftFoot, "Height")->set(upperFootHeight);
 		PARAM(DoubleValue, mLeftFoot, "Depth")->set(upperFootDepth);
-		PARAM(DoubleValue, mLeftFoot, "Mass")->set(footWeight);
-		PARAM(ColorValue, mLeftFoot, "Color")->set(absColor);
-		PARAM(StringValue, mLeftFoot, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mLeftFoot, "InertiaTensor")->set(leftFootInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftFoot, "CenterOfMass")->set(leftFootComX, leftFootComY, leftFootComZ);
+			PARAM(DoubleValue, mLeftFoot, "Mass")->set(footWeight);
+			PARAM(ColorValue, mLeftFoot, "Color")->set(absColor);
+			PARAM(StringValue, mLeftFoot, "Material")->set("ABS");
+		}
+		
 
 		// SoleOfFoot is a box body under the UpperFoot body, over the FootForceSensors and between the heel cylinder and the toes
-		mLeftSoleOfFoot->setMass(0.0);
-		mLeftSoleOfFoot->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftSoleOfFoot->setMass(0.0);
+			mLeftSoleOfFoot->setMaterialType("Latex");
+		}
 		BoxGeom *leftSoleOfFootGeom = dynamic_cast<BoxGeom*>(mLeftSoleOfFoot->getGeometry());
 		leftSoleOfFootGeom->setSize(soleWidth, soleHeight, soleDepth);
 		leftSoleOfFootGeom->setAutomaticColor(false);
@@ -2330,8 +2369,10 @@ void MSeriesV2Model::layoutObjects() {
 													   soleZ - upperFootZ));
 
 		// Heel Force Sensors are cylinder bodies before the sole
-		mLeftHeelRightForceSensorCollObj->setMass(0.0);
-		mLeftHeelRightForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftHeelRightForceSensorCollObj->setMass(0.0);
+			mLeftHeelRightForceSensorCollObj->setMaterialType("Latex");
+		}
 		CylinderGeom *leftHeelRightForceSensorGeom = dynamic_cast<CylinderGeom*>(mLeftHeelRightForceSensorCollObj->getGeometry());
 		leftHeelRightForceSensorGeom->setRadius(mHeelRadius->get());
 		leftHeelRightForceSensorGeom->setLength(mLegWidth->get() / 2.0);
@@ -2342,8 +2383,10 @@ void MSeriesV2Model::layoutObjects() {
 																heelZ - upperFootZ));
 		leftHeelRightForceSensorGeom->setLocalOrientation(Quaternion(0.707, 0.0, 0.707, 0.0));
 
-		mLeftHeelLeftForceSensorCollObj->setMass(0.0);
-		mLeftHeelLeftForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftHeelLeftForceSensorCollObj->setMass(0.0);
+			mLeftHeelLeftForceSensorCollObj->setMaterialType("Latex");
+		}
 		CylinderGeom *leftHeelLeftForceSensorGeom = dynamic_cast<CylinderGeom*>(mLeftHeelLeftForceSensorCollObj->getGeometry());
 		leftHeelLeftForceSensorGeom->setRadius(mHeelRadius->get());
 		leftHeelLeftForceSensorGeom->setLength(mLegWidth->get() / 2.0);
@@ -2355,8 +2398,10 @@ void MSeriesV2Model::layoutObjects() {
 		leftHeelLeftForceSensorGeom->setLocalOrientation(Quaternion(0.707, 0.0, 0.707, 0.0));
 
 		// Sole of Foot Force Sensors are box bodies behind the heel and under the sole
-		mLeftSoleOfFootRightForceSensorCollObj->setMass(0.0);
-		mLeftSoleOfFootRightForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftSoleOfFootRightForceSensorCollObj->setMass(0.0);
+			mLeftSoleOfFootRightForceSensorCollObj->setMaterialType("Latex");
+		}
 		BoxGeom *leftSoleOfFootRightForceSensorGeom = dynamic_cast<BoxGeom*>(mLeftSoleOfFootRightForceSensorCollObj->getGeometry());
 		leftSoleOfFootRightForceSensorGeom->setSize(mLegWidth->get() / 2.0, mFootForceSensorHeight->get(), mSoleOfFootForceSensorDepth->get());
 		leftSoleOfFootRightForceSensorGeom->setAutomaticColor(false);
@@ -2365,8 +2410,10 @@ void MSeriesV2Model::layoutObjects() {
 													   footForceSensorY - upperFootY, 
 													   soleOfFootForceSensorZ - upperFootZ));
 
-		mLeftSoleOfFootLeftForceSensorCollObj->setMass(0.0);
-		mLeftSoleOfFootLeftForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftSoleOfFootLeftForceSensorCollObj->setMass(0.0);
+			mLeftSoleOfFootLeftForceSensorCollObj->setMaterialType("Latex");
+		}
 		BoxGeom *leftSoleOfFootLeftForceSensorGeom = dynamic_cast<BoxGeom*>(mLeftSoleOfFootLeftForceSensorCollObj->getGeometry());
 		leftSoleOfFootLeftForceSensorGeom->setSize(mLegWidth->get() / 2.0, mFootForceSensorHeight->get(), mSoleOfFootForceSensorDepth->get());
 		leftSoleOfFootLeftForceSensorGeom->setAutomaticColor(false);
@@ -2376,8 +2423,10 @@ void MSeriesV2Model::layoutObjects() {
 													   soleOfFootForceSensorZ - upperFootZ));
 
 		// Ball of Foot Force Sensors are box bodies before the toes and under the sole
-		mLeftBallOfFootRightForceSensorCollObj->setMass(0.0);
-		mLeftBallOfFootRightForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftBallOfFootRightForceSensorCollObj->setMass(0.0);
+			mLeftBallOfFootRightForceSensorCollObj->setMaterialType("Latex");
+		}
 		BoxGeom *leftBallOfFootRightForceSensorGeom = dynamic_cast<BoxGeom*>(mLeftBallOfFootRightForceSensorCollObj->getGeometry());
 		leftBallOfFootRightForceSensorGeom->setSize(mLegWidth->get() / 2.0, mFootForceSensorHeight->get(), mBallOfFootForceSensorDepth->get());
 		leftBallOfFootRightForceSensorGeom->setAutomaticColor(false);
@@ -2386,8 +2435,10 @@ void MSeriesV2Model::layoutObjects() {
 														footForceSensorY - upperFootY,
 														ballOfFootForceSensorZ - upperFootZ));
 
-		mLeftBallOfFootLeftForceSensorCollObj->setMass(0.0);
-		mLeftBallOfFootLeftForceSensorCollObj->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftBallOfFootLeftForceSensorCollObj->setMass(0.0);
+			mLeftBallOfFootLeftForceSensorCollObj->setMaterialType("Latex");
+		}
 		BoxGeom *leftBallOfFootLeftForceSensorGeom = dynamic_cast<BoxGeom*>(mLeftBallOfFootLeftForceSensorCollObj->getGeometry());
 		leftBallOfFootLeftForceSensorGeom->setSize(mLegWidth->get() / 2.0, mFootForceSensorHeight->get(), mBallOfFootForceSensorDepth->get());
 		leftBallOfFootLeftForceSensorGeom->setAutomaticColor(false);
@@ -2400,18 +2451,23 @@ void MSeriesV2Model::layoutObjects() {
 		// Toe Body
 		PARAM(Vector3DValue, mLeftToes, "Position")->set(leftToesX, toesY, toesZ);
 //		PARAM(Vector3DValue, mLeftToes, "CenterOfMass")->set(leftToesComX - leftToesX, leftToesComY - toesY, leftToesComZ - toesZ);
-		PARAM(Vector3DValue, mLeftToes, "CenterOfMass")->set(leftToesComX, leftToesComY, leftToesComZ);
 		PARAM(DoubleValue, mLeftToes, "Width")->set(toesWidth);
 		PARAM(DoubleValue, mLeftToes, "Height")->set(toesHeight);
 		PARAM(DoubleValue, mLeftToes, "Depth")->set(mToesDepth->get());
-		PARAM(DoubleValue, mLeftToes, "Mass")->set(toesWeight);
-		PARAM(ColorValue, mLeftToes, "Color")->set(absColor);
-		PARAM(StringValue, mLeftToes, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mLeftToes, "InertiaTensor")->set(leftToesInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftToes, "CenterOfMass")->set(leftToesComX, leftToesComY, leftToesComZ);
+			PARAM(DoubleValue, mLeftToes, "Mass")->set(toesWeight);
+			PARAM(ColorValue, mLeftToes, "Color")->set(absColor);
+			PARAM(StringValue, mLeftToes, "Material")->set("ABS");
+		}
+		
 
 		// TipToes is a cylinder body behind the toes
-		mLeftTipToes->setMass(tipToesWeight);
-		mLeftTipToes->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftTipToes->setMass(tipToesWeight);
+			mLeftTipToes->setMaterialType("Latex");
+		}
 		CylinderGeom *leftTipToesGeom = dynamic_cast<CylinderGeom*>(mLeftTipToes->getGeometry());
 		leftTipToesGeom->setRadius(mTipToesRadius->get());
 		leftTipToesGeom->setLength(tipToesWidth);
@@ -2425,31 +2481,39 @@ void MSeriesV2Model::layoutObjects() {
 	// Left Ankle is a small BoxInertiaBody not visible from outside connecting the Tibia and the Foot
 		PARAM(Vector3DValue, mLeftAnkle, "Position")->set(leftAnkleX, mAnkleJointY->get(), 0.0);
 //		PARAM(Vector3DValue, mLeftAnkle, "CenterOfMass")->set(leftAnkleComX - leftAnkleX, leftAnkleComY - mAnkleJointY->get(), leftAnkleComZ);
-		PARAM(Vector3DValue, mLeftAnkle, "CenterOfMass")->set(leftAnkleComX, leftAnkleComY, leftAnkleComZ);
 		PARAM(DoubleValue, mLeftAnkle, "Width")->set(0.01);
 		PARAM(DoubleValue, mLeftAnkle, "Height")->set(0.01);
 		PARAM(DoubleValue, mLeftAnkle, "Depth")->set(0.01);
-		PARAM(DoubleValue, mLeftAnkle, "Mass")->set(ankleWeight);
-		PARAM(ColorValue, mLeftAnkle, "Color")->set(absColor);
-		PARAM(StringValue, mLeftAnkle, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mLeftAnkle, "InertiaTensor")->set(leftAnkleInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftAnkle, "CenterOfMass")->set(leftAnkleComX, leftAnkleComY, leftAnkleComZ);
+			PARAM(DoubleValue, mLeftAnkle, "Mass")->set(ankleWeight);
+			PARAM(ColorValue, mLeftAnkle, "Color")->set(absColor);
+			PARAM(StringValue, mLeftAnkle, "Material")->set("ABS");
+		}
+		
 
 	// Left Tibia (Tibia consist of a long box (the tibia) and a cylinder on top of the box (the knee joint)
 		// Tibia Body
 		PARAM(Vector3DValue, mLeftTibia, "Position")->set(leftTibiaX, tibiaY, 0.0);
 //		PARAM(Vector3DValue, mLeftTibia, "CenterOfMass")->set(leftTibiaComX - leftTibiaX, leftTibiaComY - tibiaY, leftTibiaComZ);
-		PARAM(Vector3DValue, mLeftTibia, "CenterOfMass")->set(leftTibiaComX, leftTibiaComY, leftTibiaComZ);
 		PARAM(DoubleValue, mLeftTibia, "Width")->set(tibiaWidth);
 		PARAM(DoubleValue, mLeftTibia, "Height")->set(tibiaHeight);
 		PARAM(DoubleValue, mLeftTibia, "Depth")->set(tibiaDepth);
-		PARAM(DoubleValue, mLeftTibia, "Mass")->set(tibiaWeight);
-		PARAM(ColorValue, mLeftTibia, "Color")->set(absColor);
-		PARAM(StringValue, mLeftTibia, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mLeftTibia, "InertiaTensor")->set(leftTibiaInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftTibia, "CenterOfMass")->set(leftTibiaComX, leftTibiaComY, leftTibiaComZ);
+			PARAM(DoubleValue, mLeftTibia, "Mass")->set(tibiaWeight);
+			PARAM(ColorValue, mLeftTibia, "Color")->set(absColor);
+			PARAM(StringValue, mLeftTibia, "Material")->set("ABS");
+		}
+		
 
 		// Knee is a cylinder body on top of the tibia
-		mLeftKnee->setMass(kneeWeight);
-		mLeftKnee->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftKnee->setMass(kneeWeight);
+			mLeftKnee->setMaterialType("Latex");
+		}
 		CylinderGeom *leftKneeGeom = dynamic_cast<CylinderGeom*>(mLeftKnee->getGeometry());
 		leftKneeGeom->setRadius(mKneeRadius->get());
 		leftKneeGeom->setLength(kneeWidth);
@@ -2465,27 +2529,32 @@ void MSeriesV2Model::layoutObjects() {
 		// Femur Body
 		PARAM(Vector3DValue, mLeftFemur, "Position")->set(leftFemurX, femurY, 0.0);
 //		PARAM(Vector3DValue, mLeftFemur, "CenterOfMass")->set(leftFemurComX - leftFemurX, leftFemurComY - femurY, leftFemurComZ);
-		PARAM(Vector3DValue, mLeftFemur, "CenterOfMass")->set(leftFemurComX, leftFemurComY, leftFemurComZ);
 		PARAM(DoubleValue, mLeftFemur, "Width")->set(mLegWidth->get());
 		PARAM(DoubleValue, mLeftFemur, "Height")->set(femurHeight);
 		PARAM(DoubleValue, mLeftFemur, "Depth")->set(mLegDepth->get());
-		PARAM(DoubleValue, mLeftFemur, "Mass")->set(femurWeight);
-		PARAM(ColorValue, mLeftFemur, "Color")->set(absColor);
-		PARAM(StringValue, mLeftFemur, "Material")->set("ABS");
 		PARAM(Matrix3x3Value, mLeftFemur, "InertiaTensor")->set(leftFemurInertia);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftFemur, "CenterOfMass")->set(leftFemurComX, leftFemurComY, leftFemurComZ);
+			PARAM(DoubleValue, mLeftFemur, "Mass")->set(femurWeight);
+			PARAM(ColorValue, mLeftFemur, "Color")->set(absColor);
+			PARAM(StringValue, mLeftFemur, "Material")->set("ABS");
+		}
+		
 	}
 	if(mIncludeHip) {
 	// Left HipCross. HipCross is a small body not visible from outside the robot connecting the
 	// Hip and the Femur. It can be rotated by the HipRollJoint
 		PARAM(Vector3DValue, mLeftHipCross, "Position")->set(leftHipCrossX, hipPitchRollJointY, 0.0);
 //		PARAM(Vector3DValue, mLeftHipCross, "CenterOfMass")->set(leftHipCrossComX - leftHipCrossX, leftHipCrossComY - hipPitchRollJointY, leftHipCrossComZ);
-		PARAM(Vector3DValue, mLeftHipCross, "CenterOfMass")->set(leftHipCrossComX, leftHipCrossComY, leftHipCrossComZ);
 		PARAM(DoubleValue, mLeftHipCross, "Width")->set(0.01);
 		PARAM(DoubleValue, mLeftHipCross, "Height")->set(0.01);
 		PARAM(DoubleValue, mLeftHipCross, "Depth")->set(0.01);
-		PARAM(DoubleValue, mLeftHipCross, "Mass")->set(hipCrossWeight);
-		PARAM(ColorValue, mLeftHipCross, "Color")->set(absColor);
-		PARAM(StringValue, mLeftHipCross, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftHipCross, "CenterOfMass")->set(leftHipCrossComX, leftHipCrossComY, leftHipCrossComZ);
+			PARAM(DoubleValue, mLeftHipCross, "Mass")->set(hipCrossWeight);
+			PARAM(ColorValue, mLeftHipCross, "Color")->set(absColor);
+			PARAM(StringValue, mLeftHipCross, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mLeftHipCross, "InertiaTensor")->set(leftHipCrossInertia);
 	}
 	if(mIncludeHip) {
@@ -2494,13 +2563,15 @@ void MSeriesV2Model::layoutObjects() {
 	// real robot.
 		PARAM(Vector3DValue, mRightHip, "Position")->set(rightHipX, hipY, 0.0);
 //		PARAM(Vector3DValue, mRightHip, "CenterOfMass")->set(rightHipComX - rightHipX, rightHipComY - hipY, rightHipComZ);
-		PARAM(Vector3DValue, mRightHip, "CenterOfMass")->set(rightHipComX, rightHipComY, rightHipComZ);
 		PARAM(DoubleValue, mRightHip, "Width")->set(hipWidth);
 		PARAM(DoubleValue, mRightHip, "Height")->set(mDistanceYHipPitchRollToHipYawJoint->get());
 		PARAM(DoubleValue, mRightHip, "Depth")->set(mLegDepth->get());
-		PARAM(DoubleValue, mRightHip, "Mass")->set(hipWeight);
-		PARAM(ColorValue, mRightHip, "Color")->set(absColor);
-		PARAM(StringValue, mRightHip, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightHip, "CenterOfMass")->set(rightHipComX, rightHipComY, rightHipComZ);
+			PARAM(DoubleValue, mRightHip, "Mass")->set(hipWeight);
+			PARAM(ColorValue, mRightHip, "Color")->set(absColor);
+			PARAM(StringValue, mRightHip, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mRightHip, "InertiaTensor")->set(rightHipInertia);
 
 	// Left Hip. Hip is a body on top of the HipCross which can be rotated with the HipYawJoint.
@@ -2508,26 +2579,30 @@ void MSeriesV2Model::layoutObjects() {
 	// real robot.
 		PARAM(Vector3DValue, mLeftHip, "Position")->set(leftHipX, hipY, 0.0);
 //		PARAM(Vector3DValue, mLeftHip, "CenterOfMass")->set(leftHipComX - leftHipX, leftHipComY - hipY, leftHipComZ);
-		PARAM(Vector3DValue, mLeftHip, "CenterOfMass")->set(leftHipComX, leftHipComY, leftHipComZ);
 		PARAM(DoubleValue, mLeftHip, "Width")->set(hipWidth);
 		PARAM(DoubleValue, mLeftHip, "Height")->set(mDistanceYHipPitchRollToHipYawJoint->get());
 		PARAM(DoubleValue, mLeftHip, "Depth")->set(mLegDepth->get());
-		PARAM(DoubleValue, mLeftHip, "Mass")->set(hipWeight);
-		PARAM(ColorValue, mLeftHip, "Color")->set(absColor);
-		PARAM(StringValue, mLeftHip, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftHip, "CenterOfMass")->set(leftHipComX, leftHipComY, leftHipComZ);
+			PARAM(DoubleValue, mLeftHip, "Mass")->set(hipWeight);
+			PARAM(ColorValue, mLeftHip, "Color")->set(absColor);
+			PARAM(StringValue, mLeftHip, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mLeftHip, "InertiaTensor")->set(leftHipInertia);
 	}
 	if(mIncludeHip || mIncludeBody) {
 	// Pelvis is a body on top of the hips. It is connected with the HipYawJoints to the hips and with the WaistRollJoint to the chest.
 		PARAM(Vector3DValue, mPelvis, "Position")->set(0.0, pelvisY, 0.0);
 //		PARAM(Vector3DValue, mPelvis, "CenterOfMass")->set(pelvisComX, pelvisComY - pelvisY, pelvisComZ);
-		PARAM(Vector3DValue, mPelvis, "CenterOfMass")->set(pelvisComX, pelvisComY, pelvisComZ);
 		PARAM(DoubleValue, mPelvis, "Width")->set(mPelvisWidth->get());
 		PARAM(DoubleValue, mPelvis, "Height")->set(mDistanceYHipYawToWaistRollJoint->get());
 		PARAM(DoubleValue, mPelvis, "Depth")->set(mPelvisDepth->get());
-		PARAM(DoubleValue, mPelvis, "Mass")->set(pelvisWeight);
-		PARAM(ColorValue, mPelvis, "Color")->set(absColor);
-		PARAM(StringValue, mPelvis, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mPelvis, "CenterOfMass")->set(pelvisComX, pelvisComY, pelvisComZ);
+			PARAM(DoubleValue, mPelvis, "Mass")->set(pelvisWeight);
+			PARAM(ColorValue, mPelvis, "Color")->set(absColor);
+			PARAM(StringValue, mPelvis, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mPelvis, "InertiaTensor")->set(pelvisInertia);
 	}
 	if(mIncludeBody) {
@@ -2536,18 +2611,22 @@ void MSeriesV2Model::layoutObjects() {
 		// Main body
 		PARAM(Vector3DValue, mUpperBody, "Position")->set(0.0, upperBodyY, 0.0);
 //		PARAM(Vector3DValue, mUpperBody, "CenterOfMass")->set(upperBodyComX, upperBodyComY - upperBodyY, upperBodyComZ);
-		PARAM(Vector3DValue, mUpperBody, "CenterOfMass")->set(upperBodyComX, upperBodyComY, upperBodyComZ);
 		PARAM(DoubleValue, mUpperBody, "Width")->set(mDistanceXShoulderPitch->get());
 		PARAM(DoubleValue, mUpperBody, "Height")->set(mDistanceYWaistRollToHeadFlange->get());
 		PARAM(DoubleValue, mUpperBody, "Depth")->set(mUpperBodyDepth->get());
-		PARAM(DoubleValue, mUpperBody, "Mass")->set(upperBodyWeight);
-		PARAM(ColorValue, mUpperBody, "Color")->set(absColor);
-		PARAM(StringValue, mUpperBody, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mUpperBody, "CenterOfMass")->set(upperBodyComX, upperBodyComY, upperBodyComZ);
+			PARAM(DoubleValue, mUpperBody, "Mass")->set(upperBodyWeight);
+			PARAM(ColorValue, mUpperBody, "Color")->set(absColor);
+			PARAM(StringValue, mUpperBody, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mUpperBody, "InertiaTensor")->set(upperBodyInertia);
 
 		// Throat is a box body under the head
-		mThroat->setMass(0.0);
-		mThroat->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mThroat->setMass(0.0);
+			mThroat->setMaterialType("Latex");
+		}
 		BoxGeom *throatGeom = dynamic_cast<BoxGeom*>(mThroat->getGeometry());
 		throatGeom->setSize(mThroatWidth->get(), mDistanceYHeadFlangeToShoulderPitchJoint->get(), mThroatDepth->get());
 		throatGeom->setAutomaticColor(false);
@@ -2561,38 +2640,44 @@ void MSeriesV2Model::layoutObjects() {
 	// HeadPitchPart is the body which is moved by the HeadPitchJoint and to which the HeadYawJoint is connected.
 		PARAM(Vector3DValue, mHeadPitchPart, "Position")->set(0.0, headPitchPartY, 0.0);
 //		PARAM(Vector3DValue, mHeadPitchPart, "CenterOfMass")->set(headPitchPartComX, headPitchPartComY - headPitchPartY, headPitchPartComZ);
-		PARAM(Vector3DValue, mHeadPitchPart, "CenterOfMass")->set(headPitchPartComX, headPitchPartComY, headPitchPartComZ);
 		PARAM(DoubleValue, mHeadPitchPart, "Width")->set(mThroatWidth->get());
 		PARAM(DoubleValue, mHeadPitchPart, "Height")->set(mDistanceYHeadPitchToHeadYawRollJoint->get());
 		PARAM(DoubleValue, mHeadPitchPart, "Depth")->set(mThroatDepth->get());
-		PARAM(DoubleValue, mHeadPitchPart, "Mass")->set(headPitchPartWeight);
-		PARAM(ColorValue, mHeadPitchPart, "Color")->set(absColor);
-		PARAM(StringValue, mHeadPitchPart, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mHeadPitchPart, "CenterOfMass")->set(headPitchPartComX, headPitchPartComY, headPitchPartComZ);
+			PARAM(DoubleValue, mHeadPitchPart, "Mass")->set(headPitchPartWeight);
+			PARAM(ColorValue, mHeadPitchPart, "Color")->set(absColor);
+			PARAM(StringValue, mHeadPitchPart, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mHeadPitchPart, "InertiaTensor")->set(headPitchPartInertia);
 
 	// HeadYawPart is a small body not visible from outside the robot connecting the HeadPitch and HeadRollPart. It can be rotated
 	// by the HeadYawJoint.
 		PARAM(Vector3DValue, mHeadYawPart, "Position")->set(0.0, headYawRollY, mHeadYawJointZ->get());
 //		PARAM(Vector3DValue, mHeadYawPart, "CenterOfMass")->set(headYawPartComX, headYawPartComY - headYawRollY, headYawPartComZ - mHeadYawJointZ->get());
-		PARAM(Vector3DValue, mHeadYawPart, "CenterOfMass")->set(headYawPartComX, headYawPartComY, headYawPartComZ);
 		PARAM(DoubleValue, mHeadYawPart, "Width")->set(0.01);
 		PARAM(DoubleValue, mHeadYawPart, "Height")->set(0.01);
 		PARAM(DoubleValue, mHeadYawPart, "Depth")->set(0.01);
-		PARAM(DoubleValue, mHeadYawPart, "Mass")->set(headYawPartWeight);
-		PARAM(ColorValue, mHeadYawPart, "Color")->set(absColor);
-		PARAM(StringValue, mHeadYawPart, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mHeadYawPart, "CenterOfMass")->set(headYawPartComX, headYawPartComY, headYawPartComZ);
+			PARAM(DoubleValue, mHeadYawPart, "Mass")->set(headYawPartWeight);
+			PARAM(ColorValue, mHeadYawPart, "Color")->set(absColor);
+			PARAM(StringValue, mHeadYawPart, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mHeadYawPart, "InertiaTensor")->set(headYawPartInertia);
 
 	// HeadRollPart is the body which is moved by the HeadRollJoint and connected to the HeadYawPart
 		PARAM(Vector3DValue, mHeadRollPart, "Position")->set(0.0, headRollPartY, headRollPartZ);
 //		PARAM(Vector3DValue, mHeadRollPart, "CenterOfMass")->set(headRollPartComX, headRollPartComY - headRollPartY, headRollPartComZ - headRollPartZ);
-		PARAM(Vector3DValue, mHeadRollPart, "CenterOfMass")->set(headRollPartComX, headRollPartComY, headRollPartComZ);
 		PARAM(DoubleValue, mHeadRollPart, "Width")->set(mHeadRollPartWidth->get());
 		PARAM(DoubleValue, mHeadRollPart, "Height")->set(mHeadRollPartHeight->get());
 		PARAM(DoubleValue, mHeadRollPart, "Depth")->set(headRollPartDepth);
-		PARAM(DoubleValue, mHeadRollPart, "Mass")->set(headRollPartWeight);
-		PARAM(ColorValue, mHeadRollPart, "Color")->set(absColor);
-		PARAM(StringValue, mHeadRollPart, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mHeadRollPart, "CenterOfMass")->set(headRollPartComX, headRollPartComY, headRollPartComZ);
+			PARAM(DoubleValue, mHeadRollPart, "Mass")->set(headRollPartWeight);
+			PARAM(ColorValue, mHeadRollPart, "Color")->set(absColor);
+			PARAM(StringValue, mHeadRollPart, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mHeadRollPart, "InertiaTensor")->set(headRollPartInertia);
 	}
 	if(mIncludeRightArm) {
@@ -2600,31 +2685,37 @@ void MSeriesV2Model::layoutObjects() {
 		// Shoulder Body
 		PARAM(Vector3DValue, mRightShoulder, "Position")->set(rightShoulderX, shoulderY, 0.0);
 //		PARAM(Vector3DValue, mRightShoulder, "CenterOfMass")->set(rightShoulderComX - rightShoulderX, shoulderComY - shoulderY, shoulderComZ);
-		PARAM(Vector3DValue, mRightShoulder, "CenterOfMass")->set(rightShoulderComX, shoulderComY, shoulderComZ);
 		PARAM(DoubleValue, mRightShoulder, "Width")->set(shoulderWidth);
 		PARAM(DoubleValue, mRightShoulder, "Height")->set(mShoulderHeight->get());
 		PARAM(DoubleValue, mRightShoulder, "Depth")->set(mArmDepth->get());
-		PARAM(DoubleValue, mRightShoulder, "Mass")->set(shoulderWeight);
-		PARAM(ColorValue, mRightShoulder, "Color")->set(absColor);
-		PARAM(StringValue, mRightShoulder, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightShoulder, "CenterOfMass")->set(rightShoulderComX, shoulderComY, shoulderComZ);
+			PARAM(DoubleValue, mRightShoulder, "Mass")->set(shoulderWeight);
+			PARAM(ColorValue, mRightShoulder, "Color")->set(absColor);
+			PARAM(StringValue, mRightShoulder, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mRightShoulder, "InertiaTensor")->set(rightShoulderInertia);
 
 	// Right UpperArm (UpperArm consist of a long box (the upperArm) and a cylinder at the bottom of the box (the elbow joint)
 		// UpperArm Body
 		PARAM(Vector3DValue, mRightUpperArm, "Position")->set(rightShoulderRollX, upperArmY, 0.0);
 //		PARAM(Vector3DValue, mRightUpperArm, "CenterOfMass")->set(rightUpperArmComX - rightShoulderRollX, upperArmComY - upperArmY, upperArmComZ);
-		PARAM(Vector3DValue, mRightUpperArm, "CenterOfMass")->set(rightUpperArmComX, upperArmComY, upperArmComZ);
 		PARAM(DoubleValue, mRightUpperArm, "Width")->set(mArmWidth->get());
 		PARAM(DoubleValue, mRightUpperArm, "Height")->set(upperArmHeight);
 		PARAM(DoubleValue, mRightUpperArm, "Depth")->set(mArmDepth->get());
-		PARAM(DoubleValue, mRightUpperArm, "Mass")->set(upperArmWeight);
-		PARAM(ColorValue, mRightUpperArm, "Color")->set(absColor);
-		PARAM(StringValue, mRightUpperArm, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightUpperArm, "CenterOfMass")->set(rightUpperArmComX, upperArmComY, upperArmComZ);
+			PARAM(DoubleValue, mRightUpperArm, "Mass")->set(upperArmWeight);
+			PARAM(ColorValue, mRightUpperArm, "Color")->set(absColor);
+			PARAM(StringValue, mRightUpperArm, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mRightUpperArm, "InertiaTensor")->set(rightUpperArmInertia);
 
 		// Elbow is a cylinder body on top of the upperArm
-		mRightElbow->setMass(0.0);
-		mRightElbow->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mRightElbow->setMass(0.0);
+			mRightElbow->setMaterialType("Latex");
+		}
 		CylinderGeom *rightElbowGeom = dynamic_cast<CylinderGeom*>(mRightElbow->getGeometry());
 		rightElbowGeom->setRadius(mElbowRadius->get());
 		rightElbowGeom->setLength(mArmWidth->get());
@@ -2644,13 +2735,15 @@ void MSeriesV2Model::layoutObjects() {
 		PARAM(Vector3DValue, mRightLowerArm, "Position")->set(rightShoulderRollX, lowerArmY, mElbowJointZ->get());
 // 		PARAM(Vector3DValue, mRightLowerArm, "CenterOfMass")->set(rightLowerArmComX - rightShoulderRollX, lowerArmComY - lowerArmY, lowerArmComZ - mElbowJointZ->get());
 // 		PARAM(Vector3DValue, mRightLowerArm, "CenterOfMass")->set(rightLowerArmComX, lowerArmComY, lowerArmComZ);
-		PARAM(Vector3DValue, mRightLowerArm, "CenterOfMass")->set(rightLowerArmComX, lowerArmComY, lowerArmComZ);
 		PARAM(DoubleValue, mRightLowerArm, "Width")->set(mArmWidth->get());
 		PARAM(DoubleValue, mRightLowerArm, "Height")->set(lowerArmHeight);
 		PARAM(DoubleValue, mRightLowerArm, "Depth")->set(mArmDepth->get());
-		PARAM(DoubleValue, mRightLowerArm, "Mass")->set(lowerArmWeight);
-		PARAM(ColorValue, mRightLowerArm, "Color")->set(absColor);
-		PARAM(StringValue, mRightLowerArm, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightLowerArm, "CenterOfMass")->set(rightLowerArmComX, lowerArmComY, lowerArmComZ);
+			PARAM(DoubleValue, mRightLowerArm, "Mass")->set(lowerArmWeight);
+			PARAM(ColorValue, mRightLowerArm, "Color")->set(absColor);
+			PARAM(StringValue, mRightLowerArm, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mRightLowerArm, "InertiaTensor")->set(rightLowerArmInertia);
 	}
 	if(mIncludeLeftArm) {
@@ -2658,31 +2751,37 @@ void MSeriesV2Model::layoutObjects() {
 		// Shoulder Body
 		PARAM(Vector3DValue, mLeftShoulder, "Position")->set(leftShoulderX, shoulderY, 0.0);
 //		PARAM(Vector3DValue, mLeftShoulder, "CenterOfMass")->set(leftShoulderComX - leftShoulderX, shoulderComY - shoulderY, shoulderComZ);
-		PARAM(Vector3DValue, mLeftShoulder, "CenterOfMass")->set(leftShoulderComX, shoulderComY, shoulderComZ);
 		PARAM(DoubleValue, mLeftShoulder, "Width")->set(shoulderWidth);
 		PARAM(DoubleValue, mLeftShoulder, "Height")->set(mShoulderHeight->get());
 		PARAM(DoubleValue, mLeftShoulder, "Depth")->set(mArmDepth->get());
-		PARAM(DoubleValue, mLeftShoulder, "Mass")->set(shoulderWeight);
-		PARAM(ColorValue, mLeftShoulder, "Color")->set(absColor);
-		PARAM(StringValue, mLeftShoulder, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftShoulder, "CenterOfMass")->set(leftShoulderComX, shoulderComY, shoulderComZ);
+			PARAM(DoubleValue, mLeftShoulder, "Mass")->set(shoulderWeight);
+			PARAM(ColorValue, mLeftShoulder, "Color")->set(absColor);
+			PARAM(StringValue, mLeftShoulder, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mLeftShoulder, "InertiaTensor")->set(leftShoulderInertia);
 
 	// Left UpperArm (UpperArm consist of a long box (the upperArm) and a cylinder at the bottom of the box (the elbow joint)
 		// UpperArm Body
 		PARAM(Vector3DValue, mLeftUpperArm, "Position")->set(leftShoulderRollX, upperArmY, 0.0);
 //		PARAM(Vector3DValue, mLeftUpperArm, "CenterOfMass")->set(leftUpperArmComX - leftShoulderRollX, upperArmComY - upperArmY, upperArmComZ);
-		PARAM(Vector3DValue, mLeftUpperArm, "CenterOfMass")->set(leftUpperArmComX, upperArmComY, upperArmComZ);
 		PARAM(DoubleValue, mLeftUpperArm, "Width")->set(mArmWidth->get());
 		PARAM(DoubleValue, mLeftUpperArm, "Height")->set(upperArmHeight);
 		PARAM(DoubleValue, mLeftUpperArm, "Depth")->set(mArmDepth->get());
-		PARAM(DoubleValue, mLeftUpperArm, "Mass")->set(upperArmWeight);
-		PARAM(ColorValue, mLeftUpperArm, "Color")->set(absColor);
-		PARAM(StringValue, mLeftUpperArm, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftUpperArm, "CenterOfMass")->set(leftUpperArmComX, upperArmComY, upperArmComZ);
+			PARAM(DoubleValue, mLeftUpperArm, "Mass")->set(upperArmWeight);
+			PARAM(ColorValue, mLeftUpperArm, "Color")->set(absColor);
+			PARAM(StringValue, mLeftUpperArm, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mLeftUpperArm, "InertiaTensor")->set(leftUpperArmInertia);
 
 		// Elbow is a cylinder body on top of the upperArm
-		mLeftElbow->setMass(0.0);
-		mLeftElbow->setMaterialType("Latex");
+		if(mFirstLayout) {
+			mLeftElbow->setMass(0.0);
+			mLeftElbow->setMaterialType("Latex");
+		}
 		CylinderGeom *leftElbowGeom = dynamic_cast<CylinderGeom*>(mLeftElbow->getGeometry());
 		leftElbowGeom->setRadius(mElbowRadius->get());
 		leftElbowGeom->setLength(mArmWidth->get());
@@ -2701,13 +2800,15 @@ void MSeriesV2Model::layoutObjects() {
 	// Left LowerArm
 		PARAM(Vector3DValue, mLeftLowerArm, "Position")->set(leftShoulderRollX, lowerArmY, mElbowJointZ->get());
 // 		PARAM(Vector3DValue, mLeftLowerArm, "CenterOfMass")->set(leftLowerArmComX - leftShoulderRollX, lowerArmComY - lowerArmY, lowerArmComZ - mElbowJointZ->get());
-		PARAM(Vector3DValue, mLeftLowerArm, "CenterOfMass")->set(leftLowerArmComX, lowerArmComY, lowerArmComZ);
 		PARAM(DoubleValue, mLeftLowerArm, "Width")->set(mArmWidth->get());
 		PARAM(DoubleValue, mLeftLowerArm, "Height")->set(lowerArmHeight);
 		PARAM(DoubleValue, mLeftLowerArm, "Depth")->set(mArmDepth->get());
-		PARAM(DoubleValue, mLeftLowerArm, "Mass")->set(lowerArmWeight);
-		PARAM(ColorValue, mLeftLowerArm, "Color")->set(absColor);
-		PARAM(StringValue, mLeftLowerArm, "Material")->set("ABS");
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mLeftLowerArm, "CenterOfMass")->set(leftLowerArmComX, lowerArmComY, lowerArmComZ);
+			PARAM(DoubleValue, mLeftLowerArm, "Mass")->set(lowerArmWeight);
+			PARAM(ColorValue, mLeftLowerArm, "Color")->set(absColor);
+			PARAM(StringValue, mLeftLowerArm, "Material")->set("ABS");
+		}
 		PARAM(Matrix3x3Value, mLeftLowerArm, "InertiaTensor")->set(leftLowerArmInertia);
 	}
 
@@ -2852,121 +2953,153 @@ void MSeriesV2Model::layoutObjects() {
 	if(mRightToesJoint != 0) {
 		PARAM(Vector3DValue, mRightToesJoint, "AxisPoint1")->set(0.1, mToesJointY->get(), mToesJointZ->get());
 		PARAM(Vector3DValue, mRightToesJoint, "AxisPoint2")->set(0.0, mToesJointY->get(), mToesJointZ->get());
-		PARAM(DoubleValue, mRightToesJoint, "MinAngle")->set(-90);
-		PARAM(DoubleValue, mRightToesJoint, "MaxAngle")->set(0);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mRightToesJoint, "MinAngle")->set(-90);
+			PARAM(DoubleValue, mRightToesJoint, "MaxAngle")->set(0);
+		}
 	}
 	if(mLeftToesJoint != 0) {
 		PARAM(Vector3DValue, mLeftToesJoint, "AxisPoint1")->set(0.1, mToesJointY->get(), mToesJointZ->get());
 		PARAM(Vector3DValue, mLeftToesJoint, "AxisPoint2")->set(0.0, mToesJointY->get(), mToesJointZ->get());
-		PARAM(DoubleValue, mLeftToesJoint, "MinAngle")->set(-90);
-		PARAM(DoubleValue, mLeftToesJoint, "MaxAngle")->set(0);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mLeftToesJoint, "MinAngle")->set(-90);
+			PARAM(DoubleValue, mLeftToesJoint, "MaxAngle")->set(0);
+		}
 	}
 	if(mRightAnklePitchMotor != 0) {	
 		PARAM(Vector3DValue, mRightAnklePitchMotor, "AxisPoint1")->set(0.1, mAnkleJointY->get(), 0.0);
 		PARAM(Vector3DValue, mRightAnklePitchMotor, "AxisPoint2")->set(0.0, mAnkleJointY->get(), 0.0);
-		PARAM(DoubleValue, mRightAnklePitchMotor, "MinAngle")->set(-50);
-		PARAM(DoubleValue, mRightAnklePitchMotor, "MaxAngle")->set(80);
-		PARAM(DoubleValue, mRightAnklePitchMotor, "JointAngleOffset")->set(-70);
-		
-		PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped2")->set(true);
-		PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped3")->set(true);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mRightAnklePitchMotor, "MinAngle")->set(-50);
+			PARAM(DoubleValue, mRightAnklePitchMotor, "MaxAngle")->set(80);
+			PARAM(DoubleValue, mRightAnklePitchMotor, "JointAngleOffset")->set(-70);
+			PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped2")->set(true);
+			PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped3")->set(true);
+		}
 	}
 	if(mRightAnkleRollMotor != 0) {	
 		PARAM(Vector3DValue, mRightAnkleRollMotor, "AxisPoint1")->set(-mDistanceXHipYaw->get() / 2.0, mAnkleJointY->get(), 0.1);
 		PARAM(Vector3DValue, mRightAnkleRollMotor, "AxisPoint2")->set(-mDistanceXHipYaw->get() / 2.0, mAnkleJointY->get(), 0.0);
-		PARAM(DoubleValue, mRightAnkleRollMotor, "MinAngle")->set(-20);
-		PARAM(DoubleValue, mRightAnkleRollMotor, "MaxAngle")->set(23);
-		PARAM(DoubleValue, mRightAnkleRollMotor, "JointAngleOffset")->set(-20);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mRightAnkleRollMotor, "MinAngle")->set(-20);
+			PARAM(DoubleValue, mRightAnkleRollMotor, "MaxAngle")->set(23);
+			PARAM(DoubleValue, mRightAnkleRollMotor, "JointAngleOffset")->set(-20);
+		}
 	}
 	if(mLeftAnklePitchMotor != 0) {	
 		PARAM(Vector3DValue, mLeftAnklePitchMotor, "AxisPoint1")->set(0.0, mAnkleJointY->get(), 0.0);
 		PARAM(Vector3DValue, mLeftAnklePitchMotor, "AxisPoint2")->set(0.1, mAnkleJointY->get(), 0.0);
-		PARAM(DoubleValue, mLeftAnklePitchMotor, "MinAngle")->set(-80);
-		PARAM(DoubleValue, mLeftAnklePitchMotor, "MaxAngle")->set(50);
-		PARAM(DoubleValue, mLeftAnklePitchMotor, "JointAngleOffset")->set(70);
-		
-		PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped2")->set(true);
-		PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped3")->set(true);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mLeftAnklePitchMotor, "MinAngle")->set(-80);
+			PARAM(DoubleValue, mLeftAnklePitchMotor, "MaxAngle")->set(50);
+			PARAM(DoubleValue, mLeftAnklePitchMotor, "JointAngleOffset")->set(70);
+			PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped2")->set(true);
+			PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped3")->set(true);
+		}
 	}
 	if(mLeftAnkleRollMotor != 0) {	
 		PARAM(Vector3DValue, mLeftAnkleRollMotor, "AxisPoint1")->set(mDistanceXHipYaw->get() / 2.0, mAnkleJointY->get(), 0.1);
 		PARAM(Vector3DValue, mLeftAnkleRollMotor, "AxisPoint2")->set(mDistanceXHipYaw->get() / 2.0, mAnkleJointY->get(), 0.0);
-		PARAM(DoubleValue, mLeftAnkleRollMotor, "MinAngle")->set(-23);
-		PARAM(DoubleValue, mLeftAnkleRollMotor, "MaxAngle")->set(20);
-		PARAM(DoubleValue, mLeftAnkleRollMotor, "JointAngleOffset")->set(20);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mLeftAnkleRollMotor, "MinAngle")->set(-23);
+			PARAM(DoubleValue, mLeftAnkleRollMotor, "MaxAngle")->set(20);
+			PARAM(DoubleValue, mLeftAnkleRollMotor, "JointAngleOffset")->set(20);
+		}
 	}
 	if(mRightKneeMotor != 0) {	
 		PARAM(Vector3DValue, mRightKneeMotor, "AxisPoint1")->set(0.0, kneeJointY, mKneeJointZ->get());
 		PARAM(Vector3DValue, mRightKneeMotor, "AxisPoint2")->set(0.1, kneeJointY, mKneeJointZ->get());
-		PARAM(DoubleValue, mRightKneeMotor, "MinAngle")->set(0);
-		PARAM(DoubleValue, mRightKneeMotor, "MaxAngle")->set(164);
-		PARAM(DoubleValue, mRightKneeMotor, "JointAngleOffset")->set(150);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mRightKneeMotor, "MinAngle")->set(0);
+			PARAM(DoubleValue, mRightKneeMotor, "MaxAngle")->set(164);
+			PARAM(DoubleValue, mRightKneeMotor, "JointAngleOffset")->set(150);
+		}
 	}
 	if(mLeftKneeMotor != 0) {	
 		PARAM(Vector3DValue, mLeftKneeMotor, "AxisPoint1")->set(0.1, kneeJointY, mKneeJointZ->get());
 		PARAM(Vector3DValue, mLeftKneeMotor, "AxisPoint2")->set(0.0, kneeJointY, mKneeJointZ->get());
-		PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-164);
-		PARAM(DoubleValue, mLeftKneeMotor, "MaxAngle")->set(0);
-		PARAM(DoubleValue, mLeftKneeMotor, "JointAngleOffset")->set(-150);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-164);
+			PARAM(DoubleValue, mLeftKneeMotor, "MaxAngle")->set(0);
+			PARAM(DoubleValue, mLeftKneeMotor, "JointAngleOffset")->set(-150);
+		}
 	}
 	if(mRightHipPitchMotor != 0) {	
 		PARAM(Vector3DValue, mRightHipPitchMotor, "AxisPoint1")->set(0.0, hipPitchRollJointY, 0.0);
 		PARAM(Vector3DValue, mRightHipPitchMotor, "AxisPoint2")->set(0.1, hipPitchRollJointY, 0.0);
-		PARAM(DoubleValue, mRightHipPitchMotor, "MinAngle")->set(-110);
-		PARAM(DoubleValue, mRightHipPitchMotor, "MaxAngle")->set(20);
-		PARAM(DoubleValue, mRightHipPitchMotor, "JointAngleOffset")->set(-130);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mRightHipPitchMotor, "MinAngle")->set(-110);
+			PARAM(DoubleValue, mRightHipPitchMotor, "MaxAngle")->set(20);
+			PARAM(DoubleValue, mRightHipPitchMotor, "JointAngleOffset")->set(-130);
+		}
 	}
 	if(mLeftHipPitchMotor != 0) {
 		PARAM(Vector3DValue, mLeftHipPitchMotor, "AxisPoint1")->set(0.1, hipPitchRollJointY, 0.0);
 		PARAM(Vector3DValue, mLeftHipPitchMotor, "AxisPoint2")->set(0.0, hipPitchRollJointY, 0.0);
-		PARAM(DoubleValue, mLeftHipPitchMotor, "MinAngle")->set(-20);
-		PARAM(DoubleValue, mLeftHipPitchMotor, "MaxAngle")->set(110);
-		PARAM(DoubleValue, mLeftHipPitchMotor, "JointAngleOffset")->set(130);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mLeftHipPitchMotor, "MinAngle")->set(-20);
+			PARAM(DoubleValue, mLeftHipPitchMotor, "MaxAngle")->set(110);
+			PARAM(DoubleValue, mLeftHipPitchMotor, "JointAngleOffset")->set(130);
+		}
 	}
 	if(mRightHipRollMotor != 0) {
 		PARAM(Vector3DValue, mRightHipRollMotor, "AxisPoint1")->set(-mDistanceXHipYaw->get() / 2.0, hipPitchRollJointY, 0.0);
 		PARAM(Vector3DValue, mRightHipRollMotor, "AxisPoint2")->set(-mDistanceXHipYaw->get() / 2.0, hipPitchRollJointY, 0.1);
-		PARAM(DoubleValue, mRightHipRollMotor, "MinAngle")->set(-44);
-		PARAM(DoubleValue, mRightHipRollMotor, "MaxAngle")->set(20);
-		PARAM(DoubleValue, mRightHipRollMotor, "JointAngleOffset")->set(30);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mRightHipRollMotor, "MinAngle")->set(-44);
+			PARAM(DoubleValue, mRightHipRollMotor, "MaxAngle")->set(20);
+			PARAM(DoubleValue, mRightHipRollMotor, "JointAngleOffset")->set(30);
+		}
 	}
 	if(mLeftHipRollMotor != 0) {
 		PARAM(Vector3DValue, mLeftHipRollMotor, "AxisPoint1")->set(mDistanceXHipYaw->get() / 2.0, hipPitchRollJointY, 0.0);
 		PARAM(Vector3DValue, mLeftHipRollMotor, "AxisPoint2")->set(mDistanceXHipYaw->get() / 2.0, hipPitchRollJointY, 0.1);
-		PARAM(DoubleValue, mLeftHipRollMotor, "MinAngle")->set(-20);
-		PARAM(DoubleValue, mLeftHipRollMotor, "MaxAngle")->set(44);
-		PARAM(DoubleValue, mLeftHipRollMotor, "JointAngleOffset")->set(-30);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mLeftHipRollMotor, "MinAngle")->set(-20);
+			PARAM(DoubleValue, mLeftHipRollMotor, "MaxAngle")->set(44);
+			PARAM(DoubleValue, mLeftHipRollMotor, "JointAngleOffset")->set(-30);
+		}
 	}
 	if(mRightHipYawMotor != 0) {
 		PARAM(Vector3DValue, mRightHipYawMotor, "AxisPoint1")->set(-mDistanceXHipYaw->get() / 2.0, 0.0, 0.0);
 		PARAM(Vector3DValue, mRightHipYawMotor, "AxisPoint2")->set(-mDistanceXHipYaw->get() / 2.0, 0.1, 0.0);
-		PARAM(DoubleValue, mRightHipYawMotor, "MinAngle")->set(-44);
-		PARAM(DoubleValue, mRightHipYawMotor, "MaxAngle")->set(20);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mRightHipYawMotor, "MinAngle")->set(-44);
+			PARAM(DoubleValue, mRightHipYawMotor, "MaxAngle")->set(20);
+		}
 	}
 	if(mLeftHipYawMotor != 0) {
 		PARAM(Vector3DValue, mLeftHipYawMotor, "AxisPoint1")->set(mDistanceXHipYaw->get() / 2.0, 0.0, 0.0);
 		PARAM(Vector3DValue, mLeftHipYawMotor, "AxisPoint2")->set(mDistanceXHipYaw->get() / 2.0, 0.1, 0.0);
-		PARAM(DoubleValue, mLeftHipYawMotor, "MinAngle")->set(-20);
-		PARAM(DoubleValue, mLeftHipYawMotor, "MaxAngle")->set(44);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mLeftHipYawMotor, "MinAngle")->set(-20);
+			PARAM(DoubleValue, mLeftHipYawMotor, "MaxAngle")->set(44);
+		}
 	}
 	if(mWaistRollMotor != 0) {
 		PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint1")->set(0.0, waistRollY, 0.1);
 		PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint2")->set(0.0, waistRollY, 0.0);
-		PARAM(DoubleValue, mWaistRollMotor, "MinAngle")->set(-20);
-		PARAM(DoubleValue, mWaistRollMotor, "MaxAngle")->set(20);
-		PARAM(BoolValue, mWaistRollMotor, "MotorFlipped0")->set(true);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mWaistRollMotor, "MinAngle")->set(-20);
+			PARAM(DoubleValue, mWaistRollMotor, "MaxAngle")->set(20);
+			PARAM(BoolValue, mWaistRollMotor, "MotorFlipped0")->set(true);
+		}
 	}
 	if(mHeadPitchMotor != 0) {
 		PARAM(Vector3DValue, mHeadPitchMotor, "AxisPoint1")->set(0.0, headPitchY, 0.0);
 		PARAM(Vector3DValue, mHeadPitchMotor, "AxisPoint2")->set(0.1, headPitchY, 0.0);
-		PARAM(DoubleValue, mHeadPitchMotor, "MinAngle")->set(-30);
-		PARAM(DoubleValue, mHeadPitchMotor, "MaxAngle")->set(50);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mHeadPitchMotor, "MinAngle")->set(-30);
+			PARAM(DoubleValue, mHeadPitchMotor, "MaxAngle")->set(50);
+		}
 	}
 	if(mHeadYawMotor != 0) {
 		PARAM(Vector3DValue, mHeadYawMotor, "AxisPoint1")->set(0.0, 0.1, mHeadYawJointZ->get());
 		PARAM(Vector3DValue, mHeadYawMotor, "AxisPoint2")->set(0.0, 0.0, mHeadYawJointZ->get());
-		PARAM(DoubleValue, mHeadYawMotor, "MinAngle")->set(-90);
-		PARAM(DoubleValue, mHeadYawMotor, "MaxAngle")->set(90);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mHeadYawMotor, "MinAngle")->set(-90);
+			PARAM(DoubleValue, mHeadYawMotor, "MaxAngle")->set(90);
+		}
 		// Physical robot has no joint angle sensor, only a motor angle sensor
 		// --> erase JointAngle Seonsorfrom InterfaceList
 		InterfaceValue* jointAngle = dynamic_cast<InterfaceValue*>(mHeadYawMotor->getParameter("JointAngle"));
@@ -2977,8 +3110,10 @@ void MSeriesV2Model::layoutObjects() {
 	if(mHeadRollMotor != 0) {
 		PARAM(Vector3DValue, mHeadRollMotor, "AxisPoint1")->set(0.0, headYawRollY, 0.0);
 		PARAM(Vector3DValue, mHeadRollMotor, "AxisPoint2")->set(0.0, headYawRollY, 0.1);
-		PARAM(DoubleValue, mHeadRollMotor, "MinAngle")->set(-30);
-		PARAM(DoubleValue, mHeadRollMotor, "MaxAngle")->set(30);
+		if(mFirstLayout) {
+			PARAM(DoubleValue, mHeadRollMotor, "MinAngle")->set(-30);
+			PARAM(DoubleValue, mHeadRollMotor, "MaxAngle")->set(30);
+		}
 		// Physical robot has no joint angle sensor, only a motor angle sensor
 		// --> erase JointAngle Seonsorfrom InterfaceList
 		InterfaceValue* jointAngle = dynamic_cast<InterfaceValue*>(mHeadRollMotor->getParameter("JointAngle"));

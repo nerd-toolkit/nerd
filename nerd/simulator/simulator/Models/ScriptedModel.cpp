@@ -425,23 +425,31 @@ bool ScriptedModel::crAddSource(int collisionRule, const QString &bodyRegExp) {
 		return false;
 	}
 
-	QString sourceName = bodyRegExp;
-	sourceName.replace("**", ".*");
-
-	if(!sourceName.startsWith("/")) {
-		sourceName.prepend("/");
+	StringValue *sourceList = rule->getSourceList();
+	QString listContent = sourceList->get();
+	if(listContent.trimmed() != "") {
+		listContent = listContent.trimmed().append(",");
 	}
+	listContent = listContent.append(bodyRegExp);
+	sourceList->set(listContent);
 
-	QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
-					->getSimObjects(sourceName);
-	for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
-		SimBody *sourceObject = dynamic_cast<SimBody*>(j.next());
-		if(sourceObject != 0) {
-			for(int i = 0; i < sourceObject->getCollisionObjects().size(); i++) {
-				rule->addToSourceGroup(sourceObject->getCollisionObjects().at(i));
-			}
-		}
-	}
+// 	QString sourceName = bodyRegExp;
+// 	sourceName.replace("**", ".*");
+// 
+// 	if(!sourceName.startsWith("/")) {
+// 		sourceName.prepend("/");
+// 	}
+// 
+// 	QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
+// 					->getSimObjects(sourceName);
+// 	for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
+// 		SimBody *sourceObject = dynamic_cast<SimBody*>(j.next());
+// 		if(sourceObject != 0) {
+// 			for(int i = 0; i < sourceObject->getCollisionObjects().size(); i++) {
+// 				rule->addToSourceGroup(sourceObject->getCollisionObjects().at(i));
+// 			}
+// 		}
+// 	}
 	return true;
 }
 
@@ -486,23 +494,31 @@ bool ScriptedModel::crAddTarget(int collisionRule, const QString &bodyRegExp) {
 		return false;
 	}
 
-	QString targetName = bodyRegExp;
-	targetName.replace("**", ".*");
-
-	if(!targetName.startsWith("/")) {
-		targetName.prepend("/");
+	StringValue *targetList = rule->getTargetList();
+	QString listContent = targetList->get();
+	if(listContent.trimmed() != "") {
+		listContent = listContent.trimmed().append(",");
 	}
+	listContent = listContent.append(bodyRegExp);
+	targetList->set(listContent);
 
-	QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
-					->getSimObjects(targetName);
-	for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
-		SimBody *targetObject = dynamic_cast<SimBody*>(j.next());
-		if(targetObject != 0) {
-			for(int i = 0; i < targetObject->getCollisionObjects().size(); i++) {
-				rule->addToTargetGroup(targetObject->getCollisionObjects().at(i));
-			}
-		}
-	}
+// 	QString targetName = bodyRegExp;
+// 	targetName.replace("**", ".*");
+// 
+// 	if(!targetName.startsWith("/")) {
+// 		targetName.prepend("/");
+// 	}
+// 
+// 	QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
+// 					->getSimObjects(targetName);
+// 	for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
+// 		SimBody *targetObject = dynamic_cast<SimBody*>(j.next());
+// 		if(targetObject != 0) {
+// 			for(int i = 0; i < targetObject->getCollisionObjects().size(); i++) {
+// 				rule->addToTargetGroup(targetObject->getCollisionObjects().at(i));
+// 			}
+// 		}
+// 	}
 	return true;
 }
 
