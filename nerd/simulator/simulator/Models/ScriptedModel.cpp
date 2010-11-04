@@ -214,6 +214,7 @@ int ScriptedModel::copyObject(int objectId, const QString &name) {
 			mSimObjectsLookup.insert(id, newObject);
 		}
 		newObject->setName(name);
+		mCurrentSimObject = newObject;
 		return id;
 	}
 }
