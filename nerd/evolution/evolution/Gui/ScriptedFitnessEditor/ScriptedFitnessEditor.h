@@ -76,19 +76,25 @@ namespace nerd {
 	signals:
 		void changeFitnessCodeArea();
 		void changeErrorMessageArea();
+		void markAsUnmodified();
 
 	public slots:
 		void applyButtonPressed();
 		void reloadButtonPressed();
 		void loadButtonPressed();
 		void saveButtonPressed();
+		void saveCurrentScript(const QString &fileName = "");
 		void calculationModeSelectorChanged(int);
 		void setFitnessCodeArea();
 		void setErrorMessageArea();
+		void markAsModified();
+		void markTitleAsUnmodified();
+
+	protected:
+		virtual void keyPressEvent(QKeyEvent *event);
 
 	private:
 		void updateFitnessCalculationMode();
-		void markAsModified(bool modified);
 		void setCodeFromValue();
 
 	private:
@@ -104,6 +110,8 @@ namespace nerd {
 		QTextEdit *mCodeArea;
 		QTextEdit *mErrorMessageField;
 		QComboBox *mCalculationModeSelector;
+		QLabel *mTitleLabel;
+		bool mScriptModified;
 	};
 
 }

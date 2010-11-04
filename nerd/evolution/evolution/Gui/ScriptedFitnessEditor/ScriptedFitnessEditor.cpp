@@ -52,6 +52,7 @@
 #include "Fitness/FitnessFunction.h"
 #include "Value/ChangeValueTask.h"
 #include "Util/NerdFileSelector.h"
+#include <QKeyEvent>
 
 
 using namespace std;
@@ -63,13 +64,14 @@ namespace nerd {
  * Constructs a new ScriptedFitnessEditor.
  */
 ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
+	: mScriptModified(false)
 {
 
 	QVBoxLayout *layout = new QVBoxLayout();
 	setLayout(layout);
 
-	QLabel *fitnessNameLabel = new QLabel(fitnessFunctionName);
-	layout->addWidget(fitnessNameLabel);
+	mTitleLabel = new QLabel(fitnessFunctionName);
+	layout->addWidget(mTitleLabel);
 
 	mCodeArea = new QTextEdit();
 	mCodeArea->setTabStopWidth(20);
@@ -118,7 +120,10 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 			this, SLOT(setFitnessCodeArea()));
 	connect(this, SIGNAL(changeErrorMessageArea()),
 			this, SLOT(setErrorMessageArea()));
-	
+	connect(mCodeArea, SIGNAL(textChanged()),
+			this, SLOT(markAsModified()));
+	connect(this, SIGNAL(markAsUnmodified()),
+			this, SLOT(markTitleAsUnmodified()));
 
 	
 	//Collect all required values.
@@ -208,6 +213,7 @@ void ScriptedFitnessEditor::applyButtonPressed() {
 void ScriptedFitnessEditor::reloadButtonPressed() {
 	setFitnessCodeArea();
 	Core::getInstance()->scheduleTask(new ChangeValueTask(mCurrentFileName, mCurrentFileName->get()));
+	emit markAsUnmodified();
 }
 
 
@@ -219,6 +225,7 @@ void ScriptedFitnessEditor::loadButtonPressed() {
 	if(fileName.trimmed() != "") {
 		setFitnessCodeArea();
 		Core::getInstance()->scheduleTask(new ChangeValueTask(mCurrentFileName, fileName));
+		emit markAsUnmodified();
 	}
 }
 
@@ -228,20 +235,32 @@ void ScriptedFitnessEditor::saveButtonPressed() {
 		return;
 	}	
 	QString fileName = NerdFileSelector::getFileName("Get FitnessFunction Script", false, this);
-	if(fileName.trimmed() != "") {
-		if(!fileName.endsWith(".js")) {
-			fileName = fileName.append(".js");
+	if(fileName.trimmed() == "") {
+		return;
+	}
+	saveCurrentScript(fileName);
+}
+
+
+void ScriptedFitnessEditor::saveCurrentScript(const QString &fileName_) {
+	QString name = fileName_;
+	if(name == "") {
+		name = mCurrentFileName->get();
+	}
+	if(name.trimmed() != "") {
+		if(!name.endsWith(".js")) {
+			name = name.append(".js");
 		}
 
-		QFile file(fileName);
+		QFile file(name);
 
-		int dirIndex = fileName.lastIndexOf("/");
+		int dirIndex = name.lastIndexOf("/");
 		if(dirIndex > 0) {
 			Core::getInstance()->enforceDirectoryPath(file.fileName().mid(0, dirIndex));
 		}
 	
 		if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-			Core::log(QString("Could not open file ").append(fileName).append(" to write Values."));
+			Core::log(QString("Could not open file ").append(name).append(" to write Values."));
 			file.close();
 			return;
 		}
@@ -249,9 +268,10 @@ void ScriptedFitnessEditor::saveButtonPressed() {
 		QTextStream output(&file);
 		QString code = mCodeArea->toPlainText();
 		output << code;
-		file.close();
+		file.close();;
 
-		Core::getInstance()->scheduleTask(new ChangeValueTask(mCurrentFileName, fileName));
+		Core::getInstance()->scheduleTask(new ChangeValueTask(mCurrentFileName, name));
+		emit markAsUnmodified();
 	}
 }
 
@@ -287,6 +307,35 @@ void ScriptedFitnessEditor::setErrorMessageArea() {
 	mErrorMessageField->setText(mErrorValue->get());
 }
 
+
+
+void ScriptedFitnessEditor::keyPressEvent(QKeyEvent *event) {
+	QWidget::keyPressEvent(event);
+	if(event->key() == Qt::Key_S && (event->modifiers() == Qt::CTRL)) {
+		applyButtonPressed();
+		saveCurrentScript();
+	} 
+}
+
+void ScriptedFitnessEditor::markTitleAsUnmodified() {
+	mScriptModified = false;
+	QString title = mTitleLabel->text();
+	if(title.endsWith("*")) {
+		mTitleLabel->setText(title.mid(0, title.size() - 1));
+	}
+}
+
+void ScriptedFitnessEditor::markAsModified() {
+	if(!mScriptModified) {
+		mScriptModified = true;
+		QString title = mTitleLabel->text();
+		if(!title.endsWith("*")) {
+			mTitleLabel->setText(title.append("*"));
+		}
+	}
+}
+
+
 void ScriptedFitnessEditor::updateFitnessCalculationMode() {
 	if(mCalculationModeValue != 0) {
 		mCalculationModeSelector->setEnabled(true);
@@ -310,8 +359,7 @@ void ScriptedFitnessEditor::updateFitnessCalculationMode() {
 	}
 }
 
-void ScriptedFitnessEditor::markAsModified(bool) {
-}
+
 
 void ScriptedFitnessEditor::setCodeFromValue() {
 	if(mFitnessCode == 0) {
@@ -319,8 +367,11 @@ void ScriptedFitnessEditor::setCodeFromValue() {
 	}
 	QString code = mFitnessCode->get();
 	code = code.replace("/**/", "\n");
-	mCodeArea->document()->setPlainText(code);
-	markAsModified(false);
+	QString oldCode = mCodeArea->toPlainText();
+	if(oldCode != code) {
+		mCodeArea->document()->setPlainText(code);
+	}
+	emit markAsUnmodified();
 }
 
 }
