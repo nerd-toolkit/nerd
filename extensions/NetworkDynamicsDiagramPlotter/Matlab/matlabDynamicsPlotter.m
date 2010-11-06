@@ -40,12 +40,12 @@ end
 stringInfos = t{1}{1};
 index = findstr(stringInfos, ';;');
 if length(index) == 2
-    calcName = stringInfos(1:index(1));
-    xDescr = stringInfos(index(1) + 2:index(2));
+    calcName = stringInfos(1:index(1) - 1);
+    xDescr = stringInfos(index(1) + 2:index(2) - 1);
     yDescr = stringInfos(index(2) + 2:end);
-elseif lenth(index) == 3
-    calcName = stringInfos(1:index(1));
-    xDescr = stringInfos(index(1) + 2:index(2));
+elseif length(index) == 3
+    calcName = stringInfos(1:index(1) - 1);
+    xDescr = stringInfos(index(1) + 2:index(2) - 1);
     yDescr = stringInfos(index(2) + 2:index(3));
     zDescr = stringInfos(index(3) + 2:end);
 elseif isempty(index)

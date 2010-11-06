@@ -98,8 +98,8 @@ namespace nerd {
 			double xFactor = static_cast<double>(labelWidth) / static_cast<double>(matrixWidth);
 			double yFactor = static_cast<double>(labelHeight) / static_cast<double>(matrixHeight);
 			double xValue = mMatrix->get(static_cast<int>((pos.x() + 1) / xFactor + 0.5), 0, 0);
-			double yValue = mMatrix->get(0, matrixHeight - static_cast<int>((pos.y() + 1) / yFactor + 0.5), 0);
-			QToolTip::showText(absPos, QString("(" + QString::number(xValue) + ", " + QString::number(yValue) + ") -> " + QString::number(mMatrix->get(static_cast<int>((pos.x() + 1) / xFactor + 0.5), mMatrix->getMatrixHeight() - static_cast<int>((pos.y() + 1)/yFactor + 0.5) + 1, 0))), this);
+			double yValue = mMatrix->get(0, matrixHeight - static_cast<int>((pos.y()) / yFactor + 0.5 - 1), 0);
+			QToolTip::showText(absPos, QString("(" + QString::number(xValue) + ", " + QString::number(yValue) + ") -> " + QString::number(mMatrix->get(static_cast<int>((pos.x() + 1) / xFactor + 0.5), mMatrix->getMatrixHeight() - static_cast<int>((pos.y())/yFactor + 0.5) + 1, 0))), this);
 		}
 	}
 	

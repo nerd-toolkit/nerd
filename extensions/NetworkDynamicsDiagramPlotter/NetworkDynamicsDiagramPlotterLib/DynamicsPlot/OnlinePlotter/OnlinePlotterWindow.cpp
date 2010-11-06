@@ -129,63 +129,25 @@ namespace nerd {
 			}
 			double xFactor = static_cast<double>(currentWidth)/static_cast<double>(oldWidth);
 			double yFactor = static_cast<double>(currentHeight)/static_cast<double>(oldHeight);
+// 			double xFactor = static_cast<double>(mLabel->width())/static_cast<double>(mMatrix->getMatrixWidth() - 1);
+// 			double yFactor = static_cast<double>(mLabel->height())/static_cast<double>(mMatrix->getMatrixHeight() - 1);
+			
 			if(mPixmap.isNull()){
 				Core::log("OnlinePlotterWindow::resizeEvent(): Pixmap is null.", true); 
 				return;
 			}
 
-			mPixmap = mPixmap.scaled(static_cast<int>(static_cast<double>(mPixmap.width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mPixmap.height()) * yFactor + 0.5));
+// 			mPixmap = mPixmap.scaled(static_cast<int>(static_cast<double>(mPixmap.width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mPixmap.height()) * yFactor + 0.5));
+			mLabel->setFixedSize(static_cast<int>(static_cast<double>(mLabel->width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mLabel->height()) * yFactor + 0.5));
+// 			QPixmap tempPixmap = mPixmap.scaled(static_cast<int>(static_cast<double>(mPixmap.width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mPixmap.height()) * yFactor + 0.5));
+			QPixmap tempPixmap = mPixmap.scaled(mLabel->width(), mLabel->height());
 			mLabel->clear();
-
-
-// 			mLabel->resize(mPixmap.width(), mPixmap.height());
-			mLabel->setFixedSize(mPixmap.width(), mPixmap.height());
-			mLabel->setPixmap(mPixmap); //print QImage on label
+// 			mLabel->resize(tempPixmap.width(), tempPixmap.height());
+// 			mLabel->setFixedSize(tempPixmap.width(), tempPixmap.height());
+			mLabel->setPixmap(tempPixmap); //print QImage on label
 			mLabel->update();
 			mLabel->show();
-// 			resize(100, 100);
 			show();
-
-// 
-// 			resize(mWidth - 1, mHeight - 1);
-// 			QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
-// 			image.fill(qRgb(255, 255, 0));
-// 			for(int j = 1; j < mWidth; j++){
-// 				for (int k = 1; k < mHeight; k++){
-// 					if(mMatrix->get(j, k, 0) == 0){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 255)); //no attractor
-// 					}else if(mMatrix->get(j, k, 0) == 1){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 0));
-// 					}else if(mMatrix->get(j, k, 0) == 2){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 0));
-// 					}else if(mMatrix->get(j, k, 0) == 3){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 0));
-// 					}else if(mMatrix->get(j, k, 0) == 4){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 255));
-// 					}else if(mMatrix->get(j, k, 0) == 5){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 0));
-// 					}else if(mMatrix->get(j, k, 0) == 6){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 255));
-// 					}else if(mMatrix->get(j, k, 0) == 7){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 255));
-// 					}else if(mMatrix->get(j, k, 0) == 8){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(150, 0, 255));
-// 					}else if(mMatrix->get(j, k, 0) == 9){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 160, 0));
-// 					}else{
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(220, 220, 220));//period to high
-// 					}
-// 				} 
-// 			}//for
-// 						
-// 
-// 			mLabel->clear();
-// 			mLabel->setMatrix(mMatrix);
-// 			mLabel->setPixmap(QPixmap::fromImage(image)); //print QImage on label
-// 			mLabel->show();
-// 			show();
-// 			mWidgetWidth = width();
-// 			mWidgetHeight = height();
 		}//if mIsSetUp
 
 	}
@@ -205,6 +167,7 @@ namespace nerd {
 		mLabel = new MouseMoveLabel(this);
 		mLabel->setFrameStyle(0);
 // 		mLabel->setScaledContents(true);
+		mLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 		mTitleLabel = new QLabel( this);
 
 		mYLabel = new QLabel("", this);
@@ -239,13 +202,15 @@ namespace nerd {
 		mInnerLayout->addWidget(mYMaxLabel, 0, 0, Qt::AlignRight);
 		mInnerLayout->addWidget(mYMinLabel, 1, 0);
 		mInnerLayout->addWidget(mBlankLabel2, 2, 0);
-		mInnerLayout->addWidget(mLabel, 0, 1, 2, 2);
+		mInnerLayout->addWidget(mLabel, 0, 1, 2, 1);
+// 		mInnerLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Maximum, QSizePolicy::Maximum), 0, 3, 2, 1);
 		mInnerLayout->addWidget(mXMinLabel, 2, 1);
 		mInnerLayout->addWidget(mXMaxLabel, 2, 2);
 		mInnerLayout->setColumnStretch(0, 0);
 		mInnerLayout->setColumnStretch(1, 1);
 		mInnerLayout->setRowStretch(1, 0);
 		mInnerLayout->setRowStretch(0, 1);
+// 		mInnerLayout->setColumnStretch(2, 0);
 		
 		mOuterLayout->addWidget(mYLabel, 0, 0);
 		mOuterLayout->addLayout(mInnerLayout, 0, 1);
@@ -281,68 +246,14 @@ namespace nerd {
 		}		
 		mMatrix = dataMatrix;
 // 		hide();
-
+		mIsSetUp = false;
 		mWidth = mMatrix->getMatrixWidth();
 		mHeight = mMatrix->getMatrixHeight();
-
-// 		//create a QImage-object to be printed on the label
-// 		QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
-// 		image.fill(qRgb(255, 255, 255));
-// 		
-// 		//set pixels black, when entry in matrix = 1, or if = 0 print them white, else other colors
-// 		
-// 		for(int j = 1; j < mWidth; j++){
-// 			for (int k = 1; k < mHeight; k++){
-// 				if(mMatrix->get(j, k, 0) == 0){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 255)); //no attractor
-// 				}else if(mMatrix->get(j, k, 0) == 1){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 0));
-// 				}else if(mMatrix->get(j, k, 0) == 2){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 0));
-// 				}else if(mMatrix->get(j, k, 0) == 3){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 0));
-// 				}else if(mMatrix->get(j, k, 0) == 4){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 255));
-// 				}else if(mMatrix->get(j, k, 0) == 5){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 0));
-// 				}else if(mMatrix->get(j, k, 0) == 6){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 255));
-// 				}else if(mMatrix->get(j, k, 0) == 7){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 255));
-// 				}else if(mMatrix->get(j, k, 0) == 8){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(150, 0, 255));
-// 				}else if(mMatrix->get(j, k, 0) == 9){
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 160, 0));
-// 				}else{
-// 					image.setPixel(j - 1,  mHeight - k - 1, qRgb(220, 220, 220));//period to high
-// 				}
-// 			} 
-// 		}
-// 	
-// 
 		mTitleLabel->setText(QString("<b><big>") + name + QString("<\big><\b>"));
-// 		//Print parameter/output range min. & max. to labels
-// 		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, mHeight -1, 0))));
-// 		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(mMatrix->get(0, 1, 0))));
-// 		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(mMatrix->get(1, 0, 0))));
-// 		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(mWidth - 1, 0, 0))));
-// 		
-// // 		mLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
 		mYLabel->setText(yDescr);
 		mXLabel->setText(xDescr);
-// // 		
-// 
-// 		
-// 		mLabel->clear();
-// 		mLabel->setMatrix(mMatrix);
-// // 		mLabel->resize(mWidth - 1, mHeight - 1);
-// 		mPixmap = QPixmap::fromImage(image);
-// 		mLabel->setPixmap(mPixmap); //print QImage on label
-// 		mLabel->show();
-// // 		update();
-//  		show();
-// // 		mWidgetWidth = width();
-// // 		mWidgetHeight = height();
+		resize(1,1);
 		emit timerStart();
 	}
 	
@@ -435,6 +346,7 @@ namespace nerd {
 // 			cerr << "label wid2 " << mLabel->width()<<endl;
 			mLabel->setPixmap(mPixmap); //print QImage on label
 			mLabel->show();
+			resize(1,1);
 			show();
 
 // 			mWidgetWidth = width();
@@ -447,13 +359,13 @@ namespace nerd {
 	 * 
 	 */
 	void OnlinePlotterWindow::finishedProcessing(){
-		mForceUpdate = true;
+		mForceUpdate = true; // makes using the updateData() function once possible
 		updateData();
 		mMessageLabel->setText("<font color='red'>Done!</font>");
-		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, mHeight -1, 0))));
+		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, mMatrix->getMatrixHeight() - 1, 0))));
 		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(mMatrix->get(0, 1, 0))));
 		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(mMatrix->get(1, 0, 0))));
-		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(mWidth - 1, 0, 0))));
+		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(mMatrix->getMatrixWidth() - 1, 0, 0))));
 		mIsSetUp = true;
 
 	}
