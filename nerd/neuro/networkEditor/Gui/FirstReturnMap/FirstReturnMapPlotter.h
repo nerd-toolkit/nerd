@@ -101,6 +101,7 @@ namespace nerd {
 		void removeNeuronsButtonPressed();
 		void changeLineWidth();
 		void enablePointConnections();
+		void clearHistory();
 
 	private:
 		void removeAllNeurons();
@@ -114,6 +115,7 @@ namespace nerd {
 		QList<Neuron*> mPlottedNeurons;
 		QPushButton *mAddSelectedButton;
 		QPushButton *mRemoveNeuronsButton;
+		QPushButton *mClearHistoryButton;
 
 		ValuePlotter *mValuePlotter;
 		QLineEdit *mHistorySizeField;

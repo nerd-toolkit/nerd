@@ -202,8 +202,8 @@ void ParameterVisualizationWindow::saveCurrentParameters(
 	for(int i = 0; i < mListLayout->count(); ++i) {
 		ParameterVisualization *visu = dynamic_cast<ParameterVisualization*>(mListLayout->itemAt(i)->widget());
 		
+		Value *value = visu->getValue();
 		if(saveValueContent) {
-			Value *value = visu->getValue();
 			output << visu->getValueName() << "=" << value->getValueAsString() << "\n";
 		}
 		else {
@@ -212,7 +212,11 @@ void ParameterVisualizationWindow::saveCurrentParameters(
 		}
 		QList<QString> options = visu->getOptions();
         for(QListIterator<QString> o(options); o.hasNext();) {
-            output << "#>" << o.next() << "\n";
+			QString option = o.next();
+			if(!value->getOptionList().contains(option)) {
+				//do not save the options of the option list...
+				output << "#>" << option << "\n";
+			}
         }
 	}
 	file.close();

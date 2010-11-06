@@ -192,6 +192,16 @@ void PlotterWidget::setHistoryCapacity(int size) {
 	}
 }
 
+void PlotterWidget::clearHistory() {
+	for(int i = 0; i < mPlotterItems.size(); ++i) {
+		PlotterItem *item = mPlotterItems.at(i);
+		if(item->hasStaticHistory()) {
+			continue;
+		}
+		item->setHistory(QVector<double>());
+	}
+}
+
 double PlotterWidget::getUserScaleV() const {
 	return mUserScaleV;
 }

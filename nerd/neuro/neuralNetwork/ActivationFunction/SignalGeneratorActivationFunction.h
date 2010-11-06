@@ -58,11 +58,15 @@ namespace nerd {
 	 */
 	class SignalGeneratorActivationFunction : public ActivationFunction {
 	public:
+		enum SignalGeneratorTypes {TYPE_RAMP, TYPE_NOISE, TYPE_SINE, TYPE_SPIKES};
+	public:
 		SignalGeneratorActivationFunction();
 		SignalGeneratorActivationFunction(const SignalGeneratorActivationFunction &other);
 		virtual ~SignalGeneratorActivationFunction();
 
 		virtual ActivationFunction* createCopy() const;
+
+		virtual void valueChanged(Value *value);
 
 		virtual void reset(Neuron *owner);
 		virtual double calculateActivation(Neuron *owner);
@@ -82,6 +86,8 @@ namespace nerd {
 		BoolValue *mRandomizeTargetActivations;
 		BoolValue *mRandomizeDuration;
 		StringValue *mStartActivation;
+		StringValue *mSignalType;
+		int mTypeId;
 		
 		
 	};

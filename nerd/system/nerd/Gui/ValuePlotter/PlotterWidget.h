@@ -75,6 +75,7 @@ namespace nerd {
 		void setNumberOfValuesToPlot(int numberOfValues);
 		int getNumberOfValuesToPlot() const;
 		void setHistoryCapacity(int size);
+		void clearHistory();
 
 		double getUserScaleV() const;
 		void setUserScaleV(double scale);

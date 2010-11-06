@@ -157,6 +157,9 @@ FirstReturnMapPlotter::FirstReturnMapPlotter(const QString &name, int plotMode,
 	mRemoveNeuronsButton = new QPushButton("Remove All", generalTab);
 	generalLayout->addWidget(mRemoveNeuronsButton);
 
+	mClearHistoryButton = new QPushButton("Clear Hisory", generalTab);
+	generalLayout->addWidget(mClearHistoryButton);
+
 	generalLayout->addStretch();
 
 	mControlArea->addTab(generalTab, "General");
@@ -223,6 +226,8 @@ FirstReturnMapPlotter::FirstReturnMapPlotter(const QString &name, int plotMode,
 			this, SLOT(addSelectedNeuronsButtonPressed()));
 	connect(mRemoveNeuronsButton, SIGNAL(pressed()),
 			this, SLOT(removeNeuronsButtonPressed()));
+	connect(mClearHistoryButton, SIGNAL(pressed()),
+			this, SLOT(clearHistory()));
 	connect(mHistorySizeField, SIGNAL(returnPressed()),
 			this, SLOT(plotterRangeChanged()));
 	connect(this, SIGNAL(setPlotterRange(const QString&)),
@@ -611,6 +616,14 @@ void FirstReturnMapPlotter::enablePointConnections() {
 			dynamic_cast<FirstReturnMapPlotterWidget*>(mValuePlotter->getPlotterWidget());
 	if(plotter != 0) {
 		plotter->enableConnectedPoints(mConnectLinesCheckBox->isChecked());
+	}
+}
+
+void FirstReturnMapPlotter::clearHistory() {
+	FirstReturnMapPlotterWidget *plotter = 
+			dynamic_cast<FirstReturnMapPlotterWidget*>(mValuePlotter->getPlotterWidget());
+	if(plotter != 0) {
+		plotter->clearHistory();
 	}
 }
 

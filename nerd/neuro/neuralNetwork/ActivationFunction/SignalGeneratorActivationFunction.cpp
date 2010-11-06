@@ -63,7 +63,8 @@ namespace nerd {
  */
 SignalGeneratorActivationFunction::SignalGeneratorActivationFunction()
 	: ActivationFunction("SignalGenerator"), mCurrentActivation(0.0), 
-	  mCurrentTargetActivation(0), mCurrentDuration(0), mCurrentStep(0)
+	  mCurrentTargetActivation(0), mCurrentDuration(0), mCurrentStep(0),
+	  mTypeId(TYPE_RAMP)
 {
 		mMinActivation = new DoubleValue(-1.0);
 		mMaxActivation = new DoubleValue(1.0);
@@ -73,6 +74,11 @@ SignalGeneratorActivationFunction::SignalGeneratorActivationFunction()
 		mRandomizeTargetActivations = new BoolValue(false);
 		mRandomizeDuration = new BoolValue(false);
 		mStartActivation = new StringValue("0.0");
+		mSignalType = new StringValue("Ramp");
+		mSignalType->getOptionList().append("Ramp");
+		mSignalType->getOptionList().append("Noise");
+		mSignalType->getOptionList().append("Sine");
+		mSignalType->getOptionList().append("Spikes");
 
 		addParameter("MinActivation", mMinActivation);
 		addParameter("MaxActivation", mMaxActivation);
@@ -82,6 +88,7 @@ SignalGeneratorActivationFunction::SignalGeneratorActivationFunction()
 		addParameter("RandActivation", mRandomizeTargetActivations);
 		addParameter("RandDuration", mRandomizeDuration);
 		addParameter("InitActivation", mStartActivation);
+		addParameter("Type", mSignalType);
 
 }
 
@@ -94,7 +101,8 @@ SignalGeneratorActivationFunction::SignalGeneratorActivationFunction()
 SignalGeneratorActivationFunction::SignalGeneratorActivationFunction(
 			const SignalGeneratorActivationFunction &other) 
 	: ActivationFunction(other), mCurrentActivation(0.0), 
-	  mCurrentTargetActivation(0), mCurrentDuration(0), mCurrentStep(0)
+	  mCurrentTargetActivation(0), mCurrentDuration(0), mCurrentStep(0),
+	  mTypeId(other.mTypeId)
 {
 	mMinActivation = dynamic_cast<DoubleValue*>(getParameter("MinActivation"));
 	mMaxActivation = dynamic_cast<DoubleValue*>(getParameter("MaxActivation"));
@@ -104,6 +112,7 @@ SignalGeneratorActivationFunction::SignalGeneratorActivationFunction(
 	mRandomizeTargetActivations = dynamic_cast<BoolValue*>(getParameter("RandActivation"));
 	mRandomizeDuration = dynamic_cast<BoolValue*>(getParameter("RandDuration"));
 	mStartActivation = dynamic_cast<StringValue*>(getParameter("InitActivation"));
+	mSignalType = dynamic_cast<StringValue*>(getParameter("Type"));
 }
 
 /**
@@ -118,7 +127,27 @@ ActivationFunction* SignalGeneratorActivationFunction::createCopy() const {
 	return new SignalGeneratorActivationFunction(*this);
 }
 
-
+void SignalGeneratorActivationFunction::valueChanged(Value *value) {
+	ActivationFunction::valueChanged(value);
+	if(value == 0) {
+		return;
+	}
+	else if(value == mSignalType) {
+		QString type = mSignalType->get().trimmed().toLower();
+		if(type == "ramp") {
+			mTypeId = TYPE_RAMP;
+		}
+		else if(type == "sine") {
+			mTypeId = TYPE_SINE;
+		}
+		else if(type == "noise") {
+			mTypeId = TYPE_NOISE;
+		}
+		else if(type == "spikes") {
+			mTypeId = TYPE_SPIKES;
+		}
+	}
+}
 
 void SignalGeneratorActivationFunction::reset(Neuron*) {
 	QString startActivation = mStartActivation->get();
@@ -180,6 +209,13 @@ double SignalGeneratorActivationFunction::calculateActivation(Neuron*) {
 	}
 	++mCurrentStep;
 
+	if(mTypeId == TYPE_RAMP) {
+		return mCurrentActivation;
+	}
+	else if(mTypeId == TYPE_SINE) {
+		
+	}
+
 	return mCurrentActivation;
 }
 
@@ -228,6 +264,11 @@ bool SignalGeneratorActivationFunction::equals(ActivationFunction *activationFun
 	}
 	if(sf->mRandomizeTargetActivations == 0 || mRandomizeTargetActivations == 0 
 		|| sf->mRandomizeTargetActivations->get() != mRandomizeTargetActivations->get()) 
+	{
+		return false;
+	}
+	if(sf->mSignalType == 0 || mSignalType == 0 
+		|| sf->mSignalType->get() != mSignalType->get())
 	{
 		return false;
 	}
