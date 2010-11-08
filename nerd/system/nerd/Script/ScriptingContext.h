@@ -99,6 +99,8 @@ namespace nerd {
 		void triggerEvent(const QString &eventName, bool createIfNotAvailable = false);
 
 		QString loadFileToString(const QString &fileName);
+		double random();
+		int randomInt(int max);
 
 	protected:
 		virtual void reportError(const QString &message);

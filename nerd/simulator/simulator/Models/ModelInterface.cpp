@@ -46,11 +46,14 @@
 #include "Physics/PhysicsManager.h"
 #include "Core/Core.h"
 #include "NerdConstants.h"
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
 ModelInterface::ModelInterface(const QString &name) : SimObject(name), 
-				mResetSettingsCompleted(0), mIsInitialized(false)
+				mResetSettingsCompleted(0), mRandomizeEnvironmentEvent(0), mIsInitialized(false)
 {
 	setPrefix(name + "/");
 	mPosition = new Vector3DValue();
@@ -63,7 +66,9 @@ ModelInterface::ModelInterface(const QString &name) : SimObject(name),
 
 ModelInterface::ModelInterface(const ModelInterface &model) : Object(),
 		ValueChangedListener(), EventListener(), SimObject(model), 
-		mResetSettingsCompleted(0), mIsInitialized(false)
+		mResetSettingsCompleted(0), mRandomizeEnvironmentEvent(0),
+		mIsInitialized(false)
+		
 {	
 	mPosition = dynamic_cast<Vector3DValue*>(getParameter("Position"));
 	mOrientation = dynamic_cast<Vector3DValue*>(getParameter("Orientation"));
@@ -80,13 +85,22 @@ ModelInterface::~ModelInterface() {
 void ModelInterface::setup() {
 	SimObject::setup();
 	if(!mIsInitialized) {
-		mResetSettingsCompleted =  Core::getInstance()->getEventManager()->getEvent(
+		mResetSettingsCompleted = Core::getInstance()->getEventManager()->getEvent(
 			NerdConstants::EVENT_EXECUTION_RESET_SETTINGS_COMPLETED, true);
 		if(mResetSettingsCompleted == 0) {
-			Core::log("ModelInterface: Could not create required event.");
+			Core::log("ModelInterface: Could not create required Reset event.", true);
 			return;
 		}
 		mResetSettingsCompleted->addEventListener(this);	
+
+		//make sure the simulation environment manager is available.
+		Physics::getSimulationEnvironmentManager(); 
+
+		mRandomizeEnvironmentEvent = Core::getInstance()->getEventManager()
+			->registerForEvent(SimulationConstants::EVENT_RANDOMIZE_ENVIRONMENT, this, false);
+		if(mRandomizeEnvironmentEvent == 0) {
+			Core::log("ModelInterface: Could not find RandomizeEnvironmentEvent", true);
+		}
 		createModel();
 		switchInputs();
 		mIsInitialized = true;
@@ -126,6 +140,10 @@ void ModelInterface::performTransformations() {
 
 
 void ModelInterface::layoutObjects() {
+
+}
+
+void ModelInterface::randomizeObjects() {
 
 }
 
@@ -169,8 +187,11 @@ void ModelInterface::eventOccured(Event *event) {
 	if(event == 0) {
 		return;
 	}
-	if(event == mResetSettingsCompleted) {
+	else if(event == mResetSettingsCompleted) {
 		reset();
+	}
+	else if(event == mRandomizeEnvironmentEvent) {
+		randomizeObjects();
 	}
 }
 

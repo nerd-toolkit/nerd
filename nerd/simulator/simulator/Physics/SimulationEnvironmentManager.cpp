@@ -53,6 +53,9 @@
 #include "Physics/Physics.h"
 #include "NerdConstants.h"
 #include "Math/Random.h"
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
@@ -67,6 +70,9 @@ SimulationEnvironmentManager::SimulationEnvironmentManager() : mResetSettingsEve
 	mCurrentSimulationSeed = new IntValue(Random::nextInt());
 	vManager->addValue(SimulationConstants::VALUE_RANDOMIZATION_SIMULATION_SEED,
 		mCurrentSimulationSeed);
+
+	mRandomizeEnvironmentEvent = Core::getInstance()->getEventManager()
+			->createEvent(SimulationConstants::EVENT_RANDOMIZE_ENVIRONMENT);
 }
 
 /**
@@ -263,7 +269,7 @@ void SimulationEnvironmentManager::setSnapshot(const QHash<SimObject*,
 void SimulationEnvironmentManager::performRandomization() {
 
 	if(mCurrentSimulationSeed != 0) {
-
+	
 		Random::setSeed(mCurrentSimulationSeed->get());
 		int randomizationSeed = 0;
 		if(mCurrentTry != 0) {
@@ -281,7 +287,9 @@ void SimulationEnvironmentManager::performRandomization() {
 		for(int i = 0; i < mSimulationRandomizer.size(); i++) {
 			mSimulationRandomizer.at(i)->applyRandomization();
 		}
+		mRandomizeEnvironmentEvent->trigger();
 		Random::init();
+		Core::getInstance()->executePendingTasks();
 	}
 }
 

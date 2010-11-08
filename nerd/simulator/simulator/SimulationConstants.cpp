@@ -94,6 +94,9 @@ const QString SimulationConstants::EVENT_EXECUTION_NEXT_INDIVIDUAL
 const QString SimulationConstants::EVENT_PHYSICS_ENVIRONMENT_CHANGED
 		= "/Simulation/PhysicsEnvironmentChanged";
 
+const QString SimulationConstants::EVENT_RANDOMIZE_ENVIRONMENT
+		= "/Simulation/RandomizeEnvironment";
+
 //**************************************************************************
 //Object Names
 //**************************************************************************

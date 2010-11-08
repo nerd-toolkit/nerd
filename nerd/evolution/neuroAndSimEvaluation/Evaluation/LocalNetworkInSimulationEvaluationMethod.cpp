@@ -290,6 +290,7 @@ bool LocalNetworkInSimulationEvaluationMethod::evaluateIndividuals() {
 
 	//set generation fitness
 	if(mRandomizeSeed->get()) {
+		Random::init();
 		mDesiredSeed->set(Random::nextInt());
 	}
 	mSimulationSeed->set(mDesiredSeed->get());

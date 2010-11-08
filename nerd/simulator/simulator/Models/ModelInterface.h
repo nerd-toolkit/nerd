@@ -81,6 +81,7 @@ class ModelInterface : public SimObject, public virtual EventListener {
 
 		virtual void performTransformations();
 		virtual void layoutObjects();
+		virtual void randomizeObjects();
 
 	protected:
 		Vector3DValue *mPosition;
@@ -91,6 +92,7 @@ class ModelInterface : public SimObject, public virtual EventListener {
 		QList<Vector3D> mTransformationData;
 
 		Event *mResetSettingsCompleted;
+		Event *mRandomizeEnvironmentEvent;
 
 		bool mIsInitialized;
 

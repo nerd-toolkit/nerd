@@ -102,6 +102,7 @@ class SimulationEnvironmentManager : public virtual SystemObject,
 			
 	private:
 		Event *mResetSettingsEvent;
+		Event *mRandomizeEnvironmentEvent;
 		IntValue *mCurrentTry;
 		IntValue *mCurrentSimulationSeed;
 	

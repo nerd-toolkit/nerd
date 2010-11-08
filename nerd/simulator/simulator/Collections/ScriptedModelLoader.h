@@ -50,8 +50,11 @@
 
 namespace nerd {
 
+	class ScriptedModel;
+
 	/**
 	 * ScriptedModelLoader.
+	 * TODO Make SystemObject: destroy environment scripts at shutdown...
 	 *
 	 */
 	class ScriptedModelLoader {
@@ -60,6 +63,7 @@ namespace nerd {
 		virtual ~ScriptedModelLoader();
 
 	private:
+		QList<ScriptedModel*> mEnvironmentModels;
 	};
 
 }

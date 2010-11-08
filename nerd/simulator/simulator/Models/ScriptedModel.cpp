@@ -63,7 +63,8 @@ namespace nerd {
  */
 ScriptedModel::ScriptedModel(const QString &name, const QString &script)
 	: ScriptingContext(name, "model"), ModelInterface(name), mPrototypeName(""), mIdCounter(1), mAgent(0),
-		mCurrentSimObject(0), mEnvironmentMode(false), mSetupEnvironmentMode(false)
+		mCurrentSimObject(0), mEnvironmentMode(false), mSetupEnvironmentMode(false), 
+		mRandomizationMode(false)
 {
 }
 
@@ -76,7 +77,7 @@ ScriptedModel::ScriptedModel(const QString &name, const QString &script)
 ScriptedModel::ScriptedModel(const ScriptedModel &other) 
 	: ScriptingContext(other), ModelInterface(other), mPrototypeName(other.mPrototypeName), 
 		mIdCounter(other.mIdCounter), mAgent(0), mCurrentSimObject(0), mEnvironmentMode(false),
-		mSetupEnvironmentMode(false)
+		mSetupEnvironmentMode(false), mRandomizationMode(false)
 {
 	for(QHashIterator<StringValue*, QString> i(other.mPrototypeParameters); i.hasNext();) {
 		i.next();
@@ -119,8 +120,13 @@ SimObject* ScriptedModel::createCopy() const {
 }
 
 void ScriptedModel::createModel() {
+	if(!hasModelSection()) {
+		return;
+	}
+
 	mIdCounter = 1;
 	resetScriptContext();
+
 	mAgent = new SimObjectGroup(getName(), "Agent");
 	mCurrentSimObject = 0;
 
@@ -143,6 +149,16 @@ void ScriptedModel::layoutObjects() {
 		mScript->evaluate("function layoutModel() { };");
 	}
 	executeScriptFunction("layoutModel();") ;
+}
+
+void ScriptedModel::randomizeObjects() {
+	mScript->evaluate("randomizeEnvironment.toString();");
+	if(mScript->hasUncaughtException()) {
+		mScript->evaluate("function randomizeEnvironment() { };");
+	}
+	mRandomizationMode = true;
+	executeScriptFunction("randomizeEnvironment();") ;
+	mRandomizationMode = false;
 }
 
 void ScriptedModel::createEnvironment() {
@@ -315,6 +331,13 @@ bool ScriptedModel::makeCurrent(int objectId) {
 	SimObject *obj = 0;
 	if(mEnvironmentMode) {
 		obj = mEnvironmentObjectLookup.value(objectId);
+	}
+	else if(mRandomizationMode) {
+		//search in both lookup tables
+		obj = mEnvironmentObjectLookup.value(objectId);
+		if(obj == 0) {
+			obj = mSimObjectsLookup.value(objectId);
+		}
 	}
 	else {
 		obj = mSimObjectsLookup.value(objectId);

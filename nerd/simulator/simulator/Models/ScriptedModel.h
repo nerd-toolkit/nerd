@@ -78,6 +78,7 @@ namespace nerd {
 		virtual SimObject* createCopy() const;
 		virtual void createModel();
 		virtual void layoutObjects();
+		virtual void randomizeObjects();
 		virtual void createEnvironment();
 
 	public slots:
@@ -131,6 +132,7 @@ namespace nerd {
 		QHash<StringValue*, QString> mPrototypeParameters;
 		bool mEnvironmentMode;
 		bool mSetupEnvironmentMode;
+		bool mRandomizationMode;
 		
 	};
 

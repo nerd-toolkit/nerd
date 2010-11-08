@@ -81,6 +81,7 @@ namespace nerd {
 		static const QString EVENT_EXECUTION_TERMINATE_TRY;
 		static const QString EVENT_EXECUTION_NEXT_INDIVIDUAL;
 		static const QString EVENT_PHYSICS_ENVIRONMENT_CHANGED;
+		static const QString EVENT_RANDOMIZE_ENVIRONMENT;
 
 	//**************************************************************************
 	//Object Names

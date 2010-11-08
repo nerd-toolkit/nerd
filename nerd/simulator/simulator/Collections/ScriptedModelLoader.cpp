@@ -91,18 +91,23 @@ ScriptedModelLoader::ScriptedModelLoader()
 					model->createEnvironment();
 				}
 				if(!model->hasModelSection()) {
-					delete model;
+					model->setup();
+					mEnvironmentModels.append(model);
 				}
 			}
 			else {
 				if(model->hasEnvironmentSection()) {
 					model->createEnvironment();
+					mEnvironmentModels.append(model);
+					if(!model->hasModelSection()) {
+						model->setup();
+					}
 				}
 				else {
 					Core::log("ScriptedModelLoader: Failed installing model prototype ["
 							+ model->getName() + "] from file [" + fileName + "]!", true);
+					delete model;
 				}
-				delete model;
 			}
 			Physics::getSimulationEnvironmentManager()->createSnapshot();
 		}
@@ -114,6 +119,11 @@ ScriptedModelLoader::ScriptedModelLoader()
  * Destructor.
  */
 ScriptedModelLoader::~ScriptedModelLoader() {
+// 	while(!mEnvironmentModels.empty()) {
+// 		ScriptedModel *model = mEnvironmentModels.first();
+// 		mEnvironmentModels.removeAll(model);
+// 		delete model;
+// 	}
 }
 
 

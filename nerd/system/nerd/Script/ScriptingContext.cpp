@@ -60,6 +60,8 @@
 #include "Util/Tracer.h"
 #include <QDir>
 #include <QTextStream>
+#include "Math/Random.h"
+#include <iostream>
 
 using namespace std;
 
@@ -572,6 +574,15 @@ QString ScriptingContext::loadFileToString(const QString &fileName) {
 	}
 	QTextStream input(&file);
 	return input.readAll();
+}
+
+double ScriptingContext::random() {
+	return Random::nextDouble();
+}
+
+
+int ScriptingContext::randomInt(int max) {
+	return Random::nextInt(max);
 }
 
 
