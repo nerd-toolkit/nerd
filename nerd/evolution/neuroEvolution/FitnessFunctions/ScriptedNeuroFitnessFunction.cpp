@@ -64,6 +64,7 @@
 #include <QTextStream>
 #include "Network/NeuralNetwork.h"
 #include "Script/ScriptedNetworkManipulator.h" 
+#include <iostream>
 
 using namespace std;
 
@@ -125,8 +126,16 @@ void ScriptedNeuroFitnessFunction::setControlInterface(ControlInterface *control
 
 void ScriptedNeuroFitnessFunction::resetScriptContext() {
 	mNetworkManipulator->setNeuralNetwork(0);
-
 	ScriptedFitnessFunction::resetScriptContext();
+}
+
+void ScriptedNeuroFitnessFunction::prepareNextTry() {
+	ScriptedFitnessFunction::prepareNextTry();
+	
+	if(mControlInterface != 0) {
+		ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(mControlInterface->getController());
+		mNetworkManipulator->setNeuralNetwork(network);
+	}
 }
 
 void ScriptedNeuroFitnessFunction::defineNeuron(const QString &name, const QString &neuronName) {

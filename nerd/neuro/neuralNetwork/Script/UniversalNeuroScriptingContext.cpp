@@ -84,6 +84,8 @@ UniversalNeuroScriptingContext::~UniversalNeuroScriptingContext() {
 
 
 void UniversalNeuroScriptingContext::addCustomScriptContextStructures() {
+	UniversalScriptingContext::addCustomScriptContextStructures();
+
 	QScriptValue networkManip = mScript->newQObject(mNetworkManipulator,
 							QScriptEngine::QtOwnership,
 			 				QScriptEngine::ExcludeSuperClassMethods
@@ -91,7 +93,7 @@ void UniversalNeuroScriptingContext::addCustomScriptContextStructures() {
 							  | QScriptEngine::ExcludeChildObjects);
 	mScript->globalObject().setProperty("net", networkManip);
 
-	mNetworkManipulator->setNeuralNetwork(0);
+	//mNetworkManipulator->setNeuralNetwork(0);
 
 	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
 	QList<NeuralNetwork*> networks = nnm->getNeuralNetworks();

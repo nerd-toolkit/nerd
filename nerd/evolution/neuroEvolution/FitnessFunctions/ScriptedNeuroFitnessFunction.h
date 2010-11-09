@@ -71,6 +71,8 @@ namespace nerd {
 
 		virtual void resetScriptContext();
 
+		virtual void prepareNextTry();
+
 	public slots:
 		void defineNeuron(const QString &name, const QString &neuronName);
 		double getNeuronActivity(const QString &neuronName) const;
