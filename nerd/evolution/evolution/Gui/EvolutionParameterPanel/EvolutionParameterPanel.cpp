@@ -94,13 +94,13 @@ EvolutionParameterPanel::EvolutionParameterPanel(bool includeStarterButtonToMain
 	//Edit Menu
 	QMenu *fileMenu = mainMenu->addMenu("File");
 
-	QAction *loadAction = fileMenu->addAction(tr("&Load Settings"));
-	loadAction->setShortcut(tr("Ctrl+l"));
+	QAction *loadAction = fileMenu->addAction(tr("Load Settings"));
+	//loadAction->setShortcut(tr("Ctrl+l"));
 	connect(loadAction, SIGNAL(triggered()),
 			this, SLOT(loadSettings()));
 	
-	QAction *saveAction = fileMenu->addAction(tr("&SaveSettings"));
-	saveAction->setShortcut(tr("Ctrl+s"));
+	QAction *saveAction = fileMenu->addAction(tr("SaveSettings"));
+	//saveAction->setShortcut(tr("Ctrl+s"));
 	connect(saveAction, SIGNAL(triggered()),
 			this, SLOT(saveSettings()));
 
