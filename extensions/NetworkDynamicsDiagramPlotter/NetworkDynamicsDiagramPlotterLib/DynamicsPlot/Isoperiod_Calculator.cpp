@@ -335,6 +335,7 @@ namespace nerd {
 		for(int j = 0; j < noOfvElemsY; j++){
 			setVariedNetworkElementValue(vElemsListY[j], oldValuesY[j]);
 		}
+		cerr<<"Finished isoperiod calculation."<<endl;
 	}
 }
 

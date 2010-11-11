@@ -470,12 +470,13 @@ namespace nerd {
 			
 		}//if-clause: bidirectional
 		
-		restoreCurrentNetworkActivites();
+		
 		
 		//restore former bias values and synapse strengths
 		for(int j = 0; j < noOfvElems; j++){
 			setVariedNetworkElementValue(vElemsList[j], oldValues[j]);
 		}
+		restoreCurrentNetworkActivites();
 		
 	}//calculateData()
 

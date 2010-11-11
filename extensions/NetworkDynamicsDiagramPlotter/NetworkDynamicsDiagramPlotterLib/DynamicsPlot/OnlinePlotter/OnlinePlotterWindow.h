@@ -85,7 +85,6 @@ namespace nerd {
 			
 		protected:
 			void resizeEvent(QResizeEvent * event);
-			void paintEvent ( QPaintEvent * event );
 		private:
 			MouseMoveLabel *mLabel;
 			QPixmap mPixmap;

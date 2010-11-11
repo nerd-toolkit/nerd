@@ -229,12 +229,13 @@ namespace nerd {
 		for(int j = 0; j < noOfvNeuronsY; j++){
 			if(vMinsListY[j] != vMaxsListY[j]){
 				rListY.append(vMinsListY[j]);
+				
 			}else{
 				Core::log("BasinOfAttractionCalculator: Minimum of variation must not be equal to maximum.", true);
 				return;
 			}
 		}
-		
+		QList<double> rListYInit = rListY; //Save initial parameter list, parameter of y-elements are reset after every step on x-axis
 		Core *core = Core::getInstance();
 
 		
@@ -243,7 +244,9 @@ namespace nerd {
 		int periodLength = 0;
 
 		QList<Neuron*> neuronsList = network->getNeurons();
-		
+		//matrix that stores one state of all found attractors, in the worst case plotPixelsX*plotPixelsY 
+		double attrMatrix[plotPixelsX * plotPixelsY][numberNeurons]; //only one state is saved, since if one state is the same, all others must be, too
+		int attractorCount = 0; //counts the attractors
 		//set up matrix:
 		mData->clear();
 		//matrix is as large as diagram (in pixels) + 1
@@ -259,8 +262,9 @@ namespace nerd {
 			}else{
 				mData->set(i + 1, i + 1, 0, 0); //if more, take pixelcount
 			}
+			rListY = rListYInit; //reset parameters
 			for(int l = 0; l < plotPixelsY; l++){//runs through y-parameter changes	
-				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last activity state is used 
+				
 				for(int j = 0; j < noOfvNeuronsY; j++){//set outputs of varied neurons
 					vNeuronsListY[j]->getOutputActivationValue().set(rListY[j]); 
 				}
@@ -274,7 +278,7 @@ namespace nerd {
 					mData->set(l + 1, 0, l + 1, 0); //if more, take pixelcount
 				}
 
-				
+				int steps;
 				attractorFound = false;
 				for(int j = 0; j < maxSteps && attractorFound == false; j++){//look for attractor	
 					//this executes the neural network once.
@@ -299,6 +303,7 @@ namespace nerd {
 					}			
 					//This is important: it keeps the system alive!
 					core->executePendingTasks();
+					steps = j;
 				}//attractor loop
 				
 				
@@ -308,12 +313,52 @@ namespace nerd {
 
 				
 				if(attractorFound){//update data matrix
-					mData->set(periodLength, i + 1, l + 1, 0); 
+					bool oldAttractor = false;
+					int attrNo = 0; 
+					if(attractorCount != 0){//check if the current attractor is already known:
+						for(int k = 0; k < attractorCount && oldAttractor == false; k++){//for all attractors
+							
+							for(int m = steps; m >= steps - periodLength + 1 && oldAttractor == false; m--){//for every state that is part of the attractor
+								oldAttractor = true;	
+								for(int j = 0; j < numberNeurons && oldAttractor == true; j++){//for all neurons
+									if(fabs(attrMatrix[k][j] - tempMatrix[m][j]) > fabs(mTolerance->get())){
+										oldAttractor = false;
+									}
+								}
+							}
+							
+							attrNo = k + 1;//hier?
+						}
+						if(oldAttractor == false){
+							for(int j = 0; j < numberNeurons; j++){
+								attrMatrix[attractorCount + 1][j] = tempMatrix[steps][j];
+							}
+							attractorCount = attractorCount + 1;
+							mData->set(attractorCount, i + 1, l + 1, 0); 
+// 							cerr<<"new attractor!"<<endl;
+// 							cerr<<"activity 1.neuron: " << tempMatrix[steps][0]<<"; "<<tempMatrix[steps - 1][0] << endl;
+// // 							cerr<<"activity 2.neuron: " << tempMatrix[steps][1]<<"; "<<tempMatrix[steps - 1][1] << endl;
+// 							cerr<<"activity 3.neuron: " << tempMatrix[steps][2]<<"; "<<tempMatrix[steps - 1][2] << endl;
+						}else{ //is known attractor
+							mData->set(attrNo, i + 1, l + 1, 0); 
+// 							cerr<<"old attractor........"<<endl;
+// 							cerr<<"activity 1.neuron: " << tempMatrix[steps][0]<<"; "<<tempMatrix[steps - 1][0] << endl;
+						}
+					}else{
+						
+						for(int j = 0; j < numberNeurons; j++){
+							attrMatrix[0][j] = tempMatrix[steps][j];
+						}
+						attractorCount = 1;
+						mData->set(1, i + 1, l + 1, 0); 
+					}
+// 					cerr << "attractorCount: " << attractorCount<<endl;
+					
 				}else{
 					mData->set(0, i + 1, l + 1, 0); 	
 				}
-				
-				
+// 				cerr<<attractorCount <<endl;
+				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last activity state is used 
 			}//for-loop: y-params
 			for(int j = 0; j < noOfvNeuronsX; j++){
 				rListX[j] = rListX[j] + xIncrements[j]; 

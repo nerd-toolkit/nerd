@@ -111,18 +111,15 @@ namespace nerd {
 	QString OnlinePlotterWindow::getName() const {
 		return "OnlinePlotterWindow";
 	}
-	void OnlinePlotterWindow::paintEvent ( QPaintEvent * event ){
-// 		mLabel->resize(mPixmap.width(), mPixmap.height());
-	}
+
 	
 	void OnlinePlotterWindow::resizeEvent ( QResizeEvent * event ){
 		if(mIsSetUp){
 			int oldHeight = event->oldSize().height();
 			int oldWidth = event->oldSize().width();
-// 			cerr<<"margin " << mLabel->margin()<<endl;
-			int currentWidth = event->size().width();
 			int currentHeight = event->size().height();
-
+			int currentWidth = event->size().width();
+			
 			if((oldWidth * oldHeight) == 0){
 				Core::log("OnlinePlotterWindow::resizeEvent(): Something went wrong. oldWidth * oldHeight must not be equal to zero. ", true); 
 				return;
@@ -136,11 +133,17 @@ namespace nerd {
 				Core::log("OnlinePlotterWindow::resizeEvent(): Pixmap is null.", true); 
 				return;
 			}
-
+			xFactor = 1;
 // 			mPixmap = mPixmap.scaled(static_cast<int>(static_cast<double>(mPixmap.width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mPixmap.height()) * yFactor + 0.5));
 			mLabel->setFixedSize(static_cast<int>(static_cast<double>(mLabel->width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mLabel->height()) * yFactor + 0.5));
 // 			QPixmap tempPixmap = mPixmap.scaled(static_cast<int>(static_cast<double>(mPixmap.width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mPixmap.height()) * yFactor + 0.5));
 			QPixmap tempPixmap = mPixmap.scaled(mLabel->width(), mLabel->height());
+			cerr<< "0currentWidth: " << currentWidth<<endl;
+			cerr<< "0currentHeight: " << currentHeight<<endl;
+			cerr<< "0oldWidth: " << oldWidth<<endl;
+			cerr<< "0oldHeight: " << oldHeight<<endl;
+			cerr<< "1tempPixmap.width(): " << tempPixmap.width()<<endl;
+			cerr<< "2label.width(): " << mLabel->width()<<endl;
 			mLabel->clear();
 // 			mLabel->resize(tempPixmap.width(), tempPixmap.height());
 // 			mLabel->setFixedSize(tempPixmap.width(), tempPixmap.height());
@@ -245,6 +248,10 @@ namespace nerd {
 			return;
 		}		
 		mMatrix = dataMatrix;
+		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
+			return;
+			
+		}
 // 		hide();
 		mIsSetUp = false;
 		mWidth = mMatrix->getMatrixWidth();
@@ -265,7 +272,7 @@ namespace nerd {
 // 		cerr<<"update received";
 		mVM = Core::getInstance()->getValueManager();
 		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
-
+		mIsSetUp = false;
 		if(mPlotterOnlineValue->get() == false && mForceUpdate == false){
 			if(mDots == 0){
 				mMessageLabel->setText("<font color='red'>Please wait! Calculating</font>");			
@@ -359,6 +366,10 @@ namespace nerd {
 	 * 
 	 */
 	void OnlinePlotterWindow::finishedProcessing(){
+		//Processing wird ev. gerufen, bevor updateData() fertig…
+		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
+			return;
+		}
 		mForceUpdate = true; // makes using the updateData() function once possible
 		updateData();
 		mMessageLabel->setText("<font color='red'>Done!</font>");
@@ -375,6 +386,9 @@ namespace nerd {
 	 *
 	 */
 	void OnlinePlotterWindow::processing(){
+		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
+			return;
+		}
 		mIsSetUp = false;
 		mMessageLabel->setText("<font color='red'>Please wait! Calculating...</font>");
 		mMessageLabel->show();

@@ -264,7 +264,7 @@ void DynamicsPlotter::restoreCurrentNetworkActivites() {
 			Core::log("DynamicsPlotter::restoreCurrentNetworkActivities: Could not find neuron "
 						+ QString::number(i.key()), true);
 		}
-		mNetworkActivities.insert(neuron->getId(), neuron->getActivationValue().get());
+// 		mNetworkActivities.insert(neuron->getId(), neuron->getActivationValue().get());
 	}
 }
 
