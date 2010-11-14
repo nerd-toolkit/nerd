@@ -75,6 +75,7 @@ namespace nerd {
 		mIdsOfVariedNetworkElements = new StringValue("0"); //comma or |-separated list of network element (either neuron or synapse) IDs.
 		mMinimaOfVariedNetworkElements = new StringValue("0"); //comma-separated list of minimum values for the parameter change. These must be in same sequence as IDs.
 		mMaximaOfVariedNetworkElements = new StringValue("2"); //maxima 
+		mPrerunSteps = new DoubleValue(100);//Number of steps the network takes before started searching for attractors
 
 		mPlotPixelsX = new IntValue(600); //accuracy of parameter variation, no. of pixels in x-dimension of diagram
 		mMinOutputRange = new DoubleValue(-1.0); //Adjust for other transfer function than tanh - is now set for tanh
@@ -99,6 +100,7 @@ namespace nerd {
 		mMinOutputRange->setDescription("Minimum of output range");
 		mMaxOutputRange->setDescription("Maximum of output range");
 		mBidirectional->setDescription("If TRUE, the calculator runs twice. After the standard run, parameter min and max are switched, thus the algorithm is backwards.");
+		mPrerunSteps->setDescription("Number of steps before search for attractors is started.");
 		
 // 		addParameter("Data", mData, true);
 		addParameter("IdOfObservedNeuron", mIdOfObservedNeuron, true);	
@@ -115,6 +117,9 @@ namespace nerd {
 		addParameter("ResetToInitState", mResetToInitState, true);
 		addParameter("MaxSteps", mMaxSteps, true);
 		addParameter("Bidirectional", mBidirectional, true);
+		addParameter("PrerunSteps", mPrerunSteps, true);
+		
+		
 	}
 
 
@@ -178,6 +183,8 @@ namespace nerd {
 		int numberNeurons = network->getNeurons().count(); //no. of neurons in network
 		int maxSteps = mMaxSteps->get();
 		bool resetToInitState = mResetToInitState->get();
+		double prerunSteps = mPrerunSteps->get();
+
 
 		//bias paramater variables
 		int plotPixelsX = mPlotPixelsX->get();	
@@ -231,6 +238,7 @@ namespace nerd {
 		double doubleMod = 0.0;
 		int numberOfSteps = 0;
 
+		
 		QList<Neuron*> neuronsList = network->getNeurons(); //list of all neurons
 		
 		//get index of observed neuron in list:
@@ -267,7 +275,9 @@ namespace nerd {
 			}
 			
 			if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last value is used 
-			
+			for(int j = 0; j < prerunSteps; j++){//pre run prerunSteps
+				mEvaluateNetworkEvent->trigger();
+			}
 			attractorFound = false;
 			for(int j = 0; j < maxSteps && attractorFound == false; j++){ //evaluate network with current parameters
 				//this executes the neural network once.

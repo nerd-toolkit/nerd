@@ -79,7 +79,8 @@ namespace nerd {
 		mResetToInitState = new BoolValue(false); // reset to initial activity state after every parameter change; if false: uses last state ("follows attractor")
 		mMaxSteps = new IntValue(250); // defines maximal number of steps that are executed
 		mTolerance = new DoubleValue(0.000001);//Specifies how large the margin is, such that the two outputs count as the same one 
-
+		mPrerunSteps = new DoubleValue(100);//Number of steps the network takes before started searching for attractors
+		
 		mXAxisDescription->set("Param. 1");//setting initial axes descriptions
 		mYAxisDescription->set("Param. 2");
 		
@@ -95,7 +96,7 @@ namespace nerd {
 		mResetToInitState->setDescription("If TRUE then the network activity is reset after every network step.");
 		mMaxSteps->setDescription("Maximal number of steps taken, if no attractor is found");
 		mTolerance->setDescription("Tolerance for that two values are taken as the same; x = x +/- tol");
-		
+		mPrerunSteps->setDescription("Number of steps before search for attractors is started.");
 		
 		
 // 		addParameter("Data", mData, true);
@@ -110,6 +111,7 @@ namespace nerd {
 		addParameter("Tolerance", mTolerance, true); 
 		addParameter("ResetToInitState", mResetToInitState, true);
 		addParameter("MaxSteps", mMaxSteps, true);
+		addParameter("PrerunSteps", mPrerunSteps, true);
 	}
 
 
@@ -180,7 +182,7 @@ namespace nerd {
 		int numberNeurons = network->getNeurons().count();
 		int maxSteps = mMaxSteps->get();
 		bool resetToInitState = mResetToInitState->get();
-
+		double prerunSteps = mPrerunSteps->get();
 		int plotPixelsX = mPlotPixelsX->get();
 		int plotPixelsY = mPlotPixelsY->get();		
 		
@@ -259,7 +261,7 @@ namespace nerd {
 			}
 			rListY = rListYInit; //reset parameters
 			for(int l = 0; l < plotPixelsY; l++){//runs through y-parameter changes	
-				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last activity state is used 
+				
 				for(int j = 0; j < noOfvElemsY; j++){//set varied values
 					setVariedNetworkElementValue(vElemsListY[j], rListY[j]); //inherited by parent class DynamicsPlotter
 				}
@@ -268,8 +270,11 @@ namespace nerd {
 				}else if(i == 0){
 					mData->set(l + 1, 0, l + 1, 0); //if more, take pixelcount
 				}
-				
+				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last activity state is used 
 				attractorFound = false;
+				for(int j = 0; j < prerunSteps; j++){//pre run
+					mEvaluateNetworkEvent->trigger();
+				}
 				for(int j = 0; j < maxSteps && attractorFound == false; j++){//look for attractor	
 					//this executes the neural network once.
 					mEvaluateNetworkEvent->trigger();

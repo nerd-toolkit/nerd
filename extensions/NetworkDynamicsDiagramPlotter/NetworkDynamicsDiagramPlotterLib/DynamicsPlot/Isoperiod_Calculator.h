@@ -87,7 +87,7 @@ namespace nerd {
 			
 			ULongLongValue *mIdOfObservedNeuron;
 			DoubleValue *mTolerance;
-
+			DoubleValue *mPrerunSteps;
 			BoolValue *mResetToInitState;
 			IntValue *mMaxSteps;
 			

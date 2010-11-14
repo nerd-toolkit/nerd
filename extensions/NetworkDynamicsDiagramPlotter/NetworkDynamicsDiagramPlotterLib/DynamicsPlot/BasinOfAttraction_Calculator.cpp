@@ -72,6 +72,8 @@ namespace nerd {
 		mMinimaOfVariedNeuronsY = new StringValue("0");
 		mMaximaOfVariedNeuronsY = new StringValue("1");
 		
+
+		mPrerunSteps = new DoubleValue(100);//Number of steps the network takes before started searching for attractors
 		mPlotPixelsX = new IntValue(600); //accuracy of x-parameter variation, no. of pixels in x-dimension of diagram
 		mPlotPixelsY = new IntValue(500); //same for y
 		mResetToInitState = new BoolValue(false); // reset to initial activity state after every parameter change; if false: uses last state ("follows attractor")
@@ -93,7 +95,8 @@ namespace nerd {
 		mMaxSteps->setDescription("Maximal number of steps taken, if no attractor is found");
 		mTolerance->setDescription("Tolerance for that two values are taken as the same; x = x +/- tol");
 		mMaxPeriod->setDescription("Maximal size of period that will be found.");
-		
+		mPrerunSteps->setDescription("Number of steps before search for attractors is started.");
+
 		
 		
 		
@@ -109,6 +112,7 @@ namespace nerd {
 		addParameter("ResetToInitState", mResetToInitState, true);
 		addParameter("MaxSteps", mMaxSteps, true);
 		addParameter("MaxPeriod", mMaxPeriod, true);
+		addParameter("PrerunSteps", mPrerunSteps, true);
 	}
 
 
@@ -189,6 +193,8 @@ namespace nerd {
 		int numberNeurons = network->getNeurons().count();
 		int maxSteps = mMaxSteps->get();
 		int maxPeriod = mMaxPeriod->get();
+		double prerunSteps = mPrerunSteps->get();
+
 		if(maxPeriod > maxSteps){
 			Core::log("BasinOfAttractionCalculator: MaxPeriod must not be larger that max steps.", true);
 			return;	
@@ -264,7 +270,7 @@ namespace nerd {
 			}
 			rListY = rListYInit; //reset parameters
 			for(int l = 0; l < plotPixelsY; l++){//runs through y-parameter changes	
-				
+				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last activity state is used 
 				for(int j = 0; j < noOfvNeuronsY; j++){//set outputs of varied neurons
 					vNeuronsListY[j]->getOutputActivationValue().set(rListY[j]); 
 				}
@@ -278,6 +284,10 @@ namespace nerd {
 					mData->set(l + 1, 0, l + 1, 0); //if more, take pixelcount
 				}
 
+				for(int j = 0; j < prerunSteps; j++){//pre run prerunSteps
+					mEvaluateNetworkEvent->trigger();
+				}
+				
 				int steps;
 				attractorFound = false;
 				for(int j = 0; j < maxSteps && attractorFound == false; j++){//look for attractor	
@@ -335,14 +345,8 @@ namespace nerd {
 							}
 							attractorCount = attractorCount + 1;
 							mData->set(attractorCount, i + 1, l + 1, 0); 
-// 							cerr<<"new attractor!"<<endl;
-// 							cerr<<"activity 1.neuron: " << tempMatrix[steps][0]<<"; "<<tempMatrix[steps - 1][0] << endl;
-// // 							cerr<<"activity 2.neuron: " << tempMatrix[steps][1]<<"; "<<tempMatrix[steps - 1][1] << endl;
-// 							cerr<<"activity 3.neuron: " << tempMatrix[steps][2]<<"; "<<tempMatrix[steps - 1][2] << endl;
 						}else{ //is known attractor
 							mData->set(attrNo, i + 1, l + 1, 0); 
-// 							cerr<<"old attractor........"<<endl;
-// 							cerr<<"activity 1.neuron: " << tempMatrix[steps][0]<<"; "<<tempMatrix[steps - 1][0] << endl;
 						}
 					}else{
 						
@@ -358,7 +362,6 @@ namespace nerd {
 					mData->set(0, i + 1, l + 1, 0); 	
 				}
 // 				cerr<<attractorCount <<endl;
-				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last activity state is used 
 			}//for-loop: y-params
 			for(int j = 0; j < noOfvNeuronsX; j++){
 				rListX[j] = rListX[j] + xIncrements[j]; 

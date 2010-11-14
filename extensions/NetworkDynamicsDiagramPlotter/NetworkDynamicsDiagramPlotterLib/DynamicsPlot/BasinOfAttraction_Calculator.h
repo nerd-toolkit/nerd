@@ -92,6 +92,7 @@ namespace nerd {
 			BoolValue *mResetToInitState;
 			IntValue *mMaxSteps;
 			IntValue *mMaxPeriod;
+			DoubleValue *mPrerunSteps;
 		
 	};
 
