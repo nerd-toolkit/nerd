@@ -81,7 +81,7 @@ namespace nerd {
 			StringValue *mMinimaOfVariedNetworkElements;
 			StringValue *mMaximaOfVariedNetworkElements;
 			
-			ULongLongValue *mIdOfObservedNeuron;
+			StringValue *mIdsOfObservedNeurons;
 			DoubleValue *mMaxOutputRange;
 			DoubleValue *mMinOutputRange;
 			DoubleValue *mTolerance;

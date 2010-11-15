@@ -31,11 +31,6 @@ while ischar(tempL)
 end
 
 
-% figure
-% colorbar                      % Turn on color bar on the side
-% pixval                        % Display pixel values interactively
-% truesize                      % Display at resolution of one screen pixel per image pixel
-
 
 stringInfos = t{1}{1};
 index = findstr(stringInfos, ';;');
@@ -56,7 +51,7 @@ end
 
 t{1}{1} = '0';
 calcName = strrep(calcName, '_', '\_');
-%strrep(t{1}{1}, t{1}{1}, '0');        
+    
 %size of data matrix                              
 width = 0;
 height = 0;
@@ -101,9 +96,6 @@ for j = 2:width + 1
         end
     end
 end
-       
-% color map erstellen -> 
-% use 'image' to print pixels from matrix? 
 
 fclose(fileID);
 % figure
@@ -121,20 +113,8 @@ else
 
 end
 
-
-% axHandle = findobj(gcf,'type','axes');
 title(calcName);
 set(get(get(gcf,'CurrentAxes'), 'XLabel'), 'String', xDescr)
 set(get(get(gcf,'CurrentAxes'), 'YLabel'), 'String', yDescr)
 
-
-
-
-
-% set(axHandle, 'DataAspectRatio', [width height depth]);
-% set(axes, 'YDir','normal');
-% set(gcf,'CurrentAxes',axHandle);
-% set(gcf, 'CurrentObject', imHandle);
-% % set(axes, DataAspectRatio, [width height depth])
-% figure(imHandle)
 

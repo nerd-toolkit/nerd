@@ -138,12 +138,7 @@ namespace nerd {
 			mLabel->setFixedSize(static_cast<int>(static_cast<double>(mLabel->width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mLabel->height()) * yFactor + 0.5));
 // 			QPixmap tempPixmap = mPixmap.scaled(static_cast<int>(static_cast<double>(mPixmap.width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mPixmap.height()) * yFactor + 0.5));
 			QPixmap tempPixmap = mPixmap.scaled(mLabel->width(), mLabel->height());
-			cerr<< "0currentWidth: " << currentWidth<<endl;
-			cerr<< "0currentHeight: " << currentHeight<<endl;
-			cerr<< "0oldWidth: " << oldWidth<<endl;
-			cerr<< "0oldHeight: " << oldHeight<<endl;
-			cerr<< "1tempPixmap.width(): " << tempPixmap.width()<<endl;
-			cerr<< "2label.width(): " << mLabel->width()<<endl;
+
 			mLabel->clear();
 // 			mLabel->resize(tempPixmap.width(), tempPixmap.height());
 // 			mLabel->setFixedSize(tempPixmap.width(), tempPixmap.height());

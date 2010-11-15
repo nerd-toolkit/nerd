@@ -70,7 +70,7 @@ namespace nerd {
 	: DynamicsPlotter("Bifurcation_Calculator")
 	{
 // 		mData = new MatrixValue();
-		mIdOfObservedNeuron = new ULongLongValue(0);
+		mIdsOfObservedNeurons = new StringValue("0");
 		
 		mIdsOfVariedNetworkElements = new StringValue("0"); //comma or |-separated list of network element (either neuron or synapse) IDs.
 		mMinimaOfVariedNetworkElements = new StringValue("0"); //comma-separated list of minimum values for the parameter change. These must be in same sequence as IDs.
@@ -88,7 +88,7 @@ namespace nerd {
 		mXAxisDescription->set("Parameter");//setting initial axes descriptions
 		mYAxisDescription->set("Output");
 		
-		mIdOfObservedNeuron->setDescription("ID of the neuron that is observed.");
+		mIdsOfObservedNeurons->setDescription("ID of the neuron that is observed.");
 		mIdsOfVariedNetworkElements->setDescription("List of the IDs of the network elements (neurons or synapse) which are varied separated by commas or '|'.");
 		mMinimaOfVariedNetworkElements->setDescription("Comma-separated list of the minimal values of the varied network elements");
 		mMaximaOfVariedNetworkElements->setDescription("Comma-separated list of the maximal values of the varied network elements");
@@ -103,7 +103,7 @@ namespace nerd {
 		mPrerunSteps->setDescription("Number of steps before search for attractors is started.");
 		
 // 		addParameter("Data", mData, true);
-		addParameter("IdOfObservedNeuron", mIdOfObservedNeuron, true);	
+		addParameter("IdsOfObservedNeurons", mIdsOfObservedNeurons, true);	
 		
 		addParameter("IdsOfVariedNetworkElements", mIdsOfVariedNetworkElements, true);
 		addParameter("MinimaOfVariedNetworkElements", mMinimaOfVariedNetworkElements, true);
@@ -148,6 +148,19 @@ namespace nerd {
 			return;
 		}
 		
+		QList<ULongLongValue*>obsIdsList = createListOfIds(mIdsOfObservedNeurons);//list of IDs of observed neurons
+		int noOfobsNeurons = obsIdsList.size();//No. of neurons
+		QList<Neuron*> obsNeuronsList; //list of neurons
+		//get pointer to the observed neurons 
+		for(int j = 0; j < noOfobsNeurons; j++){
+			obsNeuronsList.append(NeuralNetwork::selectNeuronById(obsIdsList[j]->get(), network->getNeurons()));	
+			if(obsNeuronsList[j] == 0){
+				Core::log("BasinOfAttractionCalculator: Could not find required (observed) neurons!", true);		
+				return;	
+			}
+		}
+		
+		
 		QList<ULongLongValue*>vIdsList = createListOfIds(mIdsOfVariedNetworkElements);//list of IDs of varied elements
 		QList<double> vMinsList = createListOfDoubles(mMinimaOfVariedNetworkElements);
 		QList<double> vMaxsList = createListOfDoubles(mMaximaOfVariedNetworkElements);
@@ -171,13 +184,12 @@ namespace nerd {
 
 		
 		//Get pointers to the output neuron:
-		Neuron *observedNeuron = NeuralNetwork::selectNeuronById(mIdOfObservedNeuron->get(),
-				network->getNeurons());
+// 		Neuron *observedNeuron = NeuralNetwork::selectNeuronById(mIdOfObservedNeuron->get(), network->getNeurons());
 		
-		if(observedNeuron == 0) {
-			Core::log("Bifurcation_Calculator: Could not find required neurons (observed)!", true);		
-			return;
-		}
+// // // 		if(observedNeuron == 0) {
+// // // 			Core::log("Bifurcation_Calculator: Could not find required neurons (observed)!", true);		
+// // // 			return;
+// // // 		}
 		
 		//prepare variables for evaluations
 		int numberNeurons = network->getNeurons().count(); //no. of neurons in network
@@ -221,7 +233,6 @@ namespace nerd {
 			return;
 		}
 		double yIncrement = (maxOutputRange - minOutputRange) / ((double) plotPixelsY - 1); //'-1' to include min and max; gives the range of each pixel in y-dimension
-
 		Core *core = Core::getInstance();
 
 		QList<double> oldValues; //for restoration of initial bias or synapse strength value
@@ -240,16 +251,17 @@ namespace nerd {
 
 		
 		QList<Neuron*> neuronsList = network->getNeurons(); //list of all neurons
-		
+// 		hier liste mit neuronpositionen draus machen:
 		//get index of observed neuron in list:
-		qulonglong posOutputNeuron = -1;
-		for(int k = 0; k < numberNeurons; k++){ 
-			if(static_cast<nerd::Neuron*>(neuronsList.at(k))->getId() == mIdOfObservedNeuron->get()){
-				posOutputNeuron = k;
-				break;
+		qulonglong posOutputNeuron[noOfobsNeurons];
+		for(int j = 0; j < noOfobsNeurons; j++){
+			for(int k = 0; k < numberNeurons; k++){ 
+				if(static_cast<nerd::Neuron*>(neuronsList.at(k))->getId() == obsIdsList[j]->get()){
+					posOutputNeuron[j] = k;
+					break;
+				}
 			}
 		}
-		
 		//set up matrix:
 		mData->clear();
 		//matrix is as large as diagram (in pixels) + 1
@@ -314,12 +326,20 @@ namespace nerd {
 			if(attractorFound){
 				//save outputs from the last step to the one where the repetition was found
 				for(int j = numberOfSteps - periodLength + 1; j <= numberOfSteps; j++){
-					neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+// 					hier den durchschnitt - auch für unten wiederholen!!
+					neuronOutput = 0;
+					for(int n = 0; n < noOfobsNeurons; n++){
+						neuronOutput = neuronOutput + tempMatrix[j][posOutputNeuron[n]]; //get output activation of output neuron of every time step
+					}
+					neuronOutput = neuronOutput / noOfobsNeurons;
+					
 					//find pixel for neuronOutput:
 					//calculate double modulus: thx to http://bytes.com/topic/c/answers/495889-modulus-double-variables ??@chris -> so was in Refs?
 					if(neuronOutput < minOutputRange || neuronOutput > maxOutputRange){
+						//do not plot 
 					}else{
 						temp = static_cast<int>( (neuronOutput - minOutputRange) / yIncrement); //how often fits the bucket in neuronOutput (starting at minOutputRange)
+
 						doubleMod = neuronOutput - minOutputRange - static_cast<double>(temp) * yIncrement; //get modulus neuronOutput%yIncrement
 						//round:
 						if (doubleMod < 0.5 * yIncrement){
@@ -327,15 +347,18 @@ namespace nerd {
 						}else{ 
 							neuronOutput = neuronOutput + yIncrement- doubleMod;
 						}
-						
-						
 						mData->set(1, i + 1, int((neuronOutput + yIncrement - minOutputRange)/yIncrement + 0.5), 0); 
 					}
 				}
 			}else{
 				//no attractor found - plot all activations of output neuron
 				for(int j = 0; j < maxSteps; j++){
-					neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+// 					neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+					neuronOutput = 0;
+					for(int n = 0; n < noOfobsNeurons; n++){
+						neuronOutput = neuronOutput + tempMatrix[j][posOutputNeuron[n]]; //get output activation of output neuron of every time step
+					}
+					neuronOutput = neuronOutput / noOfobsNeurons;
 					if(neuronOutput < minOutputRange || neuronOutput > maxOutputRange){
 						//do nothing
 					}else{
@@ -384,7 +407,9 @@ namespace nerd {
 				for(int j = 0; j < noOfvElems; j++){ 
 					setVariedNetworkElementValue(vElemsList[j], rList[j]); //inherited by parent class DynamicsPlotter
 				}		
-			
+				for(int j = 0; j < prerunSteps; j++){//pre run prerunSteps
+					mEvaluateNetworkEvent->trigger();
+				}
 				if(resetToInitState) restoreCurrentNetworkActivites(); //if false, then the last value is used 
 			
 				attractorFound = false;
@@ -423,7 +448,14 @@ namespace nerd {
 				if(attractorFound){
 				//save outputs from the last step to the one where the repetition was found
 					for(int j = numberOfSteps - periodLength + 1; j <= numberOfSteps; j++){
-						neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+// 						neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+						neuronOutput = 0;
+						for(int n = 0; n < noOfobsNeurons; n++){
+							neuronOutput = neuronOutput + tempMatrix[j][posOutputNeuron[n]]; //get output activation of output neuron of every time step
+						}
+						neuronOutput = neuronOutput / noOfobsNeurons;
+					
+						
 					//find pixel for neuronOutput:
 					//calculate double modulus: thx to http://bytes.com/topic/c/answers/495889-modulus-double-variables ??@chris -> so was in Refs?
 						if(neuronOutput < minOutputRange || neuronOutput > maxOutputRange){
@@ -444,7 +476,13 @@ namespace nerd {
 				}else{
 				//no attractor found - plot all activations of output neuron
 					for(int j = 0; j < maxSteps; j++){
-						neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+// 						neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
+						neuronOutput = 0;
+						for(int n = 0; n < noOfobsNeurons; n++){
+							neuronOutput = neuronOutput + tempMatrix[j][posOutputNeuron[n]]; //get output activation of output neuron of every time step
+						}
+						neuronOutput = neuronOutput / noOfobsNeurons;
+					
 						if(neuronOutput < minOutputRange || neuronOutput > maxOutputRange){
 						//do nothing
 						}else{
