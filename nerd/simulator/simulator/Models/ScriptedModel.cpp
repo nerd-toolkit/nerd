@@ -144,6 +144,10 @@ void ScriptedModel::createModel() {
 void ScriptedModel::layoutObjects() {
 	mCurrentSimObject = 0;
 
+	if(mScript == 0) {
+		return;
+	}
+
 	mScript->evaluate("layoutModel.toString();");
 	if(mScript->hasUncaughtException()) {
 		mScript->evaluate("function layoutModel() { };");
@@ -152,6 +156,10 @@ void ScriptedModel::layoutObjects() {
 }
 
 void ScriptedModel::randomizeObjects() {
+	if(mScript == 0) {
+		return;
+	}
+
 	mScript->evaluate("randomizeEnvironment.toString();");
 	if(mScript->hasUncaughtException()) {
 		mScript->evaluate("function randomizeEnvironment() { };");
@@ -162,6 +170,10 @@ void ScriptedModel::randomizeObjects() {
 }
 
 void ScriptedModel::createEnvironment() {
+
+	if(mScript == 0) {
+		return;
+	}
 
 	mCurrentSimObject = 0;
 	mEnvironmentMode = true;

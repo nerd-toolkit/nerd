@@ -386,7 +386,12 @@ void MSeriesV2Model::createModel() {
 		mUseAlternativeRightArm = false;
 	}
 	else {
-		QStringList bodyParts = bodyPartsList.split(",");
+		QStringList rawBodyParts = bodyPartsList.split(",");
+		QStringList bodyParts;
+		for(QListIterator<QString> i(rawBodyParts); i.hasNext();) {
+			bodyParts.append(i.next().trimmed());
+		}
+		
 		mIncludeHead = bodyParts.contains("Head");
 		mIncludeLeftArm = bodyParts.contains("LeftArm") || bodyParts.contains("LeftArm2b");
 		mIncludeRightArm = bodyParts.contains("RightArm") || bodyParts.contains("RightArm2b");
