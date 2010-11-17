@@ -1,0 +1,37 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc} 
+\usepackage{amsfonts}
+
+\begin{document}
+
+\title{How to Use the Dynamics Plotter}
+\author{
+        Till Faber \\
+        Universit\"{a}t Osnabr\"{u}ck\\
+        Institute of Cognitive Science\\
+        \textit{Neurocybernetics}\\
+        tfaber@uos.de        
+        }
+\date{\today}
+\maketitle
+
+\section*{Introduction}
+This document is supposed to help using the Dynamics Plotter. Therefore the procedure of the creation of a new plot is described. For an explanation of the individual properties of the computation modules, see the bachelor thesis `Visualization of Neurodynamical Properties for an Evolutionary Robotics Environment'. In the following the use of the program is explained, by first noting, what to pay attention to when setting up a network and subsequently explaining how to find and set the properties. 
+
+\section*{Starting the Program}
+  Execution of NetworkDynamics\-DiagramPlotter/\-NetworkDynamics\-DiagramPlotter\-Application/\-NetworkDynamics\-DiagramPlotter\-Application starts the Dynamics Plotter program. The option `-h' gives an overview of the available options, for example how to load a network at startup. 
+
+\section*{Setting up the Network}
+   By pressing `F4' or clicking `Tools \( \rightarrow \)  Network Editor', the network editor is opened. With it new networks can be created or loaded. A useful function is the possibility to grab IDs of network elements: Press `Ctrl + g' and then right-click a neuron or synapse. This shows the ID and saves it to the cache. Click on multiple elements to obtain a list of their IDs. This list can be directly used to specify multiple networks elements in the properties. Uncheck `Control' \( \rightarrow \) `Visualize Activity' to increase the computation speed. 
+   
+\section*{Using the Property Panel}
+   After setting up the network, press `Ctrl + o' or click `Tools \( \rightarrow \) `Object Properties' to launch the property panel. Here the properties for the computation modules can be set. Start entering the name of the module (e.g. 'bifurcation') in the top of the property window until the properties are filtered and in the dropdown-list only those of the respective module appear. Then hit the `Add'-button or press `enter'. Thus the properties should appear in the box below. Use the textbox again and type `PlotterProgram' (`enter') and `inbuiltPlotterOnline' (`enter'). These are needed for the visualization. It is recommended to \emph{remove or deselect the `Data' property}. It is updated during the computation and thus the process takes a lot more time! Specify the properties (see the thesis for a description of those) and finally set `Activate' to \textit{true}. 
+   
+   
+   
+\section*{Visualization} 
+   The inbuilt plotter is automatically started, if required. The exporter creates a file in the specified path, or if none was given, in the NERD home folder. Use this location in the Matlab script. 
+   
+   
+   
+\end{document}

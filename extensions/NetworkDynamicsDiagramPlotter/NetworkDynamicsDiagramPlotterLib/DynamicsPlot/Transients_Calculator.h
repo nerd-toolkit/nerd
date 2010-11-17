@@ -71,9 +71,6 @@ namespace nerd {
 			virtual void calculateData();
 
 		private:
-// 			IntValue *mCalculationTime;
-			
-// 			MatrixValue *mData;
 			IntValue *mPlotPixelsX;
 			ULongLongValue *mIdOfObservedNeuron;
 			DoubleValue *mMaxOutputRange;

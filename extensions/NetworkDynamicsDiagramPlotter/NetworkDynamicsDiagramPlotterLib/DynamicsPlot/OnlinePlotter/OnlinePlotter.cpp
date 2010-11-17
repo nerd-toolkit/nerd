@@ -138,8 +138,7 @@ namespace nerd {
 	 * 
 	 * 
 	 * @param calculator Name of calculator that was executed.
-	 */
-	
+	 */	
 	void OnlinePlotter::prepareData(QString calculator)
 	{
 		ValueManager *vM = Core::getInstance()->getValueManager();

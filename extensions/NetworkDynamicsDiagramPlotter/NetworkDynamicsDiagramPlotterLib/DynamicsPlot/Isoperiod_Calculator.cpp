@@ -63,8 +63,6 @@ namespace nerd {
  */
 	Isoperiod_Calculator::Isoperiod_Calculator(): DynamicsPlotter("Isoperiod_Calculator")
 	{
-// 		mData = new MatrixValue(); //data matrix
-		
 		// IDs, minima, maxima for network elements, that will be plotted on x-axis:
 		mIdsOfVariedNetworkElementsX = new StringValue("0, 0 | 0");
 		mMinimaOfVariedNetworkElementsX = new StringValue("0 , 0, 0");
@@ -85,7 +83,6 @@ namespace nerd {
 		mYAxisDescription->set("Param. 2");
 		
 		mIdsOfVariedNetworkElementsX->setDescription("Comma-separated list of IDs of the neurons that are varied (x-axis).");
-// 		mIdsOfVariedNetwor->setDescription("List of the IDs of the network elements (neurons or synapse) which are varied separated by commas or '|'.");
 		mMinimaOfVariedNetworkElementsX->setDescription("Comma-separated list of the minimal values of the varied network elements (x-axis)");
 		mMaximaOfVariedNetworkElementsX->setDescription("Comma-separated list of the maximal values of the varied network elements (x-axis)");
 		mIdsOfVariedNetworkElementsY->setDescription("Comma-separated list of IDs of the neurons that are varied (y-axis).");
@@ -98,8 +95,6 @@ namespace nerd {
 		mTolerance->setDescription("Tolerance for that two values are taken as the same; x = x +/- tol");
 		mPrerunSteps->setDescription("Number of steps before search for attractors is started.");
 		
-		
-// 		addParameter("Data", mData, true);
 		addParameter("XIdsOfVariedNetworkElements", mIdsOfVariedNetworkElementsX, true);
 		addParameter("XMinimaOfVariedNetworkElements", mMinimaOfVariedNetworkElementsX, true);
 		addParameter("XMaximaOfVariedNetworkElements", mMaximaOfVariedNetworkElementsX, true);

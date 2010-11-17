@@ -69,14 +69,11 @@ namespace nerd {
 	Bifurcation_Calculator::Bifurcation_Calculator()
 	: DynamicsPlotter("Bifurcation_Calculator")
 	{
-// 		mData = new MatrixValue();
-		mIdsOfObservedNeurons = new StringValue("0");
-		
+		mIdsOfObservedNeurons = new StringValue("0");		
 		mIdsOfVariedNetworkElements = new StringValue("0"); //comma or |-separated list of network element (either neuron or synapse) IDs.
 		mMinimaOfVariedNetworkElements = new StringValue("0"); //comma-separated list of minimum values for the parameter change. These must be in same sequence as IDs.
 		mMaximaOfVariedNetworkElements = new StringValue("2"); //maxima 
-		mPrerunSteps = new DoubleValue(100);//Number of steps the network takes before started searching for attractors
-
+		mPrerunSteps = new DoubleValue(50);//Number of steps the network takes before started searching for attractors
 		mPlotPixelsX = new IntValue(600); //accuracy of parameter variation, no. of pixels in x-dimension of diagram
 		mMinOutputRange = new DoubleValue(-1.0); //Adjust for other transfer function than tanh - is now set for tanh
 		mMaxOutputRange = new DoubleValue(1.0); // -- " --
@@ -102,13 +99,10 @@ namespace nerd {
 		mBidirectional->setDescription("If TRUE, the calculator runs twice. After the standard run, parameter min and max are switched, thus the algorithm is backwards.");
 		mPrerunSteps->setDescription("Number of steps before search for attractors is started.");
 		
-// 		addParameter("Data", mData, true);
 		addParameter("IdsOfObservedNeurons", mIdsOfObservedNeurons, true);	
-		
 		addParameter("IdsOfVariedNetworkElements", mIdsOfVariedNetworkElements, true);
 		addParameter("MinimaOfVariedNetworkElements", mMinimaOfVariedNetworkElements, true);
-		addParameter("MaximaOfVariedNetworkElements", mMaximaOfVariedNetworkElements, true);
-						
+		addParameter("MaximaOfVariedNetworkElements", mMaximaOfVariedNetworkElements, true);	
 		addParameter("MinOutputRange", mMinOutputRange, true); 
 		addParameter("MaxOutputRange", mMaxOutputRange, true);
 		addParameter("PlotPixelsX", mPlotPixelsX, true); 
@@ -118,8 +112,6 @@ namespace nerd {
 		addParameter("MaxSteps", mMaxSteps, true);
 		addParameter("Bidirectional", mBidirectional, true);
 		addParameter("PrerunSteps", mPrerunSteps, true);
-		
-		
 	}
 
 
@@ -180,17 +172,7 @@ namespace nerd {
 				return;	
 			}
 		}
-// 		NeuralNetworkElement *variedElem = getVariedNetworkElement(mIdOfVariedNetworkElement); //inherited by parent class DynamicsPlotter
 
-		
-		//Get pointers to the output neuron:
-// 		Neuron *observedNeuron = NeuralNetwork::selectNeuronById(mIdOfObservedNeuron->get(), network->getNeurons());
-		
-// // // 		if(observedNeuron == 0) {
-// // // 			Core::log("Bifurcation_Calculator: Could not find required neurons (observed)!", true);		
-// // // 			return;
-// // // 		}
-		
 		//prepare variables for evaluations
 		int numberNeurons = network->getNeurons().count(); //no. of neurons in network
 		int maxSteps = mMaxSteps->get();
@@ -251,7 +233,6 @@ namespace nerd {
 
 		
 		QList<Neuron*> neuronsList = network->getNeurons(); //list of all neurons
-// 		hier liste mit neuronpositionen draus machen:
 		//get index of observed neuron in list:
 		qulonglong posOutputNeuron[noOfobsNeurons];
 		for(int j = 0; j < noOfobsNeurons; j++){
@@ -326,7 +307,6 @@ namespace nerd {
 			if(attractorFound){
 				//save outputs from the last step to the one where the repetition was found
 				for(int j = numberOfSteps - periodLength + 1; j <= numberOfSteps; j++){
-// 					hier den durchschnitt - auch für unten wiederholen!!
 					neuronOutput = 0;
 					for(int n = 0; n < noOfobsNeurons; n++){
 						neuronOutput = neuronOutput + tempMatrix[j][posOutputNeuron[n]]; //get output activation of output neuron of every time step
@@ -353,7 +333,6 @@ namespace nerd {
 			}else{
 				//no attractor found - plot all activations of output neuron
 				for(int j = 0; j < maxSteps; j++){
-// 					neuronOutput = tempMatrix[j][posOutputNeuron]; //get output activation of output neuron of every time step
 					neuronOutput = 0;
 					for(int n = 0; n < noOfobsNeurons; n++){
 						neuronOutput = neuronOutput + tempMatrix[j][posOutputNeuron[n]]; //get output activation of output neuron of every time step

@@ -62,7 +62,6 @@ namespace nerd {
  */
 	Transients_Calculator::Transients_Calculator(): DynamicsPlotter("Transients_Calculator")
 	{
-// 		mData = new MatrixValue();
 		mIdOfObservedNeuron = new ULongLongValue(0);
 		mPlotPixelsX = new IntValue(600); // No. of time steps, x-size of plot in pixels
 		mMinOutputRange = new DoubleValue(-1.0); //in case other transfer function than tanh - is now set for tanh

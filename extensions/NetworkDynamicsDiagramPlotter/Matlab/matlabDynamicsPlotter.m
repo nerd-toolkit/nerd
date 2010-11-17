@@ -31,7 +31,7 @@ while ischar(tempL)
 end
 
 
-
+%get axes descriptions and name from matrix
 stringInfos = t{1}{1};
 index = findstr(stringInfos, ';;');
 if length(index) == 2
@@ -103,14 +103,14 @@ if depth == 1
     imHandle = imagesc(xAxis, yAxis, matrix');
     %create color map
     cmap = rand(3, 33);
-    cmap(1:3, 1:9) = [1 1 1; 0 0 0; 1 0 0; 0 0 1; 0.75 0 0; 0.6 0.6 0.5; 0 1 0; 0.3 1 0.6; 0.5 0 0]';
+    cmap(1:3, 1:9) = [1 1 1; 0 0 0; 1 0 0; 0 0 1; 1 1 0.2; 0.6 0.6 0.5; 0 1 0; 0.3 1 0.6; 0.5 0 0]';
     cmp(1:3, 17) = [0.25 0 0]';
     colormap(cmap');
     caxis([0 32]);
     colorbar
     
 else
-
+    %for three-dimensional plot
 end
 
 title(calcName);

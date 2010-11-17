@@ -66,9 +66,6 @@ namespace nerd {
 		Core::getInstance()->addSystemObject(this);
 	}
 
-
-
-
 /**
 	 * Destructor.
  */

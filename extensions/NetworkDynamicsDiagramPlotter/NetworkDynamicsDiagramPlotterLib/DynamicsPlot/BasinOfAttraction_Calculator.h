@@ -73,8 +73,6 @@ namespace nerd {
 			
 			virtual void calculateData();
 		private:
-// 			IntValue *mCalculationTime;
-		
 			IntValue *mPlotPixelsX;
 			IntValue *mPlotPixelsY;	
 		

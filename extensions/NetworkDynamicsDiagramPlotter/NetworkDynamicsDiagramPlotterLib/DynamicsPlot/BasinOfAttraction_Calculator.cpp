@@ -61,8 +61,6 @@ namespace nerd {
  */
 	BasinOfAttraction_Calculator::BasinOfAttraction_Calculator() : DynamicsPlotter("BasinOfAttraction_Calculator")
 	{
-
-		
 		// IDs, minima, maxima for network elements, that will be plotted on x-axis:
 		mIdsOfVariedNeuronsX = new StringValue("0, 0 | 0");
 		mMinimaOfVariedNeuronsX = new StringValue("0 , 0, 0");
@@ -72,7 +70,6 @@ namespace nerd {
 		mMinimaOfVariedNeuronsY = new StringValue("0");
 		mMaximaOfVariedNeuronsY = new StringValue("1");
 		
-
 		mPrerunSteps = new DoubleValue(100);//Number of steps the network takes before started searching for attractors
 		mPlotPixelsX = new IntValue(600); //accuracy of x-parameter variation, no. of pixels in x-dimension of diagram
 		mPlotPixelsY = new IntValue(500); //same for y
@@ -97,9 +94,6 @@ namespace nerd {
 		mMaxPeriod->setDescription("Maximal size of period that will be found.");
 		mPrerunSteps->setDescription("Number of steps before search for attractors is started.");
 
-		
-		
-		
 		addParameter("XIdsOfVariedNeurons", mIdsOfVariedNeuronsX, true);
 		addParameter("XMinimaOfVariedNeurons", mMinimaOfVariedNeuronsX, true);
 		addParameter("XMaximaOfVariedNeurons", mMaximaOfVariedNeuronsX, true);
@@ -169,9 +163,7 @@ namespace nerd {
 		
 		QList<Neuron*> vNeuronsListX; //list of neurons
 		QList<Neuron*> vNeuronsListY;
-		
-		
-		
+	
 		//get pointer to the varied neurons on the x-axis
 		for(int j = 0; j < noOfvNeuronsX; j++){
 			vNeuronsListX.append(NeuralNetwork::selectNeuronById(vIdsListX[j]->get(), network->getNeurons()));	
@@ -355,13 +347,10 @@ namespace nerd {
 						}
 						attractorCount = 1;
 						mData->set(1, i + 1, l + 1, 0); 
-					}
-// 					cerr << "attractorCount: " << attractorCount<<endl;
-					
+					}					
 				}else{
 					mData->set(0, i + 1, l + 1, 0); 	
 				}
-// 				cerr<<attractorCount <<endl;
 			}//for-loop: y-params
 			for(int j = 0; j < noOfvNeuronsX; j++){
 				rListX[j] = rListX[j] + xIncrements[j]; 
