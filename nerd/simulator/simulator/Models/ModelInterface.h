@@ -49,6 +49,8 @@
 #include "Value/Vector3DValue.h"
 #include "Event/EventListener.h"
 #include "Event/Event.h"
+#include "Physics/SimObjectGroup.h"
+
 
 namespace nerd{
 
@@ -83,6 +85,8 @@ class ModelInterface : public SimObject, public virtual EventListener {
 		virtual void layoutObjects();
 		virtual void randomizeObjects();
 
+		SimObjectGroup* getAgentInterface() const;
+
 	protected:
 		Vector3DValue *mPosition;
 		Vector3DValue *mOrientation;
@@ -101,6 +105,8 @@ class ModelInterface : public SimObject, public virtual EventListener {
 		QList<QString> mSwitchInputObjectNames;
 		QList<QString> mSwitchInputValueNames;
 		QList<bool> mSwitchInputMakeInfoFlags;
+
+		SimObjectGroup *mAgent;
 };
 }
 #endif

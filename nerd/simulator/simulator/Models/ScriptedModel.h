@@ -101,6 +101,9 @@ namespace nerd {
 		int getCurrent();
 		bool setP(const QString &propertyName, const QString &value);
 
+		bool addToModel(const QString modelName, int objectId);
+		bool addToModel(int modelId, int objectId);
+
 		int createCollisionRule(const QString &name, const QString &prototypeName = "EventCollisionRule");
 		bool crAddSource(int collisionRule, int bodyId);
 		bool crAddSource(int collisionRule, const QString &bodyRegExp);
@@ -117,6 +120,8 @@ namespace nerd {
 		bool hasEnvironmentSection();
 		bool hasModelSection();
 
+		
+
 	protected:
 		virtual void reportError(const QString &message);
 		virtual void importVariables();
@@ -128,7 +133,6 @@ namespace nerd {
 		QHash<int, SimObject*> mSimObjectsLookup;
 		QHash<int, SimObject*> mEnvironmentObjectLookup;
 		QHash<int, CollisionRule*> mCollisionRulesLookup;
-		SimObjectGroup *mAgent;
 		SimObject *mCurrentSimObject;
 		QHash<StringValue*, QString> mPrototypeParameters;
 		bool mEnvironmentMode;

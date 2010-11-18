@@ -380,6 +380,7 @@ void ASeriesUpperBodyPart::createModel() {
 
 	//Agent SimObject group.
 	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
+	mAgent = agent;
 	
 	SimObject *body = 0;
 // 	// Right Foot

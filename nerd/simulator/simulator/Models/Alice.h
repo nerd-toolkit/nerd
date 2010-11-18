@@ -65,7 +65,6 @@ class Alice : public ModelInterface {
 		void addLightSensors(const QString &name, int type);
 
 	private:
-		SimObjectGroup *mAgent;
 		SimObject *mLightSensorPrototype;
 };
 

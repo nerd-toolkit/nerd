@@ -134,6 +134,7 @@ set(nerd_simulator_SRCS
 	Models/CustomModel.cpp
 	Models/ScriptedModel.cpp
 	Collections/ScriptedModelLoader.cpp
+	Physics/Gyroscope.cpp
 )
 
 set(nerd_simulator_MOC_HDRS

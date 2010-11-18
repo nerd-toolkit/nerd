@@ -42,72 +42,53 @@
  ***************************************************************************/
 
 
-
-#ifndef NERDSimpleMultiLeggedRobot_H
-#define NERDSimpleMultiLeggedRobot_H
+#ifndef ORCSGyroscope_H
+#define ORCSGyroscope_H
 
 #include <QString>
 #include <QHash>
-#include "ModelInterface.h"
-#include "Value/IntValue.h"
+#include "Value/InterfaceValue.h"
 #include "Value/BoolValue.h"
+#include "Value/DoubleValue.h"
 #include "Value/StringValue.h"
-#include "Physics/SimBody.h"
+#include "Physics/SimObject.h"
+#include "Physics/SimSensor.h"
+#include "Math/Vector3D.h"
+#include "Value/Vector3DValue.h"
 
 namespace nerd {
 
 	/**
-	 * SimpleMultiLeggedRobot.
+	 * Gyroscope.
 	 *
 	 */
-	class SimpleMultiLeggedRobot : public ModelInterface {
+	class Gyroscope : public virtual SimSensor, public SimObject {
 	public:
-		SimpleMultiLeggedRobot(const QString &groupName = "");
-		SimpleMultiLeggedRobot(const SimpleMultiLeggedRobot &other);
-		virtual ~SimpleMultiLeggedRobot();
+		Gyroscope(const QString &name);
+		Gyroscope(const Gyroscope &other);
+		virtual ~Gyroscope();
 
 		virtual SimObject* createCopy() const;
 
-		virtual void createModel();
+		virtual void setup();
+		virtual void clear();
+
+		virtual void updateSensorValues();
 
 	protected:
-		virtual void layoutObjects();
-
-	private:
-		void createSegmentBody();
-		void createSingleBody();
-		void createSegment(int segmentNumber);
-		void createLegs(SimBody *body, double offset, bool left, int segmentNumber);
-
-
-	private:
-		IntValue *mNumberOfSegmentsValue;
-		BoolValue *mUseSingleBody;
-		DoubleValue *mSegmentLengthValue;
-		DoubleValue *mUpperLegLengthValue;
-		DoubleValue *mLowerLegLengthValue;
-
-		StringValue *mMotorPrototypeNameValue;
-
-		QString mGroupName;
-		QString mNamePrefix;
-		QString mGroupPrefix;
-
-		double mLegThickness;
-		double mHalfBodyWidth;	
-		double mBodyLength;
-		double mConnectorLength;
-		double mUpperLegLength;
-		double mLowerLegLength;
-		double mLegStubLength;
-
-		SimObject *mBoxBodyPrototype;
-		SimObject *mMotor1DPrototype;
-		SimObject *mFixedJointPrototype;
-		SimObject *mForceSensorPrototype;
-		SimObject *mCapsulePrototype;
-
-		QList<SimBody*> mSegmentMainBodies;
+		SimObject *mHostBody;
+		Vector3DValue *mHostBodyOrientation;
+		InterfaceValue *mRotation1stAxis;
+		InterfaceValue *mRotation2ndAxis;
+		InterfaceValue *mRotation3rdAxis;
+		DoubleValue *mDrift;
+		BoolValue *mOutputRateOfChange;
+		StringValue *mHostBodyName;
+		DoubleValue *mMaxSensorOutput;
+		BoolValue *mRandomizeInitialOffsets;
+		Vector3D mPreviousBodyAngles;
+		Vector3D mPreviousSensorAngles;
+		Vector3D mCurrentOffsets;
 		
 	};
 

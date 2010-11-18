@@ -279,6 +279,7 @@ void MSeriesV1Model::createModel() {
 
 	//Agent SimObject group.
 	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
+	mAgent = agent;
 
 	// Right Foot
 		// Main Body (uUperFoot Geom)

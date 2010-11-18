@@ -53,7 +53,8 @@ using namespace std;
 namespace nerd {
 
 ModelInterface::ModelInterface(const QString &name) : SimObject(name), 
-				mResetSettingsCompleted(0), mRandomizeEnvironmentEvent(0), mIsInitialized(false)
+				mResetSettingsCompleted(0), mRandomizeEnvironmentEvent(0), mIsInitialized(false),
+				mAgent(0)
 {
 	setPrefix(name + "/");
 	mPosition = new Vector3DValue();
@@ -67,7 +68,7 @@ ModelInterface::ModelInterface(const QString &name) : SimObject(name),
 ModelInterface::ModelInterface(const ModelInterface &model) : Object(),
 		ValueChangedListener(), EventListener(), SimObject(model), 
 		mResetSettingsCompleted(0), mRandomizeEnvironmentEvent(0),
-		mIsInitialized(false)
+		mIsInitialized(false), mAgent(0)
 		
 {	
 	mPosition = dynamic_cast<Vector3DValue*>(getParameter("Position"));
@@ -145,6 +146,10 @@ void ModelInterface::layoutObjects() {
 
 void ModelInterface::randomizeObjects() {
 
+}
+
+SimObjectGroup* ModelInterface::getAgentInterface() const {
+	return mAgent;
 }
 
 void ModelInterface::reset() {

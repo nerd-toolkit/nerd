@@ -92,7 +92,6 @@ namespace nerd {
 		void addSimObjectPrefix(const QString &prefix);
 
 	protected:
-		SimObjectGroup *mAgent;
 		QList<CustomModelVariable*> mVariables;
 		QHash<QString, CustomModelVariable*> mVariableLookUp;
 	};

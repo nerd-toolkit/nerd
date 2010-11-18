@@ -63,7 +63,6 @@ class Khepera : public ModelInterface {
 		virtual SimObject* createCopy() const;
 
 	private:
-		SimObjectGroup *mAgent;
 		BoolValue *mUseDistanceSensors;
 		BoolValue *mUseLightSensors;
 		StringValue *mDistanceSensorLayout;

@@ -85,8 +85,6 @@ namespace nerd {
 		double mHalfBodyWidth;
 		double mBodyLength;
 
-		SimObjectGroup *mAgent;
-
 	};
 
 }

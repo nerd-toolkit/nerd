@@ -150,6 +150,7 @@ void ConfigurablePendulum::createModel() {
 	}
 
 	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
+	mAgent = agent;
 
 	// rod
 	mRod = dynamic_cast<BoxBody*>(boxBody->createCopy());

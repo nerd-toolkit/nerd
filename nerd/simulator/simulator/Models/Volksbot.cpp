@@ -74,6 +74,7 @@ void Volksbot::createModel() {
 
 	//Agent SimObject group.
 	SimObjectGroup *agent = new SimObjectGroup(name, "Agent");
+	mAgent = agent;
 	
 	double bodySize = 0.05;
 

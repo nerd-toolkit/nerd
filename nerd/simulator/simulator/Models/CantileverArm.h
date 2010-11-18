@@ -83,8 +83,6 @@ namespace nerd {
 		QString mGroupName;
 		QString mNamePrefix;
 		QString mGroupPrefix;
-
-		SimObjectGroup *mAgent;
 	};
 
 }

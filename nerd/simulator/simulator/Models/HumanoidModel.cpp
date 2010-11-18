@@ -368,6 +368,7 @@ void HumanoidModel::createModel() {
 
 	//Agent SimObject group.
 	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
+	mAgent = agent;
 	
 	
 	// Right Foot

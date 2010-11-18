@@ -423,6 +423,7 @@ void MSeriesV2Model::createModel() {
 
 	//Agent SimObject group.
 	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
+	mAgent = agent;
 
 	if(mIncludeRightLeg) {
 	// Right Foot

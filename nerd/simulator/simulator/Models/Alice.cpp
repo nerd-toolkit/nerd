@@ -64,13 +64,12 @@ using namespace std;
 namespace nerd {
 
 Alice::Alice(const QString &name)
-	: ModelInterface(name), mAgent(0)
+	: ModelInterface(name)
 {
 }
 
 Alice::Alice(const Alice &alice)
-	: Object(), ValueChangedListener(), EventListener(), ModelInterface(alice),
-	  mAgent(0)
+	: Object(), ValueChangedListener(), EventListener(), ModelInterface(alice)
 {
 }
 

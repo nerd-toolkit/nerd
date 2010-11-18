@@ -62,6 +62,7 @@
 #include <iostream>
 #include "PlugIns/PrototypeOverviewPrinter.h"
 #include "Physics/SinkBox.h"
+#include "Physics/Gyroscope.h"
 
 
 using namespace std;
@@ -88,6 +89,9 @@ namespace nerd{
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_LIGHT_SENSOR,
         new LightSensor(SimulationConstants::PROTOTYPE_LIGHT_SENSOR));
+
+	pm->addPrototype(SimulationConstants::PROTOTYPE_GYROSCOPE,
+		new Gyroscope(SimulationConstants::PROTOTYPE_GYROSCOPE));
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_BOX_BODY_NO_PHYSICS, 
         new BoxBody(SimulationConstants::PROTOTYPE_BOX_BODY_NO_PHYSICS)); 

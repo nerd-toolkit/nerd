@@ -66,7 +66,7 @@ namespace nerd {
 
 Khepera::Khepera(const QString &name, bool useDistanceSensors,
 		bool useLightSensors)
-	: ModelInterface(name), mAgent(0), mUseDistanceSensors(0),
+	: ModelInterface(name), mUseDistanceSensors(0),
 	  mUseLightSensors(0)
 {
 	mUseDistanceSensors = new BoolValue(useDistanceSensors);
@@ -80,7 +80,7 @@ Khepera::Khepera(const QString &name, bool useDistanceSensors,
 
 Khepera::Khepera(const Khepera &khepera)
 	: Object(), ValueChangedListener(), EventListener(), ModelInterface(khepera),
-	  mAgent(0), mUseDistanceSensors(khepera.mUseDistanceSensors),
+	  mUseDistanceSensors(khepera.mUseDistanceSensors),
 	  mUseLightSensors(khepera.mUseLightSensors)
 {
 	mUseDistanceSensors = dynamic_cast<BoolValue*>(getParameter("UseDistanceSensors"));

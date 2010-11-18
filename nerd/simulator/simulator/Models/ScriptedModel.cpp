@@ -62,7 +62,7 @@ namespace nerd {
  * Constructs a new ScriptedModel.
  */
 ScriptedModel::ScriptedModel(const QString &name, const QString &script)
-	: ScriptingContext(name, "model"), ModelInterface(name), mPrototypeName(""), mIdCounter(1), mAgent(0),
+	: ScriptingContext(name, "model"), ModelInterface(name), mPrototypeName(""), mIdCounter(1),
 		mCurrentSimObject(0), mEnvironmentMode(false), mSetupEnvironmentMode(false), 
 		mRandomizationMode(false)
 {
@@ -76,7 +76,7 @@ ScriptedModel::ScriptedModel(const QString &name, const QString &script)
  */
 ScriptedModel::ScriptedModel(const ScriptedModel &other) 
 	: ScriptingContext(other), ModelInterface(other), mPrototypeName(other.mPrototypeName), 
-		mIdCounter(other.mIdCounter), mAgent(0), mCurrentSimObject(0), mEnvironmentMode(false),
+		mIdCounter(other.mIdCounter), mCurrentSimObject(0), mEnvironmentMode(false),
 		mSetupEnvironmentMode(false), mRandomizationMode(false)
 {
 	for(QHashIterator<StringValue*, QString> i(other.mPrototypeParameters); i.hasNext();) {
@@ -185,10 +185,6 @@ void ScriptedModel::createEnvironment() {
 	QList<SimObject*> objects = mEnvironmentObjectLookup.values();
 	for(QListIterator<SimObject*> i(objects); i.hasNext();) {
 		SimObject *obj = i.next();
-		ModelInterface *model = dynamic_cast<ModelInterface*>(obj);
-		if(model != 0) {
-			model->setup();
-		}
 		pm->addSimObject(obj);
 	}
 	mSetupEnvironmentMode = true;
@@ -218,6 +214,12 @@ int ScriptedModel::createObject(const QString &prototypeName, const QString &nam
 
 	//by default the new object is the current object.
 	mCurrentSimObject = newObject;
+
+	ModelInterface *model = dynamic_cast<ModelInterface*>(newObject);
+	if(model != 0) {
+		model->setup();
+	}
+
 	return id;
 }
 
@@ -243,6 +245,12 @@ int ScriptedModel::copyObject(int objectId, const QString &name) {
 		}
 		newObject->setName(name);
 		mCurrentSimObject = newObject;
+
+		ModelInterface *model = dynamic_cast<ModelInterface*>(newObject);
+		if(model != 0) {
+			model->setup();
+		}
+
 		return id;
 	}
 }
@@ -419,6 +427,51 @@ bool ScriptedModel::setP(const QString &propertyName, const QString &value) {
 		return false;
 	}
 	return prop->setValueFromString(value);
+}
+
+
+bool ScriptedModel::addToModel(const QString modelName, int objectId) {
+	SimObject *obj = 0;
+	if(mEnvironmentMode) {
+		obj = mEnvironmentObjectLookup.value(objectId);
+	}
+	else { //TODO check if this should be allowed at all?
+		obj = mSimObjectsLookup.value(objectId);
+	}
+	if(obj == 0) {
+		reportError("Could not find object [" 
+				+ QString::number(objectId) + "] to add to model [" + modelName + "]");
+		return false;
+	}
+	SimObjectGroup *group = Physics::getPhysicsManager()->getSimObjectGroup(modelName);
+	if(group == 0) {
+		reportError("Could not find the model with name [" + modelName + "]");
+		return false;
+	}
+	return group->addObject(obj);
+}
+
+bool ScriptedModel::addToModel(int modelId, int objectId) {
+	SimObject *obj = 0;
+	SimObjectGroup *model = 0;
+	if(mEnvironmentMode) {
+		obj = mEnvironmentObjectLookup.value(objectId);
+		ModelInterface *modelInterface = dynamic_cast<ModelInterface*>(mEnvironmentObjectLookup.value(modelId));
+		Core::log("Inteface: " + QString::number((int) modelInterface), true);
+		if(modelInterface != 0) {
+			model = modelInterface->getAgentInterface();
+		}
+	}
+	if(obj == 0) {
+		reportError("Could not find object [" 
+				+ QString::number(objectId) + "] to add to model [" + QString::number(modelId) + "]");
+		return false;
+	}
+	if(model == 0) {
+		reportError("Could not find the model with id [" + QString::number(modelId) + "]");
+		return false;
+	}
+	return model->addObject(obj);
 }
 
 

@@ -101,6 +101,7 @@ void MSeriesMotorMultipleTest::createModel() {
 
 	//Agent SimObject group.
 	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
+	mAgent = agent;
 
 	// First box
 	double mFirstBoxSize = 0.056;
