@@ -120,6 +120,8 @@ namespace nerd {
 		StringValue *mScriptCode;
 		StringValue *mScriptFileName;
 		QString mMainContextName;
+		bool mHasUnresolvedValueDefinitions;
+		bool mHasUnresolvedEventDefinitions;
 	};
 
 }

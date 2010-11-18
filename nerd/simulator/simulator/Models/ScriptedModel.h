@@ -95,6 +95,7 @@ namespace nerd {
 		bool setProperty(const QString &fullPropertyName, const QString &value);
 		bool hasProperty(int objectId, const QString &propertyName);
 		QString getProperty(int objectId, const QString &propertyName);
+		QString getProperty(const QString &fullPropertyName);
 		
 		bool makeCurrent(int objectId);
 		int getCurrent();

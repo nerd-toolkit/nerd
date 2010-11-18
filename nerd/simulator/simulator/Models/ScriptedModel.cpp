@@ -338,6 +338,31 @@ QString ScriptedModel::getProperty(int objectId, const QString &propertyName) {
 	return prop->getValueAsString();
 }
 
+QString ScriptedModel::getProperty(const QString &fullPropertyName) {
+	ValueManager *vm = Core::getInstance()->getValueManager();
+
+	QString propNameRegExp = fullPropertyName;
+	propNameRegExp = propNameRegExp.replace("**", ".*");
+	QList<QString> matchingNames = vm->getValueNamesMatchingPattern(propNameRegExp, true);
+
+	if(matchingNames.empty()) {
+		reportError("Could not find global property [" 
+				+ fullPropertyName + "]");
+		return "";
+	}
+
+	for(QListIterator<QString> i(matchingNames); i.hasNext();) {
+		Value *v = vm->getValue(i.next());
+		if(v == 0) {
+			reportError("Could not find global property [" 
+					+ fullPropertyName + "]");
+			continue;
+		}
+		return v->getValueAsString();
+	}
+	return "";
+}
+
 
 bool ScriptedModel::makeCurrent(int objectId) {
 	SimObject *obj = 0;

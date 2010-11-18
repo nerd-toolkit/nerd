@@ -72,7 +72,8 @@ namespace nerd {
  * Constructs a new ScriptingContext.
  */
 ScriptingContext::ScriptingContext(const QString &name, const QString &mainContextName)
-	: mName(name), mScript(0), mScriptCode(0), mScriptFileName(0), mMainContextName(mainContextName)
+	: mName(name), mScript(0), mScriptCode(0), mScriptFileName(0), mMainContextName(mainContextName),
+	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false)
 {
 	mScriptCode = new StringValue();
 	mScriptCode->addValueChangedListener(this);
@@ -91,7 +92,8 @@ ScriptingContext::ScriptingContext(const QString &name, const QString &mainConte
  */
 ScriptingContext::ScriptingContext(const ScriptingContext &other) 
 	: QObject(), mName(other.mName), mScript(0), mScriptCode(0), mScriptFileName(0), 
-	  mMainContextName(other.mMainContextName)
+	  mMainContextName(other.mMainContextName),
+	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false)
 {
 	mScriptCode = new StringValue(other.mScriptCode->get());
 	mScriptCode->addValueChangedListener(this);
@@ -157,6 +159,8 @@ void ScriptingContext::resetScriptContext() {
 	if(!Core::getInstance()->isMainExecutionThread()) {
 		return;
 	}
+	mHasUnresolvedValueDefinitions = false;
+	mHasUnresolvedEventDefinitions = false;
 
 	//remove all known events
 	for(QHash<Event*, QString>::iterator i = mEventNames.begin(); i != mEventNames.end(); i++) {
@@ -317,6 +321,11 @@ void ScriptingContext::executeScriptFunction(const QString &functionName) {
 	if(mScript == 0 || !Core::getInstance()->isMainExecutionThread()) {
 		return;
 	}
+	if(mHasUnresolvedValueDefinitions || mHasUnresolvedEventDefinitions) {
+		Core::log("Scripting Context [" + getName() + "]: Resetting script because of unresolved "
+				  "Value or Event definitions. The reset might fix this problem.", true);
+		resetScriptContext();
+	}
 
 	importVariables();
 	QScriptValue error = mScript->evaluate(functionName);
@@ -446,6 +455,8 @@ void ScriptingContext::defineVariable(const QString &name, const QString &valueN
 		reportError(QString("ScriptingContext [") + getName() + "]: "
 				+ "Could not define string variable [" + name 
 				+ "] for value [" + valueName + "]! Value name not found!");
+
+		mHasUnresolvedValueDefinitions = true;
 		return;
 	}
 
@@ -463,6 +474,8 @@ void ScriptingContext::defineReadOnlyVariable(const QString &name, const QString
 		reportError(QString("ScriptingContext [") + getName() + "]: "
 				+ "Could not define string variable [" + name 
 				+ "] for value [" + valueName + "]! Value name not found!");
+
+		mHasUnresolvedValueDefinitions = true;
 		return;
 	}
 
@@ -494,6 +507,8 @@ void ScriptingContext::defineEvent(const QString &name, const QString &eventName
 		reportError(QString("ScriptingContext [") + getName() + "]: "
 				+ "Could not define event variable [" + name 
 				+ "] for event [" + eventName + "]! Event name not found!");
+
+		mHasUnresolvedEventDefinitions = true;
 		return;
 	}
 	mEventNames.insert(event, name);
