@@ -82,7 +82,7 @@ ScriptedModelLoader::ScriptedModelLoader()
 			model->loadScriptFromFile(fileName);
 			if(model->getName() != "") {
 				Core::log("ScriptedModelLoader: Installed model prototype ["
-						+ model->getName() + "] from file [" + fileName + "]");
+						+ model->getName() + "] from file [" + fileName + "]", true);
 
 				if(model->hasModelSection()) {
 					Physics::getPhysicsManager()->addPrototype(model->getName(), model);

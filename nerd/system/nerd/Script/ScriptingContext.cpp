@@ -322,8 +322,10 @@ void ScriptingContext::executeScriptFunction(const QString &functionName) {
 		return;
 	}
 	if(mHasUnresolvedValueDefinitions || mHasUnresolvedEventDefinitions) {
-		Core::log("Scripting Context [" + getName() + "]: Resetting script because of unresolved "
-				  "Value or Event definitions. The reset might fix this problem.", true);
+		if(Core::getInstance()->isInitialized()) {
+			Core::log("Scripting Context [" + getName() + "]: "
+					  "Resetting script: unresolved defVar or defEvent.", true);
+		}
 		resetScriptContext();
 	}
 
@@ -452,10 +454,11 @@ void ScriptingContext::defineVariable(const QString &name, const QString &valueN
 	Value *value = Core::getInstance()->getValueManager()->getMultiPartValue(valueName);
 
 	if(value == 0 && reportMissingValues) {
-		reportError(QString("ScriptingContext [") + getName() + "]: "
-				+ "Could not define string variable [" + name 
-				+ "] for value [" + valueName + "]! Value name not found!");
-
+		if(Core::getInstance()->isInitialized()) {
+			reportError(QString("ScriptingContext [") + getName() + "]: "
+					+ "Could not define string variable [" + name 
+					+ "] for value [" + valueName + "]! Value name not found!");
+		}
 		mHasUnresolvedValueDefinitions = true;
 		return;
 	}
@@ -471,10 +474,11 @@ void ScriptingContext::defineReadOnlyVariable(const QString &name, const QString
 	Value *value = Core::getInstance()->getValueManager()->getMultiPartValue(valueName);
 
 	if(value == 0 && reportMissingValues) {
-		reportError(QString("ScriptingContext [") + getName() + "]: "
-				+ "Could not define string variable [" + name 
-				+ "] for value [" + valueName + "]! Value name not found!");
-
+		if(Core::getInstance()->isInitialized()) {
+			reportError(QString("ScriptingContext [") + getName() + "]: "
+					+ "Could not define string variable [" + name 
+					+ "] for value [" + valueName + "]! Value name not found!");
+		}
 		mHasUnresolvedValueDefinitions = true;
 		return;
 	}
@@ -504,10 +508,11 @@ void ScriptingContext::defineEvent(const QString &name, const QString &eventName
 	Event *event = em->registerForEvent(eventName, this);
 	
 	if(event == 0 && reportMissingEvents) {
-		reportError(QString("ScriptingContext [") + getName() + "]: "
-				+ "Could not define event variable [" + name 
-				+ "] for event [" + eventName + "]! Event name not found!");
-
+		if(Core::getInstance()->isInitialized()) {
+			reportError(QString("ScriptingContext [") + getName() + "]: "
+					+ "Could not define event variable [" + name 
+					+ "] for event [" + eventName + "]! Event name not found!");
+		}
 		mHasUnresolvedEventDefinitions = true;
 		return;
 	}

@@ -120,12 +120,12 @@ SimObject* ScriptedModel::createCopy() const {
 }
 
 void ScriptedModel::createModel() {
+	mIdCounter = 1;
+	resetScriptContext();
+
 	if(!hasModelSection()) {
 		return;
 	}
-
-	mIdCounter = 1;
-	resetScriptContext();
 
 	mAgent = new SimObjectGroup(getName(), "Agent");
 	mCurrentSimObject = 0;
