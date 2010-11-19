@@ -127,7 +127,6 @@ void ScriptedModel::createModel() {
 		return;
 	}
 
-	mAgent = new SimObjectGroup(getName(), "Agent");
 	mCurrentSimObject = 0;
 
 	executeScriptFunction("createModel();");
@@ -186,6 +185,11 @@ void ScriptedModel::createEnvironment() {
 	for(QListIterator<SimObject*> i(objects); i.hasNext();) {
 		SimObject *obj = i.next();
 		pm->addSimObject(obj);
+
+		ModelInterface *model = dynamic_cast<ModelInterface*>(obj);
+		if(model != 0) {
+			model->setup();
+		}
 	}
 	mSetupEnvironmentMode = true;
 	mScript->evaluate("setupEnvironment.toString();");
@@ -215,11 +219,6 @@ int ScriptedModel::createObject(const QString &prototypeName, const QString &nam
 	//by default the new object is the current object.
 	mCurrentSimObject = newObject;
 
-	ModelInterface *model = dynamic_cast<ModelInterface*>(newObject);
-	if(model != 0) {
-		model->setup();
-	}
-
 	return id;
 }
 
@@ -245,12 +244,6 @@ int ScriptedModel::copyObject(int objectId, const QString &name) {
 		}
 		newObject->setName(name);
 		mCurrentSimObject = newObject;
-
-		ModelInterface *model = dynamic_cast<ModelInterface*>(newObject);
-		if(model != 0) {
-			model->setup();
-		}
-
 		return id;
 	}
 }

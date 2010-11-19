@@ -422,8 +422,7 @@ void MSeriesV2Model::createModel() {
 			SimulationConstants::PROTOTYPE_HINGE_SPRING_ADAPTER);
 
 	//Agent SimObject group.
-	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
-	mAgent = agent;
+	SimObjectGroup *agent = mAgent;
 
 	if(mIncludeRightLeg) {
 	// Right Foot

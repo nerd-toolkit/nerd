@@ -135,8 +135,6 @@ void SimpleMultiLeggedRobot::createModel() {
 
 	mNamePrefix = "/";
 	mGroupPrefix = QString("/").append(mGroupName);
-
-	mAgent = new SimObjectGroup(mGroupName, "Agent");
 	
 	mLegThickness = 0.02;
 	mHalfBodyWidth = 0.02;

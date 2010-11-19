@@ -379,8 +379,7 @@ void ASeriesUpperBodyPart::createModel() {
 	Color *absColor = new Color(25, 25, 25, 255);
 
 	//Agent SimObject group.
-	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
-	mAgent = agent;
+	SimObjectGroup *agent = mAgent;
 	
 	SimObject *body = 0;
 // 	// Right Foot

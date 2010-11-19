@@ -87,6 +87,8 @@ class ModelInterface : public SimObject, public virtual EventListener {
 
 		SimObjectGroup* getAgentInterface() const;
 
+		virtual void valueChanged(Value *value);
+
 	protected:
 		Vector3DValue *mPosition;
 		Vector3DValue *mOrientation;

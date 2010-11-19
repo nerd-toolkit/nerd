@@ -92,7 +92,6 @@ void Khepera::createModel() {
 	CollisionManager *cm = Physics::getCollisionManager();
 	PhysicsManager *pm = Physics::getPhysicsManager();
 
-	mAgent = new SimObjectGroup(getName(), "Agent");
 	QString pathName = "/";
 	pathName = pathName.append(getName());
 

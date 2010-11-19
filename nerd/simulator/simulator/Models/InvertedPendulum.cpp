@@ -110,8 +110,6 @@ void InvertedPendulum::createModel() {
 
 	mNamePrefix = "/";
 	mGroupPrefix = QString("/").append(mGroupName);
-
-	mAgent = new SimObjectGroup(mGroupName, "Agent");
 	
 	mStickLength = 0.2;
 	mHalfBodyWidth = 0.015;

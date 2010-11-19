@@ -278,8 +278,7 @@ void MSeriesV1Model::createModel() {
 			SimulationConstants::PROTOTYPE_ACCELSENSOR_3D);
 
 	//Agent SimObject group.
-	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
-	mAgent = agent;
+	SimObjectGroup *agent = mAgent;
 
 	// Right Foot
 		// Main Body (uUperFoot Geom)

@@ -73,6 +73,10 @@ const QString& SimObjectGroup::getName() const {
 	return mName;
 }
 
+void SimObjectGroup::setName(const QString &name) {
+	mName = name;
+}
+
 
 const QString& SimObjectGroup::getType() const {
 	return mType;

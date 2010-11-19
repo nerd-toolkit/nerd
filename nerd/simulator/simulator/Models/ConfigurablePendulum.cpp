@@ -149,8 +149,7 @@ void ConfigurablePendulum::createModel() {
 	default: motor = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_0);
 	}
 
-	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
-	mAgent = agent;
+	SimObjectGroup *agent = mAgent;
 
 	// rod
 	mRod = dynamic_cast<BoxBody*>(boxBody->createCopy());

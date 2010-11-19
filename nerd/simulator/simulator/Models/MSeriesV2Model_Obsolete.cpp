@@ -415,8 +415,7 @@ void MSeriesV2Model_Obsolete::createModel() {
 			SimulationConstants::PROTOTYPE_ACCELSENSOR_3D);
 
 	//Agent SimObject group.
-	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
-	mAgent = agent;
+	SimObjectGroup *agent = mAgent;
 
 	if(mIncludeRightLeg) {
 	// Right Foot

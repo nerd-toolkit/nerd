@@ -89,7 +89,7 @@ void DummyModel::createModel() {
 
 	PhysicsManager *pm = Physics::getPhysicsManager();
 
-	SimObjectGroup *agent = new SimObjectGroup(getName(), "Agent");
+	SimObjectGroup *agent = mAgent;
 
 	pm->addSimObjectGroup(agent);
 

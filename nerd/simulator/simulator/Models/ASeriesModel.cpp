@@ -346,7 +346,6 @@ void ASeriesModel::createModel() {
   Color *absColor = new Color(25, 25, 25, 255);
 
   //Agent SimObject group.
-  mAgent = new SimObjectGroup(mGroupName, "Agent");
   SimObjectGroup *agent = mAgent;
   
   

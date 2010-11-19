@@ -73,8 +73,7 @@ void Volksbot::createModel() {
 	QString namePrefix = "/";
 
 	//Agent SimObject group.
-	SimObjectGroup *agent = new SimObjectGroup(name, "Agent");
-	mAgent = agent;
+	SimObjectGroup *agent = mAgent;
 	
 	double bodySize = 0.05;
 

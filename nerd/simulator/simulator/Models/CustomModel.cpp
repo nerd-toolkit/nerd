@@ -98,8 +98,6 @@ void CustomModel::createModel() {
 
 void CustomModel::createModel(bool ignorePhysicsManager) {
 
-	mAgent = new SimObjectGroup(getName(), "Agent");
-
 	QString pathName = "/";
 	pathName = pathName.append(getName());
 

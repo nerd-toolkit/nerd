@@ -63,6 +63,8 @@ ModelInterface::ModelInterface(const QString &name) : SimObject(name),
 	addParameter("Orientation", mOrientation);
 	mResetSettingsCompleted = 0;
 	mMorphologyParametersPrefix = "MorphologyParameters/";
+
+	mAgent = new SimObjectGroup(getName(), "Agent");
 }
 
 ModelInterface::ModelInterface(const ModelInterface &model) : Object(),
@@ -75,6 +77,8 @@ ModelInterface::ModelInterface(const ModelInterface &model) : Object(),
 	mOrientation = dynamic_cast<Vector3DValue*>(getParameter("Orientation"));
 	mResetSettingsCompleted = 0;
 	mMorphologyParametersPrefix = "MorphologyParameters/";
+
+	mAgent = new SimObjectGroup(getName(), "Agent");
 }
 
 ModelInterface::~ModelInterface() {
@@ -151,6 +155,17 @@ void ModelInterface::randomizeObjects() {
 SimObjectGroup* ModelInterface::getAgentInterface() const {
 	return mAgent;
 }
+
+void ModelInterface::valueChanged(Value *value) {
+	SimObject::valueChanged(value);
+	if(value == 0) {
+		return;
+	}
+	else if(value == mNameValue) {
+		mAgent->setName(mNameValue->get());
+	}
+}
+
 
 void ModelInterface::reset() {
 	layoutObjects();

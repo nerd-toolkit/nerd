@@ -100,8 +100,7 @@ void MSeriesMotorMultipleTest::createModel() {
 //			SimulationConstants::PROTOTYPE_CYLINDER_BODY); 
 
 	//Agent SimObject group.
-	SimObjectGroup *agent = new SimObjectGroup(mGroupName, "Agent");
-	mAgent = agent;
+	SimObjectGroup *agent = mAgent;
 
 	// First box
 	double mFirstBoxSize = 0.056;

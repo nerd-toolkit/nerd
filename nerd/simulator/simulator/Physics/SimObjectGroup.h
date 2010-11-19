@@ -63,6 +63,7 @@ namespace nerd {
 		virtual ~SimObjectGroup();
 		
 		const QString& getName() const;
+		void setName(const QString &name);
 		const QString& getType() const;
 		
 		void clearGroup();

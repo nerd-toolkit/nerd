@@ -87,8 +87,7 @@ void ShakerBoard::createModel() {
 	PhysicsManager *pm = Physics::getPhysicsManager();
 
 	// Create SimObjectGroup for all SimObjects of the ShakerBoard
-	SimObjectGroup *shakerBoard = new SimObjectGroup(getName(), "ShakerBoard");
-	mAgent = shakerBoard;
+	SimObjectGroup *shakerBoard = mAgent;
 
 	// Create board without motor and add it to SimObjectGroup and mSimObjects
 	SimObject *boxBody = pm->getPrototype(

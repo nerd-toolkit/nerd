@@ -133,9 +133,6 @@ void CantileverArm::createModel() {
 	mNamePrefix = "/";
 	mGroupPrefix = QString("/").append(mGroupName).append("/");
 
-	mAgent = new SimObjectGroup(mGroupName, "Agent");
-
-
 	double length = mBoomLength->get();
 	double xArmPos = -1 * mBoomOffset->get();
 	double mass = mCantileverMass->get();
