@@ -146,7 +146,8 @@ void Gyroscope::setup() {
 
 
 void Gyroscope::clear() {
-
+	mHostBodyOrientation = 0;
+	mHostBody = 0;
 }
 
 void Gyroscope::updateSensorValues() {

@@ -457,7 +457,6 @@ bool ScriptedModel::addToModel(int modelId, int objectId) {
 	if(mEnvironmentMode) {
 		obj = mEnvironmentObjectLookup.value(objectId);
 		ModelInterface *modelInterface = dynamic_cast<ModelInterface*>(mEnvironmentObjectLookup.value(modelId));
-		Core::log("Inteface: " + QString::number((int) modelInterface), true);
 		if(modelInterface != 0) {
 			model = modelInterface->getAgentInterface();
 		}
