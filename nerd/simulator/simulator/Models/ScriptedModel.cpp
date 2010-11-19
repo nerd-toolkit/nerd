@@ -86,6 +86,7 @@ ScriptedModel::ScriptedModel(const ScriptedModel &other)
 			mPrototypeParameters.insert(value, i.value());
 		}
 	}
+	resetScriptContext();
 }
 
 /**
@@ -121,11 +122,12 @@ SimObject* ScriptedModel::createCopy() const {
 
 void ScriptedModel::createModel() {
 	mIdCounter = 1;
-	resetScriptContext();
 
 	if(!hasModelSection()) {
 		return;
 	}
+	//resetScriptContext();
+	
 
 	mCurrentSimObject = 0;
 
@@ -511,7 +513,6 @@ bool ScriptedModel::crAddSource(int collisionRule, int bodyId) {
 				+ QString::number(bodyId) + "]");
 		return false;
 	}
-	cerr << "Adding source" << endl;
 	for(int i = 0; i < body->getCollisionObjects().size(); i++) {
 		rule->addToSourceGroup(body->getCollisionObjects().at(i));
 	}

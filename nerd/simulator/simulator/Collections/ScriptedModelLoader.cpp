@@ -91,8 +91,8 @@ ScriptedModelLoader::ScriptedModelLoader()
 					model->createEnvironment();
 				}
 				if(!model->hasModelSection()) {
-					model->setup();
 					mEnvironmentModels.append(model);
+					model->setup();
 				}
 			}
 			else {

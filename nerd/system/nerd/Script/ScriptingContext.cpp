@@ -280,6 +280,7 @@ void ScriptingContext::resetScriptContext() {
 		}
 		reportError(errorMessage);
 
+		cerr << "Error1" << endl;
 		delete mScript;
 		mScript = 0;
 
