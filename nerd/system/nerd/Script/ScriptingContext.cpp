@@ -327,6 +327,7 @@ void ScriptingContext::executeScriptFunction(const QString &functionName) {
 			Core::log("Scripting Context [" + getName() + "]: "
 					  "Resetting script: unresolved defVar or defEvent.", true);
 		}
+		cerr << "R3" << endl;
 		resetScriptContext();
 	}
 

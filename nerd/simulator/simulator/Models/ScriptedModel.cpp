@@ -252,7 +252,7 @@ int ScriptedModel::copyObject(int objectId, const QString &name) {
 
 bool ScriptedModel::setProperty(int objectId, const QString &propertyName, const QString &value) {
 	ParameterizedObject *obj = 0;
-	if(mEnvironmentMode) {
+	if(mEnvironmentMode || mRandomizationMode) {
 		obj = mEnvironmentObjectLookup.value(objectId);
 	}
 	else if(mSetupEnvironmentMode) {
