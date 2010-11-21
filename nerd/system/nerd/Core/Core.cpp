@@ -491,14 +491,12 @@ bool Core::init() {
 	bool quitApplication = false;
 	mShutDownCompleted = false;
 
+	QDir plugInDir(getConfigDirectoryPath().append("/plugins"));
 	if(!mIsUsingReducedFileWriting) {
 		logMessage("~Loading PlugIns.");
-
-		QDir plugInDir(getConfigDirectoryPath().append("/plugins"));
 		enforceDirectoryPath(plugInDir.absolutePath());
-
-		mPlugInManager->loadPlugIns(plugInDir.absolutePath());
 	}
+	mPlugInManager->loadPlugIns(plugInDir.absolutePath());
 
 	//check version request
 	CommandLineArgument *versionArgument = new CommandLineArgument("version", "", "",

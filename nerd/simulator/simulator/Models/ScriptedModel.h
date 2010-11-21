@@ -117,6 +117,8 @@ namespace nerd {
 		QString toVector3DString(double x, double y, double z);
 		QString toColorString(double r, double g, double b, double t);
 
+		bool loadValues(const QString &fileName);
+
 		bool hasEnvironmentSection();
 		bool hasModelSection();
 

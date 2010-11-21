@@ -698,6 +698,10 @@ QString ScriptedModel::toColorString(double r, double g, double b, double t) {
 			+ "," + QString::number(b) + "," + QString::number(t) + ")";
 }
 
+bool ScriptedModel::loadValues(const QString &fileName) {
+	return Core::getInstance()->getValueManager()->loadValues(fileName);
+}
+
 bool ScriptedModel::hasEnvironmentSection() {
 	if(mScript != 0) {
 		mScript->evaluate("createEnvironment.toString();");
