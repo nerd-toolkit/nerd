@@ -41,94 +41,115 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#ifndef NERD_HINGEMOTORADAPTER_H
-#define NERD_HINGEMOTORADAPTER_H
 
 
-#include "Physics/HingeJoint.h"
-#include "Physics/SimSensor.h"
-#include "Physics/SimActuator.h"
+#include "PID_Controller.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "Math/Math.h"
 
-#include <QMap>
 
-class QString;
-namespace nerd { class SimObject; }
-namespace nerd { class HingeMotor; }
-namespace nerd { class DoubleValue; }
-namespace nerd { class BoolValue; }
-namespace nerd { class StringValue; }
+using namespace std;
 
 namespace nerd {
 
+
 /**
- * HingeMotorAdapter
+ * Constructs a new PID_Controller.
+ */
+PID_Controller::PID_Controller(double p, double i, double d, double stepSize)
+{
+	mProportional = p;
+	mIntegral = i;
+	mDifferential = d;
+	mStepSize = stepSize;
+	mLastError = 0.0;
+}
+
+
+/**
+ * Copy constructor. 
  * 
- * Base class for all HingeMotorAdapters. A HingeMotorAdpater can hold different
- * HingeMotor objects. The user can configure which HingeMotor should be used.
- * The HingeMotorAdapter provides a motor interface and passes the set parameters to the
- * HingeMotors.  
- */  
-class HingeMotorAdapter : public HingeJoint, public SimSensor, public SimActuator {
-	public:
-		
-		HingeMotorAdapter(const QString &name, const QString &globalActiveMotorValue);
-		HingeMotorAdapter(const HingeMotorAdapter &hingeMotorAdapter);
-		
-		virtual SimObject* createCopy() const = 0;
+ * @param other the PID_Controller object to copy.
+ */
+PID_Controller::PID_Controller(const PID_Controller &other) 
+	: mProportional(other.mProportional), mIntegral(other.mIntegral), 
+		mDifferential(other.mDifferential), mStepSize(other.mStepSize),
+		mLastError(0.0)
+{
+}
+
+/**
+ * Destructor.
+ */
+PID_Controller::~PID_Controller() {
+}
+
+
+void PID_Controller::setPIDParameters(double p, double i, double d) {
+	mProportional = p;
+	mIntegral = i;
+	mDifferential = d;
+}
+
+
+void PID_Controller::setHistorySize(int size) {
+	mHistorySize = size;
+}
+
+
+bool PID_Controller::update(double currentAngle, double desiredAngle) {
+
+
+	double velocity = 0.0;
+	double currentError = desiredAngle - currentAngle;
 	
-		virtual void valueChanged(Value *value);
-		virtual void setup();
-		virtual void clear();
+	mErrorHistory.push_back(currentError);
 	
-		virtual void updateActuators();
-		virtual void updateSensorValues();
+	if(mErrorHistory.size() > mHistorySize) {
+		mErrorHistory.pop_front();
+	}
 	
-	protected:
-		virtual void updateMotorParameter(const QString &parameter, Value *value);
-		virtual QString createMissingMotorErrorMsg();
+	double currentI = 0.0;
+	
+	for(int i = 0; i < mErrorHistory.size(); i++) {
+		currentI += mErrorHistory.at(i);
+	}
+	double errorDistance = currentError - mLastError;
+	double iPart;
+	if(Math::compareDoubles(mIntegral, 0.0, 10)) {
+		iPart= 0.0;
+	}
+	else {
+		iPart= mStepSize / mIntegral * currentI;
+	}
+	
+	if(mStepSize == 0.0) {
+		Core::log("DynamixelFrictionMotor Warning: TimeStepSize was 0.0, prevented division by zero.");
+		return 0.0;
+	}
+	
+	velocity = mProportional
+		* (currentError + iPart + mDifferential / mStepSize * errorDistance);
+	
+	mLastError = currentError;
+	
+	return velocity;
+}
 
 
-	protected:
-		DoubleValue *mMinAngleValue;
-		DoubleValue *mMaxAngleValue;
+double PID_Controller::getVelocity() const {
+	return mVelocity;
+}
 
-		/**
-		* Name of the HingeMotor which should be active. 
-		*/
-		StringValue *mActiveMotorName;
-		
-		/**
-		* Defines if a change to the global ActiveMotor Value
-		* changes also the current ActiveMotor of this HingeMotorAdapter.
-		*/
-		BoolValue *mUseGlobalActiveMotorChanges;
-		
-		/**
-		* Name of the HingeMotor which should be globaly active for all HingeMotorAdapter
-		* objects of the same type if their mUseGlobalActiveMotorChanges is true. 
-		*/
-		StringValue *mGlobalActiveMotorName;
-		
-		/**
-		* Parameter which is used as Interface to change the mGlobalActiveMotorName directly
-		* via the HingeMotorAdapter object.
-		* 
-		* mGlobalActiveMotorName is not a Parameter to avoid that it would be delete automatically
-		* if one object gets deleted.
-		*/
-		StringValue *mGlobalActiveMotorNameInterace;
-		
-		/**
-		* Map of all HingeMotors which can used for the adapter.
-		* The Key is the name of the HingeMotor.
-		*/
-		QMap<QString, HingeMotor*> mHingeMotors;
-		
-		/**
-		* Reference to the current active HingeMotor.
-		*/
-		HingeMotor *mActiveMotor;
-};
 
-} // namespace nerd
-#endif
+void PID_Controller::clear() {
+	mErrorHistory.clear();
+}
+
+
+}
+
+
+

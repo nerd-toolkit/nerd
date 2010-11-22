@@ -135,6 +135,10 @@ set(nerd_simulator_SRCS
 	Models/ScriptedModel.cpp
 	Collections/ScriptedModelLoader.cpp
 	Physics/Gyroscope.cpp
+	MotorModels/PassiveActuatorModel.cpp
+	MotorModels/PassiveActuatorAdapter.cpp
+	MotorModels/PID_PassiveActuatorModel.cpp
+	Util/PID_Controller.cpp
 )
 
 set(nerd_simulator_MOC_HDRS

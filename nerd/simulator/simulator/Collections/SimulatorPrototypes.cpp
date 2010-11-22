@@ -63,6 +63,7 @@
 #include "PlugIns/PrototypeOverviewPrinter.h"
 #include "Physics/SinkBox.h"
 #include "Physics/Gyroscope.h"
+#include "MotorModels/PassiveActuatorAdapter.h"
 
 
 using namespace std;
@@ -152,6 +153,9 @@ namespace nerd{
 		new SpringAdapter(MotorModel::HINGE_JOINT, SimulationConstants::PROTOTYPE_HINGE_SPRING_ADAPTER));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_SLIDER_SPRING_ADAPTER, 
 		new SpringAdapter(MotorModel::SLIDER_JOINT, SimulationConstants::PROTOTYPE_SLIDER_SPRING_ADAPTER));
+
+	pm->addPrototype(SimulationConstants::PROTOTYPE_PASSIVE_HINGE_ACTUATOR_ADAPTER, 
+		new PassiveActuatorAdapter(SimulationConstants::PROTOTYPE_PASSIVE_HINGE_ACTUATOR_ADAPTER));
   }
 
 }

@@ -61,17 +61,17 @@ class ODE_DynamixelFrictionMotor : public DynamixelFrictionMotor, public ODE_Joi
   public:
     ODE_DynamixelFrictionMotor(const QString &name);
     ODE_DynamixelFrictionMotor(const ODE_DynamixelFrictionMotor &motor);
-  
+
     virtual SimObject* createCopy() const;
-    
+
     virtual void valueChanged(Value *value);
     virtual void setup();
     virtual void clear();
     virtual dJointID createJoint(dBodyID body1, dBodyID body2);
-    
+
     virtual void updateComponentOutput();
     virtual void updateComponentInput();
-  
+
   protected:
     dJointID mHingeJoint;
 

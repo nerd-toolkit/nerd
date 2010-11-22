@@ -215,7 +215,9 @@ DynamixelFrictionMotor::DynamixelFrictionMotor(const DynamixelFrictionMotor &dyn
 	mEliminateNegativeTorqueRange =
  			dynamic_cast<BoolValue*>(getParameter("EliminateNegativeTorqueRange"));
 	
-	mDesiredMotorTorqueValue->addValueChangedListener(this);
+	if(mDesiredMotorTorqueValue != 0) {
+		mDesiredMotorTorqueValue->addValueChangedListener(this);
+	}
 	
 	mDynamicFrictionValue = vm->getDoubleValue("/AngularMotor/DynamicFriction");
 	mMotorValueNoiseValue = vm->getDoubleValue("/AngularMotor/MotorNoise");
@@ -258,8 +260,9 @@ bool DynamixelFrictionMotor::setInputValues(const QList<InterfaceValue*> &values
 	if(!DynamixelMotor::setInputValues(values)){
 		return false;
 	}
-	
-	mDesiredMotorTorqueValue->addValueChangedListener(this);
+	if(mDesiredMotorTorqueValue != 0) {
+		mDesiredMotorTorqueValue->addValueChangedListener(this);
+	}
 	
 	return true;
 }
@@ -282,11 +285,13 @@ void DynamixelFrictionMotor::setupComponents() {
 	mPidDifferential = mDamping->get();
 	mHistorySize = mHistorySizeValue->get();
 	
-	if(mEliminateNegativeTorqueRange->get()) {
-		mDesiredMotorTorqueValue->setMin(-1.0);
-	}
-	else {
-		mDesiredMotorTorqueValue->setMin(0.0);
+	if(mDesiredMotorTorqueValue != 0) {
+		if(mEliminateNegativeTorqueRange->get()) {
+			mDesiredMotorTorqueValue->setMin(-1.0);
+		}
+		else {
+			mDesiredMotorTorqueValue->setMin(0.0);
+		}
 	}
 	
 	mDynamicFriction = mDynamicFrictionValue->get();

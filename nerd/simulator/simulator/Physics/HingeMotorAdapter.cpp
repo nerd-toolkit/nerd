@@ -56,90 +56,91 @@ namespace nerd {
   HingeMotorAdapter::HingeMotorAdapter(const QString &name, 
                                        const QString &globalActiveMotorValue)
   : HingeJoint(name), SimSensor(), SimActuator(), 
-    mMinAngleValue(0), 
-    mMaxAngleValue(0),
-    mActiveMotorName(0),
-    mUseGlobalActiveMotorChanges(0),
-    mGlobalActiveMotorName(0),
-    mGlobalActiveMotorNameInterace(0),
+	mMinAngleValue(0), 
+	mMaxAngleValue(0),
+	mActiveMotorName(0),
+	mUseGlobalActiveMotorChanges(0),
+	mGlobalActiveMotorName(0),
+	mGlobalActiveMotorNameInterace(0),
 	mActiveMotor(0)
 { 
-  // add local parameters
-  mMinAngleValue = new DoubleValue(-150.0);
-  mMaxAngleValue = new DoubleValue(150.0);
-  mActiveMotorName = new StringValue("");
-  mUseGlobalActiveMotorChanges = new BoolValue(true);
-  mGlobalActiveMotorNameInterace = new StringValue("");
-  
-  // add global parameter 
-  ValueManager * vm = Core::getInstance()->getValueManager();
-  
-  if(vm->nameExists(globalActiveMotorValue)) {
-    mGlobalActiveMotorName = vm->getStringValue(globalActiveMotorValue);
-  }
-  else {
-    mGlobalActiveMotorName = new StringValue(mActiveMotorName->get());    
-    vm->addValue(globalActiveMotorValue, mGlobalActiveMotorName);    
-  }
-  mGlobalActiveMotorName->addValueChangedListener(this);
-  
-  addParameter("MinAngle", mMinAngleValue);
-  addParameter("MaxAngle", mMaxAngleValue);
-  addParameter("ActiveMotor", mActiveMotorName);
-  addParameter("UseGlobalActiveMotorChanges", mUseGlobalActiveMotorChanges);
-  addParameter("GlobalActiveMotor", mGlobalActiveMotorNameInterace);
-  
-  if(mUseGlobalActiveMotorChanges->get() == true)
-  {
-    mGlobalActiveMotorNameInterace->set(mGlobalActiveMotorName->get());
-  }
+	// add local parameters
+	mMinAngleValue = new DoubleValue(-150.0);
+	mMaxAngleValue = new DoubleValue(150.0);
+	mActiveMotorName = new StringValue("");
+	mUseGlobalActiveMotorChanges = new BoolValue(true);
+	mGlobalActiveMotorNameInterace = new StringValue("");
+	
+	// add global parameter 
+	ValueManager * vm = Core::getInstance()->getValueManager();
+	
+	if(vm->nameExists(globalActiveMotorValue)) {
+		mGlobalActiveMotorName = vm->getStringValue(globalActiveMotorValue);
+	}
+	else {
+		mGlobalActiveMotorName = new StringValue(mActiveMotorName->get());
+		vm->addValue(globalActiveMotorValue, mGlobalActiveMotorName);
+	}
+	mGlobalActiveMotorName->addValueChangedListener(this);
+	
+	addParameter("MinAngle", mMinAngleValue);
+	addParameter("MaxAngle", mMaxAngleValue);
+	addParameter("ActiveMotor", mActiveMotorName);
+	addParameter("UseGlobalActiveMotorChanges", mUseGlobalActiveMotorChanges);
+	addParameter("GlobalActiveMotor", mGlobalActiveMotorNameInterace);
+	
+	
+	if(mUseGlobalActiveMotorChanges->get() == true)
+	{
+	mGlobalActiveMotorNameInterace->set(mGlobalActiveMotorName->get());
+	}
 }
 
 
 HingeMotorAdapter::HingeMotorAdapter(const HingeMotorAdapter &hingeMotorAdapter)
   : HingeJoint(hingeMotorAdapter), SimSensor(), SimActuator(),
-    mMinAngleValue(0), 
-    mMaxAngleValue(0),
-    mActiveMotorName(0),
-    mUseGlobalActiveMotorChanges(0),
-    mGlobalActiveMotorName(0),
-    mGlobalActiveMotorNameInterace(0),
+	mMinAngleValue(0), 
+	mMaxAngleValue(0),
+	mActiveMotorName(0),
+	mUseGlobalActiveMotorChanges(0),
+	mGlobalActiveMotorName(0),
+	mGlobalActiveMotorNameInterace(0),
 	mActiveMotor(0)
 { 
-  // local values
-  mMinAngleValue = dynamic_cast<DoubleValue*>(getParameter("MinAngle"));
-  mMaxAngleValue = dynamic_cast<DoubleValue*>(getParameter("MaxAngle"));
-  mActiveMotorName = dynamic_cast<StringValue*>(getParameter("ActiveMotor"));
-  mUseGlobalActiveMotorChanges =
-      dynamic_cast<BoolValue*>(getParameter("UseGlobalActiveMotorChanges"));
-  mGlobalActiveMotorNameInterace = dynamic_cast<StringValue*>(getParameter("GlobalActiveMotor"));
-  
-  // global values 
-  mGlobalActiveMotorName = hingeMotorAdapter.mGlobalActiveMotorName;
-  mGlobalActiveMotorName->addValueChangedListener(this);
-  
-  if(mUseGlobalActiveMotorChanges->get() == true)
-  {
-    mGlobalActiveMotorNameInterace->set(mGlobalActiveMotorName->get());
-  }
+	// local values
+	mMinAngleValue = dynamic_cast<DoubleValue*>(getParameter("MinAngle"));
+	mMaxAngleValue = dynamic_cast<DoubleValue*>(getParameter("MaxAngle"));
+	mActiveMotorName = dynamic_cast<StringValue*>(getParameter("ActiveMotor"));
+	mUseGlobalActiveMotorChanges =
+		dynamic_cast<BoolValue*>(getParameter("UseGlobalActiveMotorChanges"));
+	mGlobalActiveMotorNameInterace = dynamic_cast<StringValue*>(getParameter("GlobalActiveMotor"));
+	
+	// global values 
+	mGlobalActiveMotorName = hingeMotorAdapter.mGlobalActiveMotorName;
+	mGlobalActiveMotorName->addValueChangedListener(this);
+	
+	if(mUseGlobalActiveMotorChanges->get() == true)
+	{
+	mGlobalActiveMotorNameInterace->set(mGlobalActiveMotorName->get());
+	}
 }
 
 
 
 void HingeMotorAdapter::valueChanged(Value *value) 
 {
-  SimJoint::valueChanged(value);
-  
-  if(value == 0){
-    return;
-  }
-  
-  // avoid that the prototyp which has no motors
-  // influences the configuration of the global
-  // active motor
-  if(mHingeMotors.size() <= 0) {
-    return;
-  }
+	SimJoint::valueChanged(value);
+	
+	if(value == 0){
+		return;
+	}
+	
+	// avoid that the prototyp which has no motors
+	// influences the configuration of the global
+	// active motor
+	if(mHingeMotors.size() <= 0) {
+		return;
+	}
   
   //////////////////////////////////////////////////////
   // values which must be provided to all hingemotors
@@ -309,12 +310,12 @@ void HingeMotorAdapter::updateMotorParameter(const QString &parameter, Value *va
 QString HingeMotorAdapter::createMissingMotorErrorMsg()
 {
   QString errorMsg = "ERROR - The specified motor type does not exist! Possible types are: ";
-            
+
   for(int i = 0; i < mHingeMotors.keys().size(); i++)
   {
     if(i > 0) {
       errorMsg += ", ";
-    }      
+    }
     errorMsg += "\"" + mHingeMotors.keys().at(i) + "\"";
   }
 

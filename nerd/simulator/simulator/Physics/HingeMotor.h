@@ -58,37 +58,29 @@ namespace nerd { class DoubleValue; }
 
 namespace nerd {
 
-class HingeMotor : public HingeJoint{
+class HingeMotor : public HingeJoint {
   public:
-    
     HingeMotor(const QString &name);
-    
     HingeMotor(const HingeMotor &hingeMotor);
-        
-    void setup();
 
+    void setup();
     void clear();
-       
+
     virtual SimObject * createCopy() const = 0;
-    
     virtual QString getMotorName() const = 0;
-    
+
     virtual void setupComponents() = 0;
-    
     virtual void clearComponents() = 0;
-    
+
     virtual void updateComponentInput() = 0;
-    
     virtual void updateComponentOutput() = 0;
 
     virtual bool setInputValues(const QList<InterfaceValue*> &values) = 0;
-
     virtual bool setOutputValues(const QList<InterfaceValue*> &values) = 0;
-    
+
   protected:
-    
+
     DoubleValue *mMinAngleValue;
-    
     DoubleValue *mMaxAngleValue;
 
 };

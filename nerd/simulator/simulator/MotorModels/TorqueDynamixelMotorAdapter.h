@@ -65,6 +65,10 @@ namespace nerd {
 									bool useIndividualMotorTorqueValues = false);
 		TorqueDynamixelMotorAdapter(const TorqueDynamixelMotorAdapter &other);
 
+		virtual ~TorqueDynamixelMotorAdapter();
+
+		virtual SimObject* createCopy() const;
+
 		QList<InterfaceValue*> getTorqueInputValues() const;
 		InterfaceValue* getJointAngleSensorValue() const;
 		QList<InterfaceValue*> getMotorAngleSensorValues() const;
@@ -81,10 +85,6 @@ namespace nerd {
 		bool isUsingFreerunInputValues() const;
 		bool isUsingIndividualMotorTorqueValues() const;
 		bool isUsingCurrentConsumptionSensors() const;
-
-		virtual ~TorqueDynamixelMotorAdapter();
-
-		virtual SimObject* createCopy() const;
 
 	protected:
 		virtual bool isValidMotorModel(MotorModel *model) const;

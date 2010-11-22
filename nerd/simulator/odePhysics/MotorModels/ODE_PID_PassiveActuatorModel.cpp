@@ -42,39 +42,55 @@
  ***************************************************************************/
 
 
-#include "ODE_DynamixelFrictionMotor.h"
-#include "Math/Math.h"
-#include "Math/Vector3D.h"
-#include "Value/Vector3DValue.h"
-#include "Value/BoolValue.h"
-#include "Core/Core.h"
 
-namespace nerd{
+#include "ODE_PID_PassiveActuatorModel.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "Math/Math.h"
+#include "Value/BoolValue.h"
+#include "Value/Vector3DValue.h"
+#include "Value/DoubleValue.h"
+#include "Physics/MotorAdapter.h"
+
+using namespace std;
+
+namespace nerd {
+
 
 /**
- * Constructor.
- * @param name The name of the ODE_DynamixelFrictionMotor Object.
+ * Constructs a new ODE_PID_PassiveActuatorModel.
  */
-ODE_DynamixelFrictionMotor::ODE_DynamixelFrictionMotor(const QString &name)
-	: DynamixelFrictionMotor(name), ODE_Joint()
-{
-}
-
-ODE_DynamixelFrictionMotor::ODE_DynamixelFrictionMotor(const ODE_DynamixelFrictionMotor &motor) 
-	: DynamixelFrictionMotor(motor), ODE_Joint()
+ODE_PID_PassiveActuatorModel::ODE_PID_PassiveActuatorModel(const QString &name)
+	: PID_PassiveActuatorModel(name), ODE_Joint()
 {
 }
 
 
+/**
+ * Copy constructor. 
+ * 
+ * @param other the ODE_PID_PassiveActuatorModel object to copy.
+ */
+ODE_PID_PassiveActuatorModel::ODE_PID_PassiveActuatorModel(const ODE_PID_PassiveActuatorModel &other) 
+	: PID_PassiveActuatorModel(other), ODE_Joint()
+{
+}
 
-SimObject* ODE_DynamixelFrictionMotor::createCopy() const {
-	return new ODE_DynamixelFrictionMotor(this->getName());
+/**
+ * Destructor.
+ */
+ODE_PID_PassiveActuatorModel::~ODE_PID_PassiveActuatorModel() {
+}
+
+SimObject* ODE_PID_PassiveActuatorModel::createCopy() const {
+	return new ODE_PID_PassiveActuatorModel(*this);
 }
 
 
-void ODE_DynamixelFrictionMotor::setup() {
+void ODE_PID_PassiveActuatorModel::setup() {
 	ODE_Joint::setup();
-	DynamixelFrictionMotor::setup();
+	PID_PassiveActuatorModel::setup();
 	if(mJoint == 0) {
 		mJoint = (dJointID) ODE_Joint::createJoint();
 	}
@@ -84,67 +100,90 @@ void ODE_DynamixelFrictionMotor::setup() {
 	}
 }
 
-void ODE_DynamixelFrictionMotor::valueChanged(Value *value) 
-{
-	DynamixelFrictionMotor::valueChanged(value);
-
-	if(value == mDesiredMotorTorqueValue && mJoint != 0) {
-		dJointSetAMotorParam(mJoint, dParamFMax, mFMaxFactor->get() 
-			* Math::max(0.0, mDesiredMotorTorqueValue->get()));
-	}
+void ODE_PID_PassiveActuatorModel::clear() {
+	ODE_Joint::clearJoint();
+	PID_PassiveActuatorModel::clear();
+	mJoint = 0;
 }
 
-void ODE_DynamixelFrictionMotor::updateComponentInput() 
+void ODE_PID_PassiveActuatorModel::valueChanged(Value *value) 
 {
-	if(mJoint != 0) {
-		mCurrentPosition = dJointGetAMotorAngle(mJoint, 0);
-		calculateMotorFrictionAndVelocity();
-	
-		dJointSetHingeParam(mHingeJoint, dParamFMax, mCalculatedFriction);
-		dJointSetAMotorParam(mJoint, dParamVel, mCalculatedVelocity);
-	}
+	PID_PassiveActuatorModel::valueChanged(value);
+
+// 	if(value == mDesiredMotorTorqueValue && mJoint != 0) {
+// 		dJointSetAMotorParam(mJoint, dParamFMax, mFMaxFactor->get() 
+// 			* Math::max(0.0, mDesiredMotorTorqueValue->get()));
+// 	}
+}
+
+void ODE_PID_PassiveActuatorModel::updateComponentInput() 
+{
+// 	if(mJoint != 0) {
+// 		//TODO calculate desired position according to reference angle.
+// 	
+// 		mCurrentPosition = dJointGetAMotorAngle(mJoint, 0);
+// 		calculateMotorFrictionAndVelocity();
+// 	
+// 		dJointSetHingeParam(mHingeJoint, dParamFMax, mCalculatedFriction);
+// 		dJointSetAMotorParam(mJoint, dParamVel, mCalculatedVelocity);
+// 	}
 }
 
 /**
  * Calculates the new motor angle.
  */
-void ODE_DynamixelFrictionMotor::updateComponentOutput() {
+void ODE_PID_PassiveActuatorModel::updateComponentOutput() {
 
-	if(mJoint != 0) {
-		//read sensor value and add noise.
-		double sensorValue = dJointGetAMotorAngle(mJoint, 0);
-	
-		// First add the choosen offset
-		// Add desired noise to the measured angle value
-		// Map the value into the interval -150 - 150 degree ( = -1 - 1)
-		
-		sensorValue = (sensorValue * 180.0)/Math::PI;
-
-		if(mIncludeNoise->get() == true)
-		{
-			sensorValue = Math::calculateGaussian(sensorValue, mSensorNoiseDeviation);
-		}
-		mAngleValue->set(sensorValue);
-	}
+// 	if(mJoint != 0) {
+// 		//read sensor value and add noise.
+// 		double sensorValue = dJointGetAMotorAngle(mJoint, 0);
+// 	
+// 		// First add the choosen offset
+// 		// Add desired noise to the measured angle value
+// 		// Map the value into the interval ( = -1 - 1)
+// 		
+// 		sensorValue = (sensorValue * 180.0)/Math::PI;
+// 
+// 		if(mIncludeNoise->get() == true)
+// 		{
+// 			sensorValue = Math::calculateGaussian(sensorValue, mSensorNoiseDeviation);
+// 		}
+// 		mAngleValue->set(sensorValue);
+// 	}
 
 }
 
 
-dJointID ODE_DynamixelFrictionMotor::createJoint(dBodyID body1, dBodyID body2) {
+dJointID ODE_PID_PassiveActuatorModel::createJoint(dBodyID body1, dBodyID body2) {
 
-	if(mJointAxisPoint1->get().equals(mJointAxisPoint2->get(), -1)) {
+	Vector3DValue *jointAxisPoint1 = dynamic_cast<Vector3DValue*>(mOwner->getParameter("AxisPoint1"));
+	Vector3DValue *jointAxisPoint2 = dynamic_cast<Vector3DValue*>(mOwner->getParameter("AxisPoint2"));
+	DoubleValue *minAngleValue = dynamic_cast<DoubleValue*>(mOwner->getParameter("MinAngle"));
+	DoubleValue *maxAngleValue = dynamic_cast<DoubleValue*>(mOwner->getParameter("MaxAngle"));
+
+	if(jointAxisPoint1 == 0 || jointAxisPoint2 == 0 || minAngleValue == 0 || maxAngleValue == 0) {
+		Core::log("ODE_H_MSeriesTorqueSpringMotorModel: Could not find all required parameter values.");
+		return 0;
+	}
+
+	if(jointAxisPoint1->get().equals(jointAxisPoint2->get(), -1)) {
+		Core::log("ODE_H_MSeriesTorqueSpringMotorModel: Invalid axis points " + jointAxisPoint1->getValueAsString() + " and " + jointAxisPoint2->getValueAsString() + ".");
+		return 0;
+	}
+
+	if(jointAxisPoint1->get().equals(jointAxisPoint2->get(), -1)) {
 		Core::log("Invalid axes for ODE_DynamixelFrictionMotor.");
 		return 0;
 	}
 
-	Vector3D anchor = mJointAxisPoint1->get();
-	Vector3D axis = mJointAxisPoint2->get() - mJointAxisPoint1->get();
+	Vector3D anchor = jointAxisPoint1->get();
+	Vector3D axis = jointAxisPoint2->get() - jointAxisPoint1->get();
 
 	dJointID joint = dJointCreateAMotor(mWorldID, mGeneralJointGroup);
 	dJointAttach(joint, body1, body2);
 	dJointSetAMotorMode(joint, dAMotorEuler);
 	dJointSetAMotorParam(joint, dParamVel, 0.0);
-	dJointSetAMotorParam(joint, dParamFMax, mDesiredMotorTorqueValue->get());
+	dJointSetAMotorParam(joint, dParamFMax, 1.0);
 	dJointSetAMotorParam(joint, dParamCFM, mCFMValue->get());
 	dJointSetAMotorParam(joint, dParamStopERP, mStopERPValue->get());
 	dJointSetAMotorParam(joint, dParamStopCFM, mStopCFMValue->get());
@@ -184,24 +223,26 @@ dJointID ODE_DynamixelFrictionMotor::createJoint(dBodyID body1, dBodyID body2) {
 	dJointSetHingeAnchor(mHingeJoint, anchor.getX(), anchor.getY(), anchor.getZ());
 	dJointSetHingeAxis(mHingeJoint, axis.getX(), axis.getY(), axis.getZ());
 
+	double minAngle = (minAngleValue->get() * Math::PI) / 180.0;
+	double maxAngle = (maxAngleValue->get() * Math::PI) / 180.0;
+
 	if(body1 == 0) {
-		double tmp = mMinAngle;
-		mMinAngle = -1.0 * mMaxAngle;
-		mMaxAngle = -1.0 * tmp;
+		double tmp = minAngle;
+		minAngle = -1.0 * maxAngle;
+		maxAngle = -1.0 * tmp;
 	}
 
-	dJointSetHingeParam(mHingeJoint, dParamLoStop, mMinAngle);
-	dJointSetHingeParam(mHingeJoint, dParamHiStop, mMaxAngle);
+	dJointSetHingeParam(mHingeJoint, dParamLoStop, minAngle);
+	dJointSetHingeParam(mHingeJoint, dParamHiStop, maxAngle);
 
 	dJointSetHingeParam(mHingeJoint, dParamVel, 0.0);
 	return joint;
 }
 
-void ODE_DynamixelFrictionMotor::clear() {
-	ODE_Joint::clearJoint();
-	DynamixelFrictionMotor::clear();
-	mJoint = 0;
-}
+
 
 
 }
+
+
+

@@ -29,6 +29,7 @@ set(nerd_odePhysics_SRCS
 	MotorModels/ODE_MSeriesTorqueSpringMotorModel.cpp  
 	Physics/ODE_ForceHandle.cpp  
 	MotorModels/ODE_LinearSpringModel.cpp
+	MotorModels/ODE_PID_PassiveActuatorModel.cpp
 )
 
 set(nerd_odePhysics_MOC_HDRS

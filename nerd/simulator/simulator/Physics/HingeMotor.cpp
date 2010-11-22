@@ -51,11 +51,11 @@ HingeMotor::HingeMotor(const QString &name)
     mMinAngleValue(0), 
     mMaxAngleValue(0)
 {
-  mMinAngleValue = new DoubleValue(-150.0);
-  mMaxAngleValue = new DoubleValue(150.0);
-  
-  addParameter("MinAngle", mMinAngleValue);
-  addParameter("MaxAngle", mMaxAngleValue);
+	mMinAngleValue = new DoubleValue(-150.0);
+	mMaxAngleValue = new DoubleValue(150.0);
+	
+	addParameter("MinAngle", mMinAngleValue);
+	addParameter("MaxAngle", mMaxAngleValue);
 }
 
 HingeMotor::HingeMotor(const HingeMotor &hingeMotor)
@@ -63,8 +63,8 @@ HingeMotor::HingeMotor(const HingeMotor &hingeMotor)
     mMinAngleValue(0), 
     mMaxAngleValue(0)
 {
-  mMinAngleValue = dynamic_cast<DoubleValue*>(getParameter("MinAngle"));
-  mMaxAngleValue = dynamic_cast<DoubleValue*>(getParameter("MaxAngle"));
+	mMinAngleValue = dynamic_cast<DoubleValue*>(getParameter("MinAngle"));
+	mMaxAngleValue = dynamic_cast<DoubleValue*>(getParameter("MaxAngle"));
 }
 
 void HingeMotor::setup()

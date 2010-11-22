@@ -73,6 +73,7 @@
 #include "Physics/ODE_CapsuleBody.h"
 #include "Physics/ODE_ForceHandle.h"
 #include "MotorModels/ODE_LinearSpringModel.h"
+#include "MotorModels/ODE_PID_PassiveActuatorModel.h"
 
 namespace nerd {
 
@@ -150,6 +151,9 @@ ODE_Physics::ODE_Physics()
 
 	pm->addPrototype("Prototypes/LinearSliderSpringModel",
 		new ODE_LinearSpringModel(MotorModel::SLIDER_JOINT, "Prototypes/LinearSpringModel"));
+
+	pm->addPrototype("Prototypes/PID_PassiveActuatorModel",
+		new ODE_PID_PassiveActuatorModel("Prototypes/PID_PassiveActuatorModel"));
 
 	ModelPrototypes();
 }

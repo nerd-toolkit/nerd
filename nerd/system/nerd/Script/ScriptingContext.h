@@ -79,6 +79,8 @@ namespace nerd {
 		virtual void resetScriptContext();
 		virtual void executeScriptFunction(const QString &functionName);
 
+		virtual void reloadEventAndValueDefinitions();
+
 		virtual bool setScriptCode(const QString &code);
 		virtual QString getScriptCode() const;
 		virtual bool loadScriptCode(bool replaceExistingCode);

@@ -280,7 +280,6 @@ void ScriptingContext::resetScriptContext() {
 		}
 		reportError(errorMessage);
 
-		cerr << "Error1" << endl;
 		delete mScript;
 		mScript = 0;
 
@@ -323,12 +322,7 @@ void ScriptingContext::executeScriptFunction(const QString &functionName) {
 		return;
 	}
 	if(mHasUnresolvedValueDefinitions || mHasUnresolvedEventDefinitions) {
-		if(Core::getInstance()->isInitialized()) {
-			Core::log("Scripting Context [" + getName() + "]: "
-					  "Resetting script: unresolved defVar or defEvent.", true);
-		}
-		cerr << "R3" << endl;
-		resetScriptContext();
+		reloadEventAndValueDefinitions();
 	}
 
 	importVariables();
@@ -339,6 +333,32 @@ void ScriptingContext::executeScriptFunction(const QString &functionName) {
 						+ error.toString());
 	}
 	exportVariables();
+}
+
+void ScriptingContext::reloadEventAndValueDefinitions() {
+
+	mHasUnresolvedEventDefinitions = false;
+	mHasUnresolvedValueDefinitions = false;
+
+	QString code = mScriptCode->get();
+	QStringList linesOfCode = code.split("/**/");
+	
+	for(int i = 0; i < linesOfCode.size(); ++i) {
+		QString line = linesOfCode.at(i);
+		if(line.contains("defVar(") || line.contains("defEvent(") || line.contains("defVarR(")) {
+			if(mScript != 0) {
+				mScript->evaluate(line);
+			}
+		}
+	}
+
+	if(mHasUnresolvedValueDefinitions || mHasUnresolvedEventDefinitions) {
+		if(Core::getInstance()->isInitialized()) {
+			Core::log("Scripting Context [" + getName() + "]: "
+					  "ReloadEventAndValueDefinitions: Unresolved defVar or defEvent.", true);
+		}
+	}
+
 }
 
 

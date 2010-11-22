@@ -41,94 +41,117 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#ifndef NERD_HINGEMOTORADAPTER_H
-#define NERD_HINGEMOTORADAPTER_H
 
 
-#include "Physics/HingeJoint.h"
-#include "Physics/SimSensor.h"
-#include "Physics/SimActuator.h"
+#include "PassiveActuatorAdapter.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "MotorModels/PassiveActuatorModel.h"
+#include "Value/ValueManager.h"
 
-#include <QMap>
-
-class QString;
-namespace nerd { class SimObject; }
-namespace nerd { class HingeMotor; }
-namespace nerd { class DoubleValue; }
-namespace nerd { class BoolValue; }
-namespace nerd { class StringValue; }
+using namespace std;
 
 namespace nerd {
 
+
 /**
- * HingeMotorAdapter
+ * Constructs a new PassiveActuatorAdapter.
+ */
+PassiveActuatorAdapter::PassiveActuatorAdapter(const QString &name)
+	: HingeJointMotorAdapter(name)
+{
+	mReferenceAngleName = new StringValue();
+	mGearRatio = new DoubleValue(1.0);
+	mReferenceOffsetAngle = new DoubleValue();
+	mOffsetAngle = new DoubleValue();
+
+	addParameter("ReferenceAngleName", mReferenceAngleName);
+	addParameter("GearRatio", mGearRatio);
+	addParameter("ReferenceAngleOffset", mReferenceOffsetAngle);
+	addParameter("AngleOffset", mOffsetAngle);
+}
+
+
+/**
+ * Copy constructor. 
  * 
- * Base class for all HingeMotorAdapters. A HingeMotorAdpater can hold different
- * HingeMotor objects. The user can configure which HingeMotor should be used.
- * The HingeMotorAdapter provides a motor interface and passes the set parameters to the
- * HingeMotors.  
- */  
-class HingeMotorAdapter : public HingeJoint, public SimSensor, public SimActuator {
-	public:
-		
-		HingeMotorAdapter(const QString &name, const QString &globalActiveMotorValue);
-		HingeMotorAdapter(const HingeMotorAdapter &hingeMotorAdapter);
-		
-		virtual SimObject* createCopy() const = 0;
-	
-		virtual void valueChanged(Value *value);
-		virtual void setup();
-		virtual void clear();
-	
-		virtual void updateActuators();
-		virtual void updateSensorValues();
-	
-	protected:
-		virtual void updateMotorParameter(const QString &parameter, Value *value);
-		virtual QString createMissingMotorErrorMsg();
+ * @param other the PassiveActuatorAdapter object to copy.
+ */
+PassiveActuatorAdapter::PassiveActuatorAdapter(const PassiveActuatorAdapter &other)
+	: SimSensor(other), SimActuator(other), Object(other), ValueChangedListener(other), 
+		HingeJointMotorAdapter(other) 
+{
+	mReferenceAngleName = dynamic_cast<StringValue*>(getParameter("ReferenceAngleName"));
+	mGearRatio = dynamic_cast<DoubleValue*>(getParameter("GearRatio"));
+	mReferenceOffsetAngle = dynamic_cast<DoubleValue*>(getParameter("ReferenceAngleOffset"));
+	mOffsetAngle = dynamic_cast<DoubleValue*>(getParameter("AngleOffset"));
+}
+
+/**
+ * Destructor.
+ */
+PassiveActuatorAdapter::~PassiveActuatorAdapter() {
+}
+
+SimObject* PassiveActuatorAdapter::createCopy() const {
+	PassiveActuatorAdapter *adapter = new PassiveActuatorAdapter(*this);
+	adapter->collectCompatibleMotorModels();
+	return adapter;
+}
+
+void PassiveActuatorAdapter::setup() {
+	HingeJointMotorAdapter::setup();
+
+	mReferenceAngle = Core::getInstance()->getValueManager()
+						->getDoubleValue(mReferenceAngleName->get());
+
+	if(mReferenceAngle == 0) {
+		Core::log("PassiveActuatorAdapter [" + getName() + "]: Could not find required "
+				  "reference angle value [" + mReferenceAngleName->get() + "]!", true);
+	}
+}
 
 
-	protected:
-		DoubleValue *mMinAngleValue;
-		DoubleValue *mMaxAngleValue;
+void PassiveActuatorAdapter::clear() {
+	HingeJointMotorAdapter::clear();
+	mReferenceAngle = 0;
+}
 
-		/**
-		* Name of the HingeMotor which should be active. 
-		*/
-		StringValue *mActiveMotorName;
-		
-		/**
-		* Defines if a change to the global ActiveMotor Value
-		* changes also the current ActiveMotor of this HingeMotorAdapter.
-		*/
-		BoolValue *mUseGlobalActiveMotorChanges;
-		
-		/**
-		* Name of the HingeMotor which should be globaly active for all HingeMotorAdapter
-		* objects of the same type if their mUseGlobalActiveMotorChanges is true. 
-		*/
-		StringValue *mGlobalActiveMotorName;
-		
-		/**
-		* Parameter which is used as Interface to change the mGlobalActiveMotorName directly
-		* via the HingeMotorAdapter object.
-		* 
-		* mGlobalActiveMotorName is not a Parameter to avoid that it would be delete automatically
-		* if one object gets deleted.
-		*/
-		StringValue *mGlobalActiveMotorNameInterace;
-		
-		/**
-		* Map of all HingeMotors which can used for the adapter.
-		* The Key is the name of the HingeMotor.
-		*/
-		QMap<QString, HingeMotor*> mHingeMotors;
-		
-		/**
-		* Reference to the current active HingeMotor.
-		*/
-		HingeMotor *mActiveMotor;
-};
 
-} // namespace nerd
-#endif
+double PassiveActuatorAdapter::getReferenceAngle() const {
+	if(mReferenceAngle == 0) {
+		return 0.0;
+	}
+	return mReferenceAngle->get();
+}
+
+
+double PassiveActuatorAdapter::getGearRation() const {
+	return mGearRatio->get();
+}
+
+
+double PassiveActuatorAdapter::getReferenceOffsetAngle() const {
+	return mReferenceOffsetAngle->get();
+}
+
+
+double PassiveActuatorAdapter::getOffsetAngle() const {
+	return mOffsetAngle->get();
+}
+
+
+bool PassiveActuatorAdapter::isValidMotorModel(MotorModel *model) const {
+	if((dynamic_cast<PassiveActuatorModel*>(model)) != 0) {
+		return true;
+	}
+	return false;
+}
+
+
+
+}
+
+
+
