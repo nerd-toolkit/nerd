@@ -57,11 +57,13 @@ namespace nerd {
 	 */
 	class PID_Controller {
 	public:
+		PID_Controller();
 		PID_Controller(double p, double i, double d, double stepSize);
 		PID_Controller(const PID_Controller &other);
 		virtual ~PID_Controller();
 
 		void setPIDParameters(double p, double i, double d);
+		void setStepSize(double stepSize);
 		void setHistorySize(int size);
 
 		bool update(double currentAngle, double desiredAngle);

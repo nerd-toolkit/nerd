@@ -47,6 +47,7 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
+#include "SimulationConstants.h"
 
 using namespace std;
 
@@ -57,8 +58,15 @@ namespace nerd {
  * Constructs a new PID_PassiveActuatorModel.
  */
 PID_PassiveActuatorModel::PID_PassiveActuatorModel(const QString &name)
-	: PassiveActuatorModel(name)
+	: PassiveActuatorModel(name), mTimeStepSize(0)
 {
+	mFriction = new DoubleValue(0.1);
+	mMaxForce = new DoubleValue(0.5);
+	mProportionalFactor = new DoubleValue(15.0);
+
+	addParameter("Friction", mFriction);
+	addParameter("MaxForce", mMaxForce);
+	addParameter("Proportional", mProportionalFactor);
 }
 
 
@@ -68,8 +76,11 @@ PID_PassiveActuatorModel::PID_PassiveActuatorModel(const QString &name)
  * @param other the PID_PassiveActuatorModel object to copy.
  */
 PID_PassiveActuatorModel::PID_PassiveActuatorModel(const PID_PassiveActuatorModel &other) 
-	: PassiveActuatorModel(other)
+	: PassiveActuatorModel(other), mTimeStepSize(0)
 {
+	mFriction = dynamic_cast<DoubleValue*>(getParameter("Friction"));
+	mMaxForce = dynamic_cast<DoubleValue*>(getParameter("MaxForce"));
+	mProportionalFactor = dynamic_cast<DoubleValue*>(getParameter("Proportional"));
 }
 
 /**
@@ -79,8 +90,33 @@ PID_PassiveActuatorModel::~PID_PassiveActuatorModel() {
 }
 
 
-void PID_PassiveActuatorModel::updateInputValues() {
+void PID_PassiveActuatorModel::setup() {
+	PassiveActuatorModel::setup();
 
+	if(mTimeStepSize == 0) {
+		mTimeStepSize = Core::getInstance()->getValueManager()
+					->getDoubleValue(SimulationConstants::VALUE_TIME_STEP_SIZE);
+	}
+
+	mPID_Controller.clear();
+	mPID_Controller.setHistorySize(10);
+	mPID_Controller.setPIDParameters(mProportionalFactor->get(), 5.5, 0.0);
+	if(mTimeStepSize == 0) {
+		Core::log("PID_PassiveActuatorModel: Could not find time step size value!");
+		return;
+	}
+	mPID_Controller.setStepSize(mTimeStepSize->get());
+
+
+}
+
+
+void PID_PassiveActuatorModel::clear() {
+	PassiveActuatorModel::clear();
+}
+
+
+void PID_PassiveActuatorModel::updateInputValues() {
 }
 
 
@@ -89,9 +125,6 @@ void PID_PassiveActuatorModel::updateOutputValues() {
 }
 
 
-double PID_PassiveActuatorModel::calculateDesiredAngle() {
-
-}
 
 
 }

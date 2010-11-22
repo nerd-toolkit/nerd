@@ -67,7 +67,7 @@ TARGET_LINK_LIBRARIES(testOdePhysics
 if(WIN32)
 elseif(UNIX)
 TARGET_LINK_LIBRARIES(testOdePhysics
-	libGLU.a
+	-lGLU
 )
 endif(WIN32)
 

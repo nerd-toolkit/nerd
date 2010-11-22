@@ -434,6 +434,6 @@ double DynamixelFrictionMotor::calculateFriction(double velocity) {
 		}
 		return fabs(friction);
 	}
-	}
+}
 
 } // namespace nerd

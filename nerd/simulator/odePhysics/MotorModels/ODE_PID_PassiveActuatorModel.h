@@ -69,8 +69,8 @@ namespace nerd {
 		virtual void clear();
 		virtual dJointID createJoint(dBodyID body1, dBodyID body2);
 	
-		virtual void updateComponentOutput();
-		virtual void updateComponentInput();
+		virtual void updateInputValues();
+		virtual void updateOutputValues();
 	
 	protected:
 		dJointID mHingeJoint;

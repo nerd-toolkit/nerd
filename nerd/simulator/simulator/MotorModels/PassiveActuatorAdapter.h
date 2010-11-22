@@ -70,7 +70,7 @@ namespace nerd {
 		virtual void clear();
 
 		double getReferenceAngle() const;
-		double getGearRation() const;
+		double getGearRatio() const;
 		double getReferenceOffsetAngle() const;
 		double getOffsetAngle() const;
 

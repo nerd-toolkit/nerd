@@ -48,6 +48,7 @@
 #include <QString>
 #include <QHash>
 #include "MotorModels/PassiveActuatorModel.h"
+#include "Util/PID_Controller.h"
 
 namespace nerd {
 
@@ -61,12 +62,18 @@ namespace nerd {
 		PID_PassiveActuatorModel(const PID_PassiveActuatorModel &other);
 		virtual ~PID_PassiveActuatorModel();
 
+		virtual void setup();
+		virtual void clear();
+
 		virtual void updateInputValues();
 		virtual void updateOutputValues();
 
-		double calculateDesiredAngle();
-
-	private:
+	protected:
+		PID_Controller mPID_Controller;
+		DoubleValue *mTimeStepSize;
+		DoubleValue *mFriction;
+		DoubleValue *mMaxForce;
+		DoubleValue *mProportionalFactor;
 	};
 
 }

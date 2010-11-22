@@ -55,6 +55,13 @@ using namespace std;
 namespace nerd {
 
 
+PID_Controller::PID_Controller()
+	: mProportional(0.0), mIntegral(0.0), 
+		mDifferential(0.0), mStepSize(0.0), mLastError(0.0)
+{
+
+}
+
 /**
  * Constructs a new PID_Controller.
  */
@@ -93,6 +100,9 @@ void PID_Controller::setPIDParameters(double p, double i, double d) {
 	mDifferential = d;
 }
 
+void PID_Controller::setStepSize(double stepSize) {
+	mStepSize = stepSize;
+}
 
 void PID_Controller::setHistorySize(int size) {
 	mHistorySize = size;
@@ -100,7 +110,6 @@ void PID_Controller::setHistorySize(int size) {
 
 
 bool PID_Controller::update(double currentAngle, double desiredAngle) {
-
 
 	double velocity = 0.0;
 	double currentError = desiredAngle - currentAngle;
@@ -127,7 +136,8 @@ bool PID_Controller::update(double currentAngle, double desiredAngle) {
 	
 	if(mStepSize == 0.0) {
 		Core::log("DynamixelFrictionMotor Warning: TimeStepSize was 0.0, prevented division by zero.");
-		return 0.0;
+		mVelocity = 0.0;
+		return false;
 	}
 	
 	velocity = mProportional
@@ -135,7 +145,8 @@ bool PID_Controller::update(double currentAngle, double desiredAngle) {
 	
 	mLastError = currentError;
 	
-	return velocity;
+	mVelocity = velocity;
+	return true;
 }
 
 

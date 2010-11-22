@@ -52,6 +52,7 @@
 #include "Value/Vector3DValue.h"
 #include "Value/DoubleValue.h"
 #include "Physics/MotorAdapter.h"
+#include "MotorModels/PassiveActuatorAdapter.h"
 
 using namespace std;
 
@@ -116,23 +117,36 @@ void ODE_PID_PassiveActuatorModel::valueChanged(Value *value)
 // 	}
 }
 
-void ODE_PID_PassiveActuatorModel::updateComponentInput() 
+void ODE_PID_PassiveActuatorModel::updateInputValues() 
 {
-// 	if(mJoint != 0) {
-// 		//TODO calculate desired position according to reference angle.
-// 	
-// 		mCurrentPosition = dJointGetAMotorAngle(mJoint, 0);
-// 		calculateMotorFrictionAndVelocity();
-// 	
-// 		dJointSetHingeParam(mHingeJoint, dParamFMax, mCalculatedFriction);
-// 		dJointSetAMotorParam(mJoint, dParamVel, mCalculatedVelocity);
-// 	}
+	cerr << "Update" << endl;
+	if(mJoint != 0) {
+		double desiredAngle = 0.0;
+		PassiveActuatorAdapter *owner = dynamic_cast<PassiveActuatorAdapter*>(mOwner);
+
+		if(owner != 0) {
+			//TODO add gear ration and offset.
+			desiredAngle = (owner->getReferenceAngle() + owner->getReferenceOffsetAngle()) 
+							* owner->getGearRatio() + owner->getOffsetAngle();
+		}
+
+
+		double currentAngle = dJointGetAMotorAngle(mJoint, 0);
+		mPID_Controller.update(currentAngle, desiredAngle * Math::PI / 180.0);
+
+		cerr << "UpdateInput: " << desiredAngle << " force: " << mPID_Controller.getVelocity() << endl;
+	
+		dJointSetAMotorParam(mJoint, dParamFMax, mMaxForce->get());
+		dJointSetHingeParam(mHingeJoint, dParamFMax, mFriction->get());
+		dJointSetAMotorParam(mJoint, dParamVel, mPID_Controller.getVelocity());
+	}
 }
+
 
 /**
  * Calculates the new motor angle.
  */
-void ODE_PID_PassiveActuatorModel::updateComponentOutput() {
+void ODE_PID_PassiveActuatorModel::updateOutputValues() {
 
 // 	if(mJoint != 0) {
 // 		//read sensor value and add noise.

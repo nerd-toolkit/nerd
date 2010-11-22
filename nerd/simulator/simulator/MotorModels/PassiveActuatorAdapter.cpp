@@ -127,7 +127,7 @@ double PassiveActuatorAdapter::getReferenceAngle() const {
 }
 
 
-double PassiveActuatorAdapter::getGearRation() const {
+double PassiveActuatorAdapter::getGearRatio() const {
 	return mGearRatio->get();
 }
 

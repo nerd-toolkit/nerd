@@ -307,7 +307,7 @@ bool ScriptedModel::setProperty(const QString &fullPropertyName, const QString &
 
 bool ScriptedModel::hasProperty(int objectId, const QString &propertyName) {
 	SimObject *obj = 0;
-	if(mEnvironmentMode) {
+	if(mEnvironmentMode || mRandomizationMode) {
 		obj = mEnvironmentObjectLookup.value(objectId);
 	}
 	else {
@@ -325,7 +325,7 @@ bool ScriptedModel::hasProperty(int objectId, const QString &propertyName) {
 
 QString ScriptedModel::getProperty(int objectId, const QString &propertyName) {
 	SimObject *obj = 0;
-	if(mEnvironmentMode) {
+	if(mEnvironmentMode || mRandomizationMode) {
 		obj = mEnvironmentObjectLookup.value(objectId);
 	}
 	else {
