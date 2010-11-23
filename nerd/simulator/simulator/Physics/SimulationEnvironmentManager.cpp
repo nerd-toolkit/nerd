@@ -208,9 +208,24 @@ void SimulationEnvironmentManager::resetStartConditions() {
 	for(int i = 0; i < mParameterSettings.size(); i++) {
 		QHash<Value*, QString> parameters = mParameterSettings.value(
 			mParameterSettings.keys().at(i));
+		QHash<Value*, QString> buffer = parameters;
+
+		//TODO test this carefully!
+
 		for(int j = 0; j < parameters.size(); j++) {
 			Value *value = parameters.keys().at(j);
-			QString parameterValue = parameters.value(value);
+			if(dynamic_cast<QuaternionValue*>(value) != 0) {
+				//restore quaternions first to prevent orientation values to change...
+				QString parameterValue = parameters.value(value);
+				value->setValueFromString(parameterValue);
+				buffer.remove(value);
+			}
+		}
+
+		//restore all remaining values.
+		for(int j = 0; j < buffer.size(); j++) {
+			Value *value = buffer.keys().at(j);
+			QString parameterValue = buffer.value(value);
 			value->setValueFromString(parameterValue);
 		}
 	}

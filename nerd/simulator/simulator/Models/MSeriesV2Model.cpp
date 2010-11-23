@@ -382,6 +382,8 @@ void MSeriesV2Model::createModel() {
 		mIncludeHip = true;
 		mIncludeLeftLeg = true;
 		mIncludeRightLeg = true;
+		mIncludeLeftHand = false;
+		mIncludeRightHand = false;
 		mUseAlternativeLeftArm = false;
 		mUseAlternativeRightArm = false;
 	}
@@ -399,6 +401,8 @@ void MSeriesV2Model::createModel() {
 		mIncludeHip = bodyParts.contains("Hip");
 		mIncludeLeftLeg = bodyParts.contains("LeftLeg");
 		mIncludeRightLeg = bodyParts.contains("RightLeg");
+		mIncludeLeftHand = bodyParts.contains("LeftHand");
+		mIncludeRightHand = bodyParts.contains("RightHand");
 		mUseAlternativeLeftArm = bodyParts.contains("LeftArm2b");
 		mUseAlternativeRightArm = bodyParts.contains("RightArm2b");
 	}
@@ -411,6 +415,8 @@ void MSeriesV2Model::createModel() {
 
 	SimObject *boxInertiaBody = pm->getPrototype(
 			SimulationConstants::PROTOTYPE_BOX_INERTIA_BODY); 
+	SimObject *boxBody = pm->getPrototype(
+			SimulationConstants::PROTOTYPE_BOX_BODY);
 
 	SimObject *forceSensor = pm->getPrototype(
 			SimulationConstants::PROTOTYPE_FORCE_SENSOR);
@@ -420,6 +426,8 @@ void MSeriesV2Model::createModel() {
 			SimulationConstants::PROTOTYPE_ACCELSENSOR_3D);
 	SimObject *springAdapter = pm->getPrototype(
 			SimulationConstants::PROTOTYPE_HINGE_SPRING_ADAPTER);
+	SimObject *capsuleBody = pm->getPrototype(
+			SimulationConstants::PROTOTYPE_CAPSULE_BODY);
 
 	//Agent SimObject group.
 	SimObjectGroup *agent = mAgent;
@@ -697,6 +705,25 @@ void MSeriesV2Model::createModel() {
 
 		agent->addObject(mLeftLowerArm);
 	}
+	if(mIncludeRightHand) {
+		mRightHandPalm = boxBody->createCopy();
+		PARAM(StringValue, mRightHandPalm, "Name")->set(mNamePrefix + "Right/Hand/Palm");
+		PARAM(BoolValue, mRightHandPalm, "Dynamic")->set(true);
+
+		agent->addObject(mRightHandPalm);
+
+// 		mRightFingerLowerBase = capsuleBody->createCopy();
+// 		PARAM(StringValue, mRightFingerLowerBase, "Name")->set(mNamePrefix + "Right/Hand/LowerBase");
+// 		PARAM(BoolValue, mRightFingerLowerBase, "Dynamic")->set(true);
+// 
+// 		agent->addObject(mRightFingerLowerBase);
+// 
+// 		mRightFingerLowerTip = capsuleBody->createCopy();
+// 		PARAM(StringValue, mRightFingerLowerTip, "Name")->set(mNamePrefix + "Right/Hand/LowerTip");
+// 		PARAM(BoolValue, mRightFingerLowerTip, "Dynamic")->set(true);
+// 
+// 		agent->addObject(mRightFingerLowerTip);
+	}
 
 	// Sensors
 		QString groupPrefix = "/";
@@ -841,6 +868,7 @@ void MSeriesV2Model::createModel() {
 	SimObject *dynamixel_m2 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_2);
 	SimObject *dynamixel_m3 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_3);
 	SimObject *dynamixel_m4 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_4);
+	SimObject *passiveActuator = pm->getPrototype(SimulationConstants::PROTOTYPE_PASSIVE_HINGE_ACTUATOR_ADAPTER);
 
 	if(mIncludeRightLeg) {
 		// Right Toes
@@ -1108,6 +1136,32 @@ void MSeriesV2Model::createModel() {
 		}
 	
 		agent->addObject(mLeftElbowPitchMotor);
+	}
+	if(mIncludeRightHand) {
+// 		QString rightArmName = groupPrefix + "Right/LowerArm";
+// 		if(!mIncludeRightArm) {
+// 			rightArmName = "";
+// 		}
+// 
+// 		// Right Shoulder Pitch
+// 		mRightHandMainMotor = dynamixel_m1->createCopy();
+// 		PARAM(StringValue, mRightHandMainMotor, "Name")->set(mNamePrefix + ("Right/Hand/MainMotor"));
+// 		PARAM(StringValue, mRightHandMainMotor, "FirstBody")->set(rightArmName);
+// 		PARAM(StringValue, mRightHandMainMotor, "SecondBody")->set(groupPrefix + "Right/Hand/LowerBase");
+// 		PARAM(DoubleValue, mRightHandMainMotor, "MinAngle")->set(-180);
+// 		PARAM(DoubleValue, mRightHandMainMotor, "MaxAngle")->set(180);
+// 		PARAM(DoubleValue, mRightHandMainMotor, "JointAngleOffset")->set(0);
+// 	
+// 		agent->addObject(mRightHandMainMotor);
+// 
+// 		mRightHandLowerTipMotor = passiveActuator->createCopy();
+// 		PARAM(StringValue, mRightHandLowerTipMotor, "Name")->set(mNamePrefix + ("Right/Hand/LowerTipMotor"));
+// 		PARAM(StringValue, mRightHandLowerTipMotor, "FirstBody")->set(groupPrefix + "Right/Hand/LowerBase");
+// 		PARAM(StringValue, mRightHandLowerTipMotor, "SecondBody")->set(groupPrefix + "Right/Hand/LowerTip");
+// 		PARAM(DoubleValue, mRightHandLowerTipMotor, "MinAngle")->set(-180);
+// 		PARAM(DoubleValue, mRightHandLowerTipMotor, "MaxAngle")->set(180);
+// 	
+// 		agent->addObject(mRightHandLowerTipMotor);
 	}
 
 	//Add accelboards
@@ -2082,6 +2136,8 @@ void MSeriesV2Model::layoutObjects() {
 
 		double lowerArmY = elbowY - mElbowRadius->get() - lowerArmHeight / 2.0;
 
+		double handPalmY = lowerArmY - (lowerArmHeight / 2.0);
+
 		// Accelboard positions relative to center of host body
 		double abLegLowerBottomYRel = (mAnkleJointY->get() + 0.064) - tibiaY;
 		double abLegLowerBottomZRel = -0.039;
@@ -2684,6 +2740,18 @@ void MSeriesV2Model::layoutObjects() {
 			PARAM(StringValue, mHeadRollPart, "Material")->set("ABS");
 		}
 		PARAM(Matrix3x3Value, mHeadRollPart, "InertiaTensor")->set(headRollPartInertia);
+	}
+	if(mIncludeRightHand) {
+		PARAM(Vector3DValue, mRightHandPalm, "Position")->set(rightShoulderRollX, handPalmY, 0.0);
+		PARAM(DoubleValue, mRightShoulder, "Width")->set(1.1);
+		PARAM(DoubleValue, mRightShoulder, "Height")->set(0.05);
+		PARAM(DoubleValue, mRightShoulder, "Depth")->set(0.15);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightShoulder, "CenterOfMass")->set(0.0, 0.0, 0.0);
+			PARAM(DoubleValue, mRightShoulder, "Mass")->set(0.01);
+			PARAM(ColorValue, mRightShoulder, "Color")->set(absColor);
+			PARAM(StringValue, mRightShoulder, "Material")->set("ABS");
+		}
 	}
 	if(mIncludeRightArm) {
 	// Right Shoulder

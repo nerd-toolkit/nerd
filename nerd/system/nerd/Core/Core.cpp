@@ -278,6 +278,7 @@ void Core::setUpCore() {
 	TRACE("Core::setUpCore");
 
 	logMessage("~Setting up Core.");
+	Core::log("NERD Version " + getVersionString() + ")", true);
 
 	//Core infrastructure managers
 	mEventManager = new EventManager();

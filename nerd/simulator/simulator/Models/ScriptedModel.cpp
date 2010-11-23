@@ -52,6 +52,7 @@
 #include "Physics/SimObject.h"
 #include "Collision/CollisionManager.h"
 #include "Physics/SimObjectGroup.h"
+#include <QStringList>
 
 using namespace std;
 
@@ -696,6 +697,21 @@ QString ScriptedModel::toVector3DString(double x, double y, double z) {
 QString ScriptedModel::toColorString(double r, double g, double b, double t) {
 	return QString("(") + QString::number(r) + "," + QString::number(g) 
 			+ "," + QString::number(b) + "," + QString::number(t) + ")";
+}
+
+double ScriptedModel::getVectorElement(const QString &vector3DString, int index) {
+	if(!vector3DString.startsWith("(") || !vector3DString.endsWith(")")) {
+		Core::log("ScriptedModel::getVectorElement: Could not parse [" + vector3DString + "]", true);
+		return 0.0;
+	}
+	QString content = vector3DString;
+	QStringList elements = content.mid(1, content.length() - 2).split(",");
+	if(elements.size() <= 0 || elements.size() >= index) {
+		Core::log("ScriptedModel::getVectorElement: Index out of range ["
+				+ QString::number(index) + "]", true);
+		return 0.0;
+	}
+	return elements.at(index).toDouble();
 }
 
 bool ScriptedModel::loadValues(const QString &fileName) {

@@ -88,6 +88,8 @@ namespace nerd {
 		bool mIncludeHip;
 		bool mIncludeLeftLeg;
 		bool mIncludeRightLeg;
+		bool mIncludeLeftHand;
+		bool mIncludeRightHand;
 		bool mUseAlternativeLeftArm;
 		bool mUseAlternativeRightArm;
 		// Free model parameters, see constructor for details
@@ -184,6 +186,12 @@ namespace nerd {
 		CollisionObject *mLeftElbow;
 		BoxInertiaBody *mRightLowerArm;
 		BoxInertiaBody *mLeftLowerArm;
+
+		SimObject *mRightHandPalm;
+		SimObject *mRightFingerLowerBase;
+		SimObject *mRightFingerLowerTip; 
+		SimObject *mRightHandMainMotor;
+		SimObject *mRightHandLowerTipMotor;
 
 		SimObject *mForceSensorRightSoleOfFootRight;
 		SimObject *mForceSensorRightSoleOfFootLeft;

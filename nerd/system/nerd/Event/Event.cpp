@@ -198,7 +198,10 @@ void Event::trigger() {
 	else {
 		//cerr << "Event: " << getName().toStdString().c_str() << endl;
 		for(int index = 0; index < mEventBuffer.size(); index++) {
-			mEventBuffer.at(index)->eventOccured(this);
+			EventListener *e = mEventBuffer.at(index);
+			if(mEventListeners.contains(e)) {
+				e->eventOccured(this);
+			}
 		}
 	}
 

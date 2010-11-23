@@ -116,6 +116,7 @@ namespace nerd {
 
 		QString toVector3DString(double x, double y, double z);
 		QString toColorString(double r, double g, double b, double t);
+		double getVectorElement(const QString &vector3DString, int index);
 
 		bool loadValues(const QString &fileName);
 

@@ -110,22 +110,15 @@ void ODE_PID_PassiveActuatorModel::clear() {
 void ODE_PID_PassiveActuatorModel::valueChanged(Value *value) 
 {
 	PID_PassiveActuatorModel::valueChanged(value);
-
-// 	if(value == mDesiredMotorTorqueValue && mJoint != 0) {
-// 		dJointSetAMotorParam(mJoint, dParamFMax, mFMaxFactor->get() 
-// 			* Math::max(0.0, mDesiredMotorTorqueValue->get()));
-// 	}
 }
 
 void ODE_PID_PassiveActuatorModel::updateInputValues() 
 {
-	cerr << "Update" << endl;
 	if(mJoint != 0) {
 		double desiredAngle = 0.0;
 		PassiveActuatorAdapter *owner = dynamic_cast<PassiveActuatorAdapter*>(mOwner);
 
 		if(owner != 0) {
-			//TODO add gear ration and offset.
 			desiredAngle = (owner->getReferenceAngle() + owner->getReferenceOffsetAngle()) 
 							* owner->getGearRatio() + owner->getOffsetAngle();
 		}
@@ -134,8 +127,6 @@ void ODE_PID_PassiveActuatorModel::updateInputValues()
 		double currentAngle = dJointGetAMotorAngle(mJoint, 0);
 		mPID_Controller.update(currentAngle, desiredAngle * Math::PI / 180.0);
 
-		cerr << "UpdateInput: " << desiredAngle << " force: " << mPID_Controller.getVelocity() << endl;
-	
 		dJointSetAMotorParam(mJoint, dParamFMax, mMaxForce->get());
 		dJointSetHingeParam(mHingeJoint, dParamFMax, mFriction->get());
 		dJointSetAMotorParam(mJoint, dParamVel, mPID_Controller.getVelocity());
@@ -148,23 +139,6 @@ void ODE_PID_PassiveActuatorModel::updateInputValues()
  */
 void ODE_PID_PassiveActuatorModel::updateOutputValues() {
 
-// 	if(mJoint != 0) {
-// 		//read sensor value and add noise.
-// 		double sensorValue = dJointGetAMotorAngle(mJoint, 0);
-// 	
-// 		// First add the choosen offset
-// 		// Add desired noise to the measured angle value
-// 		// Map the value into the interval ( = -1 - 1)
-// 		
-// 		sensorValue = (sensorValue * 180.0)/Math::PI;
-// 
-// 		if(mIncludeNoise->get() == true)
-// 		{
-// 			sensorValue = Math::calculateGaussian(sensorValue, mSensorNoiseDeviation);
-// 		}
-// 		mAngleValue->set(sensorValue);
-// 	}
-
 }
 
 
@@ -176,17 +150,17 @@ dJointID ODE_PID_PassiveActuatorModel::createJoint(dBodyID body1, dBodyID body2)
 	DoubleValue *maxAngleValue = dynamic_cast<DoubleValue*>(mOwner->getParameter("MaxAngle"));
 
 	if(jointAxisPoint1 == 0 || jointAxisPoint2 == 0 || minAngleValue == 0 || maxAngleValue == 0) {
-		Core::log("ODE_H_MSeriesTorqueSpringMotorModel: Could not find all required parameter values.");
+		Core::log("ODE_PID_PassiveActuatorModel: Could not find all required parameter values.");
 		return 0;
 	}
 
 	if(jointAxisPoint1->get().equals(jointAxisPoint2->get(), -1)) {
-		Core::log("ODE_H_MSeriesTorqueSpringMotorModel: Invalid axis points " + jointAxisPoint1->getValueAsString() + " and " + jointAxisPoint2->getValueAsString() + ".");
+		Core::log("ODE_PID_PassiveActuatorModel: Invalid axis points " + jointAxisPoint1->getValueAsString() + " and " + jointAxisPoint2->getValueAsString() + ".");
 		return 0;
 	}
 
 	if(jointAxisPoint1->get().equals(jointAxisPoint2->get(), -1)) {
-		Core::log("Invalid axes for ODE_DynamixelFrictionMotor.");
+		Core::log("Invalid axes for ODE_PID_PassiveActuatorModel.");
 		return 0;
 	}
 
