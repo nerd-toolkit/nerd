@@ -187,11 +187,16 @@ namespace nerd {
 		BoxInertiaBody *mRightLowerArm;
 		BoxInertiaBody *mLeftLowerArm;
 
-		SimObject *mRightHandPalm;
-		SimObject *mRightFingerLowerBase;
-		SimObject *mRightFingerLowerTip; 
+		SimBody *mRightHandPalm;
+		SimBody *mRightThumbBase;
+		SimBody *mRightThumbTip; 
+		SimBody *mRightFingerBase;
+		SimBody *mRightFingerTip;
+		SimObject *mRightHandRollMotor;
 		SimObject *mRightHandMainMotor;
-		SimObject *mRightHandLowerTipMotor;
+		SimObject *mRightHandThumbTipMotor;
+		SimObject *mRightHandFingerBaseMotor;
+		SimObject *mRightHandFingerTipMotor;
 
 		SimObject *mForceSensorRightSoleOfFootRight;
 		SimObject *mForceSensorRightSoleOfFootLeft;

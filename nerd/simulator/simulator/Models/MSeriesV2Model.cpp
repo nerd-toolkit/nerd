@@ -426,8 +426,6 @@ void MSeriesV2Model::createModel() {
 			SimulationConstants::PROTOTYPE_ACCELSENSOR_3D);
 	SimObject *springAdapter = pm->getPrototype(
 			SimulationConstants::PROTOTYPE_HINGE_SPRING_ADAPTER);
-	SimObject *capsuleBody = pm->getPrototype(
-			SimulationConstants::PROTOTYPE_CAPSULE_BODY);
 
 	//Agent SimObject group.
 	SimObjectGroup *agent = mAgent;
@@ -706,23 +704,63 @@ void MSeriesV2Model::createModel() {
 		agent->addObject(mLeftLowerArm);
 	}
 	if(mIncludeRightHand) {
-		mRightHandPalm = boxBody->createCopy();
+
+		Color handColor(120, 120, 120, 255);
+
+		mRightHandPalm = dynamic_cast<SimBody*>(boxBody->createCopy());
 		PARAM(StringValue, mRightHandPalm, "Name")->set(mNamePrefix + "Right/Hand/Palm");
 		PARAM(BoolValue, mRightHandPalm, "Dynamic")->set(true);
+		PARAM(DoubleValue, mRightHandPalm, "Width")->set(0.06);
+		PARAM(DoubleValue, mRightHandPalm, "Height")->set(0.05);
+		PARAM(DoubleValue, mRightHandPalm, "Depth")->set(0.06);
+		PARAM(ColorValue, mRightHandPalm, "Color")->set(handColor);
 
 		agent->addObject(mRightHandPalm);
 
-// 		mRightFingerLowerBase = capsuleBody->createCopy();
-// 		PARAM(StringValue, mRightFingerLowerBase, "Name")->set(mNamePrefix + "Right/Hand/LowerBase");
-// 		PARAM(BoolValue, mRightFingerLowerBase, "Dynamic")->set(true);
-// 
-// 		agent->addObject(mRightFingerLowerBase);
-// 
-// 		mRightFingerLowerTip = capsuleBody->createCopy();
-// 		PARAM(StringValue, mRightFingerLowerTip, "Name")->set(mNamePrefix + "Right/Hand/LowerTip");
-// 		PARAM(BoolValue, mRightFingerLowerTip, "Dynamic")->set(true);
-// 
-// 		agent->addObject(mRightFingerLowerTip);
+
+		//thumb
+
+		mRightThumbBase = dynamic_cast<SimBody*>(boxBody->createCopy());
+		PARAM(StringValue, mRightThumbBase, "Name")->set(mNamePrefix + "Right/Hand/ThumbBase");
+		PARAM(BoolValue, mRightThumbBase, "Dynamic")->set(true);
+		PARAM(DoubleValue, mRightThumbBase, "Width")->set(0.02);
+		PARAM(DoubleValue, mRightThumbBase, "Height")->set(0.035);
+		PARAM(DoubleValue, mRightThumbBase, "Depth")->set(0.04);
+		PARAM(ColorValue, mRightThumbBase, "Color")->set(handColor);
+
+		agent->addObject(mRightThumbBase);
+
+		mRightThumbTip = dynamic_cast<SimBody*>(boxBody->createCopy());
+		PARAM(StringValue, mRightThumbTip, "Name")->set(mNamePrefix + "Right/Hand/ThumbTip");
+		PARAM(BoolValue, mRightThumbTip, "Dynamic")->set(true);
+		PARAM(DoubleValue, mRightThumbTip, "Width")->set(0.02);
+		PARAM(DoubleValue, mRightThumbTip, "Height")->set(0.04);
+		PARAM(DoubleValue, mRightThumbTip, "Depth")->set(0.035);
+		PARAM(ColorValue, mRightThumbTip, "Color")->set(handColor);
+
+		agent->addObject(mRightThumbTip);
+
+		//finger
+		mRightFingerBase = dynamic_cast<SimBody*>(boxBody->createCopy());
+		PARAM(StringValue, mRightFingerBase, "Name")->set(mNamePrefix + "Right/Hand/FingerBase");
+		PARAM(BoolValue, mRightFingerBase, "Dynamic")->set(true);
+		PARAM(DoubleValue, mRightFingerBase, "Width")->set(0.02);
+		PARAM(DoubleValue, mRightFingerBase, "Height")->set(0.035);
+		PARAM(DoubleValue, mRightFingerBase, "Depth")->set(0.04);
+		PARAM(ColorValue, mRightFingerBase, "Color")->set(handColor);
+
+		agent->addObject(mRightFingerBase);
+
+		mRightFingerTip = dynamic_cast<SimBody*>(boxBody->createCopy());
+		PARAM(StringValue, mRightFingerTip, "Name")->set(mNamePrefix + "Right/Hand/FingerTip");
+		PARAM(BoolValue, mRightFingerTip, "Dynamic")->set(true);
+		PARAM(DoubleValue, mRightFingerTip, "Width")->set(0.02);
+		PARAM(DoubleValue, mRightFingerTip, "Height")->set(0.04);
+		PARAM(DoubleValue, mRightFingerTip, "Depth")->set(0.035);
+		PARAM(ColorValue, mRightFingerTip, "Color")->set(handColor);
+
+		agent->addObject(mRightFingerTip);
+		
 	}
 
 	// Sensors
@@ -1138,30 +1176,67 @@ void MSeriesV2Model::createModel() {
 		agent->addObject(mLeftElbowPitchMotor);
 	}
 	if(mIncludeRightHand) {
-// 		QString rightArmName = groupPrefix + "Right/LowerArm";
-// 		if(!mIncludeRightArm) {
-// 			rightArmName = "";
-// 		}
-// 
-// 		// Right Shoulder Pitch
-// 		mRightHandMainMotor = dynamixel_m1->createCopy();
-// 		PARAM(StringValue, mRightHandMainMotor, "Name")->set(mNamePrefix + ("Right/Hand/MainMotor"));
-// 		PARAM(StringValue, mRightHandMainMotor, "FirstBody")->set(rightArmName);
-// 		PARAM(StringValue, mRightHandMainMotor, "SecondBody")->set(groupPrefix + "Right/Hand/LowerBase");
-// 		PARAM(DoubleValue, mRightHandMainMotor, "MinAngle")->set(-180);
-// 		PARAM(DoubleValue, mRightHandMainMotor, "MaxAngle")->set(180);
-// 		PARAM(DoubleValue, mRightHandMainMotor, "JointAngleOffset")->set(0);
-// 	
-// 		agent->addObject(mRightHandMainMotor);
-// 
-// 		mRightHandLowerTipMotor = passiveActuator->createCopy();
-// 		PARAM(StringValue, mRightHandLowerTipMotor, "Name")->set(mNamePrefix + ("Right/Hand/LowerTipMotor"));
-// 		PARAM(StringValue, mRightHandLowerTipMotor, "FirstBody")->set(groupPrefix + "Right/Hand/LowerBase");
-// 		PARAM(StringValue, mRightHandLowerTipMotor, "SecondBody")->set(groupPrefix + "Right/Hand/LowerTip");
-// 		PARAM(DoubleValue, mRightHandLowerTipMotor, "MinAngle")->set(-180);
-// 		PARAM(DoubleValue, mRightHandLowerTipMotor, "MaxAngle")->set(180);
-// 	
-// 		agent->addObject(mRightHandLowerTipMotor);
+		QString rightArmName = groupPrefix + "Right/LowerArm";
+		if(!mIncludeRightArm) {
+			rightArmName = "";
+		}
+
+		mRightHandRollMotor = dynamixel_m1->createCopy();
+		PARAM(StringValue, mRightHandRollMotor, "Name")->set(mNamePrefix + ("Right/MotorHandRoll"));
+		PARAM(StringValue, mRightHandRollMotor, "FirstBody")->set(rightArmName);
+		PARAM(StringValue, mRightHandRollMotor, "SecondBody")->set(groupPrefix + "Right/Hand/Palm");
+		PARAM(DoubleValue, mRightHandRollMotor, "MinAngle")->set(-150);
+		PARAM(DoubleValue, mRightHandRollMotor, "MaxAngle")->set(150);
+		PARAM(DoubleValue, mRightHandRollMotor, "JointAngleOffset")->set(0);
+	
+		agent->addObject(mRightHandRollMotor);
+
+		mRightHandMainMotor = dynamixel_m1->createCopy();
+		PARAM(StringValue, mRightHandMainMotor, "Name")->set(mNamePrefix + ("Right/Hand/MotorMain"));
+		PARAM(StringValue, mRightHandMainMotor, "FirstBody")->set(groupPrefix + "Right/Hand/Palm");
+		PARAM(StringValue, mRightHandMainMotor, "SecondBody")->set(groupPrefix + "Right/Hand/ThumbBase");
+		PARAM(DoubleValue, mRightHandMainMotor, "MinAngle")->set(-15);
+		PARAM(DoubleValue, mRightHandMainMotor, "MaxAngle")->set(100);
+		PARAM(DoubleValue, mRightHandMainMotor, "JointAngleOffset")->set(0);
+	
+		agent->addObject(mRightHandMainMotor);
+
+		mRightHandThumbTipMotor = passiveActuator->createCopy();
+		PARAM(StringValue, mRightHandThumbTipMotor, "Name")->set(mNamePrefix + ("Right/Hand/MotorThumbTip"));
+		PARAM(StringValue, mRightHandThumbTipMotor, "FirstBody")->set(groupPrefix + "Right/Hand/ThumbBase");
+		PARAM(StringValue, mRightHandThumbTipMotor, "SecondBody")->set(groupPrefix + "Right/Hand/ThumbTip");
+		PARAM(DoubleValue, mRightHandThumbTipMotor, "MinAngle")->set(-25);
+		PARAM(DoubleValue, mRightHandThumbTipMotor, "MaxAngle")->set(50);
+		PARAM(StringValue, mRightHandThumbTipMotor, "ReferenceAngleName")->set("/Sim/MSeriesV2/Right/Hand/MotorMain/JointAngle");
+		PARAM(DoubleValue, mRightHandThumbTipMotor, "GearRatio")->set(0.5);
+		PARAM(DoubleValue, mRightHandThumbTipMotor, "AngleOffset")->set(-10);
+
+		agent->addObject(mRightHandThumbTipMotor);
+
+
+		mRightHandFingerBaseMotor = passiveActuator->createCopy();
+		PARAM(StringValue, mRightHandFingerBaseMotor, "Name")->set(mNamePrefix + ("Right/Hand/MotorFingerBase"));
+		PARAM(StringValue, mRightHandFingerBaseMotor, "FirstBody")->set(groupPrefix + "Right/Hand/Palm");
+		PARAM(StringValue, mRightHandFingerBaseMotor, "SecondBody")->set(groupPrefix + "Right/Hand/FingerBase");
+		PARAM(DoubleValue, mRightHandFingerBaseMotor, "MinAngle")->set(-100);
+		PARAM(DoubleValue, mRightHandFingerBaseMotor, "MaxAngle")->set(15);
+		PARAM(StringValue, mRightHandFingerBaseMotor, "ReferenceAngleName")->set("/Sim/MSeriesV2/Right/Hand/MotorMain/JointAngle");
+		PARAM(DoubleValue, mRightHandFingerBaseMotor, "GearRatio")->set(-1.0);
+		PARAM(DoubleValue, mRightHandFingerBaseMotor, "AngleOffset")->set(0);
+	
+		agent->addObject(mRightHandFingerBaseMotor);
+
+		mRightHandFingerTipMotor = passiveActuator->createCopy();
+		PARAM(StringValue, mRightHandFingerTipMotor, "Name")->set(mNamePrefix + ("Right/Hand/MotorFingerTip"));
+		PARAM(StringValue, mRightHandFingerTipMotor, "FirstBody")->set(groupPrefix + "Right/Hand/FingerBase");
+		PARAM(StringValue, mRightHandFingerTipMotor, "SecondBody")->set(groupPrefix + "Right/Hand/FingerTip");
+		PARAM(DoubleValue, mRightHandFingerTipMotor, "MinAngle")->set(-50);
+		PARAM(DoubleValue, mRightHandFingerTipMotor, "MaxAngle")->set(25);
+		PARAM(StringValue, mRightHandFingerTipMotor, "ReferenceAngleName")->set("/Sim/MSeriesV2/Right/Hand/MotorMain/JointAngle");
+		PARAM(DoubleValue, mRightHandFingerTipMotor, "GearRatio")->set(-0.5);
+		PARAM(DoubleValue, mRightHandFingerTipMotor, "AngleOffset")->set(10);
+
+		agent->addObject(mRightHandFingerTipMotor);
 	}
 
 	//Add accelboards
@@ -1666,6 +1741,11 @@ void MSeriesV2Model::createModel() {
 	disableCollisions(mHeadPitchPart, mHeadRollPart);
 	disableCollisions(mLeftUpperArm, mUpperBody);
 	disableCollisions(mRightUpperArm, mUpperBody);
+	disableCollisions(mRightLowerArm, mRightHandPalm);
+	disableCollisions(mRightHandPalm, mRightThumbBase);
+	disableCollisions(mRightThumbBase, mRightThumbTip);
+	disableCollisions(mRightHandPalm, mRightFingerBase);
+	disableCollisions(mRightFingerBase, mRightFingerTip);
 
 	if(mFirstLayout) {
 		initializeMotorModels();
@@ -2165,6 +2245,9 @@ void MSeriesV2Model::layoutObjects() {
 		double abHeadZRel = 0.026;
 		double abRightHeadXRel = -0.034;
 		double abLeftHeadXRel = -abRightHeadXRel;
+
+		double fingerPartMass = 0.03;
+		double handPalmMass = 0.03;
 
 	// ----------------------------------------------------------
 	// Now set the parameters of the Bodies and CollisionObjects
@@ -2742,16 +2825,85 @@ void MSeriesV2Model::layoutObjects() {
 		PARAM(Matrix3x3Value, mHeadRollPart, "InertiaTensor")->set(headRollPartInertia);
 	}
 	if(mIncludeRightHand) {
-		PARAM(Vector3DValue, mRightHandPalm, "Position")->set(rightShoulderRollX, handPalmY, 0.0);
-		PARAM(DoubleValue, mRightShoulder, "Width")->set(1.1);
-		PARAM(DoubleValue, mRightShoulder, "Height")->set(0.05);
-		PARAM(DoubleValue, mRightShoulder, "Depth")->set(0.15);
+
+		//Hand Palm
+		double palmHeight = dynamic_cast<DoubleValue*>(mRightHandPalm->getParameter("Height"))->get();
+		PARAM(Vector3DValue, mRightHandPalm, "Position")
+					->set(rightShoulderRollX, handPalmY - (palmHeight / 2.0), 0.0);
 		if(mFirstLayout) {
-			PARAM(Vector3DValue, mRightShoulder, "CenterOfMass")->set(0.0, 0.0, 0.0);
-			PARAM(DoubleValue, mRightShoulder, "Mass")->set(0.01);
-			PARAM(ColorValue, mRightShoulder, "Color")->set(absColor);
-			PARAM(StringValue, mRightShoulder, "Material")->set("ABS");
+			PARAM(Vector3DValue, mRightHandPalm, "CenterOfMass")->set(0.0, 0.0, 0.0);
+			PARAM(DoubleValue, mRightHandPalm, "Mass")->set(handPalmMass);
+			PARAM(StringValue, mRightHandPalm, "Material")->set("ABS");
 		}
+
+		//Hand Thumb Lower Base
+		double fingerBaseHeight = dynamic_cast<DoubleValue*>(mRightThumbBase->getParameter("Height"))->get();
+		double palmWidth = dynamic_cast<DoubleValue*>(mRightHandPalm->getParameter("Width"))->get();
+		double fingerWidth = dynamic_cast<DoubleValue*>(mRightThumbBase->getParameter("Width"))->get();
+
+		double thumbBaseX = rightShoulderRollX - (0.5 * palmWidth) + (0.5 * fingerWidth);
+		double thumbBaseY = handPalmY - palmHeight - (fingerBaseHeight / 2.0);
+
+		PARAM(Vector3DValue, mRightThumbBase, "Position")
+					->set(thumbBaseX, thumbBaseY, 0.0);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightThumbBase, "CenterOfMass")->set(0.0, 0.0, 0.0);
+			PARAM(DoubleValue, mRightThumbBase, "Mass")->set(fingerPartMass);
+			PARAM(StringValue, mRightThumbBase, "Material")->set("ABS");
+		}
+
+		//Hand Thumb Tip
+		double fingerTipHeight = dynamic_cast<DoubleValue*>(mRightThumbTip->getParameter("Height"))->get();
+		
+		double thumbTipY = handPalmY - palmHeight - fingerBaseHeight - (fingerTipHeight / 2.0);
+		PARAM(Vector3DValue, mRightThumbTip, "Position")
+					->set(thumbBaseX, thumbTipY, 0.0);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightThumbTip, "CenterOfMass")->set(0.0, 0.0, 0.0);
+			PARAM(DoubleValue, mRightThumbTip, "Mass")->set(fingerPartMass);
+			PARAM(StringValue, mRightThumbTip, "Material")->set("ABS");
+		}
+
+		//Hand Finger Base
+		double fingerBaseX = rightShoulderRollX + (0.5 * palmWidth) - (0.5 * fingerWidth);
+
+		PARAM(Vector3DValue, mRightFingerBase, "Position")
+					->set(fingerBaseX, thumbBaseY, 0.0);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightFingerBase, "CenterOfMass")->set(0.0, 0.0, 0.0);
+			PARAM(DoubleValue, mRightFingerBase, "Mass")->set(fingerPartMass);
+			PARAM(StringValue, mRightFingerBase, "Material")->set("ABS");
+		}
+
+		//Hand Thumb Tip
+		PARAM(Vector3DValue, mRightFingerTip, "Position")
+					->set(fingerBaseX, thumbTipY, 0.0);
+		if(mFirstLayout) {
+			PARAM(Vector3DValue, mRightFingerTip, "CenterOfMass")->set(0.0, 0.0, 0.0);
+			PARAM(DoubleValue, mRightFingerTip, "Mass")->set(fingerPartMass);
+			PARAM(StringValue, mRightFingerTip, "Material")->set("ABS");
+		}
+
+		//Motor Roll
+		PARAM(Vector3DValue, mRightHandRollMotor, "AxisPoint1")->set(rightShoulderRollX, handPalmY, 0.0);
+		PARAM(Vector3DValue, mRightHandRollMotor, "AxisPoint2")->set(rightShoulderRollX, handPalmY + 0.1, 0.0);
+
+		//Motor Thumb Main
+		PARAM(Vector3DValue, mRightHandMainMotor, "AxisPoint1")->set(thumbBaseX, thumbBaseY + (fingerBaseHeight / 2.0), 0.0);
+		PARAM(Vector3DValue, mRightHandMainMotor, "AxisPoint2")->set(thumbBaseX, thumbBaseY + (fingerBaseHeight / 2.0), 0.1);
+
+		//Motor Thumb Tip
+		PARAM(Vector3DValue, mRightHandThumbTipMotor, "AxisPoint1")->set(thumbBaseX, thumbTipY + (fingerTipHeight / 2.0), 0.0);
+		PARAM(Vector3DValue, mRightHandThumbTipMotor, "AxisPoint2")->set(thumbBaseX, thumbTipY + (fingerTipHeight / 2.0), 0.1);
+
+		//Motor Thumb Main
+		PARAM(Vector3DValue, mRightHandFingerBaseMotor, "AxisPoint1")->set(fingerBaseX, thumbBaseY + (fingerBaseHeight / 2.0), 0.0);
+		PARAM(Vector3DValue, mRightHandFingerBaseMotor, "AxisPoint2")->set(fingerBaseX, thumbBaseY + (fingerBaseHeight / 2.0), 0.1);
+
+		//Motor Thumb Tip
+		PARAM(Vector3DValue, mRightHandFingerTipMotor, "AxisPoint1")->set(fingerBaseX, thumbTipY + (fingerTipHeight / 2.0), 0.0);
+		PARAM(Vector3DValue, mRightHandFingerTipMotor, "AxisPoint2")->set(fingerBaseX, thumbTipY + (fingerTipHeight / 2.0), 0.1);
+		
 	}
 	if(mIncludeRightArm) {
 	// Right Shoulder
@@ -3323,6 +3475,13 @@ void MSeriesV2Model::initializeMotorModels() {
 	SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.33");
 	SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 
+	if(mIncludeRightHand) {
+		SETVAL(prefix + "Right/Hand/MotorMain/ODE_H_MSeriesTorqueSpringMotorModel/TorqueConstant", "0.05");
+		SETVAL(prefix + "Right/Hand/MotorFingerBase/PID_PassiveActuatorModel/MaxForce", "2");
+		SETVAL(prefix + "Right/Hand/MotorFingerTip/PID_PassiveActuatorModel/MaxForce", "0.2");
+		SETVAL(prefix + "Right/Hand/MotorThumbTip/PID_PassiveActuatorModel/MaxForce", "0.2");
+		SETVAL(prefix + "Right/Hand/MotorMain/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.65");
+	}
 }
 
 }
