@@ -803,7 +803,6 @@ void ValueManager::printValues(const QString &valueNamePattern) {
 }
 
 
-
 }
 
 

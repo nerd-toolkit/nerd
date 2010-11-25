@@ -107,7 +107,10 @@ MSeriesV2Model::MSeriesV2Model(const QString &groupName, const QString &bodyPart
 		mRightHip(0), mLeftHip(0), mRightHipCross(0), mLeftHipCross(0), mPelvis(0), mUpperBody(0), 
 		mThroat(0), mHeadPitchPart(0), mHeadYawPart(0), mHeadRollPart(0), mRightShoulder(0), 
 		mLeftShoulder(0), mRightUpperArm(0), mLeftUpperArm(0), mRightElbow(0), mLeftElbow(0), 
-		mRightLowerArm(0), mLeftLowerArm(0), mForceSensorRightSoleOfFootRight(0), 
+		mRightLowerArm(0), mLeftLowerArm(0), mRightHandPalm(0), mRightThumbBase(0), mRightThumbTip(0),
+		mRightFingerBase(0), mRightFingerTip(0), mRightHandRollMotor(0), mRightHandMainMotor(0),
+		mRightHandThumbTipMotor(0), mRightHandFingerBaseMotor(0), mRightHandFingerTipMotor(0), 
+		mForceSensorRightSoleOfFootRight(0), 
 		mForceSensorRightSoleOfFootLeft(0), mForceSensorRightBallOfFootRight(0), 
 		mForceSensorRightBallOfFootLeft(0), mForceSensorLeftSoleOfFootRight(0), 
 		mForceSensorLeftSoleOfFootLeft(0), mForceSensorLeftBallOfFootRight(0), 
@@ -293,7 +296,10 @@ MSeriesV2Model::MSeriesV2Model(const MSeriesV2Model &other) : Object(), ValueCha
 		mRightHip(0), mLeftHip(0), mRightHipCross(0), mLeftHipCross(0), mPelvis(0), mUpperBody(0), 
 		mThroat(0), mHeadPitchPart(0), mHeadYawPart(0), mHeadRollPart(0), mRightShoulder(0), 
 		mLeftShoulder(0), mRightUpperArm(0), mLeftUpperArm(0), mRightElbow(0), mLeftElbow(0), 
-		mRightLowerArm(0), mLeftLowerArm(0), mForceSensorRightSoleOfFootRight(0), 
+		mRightLowerArm(0), mLeftLowerArm(0), mRightHandPalm(0), mRightThumbBase(0), mRightThumbTip(0),
+		mRightFingerBase(0), mRightFingerTip(0), mRightHandRollMotor(0), mRightHandMainMotor(0),
+		mRightHandThumbTipMotor(0), mRightHandFingerBaseMotor(0), mRightHandFingerTipMotor(0), 
+		mForceSensorRightSoleOfFootRight(0), 
 		mForceSensorRightSoleOfFootLeft(0), mForceSensorRightBallOfFootRight(0), 
 		mForceSensorRightBallOfFootLeft(0), mForceSensorLeftSoleOfFootRight(0), 
 		mForceSensorLeftSoleOfFootLeft(0), mForceSensorLeftBallOfFootRight(0), 
@@ -1207,7 +1213,7 @@ void MSeriesV2Model::createModel() {
 		PARAM(StringValue, mRightHandThumbTipMotor, "SecondBody")->set(groupPrefix + "Right/Hand/ThumbTip");
 		PARAM(DoubleValue, mRightHandThumbTipMotor, "MinAngle")->set(-25);
 		PARAM(DoubleValue, mRightHandThumbTipMotor, "MaxAngle")->set(50);
-		PARAM(StringValue, mRightHandThumbTipMotor, "ReferenceAngleName")->set("/Sim/MSeriesV2/Right/Hand/MotorMain/JointAngle");
+		PARAM(StringValue, mRightHandThumbTipMotor, "ReferenceAngleName")->set("/Sim" + groupPrefix + "Right/Hand/MotorMain/JointAngle");
 		PARAM(DoubleValue, mRightHandThumbTipMotor, "GearRatio")->set(0.5);
 		PARAM(DoubleValue, mRightHandThumbTipMotor, "AngleOffset")->set(-10);
 
@@ -1220,7 +1226,7 @@ void MSeriesV2Model::createModel() {
 		PARAM(StringValue, mRightHandFingerBaseMotor, "SecondBody")->set(groupPrefix + "Right/Hand/FingerBase");
 		PARAM(DoubleValue, mRightHandFingerBaseMotor, "MinAngle")->set(-100);
 		PARAM(DoubleValue, mRightHandFingerBaseMotor, "MaxAngle")->set(15);
-		PARAM(StringValue, mRightHandFingerBaseMotor, "ReferenceAngleName")->set("/Sim/MSeriesV2/Right/Hand/MotorMain/JointAngle");
+		PARAM(StringValue, mRightHandFingerBaseMotor, "ReferenceAngleName")->set("/Sim" + groupPrefix + "Right/Hand/MotorMain/JointAngle");
 		PARAM(DoubleValue, mRightHandFingerBaseMotor, "GearRatio")->set(-1.0);
 		PARAM(DoubleValue, mRightHandFingerBaseMotor, "AngleOffset")->set(0);
 	
@@ -1232,7 +1238,7 @@ void MSeriesV2Model::createModel() {
 		PARAM(StringValue, mRightHandFingerTipMotor, "SecondBody")->set(groupPrefix + "Right/Hand/FingerTip");
 		PARAM(DoubleValue, mRightHandFingerTipMotor, "MinAngle")->set(-50);
 		PARAM(DoubleValue, mRightHandFingerTipMotor, "MaxAngle")->set(25);
-		PARAM(StringValue, mRightHandFingerTipMotor, "ReferenceAngleName")->set("/Sim/MSeriesV2/Right/Hand/MotorMain/JointAngle");
+		PARAM(StringValue, mRightHandFingerTipMotor, "ReferenceAngleName")->set("/Sim" + groupPrefix + "Right/Hand/MotorMain/JointAngle");
 		PARAM(DoubleValue, mRightHandFingerTipMotor, "GearRatio")->set(-0.5);
 		PARAM(DoubleValue, mRightHandFingerTipMotor, "AngleOffset")->set(10);
 

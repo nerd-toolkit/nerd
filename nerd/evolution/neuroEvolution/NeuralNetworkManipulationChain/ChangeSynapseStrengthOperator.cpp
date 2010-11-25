@@ -55,6 +55,8 @@
 #include <iostream>
 #include "Network/NeuroTagManager.h"
 
+//TODO allow overwriting with factors, fixed values, variables and the like. (auch bei bias)
+
 using namespace std;
 
 namespace nerd {
