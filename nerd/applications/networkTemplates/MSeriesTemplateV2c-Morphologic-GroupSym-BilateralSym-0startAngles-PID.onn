@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <net version="NERD XML V1.0" >
     <properties>
-        <prop value="3551.63,10779.4,0.0717898" name="_Viewport" />
+        <prop value="13893,6358.34,0.0278128" name="_Viewport" />
     </properties>
     <defaultTransferFunction name="tanh" />
     <defaultActivationFunction name="AdditiveTD" />
     <defaultSynapseFunction name="SimpleUpdateFunction" />
-    <neuron bias="0" id="1094" name="/Right/MotorHandRoll/JointAngle" >
+    <neuron bias="0" id="1094" name="/Right/Foot/ForceSensorOuterSole/Force" >
         <properties>
             <prop value="1874.72,12365,0" name="_LOCATION" />
             <prop value="89" name="SPINAL_CORD_ADDRESS" />
@@ -16,7 +16,7 @@
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
     </neuron>
-    <neuron bias="0" id="1095" name="/Right/MotorHandRoll/MotorAngle0" >
+    <neuron bias="0" id="1095" name="/Right/Foot/ForceSensorInnerSole/Force" >
         <properties>
             <prop value="1475.75,12371,0" name="_LOCATION" />
             <prop value="87" name="SPINAL_CORD_ADDRESS" />
@@ -26,7 +26,7 @@
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
     </neuron>
-    <neuron bias="0" id="1096" name="/Right/Hand/MotorMain/JointAngle" >
+    <neuron bias="0" id="1096" name="/Right/Foot/ForceSensorOuterBall/Force" >
         <properties>
             <prop value="1873.42,11932.7,0" name="_LOCATION" />
             <prop value="88" name="SPINAL_CORD_ADDRESS" />
@@ -36,7 +36,7 @@
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
     </neuron>
-    <neuron bias="0" id="1097" name="/Right/Hand/MotorMain/MotorAngle0" >
+    <neuron bias="0" id="1097" name="/Right/Foot/ForceSensorInnerBall/Force" >
         <properties>
             <prop value="1477.38,11938.4,0" name="_LOCATION" />
             <prop value="86" name="SPINAL_CORD_ADDRESS" />
@@ -505,7 +505,7 @@
     </neuron>
     <neuron bias="0" id="1144" name="/Middle/MotorWaistRoll/JointAngle" >
         <properties>
-            <prop value="-665.477,802.76,0" name="_LOCATION" />
+            <prop value="-633.097,813.553,0" name="_LOCATION" />
             <prop value="489" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
         </properties>
@@ -514,7 +514,7 @@
     </neuron>
     <neuron bias="0" id="1145" name="/Middle/MotorWaistRoll/MotorAngle0" >
         <properties>
-            <prop value="-89.6825,778.57,0" name="_LOCATION" />
+            <prop value="-57.3029,789.363,0" name="_LOCATION" />
             <prop value="485" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
         </properties>
@@ -662,7 +662,7 @@
     </neuron>
     <neuron bias="0.5" id="1162" name="/Right/MotorElbowPitch/JointAngle" >
         <properties>
-            <prop value="4632.05,424.423,0" name="_LOCATION" />
+            <prop value="4632.05,427.964,0" name="_LOCATION" />
             <prop value="354" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
             <prop value="" name="_ConstraintSlave" />
@@ -672,7 +672,7 @@
     </neuron>
     <neuron bias="0.5" id="1163" name="/Right/MotorElbowPitch/MotorAngle0" >
         <properties>
-            <prop value="4009.01,416.425,0" name="_LOCATION" />
+            <prop value="4009.01,419.966,0" name="_LOCATION" />
             <prop value="404" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
             <prop value="" name="_ConstraintSlave" />
@@ -682,7 +682,7 @@
     </neuron>
     <neuron bias="-0.5" id="1164" name="/Left/MotorElbowPitch/JointAngle" >
         <properties>
-            <prop value="-4863.06,434.263,0" name="_LOCATION" />
+            <prop value="-4863.06,437.804,0" name="_LOCATION" />
             <prop value="" name="FLIP_ACTIVITY" />
             <prop value="327" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
@@ -692,7 +692,7 @@
     </neuron>
     <neuron bias="-0.5" id="1165" name="/Left/MotorElbowPitch/MotorAngle0" >
         <properties>
-            <prop value="-4240.02,426.265,0" name="_LOCATION" />
+            <prop value="-4240.02,429.806,0" name="_LOCATION" />
             <prop value="" name="FLIP_ACTIVITY" />
             <prop value="377" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
@@ -1526,7 +1526,7 @@
     </neuron>
     <neuron bias="0" id="1249" name="/Middle/WaistRoll/CurrentSensor0/CurrentConsumption" >
         <properties>
-            <prop value="293.18,785.722,0" name="_LOCATION" />
+            <prop value="325.56,796.515,0" name="_LOCATION" />
             <prop value="483" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
         </properties>
@@ -1565,7 +1565,7 @@
     </neuron>
     <neuron bias="0" id="1254" name="/Right/ElbowPitch/CurrentSensor0/CurrentConsumption" >
         <properties>
-            <prop value="3737.64,406.891,0" name="_LOCATION" />
+            <prop value="3737.64,410.432,0" name="_LOCATION" />
             <prop value="402" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
             <prop value="" name="_ConstraintSlave" />
@@ -1602,7 +1602,7 @@
     </neuron>
     <neuron bias="0" id="1260" name="/Left/ElbowPitch/CurrentSensor0/CurrentConsumption" >
         <properties>
-            <prop value="-3968.65,416.731,0" name="_LOCATION" />
+            <prop value="-3968.65,420.272,0" name="_LOCATION" />
             <prop value="375" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_INPUT" />
         </properties>
@@ -1627,7 +1627,7 @@
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
     </neuron>
-    <neuron bias="0" id="1264" name="/Right/MotorHandRoll/DesiredTorque0" >
+    <neuron bias="0" id="1264" name="/Right/MotorAnklePitch/DesiredTorque0" >
         <properties>
             <prop value="1781.76,10772.5,0" name="_LOCATION" />
             <prop value="M4" name="SPINAL_CORD_ADDRESS" />
@@ -1636,7 +1636,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278937" id="278987" >
+        <synapse strength="2.5" source="278937" id="278987" >
             <properties>
                 <prop value="2014.95,10712.7,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1645,7 +1645,7 @@
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
-    <neuron bias="0" id="1265" name="/Right/MotorHandRoll/ReleaseMode0" >
+    <neuron bias="0" id="1265" name="/Right/MotorAnklePitch/ReleaseMode0" >
         <properties>
             <prop value="1923.45,10768.7,0" name="_LOCATION" />
             <prop value="R4" name="SPINAL_CORD_ADDRESS" />
@@ -1655,7 +1655,7 @@
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
     </neuron>
-    <neuron bias="0" id="1266" name="/Right/Hand/MotorMain/DesiredTorque0" >
+    <neuron bias="0" id="1266" name="/Right/MotorAnklePitch/DesiredTorque1" >
         <properties>
             <prop value="1443.59,10770.5,0" name="_LOCATION" />
             <prop value="M6" name="SPINAL_CORD_ADDRESS" />
@@ -1664,7 +1664,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278937" id="278988" >
+        <synapse strength="2.5" source="278937" id="278988" >
             <properties>
                 <prop value="1844.5,10711.7,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1673,7 +1673,7 @@
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
-    <neuron bias="0" id="1267" name="/Right/Hand/MotorMain/ReleaseMode0" >
+    <neuron bias="0" id="1267" name="/Right/MotorAnklePitch/ReleaseMode1" >
         <properties>
             <prop value="1585.64,10767.1,0" name="_LOCATION" />
             <prop value="R6" name="SPINAL_CORD_ADDRESS" />
@@ -1693,7 +1693,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278937" id="278989" >
+        <synapse strength="2.5" source="278937" id="278989" >
             <properties>
                 <prop value="1677.54,10706.2,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1722,7 +1722,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278937" id="278990" >
+        <synapse strength="2.5" source="278937" id="278990" >
             <properties>
                 <prop value="1541.25,10710,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1750,7 +1750,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278905" id="278980" >
+        <synapse strength="2.5" source="278905" id="278980" >
             <properties>
                 <prop value="-2245.96,10722.5,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1776,7 +1776,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278905" id="278981" >
+        <synapse strength="2.5" source="278905" id="278981" >
             <properties>
                 <prop value="-2075.51,10721.5,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1801,7 +1801,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278905" id="278982" >
+        <synapse strength="2.5" source="278905" id="278982" >
             <properties>
                 <prop value="-1908.55,10716,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1826,7 +1826,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278905" id="278983" >
+        <synapse strength="2.5" source="278905" id="278983" >
             <properties>
                 <prop value="-1772.26,10719.8,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1852,7 +1852,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278953" id="278998" >
+        <synapse strength="2.5" source="278953" id="278998" >
             <properties>
                 <prop value="1612.84,11344.8,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1880,7 +1880,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278921" id="278994" >
+        <synapse strength="2.5" source="278921" id="278994" >
             <properties>
                 <prop value="-1843.85,11354.6,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1907,7 +1907,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278885" id="278974" >
+        <synapse strength="2.5" source="278885" id="278974" >
             <properties>
                 <prop value="1780.03,8022.08,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1936,7 +1936,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278885" id="278975" >
+        <synapse strength="2.5" source="278885" id="278975" >
             <properties>
                 <prop value="1621.48,8026.61,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1965,7 +1965,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278885" id="278976" >
+        <synapse strength="2.5" source="278885" id="278976" >
             <properties>
                 <prop value="1482.98,8024.3,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -1992,7 +1992,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278869" id="278968" >
+        <synapse strength="2.5" source="278869" id="278968" >
             <properties>
                 <prop value="-2011.04,8031.92,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2017,7 +2017,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278869" id="278969" >
+        <synapse strength="2.5" source="278869" id="278969" >
             <properties>
                 <prop value="-1852.49,8036.45,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2042,7 +2042,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278869" id="278970" >
+        <synapse strength="2.5" source="278869" id="278970" >
             <properties>
                 <prop value="-1713.99,8034.14,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2069,7 +2069,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278753" id="278856" >
+        <synapse strength="2.5" source="278753" id="278856" >
             <properties>
                 <prop value="1886.46,3465.31,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2098,7 +2098,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278753" id="278855" >
+        <synapse strength="2.5" source="278753" id="278855" >
             <properties>
                 <prop value="1694.6,3464.6,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2125,7 +2125,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278737" id="278838" >
+        <synapse strength="2.5" source="278737" id="278838" >
             <properties>
                 <prop value="-2117.47,3475.15,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2150,7 +2150,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278737" id="278839" >
+        <synapse strength="2.5" source="278737" id="278839" >
             <properties>
                 <prop value="-1925.61,3474.44,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2177,7 +2177,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278821" id="278860" >
+        <synapse strength="2.5" source="278821" id="278860" >
             <properties>
                 <prop value="1802.64,4634.43,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2206,7 +2206,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278821" id="278861" >
+        <synapse strength="2.5" source="278821" id="278861" >
             <properties>
                 <prop value="1660.39,4635.74,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2235,7 +2235,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278821" id="278862" >
+        <synapse strength="2.5" source="278821" id="278862" >
             <properties>
                 <prop value="1505.69,4639,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2262,7 +2262,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278805" id="278845" >
+        <synapse strength="2.5" source="278805" id="278845" >
             <properties>
                 <prop value="-2033.65,4644.27,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2287,7 +2287,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278805" id="278846" >
+        <synapse strength="2.5" source="278805" id="278846" >
             <properties>
                 <prop value="-1891.4,4645.58,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2312,7 +2312,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278805" id="278847" >
+        <synapse strength="2.5" source="278805" id="278847" >
             <properties>
                 <prop value="-1736.7,4648.84,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2339,7 +2339,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278787" id="278851" >
+        <synapse strength="2.5" source="278787" id="278851" >
             <properties>
                 <prop value="1764.01,3998.78,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2366,7 +2366,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278771" id="278842" >
+        <synapse strength="2.5" source="278771" id="278842" >
             <properties>
                 <prop value="-1995.02,4008.62,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2385,15 +2385,15 @@
     </neuron>
     <neuron bias="0" id="1320" name="/Middle/MotorWaistRoll/DesiredTorque0" >
         <properties>
-            <prop value="-19.2735,1632.07,0" name="_LOCATION" />
+            <prop value="13.1061,1642.86,0" name="_LOCATION" />
             <prop value="M39" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_OUTPUT" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278523" id="278537" >
+        <synapse strength="2.5" source="278523" id="278537" >
             <properties>
-                <prop value="-247.186,1440.74,0" name="_LOCATION" />
+                <prop value="-214.806,1451.53,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ_VAR" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -2401,7 +2401,7 @@
     </neuron>
     <neuron bias="0" id="1321" name="/Middle/MotorWaistRoll/ReleaseMode0" >
         <properties>
-            <prop value="-131.199,1630.9,0" name="_LOCATION" />
+            <prop value="-98.8194,1641.69,0" name="_LOCATION" />
             <prop value="R39" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_OUTPUT" />
         </properties>
@@ -2417,9 +2417,9 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278691" id="278726" >
+        <synapse strength="2.5" source="278691" id="278726" >
             <properties>
-                <prop value="-196.222,-3013.89,0" name="_LOCATION" />
+                <prop value="-196.222,-3016.76,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -2443,7 +2443,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278675" id="278730" >
+        <synapse strength="2.5" source="278675" id="278730" >
             <properties>
                 <prop value="-205.232,-2421.07,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2468,9 +2468,9 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278707" id="278722" >
+        <synapse strength="2.5" source="278707" id="278722" >
             <properties>
-                <prop value="-72.7395,-3511.69,0" name="_LOCATION" />
+                <prop value="-72.7395,-3514.56,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -2495,9 +2495,9 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278562" id="278582" >
+        <synapse strength="2.5" source="278562" id="278582" >
             <properties>
-                <prop value="2436.13,-1828.1,0" name="_LOCATION" />
+                <prop value="2436.13,-1830.97,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
@@ -2524,9 +2524,9 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278562" id="278583" >
+        <synapse strength="2.5" source="278562" id="278583" >
             <properties>
-                <prop value="2262.8,-1828.19,0" name="_LOCATION" />
+                <prop value="2259.93,-1831.06,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
@@ -2551,7 +2551,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278546" id="278575" >
+        <synapse strength="2.5" source="278546" id="278575" >
             <properties>
                 <prop value="-2667.14,-1821.13,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2576,7 +2576,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278546" id="278576" >
+        <synapse strength="2.5" source="278546" id="278576" >
             <properties>
                 <prop value="-2490.94,-1821.22,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2602,7 +2602,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278606" id="278625" >
+        <synapse strength="2.5" source="278606" id="278625" >
             <properties>
                 <prop value="3346.46,-1757.35,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2630,7 +2630,7 @@
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278590" id="278621" >
+        <synapse strength="2.5" source="278590" id="278621" >
             <properties>
                 <prop value="-3577.47,-1747.51,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
@@ -2649,16 +2649,16 @@
     </neuron>
     <neuron bias="0" id="1340" name="/Right/MotorElbowPitch/DesiredTorque0" >
         <properties>
-            <prop value="3880.73,766.377,0" name="_LOCATION" />
+            <prop value="3880.73,769.918,0" name="_LOCATION" />
             <prop value="M32" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="_ConstraintSlave" />
             <prop value="" name="TYPE_OUTPUT" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278648" id="278667" >
+        <synapse strength="2.5" source="278648" id="278667" >
             <properties>
-                <prop value="4133.26,718.407,0" name="_LOCATION" />
+                <prop value="4133.26,721.948,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
@@ -2667,7 +2667,7 @@
     </neuron>
     <neuron bias="0" id="1341" name="/Right/MotorElbowPitch/ReleaseMode0" >
         <properties>
-            <prop value="4003.19,765.128,0" name="_LOCATION" />
+            <prop value="4003.19,768.669,0" name="_LOCATION" />
             <prop value="408" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="_ConstraintSlave" />
             <prop value="" name="TYPE_OUTPUT" />
@@ -2677,16 +2677,16 @@
     </neuron>
     <neuron bias="0" id="1342" name="/Left/MotorElbowPitch/DesiredTorque0" >
         <properties>
-            <prop value="-4111.74,776.217,0" name="_LOCATION" />
+            <prop value="-4111.74,779.758,0" name="_LOCATION" />
             <prop value="" name="FLIP_ACTIVITY" />
             <prop value="M31" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_OUTPUT" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
-        <synapse strength="1" source="278632" id="278663" >
+        <synapse strength="2.5" source="278632" id="278663" >
             <properties>
-                <prop value="-4364.27,728.247,0" name="_LOCATION" />
+                <prop value="-4364.27,731.788,0" name="_LOCATION" />
                 <prop value="PID_MotorOutput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -2694,7 +2694,7 @@
     </neuron>
     <neuron bias="0" id="1343" name="/Left/MotorElbowPitch/ReleaseMode0" >
         <properties>
-            <prop value="-4234.2,774.968,0" name="_LOCATION" />
+            <prop value="-4234.2,778.509,0" name="_LOCATION" />
             <prop value="R31" name="SPINAL_CORD_ADDRESS" />
             <prop value="" name="TYPE_OUTPUT" />
         </properties>
@@ -2719,124 +2719,123 @@
     </neuron>
     <neuron bias="0" id="278519" name="Diff" >
         <properties>
-            <prop value="-558.22,1172.42,0" name="_LOCATION" />
+            <prop value="-525.84,1183.21,0" name="_LOCATION" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="278520" id="278525" >
             <properties>
-                <prop value="-527.21,1113.14,0" name="_LOCATION" />
+                <prop value="-494.83,1123.93,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-1" source="278524" id="278526" >
             <properties>
-                <prop value="-598.67,1151.82,0" name="_LOCATION" />
+                <prop value="-566.29,1162.61,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
     <neuron bias="0" id="278520" name="Error" >
         <properties>
-            <prop value="-473.75,1082.48,0" name="_LOCATION" />
+            <prop value="-441.37,1093.27,0" name="_LOCATION" />
             <prop value="1" name="MODULE_INPUT" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="1144" id="278536" >
             <properties>
-                <prop value="-570.986,942.618,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ_VAR" />
+                <prop value="-537.234,953.411,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-1" source="278538" id="278539" >
             <properties>
-                <prop value="-451.488,1048.23,0" name="_LOCATION" />
+                <prop value="-419.108,1059.02,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
     <neuron bias="0" id="278521" name="Integral" >
         <properties>
-            <prop value="-401.56,1176.23,0" name="_LOCATION" />
+            <prop value="-369.18,1187.02,0" name="_LOCATION" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="0.001" source="278520" id="278527" >
             <properties>
-                <prop value="-431.83,1111.05,0" name="_LOCATION" />
+                <prop value="-399.45,1121.84,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="0.43772" source="278521" id="278528" >
             <properties>
-                <prop value="-378.47,1129.59,0" name="_LOCATION" />
+                <prop value="-346.09,1140.38,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
     <neuron bias="0" id="278522" name="OutDiffDamper" >
         <properties>
-            <prop value="-579.94,1248.24,0" name="_LOCATION" />
+            <prop value="-547.56,1259.03,0" name="_LOCATION" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="-1" source="278523" id="278529" >
             <properties>
-                <prop value="-530.17,1261.84,0" name="_LOCATION" />
+                <prop value="-497.79,1272.63,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
     <neuron bias="0" id="278523" name="Cmd" >
         <properties>
-            <prop value="-475.1,1249.4,0" name="_LOCATION" />
+            <prop value="-442.72,1260.19,0" name="_LOCATION" />
             <prop value="1" name="MODULE_OUTPUT" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="-4.4362" source="278520" id="278530" >
             <properties>
-                <prop value="-473.4,1153.93,0" name="_LOCATION" />
+                <prop value="-441.02,1164.72,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-11.59" source="278519" id="278531" >
             <properties>
-                <prop value="-518.25,1212.24,0" name="_LOCATION" />
+                <prop value="-485.87,1223.03,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-10" source="278521" id="278532" >
             <properties>
-                <prop value="-428.637,1236.72,0" name="_LOCATION" />
+                <prop value="-396.257,1247.51,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="0.25" source="278522" id="278533" >
             <properties>
-                <prop value="-531.51,1237.93,0" name="_LOCATION" />
+                <prop value="-499.13,1248.72,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
     <neuron bias="0" id="278524" name="Delay" >
         <properties>
-            <prop value="-597.04,1109.23,0" name="_LOCATION" />
+            <prop value="-564.66,1120.02,0" name="_LOCATION" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="278520" id="278534" >
             <properties>
-                <prop value="-545.42,1094.78,0" name="_LOCATION" />
+                <prop value="-513.04,1105.57,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
     <neuron bias="0" id="278538" name="DefaultPos" >
         <properties>
-            <prop value="-413.864,1048.25,0" name="_LOCATION" />
+            <prop value="-381.484,1059.04,0" name="_LOCATION" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
@@ -2874,7 +2873,6 @@
         <synapse strength="1" source="1155" id="278574" >
             <properties>
                 <prop value="-2926.52,-2110.43,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -3007,7 +3005,6 @@
         <synapse strength="1" source="1152" id="278580" >
             <properties>
                 <prop value="2695.51,-2120.27,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3157,7 +3154,6 @@
         <synapse strength="1" source="1160" id="278619" >
             <properties>
                 <prop value="-3854.74,-2166.95,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -3290,7 +3286,6 @@
         <synapse strength="1" source="1158" id="278623" >
             <properties>
                 <prop value="3623.73,-2176.79,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3409,21 +3404,21 @@
     </neuron>
     <neuron bias="0" id="278628" name="Diff" >
         <properties>
-            <prop value="-4701.45,603.298,0" name="_LOCATION" />
+            <prop value="-4701.45,606.839,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="278629" id="278634" >
             <properties>
-                <prop value="-4670.44,544.018,0" name="_LOCATION" />
+                <prop value="-4670.44,547.559,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-1" source="278633" id="278635" >
             <properties>
-                <prop value="-4741.9,582.698,0" name="_LOCATION" />
+                <prop value="-4741.9,586.239,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3431,7 +3426,7 @@
     </neuron>
     <neuron bias="0" id="278629" name="Error" >
         <properties>
-            <prop value="-4616.98,513.358,0" name="_LOCATION" />
+            <prop value="-4616.98,516.899,0" name="_LOCATION" />
             <prop value="1" name="MODULE_INPUT" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
@@ -3439,35 +3434,34 @@
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="1164" id="278661" >
             <properties>
-                <prop value="-4740.02,473.81,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
+                <prop value="-4740.02,477.351,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-1" source="278660" id="278662" >
             <properties>
-                <prop value="-4583.95,477.19,0" name="_LOCATION" />
+                <prop value="-4583.95,480.731,0" name="_LOCATION" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
     </neuron>
     <neuron bias="0" id="278630" name="Integral" >
         <properties>
-            <prop value="-4544.79,607.108,0" name="_LOCATION" />
+            <prop value="-4544.79,610.649,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="0.001" source="278629" id="278637" >
             <properties>
-                <prop value="-4575.06,541.928,0" name="_LOCATION" />
+                <prop value="-4575.06,545.469,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="0.43772" source="278630" id="278640" >
             <properties>
-                <prop value="-4521.7,560.468,0" name="_LOCATION" />
+                <prop value="-4521.7,564.009,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3475,14 +3469,14 @@
     </neuron>
     <neuron bias="0" id="278631" name="OutDiffDamper" >
         <properties>
-            <prop value="-4723.17,679.118,0" name="_LOCATION" />
+            <prop value="-4723.17,682.659,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="-1" source="278632" id="278642" >
             <properties>
-                <prop value="-4673.4,692.718,0" name="_LOCATION" />
+                <prop value="-4673.4,696.259,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3490,7 +3484,7 @@
     </neuron>
     <neuron bias="0" id="278632" name="Cmd" >
         <properties>
-            <prop value="-4618.33,680.278,0" name="_LOCATION" />
+            <prop value="-4618.33,683.819,0" name="_LOCATION" />
             <prop value="1" name="MODULE_OUTPUT" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
@@ -3498,28 +3492,28 @@
         <activationFunction name="AdditiveTD" />
         <synapse strength="-11.59" source="278628" id="278636" >
             <properties>
-                <prop value="-4661.48,643.118,0" name="_LOCATION" />
+                <prop value="-4661.48,646.659,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-4.4362" source="278629" id="278638" >
             <properties>
-                <prop value="-4616.63,584.808,0" name="_LOCATION" />
+                <prop value="-4616.63,588.349,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-10" source="278630" id="278641" >
             <properties>
-                <prop value="-4571.87,667.598,0" name="_LOCATION" />
+                <prop value="-4571.87,671.139,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="0.25" source="278631" id="278643" >
             <properties>
-                <prop value="-4674.74,668.808,0" name="_LOCATION" />
+                <prop value="-4674.74,672.349,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3527,14 +3521,14 @@
     </neuron>
     <neuron bias="0" id="278633" name="Delay" >
         <properties>
-            <prop value="-4740.27,540.108,0" name="_LOCATION" />
+            <prop value="-4740.27,543.649,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="278629" id="278639" >
             <properties>
-                <prop value="-4688.65,525.658,0" name="_LOCATION" />
+                <prop value="-4688.65,529.199,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3542,21 +3536,21 @@
     </neuron>
     <neuron bias="0" id="278644" name="Diff" >
         <properties>
-            <prop value="4470.44,593.458,0" name="_LOCATION" />
+            <prop value="4470.44,596.999,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="278645" id="278650" >
             <properties>
-                <prop value="4439.43,534.178,0" name="_LOCATION" />
+                <prop value="4439.43,537.719,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-1" source="278649" id="278651" >
             <properties>
-                <prop value="4510.89,572.858,0" name="_LOCATION" />
+                <prop value="4510.89,576.399,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3564,7 +3558,7 @@
     </neuron>
     <neuron bias="0" id="278645" name="Error" >
         <properties>
-            <prop value="4385.97,503.518,0" name="_LOCATION" />
+            <prop value="4385.97,507.059,0" name="_LOCATION" />
             <prop value="1" name="MODULE_INPUT" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
@@ -3572,15 +3566,14 @@
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="1162" id="278665" >
             <properties>
-                <prop value="4509.01,463.97,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
+                <prop value="4509.01,467.511,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-1" source="278664" id="278666" >
             <properties>
-                <prop value="4352.94,467.35,0" name="_LOCATION" />
+                <prop value="4352.94,470.891,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3588,21 +3581,21 @@
     </neuron>
     <neuron bias="0" id="278646" name="Integral" >
         <properties>
-            <prop value="4313.78,597.268,0" name="_LOCATION" />
+            <prop value="4313.78,600.809,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="0.001" source="278645" id="278653" >
             <properties>
-                <prop value="4344.05,532.088,0" name="_LOCATION" />
+                <prop value="4344.05,535.629,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="0.43772" source="278646" id="278656" >
             <properties>
-                <prop value="4290.69,550.628,0" name="_LOCATION" />
+                <prop value="4290.69,554.169,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3610,14 +3603,14 @@
     </neuron>
     <neuron bias="0" id="278647" name="OutDiffDamper" >
         <properties>
-            <prop value="4492.16,669.278,0" name="_LOCATION" />
+            <prop value="4492.16,672.819,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="-1" source="278648" id="278658" >
             <properties>
-                <prop value="4442.39,682.878,0" name="_LOCATION" />
+                <prop value="4442.39,686.419,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3625,7 +3618,7 @@
     </neuron>
     <neuron bias="0" id="278648" name="Cmd" >
         <properties>
-            <prop value="4387.32,670.438,0" name="_LOCATION" />
+            <prop value="4387.32,673.979,0" name="_LOCATION" />
             <prop value="1" name="MODULE_OUTPUT" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
@@ -3633,28 +3626,28 @@
         <activationFunction name="AdditiveTD" />
         <synapse strength="-11.59" source="278644" id="278652" >
             <properties>
-                <prop value="4430.47,633.278,0" name="_LOCATION" />
+                <prop value="4430.47,636.819,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-4.4362" source="278645" id="278654" >
             <properties>
-                <prop value="4385.62,574.968,0" name="_LOCATION" />
+                <prop value="4385.62,578.509,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-10" source="278646" id="278657" >
             <properties>
-                <prop value="4340.86,657.758,0" name="_LOCATION" />
+                <prop value="4340.86,661.299,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="0.25" source="278647" id="278659" >
             <properties>
-                <prop value="4443.73,658.968,0" name="_LOCATION" />
+                <prop value="4443.73,662.509,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3662,14 +3655,14 @@
     </neuron>
     <neuron bias="0" id="278649" name="Delay" >
         <properties>
-            <prop value="4509.26,530.268,0" name="_LOCATION" />
+            <prop value="4509.26,533.809,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="278645" id="278655" >
             <properties>
-                <prop value="4457.64,515.818,0" name="_LOCATION" />
+                <prop value="4457.64,519.359,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -3677,14 +3670,14 @@
     </neuron>
     <neuron bias="0" id="278660" name="DefaultPos" >
         <properties>
-            <prop value="-4544.06,476.687,0" name="_LOCATION" />
+            <prop value="-4544.06,480.228,0" name="_LOCATION" />
         </properties>
         <transferFunction name="tanh" />
         <activationFunction name="AdditiveTD" />
     </neuron>
     <neuron bias="0" id="278664" name="DefaultPos" >
         <properties>
-            <prop value="4313.05,466.847,0" name="_LOCATION" />
+            <prop value="4313.05,470.388,0" name="_LOCATION" />
             <prop value="" name="_ConstraintSlave" />
         </properties>
         <transferFunction name="tanh" />
@@ -3723,7 +3716,6 @@
         <synapse strength="1" source="1149" id="278727" >
             <properties>
                 <prop value="-261.967,-2723.86,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -3862,7 +3854,6 @@
         <synapse strength="1" source="1147" id="278725" >
             <properties>
                 <prop value="-251.224,-3251.72,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -3989,7 +3980,6 @@
         <synapse strength="1" source="1151" id="278719" >
             <properties>
                 <prop value="-133.777,-3819.43,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -4143,7 +4133,6 @@
         <synapse strength="1" source="1129" id="278836" >
             <properties>
                 <prop value="-2342.19,3221.08,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -4275,8 +4264,7 @@
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="1126" id="278853" >
             <properties>
-                <prop value="2111.18,3213.33,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
+                <prop value="2111.18,3211.24,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -4411,7 +4399,6 @@
         <synapse strength="1" source="1142" id="278840" >
             <properties>
                 <prop value="-2218.83,3737.14,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -4543,8 +4530,7 @@
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="1140" id="278849" >
             <properties>
-                <prop value="1987.82,3729.39,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
+                <prop value="1987.82,3727.3,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -4679,7 +4665,6 @@
         <synapse strength="1" source="1136" id="278843" >
             <properties>
                 <prop value="-2452.57,4392.11,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -4811,8 +4796,7 @@
         <activationFunction name="AdditiveTD" />
         <synapse strength="1" source="1132" id="278858" >
             <properties>
-                <prop value="2221.56,4384.36,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
+                <prop value="2221.56,4382.27,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -4992,7 +4976,6 @@
         <synapse strength="1" source="1122" id="278965" >
             <properties>
                 <prop value="-2490.15,7742.86,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -5125,7 +5108,6 @@
         <synapse strength="1" source="1118" id="278972" >
             <properties>
                 <prop value="2259.14,7733.02,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -5260,7 +5242,6 @@
         <synapse strength="1" source="1109" id="278978" >
             <properties>
                 <prop value="-2637.12,10450.7,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -5393,7 +5374,6 @@
         <synapse strength="1" source="1116" id="278992" >
             <properties>
                 <prop value="-2231.81,11065,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
@@ -5526,7 +5506,6 @@
         <synapse strength="1" source="1104" id="278985" >
             <properties>
                 <prop value="2406.11,10440.9,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -5661,14 +5640,13 @@
         <synapse strength="1" source="1114" id="278996" >
             <properties>
                 <prop value="2000.8,11055.2,0" name="_LOCATION" />
-                <prop value="PID_SensorInput" name="EQ" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
         </synapse>
         <synapse strength="-1" source="278995" id="278997" >
             <properties>
-                <prop value="1880.91,11083,0" name="_LOCATION" />
+                <prop value="1864.91,11094,0" name="_LOCATION" />
                 <prop value="" name="_ConstraintSlave" />
             </properties>
             <synapseFunction name="SimpleUpdateFunction" />
@@ -6673,7 +6651,7 @@
     </module>
     <module id="270283" name="LeftElbowPitch" >
         <properties>
-            <prop value="-4978.87,375.694,0" name="_LOCATION" />
+            <prop value="-4978.87,379.235,0" name="_LOCATION" />
             <prop value="1184.63,481.917" name="_MODULE_SIZE" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="270283" name="_MODULE_IDENTIFIER" />
@@ -6689,7 +6667,7 @@
     </module>
     <module id="270299" name="Motor0" >
         <properties>
-            <prop value="-4320.23,392.268,0" name="_LOCATION" />
+            <prop value="-4320.23,395.809,0" name="_LOCATION" />
             <prop value="473.19,448.397" name="_MODULE_SIZE" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="270299" name="_MODULE_IDENTIFIER" />
@@ -6704,7 +6682,7 @@
     </module>
     <module id="278626" name="PID2" >
         <properties>
-            <prop value="-4776.88,493.378,0" name="_LOCATION" />
+            <prop value="-4776.88,496.919,0" name="_LOCATION" />
             <prop value="285.658,225.088" name="_MODULE_SIZE" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="278626" name="_MODULE_IDENTIFIER" />
@@ -6928,7 +6906,7 @@
     </module>
     <module id="270280" name="WaistRoll" >
         <properties>
-            <prop value="-767.207,680.381,0" name="_LOCATION" />
+            <prop value="-734.827,691.174,0" name="_LOCATION" />
             <prop value="1217.83,1092.08" name="_MODULE_SIZE" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="270280" name="_MODULE_IDENTIFIER" />
@@ -6944,7 +6922,7 @@
     </module>
     <module id="270297" name="Motor0" >
         <properties>
-            <prop value="-222.875,724.797,0" name="_LOCATION" />
+            <prop value="-190.495,735.59,0" name="_LOCATION" />
             <prop value="604.348,1009.16" name="_MODULE_SIZE" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="270297" name="_MODULE_IDENTIFIER" />
@@ -6959,7 +6937,7 @@
     </module>
     <module id="278535" name="PID2" >
         <properties>
-            <prop value="-633.65,1062.5,0" name="_LOCATION" />
+            <prop value="-601.27,1073.29,0" name="_LOCATION" />
             <prop value="285.658,225.088" name="_MODULE_SIZE" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="278535" name="_MODULE_IDENTIFIER" />
@@ -8573,7 +8551,7 @@
     </module>
     <module id="270368" name="RightElbowPitch" >
         <properties>
-            <prop value="3563.23,365.854,0" name="_LOCATION" />
+            <prop value="3563.23,369.395,0" name="_LOCATION" />
             <prop value="1184.63,481.917" name="_MODULE_SIZE" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="270368" name="_MODULE_IDENTIFIER" />
@@ -8598,7 +8576,7 @@
     </module>
     <module id="270370" name="Motor0" >
         <properties>
-            <prop value="3616.03,382.428,0" name="_LOCATION" />
+            <prop value="3616.03,385.969,0" name="_LOCATION" />
             <prop value="473.19,448.397" name="_MODULE_SIZE" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="270370" name="_MODULE_IDENTIFIER" />
@@ -8615,7 +8593,7 @@
     <module id="278627" name="PID2" >
         <properties>
             <prop value="285.658,225.088" name="_MODULE_SIZE" />
-            <prop value="4260.21,483.538,0" name="_LOCATION" />
+            <prop value="4260.21,487.079,0" name="_LOCATION" />
             <prop value="Default" name="MODULE_TYPE" />
             <prop value="278627" name="_MODULE_IDENTIFIER" />
             <prop value="" name="_ConstraintSlave" />
