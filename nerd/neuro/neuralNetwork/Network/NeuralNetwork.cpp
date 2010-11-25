@@ -202,6 +202,8 @@ void NeuralNetwork::setControlInterface(ControlInterface *controlInterface) {
 
 		QList<Neuron*> mInputNeuronBuffer(mInputNeurons);
 		QList<Neuron*> mOutputNeuronBuffer(mOutputNeurons);
+		QList<InterfaceValue*> mInputValueBuffer(mInputValues);
+		QList<InterfaceValue*> mOutputValueBuffer(mOutputValues);
 
 		bool foundNameMatches = false;
 		//check for matching names
@@ -211,9 +213,11 @@ void NeuralNetwork::setControlInterface(ControlInterface *controlInterface) {
 				InterfaceValue *v = j.next();
 				if(n->getNameValue().get() == v->getName()) {
 					mInputPairs.append(NeuronInterfaceValuePair(n, v));
-					mOutputValues.removeAll(v);
+					//mOutputValues.removeAll(v);
+					mOutputValueBuffer.removeAll(v);
 					mInputNeuronBuffer.removeAll(n);
 					foundNameMatches = true;
+					break;
 				}
 			}
 		}
@@ -225,9 +229,11 @@ void NeuralNetwork::setControlInterface(ControlInterface *controlInterface) {
 				InterfaceValue *v = j.next();
 				if(n->getNameValue().get() == v->getName()) {
 					mOutputPairs.append(NeuronInterfaceValuePair(n, v));
-					mInputValues.removeAll(v);
+					//mInputValues.removeAll(v);
+					mInputValueBuffer.removeAll(v);
 					mOutputNeuronBuffer.removeAll(n);
 					foundNameMatches = true;
+					break;
 				}
 			}
 		}
@@ -235,7 +241,7 @@ void NeuralNetwork::setControlInterface(ControlInterface *controlInterface) {
 		//assign all pairs by order that could not be matched by name
 		{
 			QListIterator<Neuron*> in(mInputNeuronBuffer);
-			QListIterator<InterfaceValue*> iv(mOutputValues);
+			QListIterator<InterfaceValue*> iv(mOutputValueBuffer);
 			for(; in.hasNext() && iv.hasNext();) 
 			{
 				Neuron *n = in.next();
@@ -253,7 +259,7 @@ void NeuralNetwork::setControlInterface(ControlInterface *controlInterface) {
 		//connect output neurons only if the network is not bypassed.
 		{
 			QListIterator<Neuron*> on(mOutputNeuronBuffer);
-			QListIterator<InterfaceValue*> ov(mInputValues);
+			QListIterator<InterfaceValue*> ov(mInputValueBuffer);
 			for(; on.hasNext() && ov.hasNext();) 
 			{
 				Neuron *n = on.next();

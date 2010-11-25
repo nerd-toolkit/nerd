@@ -67,6 +67,7 @@ set(nerd_neuralNetwork_SRCS
 	Script/UniversalNeuroScriptingContext.cpp  
 	IO/NeuralNetworkIONerdV1Xml.cpp
 	Constraints/FeedForwardConstraint.cpp
+	ActivationFunction/DelayLineActivationFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

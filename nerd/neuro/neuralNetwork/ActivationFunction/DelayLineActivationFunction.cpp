@@ -41,32 +41,99 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
+
+
+#include "DelayLineActivationFunction.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "Network/Synapse.h"
+#include "Network/Neuron.h"
+
+using namespace std;
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
+
+/**
+ * Constructs a new DelayLineActivationFunction.
+ */
+DelayLineActivationFunction::DelayLineActivationFunction()
+	: ActivationFunction("DelayLine")
 {
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	mDelay = new IntValue(2);
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+	addParameter("Delay", mDelay);
 }
 
+
+/**
+ * Copy constructor. 
+ * 
+ * @param other the DelayLineActivationFunction object to copy.
+ */
+DelayLineActivationFunction::DelayLineActivationFunction(const DelayLineActivationFunction &other)
+	: Object(), ValueChangedListener(), ActivationFunction(other)
+{
+	mDelay = dynamic_cast<IntValue*>(getParameter("Delay"));
 }
+
+/**
+ * Destructor.
+ */
+DelayLineActivationFunction::~DelayLineActivationFunction() {
+}
+
+ActivationFunction* DelayLineActivationFunction::createCopy() const {
+	return new DelayLineActivationFunction(*this);
+}
+
+void DelayLineActivationFunction::reset(Neuron*) {
+}
+
+
+double DelayLineActivationFunction::calculateActivation(Neuron *owner) {
+	if(owner == 0) {
+		return 0.0;
+	}
+	double activation = owner->getBiasValue().get();
+
+	const QList<Synapse*> &synapses = owner->getSynapses();
+	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
+		activation += i.next()->calculateActivation();
+	}
+
+	int delay = mDelay->get();
+
+	mDelayedActivations.append(activation);
+	while(mDelayedActivations.size() > delay + 1) {
+		mDelayedActivations.takeFirst();
+	}
+	if(mDelayedActivations.size() == delay + 1) {
+		return mDelayedActivations.takeFirst();
+	}
+	return 0.0;
+}
+
+bool DelayLineActivationFunction::equals(ActivationFunction *activationFunction) const {
+	if(ActivationFunction::equals(activationFunction) == false) {
+		return false;
+	}
+	DelayLineActivationFunction *af =
+ 			dynamic_cast<DelayLineActivationFunction*>(activationFunction);
+
+	if(af == 0) {
+		return false;
+	}
+	if(af->mDelay->get() != mDelay->get()) {
+		return false;
+	}
+	return true;
+}
+
+
+
+}
+
 
 

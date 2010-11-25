@@ -41,32 +41,42 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
+
+#ifndef ORCSDelayLineActivationFunction_H
+#define ORCSDelayLineActivationFunction_H
+
+#include <QString>
+#include <QHash>
+#include "Value/IntValue.h"
+#include "ActivationFunction/ActivationFunction.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	/**
+	 * DelayLineActivationFunction.
+	 *
+	 */
+	class DelayLineActivationFunction : public ActivationFunction {
+	public:
+		DelayLineActivationFunction();
+		DelayLineActivationFunction(const DelayLineActivationFunction &other);
+		virtual ~DelayLineActivationFunction();
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+		virtual ActivationFunction* createCopy() const;
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+		bool equals(ActivationFunction *activationFunction) const;
+
+	private:
+		IntValue *mDelay;
+		QList<double> mDelayedActivations;
+	};
+
 }
 
-}
+#endif
+
 
 
