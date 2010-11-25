@@ -65,7 +65,7 @@ namespace nerd {
 SettingsLogger::SettingsLogger(bool activateStaticLogger, bool activateIncrementalLogger)
 	: mEvolutionCompletedEvent(0), mCurrentGeneration(0), mWorkingDirectory(0),
 	  mIncrementalLogFileEnabled(activateIncrementalLogger), mStaticLogFileEnabled(activateStaticLogger),
-	  mIncrementalFileName(""), mNumberOfSteps(0), mNumberOfTrys(0)
+	  mIncrementalFileName(""), mNumberOfSteps(0), mNumberOfTrys(0), mFirstLogEntry(true)
 {
 	Core::getInstance()->addGlobalObject(EvolutionConstants::OBJECT_SETTINGS_LOGGER, this);
 
@@ -270,6 +270,13 @@ bool SettingsLogger::writeIncrementalLogFile() {
 	}
 
 	QTextStream output(&file);
+
+	if(mFirstLogEntry) {
+		mFirstLogEntry = false;
+		output << "#NERD Evolution Log (Version " << Core::getInstance()->getVersionString() 
+				<< ")" << endl;
+	}
+
 	output << "#" << endl
 		   << "#-------------------------------------------------------------------------------------------" << endl
 		   << "#!! Generation: " << mCurrentGeneration->get() 

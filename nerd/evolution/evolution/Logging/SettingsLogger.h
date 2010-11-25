@@ -107,6 +107,7 @@ namespace nerd {
 		QList<DoubleValue*> mBestFitnessValues;
 		IntValue *mNumberOfSteps;
 		IntValue *mNumberOfTrys;
+		bool mFirstLogEntry;
 
 	};
 
