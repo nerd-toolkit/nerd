@@ -55,6 +55,8 @@
 #include <iostream>
 #include "NeuroEvolutionConstants.h"
 #include "Network/NeuroTagManager.h"
+#include "Util/NeuroEvolutionUtil.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 
 using namespace std;
 
@@ -116,11 +118,11 @@ NeuralNetworkManipulationOperator* ChangeBiasOperator::createCopy() const
 
 bool ChangeBiasOperator::applyOperator(Individual *individual, CommandExecutor*) {
 
-	NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(individual->getGenome());
+	ModularNeuralNetwork *net = dynamic_cast<ModularNeuralNetwork*>(individual->getGenome());
 
 	if(net == 0) {
 		Core::log("ChangeBiasOperator: Could not apply operator because individual did not "
-				  "provide a NeuralNetwork as genome!");
+				  "provide a ModularNeuralNetwork as genome!");
 		return false;
 	}
 
@@ -159,7 +161,23 @@ bool ChangeBiasOperator::applyOperator(Individual *individual, CommandExecutor*)
 	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 		Neuron *neuron = i.next();
 
-		if(Random::nextDouble() >= probability) {
+		double localChangeProb = probability;
+
+		{
+			QString changeProbString = neuron->getProperty(
+						NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY);
+
+			bool ok = true;
+			localChangeProb = NeuroEvolutionUtil::getLocalNetworkSetting(changeProbString, 
+							localChangeProb, net, &ok);
+			if(!ok) {
+				Core::log("ChangeBiasOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY
+					+ "] with content [" + changeProbString + "]", true);
+			}
+		}
+
+		if(Random::nextDouble() >= localChangeProb) {
 			continue;
 		}
 
@@ -208,23 +226,51 @@ bool ChangeBiasOperator::applyOperator(Individual *individual, CommandExecutor*)
 		if(Random::nextDouble() < reinitProbability) {
 			neuron->setProperty(NeuralNetworkConstants::TAG_NEURON_REINIT_BIAS);
 		}
+
+
+		{
+			QString minString = neuron->getProperty(
+						NeuralNetworkConstants::TAG_NEURON_MIN_BIAS);
+
+			bool ok = true;
+			min = NeuroEvolutionUtil::getLocalNetworkSetting(minString, 
+							min, net, &ok);
+			if(!ok) {
+				Core::log("ChangeBiasOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_NEURON_MIN_BIAS
+					+ "] with content [" + minString + "]", true);
+			}
+		}
+		{
+			QString maxString = neuron->getProperty(
+						NeuralNetworkConstants::TAG_NEURON_MAX_BIAS);
+
+			bool ok = true;
+			max = NeuroEvolutionUtil::getLocalNetworkSetting(maxString, 
+							max, net, &ok);
+			if(!ok) {
+				Core::log("ChangeBiasOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_NEURON_MAX_BIAS
+					+ "] with content [" + maxString + "]", true);
+			}
+		}
 	
-		if(neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_MIN_BIAS)) {
-			bool ok = false;
-			double m = neuron->getProperty(NeuralNetworkConstants::TAG_NEURON_MIN_BIAS)
-									.toDouble(&ok);
-			if(ok) {
-				min = m;
-			}
-		}
-		if(neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_MAX_BIAS)) {
-			bool ok = false;
-			double m = neuron->getProperty(NeuralNetworkConstants::TAG_NEURON_MAX_BIAS)
-									.toDouble(&ok);
-			if(ok) {
-				max = m;
-			}
-		}
+// 		if(neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_MIN_BIAS)) {
+// 			bool ok = false;
+// 			double m = neuron->getProperty(NeuralNetworkConstants::TAG_NEURON_MIN_BIAS)
+// 									.toDouble(&ok);
+// 			if(ok) {
+// 				min = m;
+// 			}
+// 		}
+// 		if(neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_MAX_BIAS)) {
+// 			bool ok = false;
+// 			double m = neuron->getProperty(NeuralNetworkConstants::TAG_NEURON_MAX_BIAS)
+// 									.toDouble(&ok);
+// 			if(ok) {
+// 				max = m;
+// 			}
+// 		}
 
 		//fit bias to range and set to neuron.
 		neuron->getBiasValue().set(Math::min(max, Math::max(min, bias)));

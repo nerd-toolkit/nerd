@@ -124,8 +124,8 @@ namespace nerd {
 		static const QString TAG_SYNAPSE_NO_SYNAPSE_TARGET;
 		static const QString TAG_SYNAPSE_NO_SYNAPSE_SOURCE;
 		static const QString TAG_SYNAPSE_RANDOM_FLIP;
-		static const QString TAG_SYNAPSE_CHANGE_PROBABILITY;
-		static const QString TAG_SYNAPSE_CHANGE_DEVIATION;
+		static const QString TAG_ELEMENT_CHANGE_PROBABILITY;
+		static const QString TAG_ELEMENT_CHANGE_DEVIATION;
 // 		static const QString TAG_SYNAPSE_REINIT_STRENGTH;
 		static const QString TAG_NEURON_PROTECT_BIAS;
 		static const QString TAG_NEURON_PROTECT_BIAS_EXISTENCE;

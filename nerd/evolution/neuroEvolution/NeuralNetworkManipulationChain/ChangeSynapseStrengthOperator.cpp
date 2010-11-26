@@ -54,6 +54,8 @@
 #include "Math/Math.h"
 #include <iostream>
 #include "Network/NeuroTagManager.h"
+#include "Util/NeuroEvolutionUtil.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 
 //TODO allow overwriting with factors, fixed values, variables and the like. (auch bei bias)
 
@@ -125,12 +127,12 @@ bool ChangeSynapseStrengthOperator::applyOperator(Individual *individual,
 												CommandExecutor*) 
 {
 
-	NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(individual->getGenome());
+	ModularNeuralNetwork *net = dynamic_cast<ModularNeuralNetwork*>(individual->getGenome());
 
 	if(net == 0) {
 		Core::log("ChangeSynapseStrengthOperator: Could not apply "
 				  "operator because individual did not "
-				  "provide a NeuralNetwork as genome!");
+				  "provide a ModularNeuralNetwork as genome!");
 		return false;
 	}
 
@@ -165,11 +167,18 @@ bool ChangeSynapseStrengthOperator::applyOperator(Individual *individual,
 
 		double localChangeProb = changeProbability;
 
-		QString changeProbString = synapse->getProperty(
-						NeuralNetworkConstants::TAG_SYNAPSE_CHANGE_PROBABILITY);
+		{
+			QString changeProbString = synapse->getProperty(
+						NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY);
 
-		if(changeProbString != "") {
-			localChangeProb = changeProbString.toDouble();
+			bool ok = true;
+			localChangeProb = NeuroEvolutionUtil::getLocalNetworkSetting(changeProbString, 
+							localChangeProb, net, &ok);
+			if(!ok) {
+				Core::log("ChangeSynapseStrengthOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY
+					+ "] with content [" + changeProbString + "]", true);
+			}
 		}
 		
 		if(Random::nextDouble() >= localChangeProb) {
@@ -195,10 +204,19 @@ bool ChangeSynapseStrengthOperator::applyOperator(Individual *individual,
 
 		double change = 0.0;
 		double localDeviation = deviation;
-		
-		QString deviationString = synapse->getProperty(NeuralNetworkConstants::TAG_SYNAPSE_CHANGE_DEVIATION);
-		if(deviationString != "") {
-			localDeviation = deviationString.toDouble();
+
+		{
+			QString deviationString = synapse->getProperty(
+						NeuralNetworkConstants::TAG_ELEMENT_CHANGE_DEVIATION);
+			
+			bool ok = true;
+			localDeviation = NeuroEvolutionUtil::getLocalNetworkSetting(deviationString, 
+							localDeviation, net, &ok);
+			if(!ok) {
+				Core::log("ChangeSynapseStrengthOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_ELEMENT_CHANGE_DEVIATION
+					+ "] with content [" + deviationString + "]", true);
+			}
 		}
 
 		if(useGaussDistribution) {
@@ -253,27 +271,40 @@ bool ChangeSynapseStrengthOperator::applyOperator(Individual *individual,
 			}
 		}
 
-		//fit bias to range and set to neuron.
+		//fit weight to range and set to synapse.
 		double maxStrength = max;
 		double minStrength = min;
 
+
 		//check if the neuron strength is forced to a spefic range.
-		if(synapse->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_MAX_STRENGTH)) {
-			bool ok = false;
-			double m = synapse->getProperty(NeuralNetworkConstants::TAG_SYNAPSE_MAX_STRENGTH)
-									.toDouble(&ok);
-			if(ok) {
-				maxStrength = m;
+		{
+			bool ok = true;
+			QString minString = synapse->getProperty(
+						NeuralNetworkConstants::TAG_SYNAPSE_MIN_STRENGTH);
+			
+			minStrength = NeuroEvolutionUtil::getLocalNetworkSetting(minString, 
+							minStrength, net, &ok);
+			if(!ok) {
+				Core::log("ChangeSynapseStrengthOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_SYNAPSE_MIN_STRENGTH
+					+ "] with content [" + minString + "]", true);
 			}
 		}
-		if(synapse->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_MIN_STRENGTH)) {
-			bool ok = false;
-			double m = synapse->getProperty(NeuralNetworkConstants::TAG_SYNAPSE_MIN_STRENGTH)
-									.toDouble(&ok);
-			if(ok) {
-				minStrength = m;
+		{
+			bool ok = true;
+			QString maxString = synapse->getProperty(
+						NeuralNetworkConstants::TAG_SYNAPSE_MAX_STRENGTH);
+			
+			maxStrength = NeuroEvolutionUtil::getLocalNetworkSetting(maxString, 
+							maxStrength, net, &ok);
+			if(!ok) {
+				Core::log("ChangeSynapseStrengthOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_SYNAPSE_MAX_STRENGTH
+					+ "] with content [" + maxString + "]", true);
 			}
 		}
+
+		
 
 		//set strength
 		synapse->getStrengthValue().set(Math::min(maxStrength, Math::max(minStrength, newStrength)));
@@ -286,6 +317,8 @@ bool ChangeSynapseStrengthOperator::applyOperator(Individual *individual,
 
 	return true;
 }
+
+
 
 
 }

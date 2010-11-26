@@ -198,11 +198,11 @@ const QString NeuralNetworkConstants::TAG_SYNAPSE_NO_SYNAPSE_SOURCE
 const QString NeuralNetworkConstants::TAG_SYNAPSE_RANDOM_FLIP
 		= "_RandomFlip";
 
-const QString NeuralNetworkConstants::TAG_SYNAPSE_CHANGE_PROBABILITY
-		= "WeightChangeProbability";
+const QString NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY
+		= "ChangeProbability";
 
-const QString NeuralNetworkConstants::TAG_SYNAPSE_CHANGE_DEVIATION
-		= "WeightChangeDeviation";
+const QString NeuralNetworkConstants::TAG_ELEMENT_CHANGE_DEVIATION
+		= "ChangeDeviation";
 
 // const QString NeuralNetworkConstants::TAG_SYNAPSE_REINIT_STRENGTH 
 // 		= "_ReInitWeight";

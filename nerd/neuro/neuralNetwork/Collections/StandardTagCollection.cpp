@@ -93,11 +93,11 @@ StandardTagCollection::StandardTagCollection()
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_SYNAPSE_PROTECT_STRENGTH,
 						 NeuralNetworkConstants::TAG_TYPE_SYNAPSE,
 						 "Protects a synapse from changes of the synapse strength."));
-	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_SYNAPSE_CHANGE_PROBABILITY,
-						 NeuralNetworkConstants::TAG_SYNAPSE_CHANGE_PROBABILITY,
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY,
+						 NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY,
 						 "Overwrites the global change probability, if the operator is switched on."));
-	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_SYNAPSE_CHANGE_DEVIATION,
-						 NeuralNetworkConstants::TAG_SYNAPSE_CHANGE_DEVIATION,
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_ELEMENT_CHANGE_DEVIATION,
+						 NeuralNetworkConstants::TAG_ELEMENT_CHANGE_DEVIATION,
 						 "Overwrites the global deviation setting, if the operator is switched on."));
 
 	

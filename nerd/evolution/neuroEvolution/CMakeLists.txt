@@ -40,6 +40,7 @@ set(nerd_neuroEvolution_SRCS
 	NeuralNetworkManipulationChain/RemoveBiasOperator.cpp  
 	Collections/NeuroFitnessPrototypes.cpp  
 	FitnessFunctions/ScriptedNeuroFitnessFunction.cpp
+	Util/NeuroEvolutionUtil.cpp
 )
 
 set(nerd_neuroEvolution_MOC_HDRS
