@@ -74,6 +74,7 @@ namespace nerd {
  * Constructs a new OnlinePlotterWindow.
  */
 	OnlinePlotterWindow::OnlinePlotterWindow(QWidget *parent)
+		: mMatrix(0)
 	{
 		setMouseTracking(true);
 		mIsSetUp = false;
@@ -364,6 +365,9 @@ namespace nerd {
 	 *
 	 */
 	void OnlinePlotterWindow::processing(){
+		if(mMatrix == 0) {
+			return;
+		}
 		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
 			return;
 		}

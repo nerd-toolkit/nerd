@@ -141,6 +141,13 @@ namespace nerd {
 		
 		//evaluate
 		for(int i = 0;  i < plotPixelsX; i++) { //runs through parameter changes
+			if(!mActiveValue->get()) {
+				//stop evaluation when the user wants to cancel it.
+				restoreCurrentNetworkActivites();
+				return;
+			}
+
+
 			mData->set(i+1, i + 1, 0, 0); //set first matrix row: indices 
 
 			//this executes the neural network once.

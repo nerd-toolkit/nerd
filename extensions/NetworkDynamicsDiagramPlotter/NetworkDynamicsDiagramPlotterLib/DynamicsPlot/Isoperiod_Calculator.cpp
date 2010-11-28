@@ -245,6 +245,17 @@ namespace nerd {
 		storeCurrentNetworkActivities();
 		//evaluate
 		for(int i = 0;  i < plotPixelsX; i++) { //runs through x-parameter changes
+			if(!mActiveValue->get()) {
+				//stop evaluation when the user wants to cancel it.
+				for(int j = 0; j < noOfvElemsX; j++){
+					setVariedNetworkElementValue(vElemsListX[j], oldValuesX[j]);
+				}
+				for(int j = 0; j < noOfvElemsY; j++){
+					setVariedNetworkElementValue(vElemsListY[j], oldValuesY[j]);
+				}
+				restoreCurrentNetworkActivites();
+				return;
+			}
 			for(int j = 0; j < noOfvElemsX; j++){ //set varied values to network elements
 				setVariedNetworkElementValue(vElemsListX[j], rListX[j]); 
 			}

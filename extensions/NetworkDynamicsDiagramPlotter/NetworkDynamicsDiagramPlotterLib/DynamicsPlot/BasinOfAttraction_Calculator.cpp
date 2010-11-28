@@ -254,6 +254,12 @@ namespace nerd {
 		storeCurrentNetworkActivities();
 		//evaluate
 		for(int i = 0;  i < plotPixelsX; i++) { //runs through x-parameter changes
+			if(!mActiveValue->get()) {
+				//stop evaluation when the user wants to cancel it.
+				restoreCurrentNetworkActivites();
+				return;
+			}
+
 			//set first matrix row: indices of x-axis 
 			if(noOfvNeuronsX == 1){
 				mData->set(rListX[0], i + 1, 0, 0);//if only one parameter is changed, take its values

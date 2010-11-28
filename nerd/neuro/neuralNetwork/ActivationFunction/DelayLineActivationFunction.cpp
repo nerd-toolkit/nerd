@@ -89,6 +89,7 @@ ActivationFunction* DelayLineActivationFunction::createCopy() const {
 }
 
 void DelayLineActivationFunction::reset(Neuron*) {
+	mDelayedActivations.clear();
 }
 
 

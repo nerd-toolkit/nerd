@@ -255,6 +255,15 @@ namespace nerd {
 		storeCurrentNetworkActivities();
 		//evaluate:
 		for(int i = 0;  i < plotPixelsX; i++) { //runs through parameter changes
+			if(!mActiveValue->get()) {
+				//stop evaluation when the user wants to cancel it.
+				for(int j = 0; j < noOfvElems; j++){
+					setVariedNetworkElementValue(vElemsList[j], oldValues[j]);
+				}
+				restoreCurrentNetworkActivites();
+				return;
+			}
+
 			//change parameter:
 			for(int j = 0; j < noOfvElems; j++){ 
 				setVariedNetworkElementValue(vElemsList[j], rList[j]); //inherited by parent class DynamicsPlotter
@@ -382,6 +391,15 @@ namespace nerd {
 			
 			
 			for(int i = plotPixelsX - 1;  i >= 0 ; i--) { //runs through parameter changes
+			if(!mActiveValue->get()) {
+				//stop evaluation when the user wants to cancel it.
+				for(int j = 0; j < noOfvElems; j++){
+					setVariedNetworkElementValue(vElemsList[j], oldValues[j]);
+				}
+				restoreCurrentNetworkActivites();
+				return;
+			}
+
 			//change parameter:
 				for(int j = 0; j < noOfvElems; j++){ 
 					setVariedNetworkElementValue(vElemsList[j], rList[j]); //inherited by parent class DynamicsPlotter

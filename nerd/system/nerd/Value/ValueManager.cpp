@@ -87,7 +87,8 @@ namespace nerd {
  * The constructor automatically adds prototypes for all common value types.
  * Additional prototypes can be added manually with method addPrototype().
  */
-ValueManager::ValueManager(EventManager *eventManager) : mRepositoryChangedCounter(0)
+ValueManager::ValueManager(EventManager *eventManager) : mMutex(QMutex::Recursive), 
+														 mRepositoryChangedCounter(0)
 {
 	mRepositoryChangedEvent = eventManager
 		->createEvent(NerdConstants::EVENT_VALUE_REPOSITORY_CHANGED);
@@ -116,6 +117,7 @@ ValueManager::ValueManager(EventManager *eventManager) : mRepositoryChangedCount
  * Destroys the ValueManager and hereby destroys all registered Values and Prototypes.
  */
 ValueManager::~ValueManager() {
+	QMutexLocker guard(&mMutex);
 	mNotificationStack.clear();
 	QList<Value*> values = mValues.values();
 
@@ -143,6 +145,7 @@ ValueManager::~ValueManager() {
  * @return true if there is already a value registered with that name, otherwise false.
  */
 bool ValueManager::nameExists(const QString &name) {
+	QMutexLocker guard(&mMutex);
 	QMap<QString, Value*>::iterator index = mValues.find(name);
 	if(index == mValues.end()) {
 		return false;
@@ -168,6 +171,7 @@ bool ValueManager::addValue(const QString &name, Value *value) {
 	if(value == 0) {
 		return false;
 	}
+	QMutexLocker guard(&mMutex);
 
 	QMap<QString, Value*>::iterator i = mValues.find(name);
 	if(i != mValues.end()) {
@@ -189,6 +193,7 @@ bool ValueManager::addValue(const QString &name, Value *value) {
  * @return true if a Value was successfully removed, otherwise false.
  */
 bool ValueManager::removeValue(const QString &name) {
+	QMutexLocker guard(&mMutex);
 
 	if(mValues.remove(name) > 0) {
 		notifyRepositoryChangedListeners();
@@ -208,6 +213,7 @@ bool ValueManager::removeValue(Value *value) {
 	if(value == 0) {
 		return false;
 	}
+	QMutexLocker guard(&mMutex);
 
 	QList<QString> names = mValues.keys(value);
 
@@ -234,6 +240,7 @@ bool ValueManager::removeValue(Value *value) {
  * @return true.
  */
 bool ValueManager::removeValues(const QList<Value*> &values) {
+	QMutexLocker guard(&mMutex);
 	bool changed = false;
 	QMap<QString, Value*>::iterator i = mValues.begin();
 	while(i != mValues.end()) {
@@ -263,6 +270,7 @@ bool ValueManager::removeValues(const QList<Value*> &values) {
  * @return the associated Value of NULL if no such Value exists.
  */
 Value* ValueManager::getValue(const QString &name) {
+	QMutexLocker guard(&mMutex);
 	QMap<QString, Value*>::iterator index = mValues.find(name);
 	if(index != mValues.end()) {
 		return index.value();
@@ -289,6 +297,8 @@ Value* ValueManager::getValue(const QString &name) {
  *         NULL is returned in case of failures.
  */
 Value* ValueManager::getMultiPartValue(const QString &name, const QString &valuePart) {
+	QMutexLocker guard(&mMutex);
+
 	QString valueName = name;
 	QString partName = valuePart;
 	if(partName == "") {
@@ -402,6 +412,8 @@ StringValue* ValueManager::getStringValue(const QString &name) {
  * @return a container with all known Values.
  */
 QList<Value*> ValueManager::getValues() {
+	QMutexLocker guard(&mMutex);
+
 	return mValues.values();
 }
 
@@ -414,6 +426,8 @@ QList<Value*> ValueManager::getValues() {
  * @return a list with all matching Values.
  */
 QList<Value*> ValueManager::getValuesMatchingPattern(const QString &pattern, bool caseSensitive) {
+	QMutexLocker guard(&mMutex);
+
 	QList<Value*> values;
 	QRegExp expr(pattern);
 	if(caseSensitive) {
@@ -443,6 +457,8 @@ QList<Value*> ValueManager::getValuesMatchingPattern(const QString &pattern, boo
  * @return a list with all value names matching the regular expression.
  */
 QList<QString> ValueManager::getValueNamesMatchingPattern(const QString &pattern, bool caseSensitive) {
+	QMutexLocker guard(&mMutex);
+
 	QList<QString> values;
 	QRegExp expr(pattern);
 
@@ -469,6 +485,8 @@ QList<QString> ValueManager::getValueNamesMatchingPattern(const QString &pattern
  * @return a list with all names associated with the given value.
  */
 QList<QString> ValueManager::getNamesOfValue(const Value *value) {
+	QMutexLocker guard(&mMutex);
+
 	QList<QString> values;
 	QMap<QString, Value*>::iterator index;
 	for(index = mValues.begin(); index != mValues.end(); index++) {
@@ -486,6 +504,8 @@ QList<QString> ValueManager::getNamesOfValue(const Value *value) {
  * @return a list with all know value names.
  */
 QList<QString> ValueManager::getValueNames() {
+	QMutexLocker guard(&mMutex);
+
 	QList<QString> values;
 	QMap<QString, Value*>::iterator index;
 	for(index = mValues.begin(); index != mValues.end(); index++) {
@@ -501,6 +521,8 @@ QList<QString> ValueManager::getValueNames() {
  * manualle in the owner classes or by calling delete on all values obtained with getValues();
  */
 void ValueManager::removeAllValues() {
+	QMutexLocker guard(&mMutex);
+
 	QList<Value*> values = mValues.values();
 	while(!values.empty()) {
 		Value* tmp = values.front();
@@ -530,6 +552,8 @@ void ValueManager::notifyRepositoryChangedListeners() {
  * This method is useful during shutdown to prevent notifications while the system is destroyed.
  */
 void ValueManager::removeAllListeners() {
+	QMutexLocker guard(&mMutex);
+
 	const QList<EventListener*> &repoListeners = 
 			mRepositoryChangedEvent->getEventListeners();
 	for(QListIterator<EventListener*> i(repoListeners); i.hasNext();) {
@@ -586,6 +610,7 @@ QVector<Object*> ValueManager::getNotificationStack() const {
  * @return true if there was no error, otherwise false.
  */
 bool ValueManager::loadValues(const QString &fileName, bool useFileLocking) {
+	QMutexLocker guard(&mMutex);
 
 	Core::log(QString("Loading value file ").append(fileName));
 
@@ -683,6 +708,7 @@ bool ValueManager::saveValues(const QString &fileName,
 							  const QString &comment, 
 							  bool useFileLocking)
 {
+	QMutexLocker guard(&mMutex);
 
 	QFile file(fileName);
 
@@ -794,6 +820,8 @@ Value* ValueManager::createCopyOfPrototype(const QString &typeName) const {
  * to the error stream. 
  */
 void ValueManager::printValues(const QString &valueNamePattern) {
+	QMutexLocker guard(&mMutex);
+
 	QList<QString> valueNames = getValueNamesMatchingPattern(valueNamePattern, true);
 	for(int i = 0; i < valueNames.size(); ++i) {
 		cerr << "Value: " << valueNames.at(i).toStdString().c_str() 

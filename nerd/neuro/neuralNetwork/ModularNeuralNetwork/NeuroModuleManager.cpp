@@ -85,7 +85,7 @@ NeuroModuleManager::NeuroModuleManager()
 	mOptionalModuleDirectory->useAsFileName(true);
 
 	core->getValueManager()->addValue(
-			"NeuroModules/OptionalModuleDirectory", mOptionalModuleDirectory);
+			"/NeuroModules/OptionalModuleDirectory", mOptionalModuleDirectory);
 
 	NeuroTagManager *ntm = NeuroTagManager::getInstance();
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_MODULE_INPUT, 
