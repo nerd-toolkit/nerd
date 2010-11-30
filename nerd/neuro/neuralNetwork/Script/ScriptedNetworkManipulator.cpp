@@ -62,7 +62,7 @@ namespace nerd {
  * Constructs a new ScriptedNetworkManipulator.
  */
 ScriptedNetworkManipulator::ScriptedNetworkManipulator()
-	: mClearNetworkModificationStacks(0)
+	: mNetwork(0), mClearNetworkModificationStacks(0)
 {
 	mClearNetworkModificationStacks = Core::getInstance()->getEventManager()->getEvent(
 			NeuralNetworkConstants::EVENT_NETWORK_CLEAR_MODIFICATION_STACKS, true);
