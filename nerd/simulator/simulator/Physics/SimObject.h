@@ -80,9 +80,9 @@ class SimObject : public ParameterizedObject {
 		virtual void setup();
 		virtual void clear();
 		
-		virtual const QList<InterfaceValue*>& getInputValues() const;
-		virtual const QList<InterfaceValue*>& getOutputValues() const;
-		virtual const QList<InterfaceValue*>& getInfoValues() const;
+		virtual QList<InterfaceValue*> getInputValues() const;
+		virtual QList<InterfaceValue*> getOutputValues() const;
+		virtual QList<InterfaceValue*> getInfoValues() const;
 		
 		virtual bool useOutputAsInfoValue(InterfaceValue *outputValue, bool useAsInfoValue);
 	
@@ -92,7 +92,7 @@ class SimObject : public ParameterizedObject {
 		virtual void valueChanged(Value *value);
 	
 		QList<SimGeom*> getGeometries();
-		void setGeometries(const QVector<SimGeom*> &geometries);
+		void setGeometries(QVector<SimGeom*> geometries);
 		bool addGeometry(SimGeom *simGeometry);
 		bool removeGeometry(SimGeom *simGeometry);
 
@@ -101,7 +101,7 @@ class SimObject : public ParameterizedObject {
 
 		virtual bool addChildObject(SimObject *child);
 		virtual bool removeChildObject(SimObject *child);
-		const QList<SimObject*>& getChildObjects() const;
+		QList<SimObject*> getChildObjects() const;
 
 	protected:
 		void updateInterfaceNames();

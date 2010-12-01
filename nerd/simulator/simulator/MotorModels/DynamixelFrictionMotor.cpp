@@ -255,7 +255,7 @@ DynamixelFrictionMotor::DynamixelFrictionMotor(const DynamixelFrictionMotor &dyn
 }
 
 
-bool DynamixelFrictionMotor::setInputValues(const QList<InterfaceValue*> &values)
+bool DynamixelFrictionMotor::setInputValues(QList<InterfaceValue*> values)
 {
 	if(!DynamixelMotor::setInputValues(values)){
 		return false;

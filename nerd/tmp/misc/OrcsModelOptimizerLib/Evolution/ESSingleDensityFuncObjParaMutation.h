@@ -57,9 +57,9 @@ class ESSingleDensityFuncObjParaMutation : public ESObjectParametersMutation {
   public:
 		ESSingleDensityFuncObjParaMutation();
 
-		QList<OptimizationDouble> doMutation(	const QList<OptimizationDouble> &objectParameters, 
-																					const QList<OptimizationDouble> &strategyParameters,
-							 														const ESInformation &information);
+		QList<OptimizationDouble> doMutation(QList<OptimizationDouble> objectParameters, 
+											QList<OptimizationDouble> strategyParameters,
+											const ESInformation &information);
 
 };
 

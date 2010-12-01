@@ -201,11 +201,11 @@ void ModelParameterRotator::applyParameterSet(int index) {
 			
 			PhysicsManager *pm = Physics::getPhysicsManager();
 	
-			const QList<SimObject*> &simObjects = pm->getSimObjects();
+			QList<SimObject*> simObjects = pm->getSimObjects();
 			for(QListIterator<SimObject*> i(simObjects); i.hasNext();) {
 				SimObject *obj = i.next();
 			
-				const QList<Value*> &params = obj->getParameters();
+				QList<Value*> params = obj->getParameters();
 
 				bool parameterFound = false;
 

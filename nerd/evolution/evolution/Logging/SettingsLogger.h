@@ -80,7 +80,7 @@ namespace nerd {
 		virtual void valueChanged(Value *value);
 
 		void addValues(const QString &regularExpression);
-		const QList<QString>& getValuesToStore() const;
+		QList<QString> getValuesToStore() const;
 
 		QList<QString> getCommentHistory() const;
 

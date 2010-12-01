@@ -64,8 +64,8 @@ namespace nerd {
 	{
 	Q_OBJECT
 	public:
-		EventTriggerAction(const QString &actionName, const QList<QString> &eventNames);
-		EventTriggerAction(const QString &actionName, const QList<QString> &eventNames,
+		EventTriggerAction(const QString &actionName, QList<QString> eventNames);
+		EventTriggerAction(const QString &actionName, QList<QString> eventNames,
 							const QString &activationBoolValueName, bool requiredBoolState);
 		virtual ~EventTriggerAction();
 

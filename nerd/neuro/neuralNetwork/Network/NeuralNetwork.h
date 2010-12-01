@@ -103,7 +103,7 @@ namespace nerd {
 
 		virtual bool addNeuron(Neuron *neuron);
 		virtual bool removeNeuron(Neuron *neuron);
-		virtual const QList<Neuron*>& getNeurons() const;
+		virtual QList<Neuron*> getNeurons() const;
 		virtual QList<Neuron*> getInputNeurons() const;
 		virtual QList<Neuron*> getOutputNeurons() const;
 
@@ -142,19 +142,19 @@ namespace nerd {
 
 		static qulonglong generateNextId();
 		static void resetIdCounter(qulonglong currentId = 0);
-// 		static void renewIds(const QList<SynapseTarget*> &objects);
+// 		static void renewIds(QList<SynapseTarget*> objects);
 
-		static Neuron* selectNeuronById(qulonglong id, const QList<Neuron*> &neurons);
-		static SynapseTarget* selectSynapseTargetById(qulonglong id, const QList<SynapseTarget*> &targets);
-		static Synapse* selectSynapseById(qulonglong id, const QList<Synapse*> &synapses);
+		static Neuron* selectNeuronById(qulonglong id, QList<Neuron*> neurons);
+		static SynapseTarget* selectSynapseTargetById(qulonglong id, QList<SynapseTarget*> targets);
+		static Synapse* selectSynapseById(qulonglong id, QList<Synapse*> synapses);
 		static NeuralNetworkElement* selectNetworkElementById(qulonglong id, 
-							const QList<NeuralNetworkElement*> &elements);
+							QList<NeuralNetworkElement*> elements);
 
 		
 
 	protected:
-		const QList<NeuronInterfaceValuePair>& getInputPairs() const;
-		const QList<NeuronInterfaceValuePair>& getOutputPairs() const;
+		QList<NeuronInterfaceValuePair> getInputPairs() const;
+		QList<NeuronInterfaceValuePair> getOutputPairs() const;
 		
 		
 	protected:

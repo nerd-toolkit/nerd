@@ -105,11 +105,11 @@ bool RemoveNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 	
 	//remove all input and output neurons
 	{
-		const QList<Neuron*> &inputNeurons = net->getInputNeurons();
+		QList<Neuron*> inputNeurons = net->getInputNeurons();
 		for(QListIterator<Neuron*> i(inputNeurons); i.hasNext();) {
 			neurons.removeAll(i.next());
 		}
-		const QList<Neuron*> &outputNeurons = net->getOutputNeurons();
+		QList<Neuron*> outputNeurons = net->getOutputNeurons();
 		for(QListIterator<Neuron*> i(outputNeurons); i.hasNext();) {
 			neurons.removeAll(i.next());
 		}

@@ -63,7 +63,7 @@ namespace nerd
 {
   public:
     ReducedChiSquareErrorFunction(TrainSet *trainSet, 
-                           const QVector<ParameterDescription*> &modelParameter);
+                           QVector<ParameterDescription*> modelParameter);
     
     virtual QString getName() const;
     

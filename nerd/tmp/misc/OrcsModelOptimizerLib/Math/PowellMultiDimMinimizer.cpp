@@ -73,7 +73,7 @@ QString PowellMultiDimMinimizer::getName() const{
 }     
     
 bool PowellMultiDimMinimizer::minimizationStart(MultiDimFunction *multiDimFunction,
-                                                const QVector<double> &startPoint)
+                                                QVector<double> startPoint)
 {
   mMultiDimFunction = multiDimFunction;
   mOneDimFunction = new MultiToOneDimFunction(mMultiDimFunction);

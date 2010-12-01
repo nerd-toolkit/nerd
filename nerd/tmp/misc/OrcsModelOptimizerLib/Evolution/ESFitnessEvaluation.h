@@ -54,8 +54,8 @@ namespace nerd {
 
 class ESFitnessEvaluation {
   public:
-		virtual bool doEvaluation(const QList<ESIndividual*> &population,
-															const ESInformation &information) = 0;
+		virtual bool doEvaluation(QList<ESIndividual*> population,
+								const ESInformation &information) = 0;
 
 };
 

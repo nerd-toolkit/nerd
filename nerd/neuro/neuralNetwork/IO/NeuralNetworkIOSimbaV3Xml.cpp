@@ -394,7 +394,7 @@ bool NeuralNetworkIOSimbaV3Xml::transferNeuronsAndSynapses(NeuralNetwork *net, M
 	QMap<Neuron*, Neuron*> netNeuronToModNetNeuronMap;
 	bool neuronTfFault = false;
 	bool neuronAfFault = false;
-	const QList<Neuron*> &netNeurons = net->getNeurons();
+	QList<Neuron*> netNeurons = net->getNeurons();
 	QListIterator<Neuron*> netNeuronIt(netNeurons);
 	while(netNeuronIt.hasNext()) {
 		Neuron *netNeuron = netNeuronIt.next();
@@ -465,7 +465,7 @@ bool NeuralNetworkIOSimbaV3Xml::createAccelboardModulesAndAssignNeurons(ModularN
 	}
 
 	// Assign neurons to modules
-	const QList<Neuron*>& neurons = modNet->getNeurons();
+	QList<Neuron*> neurons = modNet->getNeurons();
 	QListIterator<Neuron*> neuronIt(neurons);
 	while(neuronIt.hasNext()) {
 		Neuron *neuron = neuronIt.next();
@@ -665,7 +665,7 @@ bool NeuralNetworkIOSimbaV3Xml::assignSpinalChordAddressesToNeurons(ModularNeura
  * @param modNet the modular A-Series net.
  */
 void NeuralNetworkIOSimbaV3Xml::mapNeuronNames(ModularNeuralNetwork *modNet) {
-	const QList<Neuron*>& neurons = modNet->getNeurons();
+	QList<Neuron*> neurons = modNet->getNeurons();
 	QListIterator<Neuron*> neuronIt(neurons);
 	while(neuronIt.hasNext()) {
 		Neuron *neuron = neuronIt.next();
@@ -1202,7 +1202,7 @@ void NeuralNetworkIOSimbaV3Xml::addNeuronsAndSynapsesToNetwork(NeuralNetwork *ne
 	}
 }
 
-void NeuralNetworkIOSimbaV3Xml::addSynapsesToNetwork(const QVector<Neuron*> &neurons, SynapseTarget *target, const QDomNodeList &synapseList, const QDomNode &currentNode, NeuralNetworkManager *neuralNetworkManager, QList<QString> *warnings) {
+void NeuralNetworkIOSimbaV3Xml::addSynapsesToNetwork(QVector<Neuron*> neurons, SynapseTarget *target, const QDomNodeList &synapseList, const QDomNode &currentNode, NeuralNetworkManager *neuralNetworkManager, QList<QString> *warnings) {
 
 	QList<SynapseFunction*> sfPrototypes = neuralNetworkManager->getSynapseFunctionPrototypes();
 

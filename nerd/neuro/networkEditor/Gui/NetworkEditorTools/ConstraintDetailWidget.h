@@ -79,7 +79,7 @@ namespace nerd {
 		ConstraintDetailWidget(NeuralNetworkEditor *owner);
 		virtual ~ConstraintDetailWidget();
 
-		virtual void selectionChanged(const QList<PaintItem*> &selectedItems);
+		virtual void selectionChanged(QList<PaintItem*> selectedItems);
 		virtual void modificationPolicyChanged();
 
 		virtual void invalidateView();

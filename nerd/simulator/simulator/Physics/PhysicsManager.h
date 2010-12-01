@@ -101,21 +101,21 @@ class PhysicsManager : public virtual SystemObject, public virtual EventListener
 
 		bool addSimObject(SimObject *object);
 		bool removeSimObject(SimObject *object);
-		const QList<SimObject*>& getSimObjects() const;
+		QList<SimObject*> getSimObjects() const;
 		SimObject* getSimObject(const QString &name);
 		QList<SimObject*> getSimObjects(const QString &namePattern);
 
-		const QList<SimBody*>& getSimBodies() const;
+		QList<SimBody*> getSimBodies() const;
 		SimBody* getSimBody(const QString &name);
 
-		const QList<SimJoint*>& getSimJoints() const;
+		QList<SimJoint*> getSimJoints() const;
 		SimJoint* getSimJoint(const QString &name);
 
 		void destroySimObjects();
 
 		bool addSimObjectGroup(SimObjectGroup *group);
 		bool removeSimObjectGroup(SimObjectGroup *group);
-		const QList<SimObjectGroup*>& getSimObjectGroups() const;
+		QList<SimObjectGroup*> getSimObjectGroups() const;
 		SimObjectGroup* getSimObjectGroup(const QString &name) const;
 
 		void destroySimObjectGroups();

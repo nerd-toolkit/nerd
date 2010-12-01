@@ -314,7 +314,7 @@ bool StatisticsManager::removeStepStatistics(StatisticCalculator *calculator) {
 }
 
 
-const QList<StatisticCalculator*>& StatisticsManager::getStepStatistics() {
+QList<StatisticCalculator*> StatisticsManager::getStepStatistics() {
 	return mStepStatistics;
 }
 
@@ -344,7 +344,7 @@ bool StatisticsManager::removeTryStatistics(StatisticCalculator *calculator) {
 }
 
 
-const QList<StatisticCalculator*>& StatisticsManager::getTryStatistics() {
+QList<StatisticCalculator*> StatisticsManager::getTryStatistics() {
 	return mTryStatistics;
 }
 
@@ -375,7 +375,7 @@ bool StatisticsManager::removeIndividualStatistics(StatisticCalculator *calculat
 }
 
 
-const QList<StatisticCalculator*>& StatisticsManager::getIndividualStatistics() {
+QList<StatisticCalculator*> StatisticsManager::getIndividualStatistics() {
 	return mIndividualStatistics;
 }
 
@@ -406,7 +406,7 @@ bool StatisticsManager::removeGenerationStatistics(StatisticCalculator *calculat
 }
 
 
-const QList<StatisticCalculator*>& StatisticsManager::getGenerationStatistics() {
+QList<StatisticCalculator*> StatisticsManager::getGenerationStatistics() {
 	return mGenerationStatistics;
 }
 
@@ -432,14 +432,14 @@ int StatisticsManager::getCurrentGenerationIndex() const {
 
 
 void StatisticsManager::calculateStatistics(
-			const QList<StatisticCalculator*> &calculators, int index) 
+			QList<StatisticCalculator*> calculators, int index) 
 {
 	for(QListIterator<StatisticCalculator*> i(calculators); i.hasNext();) {
 		i.next()->calculateNextValue(index);
 	}
 }
 
-void StatisticsManager::clearStatistics(const QList<StatisticCalculator*> &calculators) {
+void StatisticsManager::clearStatistics(QList<StatisticCalculator*> calculators) {
 	for(QListIterator<StatisticCalculator*> i(calculators); i.hasNext();) {
 		i.next()->reset();
 	}

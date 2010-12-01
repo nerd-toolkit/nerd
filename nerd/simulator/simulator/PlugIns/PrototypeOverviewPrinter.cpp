@@ -91,7 +91,7 @@ bool PrototypeOverviewPrinter::bind() {
 		cout << "\nPhysics Prototype Overview:" << endl;
 		cout << "\n---------------------------" << endl;
 
-		const QList<QString> &prototypeNames = Physics::getPhysicsManager()->getPrototypeNames();
+		QList<QString> prototypeNames = Physics::getPhysicsManager()->getPrototypeNames();
 		for(QListIterator<QString> i(prototypeNames); i.hasNext();) {
 			QString name = i.next();
 			SimObject *obj = Physics::getPhysicsManager()->getPrototype(name);

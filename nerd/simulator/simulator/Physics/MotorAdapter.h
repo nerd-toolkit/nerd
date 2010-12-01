@@ -89,8 +89,8 @@ namespace nerd {
 		virtual Value* getParameter(const QString &name) const = 0;
 		
 
-		virtual const QList<InterfaceValue*>& getInputValues() const = 0;
-		virtual const QList<InterfaceValue*>& getOutputValues() const = 0;
+		virtual QList<InterfaceValue*> getInputValues() const = 0;
+		virtual QList<InterfaceValue*> getOutputValues() const = 0;
 
 		virtual void valueChanged(Value *value);
 

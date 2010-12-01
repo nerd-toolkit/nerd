@@ -96,7 +96,7 @@ class Event : public virtual Object {
 		virtual QString getName() const;
 		bool addName(const QString &name);
 		bool removeName(const QString &name);
-		const QList<QString>& getNames() const;
+		QList<QString> getNames() const;
 		
 		QString getDescription() const;
 		void setDescription(const QString &name);
@@ -106,8 +106,8 @@ class Event : public virtual Object {
 
 		bool addUpstreamEvent(Event *event);
 		bool removeUpstreamEvent(Event *event);
-		const QList<Event*>& getUpstreamEvents() const;
-		const QList<EventListener*>& getEventListeners() const;
+		QList<Event*> getUpstreamEvents() const;
+		QList<EventListener*> getEventListeners() const;
 
 	private:
 		QList<Event*> mUpstreamEvents;

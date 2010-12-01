@@ -671,7 +671,7 @@ bool Core::removeSystemObject(SystemObject *object) {
  *
  * @return a reference to the internal vector holding all registered SystemObjects. 
  */
-const QList<SystemObject*>& Core::getSystemObjects() const {
+QList<SystemObject*> Core::getSystemObjects() const {
 	return mSystemObjects;
 }
 
@@ -878,7 +878,7 @@ bool Core::scheduleTask(Task *task) {
  *
  * @return the list with all currently pending Tasks. 
  */
-const QList<Task*>& Core::getPendingTasks() const {
+QList<Task*> Core::getPendingTasks() const {
 	return mScheduledTasks;
 }
 

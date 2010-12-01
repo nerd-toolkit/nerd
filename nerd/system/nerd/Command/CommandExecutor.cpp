@@ -139,12 +139,12 @@ Command* CommandExecutor::getNextCommand() {
 
 
 
-const QList<Command*>& CommandExecutor::getUndoList() const {
+QList<Command*> CommandExecutor::getUndoList() const {
 	return mUndoList;
 }
 
 
-const QList<Command*>& CommandExecutor::getDoList() const {
+QList<Command*> CommandExecutor::getDoList() const {
 	return mDoList;
 }
 
@@ -186,7 +186,7 @@ void CommandExecutor::notifyExecutionListeners() {
 }
 
 
-const QList<CommandExecutionListener*>& CommandExecutor::getExecutionListeners() const {
+QList<CommandExecutionListener*> CommandExecutor::getExecutionListeners() const {
 	return mExecutionListeners;
 }
 

@@ -101,18 +101,18 @@ namespace nerd {
 
 		bool addPaintItem(PaintItem *item);
 		bool removePaintItem(PaintItem *item);
-		const QList<PaintItem*>& getPaintItems() const;
+		QList<PaintItem*> getPaintItems() const;
 
 		ElementPairVisualization* getElementPairVisualization() const;
 
-		void setSelectedItems(const QList<PaintItem*> &selectedItems);
-		const QList<PaintItem*>& getSelectedItems() const;
+		void setSelectedItems(QList<PaintItem*> selectedItems);
+		QList<PaintItem*> getSelectedItems() const;
 		PaintItem* getLastSelectedItem() const;
 		void validateSelectedItems();
 
 		bool addMouseListener(VisualizationMouseListener *listener);
 		bool removeMouseListener(VisualizationMouseListener *listener);
-		const QList<VisualizationMouseListener*>& getMouseListeners() const;
+		QList<VisualizationMouseListener*> getMouseListeners() const;
 		void notifyMousePressedListeners(QMouseEvent *event, const QPointF &globalPosition);
 		void notifyMouseReleasedListeners(QMouseEvent *event, const QPointF &globalPosition);
 		void notifyMouseDoubleClickedListeners(QMouseEvent *evnet, const QPointF &globalPosition);
@@ -120,14 +120,14 @@ namespace nerd {
 
 		bool addSelectionListener(SelectionListener *listener);
 		bool removeSelectionListener(SelectionListener *listener);
-		const QList<SelectionListener*>& getSelectionListeners() const;
+		QList<SelectionListener*> getSelectionListeners() const;
 		void notifySelectionListeners();
 
 		void notifyNeuralNetworkModified();
 
 		bool addKeyListener(KeyListener *listener);
 		bool removedKeyListener(KeyListener *listener);
-		const QList<KeyListener*>& getKeyListeners() const;
+		QList<KeyListener*> getKeyListeners() const;
 
 		void scaleVisualization(double factor);
 		void setVisualizationScale(double scale);
@@ -168,7 +168,7 @@ namespace nerd {
 	public slots:
 		void paintTimerElapsed();	
 		void setDefaultPaintIterval(int interval);
-		void updateNetworkElementPositionProperties(const QList<PaintItem*> &affectedItems);
+		void updateNetworkElementPositionProperties(QList<PaintItem*> affectedItems);
 		void setVisualizationCenter(double x, double y);
 
 	protected:

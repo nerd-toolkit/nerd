@@ -64,7 +64,7 @@ XMLConfigDocument::XMLConfigDocument(const QString &filePath)
 
 
 XMLConfigDocument::XMLConfigDocument(const QString &filePath, 
-                                     const QHash<QString,QString> &stringTemplates)
+                                     QHash<QString,QString> stringTemplates)
   : mFileName(filePath), mXmlDom(0) 
 {
   mStringTemplates = QHash<QString,QString>(stringTemplates);

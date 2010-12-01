@@ -297,8 +297,8 @@ void CollisionManager::disableCollisions(CollisionObject *first, CollisionObject
  * group and bodies of the second group will not be resolved. The bodies 
  * therefore can intersect each other.
  */
-void CollisionManager::disableCollisions(const QList<CollisionObject*> &firstGroup, 
-		const QList<CollisionObject*> &secondGroup, bool disable) 
+void CollisionManager::disableCollisions(QList<CollisionObject*> firstGroup, 
+		QList<CollisionObject*> secondGroup, bool disable) 
 {
 	for(int i = 0; i < firstGroup.size(); i++) {
 		for(int j = 0; j < secondGroup.size(); j++) {
@@ -318,7 +318,7 @@ void CollisionManager::disableCollisions(CollisionObject* collisionObject, bool 
 }
 
 void CollisionManager::disableCollisions(CollisionObject* collisionObject, 
-	const QList<CollisionObject*> &objectGroup, bool disable) 
+	QList<CollisionObject*> objectGroup, bool disable) 
 {
 	for(int i = 0; i < objectGroup.size(); i++) {
 		this->disableCollisions(objectGroup.at(i), collisionObject, disable);

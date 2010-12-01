@@ -105,7 +105,7 @@ void CopyPasteNetworkTool::activate(NetworkVisualization *visu) {
 	QList<NeuroModule*> modules;
 
 	QMutexLocker guard(mVisuContext->getSelectionMutex());
-	const QList<PaintItem*> &items = mVisuContext->getSelectedItems();
+	QList<PaintItem*> items = mVisuContext->getSelectedItems();
 
 	for(QListIterator<PaintItem*> i(items); i.hasNext();) {
 		PaintItem *item = i.next();

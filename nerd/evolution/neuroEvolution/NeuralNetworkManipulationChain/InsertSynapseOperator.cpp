@@ -182,7 +182,7 @@ bool InsertSynapseOperator::applyOperator(Individual *individual, CommandExecuto
 			SynapseTarget *target = s.next();
 
 			//remove all targets that already are target of a synapse from neuron source
-			const QList<Synapse*> &incommingSynapses = target->getSynapses();
+			QList<Synapse*> incommingSynapses = target->getSynapses();
 			bool validTarget = true;
 
 			for(QListIterator<Synapse*> k(incommingSynapses); k.hasNext();) {

@@ -152,7 +152,7 @@ int PlotterItem::getHistoryCapacity() const {
  * Returns a reference to the current value history.
  * @return the history.
  */
-const QVector<double>& PlotterItem::getHistory() const {
+QVector<double> PlotterItem::getHistory() const {
 	return mHistory;
 }
 
@@ -164,7 +164,7 @@ const QVector<double>& PlotterItem::getHistory() const {
  *
  * @param history the new history.
  */
-void PlotterItem::setHistory(const QVector<double>& history) {
+void PlotterItem::setHistory(QVector<double> history) {
 	int startIndex = 0;
 	if(history.size() > mHistoryMaxCapacity) {
 		startIndex = history.size() - mHistoryMaxCapacity;

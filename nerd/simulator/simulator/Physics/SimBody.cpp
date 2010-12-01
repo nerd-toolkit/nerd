@@ -323,7 +323,7 @@ bool SimBody::removeCollisionObject(CollisionObject *object) {
  *
  * @return a list with the CollisionObjects.
  */
-const QList<CollisionObject*>& SimBody::getCollisionObjects() const {
+QList<CollisionObject*> SimBody::getCollisionObjects() const {
 	return mCollisionObjects;
 }
 

@@ -79,7 +79,7 @@ void OffspringCountStatistic::updateStatistic(Individual*) {
 // 		Core::log("OffspringCountStatistic: Could not find owner population.");
 // 		return;
 // 	}
-// 	const QList<Individual*> &individuals = mPopulation->getIndividuals();
+// 	QList<Individual*> individuals = mPopulation->getIndividuals();
 // 
 // 	int count = 0;
 // 	for(QListIterator<Individual*> i(individuals); i.hasNext();) {

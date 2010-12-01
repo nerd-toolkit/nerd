@@ -296,7 +296,7 @@ bool MuSlashRhoLambdaES::doNextGeneration()
 	return ok;
 }
 
-const QList<ESIndividual*> & MuSlashRhoLambdaES::getPopulation() const {
+QList<ESIndividual*> MuSlashRhoLambdaES::getPopulation() const {
 	return mPopulation;
 }
 

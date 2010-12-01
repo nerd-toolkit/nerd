@@ -220,7 +220,7 @@ NetworkVisualization* NeuralNetworkEditor::getNetworkVisualization(int index) co
 	return 0;
 }
 
-const QList<NetworkVisualization*>& NeuralNetworkEditor::getNetworkVisualizations() const {
+QList<NetworkVisualization*> NeuralNetworkEditor::getNetworkVisualizations() const {
 	return mNetworkVisualizations;
 }
 
@@ -243,7 +243,7 @@ bool NeuralNetworkEditor::removeNeuralNetworkObserver(NeuralNetworkObserver *obs
 }
 
 
-const QList<NeuralNetworkObserver*>& NeuralNetworkEditor::getNeuralNetworkObservers() const {
+QList<NeuralNetworkObserver*> NeuralNetworkEditor::getNeuralNetworkObservers() const {
 	return mNetworkObservers;
 }
 
@@ -1364,7 +1364,7 @@ void NeuralNetworkEditor::saveNetworkAsSvgGraphics(const QString &fileName) {
 	double maxX = -1 * numeric_limits<double>::max();
 	double maxY = -1 * numeric_limits<double>::max();
 
-	const QList<PaintItem*> &items = visu->getPaintItems();
+	QList<PaintItem*> items = visu->getPaintItems();
 
 	if(items.empty()) {
 		if(pauseValue != 0) {

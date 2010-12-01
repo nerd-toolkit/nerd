@@ -217,7 +217,7 @@ bool Synapse::removeSynapse(Synapse *synapse) {
 }
 
 
-const QList<Synapse*>& Synapse::getSynapses() const {
+QList<Synapse*> Synapse::getSynapses() const {
 	return mSynapses;
 }
 

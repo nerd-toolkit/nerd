@@ -53,8 +53,8 @@ ESSingleDensityFuncObjParaMutation::ESSingleDensityFuncObjParaMutation()
 {}
 
 QList<OptimizationDouble> ESSingleDensityFuncObjParaMutation::doMutation(	
-					const QList<OptimizationDouble> &objectParameters, 
-					const QList<OptimizationDouble> &strategyParameters,
+					QList<OptimizationDouble> objectParameters, 
+					QList<OptimizationDouble> strategyParameters,
 					const ESInformation &information)
 {
 	QList<OptimizationDouble> mutatedObjParas;

@@ -58,7 +58,7 @@ namespace nerd
 {
 
 ReducedChiSquareErrorFunction::ReducedChiSquareErrorFunction(TrainSet *trainSet, 
-  const QVector<ParameterDescription*> &modelParameter)
+  QVector<ParameterDescription*> modelParameter)
   : mTrainSet(trainSet), mModelParameter(modelParameter)
 { }
     

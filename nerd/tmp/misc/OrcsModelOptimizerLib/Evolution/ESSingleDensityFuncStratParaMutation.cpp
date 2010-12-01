@@ -57,8 +57,8 @@ ESSingleDensityFuncStratParaMutation::ESSingleDensityFuncStratParaMutation(doubl
 {}
 		
 QList<OptimizationDouble> ESSingleDensityFuncStratParaMutation::doMutation(	
-																const QList<OptimizationDouble> &strategyParameters,
-												 				const ESInformation &information)
+									QList<OptimizationDouble> strategyParameters,
+									const ESInformation &information)
 {
 	QList<OptimizationDouble> mutatedStratParas;
 		

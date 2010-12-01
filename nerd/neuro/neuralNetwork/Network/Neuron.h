@@ -86,7 +86,7 @@ namespace nerd {
 
 		bool addInputValue(DoubleValue *input);
 		bool removeInputValue(DoubleValue *input);
-		const QList<DoubleValue*>& getInputValues() const;
+		QList<DoubleValue*> getInputValues() const;
 
 		void setTransferFunction(const TransferFunction &tf);
 		TransferFunction* getTransferFunction() const;
@@ -96,10 +96,10 @@ namespace nerd {
 		
 		virtual bool addSynapse(Synapse *synapse);
 		virtual bool removeSynapse(Synapse *synapse);
-		virtual const QList<Synapse*>& getSynapses() const;
+		virtual QList<Synapse*> getSynapses() const;
 		virtual bool registerOutgoingSynapse(Synapse *synapse);
 		virtual bool deregisterOutgoingSynapse(Synapse *synapse);
-		virtual const QList<Synapse*>& getOutgoingSynapses() const;
+		virtual QList<Synapse*> getOutgoingSynapses() const;
 
 		virtual bool equals(Neuron *neuron);
 

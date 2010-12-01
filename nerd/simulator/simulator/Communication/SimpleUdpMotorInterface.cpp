@@ -221,7 +221,7 @@ bool SimpleUdpMotorInterface::startUdpServer() {
 	cerr << "SimpleUpdMotorInterface looking for agent ["
 		<< mControlledGroupName->get().toStdString().c_str()
 		<< "] ";
-	const QList<SimObjectGroup*> &groups = Physics::getPhysicsManager()
+	QList<SimObjectGroup*> groups = Physics::getPhysicsManager()
 					->getSimObjectGroups();
 	for(int i = 0; i < groups.size(); ++i) {
 		SimObjectGroup *group = groups.at(i);

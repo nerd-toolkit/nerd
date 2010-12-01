@@ -70,7 +70,7 @@ namespace nerd {
 		bool addObject(SimObject *object);
 		bool removeObject(SimObject *object);
 		
-		const QList<SimObject*>& getObjects() const;
+		QList<SimObject*> getObjects() const;
 		
 		virtual QList<InterfaceValue*> getInputValues() const;
 		virtual QList<InterfaceValue*> getOutputValues() const;

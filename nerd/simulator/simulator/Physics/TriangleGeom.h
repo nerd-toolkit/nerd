@@ -87,20 +87,20 @@ class TriangleGeom : public SimGeom {
 	public:
 	
 		TriangleGeom(SimObject *simGeom);
-		TriangleGeom(SimObject *simGeom, const QVector<Vector3D> &points, 
-					 const QVector<Triangle> &triangles);
+		TriangleGeom(SimObject *simGeom, QVector<Vector3D> points, 
+					 QVector<Triangle> triangles);
 		TriangleGeom(const TriangleGeom &geom);
 		virtual ~TriangleGeom();
 		
 		virtual SimGeom* createCopy() const;
 		
 		QVector<Triangle> getTriangles() const;
-		void setTriangles(const QVector<Triangle> &triangles);
+		void setTriangles(QVector<Triangle> triangles);
 		Triangle getTriangle(int index) const;
 		
 		QVector<Vector3D> getPoints() const;
 		Vector3D getPoint(int index) const;
-		void setPoints(const QVector<Vector3D> &points);
+		void setPoints(QVector<Vector3D> points);
 		void setPoint(int index, const Vector3D &position);
 		
 		virtual void setLocalPosition(const Vector3D &localPosition);

@@ -123,7 +123,7 @@ bool World::removePopulation(Population *population) {
  *
  * @return all populations of this world.
  */
-const QList<Population*>& World::getPopulations() const {
+QList<Population*> World::getPopulations() const {
 	return mPopulations;
 }
 

@@ -84,7 +84,7 @@ class Value : public virtual Object
 		virtual bool addValueChangedListener(ValueChangedListener *listener);
 		virtual bool removeValueChangedListener(ValueChangedListener *listener);
 		virtual void removeValueChangedListeners();
-		virtual const QList<ValueChangedListener*> getValueChangedListeners() const;
+		virtual QList<ValueChangedListener*> getValueChangedListeners() const;
 		virtual void notifyValueChanged();
 
 		virtual void setNotifyAllSetAttempts(bool notify);

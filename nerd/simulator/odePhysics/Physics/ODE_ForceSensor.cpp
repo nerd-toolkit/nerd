@@ -241,7 +241,7 @@ ODE_Body* ODE_ForceSensor::getHostBody() const {
 }
 
 
-const QList<CollisionObject*>& ODE_ForceSensor::getReferenceCollisionObject() const {
+QList<CollisionObject*> ODE_ForceSensor::getReferenceCollisionObject() const {
 	return mReferenceCollisionObjects;
 }
 

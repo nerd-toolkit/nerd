@@ -78,8 +78,8 @@ CollisionRule* EventCollisionRule::createCopy() const {
 	return new EventCollisionRule(*this);
 }
 
-void EventCollisionRule::set(const QList<CollisionObject*> &sourceGroup, 
-						const QList<CollisionObject*> &targetGroup, 
+void EventCollisionRule::set(QList<CollisionObject*> sourceGroup, 
+						QList<CollisionObject*> targetGroup, 
 						const QString &eventName)
 {
 	CollisionRule::set(sourceGroup, targetGroup);
@@ -92,9 +92,9 @@ void EventCollisionRule::set(const QList<CollisionObject*> &sourceGroup,
 }
 
 
-void EventCollisionRule::set(const QList<CollisionObject*> &sourceGroup, 
-							const QList<CollisionObject*> &targetGroup, 
-							const QList<QString> &eventNames)
+void EventCollisionRule::set(QList<CollisionObject*> sourceGroup, 
+							QList<CollisionObject*> targetGroup, 
+							QList<QString> eventNames)
 {
 	CollisionRule::set(sourceGroup, targetGroup);
 	
@@ -198,7 +198,7 @@ QList<Event*> EventCollisionRule::getEvents() const {
 	return mGroupEvents;
 }
 
-void EventCollisionRule::setEvents(const QList<Event*> &events) {
+void EventCollisionRule::setEvents(QList<Event*> events) {
 	mGroupEvents = events;
 }
 

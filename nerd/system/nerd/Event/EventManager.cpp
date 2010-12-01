@@ -102,7 +102,7 @@ Event* EventManager::createEvent(const QString &name, const QString &description
 	for(int i = 0; i < mEvents.size(); i++) {
 		Event *event = mEvents.at(i);
 
-		const QList<QString> &names = event->getNames();
+		QList<QString> names = event->getNames();
 		QListIterator<QString> it(names);
 		for(; it.hasNext();) {
 			if(it.next().compare(name) == 0) {
@@ -132,7 +132,7 @@ Event* EventManager::createEvent(const QString &name, const QString &description
 Event* EventManager::getEvent(const QString &name, bool createIfNotAvailable) {
 	for(int i = 0; i < mEvents.size(); i++) {
 		Event *event = mEvents.at(i);
-		const QList<QString> &names = event->getNames();
+		QList<QString> names = event->getNames();
 		QListIterator<QString> it(names);
 		for(; it.hasNext();) {
 			if(it.next().compare(name) == 0) {
@@ -229,7 +229,7 @@ QVector<Event*> EventManager::getEventsMatchingPattern(const QString &regularExp
 		if(event == 0) {
 			continue;
 		}
-		const QList<QString> &names = event->getNames();
+		QList<QString> names = event->getNames();
 		QListIterator<QString> it(names);
 		for(; it.hasNext();) {
 			QString name = it.next();
@@ -268,7 +268,7 @@ QVector<QString> EventManager::getNamesMatchingPattern(const QString &regularExp
 		if(event == 0) {
 			continue;
 		}
-		const QList<QString> &names = event->getNames();
+		QList<QString> names = event->getNames();
 		QListIterator<QString> it(names);
 		for(; it.hasNext();) {
 			QString name = it.next();
@@ -288,7 +288,7 @@ QVector<QString> EventManager::getNamesMatchingPattern(const QString &regularExp
  *
  * @return a vector with all available Events.
  */
-const QVector<Event*>& EventManager::getEvents() const {
+QVector<Event*> EventManager::getEvents() const {
 	return mEvents;
 }
 

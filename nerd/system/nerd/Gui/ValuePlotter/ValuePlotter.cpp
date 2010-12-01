@@ -179,7 +179,7 @@ QString ValuePlotter::getName() const {
 	return mName;
 }
 
-const QMap<Event*, QString>& ValuePlotter::getSupportedUpdateTriggerEvents() const {
+QMap<Event*, QString> ValuePlotter::getSupportedUpdateTriggerEvents() const {
 	return mTriggerEvents;
 }
 
@@ -343,7 +343,7 @@ bool ValuePlotter::addValueToPlotter(const QString &valueName, Value *value, con
 		return false;
 	}
 
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	for(int i = 0; i < items.size(); ++i) {
 		ValuePlotterItem *item = dynamic_cast<ValuePlotterItem*>(items.at(i));
@@ -373,7 +373,7 @@ bool ValuePlotter::removeValue(Value *value) {
 		return false;
 	}
 
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	for(int i = 0; i < items.size(); ++i) {
 		ValuePlotterItem *item = dynamic_cast<ValuePlotterItem*>(items.at(i));
@@ -424,7 +424,7 @@ QList<Value*> ValuePlotter::getPlottedValues() const {
  */
 QColor ValuePlotter::getSuitableColor(QList<QColor> *ignoreList) {
 
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 	QList<QColor> excludedColors;
 	if(ignoreList != 0) {
 		excludedColors = *ignoreList;
@@ -823,7 +823,7 @@ void ValuePlotter::mousePressEvent(QMouseEvent *event) {
 	mMouseStartPosition = event->pos();
 	mOffsetVStartSetting = mPlotterWidget->getUserOffsetV();
 
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	for(int i = 0; i < items.size(); ++i) {
 		PlotterItem *item = items.at(i);
@@ -913,7 +913,7 @@ void ValuePlotter::changeUserOffsetV(double offset) {
  */
 void ValuePlotter::changeStaticDataScaleV(int count) {
 
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	double scale = 1.0;
 
@@ -948,7 +948,7 @@ void ValuePlotter::changeStaticDataScaleV(int count) {
  */
 void ValuePlotter::changeStaticDataOffsetV(int count) {
 
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	double change = ((1.0 / ((double) (mPlotterWidget->height() - 20.0) / 2.0))
 					/ mPlotterWidget->getUserScaleV());
@@ -970,7 +970,7 @@ void ValuePlotter::changeStaticDataOffsetV(int count) {
 
 
 void ValuePlotter::changeStaticDataOffsetH(double offset) {
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	double localOffset = 0.0;
 
@@ -988,7 +988,7 @@ void ValuePlotter::changeStaticDataOffsetH(double offset) {
 }
 
 void ValuePlotter::changeStaticDataOffsetV(double offset) {
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	double localOffset = 0.0;
 
@@ -1012,7 +1012,7 @@ void ValuePlotter::changeStaticDataOffsetV(double offset) {
  * @param scale the scale to set for all static PlotterItems.
  */
 void ValuePlotter::setStaticDataScaleV(double scale) {
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	for(int i = 0; i < items.size(); ++i) {
 		PlotterItem *item = items.at(i);
@@ -1031,7 +1031,7 @@ void ValuePlotter::setStaticDataScaleV(double scale) {
  * @param scale the scale to set for all static PlotterItems.
  */
 void ValuePlotter::setStaticDataScaleH(double scale) {
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	for(int i = 0; i < items.size(); ++i) {
 		PlotterItem *item = items.at(i);
@@ -1050,7 +1050,7 @@ void ValuePlotter::setStaticDataScaleH(double scale) {
  * @param offset the offset to set for all static PlotterItems.
  */
 void ValuePlotter::setStaticDataOffsetV(double offset) {
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	for(int i = 0; i < items.size(); ++i) {
 		PlotterItem *item = items.at(i);
@@ -1069,7 +1069,7 @@ void ValuePlotter::setStaticDataOffsetV(double offset) {
  * @param offset the offset to set for all static PlotterItems.
  */
 void ValuePlotter::setStaticDataOffsetH(double offset) {
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	for(int i = 0; i < items.size(); ++i) {
 		PlotterItem *item = items.at(i);
@@ -1092,7 +1092,7 @@ void ValuePlotter::setStaticDataOffsetH(double offset) {
  */
 void ValuePlotter::changeStaticDataOffsetH(int count) {
 
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	//the change per count
 	double change = 5;
@@ -1127,7 +1127,7 @@ void ValuePlotter::changeStaticDataScaleH(int count) {
 	double scaleChange = 0.01;
 	double scale = 0.0;
 
-	const QList<PlotterItem*> &items = mPlotterWidget->getPlotterItems();
+	QList<PlotterItem*> items = mPlotterWidget->getPlotterItems();
 
 	for(int i = 0; i < items.size(); ++i) {
 		PlotterItem *item = items.at(i);

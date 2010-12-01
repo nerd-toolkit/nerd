@@ -62,7 +62,7 @@ class XMLConfigDocument : public virtual Object {
     
     XMLConfigDocument(const QString &filePath);
     XMLConfigDocument(const QString &filePath,
-                      const QHash<QString,QString> &stringTemplates);
+                      QHash<QString,QString> stringTemplates);
 
     ~XMLConfigDocument();
 

@@ -123,7 +123,7 @@ bool  Event::removeName(const QString &name) {
  *
  * @return the name of the Event.
  */
-const QList<QString>& Event::getNames() const {
+QList<QString> Event::getNames() const {
 	return mNames;
 }
 
@@ -255,7 +255,7 @@ bool Event::removeEventListener(EventListener *eventListener) {
  * 
  * @return a vector with all registered EventListeners.
  */
-const QList<EventListener*>& Event::getEventListeners() const {
+QList<EventListener*> Event::getEventListeners() const {
 	return mEventListeners;
 }
 
@@ -306,7 +306,7 @@ bool Event::removeUpstreamEvent(Event *event) {
  *
  * @return a vector with all upstream Events of this Event.
  */
-const QList<Event*>& Event::getUpstreamEvents() const{
+QList<Event*> Event::getUpstreamEvents() const{
 	return mUpstreamEvents;
 }
 

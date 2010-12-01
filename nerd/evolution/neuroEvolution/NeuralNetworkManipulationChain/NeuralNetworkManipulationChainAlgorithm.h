@@ -65,7 +65,7 @@ namespace nerd {
 
 		bool addOperator(NeuralNetworkManipulationOperator *netOperator);
 		bool removeOperator(NeuralNetworkManipulationOperator *netOperator);
-		const QList<NeuralNetworkManipulationOperator*>& getOperators() const;
+		QList<NeuralNetworkManipulationOperator*> getOperators() const;
 	
 		virtual bool createNextGeneration(QList<Individual*> &trashcan);
 		virtual bool reset();

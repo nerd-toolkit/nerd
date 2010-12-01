@@ -171,12 +171,12 @@ Value* SpringAdapter::getParameter(const QString &name) const {
 
 		
 
-const QList<InterfaceValue*>& SpringAdapter::getInputValues() const {
+QList<InterfaceValue*> SpringAdapter::getInputValues() const {
 	return SimObject::getInputValues();
 }
 
 
-const QList<InterfaceValue*>& SpringAdapter::getOutputValues() const {
+QList<InterfaceValue*> SpringAdapter::getOutputValues() const {
 	return SimObject::getOutputValues();
 }
 

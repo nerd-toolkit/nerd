@@ -75,8 +75,8 @@ namespace nerd {
 		Command* getLastCommand();
 		Command* getNextCommand();
 
-		const QList<Command*>& getUndoList() const;
-		const QList<Command*>& getDoList() const;
+		QList<Command*> getUndoList() const;
+		QList<Command*> getDoList() const;
 
 		QAction* getUndoAction() const;
 		QAction* getRedoAction() const;
@@ -84,7 +84,7 @@ namespace nerd {
 		bool addExecutionListener(CommandExecutionListener *listener);
 		bool removeExecutionListener(CommandExecutionListener *listener);
 		void notifyExecutionListeners();
-		const QList<CommandExecutionListener*>& getExecutionListeners() const;
+		QList<CommandExecutionListener*> getExecutionListeners() const;
 
 		bool isExecuting() const;
 

@@ -103,7 +103,7 @@ class SimBody : public SimObject {
 		
 		virtual bool addCollisionObject(CollisionObject *object);
 		virtual bool removeCollisionObject(CollisionObject *object);
-		virtual const QList<CollisionObject*>& getCollisionObjects() const;
+		virtual QList<CollisionObject*> getCollisionObjects() const;
 
 		DoubleValue* getElasticityValue() const;
 		DoubleValue* getDynamicFrictionValue() const;

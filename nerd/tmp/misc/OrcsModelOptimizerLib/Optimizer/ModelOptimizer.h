@@ -232,7 +232,7 @@ class ModelOptimizer : public Object {
 		
 		bool appendStatistic(StatisticCalculator *childStatistic);
 		bool appendStatistic(Value *statisticValue,const QString &name);
-		bool appendStatistic(const QVector<ParameterDescription*> &mToOptimizeParameters);
+		bool appendStatistic(QVector<ParameterDescription*> mToOptimizeParameters);
 };
 
 } // namespace nerd

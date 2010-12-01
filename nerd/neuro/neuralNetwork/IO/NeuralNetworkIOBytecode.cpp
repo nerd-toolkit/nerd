@@ -164,7 +164,7 @@ bool NeuralNetworkIOBytecode::checkOrExportNetwork(QTextStream &output, NeuralNe
 	// First get all Accelboard modules.
 	// Check, if all Accelboard modules exist once and if all modules with Property "Accelboard" have a valid value.
 	QMap<QString, NeuroModule*> accelboardModules;	// Map Accelboard-Name to Module
-	const QList<NeuroModule*>& modules = modNet->getNeuroModules();
+	QList<NeuroModule*> modules = modNet->getNeuroModules();
 	QListIterator<NeuroModule*> modulesIt(modules);
 	while(modulesIt.hasNext()) {
 		NeuroModule* module = modulesIt.next();
@@ -199,7 +199,7 @@ bool NeuralNetworkIOBytecode::checkOrExportNetwork(QTextStream &output, NeuralNe
 	QListIterator<NeuroModule*> accelModIt(accelboardModules.values());
 	while(accelModIt.hasNext()) {
 		NeuroModule* module = accelModIt.next();
-		const QList<Neuron*>& neurons = module->getAllEnclosedNeurons();
+		QList<Neuron*> neurons = module->getAllEnclosedNeurons();
 		QListIterator<Neuron*> neuronIt(neurons);
 		while(neuronIt.hasNext()) {
 			Neuron* neuron = neuronIt.next();
@@ -208,7 +208,7 @@ bool NeuralNetworkIOBytecode::checkOrExportNetwork(QTextStream &output, NeuralNe
 	}
 
 	// Check if all network neurons belong to accelboard modules
-	const QList<Neuron*>& netNeurons = net->getNeurons();
+	QList<Neuron*> netNeurons = net->getNeurons();
 	QListIterator<Neuron*> netNeuronIt(netNeurons);
 	while(netNeuronIt.hasNext()) {
 		Neuron *netNeuron = netNeuronIt.next();
@@ -274,7 +274,7 @@ bool NeuralNetworkIOBytecode::checkOrExportNetwork(QTextStream &output, NeuralNe
  */
 void NeuralNetworkIOBytecode::removeSpinalChordAddressesAndMemoryNumbers(NeuralNetwork *net) {
 	// Get all network neurons
-	const QList<Neuron*>& neurons = net->getNeurons();
+	QList<Neuron*> neurons = net->getNeurons();
 	// Iterate over the neurons
 	QListIterator<Neuron*> neuronIt(neurons);
 	while(neuronIt.hasNext()) {
@@ -313,7 +313,7 @@ void NeuralNetworkIOBytecode::writeBytecode(QMap<QString, NeuroModule*> &accelbo
 		// Write accelboard beginning keyword
 		out << "_" << accelboardName << ":\r\n\r\n";
 		// Get Module neurons
-		const QList<Neuron*>& neurons = accelMod->getAllEnclosedNeurons();
+		QList<Neuron*> neurons = accelMod->getAllEnclosedNeurons();
 		// Iterate over all neurons
 		QListIterator<Neuron*> neuronIt(neurons);
 		while(neuronIt.hasNext()) {
@@ -329,7 +329,7 @@ void NeuralNetworkIOBytecode::writeBytecode(QMap<QString, NeuroModule*> &accelbo
 				// Write bias value
 				out << "weight " << bias << "\r\nbias\r\n";
 				// Write enabled incoming synapses
-				const QList<Synapse*>& synapses = neuron->getSynapses();
+				QList<Synapse*> synapses = neuron->getSynapses();
 				QListIterator<Synapse*> synapseIt(synapses);
 				while(synapseIt.hasNext()) {
 					Synapse* synapse = synapseIt.next();
@@ -399,7 +399,7 @@ bool NeuralNetworkIOBytecode::accelboardModuleHiddenNeuronCheck(NeuralNetwork *n
 
 	// Get a list of hidden neurons of the module
 	QList<Neuron*> hiddenNeurons;
-	const QList<Neuron*>& neurons = module->getAllEnclosedNeurons();
+	QList<Neuron*> neurons = module->getAllEnclosedNeurons();
 	QListIterator<Neuron*> neuronIt(neurons);
 	while(neuronIt.hasNext()) {
 		Neuron *neuron = neuronIt.next();
@@ -497,7 +497,7 @@ bool NeuralNetworkIOBytecode::accelboardModuleHiddenNeuronCheck(NeuralNetwork *n
  */
 bool NeuralNetworkIOBytecode::isNeuronWithOutgoingConnections(NeuralNetwork *net, NeuroModule *module, Neuron *neuron) {
 	QString accelboardName = module->getProperty("Accelboard");
-	const QList<Neuron*>& neurons = module->getAllEnclosedNeurons();
+	QList<Neuron*> neurons = module->getAllEnclosedNeurons();
 	QList<Synapse*> synapses = net->getSynapses();
 	QListIterator<Synapse*> synapseIt(synapses);
 	while(synapseIt.hasNext()) {
@@ -530,7 +530,7 @@ bool NeuralNetworkIOBytecode::accelboardModuleHasRightInputOutputNeurons(NeuroMo
 	QList<QString> inputNeuronAddresses;
 	QList<QString> outputNeuronAddresses;
 	
-	const QList<Neuron*>& neurons = module->getAllEnclosedNeurons();
+	QList<Neuron*> neurons = module->getAllEnclosedNeurons();
 	QListIterator<Neuron*> neuronIt(neurons);
 	while(neuronIt.hasNext()) {
 		Neuron *neuron = neuronIt.next();

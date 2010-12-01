@@ -65,7 +65,7 @@ namespace nerd {
 		AddConstraintCommand(NetworkVisualization *context, NeuronGroup *group, 
 							 const GroupConstraint &constraint);
 		AddConstraintCommand(NetworkVisualization *context, 	
-							const QList<NeuronGroup*> &groups, const GroupConstraint &constraint);
+							QList<NeuronGroup*> groups, const GroupConstraint &constraint);
 		virtual ~AddConstraintCommand();
 
 		virtual bool isUndoable() const;

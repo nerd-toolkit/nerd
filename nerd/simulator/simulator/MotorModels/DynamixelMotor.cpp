@@ -81,7 +81,7 @@ DynamixelMotor::DynamixelMotor(const DynamixelMotor &dynamixelMotor)
  * @param values List with InputValues.
  * @return TRUE if successfully, otherwise FALSE.
  */
-bool DynamixelMotor::setInputValues(const QList<InterfaceValue*> &values) 
+bool DynamixelMotor::setInputValues(QList<InterfaceValue*> values) 
 {
 	if(values.size() != 2) {
 		Core::log(QString("%1::setInputValues(): ERROR - Not correct amount of InputValues given! (Needed: 2  Given: %2)").arg(
@@ -103,7 +103,7 @@ bool DynamixelMotor::setInputValues(const QList<InterfaceValue*> &values)
  * @param values List with OutputValues.
  * @return TRUE if successfully, otherwise FALSE.
  */
-bool DynamixelMotor::setOutputValues(const QList<InterfaceValue*> &values) 
+bool DynamixelMotor::setOutputValues(QList<InterfaceValue*> values) 
 {
 	if(values.size() != 1) {
 		Core::log(QString("%1::setOutputValues(): ERROR - Not correct amount of OutputValues given! (Needed: 1  Given: %2)").arg(

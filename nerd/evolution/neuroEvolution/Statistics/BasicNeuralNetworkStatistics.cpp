@@ -92,7 +92,7 @@ bool BasicNeuralNetworkStatistics::calculateNextValue(int index) {
 		return false;
 	}
 
-	const QList<Individual*> &individuals = mTargetPopulation->getIndividuals();
+	QList<Individual*> individuals = mTargetPopulation->getIndividuals();
 
 	int minNumberOfNeurons = numeric_limits<int>::max();
 	int maxNumberOfNeurons = 0;
@@ -133,7 +133,7 @@ bool BasicNeuralNetworkStatistics::calculateNextValue(int index) {
 			return false;
 		}
 
-		const QList<Neuron*> &neurons = network->getNeurons();
+		QList<Neuron*> neurons = network->getNeurons();
 		QList<Synapse*> synapses = network->getSynapses();
 
 		if(!individual->getFitnessFunctions().empty()) {

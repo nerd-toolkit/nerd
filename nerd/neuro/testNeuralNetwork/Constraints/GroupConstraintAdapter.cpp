@@ -94,7 +94,7 @@ int GroupConstraintAdapter::getNumberOfRequiredElements() const {
 }
 
 
-bool GroupConstraintAdapter::setRequiredElements(const QList<NeuralNetworkElement*>&) {
+bool GroupConstraintAdapter::setRequiredElements(QList<NeuralNetworkElement*>) {
 	return true;
 }
 

@@ -82,7 +82,7 @@ namespace nerd {
 		double get(int w, int h, int d);
 
 		//void clear(double clearValue);
-		const QVector<QVector<QVector<double> > >& getData() const;
+		QVector<QVector<QVector<double> > > getData() const;
 
 	private:
 		QVector<QVector<QVector<double> > > mMatrix;

@@ -97,11 +97,11 @@ bool SetSnapshotValueTask::runTask() {
 	SimulationEnvironmentManager *sem = Physics::getSimulationEnvironmentManager();
 	PhysicsManager *pm = Physics::getPhysicsManager();
 
-	const QList<SimObject*> &simObjects = pm->getSimObjects();
+	QList<SimObject*> simObjects = pm->getSimObjects();
 	for(QListIterator<SimObject*> i(simObjects); i.hasNext();) {
 		SimObject *obj = i.next();
 	
-		const QList<Value*> &params = obj->getParameters();
+		QList<Value*> params = obj->getParameters();
 		for(QListIterator<Value*> j(params); j.hasNext();) {
 			Value *value = j.next();
 			if(value == mSnapshotValue) {

@@ -67,7 +67,7 @@ AddConstraintCommand::AddConstraintCommand(NetworkVisualization *context, Neuron
 }
 
 AddConstraintCommand::AddConstraintCommand(NetworkVisualization *context, 	
-			const QList<NeuronGroup*> &groups, const GroupConstraint &constraint)
+			QList<NeuronGroup*> groups, const GroupConstraint &constraint)
 	: Command("Add Constraint"), mVisualizationContext(context), mGroups(groups)
 {
 	for(int i = 0; i < mGroups.size(); ++i) {

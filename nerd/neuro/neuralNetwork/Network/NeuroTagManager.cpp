@@ -149,7 +149,7 @@ bool NeuroTagManager::hasTag(NeuroTag tag) const {
 }
 
 
-const QList<NeuroTag>& NeuroTagManager::getTags() const {
+QList<NeuroTag> NeuroTagManager::getTags() const {
 	return mNeuroTags;
 }
 

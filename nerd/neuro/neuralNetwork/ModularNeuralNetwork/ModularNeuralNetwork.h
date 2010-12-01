@@ -78,7 +78,7 @@ namespace nerd {
 		bool removeNeuronGroup(NeuronGroup *group);
 		NeuronGroup* getNeuronGroup(const QString &name) const;
 		NeuronGroup* getDefaultNeuronGroup() const;
-		const QList<NeuronGroup*>& getNeuronGroups() const;
+		QList<NeuronGroup*> getNeuronGroups() const;
 		QList<NeuroModule*> getNeuroModules() const;
 		NeuroModule* getSubModuleOwner(NeuroModule *module) const;
 
@@ -88,16 +88,16 @@ namespace nerd {
 		QList<NeuroModule*> getRootModules() const;
 		QList<Neuron*> getRootNeurons() const;
 
-		virtual bool notifyMemberIdsChanged(const QHash<qulonglong, qulonglong> &changedIds);
+		virtual bool notifyMemberIdsChanged(QHash<qulonglong, qulonglong> changedIds);
 		
 		virtual void getNetworkElements(QList<NeuralNetworkElement*> &elementList) const;
 
 		virtual void adjustIdCounter();
 		virtual void freeElements(bool destroyElements);
 
-		static NeuronGroup* selectNeuronGroupById(qulonglong id, const QList<NeuronGroup*> &groups);
-		static NeuroModule* selectNeuroModuleById(qulonglong id, const QList<NeuroModule*> &modules);
-		static GroupConstraint* selectConstraintById(qulonglong id, const QList<GroupConstraint*> &constraints);
+		static NeuronGroup* selectNeuronGroupById(qulonglong id, QList<NeuronGroup*> groups);
+		static NeuroModule* selectNeuroModuleById(qulonglong id, QList<NeuroModule*> modules);
+		static GroupConstraint* selectConstraintById(qulonglong id, QList<GroupConstraint*> constraints);
 		
 	private:
 		QList<NeuronGroup*> mNeuronGroups;

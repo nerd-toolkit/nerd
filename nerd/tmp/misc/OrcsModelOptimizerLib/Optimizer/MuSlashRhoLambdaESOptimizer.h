@@ -149,7 +149,7 @@ class MuSlashRhoLambdaESOptimizer : public virtual ModelOptimizer {
 		
     QVector<double> getParametersAsDoubleVector();
          
-    void setParametersFromDoubleVector(const QVector<double> &vector);
+    void setParametersFromDoubleVector(QVector<double> vector);
     
     virtual bool writeReportStartEntry();
 		

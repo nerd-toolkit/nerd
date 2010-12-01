@@ -69,10 +69,10 @@ class ESSelection {
 		 * @param information Information about the evolution run.
 		 * @return Sorted population of selected individuals.
 		 */
-    virtual QList<ESIndividual*> doSelection(	const QList<ESIndividual*> &parents, 
-																						 	const QList<ESIndividual*> &offsprings, 
-											 											 	const int mu ,
-																					  	const ESInformation &information) = 0;
+    virtual QList<ESIndividual*> doSelection(QList<ESIndividual*> parents, 
+											QList<ESIndividual*> offsprings, 
+											const int mu ,
+											const ESInformation &information) = 0;
 
 };
 

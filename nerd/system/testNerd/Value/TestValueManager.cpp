@@ -79,7 +79,7 @@ void TestValueManager::testConstructor() {
 	ValueManager *vm = new ValueManager(em);
 
 	//test available prototypes
-	const QList<Value*> &prototypes = vm->getPrototypes();
+	QList<Value*> prototypes = vm->getPrototypes();
 
 	QCOMPARE(prototypes.size(), 11);
 	QList<QString> valueNames;

@@ -90,19 +90,19 @@ namespace nerd {
 
 		bool addStepStatistics(StatisticCalculator *calculator);
 		bool removeStepStatistics(StatisticCalculator *calculator);
-		const QList<StatisticCalculator*>& getStepStatistics();
+		QList<StatisticCalculator*> getStepStatistics();
 
 		bool addTryStatistics(StatisticCalculator *calculator);
 		bool removeTryStatistics(StatisticCalculator *calculator);
-		const QList<StatisticCalculator*>& getTryStatistics();
+		QList<StatisticCalculator*> getTryStatistics();
 
 		bool addIndividualStatistics(StatisticCalculator *calculator);
 		bool removeIndividualStatistics(StatisticCalculator *calculator);
-		const QList<StatisticCalculator*>& getIndividualStatistics();
+		QList<StatisticCalculator*> getIndividualStatistics();
 
 		bool addGenerationStatistics(StatisticCalculator *calculator);
 		bool removeGenerationStatistics(StatisticCalculator *calculator);
-		const QList<StatisticCalculator*>& getGenerationStatistics();
+		QList<StatisticCalculator*> getGenerationStatistics();
 
 		int getCurrentStepIndex() const;
 		int getCurrentTryIndex() const;
@@ -122,8 +122,8 @@ namespace nerd {
 		QList<StatisticCalculator*> getStatistics(const QString &statisticsStepEvent);
 
 	private:
-		 void calculateStatistics(const QList<StatisticCalculator*> &calculators, int index);
-    	void clearStatistics(const QList<StatisticCalculator*> &calculators);
+		void calculateStatistics(QList<StatisticCalculator*> calculators, int index);
+    	void clearStatistics(QList<StatisticCalculator*> calculators);
 
 	private:
 		

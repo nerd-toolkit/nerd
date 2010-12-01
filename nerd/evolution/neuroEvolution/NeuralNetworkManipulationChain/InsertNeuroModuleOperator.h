@@ -69,7 +69,7 @@ namespace nerd {
 
 		virtual bool applyOperator(Individual *individual, CommandExecutor *executor = 0);
 
-		NeuroModule* getRandomModule(const QList<NeuroModulePrototype*> &prototypes);
+		NeuroModule* getRandomModule(QList<NeuroModulePrototype*> prototypes);
 		
 	private:
 		IntValue *mMaximalNumberOfNewModules;

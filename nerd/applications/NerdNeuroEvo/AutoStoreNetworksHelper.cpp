@@ -144,7 +144,7 @@ void AutoStoreNetworksHelper::storeNetworks() {
 	if(world != 0) {
 		Population *pop = world->getPopulations().value(0);
 		if(pop != 0) {
-			const QList<Individual*> &individuals = pop->getIndividuals();
+			QList<Individual*> individuals = pop->getIndividuals();
 
 			for(int i = 0; i < individuals.size(); ++i) {
 

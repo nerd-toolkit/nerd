@@ -71,8 +71,8 @@ const uint BinFilePhysicalDataSource::DATATYPE_LENGTH = 2;
 BinFilePhysicalDataSource::BinFilePhysicalDataSource(
 			Trigger *trigger,
 			Normalization *triggerNormalization,
-			const QVector<StringValue*> &trainDataValueNames,
-			const QVector<Normalization*> &trainDataValueNormalizations,
+			QVector<StringValue*> trainDataValueNames,
+			QVector<Normalization*> trainDataValueNormalizations,
 			const QString &configDocumentPath, 
 			const QString &dataFilePath)
   : PhysicalDataSource(	trigger,

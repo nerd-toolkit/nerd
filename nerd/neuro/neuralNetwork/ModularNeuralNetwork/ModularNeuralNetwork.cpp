@@ -336,7 +336,7 @@ NeuronGroup* ModularNeuralNetwork::getDefaultNeuronGroup() const {
 }
 
 
-const QList<NeuronGroup*>& ModularNeuralNetwork::getNeuronGroups() const {
+QList<NeuronGroup*> ModularNeuralNetwork::getNeuronGroups() const {
 	TRACE("ModularNeuralNetwork::getNeuronGroups");
 
 	return mNeuronGroups;
@@ -460,7 +460,7 @@ QList<Neuron*> ModularNeuralNetwork::getRootNeurons() const {
 	return neurons;
 }
 
-bool ModularNeuralNetwork::notifyMemberIdsChanged(const QHash<qulonglong, qulonglong> &changedIds) {
+bool ModularNeuralNetwork::notifyMemberIdsChanged(QHash<qulonglong, qulonglong> changedIds) {
 	bool ok = true;
 	for(QListIterator<NeuronGroup*> i(mNeuronGroups); i.hasNext();) {
 		if(!i.next()->notifyMemberIdsChanged(changedIds)) {
@@ -493,7 +493,7 @@ void ModularNeuralNetwork::adjustIdCounter() {
 		
 		maxId = Math::max(maxId, group->getId());
 
-		const QList<GroupConstraint*> &constraints = group->getConstraints();
+		QList<GroupConstraint*> constraints = group->getConstraints();
 		for(QListIterator<GroupConstraint*> j(constraints); j.hasNext();) {
 			maxId = Math::max(maxId, j.next()->getId());
 		}
@@ -539,7 +539,7 @@ void ModularNeuralNetwork::freeElements(bool destroyElements) {
 
 
 NeuronGroup* ModularNeuralNetwork::selectNeuronGroupById(qulonglong id, 
-								const QList<NeuronGroup*> &groups) 
+								QList<NeuronGroup*> groups) 
 {
 	TRACE("ModularNeuralNetwork::selectNeuronGroupById");
 
@@ -553,7 +553,7 @@ NeuronGroup* ModularNeuralNetwork::selectNeuronGroupById(qulonglong id,
 }
 
 NeuroModule* ModularNeuralNetwork::selectNeuroModuleById(qulonglong id, 
-								const QList<NeuroModule*> &modules) 
+								QList<NeuroModule*> modules) 
 {
 	TRACE("ModularNeuralNetwork::selectNeuroModuleById");
 
@@ -567,7 +567,7 @@ NeuroModule* ModularNeuralNetwork::selectNeuroModuleById(qulonglong id,
 }
 
 GroupConstraint* ModularNeuralNetwork::selectConstraintById(qulonglong id, 
-								const QList<GroupConstraint*> &constraints) 
+								QList<GroupConstraint*> constraints) 
 {
 	TRACE("ModularNeuralNetwork::selectConstraintById");
 

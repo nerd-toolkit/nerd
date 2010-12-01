@@ -239,7 +239,7 @@ bool ValueManager::removeValue(Value *value) {
  * @param values the list with the values to remove.
  * @return true.
  */
-bool ValueManager::removeValues(const QList<Value*> &values) {
+bool ValueManager::removeValues(QList<Value*> values) {
 	QMutexLocker guard(&mMutex);
 	bool changed = false;
 	QMap<QString, Value*>::iterator i = mValues.begin();
@@ -554,7 +554,7 @@ void ValueManager::notifyRepositoryChangedListeners() {
 void ValueManager::removeAllListeners() {
 	QMutexLocker guard(&mMutex);
 
-	const QList<EventListener*> &repoListeners = 
+	QList<EventListener*> repoListeners = 
 			mRepositoryChangedEvent->getEventListeners();
 	for(QListIterator<EventListener*> i(repoListeners); i.hasNext();) {
 		mRepositoryChangedEvent->removeEventListener(i.next());
@@ -704,7 +704,7 @@ bool ValueManager::loadValues(const QString &fileName, bool useFileLocking) {
  * @return true if no error occurred, otherwise false.
  */
 bool ValueManager::saveValues(const QString &fileName, 
-							  const QList<QString> valuesToSave,
+							  QList<QString> valuesToSave,
 							  const QString &comment, 
 							  bool useFileLocking)
 {
@@ -791,7 +791,7 @@ bool ValueManager::addPrototype(Value *prototype) {
  *
  * @return a list of all prototypes.
  */
-const QList<Value*>& ValueManager::getPrototypes() const {
+QList<Value*> ValueManager::getPrototypes() const {
 	return mPrototypes;
 }
 

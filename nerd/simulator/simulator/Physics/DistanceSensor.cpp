@@ -206,7 +206,7 @@ void DistanceSensor::setup() {
 	QList<SimBody*> bodies = Physics::getPhysicsManager()->getSimBodies();
 
 	for(QListIterator<SimBody*> i(bodies); i.hasNext();) {
-		const QList<CollisionObject*> &collisionObjects = i.next()->getCollisionObjects();
+		QList<CollisionObject*> collisionObjects = i.next()->getCollisionObjects();
 		for(QListIterator<CollisionObject*> j(collisionObjects); j.hasNext();) {
 			CollisionObject *obj = j.next();
 			if(dynamic_cast<RayGeom*>(obj->getGeometry()) == 0) {

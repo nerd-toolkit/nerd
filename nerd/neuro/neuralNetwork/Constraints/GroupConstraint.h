@@ -82,7 +82,7 @@ namespace nerd {
 		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor,
 									 QList<NeuralNetworkElement*> &trashcan) = 0;
 
-		virtual bool groupIdsChanged(const QHash<qulonglong, qulonglong> &changedIds);
+		virtual bool groupIdsChanged(QHash<qulonglong, qulonglong> changedIds);
 
 		QString getErrorMessage() const;
 		void setErrorMessage(const QString &message);

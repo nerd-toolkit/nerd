@@ -79,7 +79,7 @@ XMLConfigLoader::XMLConfigLoader(const QString &configFile,
 
 XMLConfigLoader::XMLConfigLoader(const QString &configFile, 
                                  const QString &configDescrFile,
-                                 const QHash<QString,QString> &stringTemplates)
+                                 QHash<QString,QString> stringTemplates)
 {
   mConfigFile = new XMLConfigDocument(configFile, stringTemplates);
   mConfigDescrFile = new XMLConfigDocument(configDescrFile, stringTemplates);

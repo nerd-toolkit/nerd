@@ -103,7 +103,7 @@ void GroupConstraint::networkElementIdChanged(NeuronGroup *owner, qulonglong old
  * have changed ids now. The changedIds hash table contains all affected ids.
  * This method should be used to adapt id pointers to the new ids. 
  */
-bool GroupConstraint::groupIdsChanged(const QHash<qulonglong, qulonglong>&) {
+bool GroupConstraint::groupIdsChanged(QHash<qulonglong, qulonglong>) {
 	return true;
 }
 

@@ -68,7 +68,7 @@ class MultiDimMinimizer : public Object
     MultiDimMinimizer();
     
     MultiDimFunctionPoint minimize(MultiDimFunction *function,
-                                   const QVector<double> &startPoint,
+                                   QVector<double> startPoint,
                                    int maxIterations = 100);
     
     MultiDimFunctionPoint getMinimumPoint();  
@@ -79,7 +79,7 @@ class MultiDimMinimizer : public Object
     void setTolerance( double tolerance );
     
     virtual bool minimizationStart(MultiDimFunction *function, 
-                                   const QVector<double> &startPoint) = 0;
+                                   QVector<double> startPoint) = 0;
     
     virtual bool doMinimizationStep() = 0;
     

@@ -66,7 +66,7 @@ namespace nerd {
 		bool checkHelpMessageRequest();
 
 		bool addCommandLineArgument(CommandLineArgument *desc);
-		const QList<CommandLineArgument*>& getCommandLineArguments() const;
+		QList<CommandLineArgument*> getCommandLineArguments() const;
 		CommandLineArgument* getCommandLineArgument(
 				const QString &name);
 		

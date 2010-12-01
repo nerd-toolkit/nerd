@@ -175,9 +175,9 @@ void TestESDiscreteRecombination::testDiscreteRecombination()
 }
 
 void TestESDiscreteRecombination::checkRecombination(
-																							const QList<OptimizationDouble> recombinedParas,
-																							const QList<ESIndividual*> parents,
-																							const ESRecombination::parameterType type)
+									QList<OptimizationDouble> recombinedParas,
+									QList<ESIndividual*> parents,
+									const ESRecombination::parameterType type)
 {
 	// check size of lists
 	if(type == ESRecombination::OBJECT) {

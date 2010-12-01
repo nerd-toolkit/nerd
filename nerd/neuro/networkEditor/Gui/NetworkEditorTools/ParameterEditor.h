@@ -69,7 +69,7 @@ namespace nerd {
 		virtual ~ParameterEditor();
 
 		virtual void setParameterizedObject(ParameterizedObject *obj,
-				const QList<ParameterizedObject*> &slaveObjects = QList<ParameterizedObject*>());
+				QList<ParameterizedObject*> slaveObjects = QList<ParameterizedObject*>());
 		ParameterizedObject* getParameterizedObject() const;
 
 		void invalidateListeners();

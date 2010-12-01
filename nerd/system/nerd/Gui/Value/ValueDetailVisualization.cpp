@@ -139,7 +139,7 @@ void ValueDetailVisualization::fillContents() {
 
 
 	textEditContent.append("<b>ValueChangedListeners:</b><br>");
-	const QList<ValueChangedListener*> &valueChangedListeners = mValue->getValueChangedListeners();
+	QList<ValueChangedListener*> valueChangedListeners = mValue->getValueChangedListeners();
 	QListIterator<ValueChangedListener*> itListeners(valueChangedListeners);
 	if(!itListeners.hasNext()) {
 		textEditContent.append("--<br>");

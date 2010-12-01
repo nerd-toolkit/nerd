@@ -66,13 +66,13 @@ namespace nerd {
 		virtual void reset();
 
 		QList<double> getStatistics(int startIndex, int endIndex);
-		const QList<double>& getStatistics() const;
+		QList<double> getStatistics() const;
 		int getStartIndex() const;
 
 		void setValue(int index, double value);
 		void setAllStatisticValues(int index, double value);
 
-		const QList<StatisticCalculator*>& getChildStatistics() const;
+		QList<StatisticCalculator*> getChildStatistics() const;
 
 		bool setObservedValue(Value *value);
 		Value* getObservedValue() const;

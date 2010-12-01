@@ -64,7 +64,7 @@ class XMLConfigLoader : public virtual Object {
     
     XMLConfigLoader(const QString &configFile, 
                     const QString &configDescrFile,
-                    const QHash<QString,QString> &stringTemplates);
+                    QHash<QString,QString> stringTemplates);
     
     ~XMLConfigLoader();
 

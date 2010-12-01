@@ -80,7 +80,7 @@ namespace nerd {
 
 		bool addEvolutionWorld(World *world);
 		bool removeEvolutionWorld(World *world);
-		const QList<World*>& getEvolutionWorlds() const;
+		QList<World*> getEvolutionWorlds() const;
 
 		void setDefaultEvaluationMethod(EvaluationMethod *evaluationMethod);
 		EvaluationMethod* getDefaultEvaluationMethod() const;

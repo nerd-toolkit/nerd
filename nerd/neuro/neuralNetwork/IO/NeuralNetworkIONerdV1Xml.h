@@ -99,9 +99,9 @@ namespace nerd {
 		static SynapseFunction* createSynapseFunctionFromXML(const QDomElement &parent, 
 										QList<QString> *warnings);
 	private:		
-		static void storeNeuronsToXML(const QList<Neuron*> &neurons, 
+		static void storeNeuronsToXML(QList<Neuron*> neurons, 
 										QDomDocument &doc, QDomElement &netRoot);
-		static void storeGroupsAndModulesToXML(const QList<NeuronGroup*> &availableGroups,
+		static void storeGroupsAndModulesToXML(QList<NeuronGroup*> availableGroups,
 										QDomDocument &doc, QDomElement &netRoot);
 	};
 

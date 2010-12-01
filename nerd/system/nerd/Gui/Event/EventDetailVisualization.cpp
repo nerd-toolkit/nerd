@@ -99,7 +99,7 @@ void EventDetailVisualization::fillContents() {
 	QString textEditContent;
 
 	textEditContent.append("<b>Names:</b><br>");
-	const QList<QString> &eventNames = mEvent->getNames();
+	QList<QString> eventNames = mEvent->getNames();
 	QListIterator<QString> itNames(eventNames);
 	for(; itNames.hasNext(); ) {
 		textEditContent.append(itNames.next()).append("<br>");
@@ -115,7 +115,7 @@ void EventDetailVisualization::fillContents() {
 	}
 
 	textEditContent.append("<b>EventListeners:</b><br>");
-	const QList<EventListener*> &eventListeners = mEvent->getEventListeners();
+	QList<EventListener*> eventListeners = mEvent->getEventListeners();
 	QListIterator<EventListener*> itListeners(eventListeners);
 	if(!itListeners.hasNext()) {
 		textEditContent.append("--<br>");
@@ -127,7 +127,7 @@ void EventDetailVisualization::fillContents() {
 	}
 
 	textEditContent.append("<b>UpstreamEvents:</b><br>");
-	const QList<Event*> &events = mEvent->getUpstreamEvents();
+	QList<Event*> events = mEvent->getUpstreamEvents();
 	QListIterator<Event*> itEvents(events);
 	if(!itEvents.hasNext()) {
 		textEditContent.append("--<br>");

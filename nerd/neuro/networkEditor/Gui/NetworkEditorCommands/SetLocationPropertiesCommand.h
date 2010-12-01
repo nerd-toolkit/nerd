@@ -62,7 +62,7 @@ namespace nerd {
 	 */
 	class SetLocationPropertiesCommand : public Command {
 	public:
-		SetLocationPropertiesCommand(NetworkVisualization *context, const QList<NeuralNetworkElement*> &elems);
+		SetLocationPropertiesCommand(NetworkVisualization *context, QList<NeuralNetworkElement*> elems);
 		virtual ~SetLocationPropertiesCommand();
 
 

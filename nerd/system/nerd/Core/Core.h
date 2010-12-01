@@ -148,7 +148,7 @@ class Core {
 
 		bool addSystemObject(SystemObject *object);
 		bool removeSystemObject(SystemObject *object);
-		const QList<SystemObject*>& getSystemObjects() const;
+		QList<SystemObject*> getSystemObjects() const;
 		bool addGlobalObject(const QString &objectName, SystemObject *object);
 		SystemObject* removeGlobalObject(const QString &objectName);
 		SystemObject* getGlobalObject(const QString &name) const;
@@ -156,7 +156,7 @@ class Core {
 		QList<QString> getGlobalObjectNames() const;
 
 		bool scheduleTask(Task *task);
-		const QList<Task*>& getPendingTasks() const;
+		QList<Task*> getPendingTasks() const;
 		void clearPendingTasks();
 		void executePendingTasks();
 

@@ -73,7 +73,7 @@ class EventManager {
 		QVector<Event*> getEventsMatchingPattern(const QString &regularExpression, bool caseSensitive = true) const;
 		QVector<QString> getNamesMatchingPattern(const QString &regularExpression, bool caseSensitive = true) const;
 		
-		const QVector<Event*>& getEvents() const;
+		QVector<Event*> getEvents() const;
 
 		void pushToNotificationStack(Object *object);
 		void popFromNotificationStack();

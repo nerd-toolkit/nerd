@@ -239,7 +239,7 @@ void SimulationEnvironmentManager::resetStartConditions() {
  */
 void SimulationEnvironmentManager::createSnapshot() {
 
-	const QList<SimObject*> &simObjects = Physics::getPhysicsManager()->getSimObjects();
+	QList<SimObject*> simObjects = Physics::getPhysicsManager()->getSimObjects();
 
 	SimObject *current = 0;
 	for(int i = 0; i < simObjects.size(); i++) {
@@ -269,13 +269,12 @@ bool SimulationEnvironmentManager::removeRandomizer(Randomizer *randomizer) {
 }
 
 
-const QHash<SimObject*, QHash<Value*, QString> >& SimulationEnvironmentManager::getSnapshot() const {
+QHash<SimObject*, QHash<Value*, QString> > SimulationEnvironmentManager::getSnapshot() const {
 	return mParameterSettings;
 }
 
 
-void SimulationEnvironmentManager::setSnapshot(const QHash<SimObject*, 
-											   QHash<Value*, QString> > &snapshot) 
+void SimulationEnvironmentManager::setSnapshot(QHash<SimObject*, QHash<Value*, QString> > snapshot) 
 {
 	mParameterSettings = snapshot;
 }

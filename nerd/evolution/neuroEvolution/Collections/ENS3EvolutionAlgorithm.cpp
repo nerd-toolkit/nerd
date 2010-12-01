@@ -164,7 +164,7 @@ ENS3EvolutionAlgorithm::ENS3EvolutionAlgorithm(World *world)
 
 
 	//Add Selection Methods and genotypePhenotypeMapper
-	const QList<Population*> &populations = world->getPopulations();
+	QList<Population*> populations = world->getPopulations();
 	for(QListIterator<Population*> i(populations); i.hasNext();) {
 		Population *population = i.next();
 

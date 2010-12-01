@@ -440,7 +440,7 @@ void ODE_Body::synchronizePositionAndOrientation(dGeomID odeGeom, SimBody *simBo
 		int counter = 0;
 		int objectIndex = 0;
 
-		const QList<CollisionObject*> &collisionObjects = simBody->getCollisionObjects();
+		QList<CollisionObject*> collisionObjects = simBody->getCollisionObjects();
 
 		while(notFound && counter < collisionObjects.size()) {
 			if(collisionObjects.at(counter)->getNativeCollisionObject() == odeGeom) 
@@ -577,7 +577,7 @@ void ODE_Body::clear() {
 	if(body == 0) {
 		return;
 	}	
-	const QList<CollisionObject*> &collisionObjects = body->getCollisionObjects();
+	QList<CollisionObject*> collisionObjects = body->getCollisionObjects();
 	for(int i = 0; i < collisionObjects.size(); ++i) {
 		CollisionObject *co = collisionObjects.at(i);
 		co->setNativeCollisionObject(0);

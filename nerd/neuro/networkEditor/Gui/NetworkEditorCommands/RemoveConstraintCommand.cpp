@@ -68,7 +68,7 @@ RemoveConstraintCommand::RemoveConstraintCommand(NetworkVisualization *context, 
 }
 
 RemoveConstraintCommand::RemoveConstraintCommand(NetworkVisualization *context, 	
-							const QList<NeuronGroup*> &groups, GroupConstraint *constraint)
+							QList<NeuronGroup*> groups, GroupConstraint *constraint)
 : Command("Remove Constraint"), mVisualizationContext(context), mGroups(groups), 
 	  mObsoleteConstraint(constraint), mRemoveAll(true)
 {

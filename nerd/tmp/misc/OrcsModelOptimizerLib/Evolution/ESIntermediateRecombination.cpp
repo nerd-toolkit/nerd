@@ -54,10 +54,10 @@ ESIntermediateRecombination::ESIntermediateRecombination()
 {}
 
 OptimizationDouble 
-ESIntermediateRecombination::recombineParameter(const QList<ESIndividual*> &parents,
-																								const parameterType type,
-																								const ESInformation &information,
-																								const int parameterIndex)
+ESIntermediateRecombination::recombineParameter(QList<ESIndividual*> parents,
+												const parameterType type,
+												const ESInformation &information,
+												const int parameterIndex)
 {
 	if(parents.size() <= 0){
 		OptimizationDouble retval;
@@ -77,7 +77,7 @@ ESIntermediateRecombination::recombineParameter(const QList<ESIndividual*> &pare
 	
 	for(int i = 0; i < parents.size(); i++)
 	{	
-		const QList<OptimizationDouble> &currentParentParameters =
+		QList<OptimizationDouble> currentParentParameters =
 				getParentParameters(parents.at(i), type);
 		
 		parentParameterSum += currentParentParameters.at(parameterIndex).value;

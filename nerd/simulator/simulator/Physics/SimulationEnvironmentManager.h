@@ -94,8 +94,8 @@ class SimulationEnvironmentManager : public virtual SystemObject,
 		bool addRandomizer(Randomizer *randomizer);
 		bool removeRandomizer(Randomizer *randomizer);
 
-		const QHash<SimObject*, QHash<Value*, QString> >& getSnapshot() const;
-		void setSnapshot(const QHash<SimObject*, QHash<Value*, QString> > &snapshot);
+		QHash<SimObject*, QHash<Value*, QString> > getSnapshot() const;
+		void setSnapshot(QHash<SimObject*, QHash<Value*, QString> > snapshot);
 	
 	private:
 		void performRandomization();

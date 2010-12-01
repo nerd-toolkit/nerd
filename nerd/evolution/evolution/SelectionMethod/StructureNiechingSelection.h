@@ -67,7 +67,7 @@ namespace nerd {
 
 		virtual SelectionMethod* createCopy() const;
 
-		virtual QList<Individual*> createSeed(const QList<Individual*> &currentGeneration,
+		virtual QList<Individual*> createSeed(QList<Individual*> currentGeneration,
 									int numberOfIndividuals, 
 									int numberOfPreservedParents,
 									int numberOfParentsPerIndividual);

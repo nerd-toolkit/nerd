@@ -82,7 +82,7 @@ namespace nerd {
 		NeuronDetailWidget(NeuralNetworkEditor *owner);
 		virtual ~NeuronDetailWidget();
 
-		virtual void selectionChanged(const QList<PaintItem*> &selectedItems);
+		virtual void selectionChanged(QList<PaintItem*> selectedItems);
 
 		virtual void valueChanged(Value *value);
 		virtual QString getName() const;

@@ -115,7 +115,7 @@ QList<double> StatisticCalculator::getStatistics(int startIndex, int endIndex) {
 }
 
 
-const QList<double>& StatisticCalculator::getStatistics() const {
+QList<double> StatisticCalculator::getStatistics() const {
 	return mStatistics;
 }
 
@@ -148,7 +148,7 @@ void StatisticCalculator::setAllStatisticValues(int index, double value) {
 	}
 }
 
-const QList<StatisticCalculator*>& StatisticCalculator::getChildStatistics() const 
+QList<StatisticCalculator*> StatisticCalculator::getChildStatistics() const 
 {
 	return mChildStatistics;
 }

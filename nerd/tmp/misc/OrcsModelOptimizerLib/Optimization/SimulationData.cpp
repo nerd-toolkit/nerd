@@ -331,7 +331,7 @@ bool SimulationData::init()
 	///////////////////////////////////////////////
 	
 	
-	const QList<SystemObject*> &sysObjs = Core::getInstance()->getSystemObjects();
+	QList<SystemObject*> sysObjs = Core::getInstance()->getSystemObjects();
 	
 	for(int i = 0; i < sysObjs.size(); i++)
 	{

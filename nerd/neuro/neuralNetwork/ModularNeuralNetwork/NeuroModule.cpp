@@ -122,7 +122,7 @@ NeuroModule* NeuroModule::createDeepCopy() const {
 	while(!targets.empty()) {
 		SynapseTarget *target = targets.takeFirst();
 
-		const QList<Synapse*> &synapses = target->getSynapses();
+		QList<Synapse*> synapses = target->getSynapses();
 		for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
 			Synapse *synapse = i.next();
 
@@ -193,11 +193,11 @@ bool NeuroModule::setOwnerNetwork(ModularNeuralNetwork *network) {
 	//if there is another NeuroModule containing one of the neurons of this module,
 	//then this method returns false to indicate incompatibility. Neurons can only
 	//live in one NeuroModule at a time.
-	const QList<NeuronGroup*> &groups = network->getNeuronGroups();
+	QList<NeuronGroup*> groups = network->getNeuronGroups();
 	for(QListIterator<NeuronGroup*> i(groups); i.hasNext();) {
 		NeuroModule *module = dynamic_cast<NeuroModule*>(i.next());
 		if(module != 0 && module != this) {
-			const QList<Neuron*> &neurons = module->getNeurons();
+			QList<Neuron*> neurons = module->getNeurons();
 			for(QListIterator<Neuron*> j(neurons); j.hasNext();) {
 				if(mMemberNeurons.contains(j.next())) {
 					mOwnerNetwork = 0;
@@ -235,7 +235,7 @@ bool NeuroModule::removeInputNeuron(Neuron *neuron) {
 }
 
 
-const QList<Neuron*> NeuroModule::getInputNeurons(int startLevel) const {
+QList<Neuron*> NeuroModule::getInputNeurons(int startLevel) const {
 	TRACE("NeuroModule::getInputNeurons");
 
 	QList<Neuron*> neurons;
@@ -324,7 +324,7 @@ bool NeuroModule::removeOutputNeuron(Neuron *neuron) {
 }
 
 
-const QList<Neuron*> NeuroModule::getOutputNeurons(int startLevel) const {
+QList<Neuron*> NeuroModule::getOutputNeurons(int startLevel) const {
 	TRACE("NeuroModule::getOutputNeurons");
 
 	QList<Neuron*> neurons;
@@ -458,7 +458,7 @@ void NeuroModule::removeAllSubModules() {
 }
 
 
-const QList<NeuroModule*>& NeuroModule::getSubModules() const {
+QList<NeuroModule*> NeuroModule::getSubModules() const {
 	TRACE("NeuroModule::getSubModules");
 
 	return mSubModules;
@@ -506,7 +506,7 @@ QList<Synapse*> NeuroModule::getAllEnclosedSynapses() const {
 	while(!targets.empty()) {
 		SynapseTarget *target = targets.takeFirst();
 
-		const QList<Synapse*> &synapses = target->getSynapses();
+		QList<Synapse*> synapses = target->getSynapses();
 		for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
 			Synapse *synapse = i.next();
 
@@ -648,7 +648,7 @@ bool NeuroModule::addNeuron(Neuron *neuron) {
 	if(mOwnerNetwork == 0) {
 		return NeuronGroup::addNeuron(neuron);
 	}
-	const QList<NeuronGroup*> &groups = mOwnerNetwork->getNeuronGroups();
+	QList<NeuronGroup*> groups = mOwnerNetwork->getNeuronGroups();
 	for(QListIterator<NeuronGroup*> i(groups); i.hasNext();) {
 		NeuroModule *module = dynamic_cast<NeuroModule*>(i.next());
 		if(module != 0) {

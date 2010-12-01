@@ -587,7 +587,7 @@ void TestSymmetryConstraint::testGetElementMatching() {
 
 	//Check network element pairs.
 
-	const QList<NetworkElementPair> &pairs = sc->getNetworkElementPairs();
+	QList<NetworkElementPair> pairs = sc->getNetworkElementPairs();
 	
 	QCOMPARE(pairs.size(), 8);
 	NetworkElementPair pair = pairs.at(0);

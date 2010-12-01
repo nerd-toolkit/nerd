@@ -211,7 +211,7 @@ NeuronDetailWidget::~NeuronDetailWidget() {
 	}
 }
 
-void NeuronDetailWidget::selectionChanged(const QList<PaintItem*>&) {
+void NeuronDetailWidget::selectionChanged(QList<PaintItem*>) {
 	TRACE("NeuronDetailWidget::selectionChanged");
 
 	updateNeuronView();
@@ -638,7 +638,7 @@ void NeuronDetailWidget::transferFunctionSelectionChanged() {
 		return;
 	}
 
-	const QList<TransferFunction*> &tfs = Neuro::getNeuralNetworkManager()
+	QList<TransferFunction*> tfs = Neuro::getNeuralNetworkManager()
 										->getTransferFunctionPrototypes();
 
 	for(QListIterator<TransferFunction*> i(tfs); i.hasNext();) {
@@ -691,7 +691,7 @@ void NeuronDetailWidget::activationFunctionSelectionChanged() {
 		return;
 	}
 
-	const QList<ActivationFunction*> &afs = Neuro::getNeuralNetworkManager()
+	QList<ActivationFunction*> afs = Neuro::getNeuralNetworkManager()
 										->getActivationFunctionPrototypes();
 	for(QListIterator<ActivationFunction*> i(afs); i.hasNext();) {
 		ActivationFunction *prototype = i.next();

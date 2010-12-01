@@ -161,12 +161,12 @@ Value* UniversalJointMotorAdapter::getParameter(const QString &name) const {
 }
 
 
-const QList<InterfaceValue*>& UniversalJointMotorAdapter::getInputValues() const {
+QList<InterfaceValue*> UniversalJointMotorAdapter::getInputValues() const {
 	return UniversalJoint::getInputValues();
 }
 
 
-const QList<InterfaceValue*>& UniversalJointMotorAdapter::getOutputValues() const {
+QList<InterfaceValue*> UniversalJointMotorAdapter::getOutputValues() const {
 	return UniversalJoint::getOutputValues();
 }
 

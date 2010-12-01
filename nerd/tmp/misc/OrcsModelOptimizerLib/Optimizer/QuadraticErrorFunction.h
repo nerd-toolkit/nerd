@@ -63,7 +63,7 @@ class QuadraticErrorFunction : public ErrorFunction
 {
   public:
     QuadraticErrorFunction(TrainSet *trainSet, 
-                           const QVector<ParameterDescription*> &modelParameter);
+                           QVector<ParameterDescription*> modelParameter);
     
     virtual QString getName() const;
     

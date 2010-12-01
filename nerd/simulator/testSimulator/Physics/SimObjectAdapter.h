@@ -85,19 +85,19 @@ class SimObjectAdapter : public SimObject {
 			mLastSimulationAlgorithm = psa;
 		}
 		
-		void setInputValues(const QList<InterfaceValue*> &values) {
+		void setInputValues(QList<InterfaceValue*> values) {
 			mInputValues.clear();
 			mInputValues += QList<InterfaceValue*>(values);
 			updateInterfaceNames();
 		}
 		
-		void setOutputValues(const QList<InterfaceValue*> &values) {
+		void setOutputValues(QList<InterfaceValue*> values) {
 			mOutputValues.clear();
 			mOutputValues += QList<InterfaceValue*>(values);
 			updateInterfaceNames();
 		}
 		
-		void setInfoValues(const QList<InterfaceValue*> &values) {
+		void setInfoValues(QList<InterfaceValue*> values) {
 			mInfoValues.clear();
 			mInfoValues += QList<InterfaceValue*>(values);
 			updateInterfaceNames();

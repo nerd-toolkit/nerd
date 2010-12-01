@@ -691,7 +691,7 @@ QVector<double> MuSlashRhoLambdaESOptimizer::getParametersAsDoubleVector()
   return doubleVec;
 }                                              
                                      
-void MuSlashRhoLambdaESOptimizer::setParametersFromDoubleVector(const QVector<double> &vector)
+void MuSlashRhoLambdaESOptimizer::setParametersFromDoubleVector(QVector<double> vector)
 {
   for(int i = 0; i < mToOptimizeParameters.size(); i++)
   {
@@ -715,7 +715,7 @@ bool MuSlashRhoLambdaESOptimizer::saveBestIndividuals()
 	
 	QString path = getOptimizationRunOutputDirectory() + "/BestIndividuals/";
 	
-	const QList<ESIndividual*> &population = mMuSlashRhoLambdaES->getPopulation();
+	QList<ESIndividual*> population = mMuSlashRhoLambdaES->getPopulation();
 	
 	Core::getInstance()->enforceDirectoryPath(path);
 	
@@ -861,7 +861,7 @@ bool MuSlashRhoLambdaESOptimizer::saveBestIndividuals()
 bool MuSlashRhoLambdaESOptimizer::saveIndividual(	ESIndividual* individual, 
 																									const QString &filename)
 {
-	const QList<OptimizationDouble> &parameters = individual->getObjectParameters();
+	QList<OptimizationDouble> parameters = individual->getObjectParameters();
 	
 	for(int i = 0; i < mToOptimizeParameters.size(); i++)
 	{

@@ -74,8 +74,8 @@ class CollisionRule : public ParameterizedObject {
 
 		virtual void valueChanged(Value *value);
 		
-		virtual void set(const QList<CollisionObject*> &sourceGroup, 
-						const QList<CollisionObject*> &targetGroup);
+		virtual void set(QList<CollisionObject*> sourceGroup, 
+						QList<CollisionObject*> targetGroup);
 	
 		virtual bool addToSourceGroup(CollisionObject *collisionObject);
 		virtual bool addToTargetGroup(CollisionObject *collisionObject);
@@ -88,9 +88,9 @@ class CollisionRule : public ParameterizedObject {
 		bool isNegated() const;
 		
 		QList<CollisionObject*> getSourceGroup() const;
-		void setSourceGroup(const QList<CollisionObject*> &sourceGroup);
+		void setSourceGroup(QList<CollisionObject*> sourceGroup);
 		QList<CollisionObject*> getTargetGroup() const;
-		void setTargetGroup(const QList<CollisionObject*> &targetGroup);
+		void setTargetGroup(QList<CollisionObject*> targetGroup);
 
 		virtual bool init();
 		virtual bool bind();

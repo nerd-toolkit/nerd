@@ -175,7 +175,7 @@ GroupSelectionWidget::~GroupSelectionWidget() {
 }
 
 
-void GroupSelectionWidget::selectionChanged(const QList<PaintItem*> &)
+void GroupSelectionWidget::selectionChanged(QList<PaintItem*>)
 {
 	TRACE("GroupSelectionWidget::selectionChanged");
 	//TODO

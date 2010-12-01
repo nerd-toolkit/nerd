@@ -232,7 +232,7 @@ void ModuleManagementWidget::createModule() {
 		return;
 	}
 
-	const QList<NeuroModulePrototype*> &prototypes = nmm->getNeuroModulePrototpyes();
+	QList<NeuroModulePrototype*> prototypes = nmm->getNeuroModulePrototpyes();
 
 	for(QListIterator<NeuroModulePrototype*> i(prototypes); i.hasNext();) {
 		NeuroModulePrototype *p = i.next();
@@ -293,7 +293,7 @@ void ModuleManagementWidget::createModule() {
 		netCopy->validateSynapseConnections();
 		
 		//make sure that the subnetwork does not contain input or output neurons.
-		const QList<Neuron*> &neurons = netCopy->getNeurons();
+		QList<Neuron*> neurons = netCopy->getNeurons();
 		for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 			Neuron *neuron = i.next();
 			neuron->removeProperty(Neuron::NEURON_TYPE_INPUT);

@@ -159,7 +159,7 @@ bool Population::removeSelectionMethod(SelectionMethod *selectionMethod) {
  * 
  * @return all available SelectionMethods.
  */
-const QList<SelectionMethod*>& Population::getSelectionMethods() const {
+QList<SelectionMethod*> Population::getSelectionMethods() const {
 	return mSelectionMethods;
 }
 
@@ -188,7 +188,7 @@ bool Population::removeFitnessFunction(FitnessFunction *fitnessFunction) {
 }
 
 
-const QList<FitnessFunction*>& Population::getFitnessFunctions() const {
+QList<FitnessFunction*> Population::getFitnessFunctions() const {
 	return mFitnessFunctions;
 }
 

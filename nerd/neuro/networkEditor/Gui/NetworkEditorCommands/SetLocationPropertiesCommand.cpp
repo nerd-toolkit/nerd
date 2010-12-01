@@ -61,7 +61,7 @@ namespace nerd {
  * Constructs a new SetLocationPropertiesCommand.
  */
 SetLocationPropertiesCommand::SetLocationPropertiesCommand(NetworkVisualization *context, 
-						const QList<NeuralNetworkElement*> &elems)
+						QList<NeuralNetworkElement*> elems)
 	: Command("Change TransferFunction"), mVisualizationContext(context), mChangedElements(elems)
 {
 	

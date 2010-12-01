@@ -56,10 +56,10 @@ ESPlusSelection::ESPlusSelection() {
 }
 
 
-QList<ESIndividual*> ESPlusSelection::doSelection(const QList<ESIndividual*> &parents, 
-																						 			const QList<ESIndividual*> &offsprings, 
-											 											 			const int mu,
-																					  			const ESInformation &information )
+QList<ESIndividual*> ESPlusSelection::doSelection(QList<ESIndividual*> parents, 
+												QList<ESIndividual*> offsprings, 
+												const int mu,
+												const ESInformation &information )
 {
 	QList<ESIndividual*> selectedIndividuals;
 	

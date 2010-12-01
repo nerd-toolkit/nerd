@@ -82,7 +82,7 @@ namespace nerd {
 		SynapseDetailWidget(NeuralNetworkEditor *owner);
 		virtual ~SynapseDetailWidget();
 
-		virtual void selectionChanged(const QList<PaintItem*> &selectedItems);
+		virtual void selectionChanged(QList<PaintItem*> selectedItems);
 		virtual void modificationPolicyChanged();
 
 		virtual void valueChanged(Value *value);

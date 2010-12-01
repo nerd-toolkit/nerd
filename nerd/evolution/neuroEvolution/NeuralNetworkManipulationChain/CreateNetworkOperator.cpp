@@ -254,7 +254,7 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 
 	//Check if there is a default function for each type matching the parameter values.
 
-	const QList<ActivationFunction*> &activationFunctions = nnm->getActivationFunctionPrototypes();
+	QList<ActivationFunction*> activationFunctions = nnm->getActivationFunctionPrototypes();
 	for(QListIterator<ActivationFunction*> i(activationFunctions); i.hasNext();) {
 		ActivationFunction *af = i.next();
 		if(af->getName() == mActivationFunctionName->get()) {
@@ -263,7 +263,7 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 		}
 	}
 
-	const QList<TransferFunction*> &transferFunctions = nnm->getTransferFunctionPrototypes();
+	QList<TransferFunction*> transferFunctions = nnm->getTransferFunctionPrototypes();
 	for(QListIterator<TransferFunction*> i(transferFunctions); i.hasNext();) {
 		TransferFunction *tf = i.next();
 		if(tf->getName() == mTransferFunctionName->get()) {
@@ -272,7 +272,7 @@ bool CreateNetworkOperator::applyOperator(Individual *individual, CommandExecuto
 		}
 	}
 
-	const QList<SynapseFunction*> &synapseFunctions = nnm->getSynapseFunctionPrototypes();
+	QList<SynapseFunction*> synapseFunctions = nnm->getSynapseFunctionPrototypes();
 	for(QListIterator<SynapseFunction*> i(synapseFunctions); i.hasNext();) {
 		SynapseFunction *sf = i.next();
 		if(sf->getName() == mSynapseFunctionName->get()) {
@@ -357,7 +357,7 @@ NeuralNetwork* CreateNetworkOperator::loadNetwork(const QString fileName) {
 		qulonglong maxId = 0;
 
 		//set creategeneration dates
-		const QList<Neuron*> &neurons = net->getNeurons();
+		QList<Neuron*> neurons = net->getNeurons();
 		for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 			Neuron *n = i.next();
 			n->setProperty(EvolutionConstants::TAG_EVO_CREATION_DATE, currentGenString);
@@ -375,7 +375,7 @@ NeuralNetwork* CreateNetworkOperator::loadNetwork(const QString fileName) {
 		}
 		ModularNeuralNetwork *modularNet = dynamic_cast<ModularNeuralNetwork*>(net);
 		if(modularNet != 0) {
-			const QList<NeuronGroup*> &groups = modularNet->getNeuronGroups();
+			QList<NeuronGroup*> groups = modularNet->getNeuronGroups();
 			for(QListIterator<NeuronGroup*> i(groups); i.hasNext();) {
 				NeuronGroup *g = i.next();
 				g->setProperty(EvolutionConstants::TAG_EVO_CREATION_DATE, currentGenString);

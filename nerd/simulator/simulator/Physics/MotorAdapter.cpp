@@ -126,7 +126,7 @@ void MotorAdapter::collectCompatibleMotorModels() {
 	PhysicsManager *pm = Physics::getPhysicsManager();
 
 
-	const QList<SimObject*> &prototypes = pm->getPrototypes();
+	QList<SimObject*> prototypes = pm->getPrototypes();
 
 	for(QListIterator<SimObject*> i(prototypes); i.hasNext();) {
 		MotorModel *model = dynamic_cast<MotorModel*>(i.next());

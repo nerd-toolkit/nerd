@@ -52,7 +52,7 @@
 namespace nerd {
 
 
-EventTriggerAction::EventTriggerAction(const QString &actionName, const QList<QString> &eventNames)
+EventTriggerAction::EventTriggerAction(const QString &actionName, QList<QString> eventNames)
 	: QAction(actionName, 0), mEventNames(eventNames), mActivationBoolValue(0)
 {
 	mName = QString("EventTriggerAction (").append(actionName).append(")");
@@ -62,7 +62,7 @@ EventTriggerAction::EventTriggerAction(const QString &actionName, const QList<QS
 	Core::getInstance()->addSystemObject(this);
 }
 
-EventTriggerAction::EventTriggerAction(const QString &actionName, const QList<QString> &eventNames,
+EventTriggerAction::EventTriggerAction(const QString &actionName, QList<QString> eventNames,
 					const QString &activationBoolValueName, bool requiredBoolState)
 	: QAction(actionName, 0), mEventNames(eventNames), 
 		mActivationBoolValueName(activationBoolValueName), mActivationBoolValue(0),

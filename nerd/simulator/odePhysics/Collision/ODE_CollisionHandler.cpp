@@ -234,11 +234,11 @@ void ODE_CollisionHandler::updateCollisionHandler(CollisionManager *cManager) {
 	}
 
 	mLookUpTable.clear();
-	const QList<SimBody*> &bodies = Physics::getPhysicsManager()->getSimBodies();
+	QList<SimBody*> bodies = Physics::getPhysicsManager()->getSimBodies();
 	for(int i = 0; i < bodies.size(); i++) {
 		SimBody *body = bodies.at(i);
 
-		const QList<CollisionObject*> &collisionObjects = body->getCollisionObjects();
+		QList<CollisionObject*> collisionObjects = body->getCollisionObjects();
 		for(int j = 0; j < collisionObjects.size(); j++) {
 			void* nativeCollisionObject = collisionObjects.at(j)->getNativeCollisionObject();
 			if(nativeCollisionObject != 0) {

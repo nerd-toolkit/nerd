@@ -126,7 +126,7 @@ bool InsertNeuroModuleOperator::applyOperator(Individual *individual, CommandExe
 	double insertionProbability = mInsertionProbability->get();
 	bool allowRootLevelModules = !mInsertSubModulesOnly->get();
 
-	const QList<NeuroModulePrototype*> &availablePrototypes =
+	QList<NeuroModulePrototype*> availablePrototypes =
 				NeuroModuleManager::getInstance()->getNeuroModulePrototpyes();
 
 	if(maxNumberOfNewModules <= 0) {
@@ -288,7 +288,7 @@ bool InsertNeuroModuleOperator::applyOperator(Individual *individual, CommandExe
  * Chooses one of the prototypes at random, extracts the first root module and returns
  * a copy of this module, including all neurons and synapses (deep copy).
  */
-NeuroModule* InsertNeuroModuleOperator::getRandomModule(const QList<NeuroModulePrototype*> &prototypes) {
+NeuroModule* InsertNeuroModuleOperator::getRandomModule(QList<NeuroModulePrototype*> prototypes) {
 	if(prototypes.empty()) {
 		return 0;
 	}

@@ -151,7 +151,7 @@ SynapseDetailWidget::~SynapseDetailWidget() {
 }
 
 
-void SynapseDetailWidget::selectionChanged(const QList<PaintItem*>&) {
+void SynapseDetailWidget::selectionChanged(QList<PaintItem*>) {
 	TRACE("SynapseDetailWidget::selectionChanged");
 
 	updateSynapseView();
@@ -438,7 +438,7 @@ void SynapseDetailWidget::synapseFunctionSelectionChanged() {
 		return;
 	}
 
-	const QList<SynapseFunction*> &sfs = Neuro::getNeuralNetworkManager()
+	QList<SynapseFunction*> sfs = Neuro::getNeuralNetworkManager()
 										->getSynapseFunctionPrototypes();
 	for(QListIterator<SynapseFunction*> i(sfs); i.hasNext();) {
 		SynapseFunction *prototype = i.next();

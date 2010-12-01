@@ -337,7 +337,7 @@ void PhysicsManager::clearPhysics() {
 }
 
 
-const QList<SimBody*>& PhysicsManager::getSimBodies() const {
+QList<SimBody*> PhysicsManager::getSimBodies() const {
 	return mBodyObjects;
 }
 
@@ -364,7 +364,7 @@ SimBody* PhysicsManager::getSimBody(const QString &name) {
 }
 
 
-const QList<SimJoint*>& PhysicsManager::getSimJoints() const {
+QList<SimJoint*> PhysicsManager::getSimJoints() const {
 	return mJointObjects;
 }
 
@@ -437,7 +437,7 @@ bool PhysicsManager::addSimObject(SimObject *object) {
 	}
 
 	//add child objects
-	const QList<SimObject*> &children = object->getChildObjects();
+	QList<SimObject*> children = object->getChildObjects();
 	for(QListIterator<SimObject*> i(children); i.hasNext();) {
 		addSimObject(i.next());
 	}
@@ -492,7 +492,7 @@ bool PhysicsManager::removeSimObject(SimObject *object) {
 }
 
 
-const QList<SimObject*>& PhysicsManager::getSimObjects() const {
+QList<SimObject*> PhysicsManager::getSimObjects() const {
 	return mSimObjects;
 }
 
@@ -563,7 +563,7 @@ bool PhysicsManager::removeSimObjectGroup(SimObjectGroup *group) {
 }
 
 
-const QList<SimObjectGroup*>& PhysicsManager::getSimObjectGroups() const {
+QList<SimObjectGroup*> PhysicsManager::getSimObjectGroups() const {
 	return mSimObjectGroups;
 }
 

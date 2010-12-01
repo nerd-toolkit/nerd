@@ -53,8 +53,8 @@ namespace nerd {
 	
 unsigned long ESIndividual::IDCounter = 0;
 
-ESIndividual::ESIndividual(const QList<OptimizationDouble> &objectParameters, 
-													 const QList<OptimizationDouble> &strategyParameters, 
+ESIndividual::ESIndividual(QList<OptimizationDouble> objectParameters, 
+													 QList<OptimizationDouble> strategyParameters, 
 													 double fitness) 
 	: mID(IDCounter++),
 	  mObjectParameters(objectParameters),
@@ -63,11 +63,11 @@ ESIndividual::ESIndividual(const QList<OptimizationDouble> &objectParameters,
 {
 }
 
-const QList<OptimizationDouble> & ESIndividual::getObjectParameters() const {
+QList<OptimizationDouble> ESIndividual::getObjectParameters() const {
 	return mObjectParameters;
 }
 
-const QList<OptimizationDouble> & ESIndividual::getStrategyParameters() const {
+QList<OptimizationDouble> ESIndividual::getStrategyParameters() const {
 	return mStrategyParameters;
 }
 
@@ -79,12 +79,12 @@ unsigned long ESIndividual::getID() const{
 	return mID;
 }
 
-void ESIndividual::setObjectParameters(const QList<OptimizationDouble> &parameters) 
+void ESIndividual::setObjectParameters(QList<OptimizationDouble> parameters) 
 {
 	mObjectParameters = QList<OptimizationDouble>(parameters);
 }
 
-void ESIndividual::setStrategyParameters(const QList<OptimizationDouble> &parameters) 
+void ESIndividual::setStrategyParameters(QList<OptimizationDouble> parameters) 
 {
 	mStrategyParameters = QList<OptimizationDouble>(parameters);
 }

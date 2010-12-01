@@ -64,7 +64,7 @@ namespace nerd {
 		RemoveConstraintCommand(NetworkVisualization *context, NeuronGroup *group, 
 							GroupConstraint *constraint);
 		RemoveConstraintCommand(NetworkVisualization *context, 	
-							const QList<NeuronGroup*> &groups, GroupConstraint *constraint);
+							QList<NeuronGroup*> groups, GroupConstraint *constraint);
 		virtual ~RemoveConstraintCommand();
 
 		virtual bool isUndoable() const;

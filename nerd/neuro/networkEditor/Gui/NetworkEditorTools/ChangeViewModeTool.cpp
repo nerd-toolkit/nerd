@@ -103,7 +103,7 @@ void ChangeViewModeTool::keyPressed(QKeyEvent *event) {
 		return;
 	}
 
-	const QList<PaintItem*> &items = handler->getPaintItems();
+	QList<PaintItem*> items = handler->getPaintItems();
 	for(QListIterator<PaintItem*> i(items); i.hasNext();) {
 		i.next()->setViewMode(mMode, !mReverseActivation);
 	}
@@ -140,7 +140,7 @@ void ChangeViewModeTool::keyReleased(QKeyEvent *event) {
 			return;
 		}
 	
-		const QList<PaintItem*> &items = handler->getPaintItems();
+		QList<PaintItem*> items = handler->getPaintItems();
 		for(QListIterator<PaintItem*> i(items); i.hasNext();) {
 			i.next()->setViewMode(mMode, mReverseActivation);
 		}

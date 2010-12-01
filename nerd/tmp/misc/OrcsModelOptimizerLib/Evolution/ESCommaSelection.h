@@ -57,10 +57,10 @@ class ESCommaSelection : public ESSelection {
   public:
     ESCommaSelection();
 
-    virtual QList<ESIndividual*> doSelection(const QList<ESIndividual*> &parents, 
-																						 const QList<ESIndividual*> &offsprings, 
-											 											 const int mu,
-																					   const ESInformation &information );
+    virtual QList<ESIndividual*> doSelection(QList<ESIndividual*> parents, 
+											QList<ESIndividual*> offsprings, 
+											const int mu,
+											const ESInformation &information );
 
 };
 

@@ -149,13 +149,13 @@ void EvolutionTerminationTrigger::eventOccured(Event *event) {
 
 		++mNumberOfGenerationsWithoutImprovement;
 
-		const QList<World*> &worlds = em->getEvolutionWorlds();
+		QList<World*> worlds = em->getEvolutionWorlds();
 		for(QListIterator<World*> i(worlds); i.hasNext();) {
 			World *world = i.next();
-			const QList<Population*> &populations = world->getPopulations();
+			QList<Population*> populations = world->getPopulations();
 			for(QListIterator<Population*> j(populations); j.hasNext();) {
 				Population *pop = j.next();
-				const QList<FitnessFunction*> &fitnessFunctions = pop->getFitnessFunctions();
+				QList<FitnessFunction*> fitnessFunctions = pop->getFitnessFunctions();
 				for(QListIterator<FitnessFunction*> k(fitnessFunctions); k.hasNext();) {
 					FitnessFunction *fitness = k.next();
 

@@ -101,7 +101,7 @@ SelectionMethod* StochasticUniversalSamplingSelection::createCopy() const {
 }
 
 QList<Individual*> StochasticUniversalSamplingSelection::createSeed(
-									const QList<Individual*> &currentGeneration,
+									QList<Individual*> currentGeneration,
 									int numberOfIndividuals, 
 									int numberOfPreservedParents,
 									int numberOfParentsPerIndividual)

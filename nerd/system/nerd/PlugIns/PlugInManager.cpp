@@ -230,7 +230,7 @@ bool PlugInManager::addCommandLineArgument(CommandLineArgument *desc) {
  *
  * @return a list with all CommandLineArguments.
  */
-const QList<CommandLineArgument*>& 
+QList<CommandLineArgument*>
 PlugInManager::getCommandLineArguments() const {
 	return mArgumentDescriptions;
 }

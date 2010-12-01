@@ -216,7 +216,7 @@ bool NeatEvolutionAlgorithm::createNextGeneration(QList<Individual*> &trashcan) 
 		Core::log("NeatEvolutionAlgorithm: createNextGeneration()");
 	}
 
-	const QList<Population*> &populations = mOwnerWorld->getPopulations();
+	QList<Population*> populations = mOwnerWorld->getPopulations();
 	for(QListIterator<Population*> i(populations); i.hasNext();) {
 		Population *pop = i.next();
 		QList<Individual*> individuals = pop->getIndividuals();

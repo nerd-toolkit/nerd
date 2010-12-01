@@ -137,7 +137,7 @@ bool NeuralNetworkAttributes::cleanUp() {
 }
 
 void NeuralNetworkAttributes::determineAttributes() {
-	const QList<NeuralNetwork*> &networks = Neuro::getNeuralNetworkManager()->getNeuralNetworks();
+	QList<NeuralNetwork*> networks = Neuro::getNeuralNetworkManager()->getNeuralNetworks();
 
 	if(networks.empty()) {
 		mNumberOfInputNeurons->set(0);

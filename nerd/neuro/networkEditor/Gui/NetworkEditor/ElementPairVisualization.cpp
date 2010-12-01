@@ -211,7 +211,7 @@ void ElementPairVisualization::paintSelf(QPainter *painter) {
 		painter->setPen(newPenBlackSmall);
 		
 
-		const QList<PaintItem*> &availableItems = mOwner->getPaintItems();
+		QList<PaintItem*> availableItems = mOwner->getPaintItems();
 
 		QList<QList<PaintItem*> > elems = mElementPairs;
 		for(QListIterator<QList<PaintItem*> > i(elems); i.hasNext();) {

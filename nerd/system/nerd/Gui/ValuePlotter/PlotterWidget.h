@@ -70,7 +70,7 @@ namespace nerd {
 
 		bool addPlotterItem(PlotterItem *item);
 		bool removePlotterItem(PlotterItem *item);
-		const QList<PlotterItem*>& getPlotterItems() const;
+		QList<PlotterItem*> getPlotterItems() const;
 
 		void setNumberOfValuesToPlot(int numberOfValues);
 		int getNumberOfValuesToPlot() const;

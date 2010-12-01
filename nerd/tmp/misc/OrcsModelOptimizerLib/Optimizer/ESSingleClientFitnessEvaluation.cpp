@@ -56,8 +56,8 @@ ESSingleClientFitnessEvaluation::ESSingleClientFitnessEvaluation(ErrorFunction *
 {
 }	
 		
-bool ESSingleClientFitnessEvaluation::doEvaluation(	const QList<ESIndividual*> &population,
-																										const ESInformation &information)
+bool ESSingleClientFitnessEvaluation::doEvaluation(QList<ESIndividual*> population,
+										const ESInformation &information)
 {
 	for(int i = 0; i < population.size(); i++)
 	{

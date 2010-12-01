@@ -57,8 +57,8 @@ class ESSingleClientFitnessEvaluation : public ESFitnessEvaluation {
   public:
 		ESSingleClientFitnessEvaluation(ErrorFunction *errorFunction);
 		
-		virtual bool doEvaluation(const QList<ESIndividual*> &population,
-															const ESInformation &information);
+		virtual bool doEvaluation(QList<ESIndividual*> population,
+									const ESInformation &information);
 
 	protected:
 		ErrorFunction *mErrorFunction;	

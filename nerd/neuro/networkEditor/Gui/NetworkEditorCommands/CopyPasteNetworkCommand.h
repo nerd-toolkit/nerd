@@ -63,9 +63,9 @@ namespace nerd {
 	class CopyPasteNetworkCommand : public Command {
 	public:
 		CopyPasteNetworkCommand(NetworkVisualization *context,
-				const QList<Neuron*> &neurons, 
-				const QList<Synapse*> &synapses, const QList<NeuroModule*> &modules, 
-				const QList<NeuronGroup*> &groups);
+				QList<Neuron*> neurons, 
+				QList<Synapse*> synapses, QList<NeuroModule*> modules, 
+				QList<NeuronGroup*> groups);
 		virtual ~CopyPasteNetworkCommand();
 
 		virtual bool isUndoable() const;

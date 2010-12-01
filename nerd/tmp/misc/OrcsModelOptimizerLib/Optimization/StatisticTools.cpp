@@ -60,7 +60,7 @@ using namespace nerd;
  * @param data Vector with data points.
  * @return Mean of the data points.
  */
-double StatisticTools::calculateMean(const QVector<double> &data)
+double StatisticTools::calculateMean(QVector<double> data)
 {
   // avoid division through zero
   if(data.count() <= 0)
@@ -86,7 +86,7 @@ double StatisticTools::calculateMean(const QVector<double> &data)
  * @param data Vector with data points.
  * @return Variance of the data points.
  */
-double StatisticTools::calculateVariance(const QVector<double> &data)
+double StatisticTools::calculateVariance(QVector<double> data)
 {
   double mean = StatisticTools::calculateMean(data);
   
@@ -103,7 +103,7 @@ double StatisticTools::calculateVariance(const QVector<double> &data)
  * @param mean Mean of the provided data points
  * @return Variance of the data points.
  */
-double StatisticTools::calculateVariance(const QVector<double> &data, double mean)
+double StatisticTools::calculateVariance(QVector<double> data, double mean)
 {
   // avoid division by zero
   if(data.count() < 2)
@@ -128,7 +128,7 @@ double StatisticTools::calculateVariance(const QVector<double> &data, double mea
  * @param data Vector with data points.
  * @return Variance of the data points.
  */
-double StatisticTools::calculateStandardDeviation(const QVector<double> &data)
+double StatisticTools::calculateStandardDeviation(QVector<double> data)
 {
   double mean = StatisticTools::calculateMean(data);
   
@@ -145,7 +145,7 @@ double StatisticTools::calculateStandardDeviation(const QVector<double> &data)
  * @param mean Mean of the provided data points
  * @return Variance of the data points.
  */
-double StatisticTools::calculateStandardDeviation(const QVector<double> &data, 
+double StatisticTools::calculateStandardDeviation(QVector<double> data, 
                                                   double mean)
 {
   return pow(StatisticTools::calculateVariance(data, mean), 0.5);

@@ -126,7 +126,7 @@ GroupConstraint* ConstraintManager::getConstraintPrototype(const QString &name) 
 }
 
 
-const QList<GroupConstraint*>& ConstraintManager::getConstraintPrototypes() const {
+QList<GroupConstraint*> ConstraintManager::getConstraintPrototypes() const {
 	return mConstraintPrototypes;
 }
 
@@ -141,7 +141,7 @@ QStringList ConstraintManager::verifyAllConstraints(ModularNeuralNetwork *net) {
 
 	QStringList errors;
 
-	const QList<NeuronGroup*> &groups = net->getNeuronGroups();
+	QList<NeuronGroup*> groups = net->getNeuronGroups();
 
 	{
 		for(QListIterator<NeuronGroup*> g(groups); g.hasNext();) {
@@ -164,7 +164,7 @@ QStringList ConstraintManager::verifyConstraints(NeuronGroup *group) {
 
 	QStringList errors;
 
-	const QList<GroupConstraint*> &constraints = group->getConstraints();
+	QList<GroupConstraint*> constraints = group->getConstraints();
 
 	for(QListIterator<GroupConstraint*> c(constraints); c.hasNext();) {
 		GroupConstraint *constraint = c.next();
@@ -232,7 +232,7 @@ bool ConstraintManager::runGroupConstraints(NeuronGroup *group,
 					QList<NeuralNetworkElement*> &trashcan,
 					QStringList &errors) 
 {
-	const QList<GroupConstraint*> &constraints = group->getConstraints();
+	QList<GroupConstraint*> constraints = group->getConstraints();
 
 	for(int i = 0; i < maxIterations; ++i) {
 		bool allOk = true;

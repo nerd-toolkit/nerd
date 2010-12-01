@@ -206,8 +206,8 @@ void TestESIntermediateRecombination::testIntermediateRecombination()
 }
 
 void TestESIntermediateRecombination::checkRecombination(	
-		const QList<OptimizationDouble> recombinedParas,
-		const QList<OptimizationDouble> results)
+		QList<OptimizationDouble> recombinedParas,
+		QList<OptimizationDouble> results)
 {
 	QVERIFY(recombinedParas.size() == results.size());		
 	

@@ -61,10 +61,10 @@ class ESDiscreteRecombination : public ESRecombination {
 		
 	protected:
 		
-		virtual OptimizationDouble recombineParameter(const QList<ESIndividual*> &parents,
-																									const parameterType type,
-																									const ESInformation &information,
-																									const int parameterIndex);
+		virtual OptimizationDouble recombineParameter(QList<ESIndividual*> parents,
+													const parameterType type,
+													const ESInformation &information,
+													const int parameterIndex);
 
 };
 

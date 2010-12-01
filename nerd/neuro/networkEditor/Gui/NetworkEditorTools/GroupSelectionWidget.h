@@ -78,7 +78,7 @@ namespace nerd {
 		GroupSelectionWidget(NeuralNetworkEditor *owner);
 		virtual ~GroupSelectionWidget();
 
-		virtual void selectionChanged(const QList<PaintItem*> &selectedItems);
+		virtual void selectionChanged(QList<PaintItem*> selectedItems);
 		virtual void modificationPolicyChanged();
 
 		virtual void invalidateView();

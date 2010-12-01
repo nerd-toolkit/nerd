@@ -66,16 +66,16 @@ namespace nerd {
 
 		virtual bool addInputNeuron(Neuron *neuron);
 		virtual bool removeInputNeuron(Neuron *neuron);
-		virtual const QList<Neuron*> getInputNeurons(int startLevel = 0) const;
+		virtual QList<Neuron*> getInputNeurons(int startLevel = 0) const;
 
 		virtual bool addOutputNeuron(Neuron *neuron);
 		virtual bool removeOutputNeuron(Neuron *neuron);
-		virtual const QList<Neuron*> getOutputNeurons(int startLevel = 0) const;
+		virtual QList<Neuron*> getOutputNeurons(int startLevel = 0) const;
 
 		virtual bool addSubModule(NeuroModule *module);
 		virtual bool removeSubModule(NeuroModule *module);
 		virtual void removeAllSubModules();
-		virtual const QList<NeuroModule*>& getSubModules() const;
+		virtual QList<NeuroModule*> getSubModules() const;
 
 		virtual NeuroModule* getParentModule() const;
 

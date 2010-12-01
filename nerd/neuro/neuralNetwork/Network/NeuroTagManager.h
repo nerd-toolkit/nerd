@@ -79,7 +79,7 @@ namespace nerd {
 
 		bool addTag(NeuroTag tag);
 		bool hasTag(NeuroTag tag) const;
-		const QList<NeuroTag>& getTags() const;
+		QList<NeuroTag> getTags() const;
 		
 
 	private:

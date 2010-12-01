@@ -181,7 +181,7 @@ void InsertSynapseNetworkTool::mouseButtonPressed(NetworkVisualization *source,
 		}
 
 		//check if target already has a synapse from mSourceNeuron
-		const QList<Synapse*> &incommingSynapses = target->getSynapses();
+		QList<Synapse*> incommingSynapses = target->getSynapses();
 		for(QListIterator<Synapse*> i(incommingSynapses); i.hasNext();) {
 			if(i.next()->getSource() == mSourceNeuron) {
 				emit done();

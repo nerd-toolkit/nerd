@@ -75,8 +75,8 @@ namespace nerd {
 
 		void setHistoryCapacity(int capacity);
 		int getHistoryCapacity() const;
-		const QVector<double>& getHistory() const;
-		void setHistory(const QVector<double>& history);
+		QVector<double> getHistory() const;
+		void setHistory(QVector<double> history);
 		int getHistoryStartIndex() const;
 		void addToHistory(double value);
 		double getHistoryValue(int index);

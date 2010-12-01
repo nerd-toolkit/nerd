@@ -56,7 +56,7 @@ class ESTestFitnessEvaluation : public ESFitnessEvaluation {
   public:
 		ESTestFitnessEvaluation(double fitness);
 		
-		virtual bool doEvaluation(const QList<ESIndividual*> &population,
+		virtual bool doEvaluation(QList<ESIndividual*> population,
 															const ESInformation &information);
 		
 		virtual void setFitness(double fitness);

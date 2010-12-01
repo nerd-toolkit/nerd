@@ -208,7 +208,7 @@ bool Neuron::removeInputValue(DoubleValue *input) {
 }
 
 
-const QList<DoubleValue*>& Neuron::getInputValues() const {
+QList<DoubleValue*> Neuron::getInputValues() const {
 	return mInputValues;
 }
 
@@ -267,7 +267,7 @@ bool Neuron::removeSynapse(Synapse *synapse) {
 }
 
 
-const QList<Synapse*>& Neuron::getSynapses() const {
+QList<Synapse*> Neuron::getSynapses() const {
 	return mIncommingSynapses;
 }
 
@@ -290,7 +290,7 @@ bool Neuron::deregisterOutgoingSynapse(Synapse *synapse) {
 }
 
 
-const QList<Synapse*>& Neuron::getOutgoingSynapses() const {
+QList<Synapse*> Neuron::getOutgoingSynapses() const {
 	return mOutgoingSynapses;
 }
 

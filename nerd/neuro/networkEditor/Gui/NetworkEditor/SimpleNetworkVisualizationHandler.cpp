@@ -978,7 +978,7 @@ NeuronItem* SimpleNetworkVisualizationHandler::getNeuronItem(Neuron *neuron) {
 }
 
 
-const QList<NeuronItem*>& SimpleNetworkVisualizationHandler::getNeuronItems() const {
+QList<NeuronItem*> SimpleNetworkVisualizationHandler::getNeuronItems() const {
 	return mNeurons;
 }
 
@@ -991,7 +991,7 @@ SynapseItem* SimpleNetworkVisualizationHandler::getSynapseItem(Synapse *synapse)
 }
 
 
-const QList<SynapseItem*>& SimpleNetworkVisualizationHandler::getSynapseItems() const {
+QList<SynapseItem*> SimpleNetworkVisualizationHandler::getSynapseItems() const {
 	return mSynapses;
 }
 
@@ -1003,7 +1003,7 @@ ModuleItem* SimpleNetworkVisualizationHandler::getModuleItem(NeuroModule *module
 }
 
 
-const QList<ModuleItem*>& SimpleNetworkVisualizationHandler::getModuleItems() const {
+QList<ModuleItem*> SimpleNetworkVisualizationHandler::getModuleItems() const {
 	return mModules;
 }
 
@@ -1016,7 +1016,7 @@ GroupItem* SimpleNetworkVisualizationHandler::getGroupItem(NeuronGroup *group) {
 }
 
 
-const QList<GroupItem*>& SimpleNetworkVisualizationHandler::getGroupItems() const {
+QList<GroupItem*> SimpleNetworkVisualizationHandler::getGroupItems() const {
 	return mGroups;
 }
 
@@ -1067,7 +1067,7 @@ void SimpleNetworkVisualizationHandler::setLocationByGrid(PaintItem *item) {
 
 
 void SimpleNetworkVisualizationHandler::markElementsAsSelected(
-						const QList<NeuralNetworkElement*> &elements) 
+						QList<NeuralNetworkElement*> elements) 
 {
 	//get selected items
 	QList<PaintItem*> selectedItems;

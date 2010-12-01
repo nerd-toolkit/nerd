@@ -218,9 +218,9 @@ void H_MSeriesTorqueSpringMotorModel::updateOutputValues() {
 
 	if(owner != 0) {
 		// Get Output Values and Parameters from owner
-		const QList<InterfaceValue*> motorAngleSensorValues = owner->getMotorAngleSensorValues();
-		const QList<DoubleValue*> currentConsumptionSensorValues = owner->getCurrentConsumptionValues();
-		const QList<BoolValue*> motorFlipStates = owner->getMotorFlipStateValues();
+		QList<InterfaceValue*> motorAngleSensorValues = owner->getMotorAngleSensorValues();
+		QList<DoubleValue*> currentConsumptionSensorValues = owner->getCurrentConsumptionValues();
+		QList<BoolValue*> motorFlipStates = owner->getMotorFlipStateValues();
 
 		for(int i = 0; i < mNumberOfMotors; i++) {
 			double flipped = motorFlipStates.at(i)->get() ? -1.0 : 1.0;
@@ -247,11 +247,11 @@ double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 
 	if(owner != 0) {
 		// Get Input Values from owner
-		const QList<InterfaceValue*> torqueInputValues = owner->getTorqueInputValues();
-		const QList<InterfaceValue*> freerunInputValues = owner->getFreerunInputValues();
-		const QList<DoubleValue*> currentConsumptionValues = owner->getCurrentConsumptionValues();
-		const QList<BoolValue*> flippedStateValues = owner->getMotorFlipStateValues();
-		const QList<DoubleValue*> individualMotorTorqueValues = owner->getIndividualMotorTorqueValues();
+		QList<InterfaceValue*> torqueInputValues = owner->getTorqueInputValues();
+		QList<InterfaceValue*> freerunInputValues = owner->getFreerunInputValues();
+		QList<DoubleValue*> currentConsumptionValues = owner->getCurrentConsumptionValues();
+		QList<BoolValue*> flippedStateValues = owner->getMotorFlipStateValues();
+		QList<DoubleValue*> individualMotorTorqueValues = owner->getIndividualMotorTorqueValues();
 
 		// Get timeStepSize for speed and acceleration calculation
 		double timeStepSize = Core::getInstance()->getValueManager()->getDoubleValue(SimulationConstants::VALUE_TIME_STEP_SIZE)->get();

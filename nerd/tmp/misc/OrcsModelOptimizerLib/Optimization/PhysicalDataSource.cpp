@@ -72,8 +72,8 @@ namespace nerd {
 PhysicalDataSource* PhysicalDataSource::createPhysicalDataSource(
 																			Trigger *trigger,
 																			Normalization *triggerNormalization,
-																			const QVector<StringValue*> &trainDataValueNames,
-																			const QVector<Normalization*> &trainDataValueNormalizations,
+																			QVector<StringValue*> trainDataValueNames,
+																			QVector<Normalization*> trainDataValueNormalizations,
 																			const QString &configDocumentPath, 
 																			const QString &dataFilePath)
 {
@@ -123,8 +123,8 @@ PhysicalDataSource* PhysicalDataSource::createPhysicalDataSource(
 
 PhysicalDataSource::PhysicalDataSource(	Trigger *trigger,
 																			Normalization *triggerNormalization,
-																			const QVector<StringValue*> &trainDataValueNames,
-																			const QVector<Normalization*> &trainDataValueNormalizations,
+																			QVector<StringValue*> trainDataValueNames,
+																			QVector<Normalization*> trainDataValueNormalizations,
 																			const QString &configDocumentPath, 
 																			const QString &dataFilePath)
 	:	mDataFilePath(dataFilePath),

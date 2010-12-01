@@ -67,7 +67,7 @@ namespace nerd {
 
 		virtual bool addSynapse(Synapse *synapse) = 0;
 		virtual bool removeSynapse(Synapse *synapse) = 0;
-		virtual const QList<Synapse*>& getSynapses() const = 0;
+		virtual QList<Synapse*> getSynapses() const = 0;
 	};
 
 }

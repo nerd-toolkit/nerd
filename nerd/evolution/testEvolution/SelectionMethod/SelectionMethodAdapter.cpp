@@ -78,7 +78,7 @@ SelectionMethod* SelectionMethodAdapter::createCopy() const {
 	return new SelectionMethodAdapter(*this);
 }
 
-QList<Individual*> SelectionMethodAdapter::createSeed(const QList<Individual*>&,
+QList<Individual*> SelectionMethodAdapter::createSeed(QList<Individual*>,
 		int numberOfIndividuals, int numberOfPreservedParents, int numberOfParentsPerIndividual)
 {
 	mCreateSeedCounter++;

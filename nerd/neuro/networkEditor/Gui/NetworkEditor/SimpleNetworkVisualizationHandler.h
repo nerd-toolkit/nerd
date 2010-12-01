@@ -91,13 +91,13 @@ namespace nerd {
 		bool removeGroupItem(GroupItem *groupItem);
 
 		virtual NeuronItem* getNeuronItem(Neuron *neuron);
-		virtual const QList<NeuronItem*>& getNeuronItems() const;
+		virtual QList<NeuronItem*> getNeuronItems() const;
 		virtual SynapseItem* getSynapseItem(Synapse *synapse);
-		virtual const QList<SynapseItem*>& getSynapseItems() const;
+		virtual QList<SynapseItem*> getSynapseItems() const;
 		virtual ModuleItem* getModuleItem(NeuroModule *module);
-		virtual const QList<ModuleItem*>& getModuleItems() const;
+		virtual QList<ModuleItem*> getModuleItems() const;
 		virtual GroupItem* getGroupItem(NeuronGroup *group);
-		virtual const QList<GroupItem*>& getGroupItems() const;
+		virtual QList<GroupItem*> getGroupItems() const;
 		virtual QList<PaintItem*> getPaintItems() const;
 
 		virtual NeuronItem* getNeuronItemPrototype() const;
@@ -105,7 +105,7 @@ namespace nerd {
 		virtual ModuleItem* getModuleItemPrototype() const;
 		virtual GroupItem* getGroupItemPrototype() const;
 
-		virtual void markElementsAsSelected(const QList<NeuralNetworkElement*> &elements);
+		virtual void markElementsAsSelected(QList<NeuralNetworkElement*> elements);
 
 	private:
 		void setLocationByGrid(PaintItem *item);

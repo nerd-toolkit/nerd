@@ -121,7 +121,7 @@ bool SymmetryConstraint::detachFromGroup(NeuronGroup *group) {
 	return GroupConstraint::detachFromGroup(group);
 }
 
-bool SymmetryConstraint::setRequiredElements(const QList<NeuralNetworkElement*> &elements) {
+bool SymmetryConstraint::setRequiredElements(QList<NeuralNetworkElement*> elements) {
 
 	if(elements.size() != 2) {
 		mErrorMessage = QString("Too few elements set. Got ")
@@ -713,7 +713,7 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
  * Called if the group ids of controlled member elements was changed somewhere.
  * This method allows to realign the new ids with the old obsolete ids.
  */
-bool SymmetryConstraint::groupIdsChanged(const QHash<qulonglong, qulonglong> &changedIds) {
+bool SymmetryConstraint::groupIdsChanged(QHash<qulonglong, qulonglong> changedIds) {
 	GroupConstraint::groupIdsChanged(changedIds);
 
 	if(changedIds.keys().contains(mTargetGroupId->get())) {
@@ -883,7 +883,7 @@ bool SymmetryConstraint::setModulePositionsRecursively(NeuroModule *module,
 		}
 	}
 
-	const QList<NeuroModule*> &submodules = module->getSubModules();
+	QList<NeuroModule*> submodules = module->getSubModules();
 	for(QListIterator<NeuroModule*> i(submodules); i.hasNext();) {
 		if(setModulePositionsRecursively(i.next(), referenceOrigin, newOrigin)) {
 			positionsChanged = true;
@@ -1003,7 +1003,7 @@ NeuronGroup* SymmetryConstraint::getNeuronOwnerGroup(Neuron *neuron, NeuronGroup
 	if(neuron == 0 || baseGroup == 0) {
 		return 0;
 	}
-	const QList<NeuroModule*> &submodules = baseGroup->getSubModules();
+	QList<NeuroModule*> submodules = baseGroup->getSubModules();
 	for(QListIterator<NeuroModule*> i(submodules); i.hasNext();) {
 		NeuronGroup *ownerModule = getNeuronOwnerGroup(neuron, i.next());
 		if(ownerModule != 0) {
@@ -1023,7 +1023,7 @@ QList<Synapse*> SymmetryConstraint::getSynapsesOfSynapseTarget(SynapseTarget *ta
 	}
 	QList<Synapse*> synapses;
 
-	const QList<Synapse*> &incommingSynapses = target->getSynapses();
+	QList<Synapse*> incommingSynapses = target->getSynapses();
 	for(QListIterator<Synapse*> i(incommingSynapses); i.hasNext();) {
 		synapses << getSynapsesOfSynapseTarget(i.next());
 	}
@@ -1161,10 +1161,10 @@ bool SymmetryConstraint::updateNetworkElementPairs(NeuronGroup *owner, NeuronGro
 	QStringList pairStrings; // = mNetworkElementPairValue->get().split("|");
 
 	//collect pair strings of all modules and groups that contain this group (module).
-	const QList<NeuronGroup*> &allGroups = net->getNeuronGroups();
+	QList<NeuronGroup*> allGroups = net->getNeuronGroups();
 	for(QListIterator<NeuronGroup*> i(allGroups); i.hasNext();) {
 		NeuronGroup *group = i.next();
-		const QList<GroupConstraint*> &constraints = group->getConstraints();
+		QList<GroupConstraint*> constraints = group->getConstraints();
 		for(QListIterator<GroupConstraint*> j(constraints); j.hasNext();) {
 			GroupConstraint *constraint = j.next();
 			SymmetryConstraint *sc = dynamic_cast<SymmetryConstraint*>(constraint);
@@ -1362,7 +1362,7 @@ bool SymmetryConstraint::updateNetworkElementPairs(NeuronGroup *owner, NeuronGro
 }
 
 
-const QList<NetworkElementPair>& SymmetryConstraint::getNetworkElementPairs() const {
+QList<NetworkElementPair> SymmetryConstraint::getNetworkElementPairs() const {
 	return mNetworkElementPairs;
 }
 

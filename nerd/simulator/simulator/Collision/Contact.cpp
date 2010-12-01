@@ -63,11 +63,11 @@ CollisionObject* Contact::getSecondCollisionObject() const {
 	return mSecondCollisionObject;
 }
 
-const QList<Vector3D>& Contact::getContactPoints() const {
+QList<Vector3D> Contact::getContactPoints() const {
 	return mContactPoints;
 }
 
-void Contact::setContactPoints(const QList<Vector3D> &contactPoints) {
+void Contact::setContactPoints(QList<Vector3D> contactPoints) {
 	mContactPoints = contactPoints;
 }
 

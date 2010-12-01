@@ -185,7 +185,7 @@ QString DebugNeuralNetworkIOMSeriesComponentsBDN::exportNetwork(QString networkN
 	// FILL HASHTABLE WITH ALL NEURON AND SYNAPSE ID'S /////////////
 	
 	// create XML ID's for neurons
-	const QList<Neuron*>& netNeurons = net->getNeurons();
+	QList<Neuron*> netNeurons = net->getNeurons();
 	QListIterator<Neuron*> netNeuronIt(netNeurons);
 	while(netNeuronIt.hasNext()) {		
 		Neuron *netNeuron = netNeuronIt.next();
@@ -195,7 +195,7 @@ QString DebugNeuralNetworkIOMSeriesComponentsBDN::exportNetwork(QString networkN
 	}
 	
 	// create XML ID's for synapses
-	const QList<Synapse*>& netSynapses = net->getSynapses();
+	QList<Synapse*> netSynapses = net->getSynapses();
 	QListIterator<Synapse*> netSynapseIt(netSynapses);
 	while(netSynapseIt.hasNext()) {
 		
@@ -341,7 +341,7 @@ QString DebugNeuralNetworkIOMSeriesComponentsBDN::exportNetwork(QString networkN
 	xmlRoot.appendChild( xmlNetModule );
 	*/
 	
-	const QList<NeuroModule*>& netModules = net->getNeuroModules();
+	QList<NeuroModule*> netModules = net->getNeuroModules();
 	QListIterator<NeuroModule*> netModuleIt(netModules);
 	while(netModuleIt.hasNext()) {
 		
@@ -358,11 +358,11 @@ QString DebugNeuralNetworkIOMSeriesComponentsBDN::exportNetwork(QString networkN
 		
 		
 		// create List of Neurons in the module
-		const QList<Neuron*>& netModuleNeurons = netModule->getAllEnclosedNeurons();
+		QList<Neuron*> netModuleNeurons = netModule->getAllEnclosedNeurons();
 		QListIterator<Neuron*> netModuleNeuronIt(netModuleNeurons);
 
 		// create List of synapses in the module
-		//const QList<Synapse*>& netModuleSynapses = netModule->getAllEnclosedSynapses();
+		//QList<Synapse*> netModuleSynapses = netModule->getAllEnclosedSynapses();
 		QListIterator<Synapse*> netModuleSynapseIt(netSynapses);
 
 		
@@ -528,8 +528,8 @@ QString DebugNeuralNetworkIOMSeriesComponentsBDN::exportNetwork(QString networkN
 			}
 			
 			// create synapse information for neuron if needed
-			const QList<Synapse*>& netNeuronSynapsesIn = netNeuron->getSynapses();
-			const QList<Synapse*>& netNeuronSynapsesOut = netNeuron->getOutgoingSynapses();
+			QList<Synapse*> netNeuronSynapsesIn = netNeuron->getSynapses();
+			QList<Synapse*> netNeuronSynapsesOut = netNeuron->getOutgoingSynapses();
 			if(netNeuronSynapsesIn.count() > 0 || netNeuronSynapsesOut.count() > 0 || biasExists == true)
 			{		
 				QDomElement xmlConnectedEdges = xmlDoc.createElement ("connectedEdges");
@@ -695,7 +695,7 @@ int DebugNeuralNetworkIOMSeriesComponentsBDN::addXmlBias(QDomElement &baseElemen
 /**
  * Returns the type names of the bytecode mappings for neurons. Used for error messages.
  */
-QString DebugNeuralNetworkIOMSeriesComponentsBDN::getNeuronByteCodeMappingTypes(const QMap<QString, QString> & byteCodeMapping)
+QString DebugNeuralNetworkIOMSeriesComponentsBDN::getNeuronByteCodeMappingTypes(QMap<QString, QString> byteCodeMapping)
 {
 	QString retval = "";
 	
@@ -715,7 +715,7 @@ QString DebugNeuralNetworkIOMSeriesComponentsBDN::getNeuronByteCodeMappingTypes(
 /**
  * Returns the type names of the bytecode mappings for synapses. Used for error messages.
  */
-QString DebugNeuralNetworkIOMSeriesComponentsBDN::getSynapseByteCodeMappingTypes(const QMap<QString, QString> & byteCodeMapping)
+QString DebugNeuralNetworkIOMSeriesComponentsBDN::getSynapseByteCodeMappingTypes(QMap<QString, QString> byteCodeMapping)
 {
 	QString retval = "";
 	

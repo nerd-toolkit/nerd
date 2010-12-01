@@ -75,7 +75,7 @@ class ValueManager {
 		bool addValue(const QString &name, Value *value);
 		bool removeValue(const QString &name);
 		bool removeValue(Value *value);
-		bool removeValues(const QList<Value*> &values);
+		bool removeValues(QList<Value*> values);
 
 		Value* getValue(const QString &name);
 		Value* getMultiPartValue(const QString &name, const QString &valuePart = "");
@@ -103,12 +103,12 @@ class ValueManager {
 
 		bool loadValues(const QString &fileName, bool useFileLocking = false);
 		bool saveValues(const QString &fileName, 
-						const QList<QString> valuesToSave,
+						QList<QString> valuesToSave,
 						const QString &comment, 
 						bool useFileLocking = false);
 
 		bool addPrototype(Value *prototype);
-		const QList<Value*>& getPrototypes() const;
+		QList<Value*> getPrototypes() const;
 		Value* createCopyOfPrototype(const QString &typeName) const;
 
 		void printValues(const QString &valueNamePattern);

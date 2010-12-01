@@ -53,24 +53,24 @@
 
 namespace nerd {
 
-ESRandomInitialize::ESRandomInitialize(	const QList<ESInitializeValue> &objectParametersRanges, 
-																				const QList<ESInitializeValue> &strategyParametersRanges)
+ESRandomInitialize::ESRandomInitialize(QList<ESInitializeValue> objectParametersRanges, 
+										QList<ESInitializeValue> strategyParametersRanges)
 	: mObjectParametersRanges(objectParametersRanges),
 		mStrategyParametersRanges(strategyParametersRanges)
 {}   
 		
-ESRandomInitialize::ESRandomInitialize(	ESInitializeValue objectParametersRanges,
-										 										int numberOfObjectParameters, 
-					 															const QList<ESInitializeValue> &strategyParametersRanges)
+ESRandomInitialize::ESRandomInitialize(ESInitializeValue objectParametersRanges,
+										int numberOfObjectParameters, 
+					 					QList<ESInitializeValue> strategyParametersRanges)
 	: mStrategyParametersRanges(strategyParametersRanges)
 {
 	mObjectParametersRanges = createValueRangeList(	objectParametersRanges, 
 																									numberOfObjectParameters);
 } 
 
-ESRandomInitialize::ESRandomInitialize(	const QList<ESInitializeValue> &objectParametersRanges, 
-																				ESInitializeValue strategyParametersRanges,
-					 															int numberOfStrategyParameters)
+ESRandomInitialize::ESRandomInitialize(QList<ESInitializeValue> objectParametersRanges, 
+										ESInitializeValue strategyParametersRanges,
+					 					int numberOfStrategyParameters)
 	: mObjectParametersRanges(objectParametersRanges)
 {
 	mStrategyParametersRanges = createValueRangeList(	strategyParametersRanges, 

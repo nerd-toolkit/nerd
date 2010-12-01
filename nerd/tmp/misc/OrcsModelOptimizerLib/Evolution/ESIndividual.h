@@ -53,23 +53,23 @@ namespace nerd {
 
 class ESIndividual {
   public:
-		ESIndividual(const QList<OptimizationDouble> &objectParameters, 
-								 const QList<OptimizationDouble> &strategyParameters, 
+		ESIndividual(QList<OptimizationDouble> objectParameters, 
+								 QList<OptimizationDouble> strategyParameters, 
 				 				 double fitness);
 
-		const QList<OptimizationDouble> &getObjectParameters() const;
+		QList<OptimizationDouble> getObjectParameters() const;
 
-		const QList<OptimizationDouble> &getStrategyParameters() const;
+		QList<OptimizationDouble> getStrategyParameters() const;
 
-    double getFitness() const;
+		double getFitness() const;
 		
 		unsigned long getID() const;
 
-		void setObjectParameters(const QList<OptimizationDouble> &parameters);
+		void setObjectParameters(QList<OptimizationDouble> parameters);
 
-    void setStrategyParameters(const QList<OptimizationDouble> &parameters);
-
-    void setFitness(double fitness);
+		void setStrategyParameters(QList<OptimizationDouble> parameters);
+	
+		void setFitness(double fitness);
 		
 		QString toString() const; 
 		

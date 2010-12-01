@@ -205,7 +205,7 @@ bool NeuroModuleManager::removeNeuroModulePrototype(NeuroModulePrototype *protot
 }
 
 
-const QList<NeuroModulePrototype*>& NeuroModuleManager::getNeuroModulePrototpyes() const {
+QList<NeuroModulePrototype*> NeuroModuleManager::getNeuroModulePrototpyes() const {
 	return mNeuroModulePrototypes;
 }
 

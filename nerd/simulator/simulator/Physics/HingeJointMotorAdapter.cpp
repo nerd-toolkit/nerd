@@ -126,12 +126,12 @@ Value* HingeJointMotorAdapter::getParameter(const QString &name) const {
 
 
 
-const QList<InterfaceValue*>& HingeJointMotorAdapter::getInputValues() const {
+QList<InterfaceValue*> HingeJointMotorAdapter::getInputValues() const {
 	return HingeJoint::getInputValues();
 }
 
 
-const QList<InterfaceValue*>& HingeJointMotorAdapter::getOutputValues() const {
+QList<InterfaceValue*> HingeJointMotorAdapter::getOutputValues() const {
 	return HingeJoint::getOutputValues();
 }	
 

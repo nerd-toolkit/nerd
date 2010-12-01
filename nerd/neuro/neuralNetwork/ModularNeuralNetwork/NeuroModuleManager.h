@@ -86,7 +86,7 @@ namespace nerd {
 		bool addNeuroModulePrototype(const QString &name, ModularNeuralNetwork *prototype);
 		bool addNeuroModulePrototype(NeuroModulePrototype *prototype);
 		bool removeNeuroModulePrototype(NeuroModulePrototype *prototype);
-		const QList<NeuroModulePrototype*>& getNeuroModulePrototpyes() const;
+		QList<NeuroModulePrototype*> getNeuroModulePrototpyes() const;
 
 		NeuroModulePrototype* getNeuroModuleByName(const QString &name) const;
 

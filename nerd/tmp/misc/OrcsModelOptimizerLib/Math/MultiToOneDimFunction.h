@@ -66,9 +66,9 @@ class MultiToOneDimFunction : public OneDimFunction
     
     virtual QString getName() const;
     
-    virtual void setStartPoint(const QVector<double> &startPoint);
+    virtual void setStartPoint(QVector<double> startPoint);
     
-    virtual void setDirection(const QVector<double> &direction);
+    virtual void setDirection(QVector<double> direction);
     
     virtual double calculate(double x);
     

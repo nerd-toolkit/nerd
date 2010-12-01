@@ -83,7 +83,7 @@ TorqueDynamixelMotor::~TorqueDynamixelMotor() {
 }
 
 
-bool TorqueDynamixelMotor::setInputValues(const QList<InterfaceValue*> &values) {
+bool TorqueDynamixelMotor::setInputValues(QList<InterfaceValue*> values) {
 	if(values.size() != 1) {
     Core::log(QString("%1::setInputValues(): ERROR - Not correct amount of InputValues"
 					  " given! (Needed: 1  Given: %2)").arg(
@@ -97,7 +97,7 @@ bool TorqueDynamixelMotor::setInputValues(const QList<InterfaceValue*> &values) 
 }
 
 
-bool TorqueDynamixelMotor::setOutputValues(const QList<InterfaceValue*> &values) {
+bool TorqueDynamixelMotor::setOutputValues(QList<InterfaceValue*> values) {
 	if(values.size() != 1) {
 		Core::log(QString("%1::setOutputValues(): ERROR - Not correct amount of OutputValues"
 						  " given! (Needed: 1  Given: %2)").arg(

@@ -60,8 +60,8 @@ void ESTestFitnessEvaluation::setFitness(double fitness)
 	mFitness = fitness;
 }
 	
-bool ESTestFitnessEvaluation::doEvaluation(	const QList<ESIndividual*> &population,
-																						const ESInformation &information)
+bool ESTestFitnessEvaluation::doEvaluation(QList<ESIndividual*> population,
+								const ESInformation &information)
 {
 		
 	for(int i = 0; i < population.size(); i++){

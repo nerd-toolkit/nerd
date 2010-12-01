@@ -63,13 +63,13 @@ namespace nerd {
 		
 		virtual CollisionRule* createCopy() const;
 
-		virtual void set(const QList<CollisionObject*> &sourceGroup, 
-								const QList<CollisionObject*> &targetGroup, 
+		virtual void set(QList<CollisionObject*> sourceGroup, 
+								QList<CollisionObject*> targetGroup, 
 								const QString &eventName);
 								
-		virtual void set(const QList<CollisionObject*> &sourceGroup, 
-								const QList<CollisionObject*> &targetGroup, 
-								const QList<QString> &eventNames);
+		virtual void set(QList<CollisionObject*> sourceGroup, 
+								QList<CollisionObject*> targetGroup, 
+								QList<QString> eventNames);
 		
 		void addEvent(const QString &eventName);
 		void addEvent(Event *event);
@@ -79,7 +79,7 @@ namespace nerd {
 		void replaceEvent(Event *oldEvent, Event *newEvent);
 		
 		QList<Event*> getEvents() const;
-		void setEvents(const QList<Event*> &events);
+		void setEvents(QList<Event*> events);
 		
 		virtual bool handleContact(const Contact &contact);
 		

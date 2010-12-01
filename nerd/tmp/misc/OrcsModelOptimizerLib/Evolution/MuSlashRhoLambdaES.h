@@ -79,7 +79,7 @@ class MuSlashRhoLambdaES {
 
 		bool doNextGeneration();
 
-		const QList<ESIndividual*>& getPopulation() const;
+		QList<ESIndividual*> getPopulation() const;
 
 		ESIndividual* getBestIndividual() const;
 

@@ -305,7 +305,7 @@ bool LocalNetworkInSimulationEvaluationMethod::evaluateIndividuals() {
 	setupFitnessFunctions();
 
 	//execute all individuals one after the other.
-	const QList<Individual*> &individuals = mPopulation->getIndividuals();
+	QList<Individual*> individuals = mPopulation->getIndividuals();
 
 	NeuralNetworkManager *networkManager = Neuro::getNeuralNetworkManager();
 

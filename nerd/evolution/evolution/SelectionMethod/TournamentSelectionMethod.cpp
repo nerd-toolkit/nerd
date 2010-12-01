@@ -122,7 +122,7 @@ SelectionMethod* TournamentSelectionMethod::createCopy() const {
  * @param numberOfParentsPerIndividual the number of parents per new individudal.
  */
 QList<Individual*> TournamentSelectionMethod::createSeed(
-			const QList<Individual*> &currentGeneration, int numberOfIndividuals, 
+			QList<Individual*> currentGeneration, int numberOfIndividuals, 
 			int numberOfPreservedParents, int numberOfParentsPerIndividual)
 {
 	TRACE("TournamentSelectionMethod::createSeed");

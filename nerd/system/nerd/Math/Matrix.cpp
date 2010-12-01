@@ -177,7 +177,7 @@ double Matrix::get(int w, int h, int d) {
 //	}
 //}
 
-const QVector<QVector<QVector<double> > >& Matrix::getData() const {
+QVector<QVector<QVector<double> > > Matrix::getData() const {
 	return mMatrix;
 }
 

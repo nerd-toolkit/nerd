@@ -59,7 +59,7 @@ namespace nerd {
  * Constructs a new RemoveNetworkObjectsCommand.
  */
 RemoveNetworkObjectsCommand::RemoveNetworkObjectsCommand(NetworkVisualization *context, 
-							const QList<PaintItem*> &items)
+							QList<PaintItem*> items)
 	: Command("Delete Objects"), mVisualizationContext(context)
 {
 	//extract neural network elements.
@@ -90,7 +90,7 @@ RemoveNetworkObjectsCommand::RemoveNetworkObjectsCommand(NetworkVisualization *c
 
 
 RemoveNetworkObjectsCommand::RemoveNetworkObjectsCommand(NetworkVisualization *context, 
-						const QList<NeuralNetworkElement*> networkElements)
+						QList<NeuralNetworkElement*> networkElements)
 	: Command("Delete Objects"), mVisualizationContext(context)
 {
 	//extract neural network elements.

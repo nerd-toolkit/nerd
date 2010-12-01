@@ -58,8 +58,8 @@ namespace nerd {
 		ESMultiDensityFuncStratParaMutation(double c );
 		
 		virtual QList<OptimizationDouble> doMutation(
-																			const QList<OptimizationDouble> &strategyParameters,
-																		 	const ESInformation &information);
+											QList<OptimizationDouble> strategyParameters,
+											const ESInformation &information);
 
 	protected:	
 		double mC;

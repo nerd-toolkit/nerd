@@ -461,7 +461,7 @@ bool NetworkVisualization::removePaintItem(PaintItem *item) {
 
 
 
-const QList<PaintItem*>& NetworkVisualization::getPaintItems() const {
+QList<PaintItem*> NetworkVisualization::getPaintItems() const {
 	TRACE("NetworkVisualization::getPaintItems");
 	return mPaintItems;
 }
@@ -472,7 +472,7 @@ ElementPairVisualization* NetworkVisualization::getElementPairVisualization() co
 }
 
 
-void NetworkVisualization::setSelectedItems(const QList<PaintItem*> &selectedItems) {
+void NetworkVisualization::setSelectedItems(QList<PaintItem*> selectedItems) {
 	TRACE("NetworkVisualization::setSelectedItems");
 	if(mNetworkInvalid) {
 		clearSelection();
@@ -489,7 +489,7 @@ void NetworkVisualization::setSelectedItems(const QList<PaintItem*> &selectedIte
 	notifySelectionListeners();
 }
 
-const QList<PaintItem*>& NetworkVisualization::getSelectedItems() const {
+QList<PaintItem*> NetworkVisualization::getSelectedItems() const {
 	TRACE("NetworkVisualization::getSelectedItems");
 	return mSelectedItems;
 }
@@ -587,7 +587,7 @@ bool NetworkVisualization::removeMouseListener(VisualizationMouseListener *liste
 }
 
 
-const QList<VisualizationMouseListener*>& NetworkVisualization::getMouseListeners() const {
+QList<VisualizationMouseListener*> NetworkVisualization::getMouseListeners() const {
 	TRACE("NetworkVisualization::getMouseListeners");
 	return mMouseListeners;
 }
@@ -672,7 +672,7 @@ bool NetworkVisualization::removeSelectionListener(SelectionListener *listener) 
 }
 
 
-const QList<SelectionListener*>& NetworkVisualization::getSelectionListeners() const {
+QList<SelectionListener*> NetworkVisualization::getSelectionListeners() const {
 	TRACE("NetworkVisualization::getSelectionListeners");
 	return mSelectionListeners;
 }
@@ -720,7 +720,7 @@ bool NetworkVisualization::removedKeyListener(KeyListener *listener) {
 	return true;
 }
 
-const QList<KeyListener*>& NetworkVisualization::getKeyListeners() const {
+QList<KeyListener*> NetworkVisualization::getKeyListeners() const {
 	TRACE("NetworkVisualization::getKeyListeners");
 	return mKeyListeners;
 }
@@ -1135,7 +1135,7 @@ void NetworkVisualization::setDefaultPaintIterval(int interval) {
 }
 
 
-void NetworkVisualization::updateNetworkElementPositionProperties(const QList<PaintItem*> &affectedItems) {
+void NetworkVisualization::updateNetworkElementPositionProperties(QList<PaintItem*> affectedItems) {
 
 	for(QListIterator<PaintItem*> i(affectedItems); i.hasNext();) {
 		PaintItem *item = i.next();
@@ -1166,7 +1166,7 @@ void NetworkVisualization::updateNetworkElementPositionProperties(const QList<Pa
 					QString::number(moduleItem->getSize().width()) + ","
 					  + QString::number(moduleItem->getSize().height()));
 
-			const QList<PaintItem*> &children = moduleItem->getMemberItems();
+			QList<PaintItem*> children = moduleItem->getMemberItems();
 			if(!children.empty()) {
 				updateNetworkElementPositionProperties(children);
 			}

@@ -60,17 +60,17 @@ namespace nerd {
   class StatisticTools {
 	public:
     
-    static double calculateMean(const QVector<double> &data);
+    static double calculateMean(QVector<double> data);
     
     
-    static double calculateVariance(const QVector<double> &data);
+    static double calculateVariance(QVector<double> data);
 
-    static double calculateVariance(const QVector<double> &data, double mean);
+    static double calculateVariance(QVector<double> data, double mean);
 
     
-    static double calculateStandardDeviation(const QVector<double> &data);
+    static double calculateStandardDeviation(QVector<double> data);
 
-    static double calculateStandardDeviation(const QVector<double> &data, double mean);
+    static double calculateStandardDeviation(QVector<double> data, double mean);
     
     
     static double calculateQuadraticError(MotionData *motionData, uint channel);

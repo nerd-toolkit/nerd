@@ -75,7 +75,7 @@ namespace nerd {
 
 		virtual bool addNeuralNetwork(NeuralNetwork *neuralNetwork);
 		virtual bool removeNeuralNetwork(NeuralNetwork *neuralNetwork);
-		virtual const QList<NeuralNetwork*>& getNeuralNetworks() const;
+		virtual QList<NeuralNetwork*> getNeuralNetworks() const;
 		virtual void destroyNeuralNetworks();
 
 		virtual void eventOccured(Event *event);
@@ -89,9 +89,9 @@ namespace nerd {
 		bool addActivationFunctionPrototype(const ActivationFunction &af);
 		bool addSynapseFunctionPrototype(const SynapseFunction &sf);
 
-		const QList<TransferFunction*>& getTransferFunctionPrototypes() const;
-		const QList<ActivationFunction*>& getActivationFunctionPrototypes() const;
-		const QList<SynapseFunction*>& getSynapseFunctionPrototypes() const;
+		QList<TransferFunction*> getTransferFunctionPrototypes() const;
+		QList<ActivationFunction*> getActivationFunctionPrototypes() const;
+		QList<SynapseFunction*> getSynapseFunctionPrototypes() const;
 
 		BoolValue* getBypassNetworksValue() const;
 

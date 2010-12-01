@@ -110,7 +110,7 @@ SelectionMethod* PoissonDistributionRanking::createCopy() const {
  * @param numberOfParentsPerIndividual the number of parents per new individudal.
  */
 QList<Individual*> PoissonDistributionRanking::createSeed(
-				const QList<Individual*> &currentGeneration,
+				QList<Individual*> currentGeneration,
 				int numberOfIndividuals, int numberOfPreservedParents, 
 				int)
 {

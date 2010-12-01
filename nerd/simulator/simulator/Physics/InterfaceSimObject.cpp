@@ -80,17 +80,17 @@ InterfaceSimObject::~InterfaceSimObject() {
 
 
 
-void InterfaceSimObject::setInputValues(const QList<InterfaceValue*> &inputs) {
+void InterfaceSimObject::setInputValues(QList<InterfaceValue*> inputs) {
 	mInputValues = inputs;
 }
 
 
-void InterfaceSimObject::setInfoValues(const QList<InterfaceValue*> &infos) {
+void InterfaceSimObject::setInfoValues(QList<InterfaceValue*> infos) {
 	mInfoValues = infos;
 }
 
 
-void InterfaceSimObject::setOutputValues(const QList<InterfaceValue*> &outputs) {
+void InterfaceSimObject::setOutputValues(QList<InterfaceValue*> outputs) {
 	mOutputValues = outputs;
 }
 

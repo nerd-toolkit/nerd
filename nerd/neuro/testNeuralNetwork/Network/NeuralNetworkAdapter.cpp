@@ -94,12 +94,12 @@ void NeuralNetworkAdapter::validateSynapseConnections() {
 	}
 }
 
-const QList<NeuronInterfaceValuePair>& NeuralNetworkAdapter::getRawInputPairs() const {
+QList<NeuronInterfaceValuePair> NeuralNetworkAdapter::getRawInputPairs() const {
 	return getInputPairs();
 }
 
 
-const QList<NeuronInterfaceValuePair>& NeuralNetworkAdapter::getRawOutputPairs() const {
+QList<NeuronInterfaceValuePair> NeuralNetworkAdapter::getRawOutputPairs() const {
 	return getOutputPairs();
 }
 

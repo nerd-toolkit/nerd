@@ -49,9 +49,9 @@
 
 namespace nerd {
 
-	QList<OptimizationDouble> ESRecombination::doRecombination( const QList<ESIndividual*> &parents,
-																															const parameterType type,
-																															const ESInformation &information)
+	QList<OptimizationDouble> ESRecombination::doRecombination(QList<ESIndividual*> parents,
+															const parameterType type,
+															const ESInformation &information)
 {
 	QList<OptimizationDouble> recombinedParas;
 	
@@ -79,9 +79,9 @@ namespace nerd {
 	return recombinedParas;
 }
 
-const QList<OptimizationDouble> & 
-ESRecombination::getParentParameters(	ESIndividual *parent,
-																			const parameterType type)
+QList<OptimizationDouble>
+ESRecombination::getParentParameters(ESIndividual *parent,
+									const parameterType type)
 {
 	if(type == STRATEGY){
 		return parent->getStrategyParameters();

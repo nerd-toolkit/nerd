@@ -61,7 +61,7 @@ class DynamixelFrictionMotor : public DynamixelMotor {
 
     virtual QString getMotorName() const;
 
-    virtual bool setInputValues(const QList<InterfaceValue*> &values);
+    virtual bool setInputValues(QList<InterfaceValue*> values);
 
     virtual void setupComponents();
     virtual void clearComponents();

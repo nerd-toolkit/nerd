@@ -81,7 +81,7 @@ namespace nerd {
 		PropertyDialog(NeuralNetworkEditor *owner);
 		virtual ~PropertyDialog();
 
-		virtual void selectionChanged(const QList<PaintItem*> &selectedItems);
+		virtual void selectionChanged(QList<PaintItem*> selectedItems);
 		virtual void modificationPolicyChanged();
 
 		QList<Properties*> getSelectedProperties() const;

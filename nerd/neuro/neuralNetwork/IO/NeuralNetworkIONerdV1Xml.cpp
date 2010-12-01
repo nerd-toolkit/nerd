@@ -279,7 +279,7 @@ NeuralNetwork* NeuralNetworkIONerdV1Xml::createNetFromXml(
 
 	//connect synapses to their source neurons
 	{
-		const QList<Neuron*> &neurons = net->getNeurons();
+		QList<Neuron*> neurons = net->getNeurons();
 		QList<Synapse*> synapses = availableSynapses;
 		QList<Synapse*> synapsesToRemove;
 
@@ -759,7 +759,7 @@ void NeuralNetworkIONerdV1Xml::createGroupsAndModulesFromXML(
 {
 	bool createModules = (type == "module") ? true : false;
 
-	const QList<Neuron*> &neurons = net->getNeurons();
+	QList<Neuron*> neurons = net->getNeurons();
 
 	QList<QDomElement> groupElements;
 	getDomElements(parent, type, groupElements);
@@ -1084,7 +1084,7 @@ SynapseFunction* NeuralNetworkIONerdV1Xml::createSynapseFunctionFromXML(
 }
 
 
-void NeuralNetworkIONerdV1Xml::storeNeuronsToXML(const QList<Neuron*> &neurons,	
+void NeuralNetworkIONerdV1Xml::storeNeuronsToXML(QList<Neuron*> neurons,	
 								QDomDocument &doc, QDomElement &netRoot) 
 {
 	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
@@ -1130,7 +1130,7 @@ void NeuralNetworkIONerdV1Xml::storeNeuronsToXML(const QList<Neuron*> &neurons,
 
 
 void NeuralNetworkIONerdV1Xml::storeGroupsAndModulesToXML(
-								const QList<NeuronGroup*> &availableGroups,
+								QList<NeuronGroup*> availableGroups,
 								QDomDocument &doc, QDomElement &netRoot)
 {
 	//add groups and modules

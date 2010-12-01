@@ -156,7 +156,7 @@ ConstraintDetailWidget::~ConstraintDetailWidget() {
 }
 
 
-void ConstraintDetailWidget::selectionChanged(const QList<PaintItem*> &selectedItems) {
+void ConstraintDetailWidget::selectionChanged(QList<PaintItem*> selectedItems) {
 	TRACE("ConstraintDetailWidget::selectionChanged");
 
 	mCurrentGroup = 0;

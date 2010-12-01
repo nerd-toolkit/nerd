@@ -222,7 +222,7 @@ void EventVisualizationWindow::fillEventList(const QString  &text) {
 	mEventComboBox->clear();
 	for(int i = 0; i < events.size(); i++) {
 		Event *event = events.at(i);
-		const QList<QString> &names = event->getNames();
+		QList<QString> names = event->getNames();
 		QListIterator<QString> it(names);
 		for(; it.hasNext(); ) {
 			QString name = it.next();

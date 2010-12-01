@@ -62,9 +62,9 @@ namespace nerd {
 		InterfaceSimObject(const InterfaceSimObject &other);
 		virtual ~InterfaceSimObject();
 
-		void setInputValues(const QList<InterfaceValue*> &inputs);
-		void setInfoValues(const QList<InterfaceValue*> &infos);
-		void setOutputValues(const QList<InterfaceValue*> &outputs);
+		void setInputValues(QList<InterfaceValue*> inputs);
+		void setInfoValues(QList<InterfaceValue*> infos);
+		void setOutputValues(QList<InterfaceValue*> outputs);
 
 	private:
 	};

@@ -80,7 +80,7 @@ namespace nerd {
 
 		virtual bool addMemberItem(PaintItem *member);
 		virtual bool removeMemberItem(PaintItem *member);
-		const QList<PaintItem*>& getMemberItems() const;
+		QList<PaintItem*> getMemberItems() const;
 
 		virtual void setPaintLevel(int level);
 

@@ -58,12 +58,12 @@ QString MultiToOneDimFunction::getName() const{
   return "MultiToOneDimFunction";
 }   
     
-void MultiToOneDimFunction::setStartPoint(const QVector<double> &startPoint)
+void MultiToOneDimFunction::setStartPoint(QVector<double> startPoint)
 {
   mStartPoint = startPoint;
 }
 
-void MultiToOneDimFunction::setDirection(const QVector<double> &direction)
+void MultiToOneDimFunction::setDirection(QVector<double> direction)
 {
   mDirection = direction;
 }

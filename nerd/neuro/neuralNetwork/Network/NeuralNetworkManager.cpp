@@ -308,7 +308,7 @@ bool NeuralNetworkManager::removeNeuralNetwork(NeuralNetwork *neuralNetwork) {
 }
 
 
-const QList<NeuralNetwork*>& NeuralNetworkManager::getNeuralNetworks() const {
+QList<NeuralNetwork*> NeuralNetworkManager::getNeuralNetworks() const {
 	return mNeuralNetworks;
 }
 
@@ -407,19 +407,19 @@ bool NeuralNetworkManager::addSynapseFunctionPrototype(const SynapseFunction &sf
 	return true;
 }
 
-const QList<TransferFunction*>& NeuralNetworkManager::getTransferFunctionPrototypes() const {
+QList<TransferFunction*> NeuralNetworkManager::getTransferFunctionPrototypes() const {
 	TRACE("NeuralNetworkManager::getTransferFunctionPrototypes");
 
 	return mTransferFunctionPrototypes;
 }
 
 
-const QList<ActivationFunction*>& NeuralNetworkManager::getActivationFunctionPrototypes() const {
+QList<ActivationFunction*> NeuralNetworkManager::getActivationFunctionPrototypes() const {
 	return mActivationFunctionPrototypes;
 }
 
 
-const QList<SynapseFunction*>& NeuralNetworkManager::getSynapseFunctionPrototypes() const {
+QList<SynapseFunction*> NeuralNetworkManager::getSynapseFunctionPrototypes() const {
 	return mSynapseFunctionPrototypes;
 }
 

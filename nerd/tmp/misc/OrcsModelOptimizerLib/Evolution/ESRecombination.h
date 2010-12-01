@@ -58,18 +58,18 @@ class ESRecombination {
   public:
 		enum parameterType {STRATEGY, OBJECT};
 		
-		virtual QList<OptimizationDouble> doRecombination(const QList<ESIndividual*> &parents,
-																											const parameterType type,
-																											const ESInformation &information);
+		virtual QList<OptimizationDouble> doRecombination(QList<ESIndividual*> parents,
+														const parameterType type,
+														const ESInformation &information);
 		
 	protected:
-		virtual OptimizationDouble recombineParameter(const QList<ESIndividual*> &parents,
-																									const parameterType,
-																									const ESInformation &information,
-																									const int parameterIndex) = 0;
+		virtual OptimizationDouble recombineParameter(QList<ESIndividual*> parents,
+														const parameterType,
+														const ESInformation &information,
+														const int parameterIndex) = 0;
 		
-		virtual const QList<OptimizationDouble> & getParentParameters(ESIndividual *parent,
-																																	const parameterType type);
+		virtual QList<OptimizationDouble> getParentParameters(ESIndividual *parent,
+														const parameterType type);
 
 };
 

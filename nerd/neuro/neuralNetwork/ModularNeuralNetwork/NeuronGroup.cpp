@@ -172,7 +172,7 @@ bool NeuronGroup::removeNeuron(Neuron *neuron) {
 }
 
 
-const QList<Neuron*>& NeuronGroup::getNeurons() const {
+QList<Neuron*> NeuronGroup::getNeurons() const {
 	TRACE("NeuronGroup::getNeurons");
 
 	return mMemberNeurons;
@@ -216,7 +216,7 @@ void NeuronGroup::removeAllSubModules() {
 }
 
 
-const QList<NeuroModule*>& NeuronGroup::getSubModules() const {
+QList<NeuroModule*> NeuronGroup::getSubModules() const {
 	TRACE("NeuronGroup::getSubModules");
 
 	return mSubModules;
@@ -260,7 +260,7 @@ bool NeuronGroup::addConstraint(GroupConstraint *constraint) {
 		return false;
 	}
 	if(mOwnerNetwork != 0) {
-		const QList<NeuronGroup*> &groups = mOwnerNetwork->getNeuronGroups();
+		QList<NeuronGroup*> groups = mOwnerNetwork->getNeuronGroups();
 		for(QListIterator<NeuronGroup*> i(groups); i.hasNext();) {
 			if(i.next()->getConstraints().contains(constraint)) {
 				return false;
@@ -300,14 +300,14 @@ void NeuronGroup::removeAllConstraints() {
 }
 
 
-const QList<GroupConstraint*>& NeuronGroup::getConstraints() const {
+QList<GroupConstraint*> NeuronGroup::getConstraints() const {
 	TRACE("NeuronGroup::getConstraints");
 
 	return mConstraints;
 }
 
 
-bool NeuronGroup::notifyMemberIdsChanged(const QHash<qulonglong, qulonglong> &changedIds) {
+bool NeuronGroup::notifyMemberIdsChanged(QHash<qulonglong, qulonglong> changedIds) {
 	bool ok = true;
 	for(QListIterator<GroupConstraint*> i(mConstraints); i.hasNext();) {
 		if(!i.next()->groupIdsChanged(changedIds)) {
@@ -395,7 +395,7 @@ bool NeuronGroup::moveGroupToNetwork(ModularNeuralNetwork *oldNetwork,
 /**
  * Renews the pointers to submodules according to their id.
  */
-bool NeuronGroup::verifySubModulePointers(ModularNeuralNetwork *net, const QList<NeuroModule*> &availableModules) {
+bool NeuronGroup::verifySubModulePointers(ModularNeuralNetwork *net, QList<NeuroModule*> availableModules) {
 	if(net == 0) {
 		return false;
 	}

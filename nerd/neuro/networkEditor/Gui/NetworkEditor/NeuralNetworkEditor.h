@@ -90,11 +90,11 @@ namespace nerd {
 		int getNetworkVisualizationIndex(NetworkVisualization *visualization);
 		NetworkVisualization* getCurrentNetworkVisualization() const;
 		NetworkVisualization* getNetworkVisualization(int index) const;
-		const QList<NetworkVisualization*>& getNetworkVisualizations() const;
+		QList<NetworkVisualization*> getNetworkVisualizations() const;
 
 		bool addNeuralNetworkObserver(NeuralNetworkObserver *observer);
 		bool removeNeuralNetworkObserver(NeuralNetworkObserver *observer);
-		const QList<NeuralNetworkObserver*>& getNeuralNetworkObservers() const;
+		QList<NeuralNetworkObserver*> getNeuralNetworkObservers() const;
 		void invalidateNeuralNetworkObservers();
 
 		EditorMessageWidget* getMessageWidget() const;

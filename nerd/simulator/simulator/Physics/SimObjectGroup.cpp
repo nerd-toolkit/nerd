@@ -96,7 +96,7 @@ bool SimObjectGroup::addObject(SimObject *object) {
 	object->setObjectGroup(this);
 
 	//-Add child objects
-	const QList<SimObject*> &children = object->getChildObjects();
+	QList<SimObject*> children = object->getChildObjects();
 	for(QListIterator<SimObject*> i(children); i.hasNext();) {
 		SimObject *obj = i.next();
 		addObject(obj);
@@ -115,7 +115,7 @@ bool SimObjectGroup::removeObject(SimObject *object) {
 	}
 
 	//-Remove child objects
-	const QList<SimObject*> &children = object->getChildObjects();
+	QList<SimObject*> children = object->getChildObjects();
 	for(QListIterator<SimObject*> i(children); i.hasNext();) {
 		SimObject *obj = i.next();
 		removeObject(obj);
@@ -125,7 +125,7 @@ bool SimObjectGroup::removeObject(SimObject *object) {
 }
 
 		
-const QList<SimObject*>& SimObjectGroup::getObjects() const {
+QList<SimObject*> SimObjectGroup::getObjects() const {
 	return mObjectGroup;
 }
 

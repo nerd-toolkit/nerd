@@ -79,7 +79,7 @@ double AdditiveTimeDiscreteActivationFunction::calculateActivation(Neuron *owner
 	}
 	double activation = owner->getBiasValue().get();
 
-	const QList<Synapse*> &synapses = owner->getSynapses();
+	QList<Synapse*> synapses = owner->getSynapses();
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
 		activation += i.next()->calculateActivation();
 	}

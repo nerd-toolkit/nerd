@@ -100,7 +100,7 @@ double MultiplicativeSynapseFunction::calculate(Synapse *owner) {
 	if(owner == 0) {
 		return 0.0;
 	}
-	const QList<Synapse*> &synapses = owner->getSynapses();
+	QList<Synapse*> synapses = owner->getSynapses();
 	double strength = owner->getStrengthValue().get();
 
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {

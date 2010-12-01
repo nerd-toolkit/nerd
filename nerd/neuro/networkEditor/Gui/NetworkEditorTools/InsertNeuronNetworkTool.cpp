@@ -126,7 +126,7 @@ void InsertNeuronNetworkTool::mouseButtonPressed(NetworkVisualization *source,
 	NeuroModule *module = 0;
 	QPointF pos = globalPosition;
 
-	const QList<PaintItem*> &items = mVisuContext->getPaintItems();
+	QList<PaintItem*> items = mVisuContext->getPaintItems();
 	for(int i = items.size() -1; i >= 0; --i) {
 		ModuleItem *item = dynamic_cast<ModuleItem*>(items.at(i));
 		if(item != 0 && item->isHit(globalPosition, event->buttons(), mVisuContext->getScaling())) {

@@ -67,8 +67,8 @@ namespace nerd {
 
 		void validateSynapseConnections();
 
-		const QList<NeuronInterfaceValuePair>& getRawInputPairs() const;
-		const QList<NeuronInterfaceValuePair>& getRawOutputPairs() const;
+		QList<NeuronInterfaceValuePair> getRawInputPairs() const;
+		QList<NeuronInterfaceValuePair> getRawOutputPairs() const;
 		
 	public:
 		int mResetCounter;

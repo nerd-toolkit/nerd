@@ -154,7 +154,7 @@ void NetworkSearchDialog::selectMatchingElements() {
 		expr.setCaseSensitivity(Qt::CaseInsensitive);
 	
 
-		const QList<Neuron*> &neurons = net->getNeurons();
+		QList<Neuron*> neurons = net->getNeurons();
 		for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 			Neuron *neuron = i.next();
 	
@@ -168,7 +168,7 @@ void NetworkSearchDialog::selectMatchingElements() {
 				}
 			}
 		}
-		const QList<Synapse*> &synapses = net->getSynapses();
+		QList<Synapse*> synapses = net->getSynapses();
 		for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
 			Synapse *synapse = i.next();
 	
@@ -182,7 +182,7 @@ void NetworkSearchDialog::selectMatchingElements() {
 				}
 			}
 		}
-		const QList<NeuronGroup*> &groups = net->getNeuronGroups();
+		QList<NeuronGroup*> groups = net->getNeuronGroups();
 		for(QListIterator<NeuronGroup*> i(groups); i.hasNext();) {
 			NeuronGroup *group = i.next();
 	

@@ -58,8 +58,8 @@ ESOneFifthRuleStratParaMutation::ESOneFifthRuleStratParaMutation(int checkInterv
 {}
 		
 QList<OptimizationDouble> ESOneFifthRuleStratParaMutation::doMutation(	
-																							const QList<OptimizationDouble> &strategyParameters,
-												 											const ESInformation &information)
+													QList<OptimizationDouble> strategyParameters,
+													const ESInformation &information)
 {
 	QList<OptimizationDouble> mutatedStratParas;
 		

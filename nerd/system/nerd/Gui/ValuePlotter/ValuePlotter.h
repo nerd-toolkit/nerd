@@ -104,7 +104,7 @@ namespace nerd {
 
 		PlotterWidget* getPlotterWidget() const;
 
-		const QMap<Event*, QString>& getSupportedUpdateTriggerEvents() const;
+		QMap<Event*, QString> getSupportedUpdateTriggerEvents() const;
 		void setUpdateTriggerEvent(Event *event);
 		Event* getUpdateTriggerEvent() const;
 

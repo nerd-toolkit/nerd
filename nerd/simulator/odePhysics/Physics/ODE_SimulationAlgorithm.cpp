@@ -168,7 +168,7 @@ void ODE_SimulationAlgorithm::valueChanged(Value *value) {
 
 
 bool ODE_SimulationAlgorithm::finalizeSetup() {
-	const QList<SimBody*> &bodies = Physics::getPhysicsManager()->getSimBodies();
+	QList<SimBody*> bodies = Physics::getPhysicsManager()->getSimBodies();
 
 	for(QListIterator<SimBody*> i(bodies); i.hasNext();) {
 		ODE_Body *tmp = dynamic_cast<ODE_Body*>(i.next());

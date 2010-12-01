@@ -80,7 +80,7 @@ namespace nerd {
 		virtual void updateSensorValues();
 
 		ODE_Body* getHostBody() const;
-		const QList<CollisionObject*>& getReferenceCollisionObject() const;
+		QList<CollisionObject*> getReferenceCollisionObject() const;
 
 		void setLocalSensorAxis(const Vector3D &axis);
 		Vector3D getLocalSensorAxis() const;

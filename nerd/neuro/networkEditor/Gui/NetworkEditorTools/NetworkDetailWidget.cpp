@@ -241,7 +241,7 @@ void NetworkDetailWidget::defaultTransferFunctionSelectionChanged() {
 		return;
 	}
 
-	const QList<TransferFunction*> &tfs = Neuro::getNeuralNetworkManager()
+	QList<TransferFunction*> tfs = Neuro::getNeuralNetworkManager()
 										->getTransferFunctionPrototypes();
 
 	for(QListIterator<TransferFunction*> i(tfs); i.hasNext();) {
@@ -277,7 +277,7 @@ void NetworkDetailWidget::defaultActivationFunctionSelectionChanged() {
 		return;
 	}
 
-	const QList<ActivationFunction*> &afs = Neuro::getNeuralNetworkManager()
+	QList<ActivationFunction*> afs = Neuro::getNeuralNetworkManager()
 										->getActivationFunctionPrototypes();
 
 	for(QListIterator<ActivationFunction*> i(afs); i.hasNext();) {
@@ -313,7 +313,7 @@ void NetworkDetailWidget::defaultSynapseFunctionSelectionChanged() {
 		return;
 	}
 
-	const QList<SynapseFunction*> &sfs = Neuro::getNeuralNetworkManager()
+	QList<SynapseFunction*> sfs = Neuro::getNeuralNetworkManager()
 										->getSynapseFunctionPrototypes();
 
 	for(QListIterator<SynapseFunction*> i(sfs); i.hasNext();) {

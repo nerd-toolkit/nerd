@@ -110,7 +110,7 @@ SelectionMethod* StructureNiechingSelection::createCopy() const {
 
 
 
-QList<Individual*> StructureNiechingSelection::createSeed(const QList<Individual*> &currentGeneration,
+QList<Individual*> StructureNiechingSelection::createSeed(QList<Individual*> currentGeneration,
 								int numberOfIndividuals, 
 								int numberOfPreservedParents,
 								int numberOfParentsPerIndividual)

@@ -77,13 +77,13 @@ namespace nerd {
 
 		virtual bool addNeuron(Neuron *neuron);
 		virtual bool removeNeuron(Neuron *neuron);
-		virtual const QList<Neuron*>& getNeurons() const;
+		virtual QList<Neuron*> getNeurons() const;
 		virtual void removeAllNeurons();
 
 		virtual bool addSubModule(NeuroModule *module);
 		virtual bool removeSubModule(NeuroModule *module);
 		virtual void removeAllSubModules();
-		virtual const QList<NeuroModule*>& getSubModules() const;
+		virtual QList<NeuroModule*> getSubModules() const;
 
 		virtual QList<Neuron*> getAllEnclosedNeurons() const;
 		virtual QList<NeuroModule*> getAllEnclosedModules() const;
@@ -91,15 +91,15 @@ namespace nerd {
 		virtual bool addConstraint(GroupConstraint *constraint);
 		virtual bool removeConstraint(GroupConstraint *constraint);
 		virtual void removeAllConstraints();
-		virtual const QList<GroupConstraint*>& getConstraints() const;
+		virtual QList<GroupConstraint*> getConstraints() const;
 
-		virtual bool notifyMemberIdsChanged(const QHash<qulonglong, qulonglong> &changedIds);
+		virtual bool notifyMemberIdsChanged(QHash<qulonglong, qulonglong> changedIds);
 
 		virtual bool moveGroupToNetworkConst(ModularNeuralNetwork const *oldNetwork, 
 										ModularNeuralNetwork *newNetwork);
 		virtual bool moveGroupToNetwork(ModularNeuralNetwork *oldNetwork, 
 										ModularNeuralNetwork *newNetwork);
-		virtual bool verifySubModulePointers(ModularNeuralNetwork *net, const QList<NeuroModule*> &availableModules);
+		virtual bool verifySubModulePointers(ModularNeuralNetwork *net, QList<NeuroModule*> availableModules);
 
 		virtual bool equals(NeuronGroup *group);
 		

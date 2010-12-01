@@ -70,7 +70,7 @@ class PowellMultiDimMinimizer : public MultiDimMinimizer
     virtual QString getName() const;
       
     virtual bool minimizationStart(MultiDimFunction *function, 
-                                   const QVector<double> &startPoint);
+                                   QVector<double> startPoint);
     
     virtual bool doMinimizationStep();  
     

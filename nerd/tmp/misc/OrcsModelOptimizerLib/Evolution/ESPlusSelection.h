@@ -56,10 +56,10 @@ class ESPlusSelection : public ESSelection {
   public:
     ESPlusSelection();
 
-    virtual QList<ESIndividual*> doSelection(	const QList<ESIndividual*> & parents, 
-																						 	const QList<ESIndividual*> & offsprings, 
-											 											 	const int mu,
-																					  	const ESInformation &information );
+    virtual QList<ESIndividual*> doSelection(QList<ESIndividual*> parents, 
+											QList<ESIndividual*> offsprings, 
+											const int mu,
+											const ESInformation &information );
 };
 
 } // namespace nerd

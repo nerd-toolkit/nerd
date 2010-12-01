@@ -1121,7 +1121,7 @@ bool ModelOptimizer::appendStatistic(Value *statisticValue, const QString &name)
 }
 
 bool ModelOptimizer::appendStatistic(
-		const QVector<ParameterDescription*> &mToOptimizeParameters)
+		QVector<ParameterDescription*> mToOptimizeParameters)
 {
 	bool ok = true;
 

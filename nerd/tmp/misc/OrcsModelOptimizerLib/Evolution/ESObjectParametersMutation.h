@@ -56,9 +56,9 @@ class ESObjectParametersMutation {
   public:
 
 		virtual QList<OptimizationDouble> doMutation(
-																				const QList<OptimizationDouble> &objectParameters, 
-																				const QList<OptimizationDouble> &strategyParameters,
-									 									 		const ESInformation &information) = 0;
+									QList<OptimizationDouble> objectParameters, 
+									QList<OptimizationDouble> strategyParameters,
+									const ESInformation &information) = 0;
 
 };
 

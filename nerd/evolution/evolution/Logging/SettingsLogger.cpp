@@ -191,7 +191,7 @@ void SettingsLogger::addValues(const QString &regularExpression) {
 }
 
 
-const QList<QString>& SettingsLogger::getValuesToStore() const {
+QList<QString> SettingsLogger::getValuesToStore() const {
 	return mValuesToStore;
 }
 

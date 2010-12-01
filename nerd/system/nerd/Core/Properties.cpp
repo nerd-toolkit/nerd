@@ -87,7 +87,7 @@ Properties::~Properties() {
 }
 
 
-void Properties::setOptionalHiddenPrefixes(const QList<QString> &prefixes) {
+void Properties::setOptionalHiddenPrefixes(QList<QString> prefixes) {
 	mOptionalHiddenPrefixes = prefixes;
 }
 
@@ -185,7 +185,7 @@ void Properties::removeProperty(const QString &name) {
  *
  * @return a list with all property names.
  */
-const QList<QString> Properties::getPropertyNames() const {
+QList<QString> Properties::getPropertyNames() const {
 	return mProperties.keys();
 }
 

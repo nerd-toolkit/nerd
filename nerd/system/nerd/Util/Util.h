@@ -59,7 +59,7 @@ namespace nerd {
 	class Util {
 	public:
 		template<class T>
-		static void addWithoutDuplicates(QList<T*> &targetlist, const QList<T*> &list) {
+		static void addWithoutDuplicates(QList<T*> &targetlist, QList<T*> list) {
 			for(QListIterator<T*> i(list); i.hasNext();) {
 				T *elem = i.next();
 				if(!targetlist.contains(elem)) {

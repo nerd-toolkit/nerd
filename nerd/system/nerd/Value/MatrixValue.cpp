@@ -139,13 +139,13 @@ QString MatrixValue::getValueAsString() const {
 	QTextStream out(&valueString);
 
 	out << "{";
-	const QVector<QVector<QVector<double> > > &data = mValue.getData();
+	QVector<QVector<QVector<double> > > data = mValue.getData();
 	for(int i = 0; i < data.size(); ++i) {
 		out << "{";
-		const QVector<QVector<double> > &v1 = data.at(i);
+		QVector<QVector<double> > v1 = data.at(i);
 		for(int j = 0; j < v1.size(); ++j) {
 			out << "{";
-			const QVector<double> &v2 = v1.at(j);
+			QVector<double> v2 = v1.at(j);
 			for(int k = 0; k < v2.size(); ++k) {
 				out << QString::number(v2.at(k));
 				if(k < (v2.size() - 1)) {

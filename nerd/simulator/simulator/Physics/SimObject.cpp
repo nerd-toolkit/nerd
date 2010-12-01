@@ -196,7 +196,7 @@ void SimObject::setName(const QString &name) {
  * a motor.
  * @return a QList with all available input control Values.
  */
-const QList<InterfaceValue*>& SimObject::getInputValues() const {
+QList<InterfaceValue*> SimObject::getInputValues() const {
 	return mInputValues;
 }
 
@@ -208,7 +208,7 @@ const QList<InterfaceValue*>& SimObject::getInputValues() const {
  *
  * @return a QList with all available output control Values.
  */
-const QList<InterfaceValue*>& SimObject::getOutputValues() const {
+QList<InterfaceValue*> SimObject::getOutputValues() const {
 	return mOutputValues;
 }
 
@@ -220,7 +220,7 @@ const QList<InterfaceValue*>& SimObject::getOutputValues() const {
  *
  * @return a QList with all available output control Values.
  */
-const QList<InterfaceValue*>& SimObject::getInfoValues() const {
+QList<InterfaceValue*> SimObject::getInfoValues() const {
 	return mInfoValues;
 }
 
@@ -286,7 +286,7 @@ QList<SimGeom*> SimObject::getGeometries() {
  *
  * @param geometries the new set of geometries.
  */
-void SimObject::setGeometries(const QVector<SimGeom*> &geometries){
+void SimObject::setGeometries(QVector<SimGeom*> geometries){
 	//destroy all previously registered SimGeoms.
 	for(int i = 0; i < mSimGeometries.size(); ++i) {
 		delete mSimGeometries.at(i);
@@ -393,7 +393,7 @@ bool SimObject::removeChildObject(SimObject *child) {
 /**
  * Returns a list with all registered child objects.
  */
-const QList<SimObject*>& SimObject::getChildObjects() const {
+QList<SimObject*> SimObject::getChildObjects() const {
 	return mChildObjects;
 }
 

@@ -67,7 +67,7 @@ namespace nerd {
 		Properties(const Properties &other);
 		virtual ~Properties();
 
-		virtual void setOptionalHiddenPrefixes(const QList<QString> &prefixes);
+		virtual void setOptionalHiddenPrefixes(QList<QString> prefixes);
 		virtual QList<QString> getOptionalHiddenPrefixes() const;
 
 		virtual void setProperty(const QString &name, const QString &value = QString(""));
@@ -76,7 +76,7 @@ namespace nerd {
 		virtual bool hasProperty(const QString &name) const;
 		virtual void removeProperty(const QString &name);
 
-		virtual const QList<QString> getPropertyNames() const;
+		virtual QList<QString> getPropertyNames() const;
 
 		virtual QString getPropertyList() const;
 		virtual bool saveToFile(const QString &fileName);

@@ -507,7 +507,7 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 	return !networkWasModified;
 }
 
-bool ConnectionSymmetryConstraint::groupIdsChanged(const QHash<qulonglong, qulonglong> &changedIds) {
+bool ConnectionSymmetryConstraint::groupIdsChanged(QHash<qulonglong, qulonglong> changedIds) {
 	GroupConstraint::groupIdsChanged(changedIds);
 
 	if(changedIds.keys().contains(mTargetGroupId->get())) {
@@ -737,7 +737,7 @@ QList<Synapse*> ConnectionSymmetryConstraint::getSynapsesOfSynapseTarget(Synapse
 	}
 	QList<Synapse*> synapses;
 
-	const QList<Synapse*> &incommingSynapses = target->getSynapses();
+	QList<Synapse*> incommingSynapses = target->getSynapses();
 	for(QListIterator<Synapse*> i(incommingSynapses); i.hasNext();) {
 		synapses << getSynapsesOfSynapseTarget(i.next());
 	}
@@ -920,7 +920,7 @@ bool ConnectionSymmetryConstraint::updateNetworkElementPairs(NeuronGroup *owner,
 }
 
 
-const QList<NetworkElementPair>& ConnectionSymmetryConstraint::getNetworkElementPairs() const {
+QList<NetworkElementPair> ConnectionSymmetryConstraint::getNetworkElementPairs() const {
 	return mNetworkElementPairs;
 }
 

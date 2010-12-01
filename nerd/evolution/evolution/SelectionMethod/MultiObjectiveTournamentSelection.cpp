@@ -115,7 +115,7 @@ SelectionMethod* MultiObjectiveTournamentSelection::createCopy() const {
  * @param numberOfParentsPerIndividual the number of parents per new individudal.
  */
 QList<Individual*> MultiObjectiveTournamentSelection::createSeed(
-			const QList<Individual*> &currentGeneration, int numberOfIndividuals, 
+			QList<Individual*> currentGeneration, int numberOfIndividuals, 
 			int numberOfPreservedParents, int numberOfParentsPerIndividual)
 {
 	TRACE("MultiObjectiveTournamentSelection::createSeed");
@@ -218,7 +218,7 @@ QList<Individual*> MultiObjectiveTournamentSelection::createSeed(
 }
 
 
-Individual* MultiObjectiveTournamentSelection::getBestIndividual(const QList<Individual*> candidates) {
+Individual* MultiObjectiveTournamentSelection::getBestIndividual(QList<Individual*> candidates) {
 
 	Individual *bestIndividual = 0;
 	double bestDominanceValues = -9999999;

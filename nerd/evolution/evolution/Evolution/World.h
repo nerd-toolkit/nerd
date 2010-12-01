@@ -63,7 +63,7 @@ namespace nerd {
 
 		bool addPopulation(Population *population);
 		bool removePopulation(Population *population);
-		const QList<Population*>& getPopulations() const;
+		QList<Population*> getPopulations() const;
 
 		void setEvolutionAlgorithm(EvolutionAlgorithm *evolutionAlgorithm);
 		EvolutionAlgorithm* getEvolutionAlgorithm() const;

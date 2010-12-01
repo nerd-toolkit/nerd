@@ -232,7 +232,7 @@ PropertyDialog::~PropertyDialog() {
 }
 
 
-void PropertyDialog::selectionChanged(const QList<PaintItem*>&) {
+void PropertyDialog::selectionChanged(QList<PaintItem*>) {
 	TRACE("PropertyDialog::selectionChanged");
 
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
@@ -414,7 +414,7 @@ void PropertyDialog::networkChanged(ModularNeuralNetwork*) {
 		mInitialized = true;
 		//grab tags from NeuroTagManager
 		addPropertyTemplate("-----------------");
-		const QList<NeuroTag> &tags = NeuroTagManager::getInstance()->getTags();
+		QList<NeuroTag> tags = NeuroTagManager::getInstance()->getTags();
 		for(QListIterator<NeuroTag> i(tags); i.hasNext();) {
 			NeuroTag tag = i.next();
 			addPropertyTemplate(tag.mTagName);
@@ -718,7 +718,7 @@ void PropertyDialog::showHelpDialog() {
 	QString helpMessage;
 
 	NeuroTagManager *ntm = NeuroTagManager::getInstance();
-	const QList<NeuroTag> &tags = ntm->getTags();
+	QList<NeuroTag> tags = ntm->getTags();
 
 	for(QListIterator<NeuroTag> i(tags); i.hasNext();) {
 		NeuroTag tag = i.next();

@@ -202,7 +202,7 @@ bool InsertSynapseModularOperator::connectNewNeurons(ModularNeuralNetwork *net) 
 		return false;
 	}
 
-	const QList<Neuron*> &allNeurons = net->getNeurons();
+	QList<Neuron*> allNeurons = net->getNeurons();
 	for(QListIterator<Neuron*> i(allNeurons); i.hasNext();) {
 		Neuron *neuron = i.next();
 
@@ -321,7 +321,7 @@ bool InsertSynapseModularOperator::addSynapseToSourceNeuron(Neuron *source, Modu
 		}			
 
 		//remove all targets that already are target of a synapse from neuron source
-		const QList<Synapse*> &incommingSynapses = neuron->getSynapses();
+		QList<Synapse*> incommingSynapses = neuron->getSynapses();
 
 		bool validTarget = true;
 
@@ -401,7 +401,7 @@ bool InsertSynapseModularOperator::addSynapseToTargetNeuron(Neuron *target, Modu
 		}			
 
 		//remove all targets that already are target of a synapse from neuron source
-		const QList<Synapse*> &outgoingSynapses = neuron->getOutgoingSynapses();
+		QList<Synapse*> outgoingSynapses = neuron->getOutgoingSynapses();
 
 		bool validSource = true;
 
@@ -587,7 +587,7 @@ int InsertSynapseModularOperator::getInterfaceLevel(Neuron *neuron, const QStrin
 // 	if(owner == 0 || owner->getOwnerNetwork() == 0) {
 // 		return QList<NeuroModule*>();
 // 	}
-// 	const QList<NeuroModule*> &allModules = owner->getOwnerNetwork()->getNeuroModules();
+// 	QList<NeuroModule*> allModules = owner->getOwnerNetwork()->getNeuroModules();
 // 	QList<NeuroModule*> matchingModules;
 // 
 // 	QString matchingListString = matchingList;

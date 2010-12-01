@@ -54,10 +54,10 @@ namespace nerd {
 ESCommaSelection::ESCommaSelection() {
 }
 
-QList<ESIndividual*> ESCommaSelection::doSelection(	const QList<ESIndividual*> &parents, 
-																										const QList<ESIndividual*> &offsprings, 
-																										const int mu,
-																					  				const ESInformation &information )
+QList<ESIndividual*> ESCommaSelection::doSelection(QList<ESIndividual*> parents, 
+													QList<ESIndividual*> offsprings, 
+													const int mu,
+													const ESInformation &information )
 {
 	QList<ESIndividual*> selectedIndividuals;
 	

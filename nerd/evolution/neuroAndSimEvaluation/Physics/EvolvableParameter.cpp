@@ -183,7 +183,7 @@ void EvolvableParameter::eventOccured(Event *event) {
 
 		//get corresponding neuron
 		Neuron *targetNeuron = 0;
-		const QList<Neuron*> &neurons = net->getNeurons();
+		QList<Neuron*> neurons = net->getNeurons();
 		for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 			Neuron *n = i.next();
 			if(n->getNameValue().get() == mInterfaceValue->getName()) {

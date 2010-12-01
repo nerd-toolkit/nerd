@@ -163,7 +163,7 @@ bool PlotterWidget::removePlotterItem(PlotterItem *item) {
 }
 
 
-const QList<PlotterItem*>& PlotterWidget::getPlotterItems() const {
+QList<PlotterItem*> PlotterWidget::getPlotterItems() const {
 	return mPlotterItems;
 }
 
@@ -390,7 +390,7 @@ void PlotterWidget::drawHistoryGraphs(QPainter &painter) {
 				continue;
 			}
 
-			const QVector<double> &data = item->getHistory();
+			QVector<double> data = item->getHistory();
 
 			//set PlotterItem color.
 			painter.setPen(item->getColor());

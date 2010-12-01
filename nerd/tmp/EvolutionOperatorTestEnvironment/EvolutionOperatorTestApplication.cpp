@@ -253,7 +253,7 @@ bool EvolutionOperatorTestApplication::buildEvolutionSystem() {
 	
 	if(!Evolution::getEvolutionManager()->getEvolutionWorlds().empty()) {
 		World *world = Evolution::getEvolutionManager()->getEvolutionWorlds().at(0);
-		const QList<Population*> &populations = world->getPopulations();
+		QList<Population*> populations = world->getPopulations();
 
 		for(QListIterator<Population*> i(populations); i.hasNext();) {
 			Population *population = i.next();	

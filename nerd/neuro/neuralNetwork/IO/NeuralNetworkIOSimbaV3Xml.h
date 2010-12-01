@@ -77,7 +77,7 @@ namespace nerd {
 		static void addDefaultActivationFunctionToNetwork(NeuralNetwork *net, const QDomElement &netElement, NeuralNetworkManager *neuralNetworkManager, QList<QString> *warnings);
 		static void addDefaultSynapseFunctionToNetwork(NeuralNetwork *net, const QDomElement &netElement, NeuralNetworkManager *neuralNetworkManager, QList<QString> *warnings);
 		static void addNeuronsAndSynapsesToNetwork(NeuralNetwork *net, const QDomElement &netElement, NeuralNetworkManager *neuralNetworkManager, QList<QString> *warnings);
-		static void addSynapsesToNetwork(const QVector<Neuron*> &neurons, SynapseTarget *target, const QDomNodeList &synapseList, const QDomNode &currentNode, NeuralNetworkManager *neuralNetworkManager, QList<QString> *warnings);
+		static void addSynapsesToNetwork(QVector<Neuron*> neurons, SynapseTarget *target, const QDomNodeList &synapseList, const QDomNode &currentNode, NeuralNetworkManager *neuralNetworkManager, QList<QString> *warnings);
 		static void addSynapseToFile(QDomDocument &doc, NeuralNetwork *net, Synapse *synapse, QDomElement &node);	
 	};
 }

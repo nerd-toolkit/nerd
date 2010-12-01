@@ -67,9 +67,9 @@ Q_OBJECT
 	private:
 		void deleteTestPopulation(QList<ESIndividual*> &population);		
 		
-		void checkRecombination(const QList<OptimizationDouble> recombinedParas,
-														const QList<ESIndividual*> parents,
-													 	const ESRecombination::parameterType type);
+		void checkRecombination(QList<OptimizationDouble> recombinedParas,
+								QList<ESIndividual*> parents,
+								const ESRecombination::parameterType type);
 
 };
 

@@ -59,9 +59,9 @@ namespace nerd {
  * Constructs a new CopyPasteNetworkCommand.
  */
 CopyPasteNetworkCommand::CopyPasteNetworkCommand(NetworkVisualization *context, 
-				const QList<Neuron*> &neurons, 
-				const QList<Synapse*> &synapses, const QList<NeuroModule*> &modules, 
-				const QList<NeuronGroup*> &groups)
+				QList<Neuron*> neurons, 
+				QList<Synapse*> synapses, QList<NeuroModule*> modules, 
+				QList<NeuronGroup*> groups)
 	: Command("Copy Objects"), mVisualizationContext(context), mNetwork(0)
 {
 	if(context != 0) {
@@ -220,7 +220,7 @@ bool CopyPasteNetworkCommand::doCommand() {
 		//add all synapses that have targets in the list of added synapses.
 		while(!synapses.empty()) {
 			Synapse *synapse = synapses.takeFirst();
-			const QList<Synapse*> &incommingSynapses = synapse->getSynapses();
+			QList<Synapse*> incommingSynapses = synapse->getSynapses();
 			for(QListIterator<Synapse*> s(incommingSynapses); s.hasNext();) {
 				Synapse *other = s.next();
 				if(mCopiedNeurons.contains(other->getSource())

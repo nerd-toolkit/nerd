@@ -471,7 +471,7 @@ bool NeuralNetwork::removeNeuron(Neuron *neuron) {
 }
 
 
-const QList<Neuron*>& NeuralNetwork::getNeurons() const {
+QList<Neuron*> NeuralNetwork::getNeurons() const {
 	return mNeurons;
 }
 
@@ -505,14 +505,14 @@ QList<Neuron*> NeuralNetwork::getOutputNeurons() const {
 	return mOutputNeurons;
 }
 
-const QList<NeuronInterfaceValuePair>& NeuralNetwork::getInputPairs() const {
+QList<NeuronInterfaceValuePair> NeuralNetwork::getInputPairs() const {
 	TRACE("NeuralNetwork::getInputPairs");
 
 	return mInputPairs;
 }
 
 
-const QList<NeuronInterfaceValuePair>& NeuralNetwork::getOutputPairs() const {
+QList<NeuronInterfaceValuePair> NeuralNetwork::getOutputPairs() const {
 	TRACE("NeuralNetwork::getOutputPairs");
 
 	return mOutputPairs;
@@ -524,7 +524,7 @@ QList<Synapse*> NeuralNetwork::getSynapses() const {
 
 	QList<Synapse*> synapses;
 	for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
-		const QList<Synapse*> &newSynapses = i.next()->getSynapses();
+		QList<Synapse*> newSynapses = i.next()->getSynapses();
 		synapses += newSynapses;
 		for(QListIterator<Synapse*> j(newSynapses); j.hasNext();) {
 			getSynapses(j.next(), synapses);
@@ -917,7 +917,7 @@ void NeuralNetwork::resetIdCounter(qulonglong currentId) {
 }
 
 
-Neuron* NeuralNetwork::selectNeuronById(qulonglong id, const QList<Neuron*> &neurons) {
+Neuron* NeuralNetwork::selectNeuronById(qulonglong id, QList<Neuron*> neurons) {
 	TRACE("NeuralNetwork::selectNeuronById");
 
 	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
@@ -930,7 +930,7 @@ Neuron* NeuralNetwork::selectNeuronById(qulonglong id, const QList<Neuron*> &neu
 }
 
 
-SynapseTarget* NeuralNetwork::selectSynapseTargetById(qulonglong id, const QList<SynapseTarget*> &targets) {
+SynapseTarget* NeuralNetwork::selectSynapseTargetById(qulonglong id, QList<SynapseTarget*> targets) {
 	TRACE("NeuralNetwork::selectSynapseTargetById");
 
 	for(QListIterator<SynapseTarget*> i(targets); i.hasNext();) {
@@ -942,7 +942,7 @@ SynapseTarget* NeuralNetwork::selectSynapseTargetById(qulonglong id, const QList
 	return 0;
 }
 
-Synapse* NeuralNetwork::selectSynapseById(qulonglong id, const QList<Synapse*> &synapses) {
+Synapse* NeuralNetwork::selectSynapseById(qulonglong id, QList<Synapse*> synapses) {
 	TRACE("NeuralNetwork::selectSynapseById");
 
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
@@ -956,7 +956,7 @@ Synapse* NeuralNetwork::selectSynapseById(qulonglong id, const QList<Synapse*> &
 
 
 NeuralNetworkElement* NeuralNetwork::selectNetworkElementById(qulonglong id, 
-							const QList<NeuralNetworkElement*> &elements)
+							QList<NeuralNetworkElement*> elements)
 {
 	TRACE("NeuralNetwork::selectNetworkElementById");
 
@@ -969,7 +969,7 @@ NeuralNetworkElement* NeuralNetwork::selectNetworkElementById(qulonglong id,
 	return 0;
 }
 
-// void NeuralNetwork::renewIds(const QList<SynapseTarget*> &objects) {
+// void NeuralNetwork::renewIds(QList<SynapseTarget*> objects) {
 // 	TRACE("NeuralNetwork::renewIds");
 // 
 // 	for(QListIterator<SynapseTarget*> i(objects); i.hasNext();) {

@@ -89,11 +89,11 @@ public:
 	CollisionHandler* getCollisionHandler() const;
 
 	void disableCollisions(CollisionObject *first, CollisionObject *second, bool disable);
-	void disableCollisions(const QList<CollisionObject*> &firstGroup, 
-						const QList<CollisionObject*> &secondGroup, 
+	void disableCollisions(QList<CollisionObject*> firstGroup, 
+						QList<CollisionObject*> secondGroup, 
 						bool disable);
 	void disableCollisions(CollisionObject* collisionObject, 
-						const QList<CollisionObject*> &objectGroup, 
+						QList<CollisionObject*> objectGroup, 
 						bool disable);
 
 	void disableCollisions(CollisionObject* collisionObject,

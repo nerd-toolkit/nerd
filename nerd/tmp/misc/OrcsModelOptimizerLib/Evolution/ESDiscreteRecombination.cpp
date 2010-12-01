@@ -55,10 +55,10 @@ ESDiscreteRecombination::ESDiscreteRecombination()
 {}
 
 OptimizationDouble 
-ESDiscreteRecombination::recombineParameter(const QList<ESIndividual*> &parents,
-																						const parameterType type,
-																						const ESInformation &information,
-																						const int parameterIndex)
+ESDiscreteRecombination::recombineParameter(QList<ESIndividual*> parents,
+											const parameterType type,
+											const ESInformation &information,
+											const int parameterIndex)
 {
 	if(parents.size() <= 0){
 		OptimizationDouble retval;
@@ -75,7 +75,7 @@ ESDiscreteRecombination::recombineParameter(const QList<ESIndividual*> &parents,
 	
 	int dominantParentIndex = Random::nextInt(parents.size());
 	
-	const QList<OptimizationDouble> &dominantParentParameters =
+	QList<OptimizationDouble> dominantParentParameters =
 			 getParentParameters(parents.at(dominantParentIndex), type);
 	
 	return dominantParentParameters.at(parameterIndex);	

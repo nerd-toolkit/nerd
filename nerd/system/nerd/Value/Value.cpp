@@ -247,7 +247,7 @@ void Value::removeValueChangedListeners() {
  *
  * @return a list with all ValueChangedListeners.
  */
-const QList<ValueChangedListener*> Value::getValueChangedListeners() const {
+QList<ValueChangedListener*> Value::getValueChangedListeners() const {
 	return mValueChangedListeners;
 }
 

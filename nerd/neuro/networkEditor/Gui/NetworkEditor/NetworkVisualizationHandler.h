@@ -87,23 +87,23 @@ namespace nerd {
 		virtual bool updateNetworkView() = 0;
 
 		virtual NeuronItem* getNeuronItem(Neuron *neuron) = 0;
-		virtual const QList<NeuronItem*>& getNeuronItems() const = 0;
+		virtual QList<NeuronItem*> getNeuronItems() const = 0;
 
 		virtual SynapseItem* getSynapseItem(Synapse *synapse) = 0;
-		virtual const QList<SynapseItem*>& getSynapseItems() const = 0;
+		virtual QList<SynapseItem*> getSynapseItems() const = 0;
 
 		virtual ModuleItem* getModuleItem(NeuroModule *module) = 0;
-		virtual const QList<ModuleItem*>& getModuleItems() const = 0;
+		virtual QList<ModuleItem*> getModuleItems() const = 0;
 
 		virtual GroupItem* getGroupItem(NeuronGroup *group) = 0;
-		virtual const QList<GroupItem*>& getGroupItems() const = 0;
+		virtual QList<GroupItem*> getGroupItems() const = 0;
 
 		virtual NeuronItem* getNeuronItemPrototype() const = 0;
 		virtual SynapseItem* getSynapseItemPrototype() const = 0;
 		virtual ModuleItem* getModuleItemPrototype() const = 0;
 		virtual GroupItem* getGroupItemPrototype() const = 0;
 
-		virtual void markElementsAsSelected(const QList<NeuralNetworkElement*> &elements) = 0;
+		virtual void markElementsAsSelected(QList<NeuralNetworkElement*> elements) = 0;
 
 	protected:
 		NetworkVisualization *mOwner;

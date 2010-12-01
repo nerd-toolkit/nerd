@@ -70,7 +70,7 @@ void MultiDimMinimizer::setTolerance( double tolerance ) {
  * @return Found minimum point.
  */
 MultiDimFunctionPoint MultiDimMinimizer::minimize(MultiDimFunction *function,
-                                                  const QVector<double> &startPoint,
+                                                  QVector<double> startPoint,
                                                   int maxIterations)
 {
   bool ok = minimizationStart(function, startPoint);

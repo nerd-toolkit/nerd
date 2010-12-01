@@ -65,9 +65,9 @@ namespace nerd {
 	 */
 	class RemoveNetworkObjectsCommand : public Command {
 	public:
-		RemoveNetworkObjectsCommand(NetworkVisualization *context, const QList<PaintItem*> &items);
+		RemoveNetworkObjectsCommand(NetworkVisualization *context, QList<PaintItem*> items);
 		RemoveNetworkObjectsCommand(NetworkVisualization *context, 
-						const QList<NeuralNetworkElement*> networkElements);
+						QList<NeuralNetworkElement*> networkElements);
 		virtual ~RemoveNetworkObjectsCommand();
 
 		virtual bool isUndoable() const;

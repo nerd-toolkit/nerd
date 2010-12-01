@@ -68,11 +68,11 @@ namespace nerd {
 
 		bool addSelectionMethod(SelectionMethod *selectionMethod);
 		bool removeSelectionMethod(SelectionMethod *selectionMethod);
-		const QList<SelectionMethod*>& getSelectionMethods() const;
+		QList<SelectionMethod*> getSelectionMethods() const;
 
 		bool addFitnessFunction(FitnessFunction *fitnessFunction);
 		bool removeFitnessFunction(FitnessFunction *fitnessFunction);
-		const QList<FitnessFunction*>& getFitnessFunctions() const;
+		QList<FitnessFunction*> getFitnessFunctions() const;
 		FitnessFunction* getFitnessFunction(const QString &name) const;
 
 		void setGenotypePhenotypeMapper(GenotypePhenotypeMapper *mapper);

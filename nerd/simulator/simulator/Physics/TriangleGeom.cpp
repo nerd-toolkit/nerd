@@ -52,8 +52,8 @@ TriangleGeom::TriangleGeom(SimObject *simObject) : SimGeom(simObject)
 {
 }
 
-TriangleGeom::TriangleGeom(SimObject *simObject, const QVector<Vector3D> &points, 
-		const QVector<Triangle> &triangles) : SimGeom(simObject), mTriangles(triangles), 
+TriangleGeom::TriangleGeom(SimObject *simObject, QVector<Vector3D> points, 
+		QVector<Triangle> triangles) : SimGeom(simObject), mTriangles(triangles), 
 		mPoints(points)
 {
 }
@@ -76,7 +76,7 @@ QVector<Triangle> TriangleGeom::getTriangles() const {
 }
 
 
-void TriangleGeom::setTriangles(const QVector<Triangle> &triangles) {
+void TriangleGeom::setTriangles(QVector<Triangle> triangles) {
 	mTriangles.clear();
 	mTriangles << triangles;
 }
@@ -94,7 +94,7 @@ QVector<Vector3D> TriangleGeom::getPoints() const{
  *
  * @param points the point vector in local coordinates.
  */
-void TriangleGeom::setPoints(const QVector<Vector3D> &points) {
+void TriangleGeom::setPoints(QVector<Vector3D> points) {
 	mPoints.clear();
 	
 	mPoints << points;

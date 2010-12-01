@@ -97,7 +97,7 @@ ParameterEditor::~ParameterEditor() {
 }
 
 void ParameterEditor::setParameterizedObject(ParameterizedObject *obj,
-						const QList<ParameterizedObject*> &slaveObjects) 
+						QList<ParameterizedObject*> slaveObjects) 
 {
 	TRACE("ParameterEditor::setParameterizedObject");
 

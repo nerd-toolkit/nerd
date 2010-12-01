@@ -286,7 +286,7 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 	//////////////////////////////////////////////////////////////////////
 	// Create BDN Information about neurons and synapses
 	
-	const QList<Neuron*>& netNeurons = net->getNeurons();
+	QList<Neuron*> netNeurons = net->getNeurons();
 	QListIterator<Neuron*> netNeuronIt(netNeurons);
 	while(netNeuronIt.hasNext()) {
 		Neuron *netNeuron = netNeuronIt.next();
@@ -295,7 +295,7 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 		if(ok == false){return QString::null;}		
 	}
 	
-	const QList<Synapse*>& netSynapses = net->getSynapses();
+	QList<Synapse*> netSynapses = net->getSynapses();
 	QListIterator<Synapse*> netSynapseIt(netSynapses);
 	while(netSynapseIt.hasNext()) {
 		Synapse *netSynapse = netSynapseIt.next();
@@ -360,7 +360,7 @@ bool NeuralNetworkBDNExporter::updateXmlIdTable(ModularNeuralNetwork *net, QStri
 	m_xmlIdTable.clear();
 
 	// create XML ID's for neurons
-	const QList<Neuron*>& netNeurons = net->getNeurons();
+	QList<Neuron*> netNeurons = net->getNeurons();
 	QListIterator<Neuron*> netNeuronIt(netNeurons);
 	while(netNeuronIt.hasNext()) {		
 		Neuron *netNeuron = netNeuronIt.next();
@@ -370,7 +370,7 @@ bool NeuralNetworkBDNExporter::updateXmlIdTable(ModularNeuralNetwork *net, QStri
 	}
 	
 	// create XML ID's for synapses
-	const QList<Synapse*>& netSynapses = net->getSynapses();
+	QList<Synapse*> netSynapses = net->getSynapses();
 	QListIterator<Synapse*> netSynapseIt(netSynapses);
 	while(netSynapseIt.hasNext()) {
 		
@@ -399,7 +399,7 @@ bool NeuralNetworkBDNExporter::calcNeuronPositionValues(ModularNeuralNetwork *ne
 	int maxX = std::numeric_limits<int>::min();
 	int maxY = std::numeric_limits<int>::min();
 	
-	const QList<Neuron*>& netNeurons = net->getNeurons();
+	QList<Neuron*> netNeurons = net->getNeurons();
 	QListIterator<Neuron*> netNeuronIt(netNeurons);
 	while(netNeuronIt.hasNext()) {
 		Neuron *netNeuron = netNeuronIt.next();
@@ -966,7 +966,7 @@ QList<int> NeuralNetworkBDNExporter::getBDNInSynapseInformation(Neuron *netNeuro
 	QList<int> inSynapseInformation = QList<int>();
 	
 	// create synapse information for neuron if needed
-	const QList<Synapse*>& netNeuronSynapsesIn = netNeuron->getSynapses();
+	QList<Synapse*> netNeuronSynapsesIn = netNeuron->getSynapses();
 					
 	// information for input synapses
 	QListIterator<Synapse*> netNeuronSynapsesInIt(netNeuronSynapsesIn);
@@ -987,7 +987,7 @@ QList<int> NeuralNetworkBDNExporter::getBDNOutSynapseInformation(Neuron *netNeur
 {
 	QList<int> outSynapseInformation = QList<int>();
 	
-	const QList<Synapse*>& netNeuronSynapsesOut = netNeuron->getOutgoingSynapses();
+	QList<Synapse*> netNeuronSynapsesOut = netNeuron->getOutgoingSynapses();
 		
 	// information for output synapses
 	QListIterator<Synapse*> netNeuronSynapsesOutIt(netNeuronSynapsesOut);

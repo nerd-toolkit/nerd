@@ -53,9 +53,9 @@ namespace nerd {
 ESMarriage::ESMarriage() {
 }
 
-QList<ESIndividual*> ESMarriage::doMarriage(const QList<ESIndividual*> &parents, 
-																						int rho,
-																					  const ESInformation &information) 
+QList<ESIndividual*> ESMarriage::doMarriage(QList<ESIndividual*> parents, 
+											int rho,
+											const ESInformation &information) 
 {
 	QList<ESIndividual*> marriagedParents;
 	

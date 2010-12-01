@@ -56,9 +56,9 @@ class ESMarriage {
   public:
     ESMarriage();
 
-    virtual QList<ESIndividual*> doMarriage(const QList<ESIndividual*> &parents, 
-																						int rho,
-																					  const ESInformation &information);
+    virtual QList<ESIndividual*> doMarriage(QList<ESIndividual*> parents, 
+											int rho,
+											const ESInformation &information);
 
 };
 

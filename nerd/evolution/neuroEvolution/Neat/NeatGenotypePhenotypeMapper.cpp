@@ -112,7 +112,7 @@ bool NeatGenotypePhenotypeMapper::createPhenotype(Individual *genomeOwner) {
 				TransferFunctionTanh(), 
 				SimpleSynapseFunction());
 	
-	const QList<NeatNodeGene*> &nodes = genome->getNodeGenes();
+	QList<NeatNodeGene*> nodes = genome->getNodeGenes();
 	for(QListIterator<NeatNodeGene*> i(nodes); i.hasNext();) {
 		NeatNodeGene *node = i.next();
 
@@ -134,7 +134,7 @@ bool NeatGenotypePhenotypeMapper::createPhenotype(Individual *genomeOwner) {
 		network->addNeuron(neuron);
 	}
 
-	const QList<NeatConnectionGene*> &connections = genome->getConnectionGenes();
+	QList<NeatConnectionGene*> connections = genome->getConnectionGenes();
 	for(QListIterator<NeatConnectionGene*> i(connections); i.hasNext();) {
 		NeatConnectionGene *connection = i.next();
 		

@@ -82,7 +82,7 @@ double ASeriesActivationFunction::calculateActivation(Neuron *owner) {
 	int32_t fpActivation = ASeriesFunctions::doubleToFixedPoint_8_24(activation);
 
 	// Sum up converted activation values of all synapses
-	const QList<Synapse*> &synapses = owner->getSynapses();
+	QList<Synapse*> synapses = owner->getSynapses();
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
 		fpActivation += ASeriesFunctions::doubleToFixedPoint_8_24(i.next()->calculateActivation());
 	}

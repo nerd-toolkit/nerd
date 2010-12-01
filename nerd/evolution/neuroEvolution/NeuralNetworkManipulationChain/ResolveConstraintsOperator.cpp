@@ -100,7 +100,7 @@ bool ResolveConstraintsOperator::applyOperator(Individual *individual, CommandEx
 		return true;
 	}
 
-	const QList<NeuronGroup*> &groups = net->getNeuronGroups();
+	QList<NeuronGroup*> groups = net->getNeuronGroups();
 
 	if(verbose) {
 		Core::log("ConstraintResolver: Checking for validity", true);
@@ -110,7 +110,7 @@ bool ResolveConstraintsOperator::applyOperator(Individual *individual, CommandEx
 		for(QListIterator<NeuronGroup*> g(groups); g.hasNext();) {
 			NeuronGroup *group = g.next();
 
-			const QList<GroupConstraint*> &constraints = group->getConstraints();
+			QList<GroupConstraint*> constraints = group->getConstraints();
 
 			for(QListIterator<GroupConstraint*> c(constraints); c.hasNext();) {
 				GroupConstraint *constraint = c.next();
@@ -142,7 +142,7 @@ bool ResolveConstraintsOperator::applyOperator(Individual *individual, CommandEx
 		for(QListIterator<NeuronGroup*> g(groups); g.hasNext();) {
 			NeuronGroup *group = g.next();
 
-			const QList<GroupConstraint*> &constraints = group->getConstraints();
+			QList<GroupConstraint*> constraints = group->getConstraints();
 
 			for(QListIterator<GroupConstraint*> c(constraints); c.hasNext();) {
 				GroupConstraint *constraint = c.next();

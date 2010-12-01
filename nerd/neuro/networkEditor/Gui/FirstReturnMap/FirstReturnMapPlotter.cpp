@@ -381,7 +381,7 @@ void FirstReturnMapPlotter::setTriggerEventName(const QString &eventName) {
 		return;
 	}
 
-	const QMap<Event*, QString> &triggerEvents = mValuePlotter->getSupportedUpdateTriggerEvents();
+	QMap<Event*, QString> triggerEvents = mValuePlotter->getSupportedUpdateTriggerEvents();
 	int index = 1; 
 	for(QMapIterator<Event*, QString> i(triggerEvents); i.hasNext();) {
 		i.next();
@@ -478,7 +478,7 @@ void FirstReturnMapPlotter::showLegendCheckBoxChanged(bool) {
 
 void FirstReturnMapPlotter::supportedTriggerEventsChanged() {
 	mUpdateEventSelector->clear();
-	const QMap<Event*, QString> &triggerEvents = mValuePlotter->getSupportedUpdateTriggerEvents();
+	QMap<Event*, QString> triggerEvents = mValuePlotter->getSupportedUpdateTriggerEvents();
 
 	mUpdateEventSelector->addItem("None");
 	mUpdateEventSelector->setCurrentIndex(0);
@@ -502,7 +502,7 @@ void FirstReturnMapPlotter::triggerEventSelected(int index) {
 		return;
 	}
 
-	const QMap<Event*, QString> &triggerEvents = mValuePlotter->getSupportedUpdateTriggerEvents();
+	QMap<Event*, QString> triggerEvents = mValuePlotter->getSupportedUpdateTriggerEvents();
 
 	for(QMapIterator<Event*, QString> i(triggerEvents); i.hasNext();) {
 		i.next();

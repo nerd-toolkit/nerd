@@ -268,7 +268,7 @@ bool EvolutionManager::removeEvolutionWorld(World *world) {
 }
 
 
-const QList<World*>& EvolutionManager::getEvolutionWorlds() const {
+QList<World*> EvolutionManager::getEvolutionWorlds() const {
 	return mEvolutionWorlds;
 }
 
@@ -371,7 +371,7 @@ bool EvolutionManager::processNextGeneration() {
 		}
 
 
-		const QList<Population*> &populations = world->getPopulations();
+		QList<Population*> populations = world->getPopulations();
 		for(QListIterator<Population*> j(populations); j.hasNext();) {
 			Population *pop = j.next();
 			trashcan << pop->getIndividuals();
@@ -385,7 +385,7 @@ bool EvolutionManager::processNextGeneration() {
 			//TODO check how to do this better.
 			int desiredPopulationSize = Math::max(pop->getDesiredPopulationSizeValue()->get(), 1);
 
-			const QList<SelectionMethod*> &selectionMethods = pop->getSelectionMethods();
+			QList<SelectionMethod*> selectionMethods = pop->getSelectionMethods();
 			QList<Individual*> newGeneration;
 			double sum = 0.0;
 
@@ -450,7 +450,7 @@ bool EvolutionManager::processNextGeneration() {
 	//update parent property of old individuals 
 	for(QListIterator<World*> i(mEvolutionWorlds); i.hasNext();) {
 		World *world = i.next();
-		const QList<Population*> &populations = world->getPopulations();
+		QList<Population*> populations = world->getPopulations();
 		for(QListIterator<Population*> j(populations); j.hasNext();) {
 			Population *pop = j.next();
 			if(pop == 0) {
@@ -498,7 +498,7 @@ bool EvolutionManager::processNextGeneration() {
 	//update populations (set individuals of new generation)
 	for(QListIterator<World*> i(mEvolutionWorlds); i.hasNext();) {
 		World *world = i.next();
-		const QList<Population*> &populations = world->getPopulations();
+		QList<Population*> populations = world->getPopulations();
 		for(QListIterator<Population*> j(populations); j.hasNext();) {
 			Population *pop = j.next();
 			if(pop == 0) {
@@ -564,7 +564,7 @@ bool EvolutionManager::processNextGeneration() {
 // 	for(QListIterator<World*> i(mEvolutionWorlds); i.hasNext();) {
 // 		World *world = i.next();
 // 		if(world->getEvaluationMethod() != 0) {
-// 			const QList<Population*> &populations = i.next()->getPopulations();
+// 			QList<Population*> populations = i.next()->getPopulations();
 // 			for(QListIterator<Population*> j(populations); j.hasNext();) {
 // 				Population *pop = j.next();
 // 				GenotypePhenotypeMapper *mapper = pop->getGenotypePhenotypeMapper();
@@ -586,10 +586,10 @@ bool EvolutionManager::processNextGeneration() {
 	//so danging pointers have to be avoided.
 	for(QListIterator<World*> i(mEvolutionWorlds); i.hasNext();) {
 		World *world = i.next();
-		const QList<Population*> &populations = world->getPopulations();
+		QList<Population*> populations = world->getPopulations();
 		for(QListIterator<Population*> j(populations); j.hasNext();) {
 			Population *pop = j.next();
-			const QList<Individual*> &individuals = pop->getIndividuals();
+			QList<Individual*> individuals = pop->getIndividuals();
 			for(QListIterator<Individual*> i(individuals); i.hasNext();) {
 				i.next()->getParents().clear();
 			}
@@ -741,7 +741,7 @@ bool EvolutionManager::restartEvolution() {
 			cerr << "Resetting selection methods and populations." << endl;
 		}
 
-		const QList<Population*> &populations = world->getPopulations();
+		QList<Population*> populations = world->getPopulations();
 		for(QListIterator<Population*> j(populations); j.hasNext();) {
 			Population *pop = j.next();
 
@@ -750,7 +750,7 @@ bool EvolutionManager::restartEvolution() {
 			pop->getIndividuals().clear();
 
 			//reset selection methods
-			const QList<SelectionMethod*> &selectionMethods = pop->getSelectionMethods();
+			QList<SelectionMethod*> selectionMethods = pop->getSelectionMethods();
 			for(QListIterator<SelectionMethod*> k(selectionMethods); k.hasNext();) {
 				SelectionMethod *selection = k.next();
 				selection->reset();
@@ -927,7 +927,7 @@ void EvolutionManager::initEvolution() {
 // 			cerr << "Resetting selection methods and populations." << endl;
 // 		}
 // 
-// 		const QList<Population*> &populations = world->getPopulations();
+// 		QList<Population*> populations = world->getPopulations();
 // 		for(QListIterator<Population*> j(populations); j.hasNext();) {
 // 			Population *pop = j.next();
 // 
@@ -936,7 +936,7 @@ void EvolutionManager::initEvolution() {
 // 			pop->getIndividuals().clear();
 // 
 // 			//reset selection methods
-// 			const QList<SelectionMethod*> &selectionMethods = pop->getSelectionMethods();
+// 			QList<SelectionMethod*> selectionMethods = pop->getSelectionMethods();
 // 			for(QListIterator<SelectionMethod*> k(selectionMethods); k.hasNext();) {
 // 				SelectionMethod *selection = k.next();
 // 				selection->reset();
@@ -958,7 +958,7 @@ void EvolutionManager::initEvolution() {
 // 	//update populations (set individuals of new generation)
 // 	for(QListIterator<World*> i(mEvolutionWorlds); i.hasNext();) {
 // 		World *world = i.next();
-// 		const QList<Population*> &populations = world->getPopulations();
+// 		QList<Population*> populations = world->getPopulations();
 // 		for(QListIterator<Population*> j(populations); j.hasNext();) {
 // 			Population *pop = j.next();
 // 			if(pop == 0) {

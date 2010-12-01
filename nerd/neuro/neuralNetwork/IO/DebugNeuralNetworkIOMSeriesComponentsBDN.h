@@ -78,8 +78,8 @@ namespace nerd {
 			static void addXmlSynapse(QDomElement &baseElement, int xmlSynapseID, int srcXmlNeuronID, int destXmlNeuronID, double strength, QString guid);
 			static int addXmlBias(QDomElement &baseElement, int xmlNeuronID, int xPos, int yPos, double bias, int &nextXmlId);
 			
-			static QString getNeuronByteCodeMappingTypes(const QMap<QString, QString> &map);
-			static QString getSynapseByteCodeMappingTypes(const QMap<QString, QString> &map);
+			static QString getNeuronByteCodeMappingTypes(QMap<QString, QString> map);
+			static QString getSynapseByteCodeMappingTypes(QMap<QString, QString> map);
 
 	};
 

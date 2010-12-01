@@ -70,8 +70,8 @@ namespace nerd {
 		virtual void updateComponentInput() = 0;
 		virtual void updateComponentOutput() = 0;
 	
-		virtual bool setInputValues(const QList<InterfaceValue*> &values);
-		virtual bool setOutputValues(const QList<InterfaceValue*> &values);
+		virtual bool setInputValues(QList<InterfaceValue*> values);
+		virtual bool setOutputValues(QList<InterfaceValue*> values);
 	
 	protected:
 		InterfaceValue *mDesiredMotorTorqueValue;

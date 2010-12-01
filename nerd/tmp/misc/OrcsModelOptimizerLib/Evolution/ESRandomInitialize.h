@@ -57,14 +57,14 @@ namespace nerd {
 
 class ESRandomInitialize : public ESInitialize {
   public:
-		ESRandomInitialize(const QList<ESInitializeValue> &objectParametersRanges, 
-											 const QList<ESInitializeValue> &strategyParametersRanges);  
+		ESRandomInitialize(QList<ESInitializeValue> objectParametersRanges, 
+											 QList<ESInitializeValue> strategyParametersRanges);  
 		
 		ESRandomInitialize(ESInitializeValue objectParametersRanges,
 											 int numberOfObjectParameters, 
-											 const QList<ESInitializeValue> &strategyParametersRanges);  
+											 QList<ESInitializeValue> strategyParametersRanges);  
 
-		ESRandomInitialize(const QList<ESInitializeValue> &objectParametersRanges, 
+		ESRandomInitialize(QList<ESInitializeValue> objectParametersRanges, 
 											 ESInitializeValue strategyParametersRanges,
 											 int numberOfStrategyParameters);
 		  

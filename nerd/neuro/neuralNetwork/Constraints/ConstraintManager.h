@@ -73,7 +73,7 @@ namespace nerd {
 		virtual bool addConstraintPrototype(GroupConstraint *constraint);
 		virtual bool removeConstrantPrototype(GroupConstraint *constraint);
 		virtual GroupConstraint* getConstraintPrototype(const QString &name) const;
-		virtual const QList<GroupConstraint*>& getConstraintPrototypes() const;
+		virtual QList<GroupConstraint*> getConstraintPrototypes() const;
 
 		static QStringList verifyAllConstraints(ModularNeuralNetwork *net);
 		static QStringList verifyConstraints(NeuronGroup *group);

@@ -82,13 +82,13 @@ namespace nerd {
 		virtual bool attachToGroup(NeuronGroup *group);
 		virtual bool detachFromGroup(NeuronGroup *group);
 
-		bool setRequiredElements(const QList<NeuralNetworkElement*> &elements);
+		bool setRequiredElements(QList<NeuralNetworkElement*> elements);
 
 		virtual bool isValid(NeuronGroup *owner);
 		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor,
 									 QList<NeuralNetworkElement*> &trashcan);
 
-		virtual bool groupIdsChanged(const QHash<qulonglong, qulonglong> &changedIds);
+		virtual bool groupIdsChanged(QHash<qulonglong, qulonglong> changedIds);
 		
 		virtual bool equals(GroupConstraint *constraint);
 
@@ -110,7 +110,7 @@ namespace nerd {
 		void updateFlipMode();
 		void updateNetworkElementPairValue();
 		bool updateNetworkElementPairs(NeuronGroup *owner, NeuronGroup *target);
-		const QList<NetworkElementPair>& getNetworkElementPairs() const;
+		QList<NetworkElementPair> getNetworkElementPairs() const;
 
 		StringValue* getNetworkElementPairValue() const;
 		ULongLongValue* getTargetGroupIdValue() const;

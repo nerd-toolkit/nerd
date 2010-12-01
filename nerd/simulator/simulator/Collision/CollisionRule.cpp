@@ -95,8 +95,8 @@ void CollisionRule::valueChanged(Value *value) {
 }
 
 
-void CollisionRule::set(const QList<CollisionObject*> &sourceGroup, 
-		const QList<CollisionObject*> &targetGroup)
+void CollisionRule::set(QList<CollisionObject*> sourceGroup, 
+		QList<CollisionObject*> targetGroup)
 {
 	mSourceGroup.clear();
 	mTargetGroup.clear();
@@ -153,7 +153,7 @@ QList<CollisionObject*> CollisionRule::getSourceGroup() const {
 	return mSourceGroup;
 }
 
-void CollisionRule::setSourceGroup(const QList<CollisionObject*> &sourceGroup){
+void CollisionRule::setSourceGroup(QList<CollisionObject*> sourceGroup){
 	mSourceGroup = sourceGroup;
 }
 
@@ -161,7 +161,7 @@ QList<CollisionObject*> CollisionRule::getTargetGroup() const {
 	return mTargetGroup;
 }
 
-void CollisionRule::setTargetGroup(const QList<CollisionObject*> &targetGroup) {
+void CollisionRule::setTargetGroup(QList<CollisionObject*> targetGroup) {
 	mTargetGroup = targetGroup;
 }
 

@@ -160,7 +160,7 @@ void NetworkAgentControlParser::connectNetworksToInterfaces() {
 		NeuralNetwork *net = 0;
 
 		//check if there is already a network that can be reused.
-		const QList<NeuralNetwork*> &networks = nnm->getNeuralNetworks();
+		QList<NeuralNetwork*> networks = nnm->getNeuralNetworks();
 		if(networks.size() > i) {
 			net = networks.at(i);
 		}

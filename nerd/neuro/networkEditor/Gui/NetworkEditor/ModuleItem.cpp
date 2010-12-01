@@ -144,7 +144,7 @@ bool ModuleItem::removeMemberItem(PaintItem *member) {
 
 
 
-const QList<PaintItem*>& ModuleItem::getMemberItems() const {
+QList<PaintItem*> ModuleItem::getMemberItems() const {
 	return mMembers;
 }
 

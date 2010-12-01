@@ -99,7 +99,7 @@ SelectionMethod* FirstParentsTestSelectionMethod::createCopy() const {
  * @param numberOfParentsPerIndividual the number of parents per new individudal.
  */
 QList<Individual*> FirstParentsTestSelectionMethod::createSeed(
-		const QList<Individual*> &currentGeneration, int numberOfIndividuals, 
+		QList<Individual*> currentGeneration, int numberOfIndividuals, 
 		int numberOfPreservedParents, int numberOfParentsPerIndividual)
 {
 	//disable warnings of missing variables
@@ -114,7 +114,7 @@ QList<Individual*> FirstParentsTestSelectionMethod::createSeed(
 		return newGeneration;
 	}
 	
-	const QList<Individual*> &individuals = currentGeneration;
+	QList<Individual*> individuals = currentGeneration;
 
 	int numberOfParents = mNumberOfParents->get();
 

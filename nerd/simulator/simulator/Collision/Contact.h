@@ -65,8 +65,8 @@ public:
 	CollisionObject* getFirstCollisionObject() const;
 	CollisionObject* getSecondCollisionObject() const;
 
-	const QList<Vector3D>& getContactPoints() const;
-	void setContactPoints(const QList<Vector3D> &contactPoints);
+	QList<Vector3D> getContactPoints() const;
+	void setContactPoints(QList<Vector3D> contactPoints);
 
 private:
 	CollisionObject *mFirstCollisionObject;

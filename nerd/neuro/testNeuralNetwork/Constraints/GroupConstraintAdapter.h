@@ -64,7 +64,7 @@ namespace nerd {
 								qulonglong oldId, qulonglong newId);
 
 		virtual int getNumberOfRequiredElements() const;
-		virtual bool setRequiredElements(const QList<NeuralNetworkElement*> &elements);
+		virtual bool setRequiredElements(QList<NeuralNetworkElement*> elements);
 
 		virtual bool isValid(NeuronGroup *owner);
 		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor,

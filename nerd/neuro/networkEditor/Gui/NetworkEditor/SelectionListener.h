@@ -57,7 +57,7 @@ namespace nerd {
 	 */
 	class SelectionListener {
 	public:
-		virtual void selectionChanged(const QList<PaintItem*> &selectedItems) = 0;
+		virtual void selectionChanged(QList<PaintItem*> selectedItems) = 0;
 
 	private:
 	};

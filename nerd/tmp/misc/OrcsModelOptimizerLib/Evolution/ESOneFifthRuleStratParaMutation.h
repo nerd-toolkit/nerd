@@ -58,8 +58,8 @@ class ESOneFifthRuleStratParaMutation : public ESStrategyParametersMutation {
 		ESOneFifthRuleStratParaMutation(int checkInterval, double a);
 		
 		virtual QList<OptimizationDouble> doMutation(
-																				const QList<OptimizationDouble> &strategyParameters,
-																			 	const ESInformation &information);
+										QList<OptimizationDouble> strategyParameters,
+										const ESInformation &information);
 
 	protected:
 		int mCheckInterval;

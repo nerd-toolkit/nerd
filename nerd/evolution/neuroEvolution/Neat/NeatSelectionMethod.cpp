@@ -133,7 +133,7 @@ SelectionMethod* NeatSelectionMethod::createCopy() const {
 }
 
 
-QList<Individual*> NeatSelectionMethod::createSeed(const QList<Individual*> &currentGeneration,
+QList<Individual*> NeatSelectionMethod::createSeed(QList<Individual*> currentGeneration,
 									int numberOfIndividuals, 
 									int, int)
 {

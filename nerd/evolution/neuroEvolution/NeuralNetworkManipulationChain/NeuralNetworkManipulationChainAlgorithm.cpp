@@ -130,7 +130,7 @@ bool NeuralNetworkManipulationChainAlgorithm::removeOperator(
 }
 
 
-const QList<NeuralNetworkManipulationOperator*>& 
+QList<NeuralNetworkManipulationOperator*> 
 			NeuralNetworkManipulationChainAlgorithm::getOperators() const
 {
 	return mOperators;
@@ -161,7 +161,7 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 
 	Core *core = Core::getInstance();
 
-	const QList<Population*> &populations = mOwnerWorld->getPopulations();
+	QList<Population*> populations = mOwnerWorld->getPopulations();
 	for(QListIterator<Population*> i(populations); i.hasNext() && !core->isShuttingDown();) {
 		Population *pop = i.next();
 		QList<Individual*> individuals = pop->getIndividuals();

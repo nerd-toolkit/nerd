@@ -56,8 +56,8 @@ namespace nerd {
 class ESStrategyParametersMutation {
   public:
 		virtual QList<OptimizationDouble> doMutation(
-																						const QList<OptimizationDouble> &strategyParameters,
-																		 				const ESInformation &information) = 0;
+									QList<OptimizationDouble> strategyParameters,
+									const ESInformation &information) = 0;
 
 };
 
