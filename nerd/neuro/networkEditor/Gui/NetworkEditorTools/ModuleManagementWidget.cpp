@@ -315,14 +315,33 @@ void ModuleManagementWidget::createModule() {
 
 void ModuleManagementWidget::reloadModules() {
 	NeuroModuleManager *nmm = NeuroModuleManager::getInstance();
-	nmm->loadNeuroModulePrototypes(nmm->getOptionalModuleDirectoryValue()->get());
+
+	if(nmm == 0) {
+		return;
+	}
+	nmm->clearPrototypes();
+
+	QStringList directories = nmm->getOptionalModuleDirectoryValue()->get().split(",");
+	for(QListIterator<QString> i(directories); i.hasNext();) {
+		nmm->loadNeuroModulePrototypes(i.next());
+	}
 	updateView();
 }
 
 
 void ModuleManagementWidget::storeModules() {
 	NeuroModuleManager *nmm = NeuroModuleManager::getInstance();
-	nmm->saveNeuroModulePrototypes(nmm->getOptionalModuleDirectoryValue()->get());
+
+	if(nmm == 0) {
+		return;
+	}
+	QStringList directories = nmm->getOptionalModuleDirectoryValue()->get().split(",");
+	if(directories.empty()) {
+		Core::log("ModuleManagementWidget: Could not save NeuroModules. No target directory given!");
+	}
+	else {
+		nmm->saveNeuroModulePrototypes(directories.first());
+	}
 }
 
 

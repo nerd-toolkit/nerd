@@ -76,12 +76,17 @@ NeuroModuleManager::NeuroModuleManager()
 {
 	Core *core = Core::getInstance();
 
+	QString globalModuleDirectory = QDir::homePath() + "/.nerd/neuroModules";
+	if(!core->isUsingReducedFileWriting()) {
+		core->enforceDirectoryPath(globalModuleDirectory);	
+	}
+
 	QString path = core->getConfigDirectoryPath() + "/neuroModules";
 	if(!core->isUsingReducedFileWriting()) {
 		core->enforceDirectoryPath(path);	
 	}
 
-	mOptionalModuleDirectory = new StringValue(path);
+	mOptionalModuleDirectory = new StringValue(globalModuleDirectory + "," + path);
 	mOptionalModuleDirectory->useAsFileName(true);
 
 	core->getValueManager()->addValue(
@@ -156,7 +161,11 @@ bool NeuroModuleManager::init() {
 		ok = false;
 	}
 	if(ok) {
-		loadNeuroModulePrototypes(mOptionalModuleDirectory->get());
+		clearPrototypes();
+		QStringList directories = mOptionalModuleDirectory->get().split(",");
+		for(QListIterator<QString> i(directories); i.hasNext();) {
+			loadNeuroModulePrototypes(i.next());
+		}
 	}
 
 	return ok;
@@ -221,8 +230,6 @@ NeuroModulePrototype* NeuroModuleManager::getNeuroModuleByName(const QString &na
 
 
 bool NeuroModuleManager::loadNeuroModulePrototypes(const QString &directoryName) {
-
-	clearPrototypes();
 
 	QDir dir(directoryName);
 	if(!dir.exists()) {
