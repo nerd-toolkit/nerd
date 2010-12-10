@@ -99,7 +99,6 @@ class CollisionRule : public ParameterizedObject {
 		StringValue* getSourceList() const;
 		StringValue* getTargetList() const;
 
-	protected:
 		void updateObjectList(bool source);
 	
 		

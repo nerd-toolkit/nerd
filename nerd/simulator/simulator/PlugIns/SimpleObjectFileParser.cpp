@@ -217,14 +217,6 @@ bool SimpleObjectFileParser::loadXmlDescription() {
 		file.close();
 		return false;
 	}
-	if(successful) {
-
-		//add collision rules.
-		QDomNodeList terminateRules = docElem.elementsByTagName("CollisionRule");
-		for(unsigned int i = 0; i < terminateRules.length(); i++) {
-			parseCollisionRule(terminateRules.item(i).toElement());
-		}
-	}
 
 	successful = true;
 	//parse models and agents
@@ -289,6 +281,14 @@ bool SimpleObjectFileParser::loadXmlDescription() {
 	QDomNodeList valueDefinitions = docElem.elementsByTagName("value");
 	for(unsigned int i = 0; i < valueDefinitions.length(); i++) {
 		parseValueDefinition(valueDefinitions.item(i).toElement());
+	}
+
+	if(successful) {
+		//add collision rules.
+		QDomNodeList terminateRules = docElem.elementsByTagName("CollisionRule");
+		for(unsigned int i = 0; i < terminateRules.length(); i++) {
+			parseCollisionRule(terminateRules.item(i).toElement());
+		}
 	}
 
 	Physics::getSimulationEnvironmentManager()->createSnapshot();
@@ -1361,6 +1361,9 @@ void SimpleObjectFileParser::parseCollisionRule(QDomElement collisionRuleNode) {
 	
 	QDomNode n = collisionRuleNode.firstChild();
 	
+	QString sourceList;
+	QString targetList;
+
 	while(!n.isNull()) {
 		QDomElement e = n.toElement();
 		if(!e.isNull()) {
@@ -1369,20 +1372,28 @@ void SimpleObjectFileParser::parseCollisionRule(QDomElement collisionRuleNode) {
 					a = e.attributeNode("object");
 					QString sourceName = a.value();
 
-					if(!sourceName.startsWith("/")) {
-						sourceName.prepend("/");
+					if(sourceName.startsWith("/")) {
+						sourceName.mid(1);
 					}
 
-					QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
-									->getSimObjects(sourceName);
-					for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
-						SimBody *sourceObject = dynamic_cast<SimBody*>(j.next());
-						if(sourceObject != 0) {
-							for(int i = 0; i < sourceObject->getCollisionObjects().size(); i++) {
-								rule->addToSourceGroup(sourceObject->getCollisionObjects().at(i));
-							}
-						}
+					if(sourceList != "") {
+						sourceList += ",";
 					}
+					sourceList += sourceName;
+
+// 					sourceName.prepend("/");
+// 					
+// 
+// 					QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
+// 									->getSimObjects(sourceName);
+// 					for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
+// 						SimBody *sourceObject = dynamic_cast<SimBody*>(j.next());
+// 						if(sourceObject != 0) {
+// 							for(int i = 0; i < sourceObject->getCollisionObjects().size(); i++) {
+// 								rule->addToSourceGroup(sourceObject->getCollisionObjects().at(i));
+// 							}
+// 						}
+// 					}
 				}
 			}
 			else if(e.tagName().compare("target") == 0) {
@@ -1390,20 +1401,29 @@ void SimpleObjectFileParser::parseCollisionRule(QDomElement collisionRuleNode) {
 					a = e.attributeNode("object");
 					QString targetName = a.value();
 	
-					if(!targetName.startsWith("/")) {
-						targetName.prepend("/");
+					if(targetName.startsWith("/")) {
+						targetName = targetName.mid(1);
 					}
 
-					QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
-									->getSimObjects(targetName);
-					for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
-						SimBody *targetObject = dynamic_cast<SimBody*>(j.next());
-						if(targetObject != 0) {
-							for(int i = 0; i < targetObject->getCollisionObjects().size(); i++) {
-								rule->addToTargetGroup(targetObject->getCollisionObjects().at(i));
-							}
-						}
+					if(targetList != "") {
+						targetList += ",";
 					}
+					targetList += targetName;
+
+// 					targetName.prepend("/");
+// 
+// 					
+// 
+// 					QList<SimObject*> matchingObjects = Physics::getPhysicsManager()
+// 									->getSimObjects(targetName);
+// 					for(QListIterator<SimObject*> j(matchingObjects); j.hasNext();) {
+// 						SimBody *targetObject = dynamic_cast<SimBody*>(j.next());
+// 						if(targetObject != 0) {
+// 							for(int i = 0; i < targetObject->getCollisionObjects().size(); i++) {
+// 								rule->addToTargetGroup(targetObject->getCollisionObjects().at(i));
+// 							}
+// 						}
+// 					}
 				}
 			}
 			else if(e.tagName().compare("param") == 0) {
@@ -1439,6 +1459,9 @@ void SimpleObjectFileParser::parseCollisionRule(QDomElement collisionRuleNode) {
 		n = n.nextSibling();
 	}
 	rule->init();
+	rule->getSourceList()->set(sourceList);
+	rule->getTargetList()->set(targetList);
+
 	cm->addCollisionRule(rule);
 }
 }
