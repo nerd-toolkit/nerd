@@ -41,36 +41,92 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
+
+
+#include "ChaoticNeuronActivationFunction.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "Network/Neuron.h"
+
+
+using namespace std;
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
+
+/**
+ * Constructs a new ChaoticNeuronActivationFunction.
+ */
+ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction()
+	: ActivationFunction("Chaotic")
 {
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	mDecay = new DoubleValue(0.99);
+	
+	addParameter("Decay", mDecay);
+}
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
+/**
+ * Copy constructor. 
+ * 
+ * @param other the ChaoticNeuronActivationFunction object to copy.
+ */
+ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction(
+						const ChaoticNeuronActivationFunction &other) 
+	: ActivationFunction(other)
+{
+	mDecay = dynamic_cast<DoubleValue*>(getParameter("Decay"));
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+/**
+ * Destructor.
+ */
+ChaoticNeuronActivationFunction::~ChaoticNeuronActivationFunction() {
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
+
+ActivationFunction* ChaoticNeuronActivationFunction::createCopy() const {
+	return new ChaoticNeuronActivationFunction(*this);
+}
+
+void ChaoticNeuronActivationFunction::reset(Neuron *owner) {
+}
+
+double ChaoticNeuronActivationFunction::calculateActivation(Neuron *owner) {
+	if(owner == 0) {
+		return 0.0;
+	}
+
+	double activation = owner->getActivationValue().get() * mDecay->get();
+
+	activation += owner->getBiasValue().get();
+
+	QList<Synapse*> synapses = owner->getSynapses();
+	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
+		activation += i.next()->calculateActivation();
+	}
+	return activation;
+}
+
+
+bool ChaoticNeuronActivationFunction::equals(ActivationFunction *activationFunction) const {
+	if(ActivationFunction::equals(activationFunction) == false) {
+		return false;
+	}
+	ChaoticNeuronActivationFunction *af =
+ 			dynamic_cast<ChaoticNeuronActivationFunction*>(activationFunction);
+
+	if(af == 0) {
+		return false;
+	}
+	if(af->mDecay->get() != mDecay->get()) {
+		return false;
+	}
+	return true;
 }
 
 }
+
 
 

@@ -70,6 +70,7 @@ set(nerd_neuralNetwork_SRCS
 	ActivationFunction/DelayLineActivationFunction.cpp
 	Learning/Backpropagation/Backpropagation.cpp
 	Constraints/BackpropagationConstraint.cpp
+	ActivationFunction/ChaoticNeuronActivationFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

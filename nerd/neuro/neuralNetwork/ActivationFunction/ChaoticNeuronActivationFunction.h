@@ -41,36 +41,41 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
+
+#ifndef ORCSChaoticNeuronActivationFunction_H
+#define ORCSChaoticNeuronActivationFunction_H
+
+#include <QString>
+#include <QHash>
+#include "ActivationFunction/ActivationFunction.h"
+#include "Value/DoubleValue.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	/**
+	 * ChaoticNeuronActivationFunction.
+	 *
+	 */
+	class ChaoticNeuronActivationFunction : public ActivationFunction {
+	public:
+		ChaoticNeuronActivationFunction();
+		ChaoticNeuronActivationFunction(const ChaoticNeuronActivationFunction &other);
+		virtual ~ChaoticNeuronActivationFunction();
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+		virtual ActivationFunction* createCopy() const;
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+		bool equals(ActivationFunction *activationFunction) const;
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
+	private:
+		DoubleValue *mDecay;
+	};
+
 }
 
-}
+#endif
+
 
 
