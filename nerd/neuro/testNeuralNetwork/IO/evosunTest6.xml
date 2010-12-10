@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="LATIN1"?>
-<Net SynapseMode="conventional" Transferfunction="tanh">
-	<Neuron Bias="2.0" Layer="input" Process="dynamic"/>
-    <Neuron Bias="0.0" Layer="output" Process="dynamic">
-        <Synapse Process="dynamic" Source="0"/>
-        <Synapse Process="dynamic" Source="17" Strength="0.0"/>
-        <Synapse Process="dynamic" Source="0" Strength="20.0"/>
-    </Neuron>
-</Net>

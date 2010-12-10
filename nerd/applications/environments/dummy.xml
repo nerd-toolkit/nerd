@@ -1,9 +1,0 @@
- <ORCS version="Environment XML V1.1"> 
-
-  <Models> 
-   <model prototype="Dummy" name="Dummy" position="(0,0,0)" orientation="(0,0,0)">
-   </model>
-  </Models> 
-
- </ORCS>
-

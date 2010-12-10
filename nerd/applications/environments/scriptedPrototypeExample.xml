@@ -1,9 +1,0 @@
- <NERD version="Environment XML V1.1"> 
-
-	<Models> 
-		<model prototype="Ground" name="Ground" />
-   		<model prototype="TrackDrive" name="TrackDriver" orientation="(0,0,0)" position="(0,1,0)" />  
-	</Models>
-
-
-</NERD>

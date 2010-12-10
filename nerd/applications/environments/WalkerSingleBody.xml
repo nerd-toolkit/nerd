@@ -1,9 +1,0 @@
- <ORCS version="Environment XML V1.1"> 
-
-  <Models> 
-   <model prototype="Ground" name="Ground" />  
-   <model prototype="SimpleWalker" name="SimpleWalker" position="(0,0.05,0)" orientation="(0, 0,0)" NumberOfSegments="3" UseSingleBody="true" />
-  </Models> 
-
- </ORCS>
-

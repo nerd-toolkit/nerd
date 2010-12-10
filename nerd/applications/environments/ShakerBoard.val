@@ -1,8 +1,0 @@
-#ORCS Values
-#Saved at: 17.04.2009  15:14:43
-/Sim/MyShakerBoard/RandomSignalX/Amplitude=0.4
-/Sim/MyShakerBoard/RandomSignalX/Enabled=T
-/Sim/MyShakerBoard/RandomSignalX/IdleSteps=100
-/Sim/MyShakerBoard/RandomSignalX/Offset=0
-/Sim/MyShakerBoard/RandomSignalX/Period=0.3
-/Sim/MyShakerBoard/RandomSignalX/Seed=10

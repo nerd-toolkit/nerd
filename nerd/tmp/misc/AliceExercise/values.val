@@ -1,9 +1,0 @@
-#ORCS Values
-#Saved at: 06.07.2009  15:36:32
-/Control/NumberOfSteps=2500000
-/Control/NumberOfTries=100000
-/OpenGLVisualization/Coordinate Axes=F
-/OpenGLVisualization/ORCS/ReferenceBodyName=/Alice/Body
-/OpenGLVisualization/ORCS/StartOrientation=(-26.4,7.8,0)
-/OpenGLVisualization/ORCS/StartPosition=(0.28359903,1.1116902,2.3534424)
-/OpenGLVisualization/ORCS/Translational=T
