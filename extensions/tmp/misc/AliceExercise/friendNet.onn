@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <defaultTransferFunction name="tanh" />
+    <defaultActivationFunction name="AdditiveTD" />
+    <defaultSynapseFunction name="SimpleUpdateFunction" />
+    <neuron bias="0" id="26" name="/Sensor0/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(63,32,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="27" name="/Sensor1/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(78.1,153,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="28" name="/Sensor2/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(294.2,73.1,0)" name="Location" />
+        </properties>
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="29" name="/Sensor3/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(220,20,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="30" name="/Sensor4/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(546,149,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="31" name="/Sensor5/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(320,20,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="32" name="/Sensor6/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(370,20,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="33" name="/Sensor7/Distance" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(420,20,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="34" name="/LightLeft/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(208.9,105.1,0)" name="Location" />
+        </properties>
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="35" name="/LightMid/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(520,20,0)" name="Location" />
+        </properties>
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="36" name="/LightRight/Brightness" >
+        <properties>
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="(423,106,0)" name="Location" />
+        </properties>
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0.6" id="37" name="/LeftMotor/DesiredSetting" >
+        <properties>
+            <prop value="(208.1,227,0)" name="Location" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="-5" source="41" id="45" >
+            <properties>
+                <prop value="(262.05,197.9,0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="-1" source="115" id="122" >
+            <properties>
+                <prop value="(276.53,252.388,0.0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="1" source="118" id="124" >
+            <properties>
+                <prop value="(248.95,252.048,0.0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0.6" id="38" name="/RightMotor/DesiredSetting" >
+        <properties>
+            <prop value="(423.3,227,0)" name="Location" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="5" source="41" id="44" >
+            <properties>
+                <prop value="(372.35,197,0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="1" source="115" id="121" >
+            <properties>
+                <prop value="(384.13,252.388,0.0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="-1" source="118" id="123" >
+            <properties>
+                <prop value="(356.55,251.643,0.0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0" id="41" name="Hidden" >
+        <properties>
+            <prop value="(316.9,167,0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="1" source="27" id="42" >
+            <properties>
+                <prop value="(197.5,160,0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="-1" source="30" id="43" >
+            <properties>
+                <prop value="(431,158,0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0" id="114" name="Hidden" >
+        <properties>
+            <prop value="(314.9,325.645,0.0)" name="Location" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="SignalGenerator" >
+            <param value="500" name="MaxDuration" />
+            <param value="100" name="ChangeDuration" />
+            <param value="-1" name="MinActivation" />
+            <param value="100" name="MinDuration" />
+            <param value="1" name="MaxActivation" />
+            <param value="T" name="RandActivation" />
+            <param value="T" name="RandDuration" />
+        </activationFunction>
+    </neuron>
+    <neuron bias="0" id="115" name="Hidden" >
+        <properties>
+            <prop value="(344.96,277.775,0.0)" name="Location" />
+        </properties>
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="-1" source="114" id="116" >
+            <properties>
+                <prop value="(380.15,330.87,0.0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="-1000" source="126" id="129" >
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="-1000" source="125" id="131" >
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0" id="118" name="Hidden" >
+        <properties>
+            <prop value="(289.8,277.095,0.0)" name="Location" />
+        </properties>
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="1" source="114" id="120" >
+            <properties>
+                <prop value="(252.13,320,0.0)" name="Location" />
+            </properties>
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="-1000" source="126" id="130" >
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+        <synapse strength="-1000" source="125" id="132" >
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0" id="125" name="Hidden" >
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="1" source="41" id="127" >
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <neuron bias="0" id="126" name="Hidden" >
+        <transferFunction name="ramp[0,1]" />
+        <activationFunction name="AdditiveTD" />
+        <synapse strength="-1" source="41" id="128" >
+            <synapseFunction name="SimpleUpdateFunction" />
+        </synapse>
+    </neuron>
+    <group id="25" name="Default" >
+        <properties>
+            <prop value="(20,20,0)" name="Location" />
+        </properties>
+        <members>
+            <member id="26" />
+            <member id="27" />
+            <member id="28" />
+            <member id="29" />
+            <member id="30" />
+            <member id="31" />
+            <member id="32" />
+            <member id="33" />
+            <member id="34" />
+            <member id="35" />
+            <member id="36" />
+            <member id="37" />
+            <member id="38" />
+            <member id="41" />
+            <member id="114" />
+            <member id="115" />
+            <member id="118" />
+            <member id="125" />
+            <member id="126" />
+        </members>
+    </group>
+</net>
+

@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="Simba XML V3.0">
+    <defaultTransferFunction name="tanh"/>
+    <defaultUpdateFunction name="AdditiveTD"/>
+    <defaultSynapseUpdateFunction name="SimpleUpdateFunction">
+    </defaultSynapseUpdateFunction>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABSR/Waist/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/ShoulderYaw/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/ShoulderYaw/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/ShoulderPitch/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/ShoulderPitch/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/Elbow/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/Elbow/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipRoll/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipRoll/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipYaw/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipYaw/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipPitch/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipPitch/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/Knee/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/Knee/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/AnklePitch/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/AnklePitch/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/AnkleYaw/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/AnkleYaw/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABSR/Head/Pan/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABSR/Head/Tilt/Angle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABML/Left/Shoulder/AccelX" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABML/Left/Shoulder/AccelY" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABSR/Right/Shoulder/AccelX" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABSR/Right/Shoulder/AccelY" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/Arm/AccelX" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/Arm/AccelY" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/Arm/AccelX" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/Arm/AccelY" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/Leg/AccelX" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/Leg/AccelY" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/Leg/AccelX" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/Leg/AccelY" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/Foot/AccelX" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/Foot/AccelY" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/Foot/AccelX" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="input" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/Foot/AccelY" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABSR/Waist/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABSR/Waist/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABSR/Head/Pan/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+        <synapse protection="dynamic" source="79" strength="1">
+            <synapseUpdateFunction name="SimpleUpdateFunction"/>
+        </synapse>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABSR/Head/Pan/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABSR/Head/Tilt/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABSR/Head/Tilt/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/ShoulderYaw/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/ShoulderYaw/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/ShoulderPitch/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/ShoulderPitch/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/Elbow/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAL/Left/Elbow/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+        <synapse protection="dynamic" source="84" strength="1">
+            <synapseUpdateFunction name="SimpleUpdateFunction"/>
+        </synapse>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/ShoulderYaw/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/ShoulderYaw/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/ShoulderPitch/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+        <synapse protection="dynamic" source="80" strength="1">
+            <synapseUpdateFunction name="SimpleUpdateFunction"/>
+        </synapse>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/ShoulderPitch/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/Elbow/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABAR/Right/Elbow/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipRoll/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipRoll/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipPitch/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipPitch/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipYaw/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHL/Left/HipYaw/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+        <synapse protection="dynamic" source="81" strength="1">
+            <synapseUpdateFunction name="SimpleUpdateFunction"/>
+        </synapse>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipRoll/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+        <synapse protection="dynamic" source="82" strength="1">
+            <synapseUpdateFunction name="SimpleUpdateFunction"/>
+        </synapse>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipRoll/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipPitch/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipPitch/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipYaw/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABHR/Right/HipYaw/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/Knee/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/Knee/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/AnkleYaw/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/AnkleYaw/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+        <synapse protection="dynamic" source="83" strength="1">
+            <synapseUpdateFunction name="SimpleUpdateFunction"/>
+        </synapse>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/AnklePitch/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFL/Left/AnklePitch/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/Knee/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/Knee/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/AnkleYaw/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/AnkleYaw/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/AnklePitch/DesiredAngle" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <neuron bias="0.0" layer="output" maxIn="-1" maxOut="-1"
+        name="ABFR/Right/AnklePitch/DesiredTorque" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <!-- Hidden Neuron ID 79 -->
+    <neuron bias="0.0" layer="hidden" maxIn="-1" maxOut="-1"
+        name="ABAL/Hidden1" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <!-- Hidden Neuron ID 80 -->
+    <neuron bias="0.0" layer="hidden" maxIn="-1" maxOut="-1"
+        name="ABAL/Hidden2" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <!-- Hidden Neuron ID 81 -->
+    <neuron bias="0.0" layer="hidden" maxIn="-1" maxOut="-1"
+        name="ABAL/Hidden3" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <!-- Hidden Neuron ID 82 -->
+    <neuron bias="0.0" layer="hidden" maxIn="-1" maxOut="-1"
+        name="ABAL/Hidden4" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <!-- Hidden Neuron ID 83 -->
+    <neuron bias="0.0" layer="hidden" maxIn="-1" maxOut="-1"
+        name="ABAL/Hidden5" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+    <!-- Hidden Neuron ID 84 -->
+    <neuron bias="0.0" layer="hidden" maxIn="-1" maxOut="-1"
+        name="ABAL/Hidden6" protection="dynamic">
+        <transferFunction name="tanh"/>
+        <updateFunction name="AdditiveTD"/>
+    </neuron>
+</net>

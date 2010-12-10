@@ -1,0 +1,69 @@
+Help-Content: 
+
+1. Control modi
+2. Camera control
+2.1 Hybrid camera control
+2.2 Mouse guided camera control
+3. Key commands in communication mode
+4. Additional key commands in no communication mode
+
+
+
+1. Control modi: 
+ORCS can be started in two different modi: with communcation or without communication. There exist some key commands that can not be used if a communication exists. Section 3. gives an overview of all key commands that can be used in either control modus. Following - in section 4. - the key commands, only available if no communcation was established, are listed.
+
+2. Camera control: 
+There are two camera modi "Hybrid" and "Mouse". The user can switch between the used control be pressing the key: "C" or by changing the Value: "/Visualization/CameraControlType" to the desired name.
+In both control modi, the steps size for the translational movement can be changed by using the "+" and"-" keys. For temporarily switching to a finer stepsize, keep "#" pressed.
+The following values can be used to alter the view on the scene:
+"/Visualization/StartPosition":	The position to which the view will return after a reset of the view.
+"/Visualization/StartOrientation":	The orientation (in degree) to which the view will return after a reset of the view.
+"/Visualization/Viewpoint/Orientation":	The current orientation of the view.
+"/Visualization/Viewpoint/Position":	The current position of the view.
+"/visualization/MaxStepSize":	The normal step size for translational changes of the view.
+"/visualization/MinStepSize":	The step size for translational changes of the view, when "Shift" is pressed.
+
+
+2.1 Hybrid camera control:
+In Hybrid mode the two mouse buttons control the view direction, whereas keyboard commands control the view position of the observer.
+
+"w":	move inside the scene.
+"s":	move/zoom out of the scene.
+"a":	move to the right.
+"d":	move to the left.
+"q":	move up.
+"e":	move down.
+
+left mouse button: 
+sideways:	turn to the left/right.
+front/back:	turn up/down.
+
+right mouse button:
+sideways:	rotate scene.
+
+2.2 Mouse guided camera control:
+left mouse button: 
+sideways:	turn to the left/right.
+front/back:	turn up/down.
+
+right mouse button:
+sideways:	move to the right/left.
+front/back:	zoom in/out of the scene.
+
+middle button:
+front/back:	move up/down.
+
+3. Key commands in communication mode
+
+"T":	show/hide textures.
+"C":	switch camera control mode (Hybrid/Mouse).
+"V":	reset the view to "/Visualization/StartOrientation" and "/Visualization/StartPosition".
+"+"/"-":	increase/decrease step size for translational changes of the view.
+
+
+4. Additional key commands in no communication mode
+
+"P":	pause the simulation.
+"R":	reset the simulation to the initial conditions.
+"S":	if simulation is paused, "S" can be used to trigger single simulation steps.
+

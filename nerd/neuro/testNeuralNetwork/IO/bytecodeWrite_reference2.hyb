@@ -1,0 +1,390 @@
+NeuralNet:
+
+_ABAL:
+
+weight 0
+bias
+weight -3.24
+read 39
+mac
+tanh
+res 32
+
+weight 0
+bias
+tanh
+res 33
+
+weight 0
+bias
+tanh
+res 34
+
+weight 0
+bias
+tanh
+res 45
+
+weight 0
+bias
+tanh
+res 46
+
+weight 0
+bias
+tanh
+res 47
+
+weight 0
+bias
+tanh
+res 38
+
+weight 0
+bias
+weight 3.32
+read 115
+mac
+weight 3.3
+read 39
+mac
+tanh
+res 39
+
+weight 0
+bias
+weight 3.33
+read 115
+mac
+tanh
+res 40
+
+weight 0
+bias
+tanh
+res 41
+
+weight 0
+bias
+tanh
+res N0
+
+_ABAR:
+
+weight 0
+bias
+tanh
+res 48
+
+weight 0
+bias
+tanh
+res 49
+
+weight 0
+bias
+tanh
+res 50
+
+weight 0
+bias
+tanh
+res 61
+
+weight 0
+bias
+tanh
+res 62
+
+weight 0
+bias
+tanh
+res 63
+
+weight 0
+bias
+tanh
+res N0
+
+weight 0
+bias
+tanh
+res N1
+
+weight 0
+bias
+tanh
+res N2
+
+weight 0
+bias
+tanh
+res N3
+
+weight 0
+bias
+tanh
+res N4
+
+weight 0
+bias
+tanh
+res N5
+
+weight 0
+bias
+tanh
+res N6
+
+weight 0
+bias
+tanh
+res N7
+
+weight 0
+bias
+tanh
+res N8
+
+weight 0
+bias
+tanh
+res N9
+
+weight 0
+bias
+tanh
+res N10
+
+weight 0
+bias
+tanh
+res N11
+
+weight 0
+bias
+tanh
+res N12
+
+weight 0
+bias
+tanh
+res N13
+
+weight 0
+bias
+tanh
+res N14
+
+weight 0
+bias
+tanh
+res N15
+
+weight 0
+bias
+tanh
+res N16
+
+weight 0
+bias
+tanh
+res N17
+
+weight 0
+bias
+tanh
+res N18
+
+weight 0
+bias
+tanh
+res N19
+
+weight 0
+bias
+tanh
+res N20
+
+weight 0
+bias
+tanh
+res N21
+
+weight 0
+bias
+tanh
+res N22
+
+weight 0
+bias
+tanh
+res N23
+
+weight 0
+bias
+tanh
+res N24
+
+weight 0
+bias
+tanh
+res N25
+
+weight 0
+bias
+tanh
+res N26
+
+weight 0
+bias
+tanh
+res N27
+
+weight 0
+bias
+tanh
+res N28
+
+weight 0
+bias
+tanh
+res N29
+
+weight 0
+bias
+tanh
+res N30
+
+weight 0
+bias
+tanh
+res N31
+
+weight 0
+bias
+tanh
+res 54
+
+weight 0
+bias
+tanh
+res 55
+
+weight 0
+bias
+tanh
+res 56
+
+weight 0
+bias
+tanh
+res 57
+
+_ABFL:
+
+weight 0
+bias
+tanh
+res 96
+
+weight 0
+bias
+tanh
+res 97
+
+weight 0
+bias
+tanh
+res 98
+
+weight 0
+bias
+tanh
+res 109
+
+weight 0
+bias
+tanh
+res 110
+
+weight 0
+bias
+tanh
+res 111
+
+_ABFR:
+
+weight 0
+bias
+tanh
+res 112
+
+weight 0
+bias
+tanh
+res 113
+
+weight 0
+bias
+tanh
+res 114
+
+weight 0
+bias
+tanh
+res 125
+
+weight 0
+bias
+tanh
+res 126
+
+weight 0
+bias
+tanh
+res 127
+
+_ABHL:
+
+weight 0
+bias
+tanh
+res 64
+
+weight 0
+bias
+tanh
+res 65
+
+weight 0
+bias
+tanh
+res 66
+
+weight 0
+bias
+tanh
+res 77
+
+weight 0
+bias
+tanh
+res 78
+
+weight 0
+bias
+tanh
+res 79
+
+_ABHR:
+
+weight 0
+bias
+tanh
+res 80
+
+weight 0
+bias
+tanh
+res 81

@@ -1,0 +1,2273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <defaultTransferFunction name="tanh" />
+    <defaultActivationFunction name="AdditiveTD" />
+    <defaultSynapseFunction name="SimpleUpdateFunction" />
+    <neuron bias="0" id="7" name="ForceSensorRightSoleOfFootRight/Force" >
+        <properties>
+            <prop value="-1755.9,3528.88,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="8" name="ForceSensorRightSoleOfFootLeft/Force" >
+        <properties>
+            <prop value="-1577.9,3528.88,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="9" name="ForceSensorRightBallOfFootRight/Force" >
+        <properties>
+            <prop value="-1401.9,3526.88,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="10" name="ForceSensorRightBallOfFootLeft/Force" >
+        <properties>
+            <prop value="-1223.9,3527.88,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="11" name="ForceSensorLeftSoleOfFootRight/Force" >
+        <properties>
+            <prop value="-4923.35,3452.21,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="12" name="ForceSensorLeftSoleOfFootLeft/Force" >
+        <properties>
+            <prop value="-4752.35,3454.21,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="13" name="ForceSensorLeftBallOfFootRight/Force" >
+        <properties>
+            <prop value="-4583.35,3458.21,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="14" name="ForceSensorLeftBallOfFootLeft/Force" >
+        <properties>
+            <prop value="-4406.35,3456.21,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="15" name="/RightToes/JointAngle" >
+        <properties>
+            <prop value="-1573.45,3281.64,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="16" name="/LeftToes/JointAngle" >
+        <properties>
+            <prop value="-4749.44,3198.89,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="17" name="/RightAnklePitch/JointAngle" >
+        <properties>
+            <prop value="-1722.51,2366.74,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="18" name="/RightAnklePitch/MotorAngle0" >
+        <properties>
+            <prop value="-1721.28,2146.67,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="19" name="/RightAnklePitch/MotorAngle1" >
+        <properties>
+            <prop value="-1523.2,2145.62,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="20" name="/RightAnklePitch/MotorAngle2" >
+        <properties>
+            <prop value="-1356.99,2145.8,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="21" name="/RightAnklePitch/MotorAngle3" >
+        <properties>
+            <prop value="-1181.56,2141.38,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="22" name="/LeftAnklePitch/JointAngle" >
+        <properties>
+            <prop value="-4910.81,2298.93,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="23" name="/LeftAnklePitch/MotorAngle0" >
+        <properties>
+            <prop value="-4909.95,2073.02,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="24" name="/LeftAnklePitch/MotorAngle1" >
+        <properties>
+            <prop value="-4731.27,2073.68,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="25" name="/LeftAnklePitch/MotorAngle2" >
+        <properties>
+            <prop value="-4543.98,2074.34,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="26" name="/LeftAnklePitch/MotorAngle3" >
+        <properties>
+            <prop value="-4371.04,2072.13,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="27" name="/RightAnkleRoll/JointAngle" >
+        <properties>
+            <prop value="-1753.48,3278.79,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="28" name="/RightAnkleRoll/MotorAngle0" >
+        <properties>
+            <prop value="-1753.19,3056.33,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="29" name="/LeftAnkleRoll/JointAngle" >
+        <properties>
+            <prop value="-4920.24,3199.79,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="30" name="/LeftAnkleRoll/MotorAngle0" >
+        <properties>
+            <prop value="-4918.02,2989.45,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="31" name="/RightKneePitch/JointAngle" >
+        <properties>
+            <prop value="-1888.88,239.293,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="32" name="/RightKneePitch/MotorAngle0" >
+        <properties>
+            <prop value="-1887.03,19.7247,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="33" name="/RightKneePitch/MotorAngle1" >
+        <properties>
+            <prop value="-1692.59,24.8482,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="34" name="/RightKneePitch/MotorAngle2" >
+        <properties>
+            <prop value="-1508.02,22.5643,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="35" name="/LeftKneePitch/JointAngle" >
+        <properties>
+            <prop value="-5003.76,203.769,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="36" name="/LeftKneePitch/MotorAngle0" >
+        <properties>
+            <prop value="-5000.6,5.3917,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="37" name="/LeftKneePitch/MotorAngle1" >
+        <properties>
+            <prop value="-4817.04,4.9046,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="38" name="/LeftKneePitch/MotorAngle2" >
+        <properties>
+            <prop value="-4636.68,10.0562,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="39" name="/RightHipRoll/JointAngle" >
+        <properties>
+            <prop value="-1075.43,-2531.1,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="40" name="/RightHipRoll/MotorAngle0" >
+        <properties>
+            <prop value="-1086,-2752.17,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="41" name="/RightHipRoll/MotorAngle1" >
+        <properties>
+            <prop value="-913.688,-2759.47,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="42" name="/LeftHipRoll/JointAngle" >
+        <properties>
+            <prop value="-5993.09,-2692.77,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="43" name="/LeftHipRoll/MotorAngle0" >
+        <properties>
+            <prop value="-5993.66,-2785.09,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="44" name="/LeftHipRoll/MotorAngle1" >
+        <properties>
+            <prop value="-5804.29,-2780.74,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="45" name="/RightHipPitch/JointAngle" >
+        <properties>
+            <prop value="-2031.77,-1710.68,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="46" name="/RightHipPitch/MotorAngle0" >
+        <properties>
+            <prop value="-2024.3,-1902.7,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="47" name="/RightHipPitch/MotorAngle1" >
+        <properties>
+            <prop value="-1854.49,-1902.94,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="48" name="/RightHipPitch/MotorAngle2" >
+        <properties>
+            <prop value="-1678.58,-1904.71,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="49" name="/LeftHipPitch/JointAngle" >
+        <properties>
+            <prop value="-5174.2,-1692.3,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="50" name="/LeftHipPitch/MotorAngle0" >
+        <properties>
+            <prop value="-5179.37,-1940.92,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="51" name="/LeftHipPitch/MotorAngle1" >
+        <properties>
+            <prop value="-5004.98,-1941.16,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="52" name="/LeftHipPitch/MotorAngle2" >
+        <properties>
+            <prop value="-4833.64,-1938.35,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="53" name="/RightHipYaw/JointAngle" >
+        <properties>
+            <prop value="-1912.79,-3213.77,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="54" name="/RightHipYaw/MotorAngle0" >
+        <properties>
+            <prop value="-1917.38,-3294.44,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="55" name="/LeftHipYaw/JointAngle" >
+        <properties>
+            <prop value="-5080.89,-3435.95,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="56" name="/LeftHipYaw/MotorAngle0" >
+        <properties>
+            <prop value="-5055.01,-3658.4,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="57" name="/WaistRoll/JointAngle" >
+        <properties>
+            <prop value="-3528.88,-3832.28,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="58" name="/WaistRoll/MotorAngle0" >
+        <properties>
+            <prop value="-3546.17,-3644.59,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="59" name="/HeadPitch/JointAngle" >
+        <properties>
+            <prop value="759.207,498.81,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="60" name="/HeadPitch/MotorAngle0" >
+        <properties>
+            <prop value="920,530,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="61" name="/HeadYaw/JointAngle" >
+        <properties>
+            <prop value="1070,545,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="62" name="/HeadYaw/MotorAngle0" >
+        <properties>
+            <prop value="20,510,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="63" name="/HeadRoll/JointAngle" >
+        <properties>
+            <prop value="170,525,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="64" name="/HeadRoll/MotorAngle0" >
+        <properties>
+            <prop value="320,540,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="65" name="/RightShoulderPitch/JointAngle" >
+        <properties>
+            <prop value="470,555,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="66" name="/RightShoulderPitch/MotorAngle0" >
+        <properties>
+            <prop value="620,570,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="67" name="/RightShoulderPitch/MotorAngle1" >
+        <properties>
+            <prop value="770,585,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="68" name="/LeftShoulderPitch/JointAngle" >
+        <properties>
+            <prop value="920,600,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="69" name="/LeftShoulderPitch/MotorAngle0" >
+        <properties>
+            <prop value="1070,615,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="70" name="/LeftShoulderPitch/MotorAngle1" >
+        <properties>
+            <prop value="20,580,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="71" name="/RightShoulderRoll/JointAngle" >
+        <properties>
+            <prop value="170,595,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="72" name="/RightShoulderRoll/MotorAngle0" >
+        <properties>
+            <prop value="320,610,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="73" name="/LeftShoulderRoll/JointAngle" >
+        <properties>
+            <prop value="470,625,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="74" name="/LeftShoulderRoll/MotorAngle0" >
+        <properties>
+            <prop value="620,640,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="75" name="/RightElbowPitch/JointAngle" >
+        <properties>
+            <prop value="770,655,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="76" name="/RightElbowPitch/MotorAngle0" >
+        <properties>
+            <prop value="920,670,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="77" name="/LeftElbowPitch/JointAngle" >
+        <properties>
+            <prop value="1070,685,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="78" name="/LeftElbowPitch/MotorAngle0" >
+        <properties>
+            <prop value="20,650,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="79" name="/ABRightLegLowerBottom_AB00/AccelAxis1" >
+        <properties>
+            <prop value="-1757.31,3394.41,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="80" name="/ABRightLegLowerBottom_AB00/AccelAxis2" >
+        <properties>
+            <prop value="-1573.4,3394.56,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="81" name="/ABRightLegLowerBottom_AB00/AccelAxis3" >
+        <properties>
+            <prop value="-1395.98,3395.84,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="82" name="/ABLeftLegLowerBottom_AB10/AccelAxis1" >
+        <properties>
+            <prop value="-4919.9,3321.14,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="83" name="/ABLeftLegLowerBottom_AB10/AccelAxis2" >
+        <properties>
+            <prop value="-4750.09,3322.42,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="84" name="/ABLeftLegLowerBottom_AB10/AccelAxis3" >
+        <properties>
+            <prop value="-4581.8,3323.7,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="85" name="/ABRightLegLowerTop_AB01/AccelAxis1" >
+        <properties>
+            <prop value="-1726.41,2486.18,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="86" name="/ABRightLegLowerTop_AB01/AccelAxis2" >
+        <properties>
+            <prop value="-1541.27,2485.83,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="87" name="/ABRightLegLowerTop_AB01/AccelAxis3" >
+        <properties>
+            <prop value="-1351.12,2486.49,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="88" name="/ABLeftLegLowerTop_AB11/AccelAxis1" >
+        <properties>
+            <prop value="-4915.88,2403.56,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="89" name="/ABLeftLegLowerTop_AB11/AccelAxis2" >
+        <properties>
+            <prop value="-4727.68,2404.94,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="90" name="/ABLeftLegLowerTop_AB11/AccelAxis3" >
+        <properties>
+            <prop value="-4540.4,2408.47,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="91" name="/ABRightLegUpperBottom_AB02/AccelAxis1" >
+        <properties>
+            <prop value="-1895.67,338.813,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="92" name="/ABRightLegUpperBottom_AB02/AccelAxis2" >
+        <properties>
+            <prop value="-1701.47,344.668,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="93" name="/ABRightLegUpperBottom_AB02/AccelAxis3" >
+        <properties>
+            <prop value="-1519.46,345.95,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="94" name="/ABLeftLegUpperBottom_AB12/AccelAxis1" >
+        <properties>
+            <prop value="-4997.77,304.801,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="95" name="/ABLeftLegUpperBottom_AB12/AccelAxis2" >
+        <properties>
+            <prop value="-4826.43,306.084,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="96" name="/ABLeftLegUpperBottom_AB12/AccelAxis3" >
+        <properties>
+            <prop value="-4647.47,307.366,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="97" name="/ABRightLegUpperMiddle_AB03/AccelAxis1" >
+        <properties>
+            <prop value="-2030.11,-1595.98,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="98" name="/ABRightLegUpperMiddle_AB03/AccelAxis2" >
+        <properties>
+            <prop value="-1832.7,-1580.98,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="99" name="/ABRightLegUpperMiddle_AB03/AccelAxis3" >
+        <properties>
+            <prop value="-1664.07,-1593.08,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="100" name="/ABLeftLegUpperMiddle_AB13/AccelAxis1" >
+        <properties>
+            <prop value="-5162.4,-1570.98,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="101" name="/ABLeftLegUpperMiddle_AB13/AccelAxis2" >
+        <properties>
+            <prop value="-4981.53,-1570.8,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="102" name="/ABLeftLegUpperMiddle_AB13/AccelAxis3" >
+        <properties>
+            <prop value="-4822.89,-1566.29,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="103" name="/ABRightLegUpperTop_AB04/AccelAxis1" >
+        <properties>
+            <prop value="-1071.9,-2430.11,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="104" name="/ABRightLegUpperTop_AB04/AccelAxis2" >
+        <properties>
+            <prop value="-891.419,-2433.73,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="105" name="/ABRightLegUpperTop_AB04/AccelAxis3" >
+        <properties>
+            <prop value="-722.79,-2435.67,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="106" name="/ABLeftLegUpperTop_AB14/AccelAxis1" >
+        <properties>
+            <prop value="-5991.42,-2491.93,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="107" name="/ABLeftLegUpperTop_AB14/AccelAxis2" >
+        <properties>
+            <prop value="-5816.01,-2487.09,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="108" name="/ABLeftLegUpperTop_AB14/AccelAxis3" >
+        <properties>
+            <prop value="-5647.39,-2482.25,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="109" name="/ABRightArmLower_AB20/AccelAxis1" >
+        <properties>
+            <prop value="1070,965,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="110" name="/ABRightArmLower_AB20/AccelAxis2" >
+        <properties>
+            <prop value="20,930,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="111" name="/ABRightArmLower_AB20/AccelAxis3" >
+        <properties>
+            <prop value="170,945,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="112" name="/ABLeftArmLower_AB30/AccelAxis1" >
+        <properties>
+            <prop value="320,960,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="113" name="/ABLeftArmLower_AB30/AccelAxis2" >
+        <properties>
+            <prop value="470,975,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="114" name="/ABLeftArmLower_AB30/AccelAxis3" >
+        <properties>
+            <prop value="620,990,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="115" name="/ABRightArmUpper_AB21/AccelAxis1" >
+        <properties>
+            <prop value="770,1005,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="116" name="/ABRightArmUpper_AB21/AccelAxis2" >
+        <properties>
+            <prop value="920,1020,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="117" name="/ABRightArmUpper_AB21/AccelAxis3" >
+        <properties>
+            <prop value="1070,1035,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="118" name="/ABLeftArmUpper_AB31/AccelAxis1" >
+        <properties>
+            <prop value="20,1000,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="119" name="/ABLeftArmUpper_AB31/AccelAxis2" >
+        <properties>
+            <prop value="170,1015,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="120" name="/ABLeftArmUpper_AB31/AccelAxis3" >
+        <properties>
+            <prop value="320,1030,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="121" name="/ABLeftBodyUpper_AB40/AccelAxis1" >
+        <properties>
+            <prop value="470,1045,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="122" name="/ABLeftBodyUpper_AB40/AccelAxis2" >
+        <properties>
+            <prop value="620,1060,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="123" name="/ABLeftBodyUpper_AB40/AccelAxis3" >
+        <properties>
+            <prop value="770,1075,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="124" name="/ABRightBodyUpper_AB41/AccelAxis1" >
+        <properties>
+            <prop value="920,1090,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="125" name="/ABRightBodyUpper_AB41/AccelAxis2" >
+        <properties>
+            <prop value="1070,1105,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="126" name="/ABRightBodyUpper_AB41/AccelAxis3" >
+        <properties>
+            <prop value="20,1070,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="127" name="/ABLeftBodyLower_AB42/AccelAxis1" >
+        <properties>
+            <prop value="170,1085,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="128" name="/ABLeftBodyLower_AB42/AccelAxis2" >
+        <properties>
+            <prop value="320,1100,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="129" name="/ABLeftBodyLower_AB42/AccelAxis3" >
+        <properties>
+            <prop value="470,1115,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="130" name="/ABRightBodyLower_AB43/AccelAxis1" >
+        <properties>
+            <prop value="620,1130,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="131" name="/ABRightBodyLower_AB43/AccelAxis2" >
+        <properties>
+            <prop value="770,1145,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="132" name="/ABRightBodyLower_AB43/AccelAxis3" >
+        <properties>
+            <prop value="920,1160,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="133" name="/ABBodyBottom_AB44/AccelAxis1" >
+        <properties>
+            <prop value="1070,1175,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="134" name="/ABBodyBottom_AB44/AccelAxis2" >
+        <properties>
+            <prop value="20,1140,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="135" name="/ABBodyBottom_AB44/AccelAxis3" >
+        <properties>
+            <prop value="170,1155,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="136" name="/ABHeadLeft_AB50/AccelAxis1" >
+        <properties>
+            <prop value="320,1170,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="137" name="/ABHeadLeft_AB50/AccelAxis2" >
+        <properties>
+            <prop value="470,1185,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="138" name="/ABHeadLeft_AB50/AccelAxis3" >
+        <properties>
+            <prop value="620,1200,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="139" name="/ABHeadRight_AB51/AccelAxis1" >
+        <properties>
+            <prop value="770,1215,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="140" name="/ABHeadRight_AB51/AccelAxis2" >
+        <properties>
+            <prop value="920,1230,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="141" name="/ABHeadRight_AB51/AccelAxis3" >
+        <properties>
+            <prop value="1070,1245,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="142" name="/RightAnkleRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1752.14,3151.34,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="143" name="/RightAnklePitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1356.24,2249.87,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="144" name="/RightAnklePitch1/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1722.37,2251.33,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="145" name="/RightKneePitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1692.69,141.9,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="146" name="/RightKneePitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-1879.53,141.659,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="147" name="/RightHipRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1084.15,-2646.27,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="148" name="/RightHipRoll/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-917.958,-2652.86,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="149" name="/RightHipPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-2023.09,-1814.38,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="150" name="/RightHipPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-1673.49,-1809.89,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="151" name="/RightHipYaw/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-1933.95,-3422.24,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="153" name="/LeftAnkleRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-4917.59,3082.78,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="154" name="/LeftAnklePitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-4911.61,2184.93,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="155" name="/LeftAnklePitch1/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-4541.9,2186.65,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="156" name="/LeftKneePitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-4815.04,99.2098,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="157" name="/LeftKneePitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-5000.59,91.266,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="158" name="/LeftHipRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-5995.25,-2603.59,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="159" name="/LeftHipRoll/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-5806.36,-2598.59,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="160" name="/LeftHipPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="-5175.18,-1832.71,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="161" name="/LeftHipPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="-4831.35,-1827.59,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="162" name="/LeftHipYaw/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="620,1410,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="163" name="/LeftHipYaw/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="770,1425,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="164" name="/WaistRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="920,1440,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="165" name="/RightShoulderRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="1070,1455,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="166" name="/RightShoulderRoll/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="20,1420,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="167" name="/RightShoulderPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="170,1435,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="168" name="/RightShoulderPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="320,1450,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="169" name="/RightElbowPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="470,1465,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="170" name="/RightElbowPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="620,1480,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="171" name="/LeftShoulderRoll/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="770,1495,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="172" name="/LeftShoulderRoll/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="920,1510,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="173" name="/LeftShoulderPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="1070,1525,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="174" name="/LeftShoulderPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="20,1490,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="175" name="/LeftElbowPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="170,1505,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="176" name="/LeftElbowPitch/CurrentSensor1/CurrentConsumption" >
+        <properties>
+            <prop value="320,1520,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="177" name="/HeadPitch/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="470,1535,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="178" name="/HeadRollYaw/CurrentSensor0/CurrentConsumption" >
+        <properties>
+            <prop value="620,1550,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="179" name="/RightAnklePitch/DesiredTorque0" >
+        <properties>
+            <prop value="-1727.19,1920.61,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="180" name="/RightAnklePitch/Freerun0" >
+        <properties>
+            <prop value="-1724.59,2039.39,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="181" name="/RightAnklePitch/DesiredTorque1" >
+        <properties>
+            <prop value="-1540.49,1925.52,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="182" name="/RightAnklePitch/Freerun1" >
+        <properties>
+            <prop value="-1531.34,2039.66,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="183" name="/RightAnklePitch/DesiredTorque2" >
+        <properties>
+            <prop value="-1363.58,1929.3,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="184" name="/RightAnklePitch/Freerun2" >
+        <properties>
+            <prop value="-1362.51,2044.03,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="185" name="/RightAnklePitch/DesiredTorque3" >
+        <properties>
+            <prop value="-1186.25,1931.48,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="186" name="/RightAnklePitch/Freerun3" >
+        <properties>
+            <prop value="-1182.13,2041.64,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="187" name="/LeftAnklePitch/DesiredTorque0" >
+        <properties>
+            <prop value="-4907.35,1866.82,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="188" name="/LeftAnklePitch/Freerun0" >
+        <properties>
+            <prop value="-4904.02,1957.26,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="189" name="/LeftAnklePitch/DesiredTorque1" >
+        <properties>
+            <prop value="-4725.34,1871.88,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="190" name="/LeftAnklePitch/Freerun1" >
+        <properties>
+            <prop value="-4728.53,1957.34,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="191" name="/LeftAnklePitch/DesiredTorque2" >
+        <properties>
+            <prop value="-4541.25,1871.96,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="192" name="/LeftAnklePitch/Freerun2" >
+        <properties>
+            <prop value="-4546.12,1958.66,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="193" name="/LeftAnklePitch/DesiredTorque3" >
+        <properties>
+            <prop value="-4367.44,1870.41,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="194" name="/LeftAnklePitch/Freerun3" >
+        <properties>
+            <prop value="-4375.18,1957.11,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="195" name="/RightAnkleRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-1759.21,2845.9,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="196" name="/RightAnkleRoll/Freerun0" >
+        <properties>
+            <prop value="-1755.77,2951.23,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="197" name="/LeftAnkleRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-4918.23,2793.27,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="198" name="/LeftAnkleRoll/Freerun0" >
+        <properties>
+            <prop value="-4921.42,2890.24,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="199" name="/RightKneePitch/DesiredTorque0" >
+        <properties>
+            <prop value="-1889.43,-171.097,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="200" name="/RightKneePitch/Freerun0" >
+        <properties>
+            <prop value="-1885.14,-68.6719,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="201" name="/RightKneePitch/DesiredTorque1" >
+        <properties>
+            <prop value="-1696.28,-165.381,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="202" name="/RightKneePitch/Freerun1" >
+        <properties>
+            <prop value="-1691.99,-72.6704,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="203" name="/RightKneePitch/DesiredTorque2" >
+        <properties>
+            <prop value="-1512.85,-159.666,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="204" name="/RightKneePitch/Freerun2" >
+        <properties>
+            <prop value="-1510.86,-67.0364,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="205" name="/LeftKneePitch/DesiredTorque0" >
+        <properties>
+            <prop value="-5003.05,-173.124,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="206" name="/LeftKneePitch/Freerun0" >
+        <properties>
+            <prop value="-5003.95,-81.8431,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="207" name="/LeftKneePitch/DesiredTorque1" >
+        <properties>
+            <prop value="-4819.95,-168.839,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="208" name="/LeftKneePitch/Freerun1" >
+        <properties>
+            <prop value="-4820.52,-76.1281,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="209" name="/LeftKneePitch/DesiredTorque2" >
+        <properties>
+            <prop value="-4641.38,-167.981,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="210" name="/LeftKneePitch/Freerun2" >
+        <properties>
+            <prop value="-4651.66,-80.1261,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="211" name="/RightHipRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-1082.43,-2969.02,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="212" name="/RightHipRoll/Freerun0" >
+        <properties>
+            <prop value="-1088.58,-2858.42,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="213" name="/RightHipRoll/DesiredTorque1" >
+        <properties>
+            <prop value="-903.528,-2970.88,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="214" name="/RightHipRoll/Freerun1" >
+        <properties>
+            <prop value="-914.678,-2852.93,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="215" name="/LeftHipRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-5989.47,-2953.41,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="216" name="/LeftHipRoll/Freerun0" >
+        <properties>
+            <prop value="-5996.72,-2866.36,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="217" name="/LeftHipRoll/DesiredTorque1" >
+        <properties>
+            <prop value="-5800.75,-2950.53,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="218" name="/LeftHipRoll/Freerun1" >
+        <properties>
+            <prop value="-5800.93,-2866.56,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="219" name="/RightHipPitch/DesiredTorque0" >
+        <properties>
+            <prop value="-2020.43,-2087.15,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="220" name="/RightHipPitch/Freerun0" >
+        <properties>
+            <prop value="-2025.44,-1993.96,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="221" name="/RightHipPitch/DesiredTorque1" >
+        <properties>
+            <prop value="-1854.87,-2090.08,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="222" name="/RightHipPitch/Freerun1" >
+        <properties>
+            <prop value="-1858.23,-1996.13,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="223" name="/RightHipPitch/DesiredTorque2" >
+        <properties>
+            <prop value="-1678.05,-2088.13,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="224" name="/RightHipPitch/Freerun2" >
+        <properties>
+            <prop value="-1676.19,-1997.68,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="225" name="/LeftHipPitch/DesiredTorque0" >
+        <properties>
+            <prop value="-5184.98,-2125.37,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="226" name="/LeftHipPitch/Freerun0" >
+        <properties>
+            <prop value="-5180.38,-2036.3,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="227" name="/LeftHipPitch/DesiredTorque1" >
+        <properties>
+            <prop value="-5007.06,-2128.29,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="228" name="/LeftHipPitch/Freerun1" >
+        <properties>
+            <prop value="-5010.7,-2036.47,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="229" name="/LeftHipPitch/DesiredTorque2" >
+        <properties>
+            <prop value="-4829.15,-2124.36,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="230" name="/LeftHipPitch/Freerun2" >
+        <properties>
+            <prop value="-4836.63,-2037.27,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="231" name="/RightHipYaw/DesiredTorque0" >
+        <properties>
+            <prop value="-1945.75,-3645.56,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="232" name="/RightHipYaw/Freerun0" >
+        <properties>
+            <prop value="-1942.53,-3563.34,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="233" name="/LeftHipYaw/DesiredTorque0" >
+        <properties>
+            <prop value="-5065.16,-3829.72,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="234" name="/LeftHipYaw/Freerun0" >
+        <properties>
+            <prop value="-5063.31,-3750.25,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="235" name="/WaistRoll/DesiredTorque0" >
+        <properties>
+            <prop value="-3605.25,-4195.05,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="236" name="/WaistRoll/Freerun0" >
+        <properties>
+            <prop value="-3598.65,-4109.95,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="237" name="/HeadPitch/DesiredTorque0" >
+        <properties>
+            <prop value="1070,2085,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="238" name="/HeadPitch/Freerun0" >
+        <properties>
+            <prop value="20,2050,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="239" name="/HeadYaw/DesiredTorque0" >
+        <properties>
+            <prop value="170,2065,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="240" name="/HeadYaw/Freerun0" >
+        <properties>
+            <prop value="320,2080,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="241" name="/HeadRoll/DesiredTorque0" >
+        <properties>
+            <prop value="470,2095,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="242" name="/HeadRoll/Freerun0" >
+        <properties>
+            <prop value="620,2110,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="243" name="/RightShoulderPitch/DesiredTorque0" >
+        <properties>
+            <prop value="770,2125,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="244" name="/RightShoulderPitch/Freerun0" >
+        <properties>
+            <prop value="920,2140,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="245" name="/RightShoulderPitch/DesiredTorque1" >
+        <properties>
+            <prop value="1070,2155,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="246" name="/RightShoulderPitch/Freerun1" >
+        <properties>
+            <prop value="20,2120,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="247" name="/LeftShoulderPitch/DesiredTorque0" >
+        <properties>
+            <prop value="170,2135,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="248" name="/LeftShoulderPitch/Freerun0" >
+        <properties>
+            <prop value="320,2150,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="249" name="/LeftShoulderPitch/DesiredTorque1" >
+        <properties>
+            <prop value="470,2165,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="250" name="/LeftShoulderPitch/Freerun1" >
+        <properties>
+            <prop value="620,2180,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="251" name="/RightShoulderRoll/DesiredTorque0" >
+        <properties>
+            <prop value="770,2195,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="252" name="/RightShoulderRoll/Freerun0" >
+        <properties>
+            <prop value="920,2210,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="253" name="/LeftShoulderRoll/DesiredTorque0" >
+        <properties>
+            <prop value="1070,2225,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="254" name="/LeftShoulderRoll/Freerun0" >
+        <properties>
+            <prop value="20,2190,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="255" name="/RightElbowPitch/DesiredTorque0" >
+        <properties>
+            <prop value="170,2205,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="256" name="/RightElbowPitch/Freerun0" >
+        <properties>
+            <prop value="320,2220,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="257" name="/LeftElbowPitch/DesiredTorque0" >
+        <properties>
+            <prop value="470,2235,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <neuron bias="0" id="258" name="/LeftElbowPitch/Freerun0" >
+        <properties>
+            <prop value="620,2250,0" name="_LOCATION" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="tanh" />
+        <activationFunction name="AdditiveTD" />
+    </neuron>
+    <group id="6" name="Default" >
+        <properties>
+            <prop value="470,2235,0" name="_LOCATION" />
+        </properties>
+        <members>
+            <member id="7" />
+            <member id="8" />
+            <member id="9" />
+            <member id="10" />
+            <member id="11" />
+            <member id="12" />
+            <member id="13" />
+            <member id="14" />
+            <member id="15" />
+            <member id="16" />
+            <member id="17" />
+            <member id="18" />
+            <member id="19" />
+            <member id="20" />
+            <member id="21" />
+            <member id="22" />
+            <member id="23" />
+            <member id="24" />
+            <member id="25" />
+            <member id="26" />
+            <member id="27" />
+            <member id="28" />
+            <member id="29" />
+            <member id="30" />
+            <member id="31" />
+            <member id="32" />
+            <member id="33" />
+            <member id="34" />
+            <member id="35" />
+            <member id="36" />
+            <member id="37" />
+            <member id="38" />
+            <member id="39" />
+            <member id="40" />
+            <member id="41" />
+            <member id="42" />
+            <member id="43" />
+            <member id="44" />
+            <member id="45" />
+            <member id="46" />
+            <member id="47" />
+            <member id="48" />
+            <member id="49" />
+            <member id="50" />
+            <member id="51" />
+            <member id="52" />
+            <member id="53" />
+            <member id="54" />
+            <member id="55" />
+            <member id="56" />
+            <member id="57" />
+            <member id="58" />
+            <member id="59" />
+            <member id="60" />
+            <member id="61" />
+            <member id="62" />
+            <member id="63" />
+            <member id="64" />
+            <member id="65" />
+            <member id="66" />
+            <member id="67" />
+            <member id="68" />
+            <member id="69" />
+            <member id="70" />
+            <member id="71" />
+            <member id="72" />
+            <member id="73" />
+            <member id="74" />
+            <member id="75" />
+            <member id="76" />
+            <member id="77" />
+            <member id="78" />
+            <member id="79" />
+            <member id="80" />
+            <member id="81" />
+            <member id="82" />
+            <member id="83" />
+            <member id="84" />
+            <member id="85" />
+            <member id="86" />
+            <member id="87" />
+            <member id="88" />
+            <member id="89" />
+            <member id="90" />
+            <member id="91" />
+            <member id="92" />
+            <member id="93" />
+            <member id="94" />
+            <member id="95" />
+            <member id="96" />
+            <member id="97" />
+            <member id="98" />
+            <member id="99" />
+            <member id="100" />
+            <member id="101" />
+            <member id="102" />
+            <member id="103" />
+            <member id="104" />
+            <member id="105" />
+            <member id="106" />
+            <member id="107" />
+            <member id="108" />
+            <member id="109" />
+            <member id="110" />
+            <member id="111" />
+            <member id="112" />
+            <member id="113" />
+            <member id="114" />
+            <member id="115" />
+            <member id="116" />
+            <member id="117" />
+            <member id="118" />
+            <member id="119" />
+            <member id="120" />
+            <member id="121" />
+            <member id="122" />
+            <member id="123" />
+            <member id="124" />
+            <member id="125" />
+            <member id="126" />
+            <member id="127" />
+            <member id="128" />
+            <member id="129" />
+            <member id="130" />
+            <member id="131" />
+            <member id="132" />
+            <member id="133" />
+            <member id="134" />
+            <member id="135" />
+            <member id="136" />
+            <member id="137" />
+            <member id="138" />
+            <member id="139" />
+            <member id="140" />
+            <member id="141" />
+            <member id="142" />
+            <member id="143" />
+            <member id="144" />
+            <member id="145" />
+            <member id="146" />
+            <member id="147" />
+            <member id="148" />
+            <member id="149" />
+            <member id="150" />
+            <member id="151" />
+            <member id="153" />
+            <member id="154" />
+            <member id="155" />
+            <member id="156" />
+            <member id="157" />
+            <member id="158" />
+            <member id="159" />
+            <member id="160" />
+            <member id="161" />
+            <member id="162" />
+            <member id="163" />
+            <member id="164" />
+            <member id="165" />
+            <member id="166" />
+            <member id="167" />
+            <member id="168" />
+            <member id="169" />
+            <member id="170" />
+            <member id="171" />
+            <member id="172" />
+            <member id="173" />
+            <member id="174" />
+            <member id="175" />
+            <member id="176" />
+            <member id="177" />
+            <member id="178" />
+            <member id="179" />
+            <member id="180" />
+            <member id="181" />
+            <member id="182" />
+            <member id="183" />
+            <member id="184" />
+            <member id="185" />
+            <member id="186" />
+            <member id="187" />
+            <member id="188" />
+            <member id="189" />
+            <member id="190" />
+            <member id="191" />
+            <member id="192" />
+            <member id="193" />
+            <member id="194" />
+            <member id="195" />
+            <member id="196" />
+            <member id="197" />
+            <member id="198" />
+            <member id="199" />
+            <member id="200" />
+            <member id="201" />
+            <member id="202" />
+            <member id="203" />
+            <member id="204" />
+            <member id="205" />
+            <member id="206" />
+            <member id="207" />
+            <member id="208" />
+            <member id="209" />
+            <member id="210" />
+            <member id="211" />
+            <member id="212" />
+            <member id="213" />
+            <member id="214" />
+            <member id="215" />
+            <member id="216" />
+            <member id="217" />
+            <member id="218" />
+            <member id="219" />
+            <member id="220" />
+            <member id="221" />
+            <member id="222" />
+            <member id="223" />
+            <member id="224" />
+            <member id="225" />
+            <member id="226" />
+            <member id="227" />
+            <member id="228" />
+            <member id="229" />
+            <member id="230" />
+            <member id="231" />
+            <member id="232" />
+            <member id="233" />
+            <member id="234" />
+            <member id="235" />
+            <member id="236" />
+            <member id="237" />
+            <member id="238" />
+            <member id="239" />
+            <member id="240" />
+            <member id="241" />
+            <member id="242" />
+            <member id="243" />
+            <member id="244" />
+            <member id="245" />
+            <member id="246" />
+            <member id="247" />
+            <member id="248" />
+            <member id="249" />
+            <member id="250" />
+            <member id="251" />
+            <member id="252" />
+            <member id="253" />
+            <member id="254" />
+            <member id="255" />
+            <member id="256" />
+            <member id="257" />
+            <member id="258" />
+        </members>
+    </group>
+</net>
+

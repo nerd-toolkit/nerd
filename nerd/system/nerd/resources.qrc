@@ -1,0 +1,18 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource>
+        <file>resources/pics/uofmLogo.png</file>
+        <file>resources/pics/orcsLogo.png</file>
+        <file>resources/pics/orcsLogoSmall.png</file>
+        <file>resources/pics/alearLogo.png</file>
+		<file>resources/pics/alearLogo2.png</file>
+        <file>resources/pics/euLogo.png</file>
+        <file>resources/doc/LicenseAgreement.txt</file>
+        <file>resources/doc/NERDHelp.html</file>
+        <file>resources/textures/Sky.jpg</file>
+        <file>resources/textures/PVC.jpg</file>
+        <file>resources/textures/Floor.jpg</file>
+        <file>resources/textures/AccelBoard.jpg</file>
+		<file alias="contributors.txt">../../contributors.txt</file>
+    </qresource>
+    </RCC>
+

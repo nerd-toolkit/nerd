@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="Simba XML V3.0">
+    <defaultTransferFunction name="tanh"/>
+    <defaultUpdateFunction name="AdditiveTD"/>
+    <defaultSynapseUpdateFunction name="SimpleUpdateFunction">
+    </defaultSynapseUpdateFunction>
+</net>

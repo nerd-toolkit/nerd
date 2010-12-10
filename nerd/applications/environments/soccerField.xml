@@ -1,0 +1,22 @@
+ <ORCS version="Environment XML V1.0">  
+  <Environment version="Env1.0">
+	<object type="box" position="(0.0, 0.2, -2.0)" orientation="(0.0, 0.0, 0.0)" color="yellow" dimension="(0.7, 0.4, 0.1)" name="YellowGoal"/>
+	<object type="box" position="(0.35, 0.2, -1.9)" orientation="(0.0, 0.0, 0.0)" color="yellow" dimension="(0.05, 0.4, 0.2)" name="YellowGoalRight"/>
+	<object type="box" position="(-0.35, 0.2, -1.9)" orientation="(0.0, 0.0, 0.0)" color="yellow" dimension="(0.05, 0.4, 0.2)" name="YellowGoalLeft"/>
+	<object type="box" position="(0.0, 0.2, 2.0)" orientation="(0.0, 0.0, 0.0)" color="blue" dimension="(0.7, 0.4, 0.1)" name="BlueGoal"/>
+	<object type="box" position="(0.35, 0.2, 1.9)" orientation="(0.0, 0.0, 0.0)" color="blue" dimension="(0.05, 0.4, 0.2)" name="BlueGoalRight"/>
+	<object type="box" position="(-0.35, 0.2, 1.9)" orientation="(0.0, 0.0, 0.0)" color="blue" dimension="(0.05, 0.4, 0.2)" name="BlueGoalLeft"/>
+	<object type="box" position="(0.0, 0.0, 0.0)" orientation="(0,0,0)" color="green" dimension="(2.6, 0.01, 4.0)" material="PVC" texture="soccerfield" name="SoccerGround"/>
+	<object type="sphere" position="(-0.0,0.15,0.2)" color="magenta" dimension="0.05" name="Ball"  dynamic="true" mass="0.01" material="Latex"/>
+	<object type="box" position="(1.30, 0.1, 2.0)" orientation="(0,0,0)" color="white" dimension="(0.025, 0.2, 0.025)" material="Wood" name="Post1"/>
+	<object type="box" position="(-1.30, 0.1, 2.0)" orientation="(0,0,0)" color="white" dimension="(0.025, 0.2, 0.025)" material="Wood" name="Post2"/>
+	<object type="box" position="(1.30, 0.1, -2.0)" orientation="(0,0,0)" color="white" dimension="(0.025, 0.2, 0.025)" material="Wood" name="Post3"/>
+	<object type="box" position="(-1.30, 0.1, -2.0)" orientation="(0,0,0)" color="white" dimension="(0.025, 0.2, 0.025)" material="Wood" name="Post4"/>
+	
+  </Environment>
+  <Agent> 
+    <ASeries name="Robot2" position="(0.8,0.02,-0.5)" /> 
+    <ASeries name="Robot3" position="(0.1,0.02,-1.5)" /> 
+    <ASeries name="Robot4" position="(-0.75,0.02,-0.7)" /> 
+  </Agent> 
+</ORCS>

@@ -1,0 +1,28 @@
+ <ORCS version="Environment XML V1.1"> 
+  <Environment> 
+   <object type="Box" Name="Rand1" Position="(1, 0.05, 0.0)" Orientation="(0,0,0)" Width="0.01" Height="0.1" Depth="2" Material="ABS" Color="red" Dynamic="false" Texture="AccelBoard"/> 
+   <object type="Box" Name="Rand2" Position="(-1, 0.05, 0.0)" Orientation="(0,0,0)" Width="0.01" Height="0.1" Depth="2" Material="ABS" Color="red" Dynamic="false" Texture="AccelBoard"/> 
+   <object type="Box" Name="Rand3" Position="(0.0, 0.05, -1)" Orientation="(0,90,0)" Width="0.01" Height="0.1" Depth="2" Material="ABS" Color="red" Dynamic="false" Texture="AccelBoard"/> 
+   <object type="Box" Name="Rand4" Position="(0.0, 0.05, 1)" Orientation="(0,90,0)" Width="0.01" Height="0.1" Depth="2" Material="ABS" Color="red" Dynamic="false" Texture="AccelBoard"/> 
+   <object type="FoodSource" Name="food1" Position="(0.5, 0.0, 0.0)"/>
+   <object type="FoodSource" Name="food2" Position="(-0.5, 0.0, 0.0)"/>
+</Environment>
+
+  <Models> 
+   <model prototype="Ground" name="Ground" />  
+   <model prototype="JanPrey" name="jan" position="(0.0, 0.01, 0.0)" orientation="(0.0,180.0,0.0)"/>
+  </Models> 
+  
+  <randomizeList object="jan" parameter="Position" method="random">
+	  <item value="(0.7,0.0 ,0.7)" />
+	  <item value="(0.1,0.025,0.5)" />
+	  <item value="(0.5,0.025,0.5)" />
+  </randomizeList>
+<!--<randomizeList object="jan" parameter="Orientation" method="random">
+	<item value="(0.0,90,0.0)" />
+	  <item value="(0.0,180,0.0)" />
+	  <item value="(0.0,45,0.0)" />
+	  <item value="(0.0,135,0.0)" />
+  </randomizeList>-->
+ </ORCS>
+

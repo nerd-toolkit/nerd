@@ -1,0 +1,4 @@
+/Evaluation/AgentInterfaces=ASeries
+/Evaluation/Application=NerdNeuroSim -env $HOME$/../environments/ASeries.xml 
+/Evaluation/JobName=AS1
+

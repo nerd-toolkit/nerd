@@ -1,0 +1,56 @@
+ <ORCS version="Environment XML V1.1"> 
+  <Environment> 
+   <object type="Box" Name="Box1" Position="(1, 0.05, 0.0)" Orientation="(0,0,0)" Width="0.01" Height="0.1" Depth="1" Material="ABS" Color="(100, 0, 0, 255)" Dynamic="false" Texture="AccelBoard"/> 
+   <object type="Box" Name="Box2" Position="(-0.5, 0.05, 0.0)" Orientation="(0,0,0)" Width="0.01" Height="0.1" Depth="1" Material="ABS" Color="(100, 0, 0, 150)" Dynamic="false" Texture="AccelBoard"/> 
+   <object type="Box" Name="Box3" Position="(0.0, 0.05, -0.5)" Orientation="(0,90,0)" Width="0.01" Height="0.1" Depth="1" Material="ABS" Color="(100, 0, 0, 100)" Dynamic="false" Texture="AccelBoard"/> 
+   <object type="Box" Name="Box4" Position="(0.0, 0.05, 0.5)" Orientation="(0,90,0)" Width="0.01" Height="0.1" Depth="1" Material="ABS" Color="red" Dynamic="false" Texture="AccelBoard"/> 
+  </Environment>
+
+  <Models> 
+   <model prototype="Ground" name="Ground" />  
+   <model prototype="Volksbot" name="Volksbot" position="(0,0,0)" orientation="(0,45,0)">
+   </model>
+  </Models> 
+
+
+  <CollisionRule prototype="EventCollisionRule" name="Wall">
+    <param name="Events" value="/Control/TerminateTry"/>
+    <source object="Box1"/>
+    <source object="Box2"/>
+    <source object="Box3"/>
+    <source object="Box4"/>
+    <target object="Volksbot/LeftWheel" />
+    <target object="Volksbot/RightWheel" />
+    <target object="Volksbot/BackWheel" />
+  </CollisionRule>
+
+  <randomizeList object="Volksbot" parameter="Position" method="sequencial">
+    <item value="(2.0,0,0)" />
+    <item value="(-2,0,0)" />
+    <item value="(0,0,-1)" />
+  </randomizeList>
+
+
+  <randomizeList object="Box1" parameter="Color" method="sequencial">
+    <item value="blue" />
+    <item value="magenta" />
+    <item value="yellow" />
+  </randomizeList>
+
+
+ <randomize object="Box1" parameter="Position" method="global">
+   <min value="(0.3,0,0)" />
+   <max value="(1.0,0,0)" />
+   <probability value="(0.5,0,0)" />
+ </randomize>
+
+
+ <randomize object="Box2" parameter="Width" method="additive">
+   <min value="0.01" />
+   <max value="0.1" />
+   <probability value="0.75" />
+   <deviation value="(0.2,0,0)" />
+ </randomize>
+
+ </ORCS>
+

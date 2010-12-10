@@ -1,0 +1,15 @@
+#ORCS Values
+#Saved at: 06.12.2009  17:19:36
+/Control/NumberOfSteps=200
+/Control/NumberOfTries=1
+/Evo/Algorithm/Main/ENS3/CreateInitNetwork/InputNeurons=1
+/Evo/Algorithm/Main/ENS3/CreateInitNetwork/OutputNeurons=1
+/Evo/Algorithm/Main/ENS3/InsertSynapse/Config/Enable=T
+/Evo/Algorithm/Main/ENS3/InsertSynapse/InsertionProbability=1
+/Evo/Algorithm/Main/ENS3/InsertSynapse/MaxNumberOfNewSynapses=1000
+/Evo/Algorithm/Main/ENS3/ModularCrossover/Config/Enable=F
+/Evo/Pop/Controllers/DesiredPopulationSize=2
+/Evo/Pop/Controllers/Selection/FirstParentsTestSelectionMethod/NumberOfParents=1
+/Evo/Pop/Controllers/Selection/FirstParentsTestSelectionMethod/PopulationProportion=1
+/Evo/Pop/Controllers/Selection/PoissonDistribution/PopulationProportion=0
+/Evo/Pop/Controllers/Selection/TournamentSelection/PopulationProportion=0

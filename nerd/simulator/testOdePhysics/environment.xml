@@ -1,0 +1,7 @@
+<Environment version="Env1.0">
+ <object type="box" position="(0.25,0.05,0.05)" orientation="(45,45,45)" color="(0,100,100,200)" dimension="(0.1,0.02,0.02)" name="FirstBox"/>
+ <object type="box" position="(0.025,0.1,0.1)" orientation="(0,0,0)" color="blue" dimension="(0.05, 0.05, 0.05)" dynamic="true" mass="0.05"  
+ material="Latex" name="SecondBox"/>
+ <object type="sphere" position="(-0.25,0.15,0.2)" color="(125,0,100,150)" dimension="0.075" name="FirstSphere"/>
+ <object type="sphere" position="(0.025,0.25,0.125)" color="red" dynamic="true" mass="0.05" material="ABS" dimension="0.05" name="SecondSphere"/>
+</Environment>

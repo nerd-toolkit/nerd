@@ -1,0 +1,14 @@
+ <ORCS version="Environment XML V1.1"> 
+
+  <Models> 
+   <model prototype="Ground" name="Ground" />  
+   <model prototype="ASeries" name="ASeries" position="(0,0.001,0)" orientation="(0, 90,0)">
+   </model>
+  </Models> 
+
+	<Environment>
+		<object type="EvolvableParameter" Name="MyParam" Target="ASeries" ControlledParameters="/Sim/ASeries/.*/LowerArm/Mass,/Sim/ASeries/.*Tibi.*/Mass" />
+	</Environment>
+
+ </ORCS>
+

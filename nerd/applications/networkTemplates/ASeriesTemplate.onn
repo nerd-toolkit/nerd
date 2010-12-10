@@ -1,0 +1,1138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="ORCS XML V1.0" >
+    <defaultTransferFunction name="ASeriesTanh" />
+    <defaultActivationFunction name="ASeries" />
+    <defaultSynapseFunction name="ASeries" />
+    <neuron bias="0" id="5" name="/Waist/JointAngle" >
+        <properties>
+            <prop value="695.546,195.732,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="26" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="6" name="/Right/ShoulderYaw/JointAngle" >
+        <properties>
+            <prop value="694.118,572.745,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="58" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="7" name="/Left/ShoulderYaw/JointAngle" >
+        <properties>
+            <prop value="254.331,552.543,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="42" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="8" name="/Right/ShoulderPitch/JointAngle" >
+        <properties>
+            <prop value="693.275,635.382,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="59" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="9" name="/Left/ShoulderPitch/JointAngle" >
+        <properties>
+            <prop value="252.749,621.743,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="43" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="10" name="/Right/Elbow/JointAngle" >
+        <properties>
+            <prop value="692.012,699.342,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="60" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="11" name="/Left/Elbow/JointAngle" >
+        <properties>
+            <prop value="254.925,682.697,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="44" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="12" name="/Right/HipRoll/JointAngle" >
+        <properties>
+            <prop value="707.467,1098.53,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="90" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="13" name="/Left/HipRoll/JointAngle" >
+        <properties>
+            <prop value="249.771,1080.59,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="74" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="14" name="/Right/HipPitch/JointAngle" >
+        <properties>
+            <prop value="706.776,1020.63,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="91" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="15" name="/Left/HipPitch/JointAngle" >
+        <properties>
+            <prop value="249.272,1007.37,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="75" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="16" name="/Right/HipYaw/JointAngle" >
+        <properties>
+            <prop value="707.905,949.007,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="92" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="17" name="/Left/HipYaw/JointAngle" >
+        <properties>
+            <prop value="249.149,937.845,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="76" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="18" name="/Right/Knee/JointAngle" >
+        <properties>
+            <prop value="704.348,1349.76,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="122" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="19" name="/Left/Knee/JointAngle" >
+        <properties>
+            <prop value="256.174,1336.81,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="106" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="20" name="/Right/AnkleYaw/JointAngle" >
+        <properties>
+            <prop value="707.505,1414.66,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="123" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="21" name="/Left/AnkleYaw/JointAngle" >
+        <properties>
+            <prop value="255.99,1402.88,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="107" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="22" name="/Right/AnklePitch/JointAngle" >
+        <properties>
+            <prop value="706.583,1475.36,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="124" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="23" name="/Left/AnklePitch/JointAngle" >
+        <properties>
+            <prop value="252.687,1465.46,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="108" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="24" name="/Head/Pan/JointAngle" >
+        <properties>
+            <prop value="699.41,255.024,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="27" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="25" name="/Head/Tilt/JointAngle" >
+        <properties>
+            <prop value="698.303,313.101,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="28" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="26" name="/ABFR/AccelAxis1" >
+        <properties>
+            <prop value="819.226,1557.92,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="115" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="27" name="/ABFR/AccelAxis2" >
+        <properties>
+            <prop value="713.865,1557.26,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="116" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="28" name="/ABHR/AccelAxis1" >
+        <properties>
+            <prop value="813.851,1166.1,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="83" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="29" name="/ABHR/AccelAxis2" >
+        <properties>
+            <prop value="707.576,1166.26,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="84" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="30" name="/ABSR/AccelAxis1" >
+        <properties>
+            <prop value="808.432,392.569,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="19" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="31" name="/ABSR/AccelAxis2" >
+        <properties>
+            <prop value="702.809,392.801,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="20" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="32" name="/ABAR/AccelAxis1" >
+        <properties>
+            <prop value="807.694,779.406,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="51" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="33" name="/ABAR/AccelAxis2" >
+        <properties>
+            <prop value="700.962,779.869,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="52" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="34" name="/ABFL/AccelAxis1" >
+        <properties>
+            <prop value="153.332,1548.7,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="99" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="35" name="/ABFL/AccelAxis2" >
+        <properties>
+            <prop value="254.606,1549.99,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="100" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="36" name="/ABHL/AccelAxis1" >
+        <properties>
+            <prop value="145.492,1156.49,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="67" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="37" name="/ABHL/AccelAxis2" >
+        <properties>
+            <prop value="249.393,1155.62,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="68" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="38" name="/ABML/AccelAxis1" >
+        <properties>
+            <prop value="135.844,380.589,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="3" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="39" name="/ABML/AccelAxis2" >
+        <properties>
+            <prop value="239.106,380.747,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="4" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="40" name="/ABAL/AccelAxis1" >
+        <properties>
+            <prop value="144.825,760.986,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="35" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="41" name="/ABAL/AccelAxis2" >
+        <properties>
+            <prop value="255.666,761.927,0" name="_LOCATION" />
+            <prop value="" name="TYPE_INPUT" />
+            <prop value="36" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="42" name="/Waist/DesiredAngle" >
+        <properties>
+            <prop value="1065.77,197.475,0" name="_LOCATION" />
+            <prop value="29" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="43" name="/Waist/DesiredTorque" >
+        <properties>
+            <prop value="871.453,195.75,0" name="_LOCATION" />
+            <prop value="16" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="44" name="/Right/ShoulderYaw/DesiredAngle" >
+        <properties>
+            <prop value="1075.62,575.908,0" name="_LOCATION" />
+            <prop value="61" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="45" name="/Right/ShoulderYaw/DesiredTorque" >
+        <properties>
+            <prop value="879.041,574.746,0" name="_LOCATION" />
+            <prop value="48" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="46" name="/Left/ShoulderYaw/DesiredAngle" >
+        <properties>
+            <prop value="-119.431,554.595,0" name="_LOCATION" />
+            <prop value="45" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="47" name="/Left/ShoulderYaw/DesiredTorque" >
+        <properties>
+            <prop value="60.391,552.991,0" name="_LOCATION" />
+            <prop value="32" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="48" name="/Right/ShoulderPitch/DesiredAngle" >
+        <properties>
+            <prop value="1082.48,639.208,0" name="_LOCATION" />
+            <prop value="62" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="49" name="/Right/ShoulderPitch/DesiredTorque" >
+        <properties>
+            <prop value="882.408,636.739,0" name="_LOCATION" />
+            <prop value="49" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="50" name="/Left/ShoulderPitch/DesiredAngle" >
+        <properties>
+            <prop value="-120.38,612.749,0" name="_LOCATION" />
+            <prop value="46" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="51" name="/Left/ShoulderPitch/DesiredTorque" >
+        <properties>
+            <prop value="60.024,616.044,0" name="_LOCATION" />
+            <prop value="33" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="52" name="/Right/Elbow/DesiredAngle" >
+        <properties>
+            <prop value="1070.54,703.266,0" name="_LOCATION" />
+            <prop value="63" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="53" name="/Right/Elbow/DesiredTorque" >
+        <properties>
+            <prop value="889.243,697.127,0" name="_LOCATION" />
+            <prop value="50" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="54" name="/Left/Elbow/DesiredAngle" >
+        <properties>
+            <prop value="-121.003,682.798,0" name="_LOCATION" />
+            <prop value="47" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="55" name="/Left/Elbow/DesiredTorque" >
+        <properties>
+            <prop value="63.512,683.754,0" name="_LOCATION" />
+            <prop value="34" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="56" name="/Right/HipRoll/DesiredAngle" >
+        <properties>
+            <prop value="1066.88,1098.97,0" name="_LOCATION" />
+            <prop value="93" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="57" name="/Right/HipRoll/DesiredTorque" >
+        <properties>
+            <prop value="893.22,1097.74,0" name="_LOCATION" />
+            <prop value="80" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="58" name="/Left/HipRoll/DesiredAngle" >
+        <properties>
+            <prop value="-108.61,1070.87,0" name="_LOCATION" />
+            <prop value="77" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="59" name="/Left/HipRoll/DesiredTorque" >
+        <properties>
+            <prop value="60.169,1073.24,0" name="_LOCATION" />
+            <prop value="64" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="60" name="/Right/HipPitch/DesiredAngle" >
+        <properties>
+            <prop value="1063.65,1023.39,0" name="_LOCATION" />
+            <prop value="94" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="61" name="/Right/HipPitch/DesiredTorque" >
+        <properties>
+            <prop value="889.762,1023.46,0" name="_LOCATION" />
+            <prop value="81" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="62" name="/Left/HipPitch/DesiredAngle" >
+        <properties>
+            <prop value="-107.595,1003.17,0" name="_LOCATION" />
+            <prop value="78" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="63" name="/Left/HipPitch/DesiredTorque" >
+        <properties>
+            <prop value="61.315,1003.75,0" name="_LOCATION" />
+            <prop value="65" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="64" name="/Right/HipYaw/DesiredAngle" >
+        <properties>
+            <prop value="1068.2,950.236,0" name="_LOCATION" />
+            <prop value="95" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="65" name="/Right/HipYaw/DesiredTorque" >
+        <properties>
+            <prop value="890.288,948.87,0" name="_LOCATION" />
+            <prop value="82" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="66" name="/Left/HipYaw/DesiredAngle" >
+        <properties>
+            <prop value="-110.041,934.634,0" name="_LOCATION" />
+            <prop value="79" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="67" name="/Left/HipYaw/DesiredTorque" >
+        <properties>
+            <prop value="60.479,936.777,0" name="_LOCATION" />
+            <prop value="66" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="68" name="/Right/Knee/DesiredAngle" >
+        <properties>
+            <prop value="1068.32,1344.7,0" name="_LOCATION" />
+            <prop value="125" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="69" name="/Right/Knee/DesiredTorque" >
+        <properties>
+            <prop value="886.388,1344.93,0" name="_LOCATION" />
+            <prop value="112" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="70" name="/Left/Knee/DesiredAngle" >
+        <properties>
+            <prop value="-92.1036,1334.34,0" name="_LOCATION" />
+            <prop value="109" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="71" name="/Left/Knee/DesiredTorque" >
+        <properties>
+            <prop value="83.505,1336.57,0" name="_LOCATION" />
+            <prop value="96" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="72" name="/Right/AnkleYaw/DesiredAngle" >
+        <properties>
+            <prop value="1071.41,1416.29,0" name="_LOCATION" />
+            <prop value="126" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="73" name="/Right/AnkleYaw/DesiredTorque" >
+        <properties>
+            <prop value="892.842,1410.23,0" name="_LOCATION" />
+            <prop value="113" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="74" name="/Left/AnkleYaw/DesiredAngle" >
+        <properties>
+            <prop value="-89.4678,1402.2,0" name="_LOCATION" />
+            <prop value="110" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="75" name="/Left/AnkleYaw/DesiredTorque" >
+        <properties>
+            <prop value="88.15,1404.43,0" name="_LOCATION" />
+            <prop value="97" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="76" name="/Right/AnklePitch/DesiredAngle" >
+        <properties>
+            <prop value="1074.02,1474.24,0" name="_LOCATION" />
+            <prop value="127" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="77" name="/Right/AnklePitch/DesiredTorque" >
+        <properties>
+            <prop value="895.421,1473.78,0" name="_LOCATION" />
+            <prop value="114" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="78" name="/Left/AnklePitch/DesiredAngle" >
+        <properties>
+            <prop value="-88.4573,1467.17,0" name="_LOCATION" />
+            <prop value="111" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="79" name="/Left/AnklePitch/DesiredTorque" >
+        <properties>
+            <prop value="86.128,1466.35,0" name="_LOCATION" />
+            <prop value="98" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="80" name="/Head/Pan/DesiredAngle" >
+        <properties>
+            <prop value="1064.67,264.44,0" name="_LOCATION" />
+            <prop value="30" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="81" name="/Head/Pan/DesiredTorque" >
+        <properties>
+            <prop value="873.754,252.275,0" name="_LOCATION" />
+            <prop value="17" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="0" id="82" name="/Head/Tilt/DesiredAngle" >
+        <properties>
+            <prop value="1065.72,329.05,0" name="_LOCATION" />
+            <prop value="31" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <neuron bias="1" id="83" name="/Head/Tilt/DesiredTorque" >
+        <properties>
+            <prop value="879.256,316.976,0" name="_LOCATION" />
+            <prop value="18" name="SPINAL_CORD_ADDRESS" />
+            <prop value="1" name="CreationDate" />
+            <prop value="" name="TYPE_OUTPUT" />
+        </properties>
+        <transferFunction name="ASeriesTanh" />
+        <activationFunction name="ASeries" />
+    </neuron>
+    <group id="6" name="Default" >
+        <properties>
+            <prop value="1108.05,197.674,0" name="_LOCATION" />
+        </properties>
+        <members>
+            <member id="5" />
+            <member id="6" />
+            <member id="7" />
+            <member id="8" />
+            <member id="9" />
+            <member id="10" />
+            <member id="11" />
+            <member id="12" />
+            <member id="13" />
+            <member id="14" />
+            <member id="15" />
+            <member id="16" />
+            <member id="17" />
+            <member id="18" />
+            <member id="19" />
+            <member id="20" />
+            <member id="21" />
+            <member id="22" />
+            <member id="23" />
+            <member id="24" />
+            <member id="25" />
+            <member id="26" />
+            <member id="27" />
+            <member id="28" />
+            <member id="29" />
+            <member id="30" />
+            <member id="31" />
+            <member id="32" />
+            <member id="33" />
+            <member id="34" />
+            <member id="35" />
+            <member id="36" />
+            <member id="37" />
+            <member id="38" />
+            <member id="39" />
+            <member id="40" />
+            <member id="41" />
+            <member id="42" />
+            <member id="43" />
+            <member id="44" />
+            <member id="45" />
+            <member id="46" />
+            <member id="47" />
+            <member id="48" />
+            <member id="49" />
+            <member id="50" />
+            <member id="51" />
+            <member id="52" />
+            <member id="53" />
+            <member id="54" />
+            <member id="55" />
+            <member id="56" />
+            <member id="57" />
+            <member id="58" />
+            <member id="59" />
+            <member id="60" />
+            <member id="61" />
+            <member id="62" />
+            <member id="63" />
+            <member id="64" />
+            <member id="65" />
+            <member id="66" />
+            <member id="67" />
+            <member id="68" />
+            <member id="69" />
+            <member id="70" />
+            <member id="71" />
+            <member id="72" />
+            <member id="73" />
+            <member id="74" />
+            <member id="75" />
+            <member id="76" />
+            <member id="77" />
+            <member id="78" />
+            <member id="79" />
+            <member id="80" />
+            <member id="81" />
+            <member id="82" />
+            <member id="83" />
+        </members>
+    </group>
+    <module id="819" name="ABML" >
+        <properties>
+            <prop value="-143.168,152.399,0" name="_LOCATION" />
+            <prop value="414,289" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="ABML" name="Accelboard" />
+            <prop value="819" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="38" />
+            <member id="39" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="2" name="MaxNumberOfNeurons" >
+                <param value="F" name="AutoAdapt" />
+                <param value="0" name="Min" />
+                <param value="20" name="Max" />
+            </constraint>
+            <constraint id="3" name="NumberOfReadNeurons" >
+                <param value="7" name="MaxReadNeurons" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="820" name="ABAL" >
+        <properties>
+            <prop value="-140.851,525.391,0" name="_LOCATION" />
+            <prop value="417,292" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="ABAL" name="Accelboard" />
+            <prop value="820" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="11" />
+            <member id="40" />
+            <member id="9" />
+            <member id="41" />
+            <member id="46" />
+            <member id="47" />
+            <member id="7" />
+            <member id="55" />
+            <member id="54" />
+            <member id="50" />
+            <member id="51" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="2" name="MaxNumberOfNeurons" >
+                <param value="F" name="AutoAdapt" />
+                <param value="0" name="Min" />
+                <param value="20" name="Max" />
+            </constraint>
+            <constraint id="3" name="NumberOfReadNeurons" >
+                <param value="4" name="MaxReadNeurons" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="821" name="ABHL" >
+        <properties>
+            <prop value="-136.152,901.895,0" name="_LOCATION" />
+            <prop value="409,308" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="ABHL" name="Accelboard" />
+            <prop value="821" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="15" />
+            <member id="36" />
+            <member id="58" />
+            <member id="13" />
+            <member id="37" />
+            <member id="59" />
+            <member id="63" />
+            <member id="62" />
+            <member id="17" />
+            <member id="66" />
+            <member id="67" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="2" name="MaxNumberOfNeurons" >
+                <param value="F" name="AutoAdapt" />
+                <param value="0" name="Min" />
+                <param value="20" name="Max" />
+            </constraint>
+            <constraint id="3" name="NumberOfReadNeurons" >
+                <param value="4" name="MaxReadNeurons" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="822" name="ABFL" >
+        <properties>
+            <prop value="-126.5,1294.83,0" name="_LOCATION" />
+            <prop value="406,316" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="ABFL" name="Accelboard" />
+            <prop value="822" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="19" />
+            <member id="34" />
+            <member id="21" />
+            <member id="35" />
+            <member id="70" />
+            <member id="71" />
+            <member id="23" />
+            <member id="74" />
+            <member id="78" />
+            <member id="79" />
+            <member id="75" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="2" name="MaxNumberOfNeurons" >
+                <param value="F" name="AutoAdapt" />
+                <param value="0" name="Min" />
+                <param value="20" name="Max" />
+            </constraint>
+            <constraint id="3" name="NumberOfReadNeurons" >
+                <param value="4" name="MaxReadNeurons" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="823" name="ABSR" >
+        <properties>
+            <prop value="668.635,163.916,0" name="_LOCATION" />
+            <prop value="433,287" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="ABSR" name="Accelboard" />
+            <prop value="823" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="5" />
+            <member id="30" />
+            <member id="24" />
+            <member id="31" />
+            <member id="42" />
+            <member id="43" />
+            <member id="82" />
+            <member id="83" />
+            <member id="25" />
+            <member id="81" />
+            <member id="80" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="2" name="MaxNumberOfNeurons" >
+                <param value="F" name="AutoAdapt" />
+                <param value="0" name="Min" />
+                <param value="20" name="Max" />
+            </constraint>
+            <constraint id="3" name="NumberOfReadNeurons" >
+                <param value="4" name="MaxReadNeurons" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="824" name="ABAR" >
+        <properties>
+            <prop value="674.312,538.798,0" name="_LOCATION" />
+            <prop value="423,293" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="ABAR" name="Accelboard" />
+            <prop value="824" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="10" />
+            <member id="32" />
+            <member id="44" />
+            <member id="8" />
+            <member id="33" />
+            <member id="45" />
+            <member id="6" />
+            <member id="48" />
+            <member id="49" />
+            <member id="52" />
+            <member id="53" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="2" name="MaxNumberOfNeurons" >
+                <param value="F" name="AutoAdapt" />
+                <param value="0" name="Min" />
+                <param value="20" name="Max" />
+            </constraint>
+            <constraint id="3" name="NumberOfReadNeurons" >
+                <param value="4" name="MaxReadNeurons" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="825" name="ABHR" >
+        <properties>
+            <prop value="677.591,916.595,0" name="_LOCATION" />
+            <prop value="417,304" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="ABHR" name="Accelboard" />
+            <prop value="825" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="14" />
+            <member id="12" />
+            <member id="28" />
+            <member id="29" />
+            <member id="56" />
+            <member id="60" />
+            <member id="16" />
+            <member id="57" />
+            <member id="61" />
+            <member id="64" />
+            <member id="65" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="2" name="MaxNumberOfNeurons" >
+                <param value="F" name="AutoAdapt" />
+                <param value="0" name="Min" />
+                <param value="20" name="Max" />
+            </constraint>
+            <constraint id="3" name="NumberOfReadNeurons" >
+                <param value="4" name="MaxReadNeurons" />
+            </constraint>
+        </constraints>
+    </module>
+    <module id="826" name="ABFR" >
+        <properties>
+            <prop value="680.117,1313.83,0" name="_LOCATION" />
+            <prop value="417,309" name="_MODULE_SIZE" />
+            <prop value="Default" name="MODULE_TYPE" />
+            <prop value="ABFR" name="Accelboard" />
+            <prop value="826" name="_MODULE_IDENTIFIER" />
+        </properties>
+        <members>
+            <member id="18" />
+            <member id="26" />
+            <member id="20" />
+            <member id="27" />
+            <member id="68" />
+            <member id="69" />
+            <member id="72" />
+            <member id="73" />
+            <member id="22" />
+            <member id="76" />
+            <member id="77" />
+        </members>
+        <subModules/>
+        <constraints>
+            <constraint id="2" name="MaxNumberOfNeurons" >
+                <param value="F" name="AutoAdapt" />
+                <param value="0" name="Min" />
+                <param value="20" name="Max" />
+            </constraint>
+            <constraint id="3" name="NumberOfReadNeurons" >
+                <param value="4" name="MaxReadNeurons" />
+            </constraint>
+        </constraints>
+    </module>
+</net>
+

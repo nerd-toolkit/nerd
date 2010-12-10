@@ -1,0 +1,16 @@
+#ORCS Values
+#Saved at: 07.07.2009  12:23:21
+/Sim/AliceLight/HideLightCone=T
+/Sim/BadGuy1Light/HideLightCone=T
+/Sim/BadGuy2Light/HideLightCone=T
+/Sim/CampfireLight/HideLightCone=T
+/Sim/Food1Light/HideLightCone=T
+/Sim/Food1TypeLight/HideLightCone=T
+/Sim/Food2Light/HideLightCone=T
+/Sim/Food2TypeLight/HideLightCone=T
+/Sim/Food3Light/HideLightCone=T
+/Sim/Food3TypeLight/HideLightCone=T
+/Sim/Food4Light/HideLightCone=T
+/Sim/Food4TypeLight/HideLightCone=T
+/Sim/Friend1Light/HideLightCone=T
+/Sim/Friend2Light/HideLightCone=T

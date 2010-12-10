@@ -1,0 +1,13 @@
+ <ORCS version="Environment XML V1.1"> 
+
+  <Models> 
+   <model prototype="Ground" name="Ground" />  
+   <model prototype="ASeries" name="ASeries" position="(0,0.001,0)" orientation="(0,90,0)" />
+  </Models> 
+
+   <Environment> 
+   <object type="SinkBox" Name="SinkBox1" Position="(0.2, -0.1, 0.0)" Orientation="(0,0,0)" Dimensions="(0.1,0.2,0.5)" Color="red"/> 
+  </Environment>
+
+ </ORCS>
+

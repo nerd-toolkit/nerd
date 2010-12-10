@@ -1,0 +1,69 @@
+<ORCS version="Environment XML V1.1">
+	<Models>
+		<model prototype="Ground" name="Ground"/>
+		<model prototype="Khepera" name="Khepera" position="(0, 0.1, 0)"/>
+	</Models>
+
+	<Environment>
+		<object type="Box" Name="Wall1" Position="(-1, 0, 0)" Orientation="(0, 140, 0)" Width="3" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Wall2" Position="(0, 0, -1)" Orientation="(0, 0, 0)" Width="5" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Wall3" Position="(1, 0, 0)" Orientation="(0, 40, 0)" Width="3" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+
+		<object type="Box" Name="Obs1" Position="(0, 0, 0.09)" Width="0.2" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs2" Position="(0.09, 0, 0)" Orientation="(0, 40, 0)" Width="0.2" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs3" Position="(-0.09, 0, 0)" Orientation="(0, 90, 0)" Width="0.2" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs4" Position="(0.5, 0, 0.3)" Orientation="(0, 90, 0)" Width="0.2" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs5" Position="(0.3, 0, -0.5)" Orientation="(0, 70, 0)" Width="0.2" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs6" Position="(0.4, 0, -0.6)"  Width="0.5" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs7" Position="(0.9, 0, -0.3)" Orientation="(0, 90, 0)" Width="0.2" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs8" Position="(0.8, 0, -0.3)" Orientation="(0, 40, 0)" Width="0.4" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs9" Position="(0, 0, 0.72)" Orientation="(0, 90, 0)" Width="0.3" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs10" Position="(-0.4, 0, -0.2)" Orientation="(0, 66, 0)" Width="0.2" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs11" Position="(-0.4, 0, -0.3)" Orientation="(0, 120, 0)" Width="0.4" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs12" Position="(-0.6, 0, -0.3)" Orientation="(0, 30, 0)" Width="0.4" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs13" Position="(-0.4, 0, 0.46)" Orientation="(0, 40, 0)" Width="0.1" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs14" Position="(-0.2, 0, -0.8)" Orientation="(0, 110, 0)" Width="0.42" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs15" Position="(-1.2, 0, -0.8)" Orientation="(0, 145, 0)" Width="0.6" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs16" Position="(1.2, 0, -0.9)" Orientation="(0, 45, 0)" Width="0.3" Height="0.1" Depth="0.05" Color="red" Dynamic="false"/>
+		<object type="Box" Name="Obs17" Position="(-1.3, 0, -0.5)" Orientation="(0, 45, 0)" Width="0.07" Height="0.1" Depth="0.07" Color="red" Dynamic="false"/>
+	</Environment>
+
+	<randomizeList object="Khepera" parameter="Orientation" method="sequencial">
+		<item value="(0, 90, 0)"/>
+		<item value="(0, 180, 0)"/>
+		<item value="(0, 270, 0)"/>
+		<item value="(0, 0, 0)"/>
+	</randomizeList>
+
+	<randomizeList object="Khepera" parameter="Position" method="sequencial">
+		<item value="(0, 0, 0)"/>
+		<item value="(0, 0, 0.4)"/>
+		<item value="(-1.1, 0, -0.5)"/>
+		<item value="(1, 0, -0.4)"/>
+	</randomizeList>
+
+	<CollisionRule prototype="EventCollisionRule" name="InvalidContacts">
+		<param name="Events" value="/Control/TerminateTry"/>
+		<source object="/Khepera/Body"/>
+		<target object="/Wall1"/>
+		<target object="/Wall2"/>
+		<target object="/Wall3"/>
+		<target object="/Obs1"/>
+		<target object="/Obs2"/>
+		<target object="/Obs3"/>
+		<target object="/Obs4"/>
+		<target object="/Obs5"/>
+		<target object="/Obs6"/>
+		<target object="/Obs7"/>
+		<target object="/Obs8"/>
+		<target object="/Obs9"/>
+		<target object="/Obs10"/>
+		<target object="/Obs11"/>
+		<target object="/Obs12"/>
+		<target object="/Obs13"/>
+		<target object="/Obs14"/>
+		<target object="/Obs15"/>
+		<target object="/Obs16"/>
+		<target object="/Obs17"/>
+	</CollisionRule>
+</ORCS>

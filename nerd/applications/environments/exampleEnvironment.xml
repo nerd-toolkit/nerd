@@ -1,0 +1,12 @@
+ <ORCS version="Environment XML V1.0"> 
+  <Environment> 
+   <object type="box" name="FirstBox" position="(0.025,0.075,0.25)" orientation="(45,45,45)" dimension="(0.1,0.1,0.2)" material="Wood" color="(0,100,100,200)" texture="AccelBoard"/> 
+   <object type="sphere" name="SecondSphere" position="(-0.255,0.5,0.2)" color="red" dynamic="true" mass="0.05" material="ABS" dimension="0.05"/> 
+  </Environment> 
+
+  <Agent> 
+   <Ground name="Ground" /> 
+   <ASeries name="A-Series" position="(0.8,0.02,-0.3)" orientation="(0,0,0)"/> 
+  </Agent> 
+ </ORCS>
+

@@ -1,0 +1,41 @@
+ <ORCS version="Environment XML V1.1"> 
+
+  <Models> 
+   <model prototype="Ground" name="Ground" /> 
+   <model prototype="MSeriesV1" name="MSeriesV1" position="(0,0.01,0)" orientation="(0, 0,0)"/>
+  </Models> 
+
+  <CollisionRule prototype="EventCollisionRule" name="InvalidContacts">
+    <param name="Events" value="/Control/TerminateTry" />
+
+      <source object="/MSeriesV1/Left/Ankle"/>
+      <source object="/MSeriesV1/Left/Femur"/>
+<!--      <source object="/MSeriesV1/Left/Foot"/> -->
+      <source object="/MSeriesV1/Left/Hip"/>
+      <source object="/MSeriesV1/Left/HipCross"/>
+      <source object="/MSeriesV1/Left/LowerArm"/>
+      <source object="/MSeriesV1/Left/Shoulder"/>
+      <source object="/MSeriesV1/Left/Tibia"/>
+<!--      <source object="/MSeriesV1/Left/Toes"/> -->
+      <source object="/MSeriesV1/Left/UpperArm"/>
+      <source object="/MSeriesV1/Middle/HeadPitchPart"/>
+      <source object="/MSeriesV1/Middle/HeadRollPart"/>
+      <source object="/MSeriesV1/Middle/HeadYawPart"/>
+      <source object="/MSeriesV1/Middle/Pelvis"/>
+      <source object="/MSeriesV1/Middle/UpperBody"/>
+      <source object="/MSeriesV1/Right/Ankle"/>
+      <source object="/MSeriesV1/Right/Femur"/>
+<!--      <source object="/MSeriesV1/Right/Foot"/> -->
+      <source object="/MSeriesV1/Right/Hip"/>
+      <source object="/MSeriesV1/Right/HipCross"/>
+      <source object="/MSeriesV1/Right/LowerArm"/>
+      <source object="/MSeriesV1/Right/Shoulder"/>
+      <source object="/MSeriesV1/Right/Tibia"/>
+<!--      <source object="/MSeriesV1/Right/Toes"/> -->
+      <source object="/MSeriesV1/Right/UpperArm"/>
+
+    <target object="/Ground" />
+  </CollisionRule>
+
+ </ORCS>
+

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="LATIN1"?>
+<Net SynapseMode="conventional" Transferfunction="tanh">
+	<Neuron Bias="0.0"/>
+</Net>

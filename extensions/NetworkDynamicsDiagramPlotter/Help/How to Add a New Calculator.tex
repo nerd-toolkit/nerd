@@ -1,0 +1,28 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc} %für Quellen die ä,ü,... enthalten
+\usepackage{amsfonts}
+
+\begin{document}
+
+\title{How to Add a New Calculator}
+\author{
+        Till Faber \\
+        Universit\"{a}t Osnabr\"{u}ck\\
+        Institute of Cognitive Science\\
+        \textit{Neurocybernetics}\\
+        tfaber@uos.de        
+        }
+\date{\today}
+\maketitle
+
+\section*{Introduction}
+This document is supposed to help adding new calculators to the Dynamics Plotter. Apart from creating the obvious source and header files it is necessary to add the new calculators to the collection and (if so wished) to the inbuilt plotters.
+
+\section*{Collection}
+   The new calculator is added to the selection by creating a new object in NetworkDynamics\-DiagramPlotter/\-NetworkDynamicsDiagramPlotterLib/\-Collections/\-DynamicsPlotCollection.cpp. 
+   
+\section*{Inbuilt Plotter}
+   Make sure the inbuilt plotter accepts the new calculator. Do so by adding its name to the appropriate if-clause in NetworkDynamicsDiagramPlotter/\-NetworkDynamics\-DiagramPlotterLib/\-DynamicsPlot/\-OnlinePlotter/\-OnlinePlotter.cpp, more precisely in OnlinePlotter::prepareData(QString calculator). 
+      
+   
+\end{document}
