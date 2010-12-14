@@ -53,6 +53,7 @@
 #include "Physics/SimObjectGroup.h"
 #include "Collision/CollisionRule.h"
 #include "Physics/SimBody.h"
+#include "Physics/SimJoint.h"
 
 namespace nerd {
 
@@ -92,10 +93,8 @@ namespace nerd {
 		int createObject(const QString &prototypeName, const QString &name);
 		int copyObject(int objectId, const QString &name);
 		bool setProperty(int objectId, const QString &propertyName, const QString &value);
-		bool setProperty(const QString &fullPropertyName, const QString &value);
 		bool hasProperty(int objectId, const QString &propertyName);
 		QString getProperty(int objectId, const QString &propertyName);
-		QString getProperty(const QString &fullPropertyName);
 		
 		bool makeCurrent(int objectId);
 		int getCurrent();
@@ -114,21 +113,22 @@ namespace nerd {
 
 		bool allowCollisions(int objectId1, int objectId2, bool allow);
 
-		QString toVector3DString(double x, double y, double z);
-		QString toColorString(double r, double g, double b, double t);
-		double getVectorElement(const QString &vector3DString, int index);
-
-		bool loadValues(const QString &fileName);
-
 		bool hasEnvironmentSection();
 		bool hasModelSection();
 
-		
+		bool setMorphologyBase(int bodyId);
+		bool setMorphologyProperty(int bodyId, const QString &propertyName, double content);
+		bool rotateJoint(int jointId, double degree);
+		bool rotateObjects(QScriptValue objectIds, QScriptValue vector3DAngles);
+		bool translateObjects(QScriptValue objectIds, QScriptValue vector3DTranslation);
 
 	protected:
 		virtual void reportError(const QString &message);
 		virtual void importVariables();
 		virtual void addCustomScriptContextStructures();
+		QList<QList<SimObject*> > getMorphologyTree(SimObject *localBase);
+		QList<SimObject*> getMorphologyChainRecursively(SimObject *localBase, QList<SimJoint*> remainingJoints);
+		bool rotateOrTranslateObjects(QScriptValue objectIds, QScriptValue vector3DMod, bool translate);
 
 	protected:
 		QString mPrototypeName;
@@ -141,6 +141,7 @@ namespace nerd {
 		bool mEnvironmentMode;
 		bool mSetupEnvironmentMode;
 		bool mRandomizationMode;
+		SimObject *mMorphologyBase;
 		
 	};
 

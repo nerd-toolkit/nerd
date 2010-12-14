@@ -63,7 +63,7 @@ ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction()
 {
 	mDecay = new DoubleValue(0.99);
 	
-	addParameter("Decay", mDecay);
+	addParameter("Gamma", mDecay);
 }
 
 
@@ -76,7 +76,7 @@ ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction(
 						const ChaoticNeuronActivationFunction &other) 
 	: ActivationFunction(other)
 {
-	mDecay = dynamic_cast<DoubleValue*>(getParameter("Decay"));
+	mDecay = dynamic_cast<DoubleValue*>(getParameter("Gamma"));
 }
 
 /**
@@ -100,13 +100,13 @@ double ChaoticNeuronActivationFunction::calculateActivation(Neuron *owner) {
 
 	double activation = owner->getActivationValue().get() * mDecay->get();
 
-	activation += owner->getBiasValue().get();
+	double externalInput = owner->getBiasValue().get();
 
 	QList<Synapse*> synapses = owner->getSynapses();
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
-		activation += i.next()->calculateActivation();
+		externalInput += i.next()->calculateActivation();
 	}
-	return activation;
+	return activation + ((1.0 - mDecay->get()) * externalInput);
 }
 
 

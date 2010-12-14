@@ -97,12 +97,25 @@ namespace nerd {
 		void defineEvent(const QString &name, const QString &eventName, bool reportMissingEvents = true);
 		void definePersistentParameter(const QString &name, const QString &initialValue);
 
+		bool setProperty(const QString &fullPropertyName, const QString &value);
+		QString getProperty(const QString &fullPropertyName);
+		QScriptValue getPropertyAsArray(const QString fullPropertyName);
+
+		bool createGlobalStringProperty(const QString &propertyName, const QString &content = "");
+		bool createGlobalDoubleProperty(const QString &propertyName, double content = 0.0);
+
 		void setValueFromString(const QString &valueName, const QString &content, bool warnIfValueMissing = true);
 		void triggerEvent(const QString &eventName, bool createIfNotAvailable = false);
 
 		QString loadFileToString(const QString &fileName);
 		double random();
 		int randomInt(int max);
+
+		QString toVector3DString(double x, double y, double z);
+		QString toColorString(double r, double g, double b, double t);
+		double getVectorElement(const QString &vector3DString, int index);
+
+		bool loadValues(const QString &fileName);
 
 	protected:
 		virtual void reportError(const QString &message);

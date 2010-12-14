@@ -74,6 +74,9 @@ class SimJoint : public SimObject {
 		
 		SimBody* getFirstBody() const;
 		SimBody* getSecondBody() const;
+
+		StringValue* getFirstBodyName() const;
+		StringValue* getSecondBodyName() const;
 	
 		virtual void valueChanged(Value *value);
 

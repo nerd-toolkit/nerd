@@ -53,6 +53,9 @@
 #include "Collision/CollisionManager.h"
 #include "Physics/SimObjectGroup.h"
 #include <QStringList>
+#include "Physics/BoxBody.h"
+#include "Physics/CapsuleBody.h"
+
 
 using namespace std;
 
@@ -65,7 +68,7 @@ namespace nerd {
 ScriptedModel::ScriptedModel(const QString &name, const QString &script)
 	: ScriptingContext(name, "model"), ModelInterface(name), mPrototypeName(""), mIdCounter(1),
 		mCurrentSimObject(0), mEnvironmentMode(false), mSetupEnvironmentMode(false), 
-		mRandomizationMode(false)
+		mRandomizationMode(false), mMorphologyBase(0)
 {
 }
 
@@ -78,7 +81,7 @@ ScriptedModel::ScriptedModel(const QString &name, const QString &script)
 ScriptedModel::ScriptedModel(const ScriptedModel &other) 
 	: ScriptingContext(other), ModelInterface(other), mPrototypeName(other.mPrototypeName), 
 		mIdCounter(other.mIdCounter), mCurrentSimObject(0), mEnvironmentMode(false),
-		mSetupEnvironmentMode(false), mRandomizationMode(false)
+		mSetupEnvironmentMode(false), mRandomizationMode(false), mMorphologyBase(0)
 {
 	for(QHashIterator<StringValue*, QString> i(other.mPrototypeParameters); i.hasNext();) {
 		i.next();
@@ -274,37 +277,6 @@ bool ScriptedModel::setProperty(int objectId, const QString &propertyName, const
 	return prop->setValueFromString(value);
 }
 
-bool ScriptedModel::setProperty(const QString &fullPropertyName, const QString &value) {
-	ValueManager *vm = Core::getInstance()->getValueManager();
-
-	QString propNameRegExp = fullPropertyName;
-	propNameRegExp = propNameRegExp.replace("**", ".*");
-	QList<QString> matchingNames = vm->getValueNamesMatchingPattern(propNameRegExp, true);
-
-	if(matchingNames.empty()) {
-		reportError("Could not find global property [" 
-				+ fullPropertyName + "] to set to [" + value + "]");
-		return false;
-	}
-
-	bool ok = true;
-	for(QListIterator<QString> i(matchingNames); i.hasNext();) {
-		Value *v = vm->getValue(i.next());
-		if(v == 0) {
-			reportError("Could not find global property [" 
-					+ fullPropertyName + "] to set to [" + value + "]");
-			ok = false;
-			continue;
-		}
-		if(!v->setValueFromString(value)) {
-			reportError("Could not set global property [" 
-					+ fullPropertyName + "] to [" + value + "]");
-			ok = false;
-			continue;
-		}
-	}
-	return ok;
-}
 
 bool ScriptedModel::hasProperty(int objectId, const QString &propertyName) {
 	SimObject *obj = 0;
@@ -342,30 +314,6 @@ QString ScriptedModel::getProperty(int objectId, const QString &propertyName) {
 	return prop->getValueAsString();
 }
 
-QString ScriptedModel::getProperty(const QString &fullPropertyName) {
-	ValueManager *vm = Core::getInstance()->getValueManager();
-
-	QString propNameRegExp = fullPropertyName;
-	propNameRegExp = propNameRegExp.replace("**", ".*");
-	QList<QString> matchingNames = vm->getValueNamesMatchingPattern(propNameRegExp, true);
-
-	if(matchingNames.empty()) {
-		reportError("Could not find global property [" 
-				+ fullPropertyName + "]");
-		return "";
-	}
-
-	for(QListIterator<QString> i(matchingNames); i.hasNext();) {
-		Value *v = vm->getValue(i.next());
-		if(v == 0) {
-			reportError("Could not find global property [" 
-					+ fullPropertyName + "]");
-			continue;
-		}
-		return v->getValueAsString();
-	}
-	return "";
-}
 
 
 bool ScriptedModel::makeCurrent(int objectId) {
@@ -689,35 +637,6 @@ bool ScriptedModel::allowCollisions(int objectId1, int objectId2, bool allow) {
 }
 
 
-QString ScriptedModel::toVector3DString(double x, double y, double z) {
-	return QString("(") + QString::number(x) + "," + QString::number(y) + "," + QString::number(z) + ")";
-}
-
-
-QString ScriptedModel::toColorString(double r, double g, double b, double t) {
-	return QString("(") + QString::number(r) + "," + QString::number(g) 
-			+ "," + QString::number(b) + "," + QString::number(t) + ")";
-}
-
-double ScriptedModel::getVectorElement(const QString &vector3DString, int index) {
-	if(!vector3DString.startsWith("(") || !vector3DString.endsWith(")")) {
-		Core::log("ScriptedModel::getVectorElement: Could not parse [" + vector3DString + "]", true);
-		return 0.0;
-	}
-	QString content = vector3DString;
-	QStringList elements = content.mid(1, content.length() - 2).split(",");
-	if(elements.size() <= 0 || elements.size() >= index) {
-		Core::log("ScriptedModel::getVectorElement: Index out of range ["
-				+ QString::number(index) + "]", true);
-		return 0.0;
-	}
-	return elements.at(index).toDouble();
-}
-
-bool ScriptedModel::loadValues(const QString &fileName) {
-	return Core::getInstance()->getValueManager()->loadValues(fileName);
-}
-
 bool ScriptedModel::hasEnvironmentSection() {
 	if(mScript != 0) {
 		mScript->evaluate("createEnvironment.toString();");
@@ -739,6 +658,87 @@ bool ScriptedModel::hasModelSection() {
 		return true;
 	}
 	return false;
+}
+
+bool ScriptedModel::setMorphologyBase(int bodyId) {
+	mMorphologyBase = dynamic_cast<SimBody*>(mSimObjectsLookup.value(bodyId));
+	return (mMorphologyBase != 0);
+}
+
+
+bool ScriptedModel::setMorphologyProperty(int bodyId, const QString &propertyName, 
+											double content) 
+{
+	//TODO NOT fully implemented yet!
+
+	if(mMorphologyBase == 0) {
+		return false;
+	}
+	SimObject *obj = dynamic_cast<SimBody*>(mSimObjectsLookup.value(bodyId));
+	if(obj == 0) {
+		return false;
+	}
+	if(dynamic_cast<BoxBody*>(obj) != 0) {
+		BoxBody *body = dynamic_cast<BoxBody*>(obj);
+		Vector3DValue *pos = body->getPositionValue();
+		Vector3DValue *orientation = body->getOrientationValue();
+
+		QList<QList<SimObject*> > tree = getMorphologyTree(body);
+
+		if(propertyName == "Width") {
+			DoubleValue *value = dynamic_cast<DoubleValue*>(body->getParameter("Width"));
+			double diff = content - value->get();
+			value->set(content);
+
+			for(QListIterator<QList<SimObject*> > i(tree); i.hasNext();) {
+				QList<SimObject*> chain = i.next();
+				if(chain.contains(mMorphologyBase)) {
+					continue;
+				}
+				QList<SimObject*> left;
+				QList<SimObject*> right;
+				for(QListIterator<SimObject*> k(chain); k.hasNext();) {
+					SimObject *obj = k.next();
+					//TODO
+				}
+				Physics::translateSimObjects(chain, pos->get() * -1);
+				Physics::rotateSimObjects(chain, orientation->get() * -1);
+				Physics::translateSimObjects(chain, Vector3D(diff, 0.0, 0.0));
+				Physics::rotateSimObjects(chain, orientation->get());
+				pos->set(pos->getX() + diff, pos->getY(), pos->getZ());
+				Physics::translateSimObjects(chain, pos->get());
+				
+			}
+		}
+		else if(propertyName == "Height") {
+
+		}
+		else if(propertyName == "Depth") {
+
+		}
+	}
+	else if(dynamic_cast<CapsuleBody*>(obj) != 0) {
+		CapsuleBody *body = dynamic_cast<CapsuleBody*>(obj);
+		if(propertyName == "Radius") {
+
+		}
+		else if(propertyName == "Length") {
+
+		}
+	}
+}
+
+bool ScriptedModel::rotateJoint(int jointId, double degree) {
+	//TODO not implemented yet!
+}
+
+bool ScriptedModel::rotateObjects(QScriptValue objectIds, QScriptValue vector3DAngles) {
+	return rotateOrTranslateObjects(objectIds, vector3DAngles, false);
+}
+
+
+bool ScriptedModel::translateObjects(QScriptValue objectIds, QScriptValue vector3DTranslation) {
+	return rotateOrTranslateObjects(objectIds, vector3DTranslation, true);
 }
 
 
@@ -824,6 +824,114 @@ void ScriptedModel::addCustomScriptContextStructures() {
 	
 }
 
+QList<QList<SimObject*> > ScriptedModel::getMorphologyTree(SimObject *localBase) {
+	QList<QList<SimObject*> > tree;
+
+	PhysicsManager *pm = Physics::getPhysicsManager();
+	
+	QList<SimJoint*> joints;
+	for(QListIterator<SimObject*> i(mSimObjectsLookup.values()); i.hasNext();) {
+		SimJoint *joint = dynamic_cast<SimJoint*>(i.next());
+		if(joint != 0) {
+			joints.append(joint);
+		}
+	}
+
+	QList<SimJoint*> remainingJoints = joints;
+	QList<SimBody*> directNeighbors;
+
+	for(QListIterator<SimJoint*> i(joints); i.hasNext();) {
+		SimJoint *joint = i.next();
+		SimBody *firstBody = pm->getSimBody(joint->getFirstBodyName()->get());
+		SimBody *secondBody = pm->getSimBody(joint->getSecondBodyName()->get());
+
+		if(firstBody == 0 && secondBody == 0) {
+			remainingJoints.removeAll(joint);
+			continue;
+		}
+		if(firstBody == localBase) {
+			remainingJoints.removeAll(joint);
+			directNeighbors.append(firstBody);
+			continue;
+		}
+		else if(secondBody == localBase) {
+			remainingJoints.removeAll(joint);
+			directNeighbors.append(secondBody);
+		}
+	}
+	for(QListIterator<SimBody*> i(directNeighbors); i.hasNext();) {
+		QList<SimObject*> chain = getMorphologyChainRecursively(i.next(), remainingJoints);
+		if(!chain.empty()) {
+			tree.append(chain);
+		}
+	}
+	return tree;
+}
+
+QList<SimObject*> ScriptedModel::getMorphologyChainRecursively(SimObject *localBase, 
+							QList<SimJoint*> remainingJoints) 
+{
+	QList<SimObject*> chain;
+
+	PhysicsManager *pm = Physics::getPhysicsManager();
+	
+	QList<SimJoint*> joints = remainingJoints;
+	for(QListIterator<SimJoint*> i(joints); i.hasNext();) {
+		SimJoint *joint = i.next();
+		SimBody *firstBody = pm->getSimBody(joint->getFirstBodyName()->get());
+		SimBody *secondBody = pm->getSimBody(joint->getSecondBodyName()->get());
+
+		if(firstBody == 0 && secondBody == 0) {
+			remainingJoints.removeAll(joint);
+			continue;
+		}
+		if(firstBody == localBase) {
+			remainingJoints.removeAll(joint);
+			chain.append(getMorphologyChainRecursively(firstBody, remainingJoints));
+			continue;
+		}
+		else if(secondBody == localBase) {
+			remainingJoints.removeAll(joint);
+			chain.append(getMorphologyChainRecursively(secondBody, remainingJoints));
+		}
+	}
+	return chain;
+}
+
+
+bool ScriptedModel::rotateOrTranslateObjects(QScriptValue objectIds, 
+					QScriptValue vector3DMod, bool translate) 
+{
+	if(!objectIds.isArray() || !vector3DMod.isArray()) {
+		return false;
+	}
+	int modArrayLength = vector3DMod.property("length").toInteger();
+	int objectArrayLength = objectIds.property("length").toInteger();
+	if(modArrayLength != 3 || objectArrayLength <= 0) {
+		return false;
+	}
+	Vector3D modification(vector3DMod.property(0).toNumber(), 
+						vector3DMod.property(1).toNumber(), 
+						vector3DMod.property(2).toNumber());
+	
+	QList<SimObject*> objects;
+
+	for(int i = 0; i < objectArrayLength; ++i) {
+		int id = objectIds.property(i).toInteger();
+		SimObject *obj = mSimObjectsLookup.value(id);
+		if(obj != 0 && !objects.contains(obj)) {
+			objects.append(obj);
+		}
+	}
+	if(translate) {
+		Physics::translateSimObjects(objects, modification);
+	}
+	else {
+		Physics::rotateSimObjects(objects, modification);
+	}
+
+	return true;
+}
 
 }
 

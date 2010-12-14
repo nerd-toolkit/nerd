@@ -122,6 +122,16 @@ SimBody* SimJoint::getSecondBody() const {
 }
 
 
+StringValue* SimJoint::getFirstBodyName() const {
+	return mFirstBodyName;
+}
+
+
+StringValue* SimJoint::getSecondBodyName() const {
+	return mSecondBodyName;
+}
+
+
 /**
  * Called when one of the parameter values changed.
  */

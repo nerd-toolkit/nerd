@@ -556,6 +556,100 @@ void ScriptingContext::definePersistentParameter(const QString &name,
 	mPersistentParameters.insert(name, initialValue);
 }
 
+bool ScriptingContext::setProperty(const QString &fullPropertyName, const QString &value) {
+	ValueManager *vm = Core::getInstance()->getValueManager();
+
+	QString propNameRegExp = fullPropertyName;
+	propNameRegExp = propNameRegExp.replace("**", ".*");
+	QList<QString> matchingNames = vm->getValueNamesMatchingPattern(propNameRegExp, true);
+
+	if(matchingNames.empty()) {
+		reportError("Could not find global property [" 
+				+ fullPropertyName + "] to set to [" + value + "]");
+		return false;
+	}
+
+	bool ok = true;
+	for(QListIterator<QString> i(matchingNames); i.hasNext();) {
+		Value *v = vm->getValue(i.next());
+		if(v == 0) {
+			reportError("Could not find global property [" 
+					+ fullPropertyName + "] to set to [" + value + "]");
+			ok = false;
+			continue;
+		}
+		if(!v->setValueFromString(value)) {
+			reportError("Could not set global property [" 
+					+ fullPropertyName + "] to [" + value + "]");
+			ok = false;
+			continue;
+		}
+	}
+	return ok;
+}
+
+QString ScriptingContext::getProperty(const QString &fullPropertyName) {
+	ValueManager *vm = Core::getInstance()->getValueManager();
+
+	QString propNameRegExp = fullPropertyName;
+	propNameRegExp = propNameRegExp.replace("**", ".*");
+	QList<QString> matchingNames = vm->getValueNamesMatchingPattern(propNameRegExp, true);
+
+	if(matchingNames.empty()) {
+		reportError("Could not find global property [" 
+				+ fullPropertyName + "]");
+		return "";
+	}
+
+	for(QListIterator<QString> i(matchingNames); i.hasNext();) {
+		Value *v = vm->getValue(i.next());
+		if(v == 0) {
+			reportError("Could not find global property [" 
+					+ fullPropertyName + "]");
+			continue;
+		}
+		return v->getValueAsString();
+	}
+	return "";
+}
+
+QScriptValue ScriptingContext::getPropertyAsArray(const QString fullPropertyName) {
+	QScriptValue array = mScript->newArray(3);
+	QString vector3DString = getProperty(fullPropertyName);
+	if(!vector3DString.startsWith("(") || !vector3DString.endsWith(")")) {
+		Core::log("ScriptedModel::getVectorElement: Could not parse [" + vector3DString + "]", true);
+		return array;
+	}
+	QString content = vector3DString;
+	QStringList elements = content.mid(1, content.length() - 2).split(",");
+	if(elements.size() <= 0 || elements.size() > 3) {
+		Core::log("ScriptedModel::getVectorElement: Property was not a valid Vetor3D.", true);
+		return array;
+	}
+	for(int i = 0; i < elements.size(); ++i) {
+		array.setProperty(i, elements.at(i).toDouble());
+	}
+	return array;
+}
+
+bool ScriptingContext::createGlobalStringProperty(const QString &propertyName, const QString &content) {
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	if(vm->nameExists(propertyName)) {
+		return false;
+	}
+	StringValue *value = new StringValue(content);
+	return vm->addValue(propertyName, value);
+}
+
+bool ScriptingContext::createGlobalDoubleProperty(const QString &propertyName, double content) {
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	if(vm->nameExists(propertyName)) {
+		return false;
+	}
+	DoubleValue *value = new DoubleValue(content);
+	return vm->addValue(propertyName, value);
+}
+
 void ScriptingContext::setValueFromString(const QString &valueName, const QString &content, 
 						bool warnIfValueMissing) 
 {
@@ -632,6 +726,35 @@ int ScriptingContext::randomInt(int max) {
 	return Random::nextInt(max);
 }
 
+
+QString ScriptingContext::toVector3DString(double x, double y, double z) {
+	return QString("(") + QString::number(x) + "," + QString::number(y) + "," + QString::number(z) + ")";
+}
+
+
+QString ScriptingContext::toColorString(double r, double g, double b, double t) {
+	return QString("(") + QString::number(r) + "," + QString::number(g) 
+			+ "," + QString::number(b) + "," + QString::number(t) + ")";
+}
+
+double ScriptingContext::getVectorElement(const QString &vector3DString, int index) {
+	if(!vector3DString.startsWith("(") || !vector3DString.endsWith(")")) {
+		Core::log("ScriptedModel::getVectorElement: Could not parse [" + vector3DString + "]", true);
+		return 0.0;
+	}
+	QString content = vector3DString;
+	QStringList elements = content.mid(1, content.length() - 2).split(",");
+	if(elements.size() <= 0 || elements.size() >= index) {
+		Core::log("ScriptedModel::getVectorElement: Index out of range ["
+				+ QString::number(index) + "]", true);
+		return 0.0;
+	}
+	return elements.at(index).toDouble();
+}
+
+bool ScriptingContext::loadValues(const QString &fileName) {
+	return Core::getInstance()->getValueManager()->loadValues(fileName);
+}
 
 /**
  * Writes a log message to the core logger.

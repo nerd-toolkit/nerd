@@ -195,20 +195,19 @@ void EvolvableParameter::eventOccured(Event *event) {
 			return;
 		}
 
+		double tfMin = targetNeuron->getTransferFunction()->getLowerBound();
+		double tfMax = targetNeuron->getTransferFunction()->getUpperBound();
+
 		//may also add a search space restriction property to the neuron (min / max)
 		targetNeuron->setProperty(NeuralNetworkConstants::TAG_SYNAPSE_NO_SYNAPSE_TARGET);
 		targetNeuron->setProperty(NeuralNetworkConstants::TAG_SYNAPSE_NO_SYNAPSE_SOURCE);
-		targetNeuron->setProperty(NeuralNetworkConstants::TAG_NEURON_MIN_BIAS, mMinValue->getValueAsString());
-		targetNeuron->setProperty(NeuralNetworkConstants::TAG_NEURON_MAX_BIAS, mMaxValue->getValueAsString());
+		targetNeuron->setProperty(NeuralNetworkConstants::TAG_NEURON_MIN_BIAS, QString::number(tfMin));
+		targetNeuron->setProperty(NeuralNetworkConstants::TAG_NEURON_MAX_BIAS, QString::number(tfMax));
 		
-		if(targetNeuron->getBiasValue().get() < mMinValue->get()) {
-			targetNeuron->getBiasValue().set(mMinValue->get());
-		}
-		if(targetNeuron->getBiasValue().get() > mMaxValue->get()) {
-			targetNeuron->getBiasValue().set(mMaxValue->get());
-		}
+		NormalizedDoubleValue v(0.0, mMinValue->get(), mMaxValue->get(), tfMin, tfMax);
+		v.setNormalized(targetNeuron->getBiasValue().get());
 
-		double parameterValue = targetNeuron->getBiasValue().get();
+		double parameterValue = v.get();
 
 		//apply parameter settings
 		for(QListIterator<DoubleValue*> i(mControlledParameters); i.hasNext();) {
@@ -243,7 +242,7 @@ void EvolvableParameter::valueChanged(Value *value) {
 		if(mTargetGroup == 0) {
 			Core::log(QString("EvolvableParameter: Could not add parameter object "
 						"to SimObjectGroup [")
-						.append(getName()).append("]"));
+						.append(mTargetObjectGroup->get()).append("]"));
 		}
 		else {
 			mTargetGroup->addObject(this);
