@@ -53,8 +53,8 @@ namespace nerd{
  * Constructor.
  * @param name The name of the ODE_Dynamixel Object.
  */
-ODE_Dynamixel::ODE_Dynamixel(const QString &name)
-		: SimSensor(), SimActuator(), Dynamixel(name), ODE_Joint(), mHingeJoint(0)
+ODE_Dynamixel::ODE_Dynamixel(const QString &name, bool hideTorqueInputs)
+		: SimSensor(), SimActuator(), Dynamixel(name, hideTorqueInputs), ODE_Joint(), mHingeJoint(0)
 {
 	// ODE parameters, which define the behavior of a joint (bounciness when reaching a border...)
 // 	ValueManager *vm = Core::getInstance()->getValueManager();

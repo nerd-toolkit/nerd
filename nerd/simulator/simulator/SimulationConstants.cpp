@@ -119,6 +119,7 @@ const QString SimulationConstants::PROTOTYPE_CAPSULE_BODY = "Prototypes/Capsule"
 const QString SimulationConstants::PROTOTYPE_FIXED_JOINT = "Prototypes/FixedJoint";
 const QString SimulationConstants::PROTOTYPE_HINGE_JOINT = "Prototypes/HingeJoint";
 const QString SimulationConstants::PROTOTYPE_DYNAMIXEL = "Prototypes/Dynamixel";
+const QString SimulationConstants::PROTOTYPE_DYNAMIXEL_NO_TORQUE = "Prototypes/DynamixelNoTorque";
 const QString SimulationConstants::PROTOTYPE_A_SERIES = "Prototypes/ASeries";
 const QString SimulationConstants::PROTOTYPE_DISTANCE_SENSOR = "Prototypes/DistanceSensor";
 const QString SimulationConstants::PROTOTYPE_KHEPERA = "Prototypes/Khepera";

@@ -62,7 +62,7 @@ namespace nerd {
 ODE_MSeriesSimpleDynamixel::ODE_MSeriesSimpleDynamixel(const QString &name, 
 							const QString &globalParameterPrefix,
 							int numberOfMotors, double maxForce)
-	: SimSensor(), SimActuator(), Dynamixel(name, globalParameterPrefix), ODE_Joint()
+	: SimSensor(), SimActuator(), Dynamixel(name, false, globalParameterPrefix), ODE_Joint()
 {
 	mInputValues.removeAll(mDesiredMotorAngleValue);
 	mInputValues.removeAll(mDesiredMotorTorqueValue);

@@ -99,8 +99,10 @@ ODE_Physics::ODE_Physics()
 		new ODE_Plane(SimulationConstants::PROTOTYPE_PLANE_BODY));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_FIXED_JOINT, 
 		new ODE_FixedJoint(SimulationConstants::PROTOTYPE_FIXED_JOINT));
+	pm->addPrototype(SimulationConstants::PROTOTYPE_DYNAMIXEL_NO_TORQUE,
+		new ODE_Dynamixel(SimulationConstants::PROTOTYPE_DYNAMIXEL_NO_TORQUE, true));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_DYNAMIXEL,
-		new ODE_Dynamixel(SimulationConstants::PROTOTYPE_DYNAMIXEL));;
+		new ODE_Dynamixel(SimulationConstants::PROTOTYPE_DYNAMIXEL));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_SERVO_MOTOR,
 		new ODE_ServoMotor(SimulationConstants::PROTOTYPE_SERVO_MOTOR));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_HINGE_JOINT,

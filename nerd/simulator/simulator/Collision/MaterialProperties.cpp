@@ -62,10 +62,10 @@ MaterialProperties::MaterialProperties() {
 
 	mMaterialDynamicFrictionCustom1 = new DoubleValue(0.8);
 	mMaterialStaticFrictionCustom1 = new DoubleValue(1.2);
-	mMaterialRestitutionCustom1 = new DoubleValue(0.5);
+	mMaterialRestitutionCustom1 = new DoubleValue(0.1);
 	mMaterialDynamicFrictionCustom2 = new DoubleValue(0.8);
 	mMaterialStaticFrictionCustom2 = new DoubleValue(1.2);
-	mMaterialRestitutionCustom2 = new DoubleValue(0.5);
+	mMaterialRestitutionCustom2 = new DoubleValue(0.1);
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/MaterialProperties/Custom1/DynamicFriction", mMaterialDynamicFrictionCustom1);

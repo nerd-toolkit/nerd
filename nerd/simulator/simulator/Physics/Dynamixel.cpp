@@ -48,10 +48,13 @@
 #include "SimulationConstants.h"	
 #include <math.h>
 
+
 namespace nerd {
 
-Dynamixel::Dynamixel(const QString &name, const QString &globalParameterPrefix)
-	: SimSensor(), SimActuator(), HingeJoint(name), mGlobalParameterPrefix(globalParameterPrefix)
+Dynamixel::Dynamixel(const QString &name, bool hideTorqueInputs,
+					 const QString &globalParameterPrefix)
+	: SimSensor(), SimActuator(), HingeJoint(name), mGlobalParameterPrefix(globalParameterPrefix),
+		mHideTorqueInputs(hideTorqueInputs)
 {
 	//TODO: these parameters are not used. If individual dynamixels should be able to have own parameter settings, instead of the global ones, these parameters should be included and the according lines in the setup-method should be included as well. But due to the fact, that this motor is an implementation of a specific physical motor, no differences between instances should be allowed.
 // 	mPID_Proportional = new DoubleValue(1.0);
@@ -209,7 +212,12 @@ Dynamixel::Dynamixel(const QString &name, const QString &globalParameterPrefix)
 	addParameter("EliminateNegativeTorqueRange", mEliminateNegativeTorqueRange);
 
 	mInputValues.append(mDesiredMotorAngleValue);
-	mInputValues.append(mDesiredMotorTorqueValue);
+	if(!mHideTorqueInputs) {
+		mInputValues.append(mDesiredMotorTorqueValue);
+	}
+	else {
+		mDesiredMotorTorqueValue->set(1.0);
+	}
 	mOutputValues.append(mAngleValue);
 
 	mTimeStepValue = vm->getDoubleValue(SimulationConstants::VALUE_TIME_STEP_SIZE);
@@ -248,7 +256,8 @@ Dynamixel::Dynamixel(const QString &name, const QString &globalParameterPrefix)
 
 Dynamixel::Dynamixel(const Dynamixel &joint) 
 	: Object(), ValueChangedListener(), SimSensor(),
-	  SimActuator(), HingeJoint(joint), mGlobalParameterPrefix(joint.mGlobalParameterPrefix)
+	  SimActuator(), HingeJoint(joint), mGlobalParameterPrefix(joint.mGlobalParameterPrefix),
+	  mHideTorqueInputs(joint.mHideTorqueInputs)
 {
 	ValueManager *vm = Core::getInstance()->getValueManager();
 // 	mPID_Proportional = dynamic_cast<DoubleValue*>(getParameter("PID_P"));
@@ -267,7 +276,12 @@ Dynamixel::Dynamixel(const Dynamixel &joint)
 	mDesiredMotorTorqueValue->addValueChangedListener(this);
 
 	mInputValues.append(mDesiredMotorAngleValue);
-	mInputValues.append(mDesiredMotorTorqueValue);
+	if(!mHideTorqueInputs) {
+		mInputValues.append(mDesiredMotorTorqueValue);
+	}
+	else {
+		mDesiredMotorTorqueValue->set(1.0);
+	}
 	mOutputValues.append(mAngleValue);
 
 	mDynamicFrictionValue = vm->getDoubleValue(mGlobalParameterPrefix + "/DynamicFriction");

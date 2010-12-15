@@ -812,7 +812,8 @@ void ScriptingContext::importVariables() {
 										+ content + ";");
 					
 					if(mScript->hasUncaughtException()) {
-						reportError(QString("Could not import value part.") 
+						reportError(QString("Could not import value part of value [")
+									+ i.key() + "," + mpv->getValuePartName(j) + "]. "
 										+ error.toString());
 					}
 				}
@@ -877,7 +878,8 @@ void ScriptingContext::exportVariables() {
 					part->setValueFromString(mVariableBuffer);
 					
 					if(mScript->hasUncaughtException()) {
-						reportError(QString("Could not import value part.") 
+						reportError(QString("Could not export value part of value [")
+									+ i.key() + "," + mpv->getValuePartName(j) + "]. "
 										+ error.toString());
 					}
 				}

@@ -62,7 +62,8 @@ namespace nerd {
 */
 class Dynamixel : public HingeJoint, public virtual SimSensor, public virtual SimActuator {
 	public:
-		Dynamixel(const QString &name, const QString &globalParameterPrefix = "/AngularMotor");
+		Dynamixel(const QString &name, bool hideTorqueInputs = false, 
+					const QString &globalParameterPrefix = "/AngularMotor");
 		Dynamixel(const Dynamixel &joint);
 		virtual ~Dynamixel();
 		
@@ -154,6 +155,8 @@ class Dynamixel : public HingeJoint, public virtual SimSensor, public virtual Si
 		double mCalculatedVelocity;
 		double mCalculatedFriction;
 		double mCurrentPosition;
+	
+		bool mHideTorqueInputs;
 };
 
 }

@@ -728,12 +728,27 @@ bool ScriptedModel::setMorphologyProperty(int bodyId, const QString &propertyNam
 	}
 }
 
-bool ScriptedModel::rotateJoint(int jointId, double degree) {
-	//TODO not implemented yet!
-}
 
-bool ScriptedModel::rotateObjects(QScriptValue objectIds, QScriptValue vector3DAngles) {
-	return rotateOrTranslateObjects(objectIds, vector3DAngles, false);
+bool ScriptedModel::rotateObjects(QScriptValue objectIds, QScriptValue origin, QScriptValue vector3DAngles) {
+	
+	bool ok = true;
+	if(!objectIds.isArray() || !vector3DAngles.isArray() || !origin.isArray()) {
+		return false;
+	}
+	int modArrayLength = vector3DAngles.property("length").toInteger();
+	int objectArrayLength = objectIds.property("length").toInteger();
+	int originLength = origin.property("length").toInteger();
+	if(modArrayLength != 3 || objectArrayLength <= 0 || originLength != 3 || mScript == 0) {
+		return false;
+	}
+	QScriptValue minusOrigin = mScript->newArray(3);
+	minusOrigin.setProperty(0, origin.property(0).toNumber() * -1.0);
+	minusOrigin.setProperty(1, origin.property(1).toNumber() * -1.0);
+	minusOrigin.setProperty(2, origin.property(2).toNumber() * -1.0);
+
+	rotateOrTranslateObjects(objectIds, minusOrigin, true);
+	rotateOrTranslateObjects(objectIds, vector3DAngles, false);
+	rotateOrTranslateObjects(objectIds, origin, true);
 }
 
 

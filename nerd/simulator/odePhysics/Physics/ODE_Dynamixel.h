@@ -59,7 +59,7 @@ namespace nerd {
 class ODE_Dynamixel : public Dynamixel, public ODE_Joint {
 
 	public:
-		ODE_Dynamixel(const QString &name);
+		ODE_Dynamixel(const QString &name, bool hideTorqueInputs = false);
 		ODE_Dynamixel(const ODE_Dynamixel &motor);
 		virtual ~ODE_Dynamixel();
 

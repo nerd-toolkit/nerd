@@ -118,8 +118,7 @@ namespace nerd {
 
 		bool setMorphologyBase(int bodyId);
 		bool setMorphologyProperty(int bodyId, const QString &propertyName, double content);
-		bool rotateJoint(int jointId, double degree);
-		bool rotateObjects(QScriptValue objectIds, QScriptValue vector3DAngles);
+		bool rotateObjects(QScriptValue objectIds, QScriptValue origin, QScriptValue vector3DAngles);
 		bool translateObjects(QScriptValue objectIds, QScriptValue vector3DTranslation);
 
 	protected:
