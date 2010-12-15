@@ -70,7 +70,8 @@ namespace nerd {
 		bool equals(ActivationFunction *activationFunction) const;
 
 	private:
-		DoubleValue *mDecay;
+		DoubleValue *mGamma;
+		DoubleValue *mDelta;
 	};
 
 }
