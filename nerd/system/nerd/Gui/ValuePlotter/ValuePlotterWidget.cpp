@@ -159,7 +159,7 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	mLoadStaticValuesButton = new QPushButton("Load Offline Data", offlineTab);
 	offlineLayout->addWidget(mLoadStaticValuesButton);
 
-	QGroupBox *staticOffsetBox = new QGroupBox("Vertical / Horizontal Offset", offlineTab);
+	QGroupBox *staticOffsetBox = new QGroupBox("Vert. / Hori. Offset", offlineTab);
 	mStaticOffsetV = new QLineEdit("0", staticOffsetBox);
 	mStaticOffsetH = new QLineEdit("0", staticOffsetBox);
 	QHBoxLayout *staticOffsetLayout = new QHBoxLayout(staticOffsetBox);
@@ -169,7 +169,7 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	staticOffsetLayout->addWidget(mStaticOffsetH);
 	offlineLayout->addWidget(staticOffsetBox);
 
-	QGroupBox *staticScaleBox = new QGroupBox("Vertical / Horizontal Scale", offlineTab);
+	QGroupBox *staticScaleBox = new QGroupBox("Vert. / Hori. Scale", offlineTab);
 	mStaticScaleV = new QLineEdit("1.0", staticScaleBox);
 	mStaticScaleH = new QLineEdit("1.0", staticScaleBox);
 	QHBoxLayout *staticScaleLayout = new QHBoxLayout(staticScaleBox);
@@ -206,6 +206,9 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	updateEventSelectorBox->setLayout(updateEventSelectorLayout);
 	updateEventSelectorLayout->addWidget(mUpdateEventSelector);
 	specialLayout->addWidget(updateEventSelectorBox);
+
+	mClearHistoryButton = new QPushButton("Clear History");
+	specialLayout->addWidget(mClearHistoryButton);
 	
 
 	specialLayout->addStretch();
@@ -269,6 +272,8 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 
 	connect(this, SIGNAL(updateSupportedTriggerEvents()),
 			this, SLOT(supportedTriggerEventsChanged()), Qt::QueuedConnection);
+	connect(mClearHistoryButton, SIGNAL(pressed()),
+			this, SLOT(clearHistory()));
 
 	generalLayout->addStretch(100);
 
@@ -583,6 +588,12 @@ void ValuePlotterWidget::selectAllItems(int) {
 }
 
 
+void ValuePlotterWidget::clearHistory() {
+	if(mValuePlotter == 0 || mValuePlotter->getPlotterWidget() == 0) {
+		return;
+	}
+	mValuePlotter->getPlotterWidget()->clearHistory();
+}
 
 
 }

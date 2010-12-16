@@ -104,6 +104,7 @@ namespace nerd {
 		void supportedTriggerEventsChanged();
 		void triggerEventSelected(int index);
 		void selectAllItems(int state);
+		void clearHistory();
 
 	protected:
 		ValuePlotter *mValuePlotter;
@@ -126,6 +127,7 @@ namespace nerd {
 		QTabWidget *mControlArea;
 		QCheckBox *mSelectAllCheckBox;
 		QSplitter *mSplitter;
+		QPushButton *mClearHistoryButton;
 	};
 
 }

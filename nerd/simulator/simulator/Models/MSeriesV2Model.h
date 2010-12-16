@@ -198,6 +198,17 @@ namespace nerd {
 		SimObject *mRightHandFingerBaseMotor;
 		SimObject *mRightHandFingerTipMotor;
 
+		SimBody *mLeftHandPalm;
+		SimBody *mLeftThumbBase;
+		SimBody *mLeftThumbTip; 
+		SimBody *mLeftFingerBase;
+		SimBody *mLeftFingerTip;
+		SimObject *mLeftHandRollMotor;
+		SimObject *mLeftHandMainMotor;
+		SimObject *mLeftHandThumbTipMotor;
+		SimObject *mLeftHandFingerBaseMotor;
+		SimObject *mLeftHandFingerTipMotor;
+
 		SimObject *mForceSensorRightSoleOfFootRight;
 		SimObject *mForceSensorRightSoleOfFootLeft;
 		SimObject *mForceSensorRightBallOfFootRight;

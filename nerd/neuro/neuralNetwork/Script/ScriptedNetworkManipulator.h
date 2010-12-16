@@ -94,6 +94,7 @@ namespace nerd {
 		QVariantList getPosition(qlonglong objectId);
 		QVariantList getProperties(qlonglong objectId);
 		QString getProperty(qlonglong objectId, const QString &name);
+		QString getName(qlonglong neuronId);
 
 		bool setBias(qlonglong neuronId, double bias);
 		bool setOutput(qlonglong neuronId, double output);

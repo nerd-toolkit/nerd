@@ -524,6 +524,17 @@ QString ScriptedNetworkManipulator::getProperty(qlonglong objectId, const QStrin
 	return "~";
 }
 
+QString ScriptedNetworkManipulator::getName(qlonglong neuronId) {
+	if(mNetwork == 0) {
+		return "Unknown";
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0) {
+		return "Unknown";
+	}
+	return neuron->getNameValue().get();
+}
+
 
 /**
  * Sets the bias of the neuron with the given neuronId.
