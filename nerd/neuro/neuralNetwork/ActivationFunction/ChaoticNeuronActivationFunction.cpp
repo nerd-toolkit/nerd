@@ -62,10 +62,8 @@ ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction()
 	: ActivationFunction("Chaotic")
 {
 	mGamma = new DoubleValue(0.9);
-	mDelta = new DoubleValue(0.1);
 	
 	addParameter("Gamma", mGamma);
-	addParameter("Delta", mDelta);
 }
 
 
@@ -79,7 +77,6 @@ ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction(
 	: ActivationFunction(other)
 {
 	mGamma = dynamic_cast<DoubleValue*>(getParameter("Gamma"));
-	mDelta = dynamic_cast<DoubleValue*>(getParameter("Delta"));
 }
 
 /**
@@ -109,7 +106,7 @@ double ChaoticNeuronActivationFunction::calculateActivation(Neuron *owner) {
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
 		externalInput += i.next()->calculateActivation();
 	}
-	return (mGamma->get() * activation) + (mDelta->get() * externalInput);
+	return (mGamma->get() * activation) + ((1.0 - mGamma->get()) * externalInput);
 }
 
 
@@ -124,9 +121,6 @@ bool ChaoticNeuronActivationFunction::equals(ActivationFunction *activationFunct
 		return false;
 	}
 	if(af->mGamma->get() != mGamma->get()) {
-		return false;
-	}
-	if(af->mDelta->get() != mDelta->get()) {
 		return false;
 	}
 	return true;

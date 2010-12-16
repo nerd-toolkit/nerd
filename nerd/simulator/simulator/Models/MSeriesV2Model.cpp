@@ -768,6 +768,65 @@ void MSeriesV2Model::createModel() {
 		agent->addObject(mRightFingerTip);
 		
 	}
+// 	if(mIncludeLeftHand) {
+// 
+// 		Color handColor(120, 120, 120, 255);
+// 
+// 		mLeftHandPalm = dynamic_cast<SimBody*>(boxBody->createCopy());
+// 		PARAM(StringValue, mLeftHandPalm, "Name")->set(mNamePrefix + "Left/Hand/Palm");
+// 		PARAM(BoolValue, mLeftHandPalm, "Dynamic")->set(true);
+// 		PARAM(DoubleValue, mLeftHandPalm, "Width")->set(0.06);
+// 		PARAM(DoubleValue, mLeftHandPalm, "Height")->set(0.05);
+// 		PARAM(DoubleValue, mLeftHandPalm, "Depth")->set(0.06);
+// 		PARAM(ColorValue, mLeftHandPalm, "Color")->set(handColor);
+// 
+// 		agent->addObject(mLeftHandPalm);
+// 
+// 
+// 		//thumb
+// 
+// 		mLeftThumbBase = dynamic_cast<SimBody*>(boxBody->createCopy());
+// 		PARAM(StringValue, mLeftThumbBase, "Name")->set(mNamePrefix + "Left/Hand/ThumbBase");
+// 		PARAM(BoolValue, mLeftThumbBase, "Dynamic")->set(true);
+// 		PARAM(DoubleValue, mLeftThumbBase, "Width")->set(0.02);
+// 		PARAM(DoubleValue, mLeftThumbBase, "Height")->set(0.035);
+// 		PARAM(DoubleValue, mLeftThumbBase, "Depth")->set(0.04);
+// 		PARAM(ColorValue, mLeftThumbBase, "Color")->set(handColor);
+// 
+// 		agent->addObject(mLeftThumbBase);
+// 
+// 		mLeftThumbTip = dynamic_cast<SimBody*>(boxBody->createCopy());
+// 		PARAM(StringValue, mRightThumbTip, "Name")->set(mNamePrefix + "Right/Hand/ThumbTip");
+// 		PARAM(BoolValue, mRightThumbTip, "Dynamic")->set(true);
+// 		PARAM(DoubleValue, mRightThumbTip, "Width")->set(0.02);
+// 		PARAM(DoubleValue, mRightThumbTip, "Height")->set(0.04);
+// 		PARAM(DoubleValue, mRightThumbTip, "Depth")->set(0.035);
+// 		PARAM(ColorValue, mRightThumbTip, "Color")->set(handColor);
+// 
+// 		agent->addObject(mRightThumbTip);
+// 
+// 		//finger
+// 		mRightFingerBase = dynamic_cast<SimBody*>(boxBody->createCopy());
+// 		PARAM(StringValue, mRightFingerBase, "Name")->set(mNamePrefix + "Right/Hand/FingerBase");
+// 		PARAM(BoolValue, mRightFingerBase, "Dynamic")->set(true);
+// 		PARAM(DoubleValue, mRightFingerBase, "Width")->set(0.02);
+// 		PARAM(DoubleValue, mRightFingerBase, "Height")->set(0.035);
+// 		PARAM(DoubleValue, mRightFingerBase, "Depth")->set(0.04);
+// 		PARAM(ColorValue, mRightFingerBase, "Color")->set(handColor);
+// 
+// 		agent->addObject(mRightFingerBase);
+// 
+// 		mRightFingerTip = dynamic_cast<SimBody*>(boxBody->createCopy());
+// 		PARAM(StringValue, mRightFingerTip, "Name")->set(mNamePrefix + "Right/Hand/FingerTip");
+// 		PARAM(BoolValue, mRightFingerTip, "Dynamic")->set(true);
+// 		PARAM(DoubleValue, mRightFingerTip, "Width")->set(0.02);
+// 		PARAM(DoubleValue, mRightFingerTip, "Height")->set(0.04);
+// 		PARAM(DoubleValue, mRightFingerTip, "Depth")->set(0.035);
+// 		PARAM(ColorValue, mRightFingerTip, "Color")->set(handColor);
+// 
+// 		agent->addObject(mRightFingerTip);
+// 		
+// 	}
 
 	// Sensors
 		QString groupPrefix = "/";

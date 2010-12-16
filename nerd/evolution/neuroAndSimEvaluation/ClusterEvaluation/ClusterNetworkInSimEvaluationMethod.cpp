@@ -368,9 +368,9 @@ bool ClusterNetworkInSimEvaluationMethod::createConfigList() {
 	ClusterEvaluationMethod::createConfigList();
 	bool ok = true;
 	mConfigValues += mCore->getValueManager()
-			->getValueNamesMatchingPattern("(?!.*/Config/)(?!.*/Fitness/.*/Fitness/)/Evo/Pop/.*/Fitness/.*");
+			->getValueNamesMatchingPattern("(?!.*/Config/)(?!.*/Fitness/.*/Fitness/)/Evo/.*/Pop/.*/Fitness/.*");
 	mConfigValues += mCore->getValueManager()
-			->getValueNamesMatchingPattern("/Evo/Pop/.*/Fitness/.*/Fitness/CalculationMode");
+			->getValueNamesMatchingPattern("/Evo/.*/Pop/.*/Fitness/.*/Fitness/CalculationMode");
 	mConfigValues.push_back(EvolutionConstants::VALUE_EXECUTION_NUMBER_OF_STEPS);
 	mConfigValues.push_back(NerdConstants::VALUE_RANDOMIZATION_SIMULATION_SEED);
 	return ok;

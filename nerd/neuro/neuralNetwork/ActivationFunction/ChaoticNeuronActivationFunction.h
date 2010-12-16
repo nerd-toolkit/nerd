@@ -71,7 +71,6 @@ namespace nerd {
 
 	private:
 		DoubleValue *mGamma;
-		DoubleValue *mDelta;
 	};
 
 }
