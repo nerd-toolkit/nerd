@@ -97,6 +97,8 @@ NeuroEvolutionSelector::NeuroEvolutionSelector(EvaluationMethod *evaluationMetho
 	if(evoAlgorithmArg->getNumberOfEntries() == 0) {
 		createDefaultWorld = true;
 	}
+	
+	int scriptFitnessCounter = 0;
 
 	for(int evoCount = 0; evoCount < evoAlgorithmArg->getNumberOfEntries() || createDefaultWorld; ++evoCount) {
 
@@ -147,8 +149,14 @@ NeuroEvolutionSelector::NeuroEvolutionSelector(EvaluationMethod *evaluationMetho
 			}
 		}
 		if(fitness == 0) {
+			QString scriptName = "Script";
+			if(scriptFitnessCounter > 0) {
+				scriptName += QString::number(scriptFitnessCounter);
+			}
+			scriptFitnessCounter++;
+		
 			fitness = Fitness::getFitnessManager()
-				->createFitnessFunctionFromPrototype("Script", "Script");
+				->createFitnessFunctionFromPrototype("Script", scriptName);
 			population->addFitnessFunction(fitness);
 		}
 	

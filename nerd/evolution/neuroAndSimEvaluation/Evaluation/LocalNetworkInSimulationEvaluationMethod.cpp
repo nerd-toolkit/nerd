@@ -311,18 +311,6 @@ bool LocalNetworkInSimulationEvaluationMethod::evaluateIndividuals() {
 		return false;
 	}
 
-	//TODO multi pop
-// 	Population *pop = mPopulations.at(0);
-// 
-// 	GenotypePhenotypeMapper *mapper = pop->getGenotypePhenotypeMapper();
-
-// 	if(mapper == 0) {
-// 		Core::log(QString("LocalNetworkInSimulationEvaluationMethod: "
-// 				" Could not find a GenotypePhenotypeMapper for population [")
-// 				.append(pop->getName()).append("]"));
-// 		return false;
-// 	}
-
 	//set generation fitness
 	if(mRandomizeSeed->get()) {
 		Random::init();
@@ -334,123 +322,124 @@ bool LocalNetworkInSimulationEvaluationMethod::evaluateIndividuals() {
 		Core::log("LocalNetworkInSimulationEvaluationMethod: Could not find a controller.", true);
 		return false;
 	}
+	
+	if(mLastGenerationsBestControllers.empty()) {
+		updateBestNetworks();
+	}
 
 	Core::getInstance()->executePendingTasks();
-
-	setupFitnessFunctions();
-
-	setupEvaluationPairs();
-
-	//execute all individuals one after the other. 
-// 	QList<Individual*> individuals = pop->getIndividuals();
-
-	NeuralNetworkManager *networkManager = Neuro::getNeuralNetworkManager();
-
-// 	QList<FitnessFunction*> fitnessFunctions = pop->getFitnessFunctions();
-
-	int currentIndividual = 0;
-	for(QListIterator<QList<QList<Individual*> > > i(mEvaluationPairs); i.hasNext();) {
-
-		Core::getInstance()->executePendingTasks();
 	
-		if(mStopEvaluation || mDoShutDown || evoManager->getRestartGenerationValue()->get()) {
-			break;
-		}
-
-		evoManager->setCurrentNumberOfCompletedIndividualsDuringEvaluation(currentIndividual);
-
-		QList<QList<Individual*> > evalPairs = i.next();
-
-		mCurrentPermutation = evalPairs;
-
-		if(mCurrentPermutation.empty()) {
-			continue;
-		}
-		
-		setNetworksForNextTry(0);
+	for(int p = 0; p < mPopulations.size(); ++p) {
 	
-		mCurrentIndividualValue->set(currentIndividual);
+		mCurrentPopulationId = p;
+		mCurrentPopulation = mPopulations.at(p);
+		GenotypePhenotypeMapper *mapper = mCurrentPopulation->getGenotypePhenotypeMapper();
+
+		setupFitnessFunctions();
+
+		NeuralNetworkManager *networkManager = Neuro::getNeuralNetworkManager();
 	
-		networkManager->triggerCurrentNetworksReplacedEvent();
-
-
-		//execute individual
-		mRestartIndividual = true;
-		while(mRestartIndividual) {
-			mRestartIndividual = false;
-
+		QList<Individual*> individuals = mCurrentPopulation->getIndividuals();
+	
+		int currentIndividual = 0;
+		for(QListIterator<Individual*> i(individuals); i.hasNext();) {
+	
 			Core::getInstance()->executePendingTasks();
-
-			mIndividualStartedEvent->trigger();
-			mEvaluationLoop->executeEvaluationLoop();
-			mIndividualCompletedEvent->trigger();
-
-			if(mRunStasisMode->get() && !mStopEvaluation && !mDoShutDown) {
-				mRestartIndividual = true;
+		
+			if(mStopEvaluation || mDoShutDown || evoManager->getRestartGenerationValue()->get()) {
+				break;
 			}
-		}
-
-		Core::getInstance()->executePendingTasks();
-
-		for(int k = 0; k < mCurrentNeuralNetworks.size(); ++k) {
-			networkManager->removeNeuralNetwork(mCurrentNeuralNetworks[k]);
-		}
-		networkManager->triggerCurrentNetworksReplacedEvent();
-
-		QList<Individual*> individuals = mCurrentPermutation[mCurrentTryValue->get() % mCurrentPermutation.size()];
-
-		//save fitness values
-		for(int k = 0; k < individuals.size(); ++k) {
-
-			Population *pop = mPopulations[k];
-
-			if(pop == 0) {
-				continue;
-			}
-
-			QList<FitnessFunction*> fitnessFunctions = pop->getFitnessFunctions();
-
-			for(QListIterator<FitnessFunction*> i(fitnessFunctions); i.hasNext();) {
-				FitnessFunction *ff = i.next();
-				if(ff != 0) {
-					individuals[k]->setFitness(ff, ff->getFitness());
+	
+			evoManager->setCurrentNumberOfCompletedIndividualsDuringEvaluation(currentIndividual);
+	
+			mCurrentIndividual = i.next();
+	
+			setNetworksForNextTry(0);
+		
+			mCurrentIndividualValue->set(currentIndividual);
+		
+			networkManager->triggerCurrentNetworksReplacedEvent();
+	
+			//execute individual
+			mRestartIndividual = true;
+			while(mRestartIndividual) {
+				mRestartIndividual = false;
+	
+				Core::getInstance()->executePendingTasks();
+	
+				mIndividualStartedEvent->trigger();
+				mEvaluationLoop->executeEvaluationLoop();
+				mIndividualCompletedEvent->trigger();
+	
+				if(mRunStasisMode->get() && !mStopEvaluation && !mDoShutDown) {
+					mRestartIndividual = true;
 				}
 			}
+	
+			Core::getInstance()->executePendingTasks();
+	
+// 			for(int k = 0; k < mCurrentNeuralNetworks.size(); ++k) {
+// 				networkManager->removeNeuralNetwork(mCurrentNeuralNetworks[k]);
+// 			}
+// 			
 
-			NeuralNetwork *net = mCurrentNeuralNetworks[k];
+			
 
-			//clear ControlInterface
-			mControlInterfaces[k] = net->getControlInterface(); //in case the interface was changed.
-			net->setControlInterface(0);
-			if(mControlInterfaces[k] != 0) {
-				mControlInterfaces[k]->setController(0);
+	
+			QList<FitnessFunction*> fitnessFunctions = mCurrentPopulation->getFitnessFunctions();
+
+			for(QListIterator<FitnessFunction*> k(fitnessFunctions); k.hasNext();) {
+				FitnessFunction *ff = k.next();
+				if(ff != 0) {
+					mCurrentIndividual->setFitness(ff, ff->getFitness());
+				}
 			}
+			
+			setNetworksForNextTry(-1); //remove all networks
+			networkManager->triggerCurrentNetworksReplacedEvent();
+			
+// 	
+// 				NeuralNetwork *net = mCurrentNeuralNetworks[k];
+// 	
+// 				//clear ControlInterface
+// 				mControlInterfaces[k] = net->getControlInterface(); //in case the interface was changed.
+// 				net->setControlInterface(0);
+// 				if(mControlInterfaces[k] != 0) {
+// 					mControlInterfaces[k]->setController(0);
+// 				}
+// 	
 
-	
 			//allow changes made in phenotype to be transferred to the genome.
-			pop->getGenotypePhenotypeMapper()->updateGenotype(individuals[k]);
+			mapper->updateGenotype(mCurrentIndividual);
+			currentIndividual++;
+
+			if(mDoShutDown) {
+				return true;
+			}
 		}
-		currentIndividual++;
-	
-		if(mDoShutDown) {
-			return true;
+		
+		//detach fitness functions from ControlInterface and FitnessManager.
+		for(QListIterator<FitnessFunction*> i(mCurrentFitnessFunctions); i.hasNext();) {
+			ControllerFitnessFunction *ff = dynamic_cast<ControllerFitnessFunction*>(i.next());
+			if(ff != 0) {
+				ff->setControlInterface(0);
+			}
 		}
+		
+		evoManager->setCurrentNumberOfCompletedIndividualsDuringEvaluation(mEvaluationPairs.size());
 	}
-	evoManager->setCurrentNumberOfCompletedIndividualsDuringEvaluation(mEvaluationPairs.size());
+
+	if(mDoShutDown) {
+		return true;
+	}
+	updateBestNetworks();
+
+	Core::getInstance()->executePendingTasks();
 
 	if(mDoShutDown) {
 		return true;
 	}
 	
-	//detach fitness functions from ControlInterface and FitnessManager.
-	for(QListIterator<FitnessFunction*> i(mCurrentFitnessFunctions); i.hasNext();) {
-		ControllerFitnessFunction *ff = dynamic_cast<ControllerFitnessFunction*>(i.next());
-		if(ff != 0) {
-			ff->setControlInterface(0);
-		}
-	}
-	Core::getInstance()->executePendingTasks();
-
 	return true;
 
 
@@ -533,13 +522,16 @@ void LocalNetworkInSimulationEvaluationMethod::setupFitnessFunctions() {
 		return;
 	}
 	for(int i = 0; i < mPopulations.size(); ++i) {
+		if(i != mCurrentPopulationId) {
+			continue;
+		}
 		Population *population = mPopulations.at(i);
 		ControlInterface *controller = mControlInterfaces.at(i);
 
 		QList<FitnessFunction*> fitnessFunctions = population->getFitnessFunctions();
 	
-		for(QListIterator<FitnessFunction*> i(fitnessFunctions); i.hasNext();) {
-			ControllerFitnessFunction *ff = dynamic_cast<ControllerFitnessFunction*>(i.next());
+		for(QListIterator<FitnessFunction*> j(fitnessFunctions); j.hasNext();) {
+			ControllerFitnessFunction *ff = dynamic_cast<ControllerFitnessFunction*>(j.next());
 			if(ff != 0) {
 				ff->setControlInterface(controller);
 			}
@@ -595,56 +587,55 @@ void LocalNetworkInSimulationEvaluationMethod::setupEvaluationPairs() {
 
 void LocalNetworkInSimulationEvaluationMethod::setNetworksForNextTry(int currentTry) {
 
-	if(mCurrentPermutation.empty()) {
-		return;
-	}
-
 	NeuralNetworkManager *networkManager = Neuro::getNeuralNetworkManager();
 
-	if(currentTry > 0) {
-		QList<Individual*> individuals = mCurrentPermutation[(currentTry - 1) % mCurrentPermutation.size()];
-
-		for(int k = 0; k < individuals.size(); ++k) {
+	if(currentTry != 0) { //-1 just removes all controllers.
+		for(int k = 0; k < mPopulations.size() 
+							&& k < mControlInterfaces.size()
+							&& k < mLastGenerationsBestControllers.size()
+							&& k < mCurrentNeuralNetworks.size(); ++k) 
+		{
 			Population *pop = mPopulations[k];
+		
 			if(pop == 0) {
 				continue;
 			}
 			NeuralNetwork *net = mCurrentNeuralNetworks[k];
-
+		
 			//clear ControlInterface
 			mControlInterfaces[k] = net->getControlInterface(); //in case the interface was changed.
 			net->setControlInterface(0);
 			if(mControlInterfaces[k] != 0) {
 				mControlInterfaces[k]->setController(0);
 			}
-			//allow changes made in phenotype to be transferred to the genome.
-			pop->getGenotypePhenotypeMapper()->updateGenotype(individuals[k]);
 			networkManager->removeNeuralNetwork(net);
 		}
 	}
 
-
 	mCurrentNeuralNetworks.clear();
-
-	QList<Individual*> individuals = mCurrentPermutation[currentTry % mCurrentPermutation.size()];
-
-	QString permutationString = "(";
-	for(int i = 0; i < individuals.size(); ++i) {
-		permutationString += QString::number(individuals[i]->getId());
-		if(i < (individuals.size() - 1)) {
-			permutationString += ",";
-		}
+	
+	if(currentTry == -1) {
+		return;
 	}
-	permutationString += ")";
+	
+	if(mPopulations.size() != mControlInterfaces.size() || mPopulations.size() != mLastGenerationsBestControllers.size()) {
+		Core::log("LocalNNInSimEvalMethod: Could not find all required populations, interfaces or best controllers", true);
+	}
 
-	for(int ind_index = 0; ind_index < individuals.size(); ++ind_index) {
-		Individual *ind = individuals[ind_index];
-		ControlInterface *controller = mControlInterfaces[ind_index];
-		Population *pop = mPopulations[ind_index];
+	for(int index = 0; index < mPopulations.size() 
+							&& index < mControlInterfaces.size()
+							&& index < mLastGenerationsBestControllers.size(); ++index) 
+	{
+		NeuralNetwork *bestController = mLastGenerationsBestControllers[index];
+		ControlInterface *controller = mControlInterfaces[index];
+		Population *pop = mPopulations[index];
 
-		ind->setProperty("Permutations", ind->getProperty("Permutations") + permutationString);
-		
-		if(ind == 0 || controller == 0 || pop == 0  || pop->getGenotypePhenotypeMapper() == 0) {
+		if(bestController == 0 
+			|| controller == 0 
+			|| pop == 0  
+			|| pop->getGenotypePhenotypeMapper() == 0
+			|| mCurrentIndividual == 0) 
+		{
 			Core::log(QString("LocalNetworkInSimulationEvaluationMethod: "
 				" Could not find GenotypePhenotypeMapper or other required objects ["
 				"]! [SKIPPING INDIVIDUAL]"), true);
@@ -652,38 +643,99 @@ void LocalNetworkInSimulationEvaluationMethod::setNetworksForNextTry(int current
 		}
 		GenotypePhenotypeMapper *mapper = pop->getGenotypePhenotypeMapper();
 
-		//create phenotype
-		if(!mapper->createPhenotype(ind)) {
-			Core::log(QString("LocalNetworkInSimulationEvaluationMethod: "
-				" Could not apply GenotypePhenotypeMapper [")
-				.append(mapper->getName()).append("]! [SKIPPING INDIVIDUAL]"), true);
-			continue;
-		}
+		if(index == mCurrentPopulationId) { //exchange best network with the current individual's network
 
-		//check if phenotype is a regular neural network
-		NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(ind->getPhenotype());
-		if(net == 0) {
-			Core::log(QString("LocalNetworkInSimulationEvaluationMethod: "
-				" Phenotype of Individual was not a NeuralNetwork! ")
-				.append("]! [SKIPPING INDIVIDUAL]"), true);
-			continue;
+			//create phenotype
+			if(!mapper->createPhenotype(mCurrentIndividual)) {
+				Core::log(QString("LocalNetworkInSimulationEvaluationMethod: "
+					" Could not apply GenotypePhenotypeMapper [")
+					.append(mapper->getName()).append("]! [SKIPPING INDIVIDUAL]"), true);
+				continue;
+			}
+	
+			//check if phenotype is a regular neural network
+			NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(mCurrentIndividual->getPhenotype());
+			if(net == 0) {
+				Core::log(QString("LocalNetworkInSimulationEvaluationMethod: "
+					" Phenotype of Individual was not a NeuralNetwork! ")
+					.append("]! [SKIPPING INDIVIDUAL]"), true);
+				continue;
+			}
+			bestController = net;
+			
 		}
-
-		//enable nonetexec
-		
 		//add neural network to the ControlInterface and execute the individual
 		if(controller == 0) {
 			Core::log("LocalNetworkInSimulationEvaluationMethod: Controller lost.", true);
 			return;
 		}
 
-		controller->setController(net);
-		net->setControlInterface(controller);
+		controller->setController(bestController);
+		bestController->setControlInterface(controller);
 
-		mCurrentNeuralNetworks.append(net);
-		networkManager->addNeuralNetwork(net);
+		mCurrentNeuralNetworks.append(bestController);
+		networkManager->addNeuralNetwork(bestController);
 	}
 }
+
+void LocalNetworkInSimulationEvaluationMethod::updateBestNetworks() {
+	
+	if(mLastGenerationsBestControllers.empty()) {
+		//initially use the first networks of each population as best network.
+		for(int i = 0; i < mPopulations.size(); ++i) {
+			Population *pop = mPopulations.at(i);
+			if(pop == 0 || pop->getIndividuals().empty()) {
+				mLastGenerationsBestControllers.append(0);
+			}
+			else {
+				Individual *ind = pop->getIndividuals().first();
+				pop->getGenotypePhenotypeMapper()->createPhenotype(ind);
+				NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(ind->getPhenotype());
+				if(net != 0) {
+					net = net->createCopy();
+				}
+				mLastGenerationsBestControllers.append(net);
+			}
+		}
+		return;
+	}
+	
+	while(!mBestNetworkDestroyBuffer.empty()) {
+		NeuralNetwork *net = mBestNetworkDestroyBuffer.first();
+		mBestNetworkDestroyBuffer.removeAll(net);
+		//delete net;
+	}
+	mBestNetworkDestroyBuffer = mLastGenerationsBestControllers;
+	mLastGenerationsBestControllers.clear();
+	
+	for(int i = 0; i < mPopulations.size(); ++i) {
+		Population *pop = mPopulations.at(i);
+		FitnessFunction *ff = pop->getFitnessFunctions().first();
+		if(ff == 0) {
+			mLastGenerationsBestControllers.append(0);
+			continue;
+		}
+		QList<Individual*> individuals = pop->getIndividuals();
+		if(individuals.empty()) {
+			mLastGenerationsBestControllers.append(0);
+			continue;
+		}
+		Individual *bestInd = individuals.first();
+		for(int j = 1; j < individuals.size(); ++j) {
+			Individual *ind = individuals.at(j);
+			if(bestInd->getFitness(ff) < ind->getFitness(ff)) {
+				bestInd = ind;
+			}
+		}
+		pop->getGenotypePhenotypeMapper()->createPhenotype(bestInd);
+		NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(bestInd->getPhenotype());
+		if(net != 0) {
+			net = net->createCopy();
+		}
+		mLastGenerationsBestControllers.append(net);
+	}
+}
+
 
 }
 

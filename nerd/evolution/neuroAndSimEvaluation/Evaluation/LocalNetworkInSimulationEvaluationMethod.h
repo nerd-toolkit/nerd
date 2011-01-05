@@ -90,6 +90,7 @@ namespace nerd {
 		void setupFitnessFunctions();
 		void setupEvaluationPairs();
 		void setNetworksForNextTry(int currentTry);
+		void updateBestNetworks();
 		
 	private:
 		QList<StringValue*> mControllerNames;
@@ -115,7 +116,11 @@ namespace nerd {
 		QList<QList<Individual*> > mCurrentPermutation;
 		QList<FitnessFunction*> mCurrentFitnessFunctions;
 		QList<NeuralNetwork*> mCurrentNeuralNetworks;
-
+		Individual *mCurrentIndividual;
+		Population *mCurrentPopulation;
+		int mCurrentPopulationId;
+		QList<NeuralNetwork*> mLastGenerationsBestControllers;
+		QList<NeuralNetwork*> mBestNetworkDestroyBuffer;
 	};
 
 }
