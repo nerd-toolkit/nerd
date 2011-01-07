@@ -288,7 +288,7 @@ bool SettingsLogger::writeIncrementalLogFile() {
 		}
 	}
 	output << "  Steps:" << mNumberOfSteps->getValueAsString() << "  Trys:" << mNumberOfTrys->getValueAsString();
-	output  << "  Best:";
+	output  << "  Best of prev. gen:";
 	for(QListIterator<DoubleValue*> i(mBestFitnessValues); i.hasNext();) {
 		output << i.next()->getValueAsString();
 		if(i.hasNext()) {

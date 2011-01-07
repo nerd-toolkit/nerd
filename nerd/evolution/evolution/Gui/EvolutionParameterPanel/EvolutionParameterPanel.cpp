@@ -301,7 +301,7 @@ void EvolutionParameterPanel::initializePanel() {
 	
 		//Create main control parameter panel.
 		EvolutionMainControlParameterPanel *mainPanel = new EvolutionMainControlParameterPanel(worldName);
-		tabWidget->addTab(mainPanel, "Main");
+		tabWidget->addTab(mainPanel, "General");
 	
 	
 		//Create one AlgorithmParameterPanel per detected algorithm.

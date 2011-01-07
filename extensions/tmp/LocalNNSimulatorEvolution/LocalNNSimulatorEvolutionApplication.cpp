@@ -236,9 +236,12 @@ bool LocalNNSimulatorEvolutionApplication::setupApplication()
 
 	//Install and initialize the settings logger (logging of settings history).
 	SettingsLogger *settingsLogger = new SettingsLogger();
-	settingsLogger->addValues(".*Evo/.*Algorithm.*");
-	settingsLogger->addValues(".*Evo/.*Selection.*");
-	settingsLogger->addValues(".*Evo/.*Fitness.*");
+	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/.*/Algorithm/.*");
+	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/.*/Pop/.*");
+	settingsLogger->addValues("/Evo/.*/Fitness/.*/Fitness/CalculationMode");
+	settingsLogger->addValues("/Control/NumberOfSteps");
+	settingsLogger->addValues("/Control/NumberOfTries");
+	
 
 	new FramesPerSecondCounter();
 	new SimObjectGroupPrinter();

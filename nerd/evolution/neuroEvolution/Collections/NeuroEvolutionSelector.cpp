@@ -81,9 +81,10 @@ NeuroEvolutionSelector::NeuroEvolutionSelector(EvaluationMethod *evaluationMetho
 
 	//Select evolution algorithm
 	CommandLineArgument *evoAlgorithmArg = new CommandLineArgument(
-		"evolutionAlgorithm", "evo", "<algorithmName> <controlledAgent>", 
+		"evolutionAlgorithm", "evo", "<algorithmName> <controlledAgent> <populationName>", 
 		"Uses the evolution algorithm with the given <algorithmName> "
-		"to evolve controllers for agent <controlledAgent>.", 1, 1, true);
+		"to evolve controllers for agent <controlledAgent> (optional). "
+		"Optionally the population name can be set with <populationName>.", 1, 2, true);
 
 	CommandLineArgument *fitnessFunctionArg = new CommandLineArgument(
 			"fitness", "fit", "<prototypeName> <fitnessFunctionName> <population>", 
@@ -99,27 +100,45 @@ NeuroEvolutionSelector::NeuroEvolutionSelector(EvaluationMethod *evaluationMetho
 	}
 	
 	int scriptFitnessCounter = 0;
+	
+	QList<QString> evoWorldNames;
 
 	for(int evoCount = 0; evoCount < evoAlgorithmArg->getNumberOfEntries() || createDefaultWorld; ++evoCount) {
 
 		QString worldName = "Main";
+		QString popName = "Controllers";
 		if(evoCount > 0) {
 			worldName = "Pop" + QString::number(evoCount);
 		}
-		World *world = new World(worldName);
-		QString popName = "Controllers";
 		if(evoCount > 0) {
 			popName = "Controllers" + QString::number(evoCount);
 		}
+		
+		QList<QString> evoArguments = evoAlgorithmArg->getEntryParameters(evoCount);
+		
+		if(evoArguments.size() >= 3) {
+			worldName = evoArguments[2];
+			QString name = worldName;
+			int counter = 1;
+			while(evoWorldNames.contains(worldName)) {
+				worldName = name + QString::number(counter);
+				counter++;
+			}
+			evoWorldNames.append(worldName);
+		}
+	
+		World *world = new World(worldName);
 		Population *population = new Population(popName, world);
 		world->addPopulation(population);
-	
+		
 		if(evoCount == 0) {
 			world->setEvaluationMethod(evaluationMethod);
 		}
 		else {
 			world->setEvaluationMethod(0);
 		}
+		
+		
 	
 		Evolution::getEvolutionManager()->addEvolutionWorld(world);
 	
@@ -160,7 +179,6 @@ NeuroEvolutionSelector::NeuroEvolutionSelector(EvaluationMethod *evaluationMetho
 			population->addFitnessFunction(fitness);
 		}
 	
-		QList<QString> evoArguments = evoAlgorithmArg->getEntryParameters(evoCount);
 		if(evoArguments.size() >= 1 && evoArguments.at(0).trimmed() == "ens3")
 		{
 			ENS3EvolutionAlgorithm evo(world);
