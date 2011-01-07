@@ -498,7 +498,21 @@ bool Core::init() {
 		enforceDirectoryPath(plugInDir.absolutePath());
 	}
 	mPlugInManager->loadPlugIns(plugInDir.absolutePath());
-
+	
+	{
+		CommandLineArgument *optionalPlugInDirs = new CommandLineArgument("pluginDir", "pdir", "<directory",
+						"Loads all plugins in <directory>", 1, 0, true, true);
+						
+		int numberOfEntries = optionalPlugInDirs->getNumberOfEntries();
+		for(int i = 0; i < numberOfEntries; ++i) {
+			QStringList parameters = optionalPlugInDirs->getEntryParameters(i);
+				if(parameters.size() != 1) {
+					continue;
+				}
+				mPlugInManager->loadPlugIns(parameters[0]);
+			}
+	}
+	
 	//check version request
 	CommandLineArgument *versionArgument = new CommandLineArgument("version", "", "",
 					"Prints the version of this NERD application.", 0, 0, false, true);

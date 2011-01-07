@@ -103,6 +103,7 @@ const QString NerdConstants::VALUE_RANDOMIZATION_SIMULATION_SEED
 
 const QString NerdConstants::VALUE_NNM_BYPASS_NETWORKS
 		= "/NeuralNetwork/BypassNetworks";
+		
 
 //**************************************************************************
 //Event names

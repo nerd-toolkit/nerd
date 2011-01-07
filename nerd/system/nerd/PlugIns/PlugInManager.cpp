@@ -119,7 +119,7 @@ bool PlugInManager::loadPlugIns(const QString plugInDirName) {
 					Core::log(statusMessage.append(" Installation failed!"));
 				}
 				else {
-					Core::log(statusMessage.append(" Success!"));
+					Core::log(statusMessage.append(" Success!"), true);
 				}
 			}
 			else {

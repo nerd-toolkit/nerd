@@ -1,5 +1,4 @@
-SOURCES += TestPlugIn.cpp \
-main.cpp
+SOURCES += TestPlugIn.cpp
 HEADERS += TestPlugIn.h
 
 TEMPLATE = lib
