@@ -94,14 +94,14 @@ GroupSelectionWidget::GroupSelectionWidget(NeuralNetworkEditor *owner)
 	QLayout *listLayout = new QHBoxLayout();
 	layout->addLayout(listLayout);
 
-	QLayout *neuronButtonLayout = new QHBoxLayout();
-	layout->addLayout(neuronButtonLayout);
-
 	QLayout *nameLayout = new QHBoxLayout();
 	layout->addLayout(nameLayout);
 
 	QLayout *groupButtonLayout = new QHBoxLayout();
 	layout->addLayout(groupButtonLayout);
+	
+	QLayout *neuronButtonLayout = new QHBoxLayout();
+	layout->addLayout(neuronButtonLayout);
 
 	mGroupList = new QListWidget(this);
 	mGroupList->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -110,7 +110,7 @@ GroupSelectionWidget::GroupSelectionWidget(NeuralNetworkEditor *owner)
 	mGroupNameField = new QLineEdit("", this);
 	nameLayout->addWidget(mGroupNameField);
 
-	mAddButton = new QPushButton("Add", this);
+	mAddButton = new QPushButton("Create", this);
 	mAddButton->setContentsMargins(2, 2, 2, 2);
 	mAddButton->setMinimumWidth(15);
 	groupButtonLayout->addWidget(mAddButton);
@@ -124,6 +124,8 @@ GroupSelectionWidget::GroupSelectionWidget(NeuralNetworkEditor *owner)
 	groupButtonLayout->addWidget(mRemoveButton);
 
 	QGroupBox *itemBox = new QGroupBox("Member Items", this);
+	itemBox->setAlignment(Qt::AlignHCenter);
+	itemBox->setFlat(false);
 	QHBoxLayout *itemBoxLayout = new QHBoxLayout();
 	itemBox->setLayout(itemBoxLayout);
 	itemBoxLayout->setContentsMargins(4, 4, 4, 4);
