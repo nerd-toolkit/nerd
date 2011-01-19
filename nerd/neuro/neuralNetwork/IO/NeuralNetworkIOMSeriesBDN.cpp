@@ -85,6 +85,18 @@ QMap<QString, QString> NeuralNetworkIOMSeriesBDN::createByteCodeMapping()
 	byteCodeMapping.insert(	"tanh;AdditiveTD" + NeuralNetworkBDNExporter::FLIP_TYPE, 	
 													NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
 														 + ":\ntanh V0, Input\nLOAD V1, -1.0\nMUL V1, V0, V1\nwrite Output, V1");
+														
+	byteCodeMapping.insert("ramp[0,1];AdditiveTD",
+							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+							+ ":\nload v1, 0.0\nmin V0, Input, V1\nload V1, 1.0\nmin V0, V0, V1\nwrite Output, V0");
+							
+	byteCodeMapping.insert("ramp[-1,1];AdditiveTD",
+							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+							+ ":\nload V0, Input\nsat V0\nwrite Output, V0");
+							
+	byteCodeMapping.insert("ramp[-1,1];AdditiveTD" + NeuralNetworkBDNExporter::FLIP_TYPE,
+							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+							+ ":\nload V0, Input\nload V1, -1.0\nmul V0, V0, V1\nsat V0\nwrite Output, V0");
 		
 	// Synapsetypes
 	// 

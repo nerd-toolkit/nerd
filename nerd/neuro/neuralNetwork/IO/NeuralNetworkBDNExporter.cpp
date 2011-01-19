@@ -173,6 +173,9 @@ bool NeuralNetworkBDNExporter::createFileFromNetwork(QString fileName, NeuralNet
 
 	// check if network fullfills constraints for export
 	if(checkIfNetworkIsExportable(net, errorMsg) == false){
+		if(errorMsg != NULL) {
+			*errorMsg = *errorMsg + QString("\nThe network is not exportable!");
+		}
 		return false;
 	}
 	
@@ -183,13 +186,16 @@ bool NeuralNetworkBDNExporter::createFileFromNetwork(QString fileName, NeuralNet
 	QString code = exportNetwork(networkName, dynamic_cast<ModularNeuralNetwork*>(net), errorMsg);
 
 	if(code == "" || code == QString::null) {
+		if(errorMsg != NULL) {
+			*errorMsg = *errorMsg + QString("\nNo Code could be generated due to errors.");
+		}
 		return false;
 	}
 
 	QFile file(fileName);
 	if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
 		if(errorMsg != NULL) {
-			*errorMsg = QString("Cannot create file ").append(fileName).append(".");
+			*errorMsg = *errorMsg + QString("\nCannot create file ").append(fileName).append(".");
 		}
 		file.close();
 		return false;
@@ -211,7 +217,7 @@ bool NeuralNetworkBDNExporter::checkIfNetworkIsExportable(NeuralNetwork *net, QS
 	// try to cast Network to ModularNeuralNetwork
 	ModularNeuralNetwork *modNet = dynamic_cast<ModularNeuralNetwork*>(net);
 	if(modNet == NULL) {
-		*errorMsg = QString("Network has to be modular!");
+		*errorMsg = *errorMsg + QString("Network has to be modular!");
 		return false;
 	}
 
@@ -247,7 +253,7 @@ bool NeuralNetworkBDNExporter::checkIfNetworkIsExportable(NeuralNetwork *net, QS
 	}
 	
 	if(badNeurons.length() > 0){
-		*errorMsg = QString("The exporter can handle only networkelements with a required iteration count of 1! The following elements have a different configuration:\n") + badNeurons;
+		*errorMsg = *errorMsg + QString("The exporter can handle only networkelements with a required iteration count of 1! The following elements have a different configuration:\n") + badNeurons;
 		return false;
 	}
 	
@@ -484,7 +490,7 @@ bool NeuralNetworkBDNExporter::calcExecutionPositions(ModularNeuralNetwork *net,
 	// 	- synapse from output computational neuron to output neuron
 	if(maxNetBDNExecutionPos > BDN_MAX_EXECUTION_POS - 3)
 	{
-		*errorMsg = QString("The number of execution positions (n = %1) exceeds the possible number of execution positions (n = %2) for BDN files)!").arg(	
+		*errorMsg = *errorMsg + QString("The number of execution positions (n = %1) exceeds the possible number of execution positions (n = %2) for BDN files)!").arg(	
 												(maxNetBDNExecutionPos / 2),
 												 (BDN_MAX_EXECUTION_POS - 4) / 2); 
 		
@@ -688,7 +694,7 @@ bool NeuralNetworkBDNExporter::addBDNNeuronInfo(Neuron *netNeuron, QString *erro
 bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *errorMsg)
 {
 	if(getBDNInSynapseInformation(inNeuron, errorMsg).length() > 0){
-		*errorMsg = QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has incoming synapses! This is not supported.");
+		*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has incoming synapses! This is not supported.");
 		
 		return false;
 	}
@@ -702,7 +708,10 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 	inputInfo->YPosition = getBDNYPos(inNeuron);
 	inputInfo->RobotType = m_robotType;
 	inputInfo->SpinalCordAddress = getSpinalCordAddress(inNeuron, errorMsg);
-	if(inputInfo->SpinalCordAddress == QString::null) {return false;}
+	if(inputInfo->SpinalCordAddress == QString::null) {
+		*errorMsg = *errorMsg + QString("Neuron \"" + inNeuron->getNameValue().get() + "\" has no valid SPINAL_CORD_ADDRESS property.\n");
+		return false;
+	}
 	
 	// create mirror neuron if a bias is set or if the input is flipped
 	if(inNeuron->getBiasValue().get() != 0.0
@@ -715,13 +724,13 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 		mirrorInfo->Type = "Unit";
 		
 		if(inNeuron->getTransferFunction()->getLowerBound() != -1.0){
-			*errorMsg = QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has an invalid lower value of " + QString::number(inNeuron->getTransferFunction()->getLowerBound())+ ". The lower value must be -1.0.");
+			*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has an invalid lower value of " + QString::number(inNeuron->getTransferFunction()->getLowerBound())+ ". The lower value must be -1.0.");
 					
 			return false;
 		}
 		
 		if(inNeuron->getTransferFunction()->getUpperBound() != 1.0){
-			*errorMsg = QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has an invalid upper value of " + QString::number(inNeuron->getTransferFunction()->getUpperBound())+ ". The upper value must be 1.0.");
+			*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has an invalid upper value of " + QString::number(inNeuron->getTransferFunction()->getUpperBound())+ ". The upper value must be 1.0.");
 			
 			return false;
 		}
@@ -777,7 +786,10 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 	outputInfo->YPosition = getBDNYPos(outNeuron);
 	outputInfo->RobotType = m_robotType;	
 	outputInfo->SpinalCordAddress = getSpinalCordAddress(outNeuron, errorMsg);
-	if(outputInfo->SpinalCordAddress == QString::null) {return false;}
+	if(outputInfo->SpinalCordAddress == QString::null) {
+		*errorMsg = *errorMsg + QString("The output neuron \"" + outNeuron->getNameValue().get() + "\" does not have a valid SPINAL_CORD_ADDRESS property");
+		return false;
+	}
 	
 	m_BDNNeuronInfoList.append(outputInfo);
 	
@@ -914,8 +926,8 @@ bool NeuralNetworkBDNExporter::addBDNBiasInfo(BDNNeuronInfo *target, double weig
 
 bool NeuralNetworkBDNExporter::addBDNSynapseInfo(Synapse *netSynapse, QString *errorMsg)
 {
-	if(netSynapse->getEnabledValue().get() == false) {								
-		return false;
+	if(netSynapse->getEnabledValue().get() == false) {
+		return true;
 	}
 	
 	int sourceID = m_xmlIdTable[netSynapse->getSource()];
@@ -927,7 +939,7 @@ bool NeuralNetworkBDNExporter::addBDNSynapseInfo(Synapse *netSynapse, QString *e
 		// check if the synapse type exists in bytecodemapping, if not --> error
 	if(!m_byteCodeMapping.contains(type))
 	{
-		*errorMsg = QString("A synapse of the neuron \"%1\" has an unknown synaptic function \"%2\"! Use a known function or add a new bytecode mapping to the function \"createByteCodeMapping()\".\nThe following functions are known:\n%3").arg(	
+		*errorMsg = *errorMsg + QString("A synapse of the neuron \"%1\" has an unknown synaptic function \"%2\"! Use a known function or add a new bytecode mapping to the function \"createByteCodeMapping()\".\nThe following functions are known:\n%3").arg(	
 												netSynapse->getSource()->getNameValue().get(), 
 												netSynapse->getSynapseFunction()->getName(),
 												getSynapseByteCodeMappingTypes());
