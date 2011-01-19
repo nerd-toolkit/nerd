@@ -3524,7 +3524,7 @@ void MSeriesV2Model::layoutObjects() {
 		}
 	}
 	if(mWaistRollMotor != 0) {
-		PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint1")->set(0.0, waistRollY, 0.1);
+		PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint1")->set(0.0, waistRollY, -0.1);
 		PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint2")->set(0.0, waistRollY, 0.0);
 		if(mFirstLayout) {
 			PARAM(DoubleValue, mWaistRollMotor, "MinAngle")->set(-20);
