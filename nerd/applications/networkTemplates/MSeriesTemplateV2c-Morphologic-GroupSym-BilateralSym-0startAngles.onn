@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<net version="ORCS XML V1.0">
+<net version="NERD XML V1.0">
+    <properties>
+        <prop value="3428.21,2242.34,0.109419" name="_Viewport"/>
+    </properties>
     <defaultTransferFunction name="tanh"/>
     <defaultActivationFunction name="AdditiveTD"/>
     <defaultSynapseFunction name="SimpleUpdateFunction"/>
@@ -464,7 +467,7 @@
         <properties>
             <prop value="2024.87,3663.3,0" name="_LOCATION"/>
             <prop value="" name="FLIP_ACTIVITY"/>
-            <prop value="543" name="SPINAL_CORD_ADDRESS"/>
+            <prop value="544" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
             <prop value="" name="_ConstraintSlave"/>
         </properties>
@@ -485,7 +488,7 @@
     <neuron bias="0" id="1142" name="/Left/MotorHipYaw/JointAngle">
         <properties>
             <prop value="-2255.88,3673.14,0" name="_LOCATION"/>
-            <prop value="544" name="SPINAL_CORD_ADDRESS"/>
+            <prop value="543" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
         </properties>
         <transferFunction name="tanh"/>
@@ -1609,7 +1612,7 @@
     <neuron bias="0" id="1262" name="/Middle/HeadPitch/CurrentSensor0/CurrentConsumption">
         <properties>
             <prop value="87.7031,-2881.02,0" name="_LOCATION"/>
-            <prop value="673" name="SPINAL_CORD_ADDRESS"/>
+            <prop value="672" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
         </properties>
         <transferFunction name="tanh"/>
@@ -1618,7 +1621,7 @@
     <neuron bias="0" id="1263" name="/Middle/HeadRollYaw/CurrentSensor0/CurrentConsumption">
         <properties>
             <prop value="9.70568,-3768.25,0" name="_LOCATION"/>
-            <prop value="672" name="SPINAL_CORD_ADDRESS"/>
+            <prop value="673" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
         </properties>
         <transferFunction name="tanh"/>
@@ -2307,7 +2310,7 @@
     <neuron bias="0" id="1334" name="/Left/MotorShoulderPitch/DesiredTorque1">
         <properties>
             <prop value="-2137.29,-1782.45,0" name="_LOCATION"/>
-            <prop value="462" name="SPINAL_CORD_ADDRESS"/>
+            <prop value="M37" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_OUTPUT"/>
         </properties>
         <transferFunction name="tanh"/>
@@ -2325,7 +2328,7 @@
     <neuron bias="0" id="1336" name="/Right/MotorShoulderRoll/DesiredTorque0">
         <properties>
             <prop value="3153.63,-1620.51,0" name="_LOCATION"/>
-            <prop value="408" name="SPINAL_CORD_ADDRESS"/>
+            <prop value="M34" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="_ConstraintSlave"/>
             <prop value="" name="TYPE_OUTPUT"/>
         </properties>
@@ -2374,7 +2377,7 @@
     <neuron bias="0" id="1341" name="/Right/MotorElbowPitch/ReleaseMode0">
         <properties>
             <prop value="4003.19,765.128,0" name="_LOCATION"/>
-            <prop value="408" name="SPINAL_CORD_ADDRESS"/>
+            <prop value="R32" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="_ConstraintSlave"/>
             <prop value="" name="TYPE_OUTPUT"/>
         </properties>
@@ -2416,7 +2419,7 @@
         <transferFunction name="tanh"/>
         <activationFunction name="AdditiveTD"/>
     </neuron>
-    <group id="270495" name="Default">
+    <group id="282109" name="Default">
         <properties>
             <prop value="-200.415,-6354.07,0" name="_LOCATION"/>
         </properties>
