@@ -121,6 +121,13 @@ bool UniversalScriptingContext::bind() {
 	setTriggerEventName(mTriggerEventName->get());
 
 	mScriptFileName->set(mScriptFileName->get());
+	
+	if(mTriggerEventName->get() != "") {
+		setTriggerEventName(mTriggerEventName->get());
+	}
+	if(mResetEventName->get() != "") {
+		setResetEventName(mResetEventName->get());
+	}
 
 	//if no trigger event is given, execute once during bind() phase.
 	if(mTriggerEvent == 0) {
@@ -133,6 +140,15 @@ bool UniversalScriptingContext::bind() {
 
 bool UniversalScriptingContext::cleanUp() {
 	bool ok = true;
+
+	if(mResetEvent != 0) {
+		mResetEvent->removeEventListener(this);
+		mResetEvent = 0;
+	}
+	if(mTriggerEvent != 0) {
+		mTriggerEvent->removeEventListener(this);
+		mTriggerEvent = 0;
+	}
 
 	return ok;
 }
@@ -161,11 +177,13 @@ void UniversalScriptingContext::eventOccured(Event *event) {
 		if(mScript == 0) {
 			//try to do a reset on the fly
 			resetScriptContext();
+			executeScriptFunction("reset();");
 		}
 		executeScriptFunction("exec();");
 	}
 	else if(event == mResetEvent) {
-		resetScriptContext();
+		//resetScriptContext();
+		executeScriptFunction("reset();");
 	}
 }
 
