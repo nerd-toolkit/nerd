@@ -1213,7 +1213,7 @@ QDomElement BDNSynapseInfo::toXML(QDomDocument &xmlDoc)
 			
 	QDomElement xmlSynapsePara = xmlDoc.createElement( "parameter" );	
 	xmlSynapsePara.setAttribute("name", "w");
-	xmlSynapsePara.setAttribute("value", this->Weight);
+	xmlSynapsePara.setAttribute("value", QString::number(this->Weight));
 	xmlSynapseParas.appendChild(xmlSynapsePara);
 	
 	return xmlSynapse;
