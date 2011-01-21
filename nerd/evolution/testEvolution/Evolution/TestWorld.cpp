@@ -172,8 +172,8 @@ void TestWorld::testPublishingBehavior() {
 
 	//EvolutionAlgorithm
 	QVERIFY(world.getEvolutionAlgorithm() == 0);
-	QVERIFY(vm->getValue("/Evo/Algorithm/World1/Evo1/Param3") == 0);
-	QVERIFY(vm->getValue("/Evo/Algorithm/World1/Evo1/Param4") == 0);
+	QVERIFY(vm->getValue("/Evo/World1/Algorithm/Evo1/Param3") == 0);
+	QVERIFY(vm->getValue("/Evo/World1/Algorithm/Evo1/Param4") == 0);
 
 	world.setEvolutionAlgorithm(evo1);
 
@@ -181,19 +181,19 @@ void TestWorld::testPublishingBehavior() {
 
 
 	QVERIFY(world.getEvolutionAlgorithm() == evo1);
-	QVERIFY(vm->getValue("/Evo/Algorithm/World1/Evo1/Param3") != 0);
-	QVERIFY(vm->getValue("/Evo/Algorithm/World1/Evo2/Param4") == 0);
+	QVERIFY(vm->getValue("/Evo/World1/Algorithm/Evo1/Param3") != 0);
+	QVERIFY(vm->getValue("/Evo/World1/Algorithm/Evo2/Param4") == 0);
 
 	world.setEvolutionAlgorithm(evo2);
 
 	QVERIFY(world.getEvolutionAlgorithm() == evo2);
-	QVERIFY(vm->getValue("/Evo/Algorithm/World1/Evo1/Param3") == 0);
-	QVERIFY(vm->getValue("/Evo/Algorithm/World1/Evo2/Param4") != 0);
+	QVERIFY(vm->getValue("/Evo/World1/Algorithm/Evo1/Param3") == 0);
+	QVERIFY(vm->getValue("/Evo/World1/Algorithm/Evo2/Param4") != 0);
 	
 	world.setEvolutionAlgorithm(0);
 
-	QVERIFY(vm->getValue("/Evo/Algorithm/World1/Evo1/Param3") == 0);
-	QVERIFY(vm->getValue("/Evo/Algorithm/World1/Evo2/Param4") == 0);
+	QVERIFY(vm->getValue("/Evo/World1/Algorithm/Evo1/Param3") == 0);
+	QVERIFY(vm->getValue("/Evo/World1/Algorithm/Evo2/Param4") == 0);
 
 	delete eval1;
 	delete eval2;
