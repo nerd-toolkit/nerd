@@ -124,6 +124,9 @@ ModelPrototypes::ModelPrototypes() {
 	//TODO this prototype will be the default setting in the future (will be renamed to MSeriesV2 ?)
 	pm->addPrototype("Prototypes/MSeriesV2c", 
 				new MSeriesV2Model("MSeriesV2c", "", true));
+				
+	pm->addPrototype("Prototypes/MSeriesV2d", 
+				new MSeriesV2Model("MSeriesV2d", "", true, true));
 
 	//TODO remove later
 	pm->addPrototype("Prototypes/MSeriesV2Obsolete",

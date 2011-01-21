@@ -90,7 +90,8 @@ namespace nerd {
 /**
  * Constructs a new MSeriesV2Model.
  */
-MSeriesV2Model::MSeriesV2Model(const QString &groupName, const QString &bodyPartList, bool useAlternativeForceSensorNames) 
+MSeriesV2Model::MSeriesV2Model(const QString &groupName, const QString &bodyPartList, 
+				bool useAlternativeForceSensorNames, bool useUpdatedAngleRanges) 
 	: ModelInterface(groupName), mFirstLayout(true), mIncludeHead(true), mIncludeLeftArm(true),
 		mIncludeRightArm(true), mIncludeBody(true), mIncludeHip(true),
 		mIncludeLeftLeg(true), mIncludeRightLeg(true), 
@@ -126,7 +127,8 @@ MSeriesV2Model::MSeriesV2Model(const QString &groupName, const QString &bodyPart
 		mLeftShoulderRollMotor(0), mRightElbowPitchMotor(0), mLeftElbowPitchMotor(0), mAB00(0), 
 		mAB10(0), mAB01(0), mAB11(0), mAB02(0), mAB12(0), mAB03(0), mAB13(0), mAB04(0), mAB14(0), 
 		mAB20(0), mAB30(0), mAB21(0), mAB31(0), mAB40(0), mAB41(0), mAB42(0), mAB43(0), mAB44(0), 
-		mAB50(0), mAB51(0), mUseAlternativeForceSensorNames(useAlternativeForceSensorNames)
+		mAB50(0), mAB51(0), mUseAlternativeForceSensorNames(useAlternativeForceSensorNames),
+		mUseUpdatedSensorRanges(useUpdatedAngleRanges)
 {
 	mPosition->addValueChangedListener(this);
 
@@ -318,7 +320,8 @@ MSeriesV2Model::MSeriesV2Model(const MSeriesV2Model &other) : Object(), ValueCha
 		mLeftShoulderRollMotor(0), mRightElbowPitchMotor(0), mLeftElbowPitchMotor(0), mAB00(0), 
 		mAB10(0), mAB01(0), mAB11(0), mAB02(0), mAB12(0), mAB03(0), mAB13(0), mAB04(0), mAB14(0), 
 		mAB20(0), mAB30(0), mAB21(0), mAB31(0), mAB40(0), mAB41(0), mAB42(0), mAB43(0), mAB44(0), 
-		mAB50(0), mAB51(0), mUseAlternativeForceSensorNames(other.mUseAlternativeForceSensorNames)
+		mAB50(0), mAB51(0), mUseAlternativeForceSensorNames(other.mUseAlternativeForceSensorNames),
+		mUseUpdatedSensorRanges(other.mUseUpdatedSensorRanges)
 {
 	mBodyPartSelectorValue = dynamic_cast<StringValue*>(getParameter("BodyParts"));
 	mIncludeAccus = dynamic_cast<BoolValue*>(getParameter(mMorphologyParametersPrefix + "IncludeAccus"));	
@@ -3524,8 +3527,14 @@ void MSeriesV2Model::layoutObjects() {
 		}
 	}
 	if(mWaistRollMotor != 0) {
-		PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint1")->set(0.0, waistRollY, -0.1);
-		PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint2")->set(0.0, waistRollY, 0.0);
+		if(mUseUpdatedSensorRanges) {
+			PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint1")->set(0.0, waistRollY, -0.1);
+			PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint2")->set(0.0, waistRollY, 0.0);
+		}
+		else {
+			PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint1")->set(0.0, waistRollY, 0.1);
+			PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint2")->set(0.0, waistRollY, 0.0);
+		}
 		if(mFirstLayout) {
 			PARAM(DoubleValue, mWaistRollMotor, "MinAngle")->set(-20);
 			PARAM(DoubleValue, mWaistRollMotor, "MaxAngle")->set(20);
@@ -3624,78 +3633,154 @@ void MSeriesV2Model::disableCollisions(SimBody *body1, SimBody *body2) {
 
 void MSeriesV2Model::initializeMotorModels() {
 	QString prefix = QString("/Sim/") + mGroupName + "/";
-	SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
-	SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
-	SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
-	SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
-	SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
-	SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
-	SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
-	SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
-	SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
-	SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.1");
-	SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
-	SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
-	SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
-	SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
-	SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
-	SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
-	SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.47");
-	SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.3");
-	SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
-	SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
-	SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
-	SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.8");
-	SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
-	SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.002");
-	SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1.0");
-	SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.1");
-	SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
-	SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
-	SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
-	SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
-	SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
-	SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
-	SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.47");
-	SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.3");
-	SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
-	SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
-	SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
-	SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.8");
-	SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
-	SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.002");
-	SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1.0");
-	SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
-	SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-	SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.33");
-	SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+	if(mUseUpdatedSensorRanges) {
+		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
+		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
+		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
+		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
+		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
+		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
+		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.1");
+		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4351");
+		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
+		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
+		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
+		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.629");
+		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
+		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.002");
+		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1.0");
+		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.1");
+		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4351");
+		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
+		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
+		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
+		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.629");
+		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
+		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.002");
+		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1.0");
+		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.446");
+		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+	}
+	else {
+			SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
+		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
+		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
+		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
+		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
+		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
+		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.1");
+		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
+		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
+		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.47");
+		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.3");
+		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
+		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
+		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.8");
+		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.002");
+		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1.0");
+		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.1");
+		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
+		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
+		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.47");
+		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.3");
+		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
+		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
+		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.8");
+		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.002");
+		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1.0");
+		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
+		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.33");
+		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
+	}
 
 	if(mIncludeRightHand) {
 		SETVAL(prefix + "Right/Hand/MotorMain/ODE_H_MSeriesTorqueSpringMotorModel/TorqueConstant", "0.05");

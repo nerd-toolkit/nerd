@@ -60,7 +60,8 @@ namespace nerd {
 	 */
 	class MSeriesV2Model : public ModelInterface {
 	public:
-		MSeriesV2Model(const QString &groupName = "", const QString &bodyPartList = "", bool useAlternativeForceSensorNames = false);
+		MSeriesV2Model(const QString &groupName = "", const QString &bodyPartList = "", bool useAlternativeForceSensorNames = false, 
+						bool useUpdatedAngleRanges = false);
 		MSeriesV2Model(const MSeriesV2Model &other);
 		virtual ~MSeriesV2Model();
 
@@ -267,6 +268,7 @@ namespace nerd {
 		SimObject *mAB51;
 
 		bool mUseAlternativeForceSensorNames;
+		bool mUseUpdatedSensorRanges;
 	};
 
 }
