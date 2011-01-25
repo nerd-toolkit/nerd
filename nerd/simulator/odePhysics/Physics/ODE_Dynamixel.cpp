@@ -46,8 +46,11 @@
 #include "Math/Math.h"
 #include "Math/Vector3D.h"
 #include "Core/Core.h"
+#include <iostream>
 
-namespace nerd{
+using namespace std;
+
+namespace nerd {
 
 /**
  * Constructor.
