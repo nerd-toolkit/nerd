@@ -3404,126 +3404,224 @@ void MSeriesV2Model::layoutObjects() {
 		PARAM(Vector3DValue, mRightToesJoint, "AxisPoint1")->set(0.1, mToesJointY->get(), mToesJointZ->get());
 		PARAM(Vector3DValue, mRightToesJoint, "AxisPoint2")->set(0.0, mToesJointY->get(), mToesJointZ->get());
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mRightToesJoint, "MinAngle")->set(-90);
-			PARAM(DoubleValue, mRightToesJoint, "MaxAngle")->set(0);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mRightToesJoint, "MinAngle")->set(-80);
+				PARAM(DoubleValue, mRightToesJoint, "MaxAngle")->set(0);
+			}
+			else {
+				PARAM(DoubleValue, mRightToesJoint, "MinAngle")->set(-90);
+				PARAM(DoubleValue, mRightToesJoint, "MaxAngle")->set(0);
+			}
 		}
 	}
 	if(mLeftToesJoint != 0) {
 		PARAM(Vector3DValue, mLeftToesJoint, "AxisPoint1")->set(0.1, mToesJointY->get(), mToesJointZ->get());
 		PARAM(Vector3DValue, mLeftToesJoint, "AxisPoint2")->set(0.0, mToesJointY->get(), mToesJointZ->get());
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mLeftToesJoint, "MinAngle")->set(-90);
-			PARAM(DoubleValue, mLeftToesJoint, "MaxAngle")->set(0);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mRightToesJoint, "MinAngle")->set(-80);
+				PARAM(DoubleValue, mRightToesJoint, "MaxAngle")->set(0);
+			}
+			else {
+				PARAM(DoubleValue, mRightToesJoint, "MinAngle")->set(-90);
+				PARAM(DoubleValue, mRightToesJoint, "MaxAngle")->set(0);
+			}
 		}
 	}
 	if(mRightAnklePitchMotor != 0) {	
 		PARAM(Vector3DValue, mRightAnklePitchMotor, "AxisPoint1")->set(0.1, mAnkleJointY->get(), 0.0);
 		PARAM(Vector3DValue, mRightAnklePitchMotor, "AxisPoint2")->set(0.0, mAnkleJointY->get(), 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mRightAnklePitchMotor, "MinAngle")->set(-50);
-			PARAM(DoubleValue, mRightAnklePitchMotor, "MaxAngle")->set(80);
-			PARAM(DoubleValue, mRightAnklePitchMotor, "JointAngleOffset")->set(-70);
-			PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped2")->set(true);
-			PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped3")->set(true);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mRightAnklePitchMotor, "MinAngle")->set(-52);
+				PARAM(DoubleValue, mRightAnklePitchMotor, "MaxAngle")->set(77);
+				PARAM(DoubleValue, mRightAnklePitchMotor, "JointAngleOffset")->set(-70);
+				PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped2")->set(true);
+				PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped3")->set(true);
+			}
+			else {
+				PARAM(DoubleValue, mRightAnklePitchMotor, "MinAngle")->set(-50);
+				PARAM(DoubleValue, mRightAnklePitchMotor, "MaxAngle")->set(80);
+				PARAM(DoubleValue, mRightAnklePitchMotor, "JointAngleOffset")->set(-70);
+				PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped2")->set(true);
+				PARAM(BoolValue, mRightAnklePitchMotor, "MotorFlipped3")->set(true);
+			}
 		}
 	}
 	if(mRightAnkleRollMotor != 0) {	
 		PARAM(Vector3DValue, mRightAnkleRollMotor, "AxisPoint1")->set(-mDistanceXHipYaw->get() / 2.0, mAnkleJointY->get(), 0.1);
 		PARAM(Vector3DValue, mRightAnkleRollMotor, "AxisPoint2")->set(-mDistanceXHipYaw->get() / 2.0, mAnkleJointY->get(), 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mRightAnkleRollMotor, "MinAngle")->set(-20);
-			PARAM(DoubleValue, mRightAnkleRollMotor, "MaxAngle")->set(23);
-			PARAM(DoubleValue, mRightAnkleRollMotor, "JointAngleOffset")->set(-20);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mRightAnkleRollMotor, "MinAngle")->set(-15);
+				PARAM(DoubleValue, mRightAnkleRollMotor, "MaxAngle")->set(15);
+				PARAM(DoubleValue, mRightAnkleRollMotor, "JointAngleOffset")->set(-15);
+			}
+			else {
+				PARAM(DoubleValue, mRightAnkleRollMotor, "MinAngle")->set(-20);
+				PARAM(DoubleValue, mRightAnkleRollMotor, "MaxAngle")->set(23);
+				PARAM(DoubleValue, mRightAnkleRollMotor, "JointAngleOffset")->set(-20);
+			}
 		}
 	}
 	if(mLeftAnklePitchMotor != 0) {	
 		PARAM(Vector3DValue, mLeftAnklePitchMotor, "AxisPoint1")->set(0.0, mAnkleJointY->get(), 0.0);
 		PARAM(Vector3DValue, mLeftAnklePitchMotor, "AxisPoint2")->set(0.1, mAnkleJointY->get(), 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mLeftAnklePitchMotor, "MinAngle")->set(-80);
-			PARAM(DoubleValue, mLeftAnklePitchMotor, "MaxAngle")->set(50);
-			PARAM(DoubleValue, mLeftAnklePitchMotor, "JointAngleOffset")->set(70);
-			PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped2")->set(true);
-			PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped3")->set(true);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mLeftAnklePitchMotor, "MinAngle")->set(-77);
+				PARAM(DoubleValue, mLeftAnklePitchMotor, "MaxAngle")->set(52);
+				PARAM(DoubleValue, mLeftAnklePitchMotor, "JointAngleOffset")->set(70);
+				PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped2")->set(true);
+				PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped3")->set(true);
+			}
+			else {
+				PARAM(DoubleValue, mLeftAnklePitchMotor, "MinAngle")->set(-80);
+				PARAM(DoubleValue, mLeftAnklePitchMotor, "MaxAngle")->set(50);
+				PARAM(DoubleValue, mLeftAnklePitchMotor, "JointAngleOffset")->set(70);
+				PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped2")->set(true);
+				PARAM(BoolValue, mLeftAnklePitchMotor, "MotorFlipped3")->set(true);
+			}
 		}
 	}
 	if(mLeftAnkleRollMotor != 0) {	
 		PARAM(Vector3DValue, mLeftAnkleRollMotor, "AxisPoint1")->set(mDistanceXHipYaw->get() / 2.0, mAnkleJointY->get(), 0.1);
 		PARAM(Vector3DValue, mLeftAnkleRollMotor, "AxisPoint2")->set(mDistanceXHipYaw->get() / 2.0, mAnkleJointY->get(), 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mLeftAnkleRollMotor, "MinAngle")->set(-23);
-			PARAM(DoubleValue, mLeftAnkleRollMotor, "MaxAngle")->set(20);
-			PARAM(DoubleValue, mLeftAnkleRollMotor, "JointAngleOffset")->set(20);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mLeftAnkleRollMotor, "MinAngle")->set(-15);
+				PARAM(DoubleValue, mLeftAnkleRollMotor, "MaxAngle")->set(15);
+				PARAM(DoubleValue, mLeftAnkleRollMotor, "JointAngleOffset")->set(15);
+			}
+			else {
+				PARAM(DoubleValue, mLeftAnkleRollMotor, "MinAngle")->set(-23);
+				PARAM(DoubleValue, mLeftAnkleRollMotor, "MaxAngle")->set(20);
+				PARAM(DoubleValue, mLeftAnkleRollMotor, "JointAngleOffset")->set(20);
+			}
 		}
 	}
 	if(mRightKneeMotor != 0) {	
 		PARAM(Vector3DValue, mRightKneeMotor, "AxisPoint1")->set(0.0, kneeJointY, mKneeJointZ->get());
 		PARAM(Vector3DValue, mRightKneeMotor, "AxisPoint2")->set(0.1, kneeJointY, mKneeJointZ->get());
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mRightKneeMotor, "MinAngle")->set(0);
-			PARAM(DoubleValue, mRightKneeMotor, "MaxAngle")->set(164);
-			PARAM(DoubleValue, mRightKneeMotor, "JointAngleOffset")->set(150);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mRightKneeMotor, "MinAngle")->set(0);
+				PARAM(DoubleValue, mRightKneeMotor, "MaxAngle")->set(171);
+				PARAM(DoubleValue, mRightKneeMotor, "JointAngleOffset")->set(150);
+			}
+			else {
+				PARAM(DoubleValue, mRightKneeMotor, "MinAngle")->set(0);
+				PARAM(DoubleValue, mRightKneeMotor, "MaxAngle")->set(164);
+				PARAM(DoubleValue, mRightKneeMotor, "JointAngleOffset")->set(150);
+			}
 		}
 	}
 	if(mLeftKneeMotor != 0) {	
 		PARAM(Vector3DValue, mLeftKneeMotor, "AxisPoint1")->set(0.1, kneeJointY, mKneeJointZ->get());
 		PARAM(Vector3DValue, mLeftKneeMotor, "AxisPoint2")->set(0.0, kneeJointY, mKneeJointZ->get());
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-164);
-			PARAM(DoubleValue, mLeftKneeMotor, "MaxAngle")->set(0);
-			PARAM(DoubleValue, mLeftKneeMotor, "JointAngleOffset")->set(-150);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-164);
+				PARAM(DoubleValue, mLeftKneeMotor, "MaxAngle")->set(0);
+				PARAM(DoubleValue, mLeftKneeMotor, "JointAngleOffset")->set(-150);
+			}
+			else {
+				PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-171);
+				PARAM(DoubleValue, mLeftKneeMotor, "MaxAngle")->set(0);
+				PARAM(DoubleValue, mLeftKneeMotor, "JointAngleOffset")->set(-150);
+			}
 		}
 	}
 	if(mRightHipPitchMotor != 0) {	
 		PARAM(Vector3DValue, mRightHipPitchMotor, "AxisPoint1")->set(0.0, hipPitchRollJointY, 0.0);
 		PARAM(Vector3DValue, mRightHipPitchMotor, "AxisPoint2")->set(0.1, hipPitchRollJointY, 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mRightHipPitchMotor, "MinAngle")->set(-110);
-			PARAM(DoubleValue, mRightHipPitchMotor, "MaxAngle")->set(20);
-			PARAM(DoubleValue, mRightHipPitchMotor, "JointAngleOffset")->set(-130);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mRightHipPitchMotor, "MinAngle")->set(-110);
+				PARAM(DoubleValue, mRightHipPitchMotor, "MaxAngle")->set(19);
+				PARAM(DoubleValue, mRightHipPitchMotor, "JointAngleOffset")->set(-130);
+			}
+			else {
+				PARAM(DoubleValue, mRightHipPitchMotor, "MinAngle")->set(-110);
+				PARAM(DoubleValue, mRightHipPitchMotor, "MaxAngle")->set(20);
+				PARAM(DoubleValue, mRightHipPitchMotor, "JointAngleOffset")->set(-130);
+			}
 		}
 	}
 	if(mLeftHipPitchMotor != 0) {
 		PARAM(Vector3DValue, mLeftHipPitchMotor, "AxisPoint1")->set(0.1, hipPitchRollJointY, 0.0);
 		PARAM(Vector3DValue, mLeftHipPitchMotor, "AxisPoint2")->set(0.0, hipPitchRollJointY, 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mLeftHipPitchMotor, "MinAngle")->set(-20);
-			PARAM(DoubleValue, mLeftHipPitchMotor, "MaxAngle")->set(110);
-			PARAM(DoubleValue, mLeftHipPitchMotor, "JointAngleOffset")->set(130);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mLeftHipPitchMotor, "MinAngle")->set(-19);
+				PARAM(DoubleValue, mLeftHipPitchMotor, "MaxAngle")->set(110);
+				PARAM(DoubleValue, mLeftHipPitchMotor, "JointAngleOffset")->set(130);
+			}
+			else {
+				PARAM(DoubleValue, mLeftHipPitchMotor, "MinAngle")->set(-20);
+				PARAM(DoubleValue, mLeftHipPitchMotor, "MaxAngle")->set(110);
+				PARAM(DoubleValue, mLeftHipPitchMotor, "JointAngleOffset")->set(130);
+			}
 		}
 	}
 	if(mRightHipRollMotor != 0) {
 		PARAM(Vector3DValue, mRightHipRollMotor, "AxisPoint1")->set(-mDistanceXHipYaw->get() / 2.0, hipPitchRollJointY, 0.0);
 		PARAM(Vector3DValue, mRightHipRollMotor, "AxisPoint2")->set(-mDistanceXHipYaw->get() / 2.0, hipPitchRollJointY, 0.1);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mRightHipRollMotor, "MinAngle")->set(-44);
-			PARAM(DoubleValue, mRightHipRollMotor, "MaxAngle")->set(20);
-			PARAM(DoubleValue, mRightHipRollMotor, "JointAngleOffset")->set(30);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mRightHipRollMotor, "MinAngle")->set(-40);
+				PARAM(DoubleValue, mRightHipRollMotor, "MaxAngle")->set(20);
+				PARAM(DoubleValue, mRightHipRollMotor, "JointAngleOffset")->set(30);
+			}
+			else {
+				PARAM(DoubleValue, mRightHipRollMotor, "MinAngle")->set(-44);
+				PARAM(DoubleValue, mRightHipRollMotor, "MaxAngle")->set(20);
+				PARAM(DoubleValue, mRightHipRollMotor, "JointAngleOffset")->set(30);
+			}
 		}
 	}
 	if(mLeftHipRollMotor != 0) {
 		PARAM(Vector3DValue, mLeftHipRollMotor, "AxisPoint1")->set(mDistanceXHipYaw->get() / 2.0, hipPitchRollJointY, 0.0);
 		PARAM(Vector3DValue, mLeftHipRollMotor, "AxisPoint2")->set(mDistanceXHipYaw->get() / 2.0, hipPitchRollJointY, 0.1);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mLeftHipRollMotor, "MinAngle")->set(-20);
-			PARAM(DoubleValue, mLeftHipRollMotor, "MaxAngle")->set(44);
-			PARAM(DoubleValue, mLeftHipRollMotor, "JointAngleOffset")->set(-30);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mLeftHipRollMotor, "MinAngle")->set(-20);
+				PARAM(DoubleValue, mLeftHipRollMotor, "MaxAngle")->set(40);
+				PARAM(DoubleValue, mLeftHipRollMotor, "JointAngleOffset")->set(-30);
+			}
+			else {
+				PARAM(DoubleValue, mLeftHipRollMotor, "MinAngle")->set(-20);
+				PARAM(DoubleValue, mLeftHipRollMotor, "MaxAngle")->set(44);
+				PARAM(DoubleValue, mLeftHipRollMotor, "JointAngleOffset")->set(-30);
+			}
 		}
 	}
 	if(mRightHipYawMotor != 0) {
 		PARAM(Vector3DValue, mRightHipYawMotor, "AxisPoint1")->set(-mDistanceXHipYaw->get() / 2.0, 0.0, 0.0);
 		PARAM(Vector3DValue, mRightHipYawMotor, "AxisPoint2")->set(-mDistanceXHipYaw->get() / 2.0, 0.1, 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mRightHipYawMotor, "MinAngle")->set(-44);
-			PARAM(DoubleValue, mRightHipYawMotor, "MaxAngle")->set(20);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mRightHipYawMotor, "MinAngle")->set(-40);
+				PARAM(DoubleValue, mRightHipYawMotor, "MaxAngle")->set(40);
+			}
+			else {
+				PARAM(DoubleValue, mRightHipYawMotor, "MinAngle")->set(-44);
+				PARAM(DoubleValue, mRightHipYawMotor, "MaxAngle")->set(20);
+			}
 		}
 	}
 	if(mLeftHipYawMotor != 0) {
 		PARAM(Vector3DValue, mLeftHipYawMotor, "AxisPoint1")->set(mDistanceXHipYaw->get() / 2.0, 0.0, 0.0);
 		PARAM(Vector3DValue, mLeftHipYawMotor, "AxisPoint2")->set(mDistanceXHipYaw->get() / 2.0, 0.1, 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mLeftHipYawMotor, "MinAngle")->set(-20);
-			PARAM(DoubleValue, mLeftHipYawMotor, "MaxAngle")->set(44);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mLeftHipYawMotor, "MinAngle")->set(-40);
+				PARAM(DoubleValue, mLeftHipYawMotor, "MaxAngle")->set(40);
+			}
+			else {
+				PARAM(DoubleValue, mLeftHipYawMotor, "MinAngle")->set(-20);
+				PARAM(DoubleValue, mLeftHipYawMotor, "MaxAngle")->set(44);
+			}
 		}
 	}
 	if(mWaistRollMotor != 0) {
@@ -3536,25 +3634,44 @@ void MSeriesV2Model::layoutObjects() {
 			PARAM(Vector3DValue, mWaistRollMotor, "AxisPoint2")->set(0.0, waistRollY, 0.0);
 		}
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mWaistRollMotor, "MinAngle")->set(-20);
-			PARAM(DoubleValue, mWaistRollMotor, "MaxAngle")->set(20);
-			PARAM(BoolValue, mWaistRollMotor, "MotorFlipped0")->set(true);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mWaistRollMotor, "MinAngle")->set(-30);
+				PARAM(DoubleValue, mWaistRollMotor, "MaxAngle")->set(30);
+				PARAM(BoolValue, mWaistRollMotor, "MotorFlipped0")->set(true);
+			}
+			else {
+				PARAM(DoubleValue, mWaistRollMotor, "MinAngle")->set(-20);
+				PARAM(DoubleValue, mWaistRollMotor, "MaxAngle")->set(20);
+				PARAM(BoolValue, mWaistRollMotor, "MotorFlipped0")->set(true);
+			}
 		}
 	}
 	if(mHeadPitchMotor != 0) {
 		PARAM(Vector3DValue, mHeadPitchMotor, "AxisPoint1")->set(0.0, headPitchY, 0.0);
 		PARAM(Vector3DValue, mHeadPitchMotor, "AxisPoint2")->set(0.1, headPitchY, 0.0);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mHeadPitchMotor, "MinAngle")->set(-30);
-			PARAM(DoubleValue, mHeadPitchMotor, "MaxAngle")->set(50);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mHeadPitchMotor, "MinAngle")->set(-35);
+				PARAM(DoubleValue, mHeadPitchMotor, "MaxAngle")->set(43);
+			}
+			else {
+				PARAM(DoubleValue, mHeadPitchMotor, "MinAngle")->set(-30);
+				PARAM(DoubleValue, mHeadPitchMotor, "MaxAngle")->set(50);
+			}
 		}
 	}
 	if(mHeadYawMotor != 0) {
 		PARAM(Vector3DValue, mHeadYawMotor, "AxisPoint1")->set(0.0, 0.1, mHeadYawJointZ->get());
 		PARAM(Vector3DValue, mHeadYawMotor, "AxisPoint2")->set(0.0, 0.0, mHeadYawJointZ->get());
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mHeadYawMotor, "MinAngle")->set(-90);
-			PARAM(DoubleValue, mHeadYawMotor, "MaxAngle")->set(90);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mHeadYawMotor, "MinAngle")->set(-90);
+				PARAM(DoubleValue, mHeadYawMotor, "MaxAngle")->set(90);
+			}
+			else {
+				PARAM(DoubleValue, mHeadYawMotor, "MinAngle")->set(-90);
+				PARAM(DoubleValue, mHeadYawMotor, "MaxAngle")->set(90);
+			}
 		}
 		// Physical robot has no joint angle sensor, only a motor angle sensor
 		// --> erase JointAngle Seonsorfrom InterfaceList
@@ -3567,8 +3684,14 @@ void MSeriesV2Model::layoutObjects() {
 		PARAM(Vector3DValue, mHeadRollMotor, "AxisPoint1")->set(0.0, headYawRollY, 0.0);
 		PARAM(Vector3DValue, mHeadRollMotor, "AxisPoint2")->set(0.0, headYawRollY, 0.1);
 		if(mFirstLayout) {
-			PARAM(DoubleValue, mHeadRollMotor, "MinAngle")->set(-30);
-			PARAM(DoubleValue, mHeadRollMotor, "MaxAngle")->set(30);
+			if(mUseUpdatedSensorRanges) {
+				PARAM(DoubleValue, mHeadRollMotor, "MinAngle")->set(-55);
+				PARAM(DoubleValue, mHeadRollMotor, "MaxAngle")->set(55);
+			}
+			else {
+				PARAM(DoubleValue, mHeadRollMotor, "MinAngle")->set(-30);
+				PARAM(DoubleValue, mHeadRollMotor, "MaxAngle")->set(30);
+			}
 		}
 		// Physical robot has no joint angle sensor, only a motor angle sensor
 		// --> erase JointAngle Seonsorfrom InterfaceList
@@ -3636,79 +3759,103 @@ void MSeriesV2Model::initializeMotorModels() {
 	if(mUseUpdatedSensorRanges) {
 		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
 		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1");
 		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
 		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
 		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1");
 		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
 		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
 		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1");
 		SETVAL(prefix + "Middle/MotorHeadYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
 		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.1");
-		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4351");
+		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.4351");
 		SETVAL(prefix + "Left/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1");
 		SETVAL(prefix + "Left/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Left/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
-		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Left/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
-		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Left/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
 		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1");
 		SETVAL(prefix + "Left/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
-		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.629");
+		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.629");
 		SETVAL(prefix + "Left/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
-		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.60606060");
+		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Left/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Left/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.002");
 		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1.0");
+		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1.0");
 		SETVAL(prefix + "Left/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.1");
-		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4351");
+		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.4351");
 		SETVAL(prefix + "Right/MotorAnklePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1");
 		SETVAL(prefix + "Right/MotorAnkleRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Right/MotorElbowPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
-		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Right/MotorHipPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
-		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Right/MotorHipRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
 		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
+		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1");
 		SETVAL(prefix + "Right/MotorHipYaw/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.07");
-		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.629");
+		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.4");
+		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.629");
 		SETVAL(prefix + "Right/MotorKneePitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.04");
-		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.60606060");
+		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Right/MotorShoulderPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.756");
+		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.5");
+		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.756");
 		SETVAL(prefix + "Right/MotorShoulderRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.002");
 		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1.0");
+		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "1.0");
 		SETVAL(prefix + "Right/MotorToes/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.02");
-		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.446");
+		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.25");
+		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointToAngularSensorTransmissionRatio", "0.446");
 		SETVAL(prefix + "Middle/MotorWaistRoll/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "T");
 	}
 	else {
-			SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
+		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");
 		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "1");
 		SETVAL(prefix + "Middle/MotorHeadPitch/ODE_H_MSeriesTorqueSpringMotorModel/UseSpringCouplings", "F");
 		SETVAL(prefix + "Middle/MotorHeadRoll/ODE_H_MSeriesTorqueSpringMotorModel/JointCoulombFriction", "0.005");

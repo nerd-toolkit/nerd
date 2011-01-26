@@ -69,7 +69,7 @@ TorqueDynamixelMotorAdapter::TorqueDynamixelMotorAdapter(
 {
 	// Create Joint Angle Sensor and add it to the OutputValues if used
 	if(mUseJointAngleSensor) {
-		mJointAngleSensorValue = new InterfaceValue(getName(), "JointAngle", 0.0, -150.0, 150.0);
+		mJointAngleSensorValue = new InterfaceValue(getName(), "JointAngle", 0.0, -170.0, 170.0);
 		addParameter("JointAngle", mJointAngleSensorValue);
 		mOutputValues.append(mJointAngleSensorValue);
 

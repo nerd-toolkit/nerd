@@ -74,6 +74,7 @@ namespace nerd {
 	protected:
 		double calculateJointTorque();
 		double calculateCurrent();
+		double calculateAngularSensor(double currentJointAngleInRadians);
 
 		virtual bool setOwner(MotorAdapter *owner);
 
@@ -117,6 +118,7 @@ namespace nerd {
 														// zero position of the joint and the zero positions of the motors. It's in degrees!
 
 		DoubleValue *mMotorToJointTransmissionRatio;	// Transmission Ratio between motor and joint. If it's 1:2 set this value to 0.5.
+		DoubleValue *mJointToAngularSensorTransmissionRatio;
 
 		DoubleValue *mCurrentConsumptionVoltageConstant;		// Constant for current consumption computation depending on the voltage applied to the motor.
 		DoubleValue *mCurrentConsumptionSpeedConstant;			// Constant for current consumption computation depending on the motor speed.

@@ -128,6 +128,8 @@ void ODE_SliderMotor::updateActuators() {
 
 			dJointSetSliderParam(mJoint, dParamVel, calculateVelocity(mCurrentMotorPosition));	
 			mLastMotorPosition = mCurrentMotorPosition;
+			
+			//TODO add slider friction!
 		} 
 		else {	
 			dJointSetSliderParam(mJoint, dParamVel,  mDesiredMotorSetting->get());	

@@ -378,7 +378,17 @@ void DynamixelFrictionMotor::calculateMotorFrictionAndVelocity() {
 		return;
 	}
 	
-	mVelocity = (mCurrentPosition - mLastPosition) / mStepSize;
+	if((mCurrentPosition >= 0.0 && mLastPosition >= 0.0) || (mCurrentPosition <= 0.0 && mLastPosition <= 0.0)) {
+		mVelocity = (mCurrentPosition - mLastPosition);
+	}
+	else {
+		mVelocity = -(mLastPosition + mCurrentPosition);
+	}
+	
+	//allow sign changes (rotational joints)
+
+	mVelocity = mVelocity / mStepSize;
+	
 	double calcVel;
 	
 	double desiredAngle = (mDesiredMotorAngleValue->get() * Math::PI / 180.0);

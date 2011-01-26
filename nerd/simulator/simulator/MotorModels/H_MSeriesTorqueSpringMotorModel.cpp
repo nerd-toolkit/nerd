@@ -74,6 +74,7 @@ H_MSeriesTorqueSpringMotorModel::H_MSeriesTorqueSpringMotorModel(const QString &
 	mStaticFrictionTorque = new DoubleValue(0.005);
 //	mMotorGearTransmissionRatio = new DoubleValue(193.0);
 	mMotorToJointTransmissionRatio = new DoubleValue(1.0);
+	mJointToAngularSensorTransmissionRatio = new DoubleValue(1.0);
 	mUseSpringCouplings = new BoolValue(false);
 	mCurrentConsumptionVoltageConstant = new DoubleValue(-0.02);
 	mCurrentConsumptionSpeedConstant = new DoubleValue(-0.034);
@@ -95,6 +96,7 @@ H_MSeriesTorqueSpringMotorModel::H_MSeriesTorqueSpringMotorModel(const QString &
 	addParameter("StaticFrictionTorque", mStaticFrictionTorque);
 //	addParameter("MotorGearTransmissionRatio", mMotorGearTransmissionRatio);
 	addParameter("MotorToJointTransmissionRatio", mMotorToJointTransmissionRatio);
+	addParameter("JointToAngularSensorTransmissionRatio", mJointToAngularSensorTransmissionRatio);
 	addParameter("CurrentConsumptionVoltageConstant", mCurrentConsumptionVoltageConstant);
 	addParameter("CurrentConsumptionSpeedConstant", mCurrentConsumptionSpeedConstant);
 	addParameter("UseSpringCouplings", mUseSpringCouplings);
@@ -126,6 +128,7 @@ H_MSeriesTorqueSpringMotorModel::H_MSeriesTorqueSpringMotorModel(const H_MSeries
 	mStaticFrictionTorque = dynamic_cast<DoubleValue*>(getParameter("StaticFrictionTorque"));
 //	mMotorGearTransmissionRatio = dynamic_cast<DoubleValue*>(getParameter("MotorGearTransmissionRatio"));
 	mMotorToJointTransmissionRatio = dynamic_cast<DoubleValue*>(getParameter("MotorToJointTransmissionRatio"));
+	mJointToAngularSensorTransmissionRatio = dynamic_cast<DoubleValue*>(getParameter("JointToAngularSensorTransmissionRatio"));
 	mCurrentConsumptionVoltageConstant = dynamic_cast<DoubleValue*>(getParameter("CurrentConsumptionVoltageConstant"));
 	mCurrentConsumptionSpeedConstant = dynamic_cast<DoubleValue*>(getParameter("CurrentConsumptionSpeedConstant"));
 	mUseSpringCouplings = dynamic_cast<BoolValue*>(getParameter("UseSpringCouplings"));
@@ -410,6 +413,46 @@ double H_MSeriesTorqueSpringMotorModel::calculateJointTorque() {
 
 	return jointTorque;
 }
+
+/**
+ * Calculates the current sensor angle ([-180, 180] degrees) from the current joint angle (in radians).
+ * This method consideres the transmission ration between the joint angle and the (potentiometer) angle
+ * sensor and an optional sensor angle offset.
+ * Output angles are only defines in the range [-170, 170]. Higher or lower values can derive from the 
+ * desired plausible behavior.
+ */
+double H_MSeriesTorqueSpringMotorModel::calculateAngularSensor(double currentJointAngleInRadians) {
+
+	TorqueDynamixelMotorAdapter *owner = dynamic_cast<TorqueDynamixelMotorAdapter*>(mOwner);
+	
+	if(owner == 0) {
+		return 0.0;
+	}
+	//Note: The angle sensor offset has to be considered here to allow the
+			//adjustment of the joint angle sensor potis.
+	DoubleValue *mJointAngleSensorOffset = owner->getJointAngleOffsetValue();
+			
+	if(mJointAngleSensorOffset != 0) {
+		currentJointAngleInRadians -= ((mJointAngleSensorOffset->get() / 180.0) * Math::PI);
+	}
+
+	double currentAngleInDegree = (currentJointAngleInRadians * 180.0) / Math::PI;
+	
+	//consider angular sensor transmission ratio.
+	currentAngleInDegree *= mJointToAngularSensorTransmissionRatio->get();
+	
+	while(currentAngleInDegree > 180.0) {
+		currentAngleInDegree -= 360.0;
+	}
+	while(currentAngleInDegree < -180.0) {
+		currentAngleInDegree += 360.0;
+	}
+
+	//TODO: Add noise
+
+	return currentAngleInDegree;
+}
+
 
 }
 
