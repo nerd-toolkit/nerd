@@ -123,6 +123,7 @@ SliderMotor::SliderMotor(const SliderMotor &joint)
 	mSensorNoiseValue = dynamic_cast<DoubleValue*>(getParameter("SensorNoise"));
 	mDesiredMotorSetting = dynamic_cast<InterfaceValue*>(getParameter("DesiredSetting"));
 	mMotorPositionSensor = dynamic_cast<InterfaceValue*>(getParameter("Position"));	
+	mMaxVelocityValue = dynamic_cast<DoubleValue*>(getParameter("MaxVelocity"));
 
 	mStaticFrictionValue = 
 		dynamic_cast<DoubleValue*>(getParameter("Friction/StaticFriction"));
