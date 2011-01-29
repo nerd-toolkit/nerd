@@ -61,7 +61,7 @@ ODE_SliderMotor::ODE_SliderMotor(const QString &name)
 }
 
 ODE_SliderMotor::ODE_SliderMotor(const ODE_SliderMotor &joint) 
-		: Object(), ValueChangedListener(), EventListener(), 
+		: Object(), ValueChangedListener(), 
 		SimSensor(), SimActuator(), SliderMotor(joint), ODE_Joint() 
 {
 }

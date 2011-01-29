@@ -68,7 +68,7 @@ Simple2D_SliderMotor::Simple2D_SliderMotor(const QString &name)
  * @param other the Simple2D_SliderMotor object to copy.
  */
 Simple2D_SliderMotor::Simple2D_SliderMotor(const Simple2D_SliderMotor &other) 
-	: Object(), ValueChangedListener(), EventListener(), 
+	: Object(), ValueChangedListener(), 
 		SimSensor(), SimActuator(), SliderMotor(other)
 {
 }

@@ -47,12 +47,15 @@
 #include "SimulationConstants.h"
 #include "NerdConstants.h"
 #include "Math/Math.h"
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
 SliderMotor::SliderMotor(const QString &name) 
-	: EventListener(), SimSensor(), SimActuator(), 
-	  SliderJoint(name), mIsInitialized(false), mResetEvent(0) 
+	: SimSensor(), SimActuator(), 
+	  SliderJoint(name)
 {
 	mLastMotorPosition = 0.0;
 	mCurrentMotorPosition = 0.0;
@@ -83,6 +86,9 @@ SliderMotor::SliderMotor(const QString &name)
 		getName(), "DesiredSetting", 0.0, mMinPosition, mMaxPosition);
 	mMotorPositionSensor = new InterfaceValue(
 		getName(), "Position", 0.0, mMinPosition, mMaxPosition);
+		
+	mMotorPositionSensor->setMin(mMinPosition);
+	mMotorPositionSensor->setMax(mMaxPosition);
 
 	mInputValues.append(mDesiredMotorSetting);
 	mOutputValues.append(mMotorPositionSensor);
@@ -116,8 +122,8 @@ SliderMotor::SliderMotor(const QString &name)
 }
 
 SliderMotor::SliderMotor(const SliderMotor &joint) 
-	: Object(), ValueChangedListener(), EventListener(), SimSensor(),
-	  SimActuator(), SliderJoint(joint), mResetEvent(0)
+	: Object(), ValueChangedListener(), SimSensor(),
+	  SimActuator(), SliderJoint(joint)
 {
 	mControlMotorPosition = dynamic_cast<BoolValue*>(getParameter("ControlPosition"));
 	mSensorNoiseValue = dynamic_cast<DoubleValue*>(getParameter("SensorNoise"));
@@ -142,7 +148,6 @@ SliderMotor::SliderMotor(const SliderMotor &joint)
 
 	mInputValues.append(mDesiredMotorSetting);
 	mOutputValues.append(mMotorPositionSensor);
-	mIsInitialized = false;
 
 	mTimeStepSize = dynamic_cast<DoubleValue*>(
 		Core::getInstance()->getValueManager()->getValue(SimulationConstants::VALUE_TIME_STEP_SIZE));
@@ -153,9 +158,6 @@ SliderMotor::SliderMotor(const SliderMotor &joint)
 }
 
 SliderMotor::~SliderMotor() {
-	if(mResetEvent != 0) {
-		mResetEvent->removeEventListener(this);
-	}
 }
 
 SimObject* SliderMotor::createCopy() const {
@@ -164,6 +166,12 @@ SimObject* SliderMotor::createCopy() const {
 
 void SliderMotor::valueChanged(Value *value) {
 	SliderJoint::valueChanged(value);
+	if(value == mMinPositionValue || value == mMaxPositionValue) {
+		mMinPosition = mMinPositionValue->get();
+		mMaxPosition = mMaxPositionValue->get();
+		mMotorPositionSensor->setMin(mMinPosition);
+		mMotorPositionSensor->setMax(mMaxPosition);
+	}
 }
 
 void SliderMotor::controlMotorPosition(bool controlPosition) {
@@ -174,48 +182,13 @@ bool SliderMotor::isControllingMotorPosition() const {
 	return mControlMotorPosition->get();
 }
 
-void SliderMotor::eventOccured(Event *event) {
-	if(event == mResetEvent) {
-		mSensorNoise = mSensorNoiseValue->get();
-		mLastMotorPosition = 0.0;
-		mMinPosition = mMinPositionValue->get();
-		mMaxPosition = mMaxPositionValue->get();
-		mCurrentMotorPosition = 0.0;
-		mVelocity = 0.0;
-		mProportional = mPID_Proportional->get();
-		mIntegral = mPID_Integral->get();
-		mDamping = mPID_Differential->get();
-		mLastError = 0.0;
-		mHistorySize = mHistorySizeValue->get();
-		mErrorHistory.clear();
-	
-		mStaticFriction = mStaticFrictionValue->get();
-		mStaticFrictionBorder = mStaticFrictionBorderValue->get();
-		mDynamicFriction = mDynamicFrictionValue->get();
-		mDynamicFrictionOffset = mDynamicFrictionOffsetValue->get();
-
-		mMotorPositionSensor->setMin(mMinPosition);
-		mMotorPositionSensor->setMax(mMaxPosition);
-		if(mControlMotorPosition->get()) {
-			mDesiredMotorSetting->setMin(mMinPosition);
-			mDesiredMotorSetting->setMax(mMaxPosition);
-		}
-		else {
-			mDesiredMotorSetting->setMin(-mMaxVelocityValue->get());
-			mDesiredMotorSetting->setMax(mMaxVelocityValue->get());
-		}
-	}
-}
-
 QString SliderMotor::getName() const {
 	return mNameValue->get();
 }
 
 void SliderMotor::setup() {
 	SliderJoint::setup();
-	if(!mIsInitialized) {
-		initialize();
-	}
+	resetSlider();
 }
 
 void SliderMotor::clear() {
@@ -228,15 +201,36 @@ void SliderMotor::updateActuators() {
 void SliderMotor::updateSensorValues() {
 }
 
-void SliderMotor::initialize() {
-	mResetEvent = Core::getInstance()->getEventManager()->
-		registerForEvent(NerdConstants::EVENT_EXECUTION_RESET, this);
-	if(mResetEvent == 0) {
-		Core::log(QString("SliderMotor: Could not find required event: [")
-			.append(NerdConstants::EVENT_EXECUTION_RESET)
-			.append("]! [IGNORING]"));
+
+void SliderMotor::resetSlider() {
+	mSensorNoise = mSensorNoiseValue->get();
+	mLastMotorPosition = 0.0;
+	mMinPosition = mMinPositionValue->get();
+	mMaxPosition = mMaxPositionValue->get();
+	mCurrentMotorPosition = 0.0;
+	mVelocity = 0.0;
+	mProportional = mPID_Proportional->get();
+	mIntegral = mPID_Integral->get();
+	mDamping = mPID_Differential->get();
+	mLastError = 0.0;
+	mHistorySize = mHistorySizeValue->get();
+	mErrorHistory.clear();
+
+	mStaticFriction = mStaticFrictionValue->get();
+	mStaticFrictionBorder = mStaticFrictionBorderValue->get();
+	mDynamicFriction = mDynamicFrictionValue->get();
+	mDynamicFrictionOffset = mDynamicFrictionOffsetValue->get();
+
+	mMotorPositionSensor->setMin(mMinPosition);
+	mMotorPositionSensor->setMax(mMaxPosition);
+	if(mControlMotorPosition->get()) {
+		mDesiredMotorSetting->setMin(mMinPosition);
+		mDesiredMotorSetting->setMax(mMaxPosition);
 	}
-	mIsInitialized = true;
+	else {
+		mDesiredMotorSetting->setMin(-mMaxVelocityValue->get());
+		mDesiredMotorSetting->setMax(mMaxVelocityValue->get());
+	}
 }
 
 double SliderMotor::calculateVelocity(double currentPosition) {

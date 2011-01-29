@@ -58,7 +58,7 @@ namespace nerd {
 
 class BoolValue;
 
-class SliderMotor : public SliderJoint, public virtual EventListener, 
+class SliderMotor : public SliderJoint, 
 					public virtual SimSensor, public virtual SimActuator 
 {
 
@@ -73,7 +73,6 @@ class SliderMotor : public SliderJoint, public virtual EventListener,
 		virtual void controlMotorPosition(bool controlPosition);
 		virtual bool isControllingMotorPosition() const;
 
-		virtual void eventOccured(Event *event);
 		virtual QString getName() const;
 		virtual void setup();
 		virtual void clear();
@@ -82,14 +81,13 @@ class SliderMotor : public SliderJoint, public virtual EventListener,
 
 	protected:
 		void initialize();
+		void resetSlider();
 		double calculateVelocity(double currentPosition);
 		double calculateFriction(double velocity);
 
 	protected:		
 		DoubleValue *mMaxTorque;
 		BoolValue *mControlMotorPosition;
-
-		bool mIsInitialized;
 
 		InterfaceValue *mDesiredMotorSetting;
 		InterfaceValue *mMotorPositionSensor;
