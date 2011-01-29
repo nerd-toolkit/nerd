@@ -249,8 +249,10 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 
 	if(mShowBiasAsString) {
 		
-		painter->drawText(pos.x() + 20.0, pos.y() - 6.0, 150.0, 20.0, 
-				Qt::AlignLeft, mNeuron->getBiasValue().getValueAsString());
+		if(mNeuron->getBiasValue().get() != 0.0) {
+			painter->drawText(pos.x() + 20.0, pos.y() - 6.0, 150.0, 20.0, 
+					Qt::AlignLeft, mNeuron->getBiasValue().getValueAsString());
+		}
 	}
 
 

@@ -176,7 +176,7 @@ double SignalGeneratorActivationFunction::calculateActivation(Neuron*) {
 	if(mCurrentStep >= mCurrentDuration) {
 		//determine new target values.
 		if(mRandomizeDuration->get()) {
-			mCurrentDuration = Random::nextInt(mMaxDuration->get() - mMinDuration->get());
+			mCurrentDuration = Random::nextInt(mMaxDuration->get() - mMinDuration->get()) + mMinDuration->get();
 		}
 		else {
 			mCurrentDuration = mMinDuration->get();
