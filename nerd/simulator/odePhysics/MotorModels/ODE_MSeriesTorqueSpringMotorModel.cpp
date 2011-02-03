@@ -134,14 +134,35 @@ void ODE_H_MSeriesTorqueSpringMotorModel::updateOutputValues() {
 
 	if(mJoint != 0) {
 
+// 		TorqueDynamixelMotorAdapter *owner = dynamic_cast<TorqueDynamixelMotorAdapter*>(mOwner);
+// 
+// 		if(owner != 0 && owner->isUsingJointAngleSensor()) {
+// 
+// 			// Read out joint angle from Physics and map to -180° +180°
+// 			double jointAngle = dJointGetHingeAngle(mJoint);
+// 
+// 			owner->getJointAngleSensorValue()->set(calculateAngularSensor(jointAngle));
+// 		}
 		TorqueDynamixelMotorAdapter *owner = dynamic_cast<TorqueDynamixelMotorAdapter*>(mOwner);
 
 		if(owner != 0 && owner->isUsingJointAngleSensor()) {
 
+			//Note: The angle sensor offset has to be considered here to allow the
+			//adjustment of the joint angle sensor potis.
+			DoubleValue *mJointAngleSensorOffset = owner->getJointAngleOffsetValue();
+
 			// Read out joint angle from Physics and map to -180° +180°
 			double jointAngle = dJointGetHingeAngle(mJoint);
 
-			owner->getJointAngleSensorValue()->set(calculateAngularSensor(jointAngle));
+			if(mJointAngleSensorOffset != 0) {
+				jointAngle -= ((mJointAngleSensorOffset->get() / 180.0) * Math::PI);
+			}
+
+			jointAngle = (jointAngle * 180.0) / Math::PI;
+	
+			//TODO: Add noise
+
+			owner->getJointAngleSensorValue()->set(jointAngle);
 		}
 	}
 }

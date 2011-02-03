@@ -41,36 +41,37 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardTransferFunctions.h"
-#include "Network/Neuro.h"
-#include "TransferFunction/TransferFunctionTanh.h"
-#include "TransferFunction/TransferFunctionRamp.h"
-#include "TransferFunction/TransferFunctionASeriesTanh.h"
-#include "TransferFunction/TransferFunctionParameterizedSigmoid.h"
-#include "TransferFunction/TransferFunctionSigmoid.h"
-#include "TransferFunction/TransferFunctionTanh01.h"
+
+#ifndef NERDTransferFunctionTanh01_H
+#define NERDTransferFunctionTanh01_H
+
+#include "TransferFunction/TransferFunction.h"
 
 
 namespace nerd {
 
-StandardTransferFunctions::StandardTransferFunctions()
-{
-	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
-	//Tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh());
-	//Ramp
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-1,1]", -1.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[0,1]", 0.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-u,u]", -1000000.0, 100000.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[n,m]", -1.0, 1.0, true));
-	//ASeries tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionASeriesTanh());
-	//Sigmoids
-	nnm->addTransferFunctionPrototype(TransferFunctionSigmoid());
-	nnm->addTransferFunctionPrototype(TransferFunctionParameterizedSigmoid(5.0, 10.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh01());
-}
+	/**
+	 * TransferFunctionTanh01
+	 */
+	class TransferFunctionTanh01 : public TransferFunction {
+	public:
+		TransferFunctionTanh01();
+		TransferFunctionTanh01(const TransferFunctionTanh01 &other);
+		virtual ~TransferFunctionTanh01();
+
+		virtual TransferFunction* createCopy() const;
+
+		virtual void reset(Neuron *owner);
+		virtual double transferActivation(double activation, Neuron *owner);
+		
+		bool equals(TransferFunction *transferFunction) const;
+
+	private:		
+	};
 
 }
+
+#endif
+
 
 

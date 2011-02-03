@@ -41,35 +41,61 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardTransferFunctions.h"
-#include "Network/Neuro.h"
-#include "TransferFunction/TransferFunctionTanh.h"
-#include "TransferFunction/TransferFunctionRamp.h"
-#include "TransferFunction/TransferFunctionASeriesTanh.h"
-#include "TransferFunction/TransferFunctionParameterizedSigmoid.h"
-#include "TransferFunction/TransferFunctionSigmoid.h"
-#include "TransferFunction/TransferFunctionTanh01.h"
+#include "TransferFunctionTanh01.h"
+#include <math.h>
+#include <iostream>
+#include "Math/Math.h"
 
+using namespace std;
 
 namespace nerd {
 
-StandardTransferFunctions::StandardTransferFunctions()
+TransferFunctionTanh01::TransferFunctionTanh01()
+	: TransferFunction("tanh[0,1]", 0.0, 1.0)
 {
-	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
-	//Tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh());
-	//Ramp
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-1,1]", -1.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[0,1]", 0.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-u,u]", -1000000.0, 100000.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[n,m]", -1.0, 1.0, true));
-	//ASeries tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionASeriesTanh());
-	//Sigmoids
-	nnm->addTransferFunctionPrototype(TransferFunctionSigmoid());
-	nnm->addTransferFunctionPrototype(TransferFunctionParameterizedSigmoid(5.0, 10.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh01());
 }
+
+TransferFunctionTanh01::TransferFunctionTanh01(const TransferFunctionTanh01 &other) 
+	: Object(), ValueChangedListener(), TransferFunction(other)
+{
+}
+
+TransferFunctionTanh01::~TransferFunctionTanh01() {
+}
+
+
+TransferFunction* TransferFunctionTanh01::createCopy() const {
+	return new TransferFunctionTanh01(*this);
+}
+
+
+void TransferFunctionTanh01::reset(Neuron*) {
+}
+
+
+double TransferFunctionTanh01::transferActivation(double activation, Neuron*) {
+	double raw = (pow(M_E, -2 * activation) + 1);
+	//avoid division by zero
+	if(raw == 0.0) {
+		return -1.0;
+	}
+	return Math::max((2.0 / raw) - 1, 0.0);
+}
+
+bool TransferFunctionTanh01::equals(TransferFunction *transferFunction) const {
+	if(TransferFunction::equals(transferFunction) == false) {
+		return false;
+	}
+
+	TransferFunctionTanh01 *tf = 
+			dynamic_cast<TransferFunctionTanh01*>(transferFunction);
+
+	if(tf == 0) {
+		return false;
+	}
+	return true;
+}
+
 
 }
 

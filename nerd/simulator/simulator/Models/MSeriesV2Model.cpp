@@ -3521,12 +3521,12 @@ void MSeriesV2Model::layoutObjects() {
 		PARAM(Vector3DValue, mLeftKneeMotor, "AxisPoint2")->set(0.0, kneeJointY, mKneeJointZ->get());
 		if(mFirstLayout) {
 			if(mUseUpdatedSensorRanges) {
-				PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-164);
+				PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-171);
 				PARAM(DoubleValue, mLeftKneeMotor, "MaxAngle")->set(0);
 				PARAM(DoubleValue, mLeftKneeMotor, "JointAngleOffset")->set(-150);
 			}
 			else {
-				PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-171);
+				PARAM(DoubleValue, mLeftKneeMotor, "MinAngle")->set(-164);
 				PARAM(DoubleValue, mLeftKneeMotor, "MaxAngle")->set(0);
 				PARAM(DoubleValue, mLeftKneeMotor, "JointAngleOffset")->set(-150);
 			}
