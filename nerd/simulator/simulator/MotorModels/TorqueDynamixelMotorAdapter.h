@@ -85,6 +85,8 @@ namespace nerd {
 		bool isUsingFreerunInputValues() const;
 		bool isUsingIndividualMotorTorqueValues() const;
 		bool isUsingCurrentConsumptionSensors() const;
+		
+		virtual void valueChanged(Value *value);
 
 	protected:
 		virtual bool isValidMotorModel(MotorModel *model) const;

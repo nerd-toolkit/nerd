@@ -60,6 +60,7 @@
 #include <iostream>
 #include <QStringList>
 #include "Value/ValueManager.h"
+#include "MotorModels/TorqueDynamixelMotorAdapter.h"
 
 
 #define PARAM(type, paraObj, paraName) \
@@ -975,12 +976,37 @@ void MSeriesV2Model::createModel() {
 	}
 
 	// Motors
-	SimObject *dynamixel_m0 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_0);
-	SimObject *dynamixel_m1 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_1);
-	SimObject *dynamixel_m2 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_2);
-	SimObject *dynamixel_m3 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_3);
-	SimObject *dynamixel_m4 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_4);
+	SimObject *dynamixel_m0 = new TorqueDynamixelMotorAdapter(*dynamic_cast<TorqueDynamixelMotorAdapter*>(
+					pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_0)));
+	SimObject *dynamixel_m1 = new TorqueDynamixelMotorAdapter(*dynamic_cast<TorqueDynamixelMotorAdapter*>(
+					pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_1)));
+	SimObject *dynamixel_m2 = new TorqueDynamixelMotorAdapter(*dynamic_cast<TorqueDynamixelMotorAdapter*>(
+					pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_2)));
+	SimObject *dynamixel_m3 = new TorqueDynamixelMotorAdapter(*dynamic_cast<TorqueDynamixelMotorAdapter*>(
+					pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_3)));
+	SimObject *dynamixel_m4 = new TorqueDynamixelMotorAdapter(*dynamic_cast<TorqueDynamixelMotorAdapter*>(
+					pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_4)));
+// 	SimObject *passiveActuator = pm->getPrototype(SimulationConstants::PROTOTYPE_PASSIVE_HINGE_ACTUATOR_ADAPTER)->createCopy();
+	
+// 	SimObject *dynamixel_m0 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_0);
+// 	SimObject *dynamixel_m1 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_1);
+// 	SimObject *dynamixel_m2 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_2);
+// 	SimObject *dynamixel_m3 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_3);
+// 	SimObject *dynamixel_m4 = pm->getPrototype(SimulationConstants::PROTOTYPE_M_SERIES_TORQUE_DYNAMIXEL_MOTOR_4);
 	SimObject *passiveActuator = pm->getPrototype(SimulationConstants::PROTOTYPE_PASSIVE_HINGE_ACTUATOR_ADAPTER);
+	
+	if(!mUseUpdatedSensorRanges) {
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m0)->getJointAngleSensorValue()->setMin(-150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m0)->getJointAngleSensorValue()->setMax(150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m1)->getJointAngleSensorValue()->setMin(-150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m1)->getJointAngleSensorValue()->setMax(150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m2)->getJointAngleSensorValue()->setMin(-150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m2)->getJointAngleSensorValue()->setMax(150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m3)->getJointAngleSensorValue()->setMin(-150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m3)->getJointAngleSensorValue()->setMax(150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m4)->getJointAngleSensorValue()->setMin(-150);
+		dynamic_cast<TorqueDynamixelMotorAdapter*>(dynamixel_m4)->getJointAngleSensorValue()->setMax(150);
+	}
 
 	if(mIncludeRightLeg) {
 		// Right Toes

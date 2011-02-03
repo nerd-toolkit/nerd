@@ -219,6 +219,13 @@ bool TorqueDynamixelMotorAdapter::isUsingCurrentConsumptionSensors() const {
 	return mUseCurrentConsumptionSensors;
 }
 
+void TorqueDynamixelMotorAdapter::valueChanged(Value *value) {
+	HingeJointMotorAdapter::valueChanged(value);
+	if(value == 0) {
+		return;
+	}
+}
+
 QList<InterfaceValue*> TorqueDynamixelMotorAdapter::getTorqueInputValues() const {
 	return mTorqueInputValues;
 }
