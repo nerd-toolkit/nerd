@@ -53,6 +53,7 @@
 #include "TransferFunction/TransferFunctionTanh.h"
 #include "SynapseFunction/SimpleSynapseFunction.h"
 #include "Util/Util.h"
+#include "NeuralNetworkConstants.h"
 
 #define TRACE(message)
 //#define TRACE(message) Tracer _ttt_(message);
@@ -467,6 +468,40 @@ bool ModularNeuralNetwork::notifyMemberIdsChanged(QHash<qulonglong, qulonglong> 
 			ok = false;
 		}
 	}
+	
+	//change own synaptic pathway property
+	if(hasProperty(NeuralNetworkConstants::TAG_MODULE_PERMITTED_PATHWAYS)) {
+		QString newPairValue;	
+	
+		QStringList pairStrings = getProperty(NeuralNetworkConstants::TAG_MODULE_PERMITTED_PATHWAYS).split("|");
+		for(QListIterator<QString> i(pairStrings); i.hasNext();) {
+			QStringList pair = i.next().split(",");
+			if(pair.size() != 2) {
+				continue;
+			}
+			bool ok = true;
+			qulonglong referenceId = pair.at(0).toULongLong(&ok);
+			if(!ok) {
+				continue;
+			}
+			qulonglong ownerId = pair.at(1).toULongLong(&ok);
+			if(!ok) {
+				continue;
+			}
+			if(changedIds.keys().contains(referenceId)) {
+				referenceId = changedIds.value(referenceId);
+			}
+			if(changedIds.keys().contains(ownerId)) {
+				ownerId = changedIds.value(ownerId);
+			}
+			newPairValue = newPairValue + QString::number(referenceId) + "," + QString::number(ownerId);
+			if(i.hasNext()) {
+				newPairValue.append("|");
+			}
+		}
+		setProperty(NeuralNetworkConstants::TAG_MODULE_PERMITTED_PATHWAYS, newPairValue);
+	}
+	
 	return ok;
 }
 

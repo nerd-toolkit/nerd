@@ -226,7 +226,7 @@ bool ReplaceModuleHandler::replaceModule(NeuroModule *oldModule, NeuroModule *ne
 
 
 	NeuroModule *replacement = dynamic_cast<NeuroModule*>(newModule->createDeepCopy());
-
+	QHash<qulonglong, qulonglong> replacedIds;
 	
 	//check if the neurons are also compatible with the global input / output neurons
 	QList<Neuron*> globalInputNeuronsOfOldModule;
@@ -343,7 +343,6 @@ bool ReplaceModuleHandler::replaceModule(NeuroModule *oldModule, NeuroModule *ne
 	Util::addWithoutDuplicates<Neuron>(newModuleNeurons, newInputNeurons);
 	Util::addWithoutDuplicates<Neuron>(newModuleNeurons, newOutputNeurons);
 
-
 	//disconnect all synapses from outside of the new module.
 	for(QListIterator<Neuron*> i(newModuleNeurons); i.hasNext();) {
 		Neuron *newNeuron = i.next();
@@ -400,6 +399,9 @@ bool ReplaceModuleHandler::replaceModule(NeuroModule *oldModule, NeuroModule *ne
 				}
 				continue;
 			}
+			
+			//memorize ids to notify constrains about id changes of module interface neurons
+			replacedIds.insert(neuron->getId(), newNeuron->getId());
 
 			//reconnect incomming synapses from old to new input neuron.
 			QList<Synapse*> inputSynapses = neuron->getSynapses();
@@ -436,6 +438,10 @@ bool ReplaceModuleHandler::replaceModule(NeuroModule *oldModule, NeuroModule *ne
 				}
 				continue;
 			}
+			
+			//TODO what happens if the order of input and output does not match?
+			//memorize ids to notify constrains about id changes of module interface neurons
+			replacedIds.insert(neuron->getId(), newNeuron->getId());
 
 			//reconnect outgoing synapses from old to new output neuron.
 			QList<Synapse*> outputSynapses = neuron->getOutgoingSynapses();
@@ -551,6 +557,9 @@ bool ReplaceModuleHandler::replaceModule(NeuroModule *oldModule, NeuroModule *ne
 	//by neurons / synapses).
 	//TODO use savely remove?
 	//TODO notify constraints about id changes.
+	ownerNetwork->notifyMemberIdsChanged(replacedIds);
+	
+	
 	QList<NeuralNetworkElement*> elems(oldModule->getAllEnclosedNetworkElements());
 	for(QListIterator<NeuralNetworkElement*> i(elems); i.hasNext();) {
 		SynapseTarget *target = dynamic_cast<SynapseTarget*>(i.next());
