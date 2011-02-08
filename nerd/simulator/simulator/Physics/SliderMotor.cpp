@@ -166,11 +166,21 @@ SimObject* SliderMotor::createCopy() const {
 
 void SliderMotor::valueChanged(Value *value) {
 	SliderJoint::valueChanged(value);
-	if(value == mMinPositionValue || value == mMaxPositionValue) {
+	if(value == mMinPositionValue || value == mMaxPositionValue || value == mControlMotorPosition) {
 		mMinPosition = mMinPositionValue->get();
 		mMaxPosition = mMaxPositionValue->get();
-		mMotorPositionSensor->setMin(mMinPosition);
-		mMotorPositionSensor->setMax(mMaxPosition);
+		if(!mControlMotorPosition->get()) {
+			mMotorPositionSensor->setMin(mMinPosition);
+			mMotorPositionSensor->setMax(mMaxPosition);
+			mDesiredMotorSetting->setMin(-mMaxVelocityValue->get());
+			mDesiredMotorSetting->setMax(mMaxVelocityValue->get());
+		}
+		else {
+			mMotorPositionSensor->setMin(mMinPosition);
+			mMotorPositionSensor->setMax(mMaxPosition);
+			mDesiredMotorSetting->setMin(mMinPosition);
+			mDesiredMotorSetting->setMax(mMaxPosition);
+		}
 	}
 }
 
