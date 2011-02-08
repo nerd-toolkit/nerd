@@ -70,6 +70,8 @@ Dynamixel::Dynamixel(const QString &name, bool hideTorqueInputs,
 	mDesiredMotorAngleValue = new InterfaceValue(getName(), "DesiredAngle", 0, -150.0, 150.0);
 	mDesiredMotorAngleValue->setNormalizedMin(-1.0);
 	mDesiredMotorAngleValue->setNormalizedMax(1.0);
+	mMinSensorAngleValue = new DoubleValue(-150.0);
+	mMaxSensorAngleValue = new DoubleValue(150.0);
 
 	mAngleValue = new InterfaceValue(getName(), "JointAngle", 0.0, -150.0, 150.0);
 	mAngleValue->setNormalizedMin(-1);
@@ -213,6 +215,8 @@ Dynamixel::Dynamixel(const QString &name, bool hideTorqueInputs,
 	addParameter("CurrentVelocity", mCurrentVelocityValue);
 	addParameter("JointAngle", mAngleValue);
 	addParameter("EliminateNegativeTorqueRange", mEliminateNegativeTorqueRange);
+	addParameter("MinSensorAngle", mMinSensorAngleValue);
+	addParameter("MaxSensorAngle", mMaxSensorAngleValue);
 
 	mInputValues.append(mDesiredMotorAngleValue);
 	if(!mHideTorqueInputs) {
@@ -243,10 +247,10 @@ Dynamixel::Dynamixel(const QString &name, bool hideTorqueInputs,
 	mMinAngle = (mMinAngleValue->get() * Math::PI) / 180.0;
 	mMaxAngle = (mMaxAngleValue->get() * Math::PI) / 180.0;
 
-// 	mDesiredMotorAngleValue->setMin(mMinAngleValue->get());
-// 	mDesiredMotorAngleValue->setMax(mMaxAngleValue->get());
-// 	mAngleValue->setMin(mMinAngleValue->get());
-// 	mAngleValue->setMax(mMaxAngleValue->get());
+	mDesiredMotorAngleValue->setMin(mMinSensorAngleValue->get());
+	mDesiredMotorAngleValue->setMax(mMaxSensorAngleValue->get());
+	mAngleValue->setMin(mMinSensorAngleValue->get());
+	mAngleValue->setMax(mMaxSensorAngleValue->get());
 
 	mPidProportional = mProportional->get();
 	mPidIntegral = mIntegral->get();
@@ -275,6 +279,8 @@ Dynamixel::Dynamixel(const Dynamixel &joint)
 	mOffsetValue = dynamic_cast<DoubleValue*>(getParameter("Offset"));
 	mCurrentVelocityValue = dynamic_cast<DoubleValue*>(getParameter("CurrentVelocity"));
 	mEliminateNegativeTorqueRange = dynamic_cast<BoolValue*>(getParameter("EliminateNegativeTorqueRange"));
+	mMinSensorAngleValue = dynamic_cast<DoubleValue*>(getParameter("MinSensorAngle"));
+	mMaxSensorAngleValue = dynamic_cast<DoubleValue*>(getParameter("MaxSensorAngle"));
 
 	mDesiredMotorTorqueValue->addValueChangedListener(this);
 
@@ -314,10 +320,10 @@ Dynamixel::Dynamixel(const Dynamixel &joint)
 	mMinAngle = (mMinAngleValue->get() * Math::PI) / 180.0;
 	mMaxAngle = (mMaxAngleValue->get() * Math::PI) / 180.0;
 
-// 	mDesiredMotorAngleValue->setMin(mMinAngleValue->get());
-// 	mDesiredMotorAngleValue->setMax(mMaxAngleValue->get());
-// 	mAngleValue->setMin(mMinAngleValue->get());
-// 	mAngleValue->setMax(mMaxAngleValue->get());
+	mDesiredMotorAngleValue->setMin(mMinSensorAngleValue->get());
+	mDesiredMotorAngleValue->setMax(mMaxSensorAngleValue->get());
+	mAngleValue->setMin(mMinSensorAngleValue->get());
+	mAngleValue->setMax(mMaxSensorAngleValue->get());
 	
 	mPidProportional = mProportional->get();
 	mPidIntegral = mIntegral->get();
@@ -340,6 +346,13 @@ void Dynamixel::valueChanged(Value *value) {
 	SimJoint::valueChanged(value);
 	if(value == 0) {
 		return;
+	}
+	else if(value == mMinSensorAngleValue || value == mMaxSensorAngleValue) {
+		mAngleValue->setMin(mMinSensorAngleValue->get());
+		mAngleValue->setMax(mMaxSensorAngleValue->get());
+		
+		mDesiredMotorAngleValue->setMin(mMinSensorAngleValue->get());
+		mDesiredMotorAngleValue->setMax(mMaxSensorAngleValue->get());
 	}
 }
 
@@ -477,10 +490,10 @@ void Dynamixel::setup() {
 	mMinAngle = ((mMinAngleValue->get()) * Math::PI) / 180.0;
 	mMaxAngle = ((mMaxAngleValue->get()) * Math::PI) / 180.0;
 
-// 	mDesiredMotorAngleValue->setMin(mMinAngleValue->get());
-// 	mDesiredMotorAngleValue->setMax(mMaxAngleValue->get());
-// 	mAngleValue->setMin(mMinAngleValue->get());
-// 	mAngleValue->setMax(mMaxAngleValue->get());
+	mDesiredMotorAngleValue->setMin(mMinSensorAngleValue->get());
+	mDesiredMotorAngleValue->setMax(mMaxSensorAngleValue->get());
+	mAngleValue->setMin(mMinSensorAngleValue->get());
+	mAngleValue->setMax(mMaxSensorAngleValue->get());
 
 	if(mTimeStepValue != 0) {
 		mStepSize = mTimeStepValue->get();

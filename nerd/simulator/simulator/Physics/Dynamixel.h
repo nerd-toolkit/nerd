@@ -123,6 +123,9 @@ class Dynamixel : public HingeJoint, public virtual SimSensor, public virtual Si
 		DoubleValue *mTimeStepValue;
 
 		IntValue* mHistorySizeValue;
+		
+		DoubleValue *mMinSensorAngleValue;
+		DoubleValue *mMaxSensorAngleValue;
 
 		double mOffset;
 		double mMinAngle;
