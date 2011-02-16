@@ -145,15 +145,16 @@ void ODE_H_MSeriesTorqueSpringMotorModel::updateOutputValues() {
 			// Read out joint angle from Physics and map to -180° +180°
 			double jointAngle = dJointGetHingeAngle(mJoint);
 
-			if(mJointAngleSensorOffset != 0) {
-				jointAngle -= ((mJointAngleSensorOffset->get() / 180.0) * Math::PI);
-			}
-
-			jointAngle = (jointAngle * 180.0) / Math::PI;
-	
-			//TODO: Add noise
-
-			owner->getJointAngleSensorValue()->set(jointAngle);
+// 			if(mJointAngleSensorOffset != 0) {
+// 				jointAngle -= ((mJointAngleSensorOffset->get() / 180.0) * Math::PI);
+// 			}
+// 
+// 			jointAngle = (jointAngle * 180.0) / Math::PI;
+// 	
+// 			//TODO: Add noise
+// 
+// 			owner->getJointAngleSensorValue()->set(jointAngle);
+			owner->getJointAngleSensorValue()->set(calculateAngularSensor(jointAngle));
 		}
 	}
 }

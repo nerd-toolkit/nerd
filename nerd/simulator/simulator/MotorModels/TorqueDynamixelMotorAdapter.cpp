@@ -89,7 +89,7 @@ TorqueDynamixelMotorAdapter::TorqueDynamixelMotorAdapter(
 		// Create Motor Angle Sensor Values
 		if(mUseMotorAngleSensors) {
 			InterfaceValue *motorAngleSensorValue = new InterfaceValue(getName(), "MotorAngle" + QString::number(i),
-				0.0, -180.0, +180.0);
+				0.0, -150.0, +150.0);
 			mOutputValues.append(motorAngleSensorValue);
 			mMotorAngleSensorValues.append(motorAngleSensorValue);
 			addParameter("MotorAngle" + QString::number(i), motorAngleSensorValue);
