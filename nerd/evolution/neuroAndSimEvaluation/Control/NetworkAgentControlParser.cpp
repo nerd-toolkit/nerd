@@ -62,7 +62,10 @@ NetworkAgentControlParser::NetworkAgentControlParser()
 	mNetLoaderArgument = new CommandLineArgument("loadNet", "net", 
 			"<agent> <network> [<fitness>]", "Loads a neural network from file "
 			"\n     <network> and attaches it as controller to the SimObjectGroup <agent>. "
-			"\n     If no <network> is given, then an empty default network is used. ",
+			"\n     If no <network> is given, then an empty default network is used. "
+			"\n     If no <agent> is given, then the first available agent is used. "
+			"\n     If 'c' (continue) is given for <agent> or <network>, then the agent will use "
+			"the last known network (first network in the list or recent networks in the editor.",
 			0, 2, true);
 
 	Neuro::install();
@@ -129,13 +132,33 @@ void NetworkAgentControlParser::connectNetworksToInterfaces() {
 			continue;
 		}
 		QString agentName = "";
+		QString networkFile = "";
+		
 		if(paramSet.size() > 0) {
-			agentName = paramSet.at(0);
+			if(paramSet.at(0).trimmed() == "c") {
+				networkFile = "c";
+			}
+			else {
+				agentName = paramSet.at(0);
+			}
 		}
 		
-		QString networkFile = "";
 		if(paramSet.size() > 1) {
 			networkFile = paramSet.at(1);
+		}
+		
+		if(networkFile.trimmed() == "c") {
+			networkFile = "";
+			//use most recent network from the editor for this agent. 
+			QString filePrefix = Core::getInstance()->getConfigDirectoryPath() + "/properties";
+			QFile file(filePrefix + "/recentNetworks.txt");
+			if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+				QTextStream input(&file);
+				if(!input.atEnd()) {
+					networkFile = input.readLine();
+				}
+			}
+			file.close();
 		}
 		
 		PhysicsManager *pm = Physics::getPhysicsManager();

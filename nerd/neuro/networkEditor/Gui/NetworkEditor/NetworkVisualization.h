@@ -164,6 +164,8 @@ namespace nerd {
 		QString getCurrentNetworkFileName() const;
 
 		void setHomeBookmark(double x, double y, double scale);
+		void setBookmark(int id, double x, double y, double scale);
+		QHash<int, Vector3D> getBookmarks() const;
 
 	public slots:
 		void paintTimerElapsed();	

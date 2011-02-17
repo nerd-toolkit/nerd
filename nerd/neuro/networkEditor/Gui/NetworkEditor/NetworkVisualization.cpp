@@ -412,6 +412,14 @@ void NetworkVisualization::setHomeBookmark(double x, double y, double scale) {
 	mBookmarks.insert(Qt::Key_F8, Vector3D(x, y, scale));	
 }
 
+void NetworkVisualization::setBookmark(int id, double x, double y, double scale) {
+	mBookmarks.insert(Qt::Key_F3 + id, Vector3D(x, y, scale));
+}
+
+QHash<int, Vector3D> NetworkVisualization::getBookmarks() const {
+	return mBookmarks;
+}
+
 void NetworkVisualization::closeEvent(QCloseEvent*) {
 	TRACE("NetworkVisualization::closeEvent");
 	Core::getInstance()->scheduleTask(new ShutDownTask());

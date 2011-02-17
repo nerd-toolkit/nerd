@@ -445,6 +445,24 @@ void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetw
 				network->setProperty("_Viewport", QString::number(viewport.x()) + ","
 							+ QString::number(viewport.y()) + "," 
 							+ QString::number(visu->getScaling()));
+				
+				//Store bookmarks in network XML.
+				QString bookmarkString = "";
+				QHash<int, Vector3D> bookmarks = visu->getBookmarks();
+				for(int i = Qt::Key_F3; i <= Qt::Key_F8; ++i) {
+					if(bookmarks.keys().contains(i)) {
+						Vector3D bookmark = bookmarks.value(i);
+						bookmarkString += QString::number(bookmark.getX()) + ","
+											+ QString::number(bookmark.getY()) + ","
+											+ QString::number(bookmark.getZ());
+					}
+					if(i != Qt::Key_F8) {
+						bookmarkString += "|";
+					}
+				}
+				if(bookmarkString != "") {
+					network->setProperty("_Bookmarks", bookmarkString);
+				}
 			}
 		}
 	}

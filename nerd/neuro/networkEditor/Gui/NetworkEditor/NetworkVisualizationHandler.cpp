@@ -94,8 +94,22 @@ bool NetworkVisualizationHandler::setNeuralNetwork(ModularNeuralNetwork *network
 	}
 	mNeuralNetwork = network;
 
+	if(mNeuralNetwork != 0 && mNeuralNetwork->hasProperty("_Bookmarks") && mOwner != 0) {
+		//Try to recover bookmarks
+		QString bookmarks = mNeuralNetwork->getProperty("_Bookmarks");
+		QStringList bookmarkEntries = bookmarks.split("|");
+		for(int j = 0; j < bookmarkEntries.size(); ++j) {
+			QStringList bookmarkElements = bookmarkEntries.at(j).split(",");
+			if(bookmarkElements.size() == 3) {
+				double x = bookmarkElements.at(0).toDouble();
+				double y = bookmarkElements.at(1).toDouble();
+				double scaling = bookmarkElements.at(2).toDouble();
+				mOwner->setBookmark(j, x, y, scaling);
+			}
+		}
+	}
 	if(mNeuralNetwork != 0 && mNeuralNetwork->hasProperty("_Viewport") && mOwner != 0) {
-		//Try to set viewport
+		//Try to set viewport (and overwrite the F8 bookmark if a viewport is found).
 		QString viewport = mNeuralNetwork->getProperty("_Viewport");
 		QStringList viewportElements = viewport.split(",");
 		if(viewportElements.size() == 3) {
