@@ -73,7 +73,7 @@ class QuaternionValue;
 class AccelSensor : public virtual SimSensor, public SimObject {
 
 	public:
-		AccelSensor(const QString &name, int numberOfAxes);
+		AccelSensor(const QString &name, int numberOfAxes, double scalingFactor = 1.0); //scaling factor is temporarily!
 		AccelSensor(const AccelSensor &sensor);
 
 		virtual ~AccelSensor();
@@ -86,6 +86,8 @@ class AccelSensor : public virtual SimSensor, public SimObject {
 		Vector3D getAxisThree() const;
 		Vector3D getGlobalPosition() const;
 		virtual void updateSensorValues();	
+		
+		virtual void valueChanged(Value *value);
 
 	private:
 		QList<double> calculateFilteredSensorValues(double sensorValue1, 
@@ -143,6 +145,8 @@ class AccelSensor : public virtual SimSensor, public SimObject {
 		QVector<double> mValueThreeHistory;
 
 		int mNumberOfAxes;
+		
+		DoubleValue *mScalingFactor;
 };
 }
 #endif

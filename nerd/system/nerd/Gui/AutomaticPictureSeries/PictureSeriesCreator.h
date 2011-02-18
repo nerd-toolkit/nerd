@@ -105,6 +105,8 @@ namespace nerd {
 		BoolValue *mTryVideoCreation;
 		IntValue *mVideoResolutionWidth;
 		IntValue *mVideoResolutionHeight;
+		StringValue *mPlayBackCommand;
+		BoolValue *mPlayVideoBackAfterCreation;
 		Event *mTriggerEvent;
 		int mPictureCounter;
 		bool mScreenshotInProgress;

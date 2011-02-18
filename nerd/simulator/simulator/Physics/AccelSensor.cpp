@@ -63,7 +63,7 @@ namespace nerd {
  * "Noise/Deviation" can be used to modify the sensor.
  * @param name Name of the specific acceleration sensor.
  */
-AccelSensor::AccelSensor(const QString &name, int numberOfAxes) 
+AccelSensor::AccelSensor(const QString &name, int numberOfAxes, double scalingFactor) 
 	: SimSensor(), SimObject(name), mHostBody(0), 
 		mSensorGeometry(0), mSensorBody(0), mTimeStepSize(0), mGravitationValue(0),
 		mNumberOfAxes(numberOfAxes)
@@ -74,8 +74,8 @@ AccelSensor::AccelSensor(const QString &name, int numberOfAxes)
 	mLastVelocity.set(0.0, 0.0, 0.0);
 	mVelocity.set(0.0, 0.0, 0.0);
 
-	mMaxSensorValue = 11.772;
-	double maxSensorMappingValue = 16.072704;
+	mMaxSensorValue = 11.772 * scalingFactor;
+	double maxSensorMappingValue = 16.072704 * scalingFactor;
 
 	mLocalOrientation = new QuaternionValue();
 	mLocalPosition = new Vector3DValue();
@@ -109,6 +109,8 @@ AccelSensor::AccelSensor(const QString &name, int numberOfAxes)
 	mSecondSensorValue->setNormalizedMax(1);
 	mThirdSensorValue->setNormalizedMin(-1);
 	mThirdSensorValue->setNormalizedMax(1);
+	
+	mScalingFactor = new DoubleValue(scalingFactor);
 
 	addParameter("LocalPosition", mLocalPosition);
 	addParameter("LocalOrientation", mLocalOrientation);
@@ -120,6 +122,7 @@ AccelSensor::AccelSensor(const QString &name, int numberOfAxes)
 	addParameter("AccelAxis2", mSecondSensorValue);
 	addParameter("AccelAxis3", mThirdSensorValue);
 	addParameter("ReferenceBody", mReferenceBodyName);
+	addParameter("Tmp/ScalingFactor", mScalingFactor);
 
 	//add correct number of axis to the interface.
 	if(mNumberOfAxes > 0) {
@@ -174,7 +177,7 @@ AccelSensor::AccelSensor(const AccelSensor &sensor) : SimSensor(sensor), Object(
 		ValueChangedListener(), SimObject(sensor), mHostBody(0), mSensorBody(0), 
 		mGravitationValue(0), mNumberOfAxes(sensor.mNumberOfAxes)
 {
-	mMaxSensorValue = 11.772;
+	mMaxSensorValue = sensor.mMaxSensorValue;
 	mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
 	mLocalOrientation = dynamic_cast<QuaternionValue*>(getParameter("LocalOrientation"));
 	mSensorAxisOneValue = dynamic_cast<Vector3DValue*>(getParameter("Axis1"));
@@ -184,6 +187,8 @@ AccelSensor::AccelSensor(const AccelSensor &sensor) : SimSensor(sensor), Object(
 	mFirstSensorValue = dynamic_cast<InterfaceValue*>(getParameter("AccelAxis1"));
 	mSecondSensorValue = dynamic_cast<InterfaceValue*>(getParameter("AccelAxis2"));
 	mThirdSensorValue = dynamic_cast<InterfaceValue*>(getParameter("AccelAxis3"));
+	
+	mScalingFactor = dynamic_cast<DoubleValue*>(getParameter("Tmp/ScalingFactor"));
 	
 	mReferenceBodyName = dynamic_cast<StringValue*>(getParameter("ReferenceBody"));
 	mReferenceBodyName->set("");
@@ -510,6 +515,24 @@ void AccelSensor::updateSensorValues() {
 
 }
 
+
+void AccelSensor::valueChanged(Value *value) {
+	SimObject::valueChanged(value);
+	if(value == 0) {
+		return;
+	}
+	else if(value == mScalingFactor) {
+		mMaxSensorValue = 11.772 / mScalingFactor->get();
+		double maxSensorMappingValue = 16.072704 / mScalingFactor->get();
+	
+		mFirstSensorValue->setMin(-maxSensorMappingValue);
+		mFirstSensorValue->setMax(maxSensorMappingValue);
+		mSecondSensorValue->setMin(-maxSensorMappingValue);
+		mSecondSensorValue->setMax(maxSensorMappingValue);
+		mThirdSensorValue->setMin(-maxSensorMappingValue);
+		mThirdSensorValue->setMax(maxSensorMappingValue);
+	}
+}
 
 /**
  * Returns the first sensor axis. The axis can be set during creating the sensor (createSensor()). Default setting is: (1,0,0)

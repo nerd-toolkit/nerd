@@ -88,6 +88,8 @@ PictureSeriesCreator::PictureSeriesCreator()
 	mRecordingRectangle = new StringValue("");
 	mVideoResolutionWidth = new IntValue(800);
 	mVideoResolutionHeight = new IntValue(600);
+	mPlayBackCommand = new StringValue("mplayer <name> -loop 0");
+	mPlayVideoBackAfterCreation = new BoolValue(true);
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/ScreenRecorder/Config/ScreenShotDelay", mScreenShotDelay);
@@ -103,6 +105,8 @@ PictureSeriesCreator::PictureSeriesCreator()
 	vm->addValue("/ScreenRecorder/Config/RecordingRectangle", mRecordingRectangle);
 	//vm->addValue("/PictureCreator/Video/VideoResolutionWidth", mVideoResolutionWidth);
 	//vm->addValue("/PictureCreator/Video/VideoResolutionHeight", mVideoResolutionHeight);
+	vm->addValue("/ScreenRecorder/Playback/PlayBackAfterCreation", mPlayVideoBackAfterCreation);
+	vm->addValue("/ScreenRecorder/Playback/PlayBackCommand", mPlayBackCommand);
 
 	mRunCreator->addValueChangedListener(this);
 
@@ -289,8 +293,9 @@ void PictureSeriesCreator::deactivate() {
 	
 		//check for autoclear
 		if(encoderProc.exitCode() == 0) {
-			cerr << "Video [" << QString(mCurrentWorkingDirectory + "/" + mOutputFileName->get())
-					.toStdString().c_str() 
+			QString fileName =  QString(mCurrentWorkingDirectory + "/" + mOutputFileName->get());
+		
+			cerr << "Video [" << fileName.toStdString().c_str() 
 				 << "] created successfully!" << endl;
 	
 			QDir dir(mCurrentWorkingDirectory);
@@ -300,6 +305,27 @@ void PictureSeriesCreator::deactivate() {
 				QString fileName = i.next();
 				if(fileName.endsWith(".png")) {
 					dir.remove(fileName);
+				}
+			}
+			
+			//play back video
+			if(mPlayVideoBackAfterCreation->get()) {
+				QString playbackCommand = mPlayBackCommand->get().replace("<name>", fileName);
+				QProcess playbackProc;
+				playbackProc.setWorkingDirectory(mCurrentWorkingDirectory);
+				
+				QStringList args = playbackCommand.split(" ");
+				if(args.size() > 0) {
+					QString command = args.first();
+					args.removeFirst();
+					playbackProc.start(command, args);
+					
+					playbackProc.waitForStarted();
+					cerr << "Please close video screen to resume simulation..." << endl;
+					while(playbackProc.state() == QProcess::Running) {
+						playbackProc.waitForFinished(500);
+						Core::getInstance()->executePendingTasks();
+					}
 				}
 			}
 		}

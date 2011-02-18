@@ -143,7 +143,7 @@ ODE_Physics::ODE_Physics()
 		new SimpleToeMotor("ToeMotor"));
 
 	pm->addPrototype(SimulationConstants::PROTOTYPE_FORCE_SENSOR,
-		new ODE_ForceSensor("ForceSensor", 0.0, 50.0));
+		new ODE_ForceSensor("ForceSensor", 0.0, 500.0));
 
 	pm->addPrototype("Prototypes/ODE_H_MSeriesTorqueSpringMotorModel",
 		new ODE_H_MSeriesTorqueSpringMotorModel("Prototypes/ODE_H_MSeriesTorqueSpringMotorModel"));

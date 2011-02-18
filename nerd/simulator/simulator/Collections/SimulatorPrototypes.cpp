@@ -80,7 +80,7 @@ namespace nerd{
         new AccelSensor(SimulationConstants::PROTOTYPE_ACCELSENSOR, 2));
 
 	pm->addPrototype(SimulationConstants::PROTOTYPE_ACCELSENSOR_3D, 
-        new AccelSensor(SimulationConstants::PROTOTYPE_ACCELSENSOR_3D, 3));
+        new AccelSensor(SimulationConstants::PROTOTYPE_ACCELSENSOR_3D, 3)); 
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_DISTANCE_SENSOR,
         new DistanceSensor(SimulationConstants::PROTOTYPE_DISTANCE_SENSOR));
