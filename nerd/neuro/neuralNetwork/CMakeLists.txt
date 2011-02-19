@@ -72,6 +72,7 @@ set(nerd_neuralNetwork_SRCS
 	Constraints/BackpropagationConstraint.cpp
 	ActivationFunction/ChaoticNeuronActivationFunction.cpp
 	TransferFunction/TransferFunctionTanh01.cpp
+	TransferFunction/TransferFunctionMSeriesTanh.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
