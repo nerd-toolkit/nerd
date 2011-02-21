@@ -41,40 +41,36 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
+
+#ifndef NERDMSeriesActivationFunction_H
+#define NERDMSeriesActivationFunction_H
+
+#include "ActivationFunction/ActivationFunction.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	/**
+	 * MSeriesActivationFunction
+	 */
+	class MSeriesActivationFunction : public ActivationFunction {
+	public:
+		MSeriesActivationFunction();
+		MSeriesActivationFunction(const MSeriesActivationFunction &other);
+		virtual ~MSeriesActivationFunction();
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+		virtual ActivationFunction* createCopy() const;
+
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
+
+		bool equals(ActivationFunction *activationFunction) const;
 		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-}
+	private:
+//		int32_t double_to_fixed_point_8_24(double d);
+	};
 
 }
+
+#endif
 
 

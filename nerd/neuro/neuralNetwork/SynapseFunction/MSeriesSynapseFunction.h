@@ -41,40 +41,39 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
+
+#ifndef NERDMSeriesSynapseFunction_H
+#define NERDMSeriesSynapseFunction_H
+
+#include "SynapseFunction/SynapseFunction.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	/**
+	 * MSeriesSynapseFunction.
+	 *
+	 * The MSeriesSynapseFunction returns the strength of the
+	 * owner Synapse truncated to the precision of the M-Series weight value.
+	 */
+	class MSeriesSynapseFunction : public SynapseFunction {
+	public:
+		MSeriesSynapseFunction();
+		MSeriesSynapseFunction(const MSeriesSynapseFunction &other);
+		virtual ~MSeriesSynapseFunction();
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+		virtual SynapseFunction* createCopy() const;
 		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
+		virtual void reset(Synapse *owner);
+		virtual double calculate(Synapse *owner);
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-}
+		bool equals(SynapseFunction *synapseFunction) const;
+		
+	private:
+		double map_double_to_fixed_point_4_9_precision(double d);
+	};
 
 }
+
+#endif
 
 

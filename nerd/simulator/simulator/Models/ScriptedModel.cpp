@@ -636,6 +636,24 @@ bool ScriptedModel::allowCollisions(int objectId1, int objectId2, bool allow) {
 	return true;
 }
 
+bool ScriptedModel::allowCollisions(const QString &bodyName1, const QString &bodyName2, bool allow) {
+
+	PhysicsManager *pm = Physics::getPhysicsManager();
+
+	SimBody *obj1 = pm->getSimBody(bodyName1);
+	SimBody *obj2 = pm->getSimBody(bodyName2);
+	
+	if(obj1 == 0 || obj2 == 0) {
+		reportError("Could not find required bodies ["
+				+ bodyName1 + ", " + bodyName2 + "]");
+		return false;
+	}
+	
+	CollisionManager *cm = Physics::getCollisionManager();
+	cm->disableCollisions(obj1->getCollisionObjects(), obj2->getCollisionObjects(), allow);
+	return true;
+}
+
 
 bool ScriptedModel::hasEnvironmentSection() {
 	if(mScript != 0) {

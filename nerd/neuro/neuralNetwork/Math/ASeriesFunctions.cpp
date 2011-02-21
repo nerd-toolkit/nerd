@@ -191,7 +191,7 @@ double ASeriesFunctions::mapDoubleToFixedPoint_4_9_Precision(double d) {
 	// extract the integer part of the double
 	double intpart;
 	modf(d, &intpart);
-	// shift integer part back 9 bits to the left
+	// shift integer part back 9 bits to the right
 	d = intpart / (double) 0x200;
 	// that's it
 	return d;

@@ -41,38 +41,71 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
+#include "MSeriesSynapseFunction.h"
+#include "Math/MSeriesFunctions.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
+/**
+ * Constructor.
+ */
+MSeriesSynapseFunction::MSeriesSynapseFunction()
+	: SynapseFunction("MSeries")
 {
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+}
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
-		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
+/**
+ * Copy constructor.
+ */
+MSeriesSynapseFunction::MSeriesSynapseFunction(const MSeriesSynapseFunction &other)
+	: Object(), ValueChangedListener(), SynapseFunction(other)
+{
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
+/**
+ * Destructor.
+ */
+MSeriesSynapseFunction::~MSeriesSynapseFunction() {
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+SynapseFunction* MSeriesSynapseFunction::createCopy() const {
+	return new MSeriesSynapseFunction(*this);
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
+/**
+ * Does nothing in this implementation.
+ */
+void MSeriesSynapseFunction::reset(Synapse*) {
+}
+
+/**
+ * Returns the strength of the owner synapse truncated to the
+ * precision of the A-Series weight value.
+ * 
+ * @param owner the owner of this SynapseFunction.
+ * @return the truncated strength of the owner.
+ */
+double MSeriesSynapseFunction::calculate(Synapse *owner) {
+	if(owner == 0) {
+		return 0.0;
+	}
+	double strength = owner->getStrengthValue().get();
+	return MSeriesFunctions::fixedPoint_17_15_ToDouble(
+			MSeriesFunctions::doubleToFixedPoint_17_15(strength));
+}
+
+
+bool MSeriesSynapseFunction::equals(SynapseFunction *synapseFunction) const {
+	if(SynapseFunction::equals(synapseFunction) == false) {
+		return false;
+	}
+
+	MSeriesSynapseFunction *af = dynamic_cast<MSeriesSynapseFunction*>(synapseFunction);
+
+	if(af == 0) {
+		return false;
+	}
+	return true;
 }
 
 }

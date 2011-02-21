@@ -73,6 +73,9 @@ set(nerd_neuralNetwork_SRCS
 	ActivationFunction/ChaoticNeuronActivationFunction.cpp
 	TransferFunction/TransferFunctionTanh01.cpp
 	TransferFunction/TransferFunctionMSeriesTanh.cpp
+	Math/MSeriesFunctions.cpp
+	ActivationFunction/MSeriesActivationFunction.cpp
+	SynapseFunction/MSeriesSynapseFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

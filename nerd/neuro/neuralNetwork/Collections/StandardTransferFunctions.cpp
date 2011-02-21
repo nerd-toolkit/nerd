@@ -49,6 +49,7 @@
 #include "TransferFunction/TransferFunctionParameterizedSigmoid.h"
 #include "TransferFunction/TransferFunctionSigmoid.h"
 #include "TransferFunction/TransferFunctionTanh01.h"
+#include "TransferFunction/TransferFunctionMSeriesTanh.h"
 
 
 namespace nerd {
@@ -58,17 +59,18 @@ StandardTransferFunctions::StandardTransferFunctions()
 	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
 	//Tanh
 	nnm->addTransferFunctionPrototype(TransferFunctionTanh());
+	nnm->addTransferFunctionPrototype(TransferFunctionTanh01());
+	nnm->addTransferFunctionPrototype(TransferFunctionASeriesTanh());
+	nnm->addTransferFunctionPrototype(TransferFunctionMSeriesTanh());
 	//Ramp
 	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-1,1]", -1.0, 1.0));
 	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[0,1]", 0.0, 1.0));
 	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-u,u]", -1000000.0, 100000.0));
 	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[n,m]", -1.0, 1.0, true));
-	//ASeries tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionASeriesTanh());
 	//Sigmoids
 	nnm->addTransferFunctionPrototype(TransferFunctionSigmoid());
 	nnm->addTransferFunctionPrototype(TransferFunctionParameterizedSigmoid(5.0, 10.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh01());
+	
 }
 
 }

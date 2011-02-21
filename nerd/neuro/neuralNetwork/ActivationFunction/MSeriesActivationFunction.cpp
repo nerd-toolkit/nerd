@@ -41,38 +41,68 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
+#include "MSeriesActivationFunction.h"
+#include "Math/MSeriesFunctions.h"
+#include <QListIterator>
+#include "Network/Synapse.h"
+#include "Network/Neuron.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
+MSeriesActivationFunction::MSeriesActivationFunction()
+	: ActivationFunction("MSeries")
 {
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+}
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
-		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
+MSeriesActivationFunction::MSeriesActivationFunction(
+			const MSeriesActivationFunction &other)
+	: Object(), ValueChangedListener(), ActivationFunction(other)
+{
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
+MSeriesActivationFunction::~MSeriesActivationFunction() {
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+ActivationFunction* MSeriesActivationFunction::createCopy() const {
+	return new MSeriesActivationFunction(*this);
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
+void MSeriesActivationFunction::reset(Neuron*) {
+}
+
+
+double MSeriesActivationFunction::calculateActivation(Neuron *owner) {
+	if(owner == 0) {
+		return 0.0;
+	}
+	double activation = owner->getBiasValue().get();
+
+	// Convert activation value to ACCU-Value of A-Series with 8 bits integer part 
+	// and 24 bits fractional part
+	int32_t fpActivation = MSeriesFunctions::doubleToFixedPoint_17_15(activation);
+
+	// Sum up converted activation values of all synapses
+	QList<Synapse*> synapses = owner->getSynapses();
+	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
+		fpActivation += MSeriesFunctions::doubleToFixedPoint_17_15(i.next()->calculateActivation());
+	}
+
+	// Convert the final activation value back to double
+	return MSeriesFunctions::fixedPoint_17_15_ToDouble(fpActivation);
+}
+
+
+bool MSeriesActivationFunction::equals(ActivationFunction *activationFunction) const {
+	if(ActivationFunction::equals(activationFunction) == false) {
+		return false;
+	}
+	MSeriesActivationFunction *af = 
+			dynamic_cast<MSeriesActivationFunction*>(activationFunction);
+
+	if(af == 0) {
+		return false;
+	}
+	return true;
 }
 
 }

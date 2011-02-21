@@ -66,7 +66,9 @@ namespace nerd {
 		
 		bool equals(TransferFunction *transferFunction) const;
 
-	private:		
+	private:
+		static const int32_t mBases[];
+		static const int32_t mDeltas[];
 	};
 
 }

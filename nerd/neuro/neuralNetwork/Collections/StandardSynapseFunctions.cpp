@@ -48,6 +48,7 @@
 #include "SynapseFunction/AbsoluteValueSynapseFunction.h"
 #include "SynapseFunction/MultiplicativeSynapseFunction.h"
 #include "SynapseFunction/ASeriesMultiSynapseFunction.h"
+#include "SynapseFunction/MSeriesSynapseFunction.h"
 
 namespace nerd {
 
@@ -64,6 +65,9 @@ StandardSynapseFunctions::StandardSynapseFunctions()
 	//ASeries multipart synapse function
 	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
 		ASeriesMultiSynapseFunction());
+		
+	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
+		MSeriesSynapseFunction());
 
 	//Absolute Value synapse function
 	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(

@@ -112,6 +112,7 @@ namespace nerd {
 		bool crIsNegated(int collisionRule);
 
 		bool allowCollisions(int objectId1, int objectId2, bool allow);
+		bool allowCollisions(const QString &bodyName1, const QString &bodyName2, bool allow);
 
 		bool hasEnvironmentSection();
 		bool hasModelSection();

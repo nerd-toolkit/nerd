@@ -41,40 +41,58 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
+#include "MSeriesFunctions.h"
+#include <math.h>
+#include <stdint.h>
+#include "ASeriesFunctions.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
-		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
+/**
+ * Converts a double into a 32 bit signed fixed point number with 17 bits integer part and 
+ * 15 bits fractional part.
+ * If the double doesn't fit into 32 bit the fixed point is set to INT32_MAX or INT32_MIN.
+ *
+ * This function is used to rebuild the M-Series precision of a neuron activation value
+ * which is represented in 32 bit in the ACCU-register of the M-Series.
+ *
+ * @param d the double to convert.
+ * @return the 32 bit signed fixed point number.
+ */
+int32_t MSeriesFunctions::doubleToFixedPoint_17_15(double d) {
+	// shift double 15 bits to the left
+	d *= (double)0x8000;
+	// extract the integer part of the double
+	double intpart = 0;
+	modf(d, &intpart);
+	// if the integer part doesn't fit into int32_t, fit it
+	int32_t ret = 0;
+	if(intpart < (double)INT32_MIN) {
+		ret = INT32_MIN;
+	} 
+	else if(intpart > (double)INT32_MAX) {
+		ret = INT32_MAX;
+	}
+	else {
+		ret = (int32_t) intpart;
+	}
+	return ret;
+}
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
+/**
+ * Converts a 32 bit signed fixed point number with 17 bits integer part and 15 bits
+ * fractional part into a double. 
+ *
+ * This function is used to rebuild the M-Series precision of a neuron activation value
+ * which is represented in 32 bit in the ACCU-register of the M-Series.
+ *
+ * @param i the fixed point number to convert.
+ * @return the double.
+ */
+double MSeriesFunctions::fixedPoint_17_15_ToDouble(int32_t i) {
+	// cast to double and shift 15 bits to the right
+	return ((double) i) / ((double) 0x8000);
 }
 
 }
-
-
