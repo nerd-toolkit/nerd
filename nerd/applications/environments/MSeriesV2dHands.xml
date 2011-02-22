@@ -1,0 +1,12 @@
+
+<ORCS version="Environment XML V1.1"> 
+
+	<Models> 
+		<model prototype="Ground" name="Ground" /> 
+		<model prototype="MSeriesV2d" name="MSeriesV2" position="(0,0.01,0)" orientation="(0, 0,0)" BodyParts="LeftArm,Body,Hip,RightArm,Head,RightHand,LeftHand,LeftLeg,RightLeg"/>
+	</Models> 
+
+	<value name="/Simulation/IterationsPerStep" content="10" />
+	<value name="/Simulation/TimeStepSize" content="0.001" />
+</ORCS>
+
