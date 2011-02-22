@@ -76,9 +76,11 @@ GuessModulePairs::GuessModulePairs(NeuralNetworkEditor *editor, NeuralNetworkToo
 
 	mFirstPhrase = new StringValue("Left");
 	mSecondPhrase = new StringValue("Right");
+	mBlackList = new StringValue("Module,Hidden");
 
 	vm->addValue("/Tools/GuessModulePairs/FirstPhrase", mFirstPhrase);
 	vm->addValue("/Tools/GuessModulePairs/SecondPhrase", mSecondPhrase);
+	vm->addValue("/Tools/GuessModulePairs/IgnoredNames", mBlackList);
 
 	connect(this, SIGNAL(showElementPairs()),
 			owner, SLOT(useVisualizeElementPairTool()));
@@ -195,17 +197,13 @@ void GuessModulePairs::createPairString() {
 
 	QStringList firstPhrases = mFirstPhrase->get().split(",");
 	QStringList secondPhrases = mSecondPhrase->get().split(",");
-	
-	NeuroModule *module1 = dynamic_cast<NeuroModule*>(mGroup1);
-	NeuroModule *module2 = dynamic_cast<NeuroModule*>(mGroup2);
+	QStringList ignoredNames = mBlackList->get().split(",");
 
 	QList<NeuroModule*> firstGroupModules;
 	QList<NeuroModule*> secondGroupModules;
 
-	if(module1 != 0 && module2 != 0) {
-		firstGroupModules = module1->getAllEnclosedModules();
-		secondGroupModules = module2->getAllEnclosedModules();
-	}
+	firstGroupModules = mGroup1->getAllEnclosedModules();
+	secondGroupModules = mGroup2->getAllEnclosedModules();
 
 	QList<Neuron*> firstGroupNeurons = mGroup1->getAllEnclosedNeurons();
 	QList<Neuron*> secondGroupNeurons = mGroup2->getAllEnclosedNeurons();
@@ -215,13 +213,23 @@ void GuessModulePairs::createPairString() {
 
 	for(QListIterator<NeuroModule*> i(firstGroupModules); i.hasNext();) {
 		NeuroModule *m1 = i.next();
+		
+		if(ignoredNames.contains(m1->getName().trimmed())) {
+			continue;
+		}
 
 		bool foundPartner = false;
 
 		for(QListIterator<NeuroModule*> j(secondGroupModules); j.hasNext();) {
 			NeuroModule *m2 = j.next();
+			
+			if(ignoredNames.contains(m2->getName().trimmed())) {
+				continue;
+			}
+			
 			for(int k = 0; k < firstPhrases.size() && k < secondPhrases.size(); ++k) {
 				QString name = m1->getName();
+				
 				name = name.replace(firstPhrases.at(k).trimmed(), secondPhrases.at(k).trimmed()).trimmed();
 				if(name == m2->getName()) {
 					if(mIdString != "") {

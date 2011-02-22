@@ -96,6 +96,7 @@ namespace nerd {
 		int mCurrentState;
 		StringValue *mFirstPhrase;
 		StringValue *mSecondPhrase;
+		StringValue *mBlackList;
 	};
 
 }

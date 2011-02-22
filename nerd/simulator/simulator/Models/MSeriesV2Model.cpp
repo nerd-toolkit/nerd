@@ -1262,6 +1262,13 @@ void MSeriesV2Model::createModel() {
 		PARAM(DoubleValue, mRightHandRollMotor, "MinAngle")->set(-150);
 		PARAM(DoubleValue, mRightHandRollMotor, "MaxAngle")->set(150);
 		PARAM(DoubleValue, mRightHandRollMotor, "JointAngleOffset")->set(0);
+		
+		{
+			InterfaceValue* jointAngle = dynamic_cast<InterfaceValue*>(mRightHandRollMotor->getParameter("JointAngle"));
+			if(jointAngle != 0){
+				mRightHandRollMotor->useOutputAsInfoValue(jointAngle, true);
+			}
+		}
 	
 		agent->addObject(mRightHandRollMotor);
 
@@ -1272,6 +1279,13 @@ void MSeriesV2Model::createModel() {
 		PARAM(DoubleValue, mRightHandMainMotor, "MinAngle")->set(-15);
 		PARAM(DoubleValue, mRightHandMainMotor, "MaxAngle")->set(100);
 		PARAM(DoubleValue, mRightHandMainMotor, "JointAngleOffset")->set(0);
+		
+		{
+			InterfaceValue* jointAngle = dynamic_cast<InterfaceValue*>(mRightHandMainMotor->getParameter("JointAngle"));
+			if(jointAngle != 0){
+				mRightHandMainMotor->useOutputAsInfoValue(jointAngle, true);
+			}
+		}
 	
 		agent->addObject(mRightHandMainMotor);
 
@@ -1325,6 +1339,13 @@ void MSeriesV2Model::createModel() {
 		PARAM(DoubleValue, mLeftHandRollMotor, "MinAngle")->set(-150);
 		PARAM(DoubleValue, mLeftHandRollMotor, "MaxAngle")->set(150);
 		PARAM(DoubleValue, mLeftHandRollMotor, "JointAngleOffset")->set(0);
+		
+		{
+			InterfaceValue* jointAngle = dynamic_cast<InterfaceValue*>(mLeftHandRollMotor->getParameter("JointAngle"));
+			if(jointAngle != 0){
+				mLeftHandRollMotor->useOutputAsInfoValue(jointAngle, true);
+			}
+		}
 	
 		agent->addObject(mLeftHandRollMotor);
 
@@ -1336,6 +1357,13 @@ void MSeriesV2Model::createModel() {
 		PARAM(DoubleValue, mLeftHandMainMotor, "MinAngle")->set(-15);
 		PARAM(DoubleValue, mLeftHandMainMotor, "MaxAngle")->set(100);
 		PARAM(DoubleValue, mLeftHandMainMotor, "JointAngleOffset")->set(0);
+		
+		{
+			InterfaceValue* jointAngle = dynamic_cast<InterfaceValue*>(mLeftHandMainMotor->getParameter("JointAngle"));
+			if(jointAngle != 0){
+				mLeftHandMainMotor->useOutputAsInfoValue(jointAngle, true);
+			}
+		}
 	
 		agent->addObject(mLeftHandMainMotor);
 
@@ -3836,6 +3864,20 @@ void MSeriesV2Model::layoutObjects() {
 			PARAM(DoubleValue, mLeftElbowPitchMotor, "JointAngleOffset")->set(-75);
 		}
 	}
+// 	if(mLeftHandMainMotor != 0) {
+// 		//PARAM(Vector3DValue, mLeftHandMainMotor, "AxisPoint1")->set(0.0, 0.1, mHeadYawJointZ->get());
+// 		//PARAM(Vector3DValue, mLeftHandMainMotor, "AxisPoint2")->set(0.0, 0.0, mHeadYawJointZ->get());
+// 		if(mFirstLayout) {
+// 			//PARAM(DoubleValue, mLeftHandMainMotor, "MinAngle")->set(-90);
+// 			PARAM(DoubleValue, mLeftHandMainMotor, "MaxAngle")->set(90);
+// 		}
+// 		// Physical robot has no joint angle sensor, only a motor angle sensor
+// 		// --> erase JointAngle Seonsorfrom InterfaceList
+// 		InterfaceValue* jointAngle = dynamic_cast<InterfaceValue*>(mHeadYawMotor->getParameter("JointAngle"));
+// 		if(jointAngle != 0){
+// 			mHeadYawMotor->useOutputAsInfoValue(jointAngle, true);
+// 		}
+// 	}
 }
 
 
