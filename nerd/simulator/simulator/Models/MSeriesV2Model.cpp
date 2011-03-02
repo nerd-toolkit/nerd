@@ -3735,7 +3735,7 @@ void MSeriesV2Model::layoutObjects() {
 		PARAM(Vector3DValue, mRightShoulderPitchMotor, "AxisPoint2")->set(0.0, shoulderY, 0.0);
 		if(mFirstLayout) {
 			if(mUseUpdatedSensorRanges) {
-				PARAM(DoubleValue, mRightShoulderPitchMotor, "MinAngle")->set(-180);
+				PARAM(DoubleValue, mRightShoulderPitchMotor, "MinAngle")->set(-175);
 				PARAM(DoubleValue, mRightShoulderPitchMotor, "MaxAngle")->set(55);
 				PARAM(DoubleValue, mRightShoulderPitchMotor, "JointAngleOffset")->set(-75); //TODO
 			}
@@ -3752,7 +3752,7 @@ void MSeriesV2Model::layoutObjects() {
 		if(mFirstLayout) {
 			if(mUseUpdatedSensorRanges) {
 				PARAM(DoubleValue, mLeftShoulderPitchMotor, "MinAngle")->set(-55);
-				PARAM(DoubleValue, mLeftShoulderPitchMotor, "MaxAngle")->set(180);
+				PARAM(DoubleValue, mLeftShoulderPitchMotor, "MaxAngle")->set(175);
 				PARAM(DoubleValue, mLeftShoulderPitchMotor, "JointAngleOffset")->set(75);
 			}
 			else {

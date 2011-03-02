@@ -112,7 +112,7 @@ QMap<QString, QString> NeuralNetworkIOMSeriesBDN::createByteCodeMapping()
 														
 	byteCodeMapping.insert("ramp[0,1];MSeries",
 							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
-							+ ":\nload v1, 0.0\nmin V0, Input, V1\nload V1, 1.0\nmin V0, V0, V1\nwrite Output, V0");
+							+ ":\nload V1, 1.0\nmin V0, Input, V1\nload V1, 0.0\nmax V0, V0, V1\nwrite Output, V0");
 							
 	byteCodeMapping.insert("ramp[-1,1];MSeries",
 							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
