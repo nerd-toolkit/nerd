@@ -148,6 +148,7 @@ namespace nerd {
 			bool calcNeuronPositionValues(ModularNeuralNetwork *net, QString *errorMsg);
 			bool calcExecutionPositions(ModularNeuralNetwork *net, QString *errorMsg);
 			bool createBDNHeadInformation(QDomElement &xmlRoot);
+			bool createSurroundingModule(QDomDocument &xmlDoc, QDomElement &xmlRoot, const QString &networkName);
 			void addByteCodePosition(const QString &modulName, const QString &position);
 			
 			bool addBDNNeuronInfo(Neuron *netNeuron, QString *errorMsg);

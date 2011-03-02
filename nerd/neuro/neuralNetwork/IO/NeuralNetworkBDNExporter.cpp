@@ -329,11 +329,13 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 	
 	// add module with networkdescription
 	QDomElement xmlNetModule = xmlDoc.createElement( "Module" );
-	xmlNetModule.setAttribute( "name", networkName );
+	xmlNetModule.setAttribute( "name", networkName + "_Network" );
 	xmlNetModule.setAttribute( "type", "Structure" );
-	xmlNetModule.setAttribute( "guid", networkName );
-	xmlNetModule.setAttribute( "opened", "true" );
+	xmlNetModule.setAttribute( "guid", networkName + "_Network" );
+	xmlNetModule.setAttribute( "opened", "false" );
 	xmlRoot.appendChild( xmlNetModule );
+	
+	ok &= createSurroundingModule(xmlDoc, xmlRoot, networkName);
 	
 	// add information about neurons and synapses
 	QListIterator<BDNNeuronInfo*> BDNNeuronInfoIt(m_BDNNeuronInfoList);
@@ -676,6 +678,46 @@ bool NeuralNetworkBDNExporter::createBDNHeadInformation(QDomElement &xmlRoot)
 	return true;
 }
 
+
+bool NeuralNetworkBDNExporter::createSurroundingModule(QDomDocument &xmlDoc, 
+							QDomElement &xmlRoot, const QString &networkName) 
+{
+
+	//add surrounding module to reduce drawing load in brain designer
+	QDomElement xmlSurroundingModule = xmlDoc.createElement("Module");
+	xmlSurroundingModule.setAttribute("name", networkName);
+	xmlSurroundingModule.setAttribute("type", "Structure");
+	xmlSurroundingModule.setAttribute("guid", networkName);
+	xmlSurroundingModule.setAttribute("opened", "true");
+	xmlRoot.appendChild(xmlSurroundingModule);
+	
+	QDomElement mainNode = xmlDoc.createElement("node");
+	mainNode.setAttribute("type", "Structure");
+	mainNode.setAttribute("guid", networkName + "_Network");
+	mainNode.setAttribute("name", networkName + "_Network");
+	xmlSurroundingModule.appendChild(mainNode);
+	
+	QDomElement posNode = xmlDoc.createElement("position");
+	posNode.setAttribute("x", "465");
+	posNode.setAttribute("y", "228");
+	mainNode.appendChild(posNode);
+	
+	
+	/* //TODO maybe add interface for wrapper module (for neurons marked with a special tag)
+	<node id="0" type="Structure" guid="0b8b25eb-7a29-4e9d-bb7a-d3c3381e1db5" name="Main">
+      <position x="465" y="228" />
+      <connectionPoints inputs="2" outputs="2" />
+      <connectedEdges>
+        <connectionPoint id="0">
+          <connectedEdge id="0" start="False" />
+        </connectionPoint>
+        <connectionPoint id="1">
+          <connectedEdge id="1" start="False" />
+        </connectionPoint>
+      </connectedEdges>
+    </node>
+    */
+}
 
 
 bool NeuralNetworkBDNExporter::addBDNNeuronInfo(Neuron *netNeuron, QString *errorMsg)

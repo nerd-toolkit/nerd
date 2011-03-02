@@ -50,7 +50,7 @@
 namespace nerd {
 		
 // Name of the synapse function which is used for the bias elements
-const QString NeuralNetworkIOMSeriesBDN::STANDARD_BIAS_SYNAPSE_TYPE = 	"SimpleUpdateFunction";
+const QString NeuralNetworkIOMSeriesBDN::STANDARD_BIAS_SYNAPSE_TYPE = "MSeries";
 
 // Name of the robot type which is used for the BDN network input and output elements
 const QString NeuralNetworkIOMSeriesBDN::ROBOT_TYPE = "M-Series";
@@ -76,25 +76,49 @@ QMap<QString, QString> NeuralNetworkIOMSeriesBDN::createByteCodeMapping()
 	// If the function is flipable, then a further flip type must be provided.
 	// Format: "<TransferFunctionName>;<ActivationFunctionName><NeuralNetworkIOMSeriesBDN::FLIP_TYPE>"
 	
+// 	// tanh function and flipped function
+// 	byteCodeMapping.insert("tanh;AdditiveTD",
+// 												  NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+// 															+ ":\ntanh V0, Input\nwrite Output, V0");
+// 	
+// 	byteCodeMapping.insert(	"tanh;AdditiveTD" + NeuralNetworkBDNExporter::FLIP_TYPE, 	
+// 													NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+// 														 + ":\ntanh V0, Input\nLOAD V1, -1.0\nMUL V1, V0, V1\nwrite Output, V1");
+// 														
+// 	byteCodeMapping.insert("ramp[0,1];AdditiveTD",
+// 							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+// 							+ ":\nload v1, 0.0\nmin V0, Input, V1\nload V1, 1.0\nmin V0, V0, V1\nwrite Output, V0");
+// 							
+// 	byteCodeMapping.insert("ramp[-1,1];AdditiveTD",
+// 							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+// 							+ ":\nload V0, Input\nsat V0\nwrite Output, V0");
+// 							
+// 	byteCodeMapping.insert("ramp[-1,1];AdditiveTD" + NeuralNetworkBDNExporter::FLIP_TYPE,
+// 							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+// 							+ ":\nload V0, Input\nload V1, -1.0\nmul V0, V0, V1\nsat V0\nwrite Output, V0");
+//
+// 	byteCodeMapping.insert("SimpleUpdateFunction", 	
+// 												 NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+// 														+ ":\nmul   V0, Input, w\nwrite Output, V0");
 	
 	// tanh function and flipped function
-	byteCodeMapping.insert("tanh;AdditiveTD",
-												  NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
-															+ ":\ntanh V0, Input\nwrite Output, V0");
+	byteCodeMapping.insert("MSeriesTanh;MSeries",
+							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+							+ ":\ntanh V0, Input\nwrite Output, V0");
 	
-	byteCodeMapping.insert(	"tanh;AdditiveTD" + NeuralNetworkBDNExporter::FLIP_TYPE, 	
-													NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
-														 + ":\ntanh V0, Input\nLOAD V1, -1.0\nMUL V1, V0, V1\nwrite Output, V1");
+	byteCodeMapping.insert(	"MSeriesTanh;MSeries" + NeuralNetworkBDNExporter::FLIP_TYPE, 	
+							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+							+ ":\ntanh V0, Input\nLOAD V1, -1.0\nMUL V1, V0, V1\nwrite Output, V1");
 														
-	byteCodeMapping.insert("ramp[0,1];AdditiveTD",
+	byteCodeMapping.insert("ramp[0,1];MSeries",
 							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
 							+ ":\nload v1, 0.0\nmin V0, Input, V1\nload V1, 1.0\nmin V0, V0, V1\nwrite Output, V0");
 							
-	byteCodeMapping.insert("ramp[-1,1];AdditiveTD",
+	byteCodeMapping.insert("ramp[-1,1];MSeries",
 							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
 							+ ":\nload V0, Input\nsat V0\nwrite Output, V0");
 							
-	byteCodeMapping.insert("ramp[-1,1];AdditiveTD" + NeuralNetworkBDNExporter::FLIP_TYPE,
+	byteCodeMapping.insert("ramp[-1,1];MSeries" + NeuralNetworkBDNExporter::FLIP_TYPE,
 							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
 							+ ":\nload V0, Input\nload V1, -1.0\nmul V0, V0, V1\nsat V0\nwrite Output, V0");
 		
@@ -102,9 +126,9 @@ QMap<QString, QString> NeuralNetworkIOMSeriesBDN::createByteCodeMapping()
 	// 
 	// The type is defined by its SynapseFunction name.
 	// The format is: "<SynapseFunctionName>"
-	byteCodeMapping.insert("SimpleUpdateFunction", 	
-												 NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
-														+ ":\nmul   V0, Input, w\nwrite Output, V0");
+	byteCodeMapping.insert("MSeries", 	
+							NeuralNetworkBDNExporter::BYTECODE_POS_FLAG 
+								+ ":\nmul   V0, Input, w\nwrite Output, V0");
 	
 	return byteCodeMapping;
 }
