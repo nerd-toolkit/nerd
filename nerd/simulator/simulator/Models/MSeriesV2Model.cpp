@@ -4075,6 +4075,7 @@ void MSeriesV2Model::initializeMotorModels() {
 		SETVAL(prefix + "Right/Hand/MotorFingerTip/PID_PassiveActuatorModel/MaxForce", "0.2");
 		SETVAL(prefix + "Right/Hand/MotorThumbTip/PID_PassiveActuatorModel/MaxForce", "0.2");
 		SETVAL(prefix + "Right/Hand/MotorMain/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.65");
+		SETVAL(prefix + "Right/Hand/MotorMain/ODE_H_MSeriesTorqueSpringMotorModel/JointToMotorDisplacement0", "55");
 	}
 	if(mIncludeLeftHand) {
 		SETVAL(prefix + "Left/Hand/MotorMain/ODE_H_MSeriesTorqueSpringMotorModel/TorqueConstant", "0.05");
@@ -4082,6 +4083,7 @@ void MSeriesV2Model::initializeMotorModels() {
 		SETVAL(prefix + "Left/Hand/MotorFingerTip/PID_PassiveActuatorModel/MaxForce", "0.2");
 		SETVAL(prefix + "Left/Hand/MotorThumbTip/PID_PassiveActuatorModel/MaxForce", "0.2");
 		SETVAL(prefix + "Left/Hand/MotorMain/ODE_H_MSeriesTorqueSpringMotorModel/MotorToJointTransmissionRatio", "0.65");
+		SETVAL(prefix + "Left/Hand/MotorMain/ODE_H_MSeriesTorqueSpringMotorModel/JointToMotorDisplacement0", "55");
 	}
 }
 

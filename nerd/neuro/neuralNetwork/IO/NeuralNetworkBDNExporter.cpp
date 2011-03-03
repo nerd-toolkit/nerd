@@ -50,10 +50,14 @@
 #include <QFileInfo>
 #include <QList>
 #include <QDebug>
-
+#include "Network/NeuroTagManager.h"
 #include <QDomElement>
+#include <iostream>
+#include "NeuralNetworkConstants.h"
 
 #include <limits> 
+
+using namespace std;
 
 namespace nerd {
 	
@@ -73,9 +77,16 @@ const QString NeuralNetworkBDNExporter::BYTECODE_MIN_FLAG = "<$MIN>";
 // Flag which gets replaced in the byte code mappings of mirror neurons with the maximum value
 // the input 
 const QString NeuralNetworkBDNExporter::BYTECODE_MAX_FLAG = "<$MAX>";
+
+const QString NeuralNetworkBDNExporter::TAG_BDN_INTERFACE_INPUT = "BDN_In";
+const QString NeuralNetworkBDNExporter::TAG_BDN_INTERFACE_OUTPUT = "BDN_Out";
 		
 // Name of the neurontype which is used as input neuron mirror
 const QString NeuralNetworkBDNExporter::INPUT_MIRROR_GUID = "InputMirror";
+
+// Name of the BDN interface neurons (to access neurons via wrapper module)
+const QString NeuralNetworkBDNExporter::MODULE_INPUT_GUID = "Input";
+const QString NeuralNetworkBDNExporter::MODULE_OUTPUT_GUID = "Output";
 
 // Bytecode of the neurontype which is used as input neuron mirror
 const QString NeuralNetworkBDNExporter::INPUT_MIRROR_BYTE_CODE = QString::number(BDN_MIN_EXECUTION_POS + 1) + ":\nwrite Output, Input";
@@ -121,6 +132,13 @@ NeuralNetworkBDNExporter::NeuralNetworkBDNExporter(QString standardBiasSynapseTy
 	m_bdnYPosOffset = 0;
 	m_bdnXPosScaling = 0.0;
 	m_bdnYPosScaling = 0.0;
+	
+	NeuroTagManager::getInstance()->addTag(NeuroTag(TAG_BDN_INTERFACE_INPUT,
+											NeuralNetworkConstants::TAG_TYPE_NEURON,
+											"Neuron is exported as input to wrapper module so that it can be observed and changed from there."));
+	NeuroTagManager::getInstance()->addTag(NeuroTag(TAG_BDN_INTERFACE_OUTPUT,
+											NeuralNetworkConstants::TAG_TYPE_NEURON,
+											"Neuron is exported as output to wrapper module so that it can be observed and changed from there."));
 }
 
 NeuralNetworkBDNExporter::~NeuralNetworkBDNExporter()
@@ -154,6 +172,9 @@ void NeuralNetworkBDNExporter::deleteWorkingVariables()
 	m_bdnYPosOffset = 0;
 	m_bdnXPosScaling = 0.0;
 	m_bdnYPosScaling = 0.0;
+	
+	mNumberOfModuleInterfaceInputs = 0;
+	mNumberOfModuleInterfaceOutputs = 0;
 }
 
 void NeuralNetworkBDNExporter::setExtraSpinalCordMapping(QMap<QString, QString> extraSpinalCordMapping)
@@ -702,8 +723,94 @@ bool NeuralNetworkBDNExporter::createSurroundingModule(QDomDocument &xmlDoc,
 	posNode.setAttribute("y", "228");
 	mainNode.appendChild(posNode);
 	
+	QDomElement connectionPointsElem = xmlDoc.createElement("connectionPoints");
+	connectionPointsElem.setAttribute("inputs", QString::number(mNumberOfModuleInterfaceInputs));
+	connectionPointsElem.setAttribute("outputs", QString::number(mNumberOfModuleInterfaceOutputs));
+	mainNode.appendChild(connectionPointsElem);
 	
-	/* //TODO maybe add interface for wrapper module (for neurons marked with a special tag)
+	//add bias value and corresponding synapses (to control output)
+	if(mNumberOfModuleInterfaceInputs > 0) {
+		QDomElement biasElem = xmlDoc.createElement("node");
+		biasElem.setAttribute("id", "1");
+		biasElem.setAttribute("type", "Bias");
+		biasElem.setAttribute("name", "Bias");
+		biasElem.setAttribute("guid", "Bias");
+		xmlSurroundingModule.appendChild(biasElem);
+		
+		QDomElement posElem = xmlDoc.createElement("position");
+		posElem.setAttribute("x", "340");
+		posElem.setAttribute("y", "280");
+		biasElem.appendChild(posElem);
+		
+		QDomElement connectedEdgesElem = xmlDoc.createElement("connectedEdges");
+		biasElem.appendChild(connectedEdgesElem);
+		
+		QDomElement connectionPointBiasElem = xmlDoc.createElement("connectionPoint");
+		connectionPointBiasElem.setAttribute("id", "1");
+		connectedEdgesElem.appendChild(connectionPointBiasElem);
+		
+		QDomElement connectedModuleEdgesElem = xmlDoc.createElement("connectedEdges");
+		mainNode.appendChild(connectedModuleEdgesElem);
+		
+		for(int i = 0; i < mNumberOfModuleInterfaceInputs; ++i) {
+		
+			//Add edge info for bias element
+			QDomElement connectedEdgeElem = xmlDoc.createElement("connectedEdge");
+			connectedEdgeElem.setAttribute("id", QString::number(i));
+			connectedEdgeElem.setAttribute("start", "True");
+			connectionPointBiasElem.appendChild(connectedEdgeElem);
+			
+			//Add edge info for main module element
+			QDomElement connectionPointModuleElem = xmlDoc.createElement("connectionPoint");
+			connectionPointModuleElem.setAttribute("id", QString::number(i));
+			connectedModuleEdgesElem.appendChild(connectionPointModuleElem);
+		
+			QDomElement connectedModuleEdgeElem = xmlDoc.createElement("connectedEdge");
+			connectedModuleEdgeElem.setAttribute("id", QString::number(i));
+			connectedModuleEdgeElem.setAttribute("start", "False");
+			connectionPointModuleElem.appendChild(connectedModuleEdgeElem);
+			
+			
+			//add edge
+			QDomElement edgeElem = xmlDoc.createElement("edge");
+			edgeElem.setAttribute("id", QString::number(i));
+			edgeElem.setAttribute("guid", m_standardBiasSynapseType + QString::number(BDN_MIN_EXECUTION_POS));
+			xmlSurroundingModule.appendChild(edgeElem);
+			
+			QDomElement edgeParameterElem = xmlDoc.createElement("parameters");
+			edgeElem.appendChild(edgeParameterElem);
+			
+			QDomElement weightParamElem = xmlDoc.createElement("parameter");
+			weightParamElem.setAttribute("name", "w");
+			weightParamElem.setAttribute("value", "0");
+			edgeParameterElem.appendChild(weightParamElem);
+			
+			/*
+	<edge id="0" guid="MSeries101">
+      <parameters>
+        <parameter name="w" value="0" />
+      </parameters>
+    </edge>
+			*/
+		}
+	}
+	
+	
+	/* 
+	 <node id="1" type="Bias" guid="Bias" name="Bias">
+      <position x="342" y="284" />
+      <connectedEdges>
+        <connectionPoint id="0">
+          <connectedEdge id="0" start="True" />
+          <connectedEdge id="1" start="True" />
+        </connectionPoint>
+        <connectionPoint id="1">
+          <connectedEdge id="2" start="True" />
+        </connectionPoint>
+      </connectedEdges>
+    </node>
+    
+    //TODO maybe add interface for wrapper module (for neurons marked with a special tag)
 	<node id="0" type="Structure" guid="0b8b25eb-7a29-4e9d-bb7a-d3c3381e1db5" name="Main">
       <position x="465" y="228" />
       <connectionPoints inputs="2" outputs="2" />
@@ -716,7 +823,10 @@ bool NeuralNetworkBDNExporter::createSurroundingModule(QDomDocument &xmlDoc,
         </connectionPoint>
       </connectedEdges>
     </node>
+    
+   
     */
+	return true;
 }
 
 
@@ -760,6 +870,7 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 			|| inNeuron->isActivationFlipped())
 	{
 		inputInfo->ID = m_nextXmlId++;
+
 		
 		BDNNeuronInfo *mirrorInfo = new BDNNeuronInfo();
 		mirrorInfo->ID = m_xmlIdTable.value(inNeuron);
@@ -812,6 +923,36 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 		inputInfo->OutSynapseIDs.append(getBDNOutSynapseInformation(inNeuron, errorMsg));
 	}
 	
+	// create BDN interface Output if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
+	if(inNeuron->hasProperty(TAG_BDN_INTERFACE_OUTPUT)) {
+		
+		BDNNeuronInfo *outputInterfaceInfo = new BDNNeuronInfo();
+		outputInterfaceInfo->ID = m_nextXmlId++;
+		outputInterfaceInfo->Type = "Output";
+		
+		outputInterfaceInfo->Guid = MODULE_OUTPUT_GUID;
+		
+		outputInterfaceInfo->XPosition = inputInfo->XPosition + (ADDITIONAL_BDN_NEURON_DISTANCE * 1.5);
+		outputInterfaceInfo->YPosition = inputInfo->YPosition;
+		outputInterfaceInfo->RobotType = "Normal";
+		outputInterfaceInfo->Name = inNeuron->getNameValue().get();
+		
+		int outputSynapseID = m_nextXmlId++;
+		addBDNSynapseInfo(outputSynapseID, 
+							inputInfo->ID, 
+							outputInterfaceInfo->ID, 
+							1.0, 
+							m_standardBiasSynapseType,
+							BDN_MAX_EXECUTION_POS);
+		
+		outputInterfaceInfo->InSynapseIDs.append(outputSynapseID);
+		inputInfo->OutSynapseIDs.append(outputSynapseID);
+		
+		m_BDNNeuronInfoList.append(outputInterfaceInfo);
+		
+		mNumberOfModuleInterfaceOutputs++;
+	}
+	
 	m_BDNNeuronInfoList.append(inputInfo);
 	
 	return true;
@@ -838,7 +979,8 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 	// create preOutput if needed
 	if(	outNeuron->getBiasValue().get() != 0.0 
 			|| outNeuron->getSynapses().length() > 0
-			|| outNeuron->getOutgoingSynapses().length() > 0)
+			|| outNeuron->getOutgoingSynapses().length() > 0
+			|| outNeuron->hasProperty(TAG_BDN_INTERFACE_INPUT))
 	{
 		// change ID of output to assign all synapses to the pre output neuron
 		outputInfo->ID = m_nextXmlId++;
@@ -858,11 +1000,11 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 		// create Synapse from preNeuron to output
 		int preOutputSynapseID = m_nextXmlId++;
 		addBDNSynapseInfo(	preOutputSynapseID,
-												preOutputInfo->ID, 
-												outputInfo->ID, 
-												1.0, 
-												m_standardBiasSynapseType,
-										 		BDN_MAX_EXECUTION_POS);
+							preOutputInfo->ID, 
+							outputInfo->ID, 
+							1.0, 
+							m_standardBiasSynapseType,
+							BDN_MAX_EXECUTION_POS);
 		
 		preOutputInfo->OutSynapseIDs.append(preOutputSynapseID);
 		outputInfo->InSynapseIDs.append(preOutputSynapseID);
@@ -876,7 +1018,67 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 		
 		addByteCodePosition(getBDNNeuronType(outNeuron, errorMsg),
 												QString::number(BDN_MAX_EXECUTION_POS - 1));
+												
+		// create BDN interface Output if the BDN_In tag was found. These interfaces are accessible via the wrapper module.
+		if(outNeuron->hasProperty(TAG_BDN_INTERFACE_INPUT)) {
+			
+			BDNNeuronInfo *inputInterfaceInfo = new BDNNeuronInfo();
+			inputInterfaceInfo->ID = m_nextXmlId++;
+			inputInterfaceInfo->Type = "Input";
+			
+			inputInterfaceInfo->Guid = MODULE_INPUT_GUID;
+			
+			inputInterfaceInfo->XPosition = preOutputInfo->XPosition - ADDITIONAL_BDN_NEURON_DISTANCE;
+			inputInterfaceInfo->YPosition = preOutputInfo->YPosition;
+			inputInterfaceInfo->RobotType = "Normal";
+			inputInterfaceInfo->Name = outNeuron->getNameValue().get();
+			
+			int inputSynapseID = m_nextXmlId++;
+			addBDNSynapseInfo(inputSynapseID, 
+								inputInterfaceInfo->ID,
+								preOutputInfo->ID, 
+								1.0, 
+								m_standardBiasSynapseType,
+								BDN_MIN_EXECUTION_POS);
+			
+			inputInterfaceInfo->OutSynapseIDs.append(inputSynapseID);
+			preOutputInfo->InSynapseIDs.append(inputSynapseID);
+			
+			m_BDNNeuronInfoList.append(inputInterfaceInfo);
+			
+			mNumberOfModuleInterfaceInputs++;
+		}
+		// create BDN interface Input if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
+		if(outNeuron->hasProperty(TAG_BDN_INTERFACE_OUTPUT)) {
+			
+			BDNNeuronInfo *outputInterfaceInfo = new BDNNeuronInfo();
+			outputInterfaceInfo->ID = m_nextXmlId++;
+			outputInterfaceInfo->Type = "Output";
+			
+			outputInterfaceInfo->Guid = MODULE_OUTPUT_GUID;
+			
+			outputInterfaceInfo->XPosition = preOutputInfo->XPosition + ADDITIONAL_BDN_NEURON_DISTANCE;
+			outputInterfaceInfo->YPosition = preOutputInfo->YPosition;
+			outputInterfaceInfo->RobotType = "Normal";
+			outputInterfaceInfo->Name = outNeuron->getNameValue().get();
+			
+			int outputSynapseID = m_nextXmlId++;
+			addBDNSynapseInfo(outputSynapseID, 
+								outputInterfaceInfo->ID,
+								preOutputInfo->ID, 
+								1.0, 
+								m_standardBiasSynapseType,
+								BDN_MAX_EXECUTION_POS);
+			
+			outputInterfaceInfo->OutSynapseIDs.append(outputSynapseID);
+			preOutputInfo->InSynapseIDs.append(outputSynapseID);
+			
+			m_BDNNeuronInfoList.append(outputInterfaceInfo);
+			
+			mNumberOfModuleInterfaceOutputs++;
+		}
 	}
+	
 	
 	return true;
 }
@@ -907,6 +1109,65 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 	// add neuron position
 	addByteCodePosition(getBDNNeuronType(hiddenNeuron,errorMsg),
 											QString::number(m_executionPositionTable[hiddenNeuron]));
+											
+	// create BDN interface Output if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
+	if(hiddenNeuron->hasProperty(TAG_BDN_INTERFACE_OUTPUT)) {
+		
+		BDNNeuronInfo *outputInterfaceInfo = new BDNNeuronInfo();
+		outputInterfaceInfo->ID = m_nextXmlId++;
+		outputInterfaceInfo->Type = "Output";
+		
+		outputInterfaceInfo->Guid = MODULE_OUTPUT_GUID;
+		
+		outputInterfaceInfo->XPosition = hiddenInfo->XPosition + ADDITIONAL_BDN_NEURON_DISTANCE;
+		outputInterfaceInfo->YPosition = hiddenInfo->YPosition;
+		outputInterfaceInfo->RobotType = "Normal";
+		outputInterfaceInfo->Name = hiddenNeuron->getNameValue().get() + "_" + QString::number(outputInterfaceInfo->ID);
+		
+		int outputSynapseID = m_nextXmlId++;
+		addBDNSynapseInfo(outputSynapseID, 
+							hiddenInfo->ID, 
+							outputInterfaceInfo->ID, 
+							1.0, 
+							m_standardBiasSynapseType,
+							BDN_MAX_EXECUTION_POS);
+		
+		outputInterfaceInfo->InSynapseIDs.append(outputSynapseID);
+		hiddenInfo->OutSynapseIDs.append(outputSynapseID);
+		
+		m_BDNNeuronInfoList.append(outputInterfaceInfo);
+		
+		mNumberOfModuleInterfaceOutputs++;
+	}
+	// create BDN interface Output if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
+	if(hiddenNeuron->hasProperty(TAG_BDN_INTERFACE_INPUT)) {
+		
+		BDNNeuronInfo *inputInterfaceInfo = new BDNNeuronInfo();
+		inputInterfaceInfo->ID = m_nextXmlId++;
+		inputInterfaceInfo->Type = "Input";
+		
+		inputInterfaceInfo->Guid = MODULE_INPUT_GUID;
+		
+		inputInterfaceInfo->XPosition = hiddenInfo->XPosition - ADDITIONAL_BDN_NEURON_DISTANCE;
+		inputInterfaceInfo->YPosition = hiddenInfo->YPosition;
+		inputInterfaceInfo->RobotType = "Normal";
+		inputInterfaceInfo->Name = hiddenNeuron->getNameValue().get() + "_" + QString::number(inputInterfaceInfo->ID);
+		
+		int inputSynapseID = m_nextXmlId++;
+		addBDNSynapseInfo(inputSynapseID, 
+							inputInterfaceInfo->ID,
+							hiddenInfo->ID, 
+							1.0, 
+							m_standardBiasSynapseType,
+							BDN_MIN_EXECUTION_POS);
+		
+		inputInterfaceInfo->OutSynapseIDs.append(inputSynapseID);
+		hiddenInfo->InSynapseIDs.append(inputSynapseID);
+		
+		m_BDNNeuronInfoList.append(inputInterfaceInfo);
+		
+		mNumberOfModuleInterfaceInputs++;
+	}
 	
 	return true;
 }
@@ -1163,6 +1424,13 @@ QDomElement BDNNeuronInfo::toXML(QDomDocument &xmlDoc)
 		xmlNeuronPosParameter.setAttribute( "value", this->SpinalCordAddress );
 		xmlNeuronPosParameter.setAttribute( "show", "Standard");
 		xmlNeuronParameters.appendChild(xmlNeuronPosParameter);
+		
+		if(this->Name != QString::null) {
+			QDomElement nameParameter = xmlDoc.createElement("parameter");
+			nameParameter.setAttribute("name", "Name");
+			nameParameter.setAttribute("value", this->Name);
+			xmlNeuronParameters.appendChild(nameParameter);
+		}
 	}
 	
 	QDomElement xmlPosition = xmlDoc.createElement( "position" );

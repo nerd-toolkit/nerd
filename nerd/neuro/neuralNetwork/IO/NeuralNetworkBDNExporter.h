@@ -69,9 +69,10 @@ namespace nerd {
 			QString Guid;
 			QString SpinalCordAddress;
 			QString RobotType;
+			QString Name;
 			
 		public:
-			BDNNeuronInfo() {ID = 0;InSynapseIDs=QList<int>(); OutSynapseIDs=QList<int>();XPosition=-1;YPosition=-1;Type=QString::null;Guid=QString::null;SpinalCordAddress=QString::null;RobotType=QString::null;}
+			BDNNeuronInfo() {ID = 0;InSynapseIDs=QList<int>(); OutSynapseIDs=QList<int>();XPosition=-1;YPosition=-1;Type=QString::null;Guid=QString::null;SpinalCordAddress=QString::null;RobotType=QString::null;Name=QString::null;}
 			
 			QDomElement toXML(QDomDocument &xmlDoc);
 	};
@@ -101,6 +102,8 @@ namespace nerd {
 			static const QString BYTECODE_POS_FLAG;
 			static const QString BYTECODE_MIN_FLAG;
 			static const QString BYTECODE_MAX_FLAG;
+			static const QString TAG_BDN_INTERFACE_INPUT;
+			static const QString TAG_BDN_INTERFACE_OUTPUT;
 			
 		private:
 			static const QString STANDARD_POSITION_PROPERTY_NAME;
@@ -108,28 +111,14 @@ namespace nerd {
 			static const QString INPUT_MIRROR_BYTE_CODE;
 			static const QString INPUT_MIRROR_FLIP_GUID;
 			static const QString INPUT_MIRROR_FLIP_BYTE_CODE;
+			static const QString MODULE_INPUT_GUID;
+			static const QString MODULE_OUTPUT_GUID;
 			static const int BDN_DRAWING_AREA_X_LENGTH;
 			static const int BDN_DRAWING_AREA_Y_LENGTH;
 			static const int ADDITIONAL_BDN_NEURON_DISTANCE;
 			static const int BDN_MIN_EXECUTION_POS;
 			static const int BDN_MAX_EXECUTION_POS;
-			
-			QString m_standardBiasSynapseType;
-			QString m_robotType;
-			QMap<QString, QString> m_byteCodeMapping;
-			QMap<QString, QString> m_extraSpinalCordMapping;
-			
-			QHash<NeuralNetworkElement*, int> m_xmlIdTable;
-			QHash<NeuralNetworkElement*, int> m_executionPositionTable;
-			QMap<QString, QList<QString> > m_byteCodeModulPositions;			
-			QList<BDNNeuronInfo*> m_BDNNeuronInfoList;
-			QList<BDNSynapseInfo*> m_BDNSynapseInfoList;
-			int m_nextXmlId;
-			int m_bdnXPosOffset;
-			int m_bdnYPosOffset;
-			double m_bdnXPosScaling;
-			double m_bdnYPosScaling;
-			
+				
 		public:
 			NeuralNetworkBDNExporter(QString standardBiasSynapseType, QString robotType, QMap<QString, QString> byteCodeMapping);
 			
@@ -147,6 +136,7 @@ namespace nerd {
 			bool updateXmlIdTable(ModularNeuralNetwork *net, QString *errorMsg);
 			bool calcNeuronPositionValues(ModularNeuralNetwork *net, QString *errorMsg);
 			bool calcExecutionPositions(ModularNeuralNetwork *net, QString *errorMsg);
+			bool determineBrainDesignerInterfaceNeurons(ModularNeuralNetwork *net, QString *errorMsg);
 			bool createBDNHeadInformation(QDomElement &xmlRoot);
 			bool createSurroundingModule(QDomDocument &xmlDoc, QDomElement &xmlRoot, const QString &networkName);
 			void addByteCodePosition(const QString &modulName, const QString &position);
@@ -174,6 +164,25 @@ namespace nerd {
 			QString getSynapseByteCodeMappingTypes();
 			
 			void deleteWorkingVariables();
+			
+		private:
+			QString m_standardBiasSynapseType;
+			QString m_robotType;
+			QMap<QString, QString> m_byteCodeMapping;
+			QMap<QString, QString> m_extraSpinalCordMapping;
+			
+			QHash<NeuralNetworkElement*, int> m_xmlIdTable;
+			QHash<NeuralNetworkElement*, int> m_executionPositionTable;
+			QMap<QString, QList<QString> > m_byteCodeModulPositions;			
+			QList<BDNNeuronInfo*> m_BDNNeuronInfoList;
+			QList<BDNSynapseInfo*> m_BDNSynapseInfoList;
+			int m_nextXmlId;
+			int m_bdnXPosOffset;
+			int m_bdnYPosOffset;
+			double m_bdnXPosScaling;
+			double m_bdnYPosScaling;
+			int mNumberOfModuleInterfaceInputs;
+			int mNumberOfModuleInterfaceOutputs;
 	};
 
 }
