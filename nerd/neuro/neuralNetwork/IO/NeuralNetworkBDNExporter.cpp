@@ -846,7 +846,8 @@ bool NeuralNetworkBDNExporter::addBDNNeuronInfo(Neuron *netNeuron, QString *erro
 bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *errorMsg)
 {
 	if(getBDNInSynapseInformation(inNeuron, errorMsg).length() > 0){
-		*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has incoming synapses! This is not supported.");
+		*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" ["
+						+ QString::number(inNeuron->getId()) + "] has incoming synapses! This is not supported.");
 		
 		return false;
 	}
@@ -861,7 +862,8 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 	inputInfo->RobotType = m_robotType;
 	inputInfo->SpinalCordAddress = getSpinalCordAddress(inNeuron, errorMsg);
 	if(inputInfo->SpinalCordAddress == QString::null) {
-		*errorMsg = *errorMsg + QString("Neuron \"" + inNeuron->getNameValue().get() + "\" has no valid SPINAL_CORD_ADDRESS property.\n");
+		*errorMsg = *errorMsg + QString("Neuron \"" + inNeuron->getNameValue().get() + "\" ["
+						+ QString::number(inNeuron->getId()) + "] has no valid SPINAL_CORD_ADDRESS property.\n");
 		return false;
 	}
 	
@@ -877,13 +879,19 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 		mirrorInfo->Type = "Unit";
 		
 		if(inNeuron->getTransferFunction()->getLowerBound() != -1.0){
-			*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has an invalid lower value of " + QString::number(inNeuron->getTransferFunction()->getLowerBound())+ ". The lower value must be -1.0.");
+			*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" ["
+							+ QString::number(inNeuron->getId()) + "] has an invalid lower value of " 
+							+ QString::number(inNeuron->getTransferFunction()->getLowerBound())
+							+ ". The lower value must be -1.0.");
 					
 			return false;
 		}
 		
 		if(inNeuron->getTransferFunction()->getUpperBound() != 1.0){
-			*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" has an invalid upper value of " + QString::number(inNeuron->getTransferFunction()->getUpperBound())+ ". The upper value must be 1.0.");
+			*errorMsg = *errorMsg + QString("The input neuron \"" + inNeuron->getNameValue().get() + "\" ["
+							+ QString::number(inNeuron->getId()) + "] has an invalid upper value of " 
+							+ QString::number(inNeuron->getTransferFunction()->getUpperBound())
+							+ ". The upper value must be 1.0.");
 			
 			return false;
 		}
@@ -970,7 +978,8 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 	outputInfo->RobotType = m_robotType;	
 	outputInfo->SpinalCordAddress = getSpinalCordAddress(outNeuron, errorMsg);
 	if(outputInfo->SpinalCordAddress == QString::null) {
-		*errorMsg = *errorMsg + QString("The output neuron \"" + outNeuron->getNameValue().get() + "\" does not have a valid SPINAL_CORD_ADDRESS property");
+		*errorMsg = *errorMsg + QString("The output neuron \"" + outNeuron->getNameValue().get() + "\" ["
+					+ QString::number(outNeuron->getId()) + "] does not have a valid SPINAL_CORD_ADDRESS property");
 		return false;
 	}
 	
@@ -1186,8 +1195,9 @@ QString NeuralNetworkBDNExporter::getBDNNeuronType(Neuron *netNeuron, QString *e
 		// check if neuron type exists in bytecodemapping, if not --> error
 	if(!m_byteCodeMapping.contains(neuronType))
 	{			
-		*errorMsg = QString("The neuron \"%1\" has an unknown activation and transfer function pair \"%2\"! Use a known pair or add a new bytecode mapping to the function \"createByteCodeMapping()\".\nThe following pairs are known:\n%3").arg(	
+		*errorMsg = QString("The neuron \"%1\" [%2] has an unknown activation and transfer function pair \"%3\"! Use a known pair or add a new bytecode mapping to the function \"createByteCodeMapping()\".\nThe following pairs are known:\n%4").arg(	
 												netNeuron->getNameValue().get(), 
+												QString::number(netNeuron->getId()),
 												neuronType,
 												getNeuronByteCodeMappingTypes());
 			
@@ -1242,8 +1252,9 @@ bool NeuralNetworkBDNExporter::addBDNSynapseInfo(Synapse *netSynapse, QString *e
 		// check if the synapse type exists in bytecodemapping, if not --> error
 	if(!m_byteCodeMapping.contains(type))
 	{
-		*errorMsg = *errorMsg + QString("A synapse of the neuron \"%1\" has an unknown synaptic function \"%2\"! Use a known function or add a new bytecode mapping to the function \"createByteCodeMapping()\".\nThe following functions are known:\n%3").arg(	
+		*errorMsg = *errorMsg + QString("A synapse of the neuron \"%1\" [%2] has an unknown synaptic function \"%3\"! Use a known function or add a new bytecode mapping to the function \"createByteCodeMapping()\".\nThe following functions are known:\n%4").arg(	
 												netSynapse->getSource()->getNameValue().get(), 
+												QString::number(netSynapse->getId()),
 												netSynapse->getSynapseFunction()->getName(),
 												getSynapseByteCodeMappingTypes());
 		
@@ -1338,8 +1349,9 @@ int NeuralNetworkBDNExporter::getBDNYPos(Neuron *netNeuron)
 QString NeuralNetworkBDNExporter::getSpinalCordAddress(Neuron *netNeuron, QString *errorMsg)
 {
 	if(!netNeuron->hasProperty(STANDARD_POSITION_PROPERTY_NAME)) {
-		*errorMsg = QString("The neuron \"%1\" has not the needed property \"%2\"!. ").arg(
+		*errorMsg = QString("The neuron \"%1\" [%2] has not the needed property \"%3\"!. ").arg(
 												netNeuron->getNameValue().get(),
+												QString::number(netNeuron->getId()),
 												STANDARD_POSITION_PROPERTY_NAME);
 		return QString::null;
 	}
