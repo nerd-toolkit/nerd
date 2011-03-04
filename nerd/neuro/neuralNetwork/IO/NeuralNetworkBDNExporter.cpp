@@ -1349,7 +1349,7 @@ int NeuralNetworkBDNExporter::getBDNYPos(Neuron *netNeuron)
 QString NeuralNetworkBDNExporter::getSpinalCordAddress(Neuron *netNeuron, QString *errorMsg)
 {
 	if(!netNeuron->hasProperty(STANDARD_POSITION_PROPERTY_NAME)) {
-		*errorMsg = QString("The neuron \"%1\" [%2] has not the needed property \"%3\"!. ").arg(
+		*errorMsg = QString("The neuron \"%1\" [%2] does not have the needed property \"%3\"!. ").arg(
 												netNeuron->getNameValue().get(),
 												QString::number(netNeuron->getId()),
 												STANDARD_POSITION_PROPERTY_NAME);

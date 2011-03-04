@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<net version="NERD XML V1.0">
+    <properties>
+        <prop value="" name="TYPE_LIST"/>
+    </properties>
+    <defaultTransferFunction name="tanh"/>
+    <defaultActivationFunction name="AdditiveTD"/>
+    <defaultSynapseFunction name="SimpleUpdateFunction"/>
+    <neuron bias="0" id="380712" name="URC_A_X">
+        <properties>
+            <prop value="5.76293,2431.95,0" name="_LOCATION"/>
+            <prop value="588" name="SPINAL_CORD_ADDRESS"/>
+			<prop value="" name="TYPE_INPUT"/>
+        </properties>
+        <transferFunction name="MSeriesTanh"/>
+        <activationFunction name="MSeries"/>
+    </neuron>
+    <neuron bias="0" id="380713" name="URC_A_Y">
+        <properties>
+            <prop value="1.20318,2497.9,0" name="_LOCATION"/>
+            <prop value="589" name="SPINAL_CORD_ADDRESS"/>
+			<prop value="" name="TYPE_INPUT"/>
+        </properties>
+        <transferFunction name="MSeriesTanh"/>
+        <activationFunction name="MSeries"/>
+    </neuron>
+    <neuron bias="0" id="380714" name="URC_A_Z">
+        <properties>
+            <prop value="4.05043,2567.72,0" name="_LOCATION"/>
+            <prop value="590" name="SPINAL_CORD_ADDRESS"/>
+			<prop value="" name="TYPE_INPUT"/>
+        </properties>
+        <transferFunction name="MSeriesTanh"/>
+        <activationFunction name="MSeries"/>
+    </neuron>
+    <neuron bias="0" id="380716" name="URC_Joy_X">
+        <properties>
+            <prop value="-207.407,2449.63,0" name="_LOCATION"/>
+            <prop value="597" name="SPINAL_CORD_ADDRESS"/>
+			<prop value="" name="TYPE_INPUT"/>
+        </properties>
+        <transferFunction name="MSeriesTanh"/>
+        <activationFunction name="MSeries"/>
+    </neuron>
+    <neuron bias="0" id="380717" name="URC_Joy_Y">
+        <properties>
+            <prop value="-118.16,2449.56,0" name="_LOCATION"/>
+            <prop value="599" name="SPINAL_CORD_ADDRESS"/>
+			<prop value="" name="TYPE_INPUT"/>
+        </properties>
+        <transferFunction name="MSeriesTanh"/>
+        <activationFunction name="MSeries"/>
+    </neuron>
+    <neuron bias="0" id="380718" name="URC_Knob_Fine">
+        <properties>
+            <prop value="-207.482,2574.25,0" name="_LOCATION"/>
+            <prop value="598" name="SPINAL_CORD_ADDRESS"/>
+			<prop value="" name="TYPE_INPUT"/>
+        </properties>
+        <transferFunction name="MSeriesTanh"/>
+        <activationFunction name="MSeries"/>
+    </neuron>
+    <neuron bias="0" id="380719" name="URC_Knob_2">
+        <properties>
+            <prop value="-102.889,2574.19,0" name="_LOCATION"/>
+            <prop value="600" name="SPINAL_CORD_ADDRESS"/>
+			<prop value="" name="TYPE_INPUT"/>
+        </properties>
+        <transferFunction name="MSeriesTanh"/>
+        <activationFunction name="MSeries"/>
+    </neuron>
+    <group id="380725" name="Default">
+        <members>
+            <member id="380712"/>
+            <member id="380713"/>
+            <member id="380714"/>
+            <member id="380716"/>
+            <member id="380717"/>
+            <member id="380718"/>
+            <member id="380719"/>
+        </members>
+        <subModules/>
+    </group>
+    <module id="380711" name="Accel">
+        <properties>
+            <prop value="-35.6656,2408.77,0" name="_LOCATION"/>
+            <prop value="75.9264,209.259" name="_MODULE_SIZE"/>
+            <prop value="Default" name="MODULE_TYPE"/>
+            <prop value="380711" name="_MODULE_IDENTIFIER"/>
+        </properties>
+        <members>
+            <member id="380712"/>
+            <member id="380713"/>
+            <member id="380714"/>
+        </members>
+        <subModules/>
+    </module>
+    <module id="380715" name="Joystick">
+        <properties>
+            <prop value="-255.049,2410.32,0" name="_LOCATION"/>
+            <prop value="180.864,103.087" name="_MODULE_SIZE"/>
+            <prop value="Default" name="MODULE_TYPE"/>
+            <prop value="380715" name="_MODULE_IDENTIFIER"/>
+        </properties>
+        <members>
+            <member id="380716"/>
+            <member id="380717"/>
+        </members>
+        <subModules/>
+    </module>
+    <module id="380720" name="Knobs">
+        <properties>
+            <prop value="-252.481,2548.13,0" name="_LOCATION"/>
+            <prop value="182.098,69.7531" name="_MODULE_SIZE"/>
+            <prop value="Default" name="MODULE_TYPE"/>
+            <prop value="380720" name="_MODULE_IDENTIFIER"/>
+        </properties>
+        <members>
+            <member id="380718"/>
+            <member id="380719"/>
+        </members>
+        <subModules/>
+    </module>
+    <module id="380710" name="URC">
+        <properties>
+            <prop value="-271.212,2394.4,0" name="_LOCATION"/>
+            <prop value="331.8,265.584" name="_MODULE_SIZE"/>
+            <prop value="Default" name="MODULE_TYPE"/>
+            <prop value="380710" name="_MODULE_IDENTIFIER"/>
+        </properties>
+        <members/>
+        <subModules>
+            <subModule id="380711"/>
+            <subModule id="380715"/>
+            <subModule id="380720"/>
+        </subModules>
+    </module>
+</net>
+
