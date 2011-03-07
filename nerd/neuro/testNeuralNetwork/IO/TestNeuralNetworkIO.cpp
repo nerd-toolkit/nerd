@@ -682,9 +682,9 @@ void TestNeuralNetworkIO::testCreateBytecodeFileFromNetwork() {
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
 	QVERIFY(!ret);
 	QVERIFY(!errorMsg.isEmpty());
-	QVERIFY(errorMsg == QString("There is an input neuron in accelboard module ABAL which has no property %1!").arg(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY));
+	QVERIFY(errorMsg == QString("There is an input neuron in accelboard module ABAL which has no property %1!").arg(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY));
 	errorMsg.clear();
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "42");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "42");
 	
 	// Try to safe a network with an output neuron in a accelboard module without the SpinalChordAddressProperty
 	Neuron *outputNeuron = new Neuron("ABAL_OUT_1", *(modNet->getDefaultTransferFunction()),
@@ -696,45 +696,45 @@ void TestNeuralNetworkIO::testCreateBytecodeFileFromNetwork() {
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
 	QVERIFY(!ret);
 	QVERIFY(!errorMsg.isEmpty());
-	QVERIFY(errorMsg == QString("There is an output neuron in accelboard module ABAL which has no property %1!").arg(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY));
+	QVERIFY(errorMsg == QString("There is an output neuron in accelboard module ABAL which has no property %1!").arg(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY));
 	errorMsg.clear();
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "32");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "32");
 
 	// Try to safe network with invalid SpinalChordAddress
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "34");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "34");
 	ret = NeuralNetworkIO::createFileFromNetwork(file.fileName(),
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
 	QVERIFY(!ret);
 	QVERIFY(!errorMsg.isEmpty());
-	QVERIFY(errorMsg == QString("Input neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 34!").arg(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY));
+	QVERIFY(errorMsg == QString("Input neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 34!").arg(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY));
 	errorMsg.clear();
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "35");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "35");
 
 	// Try to safe network with SpinalChordAddress assigned twice
 	inputNeuron = new Neuron("ABAL_IN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
 	group->addNeuron(inputNeuron);
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "35");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "35");
 	ret = NeuralNetworkIO::createFileFromNetwork(file.fileName(),
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
 	QVERIFY(!ret);
 	QVERIFY(!errorMsg.isEmpty());
-	QVERIFY(errorMsg == QString("Input neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 35!").arg(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY));
+	QVERIFY(errorMsg == QString("Input neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 35!").arg(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY));
 	errorMsg.clear();
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "36");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "36");
 
 	// Try to safe network with input neuron missing
 	inputNeuron = new Neuron("ABAL_IN_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
 	group->addNeuron(inputNeuron);
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "42");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "42");
 	inputNeuron = new Neuron("ABAL_IN_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
 	group->addNeuron(inputNeuron);
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "43");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "43");
 
 	ret = NeuralNetworkIO::createFileFromNetwork(file.fileName(),
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
@@ -748,30 +748,30 @@ void TestNeuralNetworkIO::testCreateBytecodeFileFromNetwork() {
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
 	group->addNeuron(inputNeuron);
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "44");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "44");
 
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "31");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "31");
 	ret = NeuralNetworkIO::createFileFromNetwork(file.fileName(),
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
 	QVERIFY(!ret);
 	QVERIFY(!errorMsg.isEmpty());
-	QVERIFY(errorMsg == QString("Output neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 31!").arg(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY));
+	QVERIFY(errorMsg == QString("Output neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 31!").arg(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY));
 	errorMsg.clear();
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "32");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "32");
 
 	// Try to safe network with SpinalChordAddress assigned twice in output neuron
 	outputNeuron = new Neuron("ABAL_OUT_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "32");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "32");
 	group->addNeuron(outputNeuron);
 	ret = NeuralNetworkIO::createFileFromNetwork(file.fileName(),
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
 	QVERIFY(!ret);
 	QVERIFY(!errorMsg.isEmpty());
-	QVERIFY(errorMsg == QString("Output neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 32!").arg(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY));
+	QVERIFY(errorMsg == QString("Output neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 32!").arg(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY));
 	errorMsg.clear();
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "33");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "33");
 
 	// Try to safe network with output neuron missing
 	ret = NeuralNetworkIO::createFileFromNetwork(file.fileName(),
@@ -785,376 +785,376 @@ void TestNeuralNetworkIO::testCreateBytecodeFileFromNetwork() {
 	outputNeuron = new Neuron("ABAL_OUT_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "34");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "34");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABAL_OUT_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "45");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "45");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABAL_OUT_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "46");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "46");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABAL_OUT_6", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "47");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "47");
 	group->addNeuron(outputNeuron);
 
 	group = modNet->getNeuronGroup("ABML");
 	inputNeuron = new Neuron("ABML_IN_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "3");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "3");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABML_IN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "4");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "4");
 	group->addNeuron(inputNeuron);
 
 	group = modNet->getNeuronGroup("ABSR");
 	inputNeuron = new Neuron("ABSR_IN_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "19");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "19");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABSR_IN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "20");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "20");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABSR_IN_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "26");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "26");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABSR_IN_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "27");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "27");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABSR_IN_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "28");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "28");
 	group->addNeuron(inputNeuron);
 	Neuron *absrOut1 = new Neuron("ABSR_OUT_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	absrOut1->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	absrOut1->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "16");
+	absrOut1->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "16");
 	group->addNeuron(absrOut1);
 	outputNeuron = new Neuron("ABSR_OUT_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "17");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "17");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABSR_OUT_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "18");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "18");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABSR_OUT_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "29");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "29");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABSR_OUT_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "30");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "30");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABSR_OUT_6", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "31");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "31");
 	group->addNeuron(outputNeuron);
 
 	group = modNet->getNeuronGroup("ABAR");
 	inputNeuron = new Neuron("ABAR_IN_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "51");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "51");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABAR_IN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "52");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "52");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABAR_IN_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "58");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "58");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABAR_IN_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "59");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "59");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABAR_IN_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "60");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "60");
 	group->addNeuron(inputNeuron);
 	outputNeuron = new Neuron("ABAR_OUT_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "48");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "48");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABAR_OUT_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "49");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "49");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABAR_OUT_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "50");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "50");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABAR_OUT_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "61");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "61");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABAR_OUT_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "62");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "62");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABAR_OUT_6", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "63");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "63");
 	group->addNeuron(outputNeuron);
 
 	group = modNet->getNeuronGroup("ABHL");
 	inputNeuron = new Neuron("ABHL_IN_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "67");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "67");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABHL_IN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "68");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "68");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABHL_IN_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "74");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "74");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABHL_IN_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "75");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "75");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABHL_IN_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "76");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "76");
 	group->addNeuron(inputNeuron);
 	outputNeuron = new Neuron("ABHL_OUT_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "64");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "64");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHL_OUT_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "65");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "65");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHL_OUT_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "66");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "66");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHL_OUT_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "77");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "77");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHL_OUT_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "78");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "78");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHL_OUT_6", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "79");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "79");
 	group->addNeuron(outputNeuron);
 
 	group = modNet->getNeuronGroup("ABHR");
 	inputNeuron = new Neuron("ABHR_IN_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "83");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "83");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABHR_IN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "84");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "84");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABHR_IN_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "90");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "90");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABHR_IN_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "91");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "91");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABHR_IN_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "92");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "92");
 	group->addNeuron(inputNeuron);
 	outputNeuron = new Neuron("ABHR_OUT_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "80");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "80");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHR_OUT_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "81");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "81");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHR_OUT_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "82");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "82");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHR_OUT_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "93");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "93");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHR_OUT_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "94");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "94");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABHR_OUT_6", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "95");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "95");
 	group->addNeuron(outputNeuron);
 
 	group = modNet->getNeuronGroup("ABFL");
 	inputNeuron = new Neuron("ABFL_IN_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "99");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "99");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABFL_IN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "100");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "100");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABFL_IN_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "106");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "106");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABFL_IN_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "107");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "107");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABFL_IN_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "108");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "108");
 	group->addNeuron(inputNeuron);
 	outputNeuron = new Neuron("ABFL_OUT_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "96");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "96");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFL_OUT_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "97");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "97");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFL_OUT_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "98");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "98");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFL_OUT_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "109");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "109");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFL_OUT_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "110");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "110");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFL_OUT_6", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "111");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "111");
 	group->addNeuron(outputNeuron);
 
 	group = modNet->getNeuronGroup("ABFR");
 	Neuron *abfrIn1 = new Neuron("ABFR_IN_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	abfrIn1->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	abfrIn1->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "115");
+	abfrIn1->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "115");
 	group->addNeuron(abfrIn1);
 	inputNeuron = new Neuron("ABFR_IN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "116");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "116");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABFR_IN_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "122");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "122");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABFR_IN_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "123");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "123");
 	group->addNeuron(inputNeuron);
 	inputNeuron = new Neuron("ABFR_IN_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	inputNeuron->setProperty(Neuron::NEURON_TYPE_INPUT, "");
-	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "124");
+	inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "124");
 	group->addNeuron(inputNeuron);
 	outputNeuron = new Neuron("ABFR_OUT_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "112");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "112");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFR_OUT_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "113");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "113");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFR_OUT_3", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "114");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "114");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFR_OUT_4", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "125");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "125");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFR_OUT_5", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "126");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "126");
 	group->addNeuron(outputNeuron);
 	outputNeuron = new Neuron("ABFR_OUT_6", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
 	outputNeuron->setProperty(Neuron::NEURON_TYPE_OUTPUT, "");
-	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "127");
+	outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "127");
 	group->addNeuron(outputNeuron);
 
 	// Try to safe a net with a synapse with a synapse as target
@@ -1177,28 +1177,28 @@ void TestNeuralNetworkIO::testCreateBytecodeFileFromNetwork() {
 	group = modNet->getNeuronGroup("ABAL");
 	Neuron *abalHidden1 = new Neuron("ABAL_HIDDEN_1", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
-	abalHidden1->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "37");
+	abalHidden1->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "37");
 	group->addNeuron(abalHidden1);
 	ret = NeuralNetworkIO::createFileFromNetwork(file.fileName(),
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
 	QVERIFY(!ret);
 	QVERIFY(!errorMsg.isEmpty());
-	QVERIFY(errorMsg == QString("Hidden neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 37!").arg(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY));
+	QVERIFY(errorMsg == QString("Hidden neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 37!").arg(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY));
 	errorMsg.clear();
-	abalHidden1->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "38");
+	abalHidden1->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "38");
 
 	// Try to safe a net with two hidden neurons with same SpinalChordAddress
 	Neuron *abalHidden2 = new Neuron("ABAL_HIDDEN_2", *(modNet->getDefaultTransferFunction()),
 								*(modNet->getDefaultActivationFunction()));
-	abalHidden2->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, "38");
+	abalHidden2->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, "38");
 	group->addNeuron(abalHidden2);
 	ret = NeuralNetworkIO::createFileFromNetwork(file.fileName(),
 			modNet, NeuralNetworkIO::Bytecode, &errorMsg);
 	QVERIFY(!ret);
 	QVERIFY(!errorMsg.isEmpty());
-	QVERIFY(errorMsg == QString("Hidden neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 38!").arg(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY));
+	QVERIFY(errorMsg == QString("Hidden neuron in accelboard module ABAL has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %1 = 38!").arg(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY));
 	errorMsg.clear();
-	abalHidden2->removeProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY);
+	abalHidden2->removeProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY);
 
 	// Try to safe a net with two mich hidden neurons with outgoing connections
 	Neuron *abalHidden3 = new Neuron("ABAL_HIDDEN_3", *(modNet->getDefaultTransferFunction()),

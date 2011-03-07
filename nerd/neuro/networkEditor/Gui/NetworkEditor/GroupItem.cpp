@@ -97,6 +97,9 @@ NeuronGroup* GroupItem::getNeuronGroup() const {
 	return mNeuronGroup;
 }
 
+Properties* GroupItem::getEncapsulatedProperties() const {
+	return mNeuronGroup;
+}
 
 }
 

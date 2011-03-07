@@ -128,6 +128,9 @@ QRectF SimpleModuleItem::getPaintingBox() {
 
 bool SimpleModuleItem::isHit(const QPointF &point, Qt::MouseButtons, double scaling) {
 
+	if(mIsInHiddenLayer) {
+		return false;
+	}
 
 	QPointF pos = getGlobalPosition();
 
@@ -226,7 +229,7 @@ void SimpleModuleItem::mouseMoved(const QPointF &distance, Qt::MouseButtons mous
 void SimpleModuleItem::paintSelf(QPainter *painter) {
 
 	if(mHidden || !mActive || painter == 0 || mModule == 0 
-		|| (mHideUnselectedElements && !mSelected)) 
+		|| (mHideUnselectedElements && !mSelected) || mIsInHiddenLayer) 
 	{
 		return;
 	}

@@ -361,6 +361,10 @@ void NeuralNetworkEditor::updateRecentNetworkMenu(const QString &fileName) {
 	}
 }
 
+bool NeuralNetworkEditor::isHiddenLayerModeEnabled() const {
+	return mEnableHiddenLayersCheckbox->isChecked();
+}
+
 void NeuralNetworkEditor::undoCommand() {
 	NetworkVisualization *visu = getCurrentNetworkVisualization();
 	if(visu != 0) {
@@ -479,12 +483,12 @@ void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetw
 
 	if(NeuralNetworkIO::createFileFromNetwork(nameOfFile, network, &errorMessage, &warnings)) {
 		if(enableLogMessage) {
-			mMessageWidget->addMessage("Successfully saved neural network to file [" + nameOfFile + "]");
+			mMessageWidget->addMessage("Successfully saved neural network to file \n[" + nameOfFile + "]");
 		}
 	}
 	else {
 		if(enableLogMessage) {
-			mMessageWidget->addMessage("Failed saving neural network to file [" + nameOfFile + "]");
+			mMessageWidget->addMessage("Failed saving neural network to file \n[" + nameOfFile + "]");
 		}
 	}
 
@@ -1261,14 +1265,27 @@ void NeuralNetworkEditor::exportMSeriesBDN(const QString &fileName) {
 	if(network == 0 || handler == 0) {
 		return;
 	}
+	
+	//additionally save network as onn file.
+	QString networkFileName = nameOfFile + ".onn";
+	saveNetwork(networkFileName, network, true, false);
 
 	QString errorMessage;
 
 	if(!NeuralNetworkIOMSeriesBDN::createFileFromNetwork(nameOfFile, network, &errorMessage))
 	{
-		mMessageWidget->addMessage("Could not export neural network as BrainDesigner Library."
+		mMessageWidget->addMessage("Could not export neural network as BrainDesigner Library.\n"
 				" [" + nameOfFile + "]");		
 	}
+	else {
+		mMessageWidget->addMessage("Successfully exported neural network as BrainDesigner Library.\n"
+				" [" + nameOfFile + "]");	
+	}
+	
+	if(errorMessage != "") {
+		mMessageWidget->addMessage(errorMessage);
+	}
+	
 	/*
 	if(!NeuralNetworkIOBytecode::createMotionEditorFileFromNetwork(nameOfFile, network, &errorMessage)) {
 		mMessageWidget->addMessage("Could not export neural network as bytecode and motion editor file."
@@ -1280,9 +1297,7 @@ void NeuralNetworkEditor::exportMSeriesBDN(const QString &fileName) {
 	}
 	*/
 
-	if(errorMessage != "") {
-		mMessageWidget->addMessage(errorMessage);
-	}
+	
 }
 
 void NeuralNetworkEditor::exportDebugMSeriesComponentsBDN(const QString &fileName) {
@@ -1329,6 +1344,7 @@ void NeuralNetworkEditor::exportDebugMSeriesComponentsBDN(const QString &fileNam
 
 
 void NeuralNetworkEditor::saveNetworkAsSvgGraphics(const QString &fileName) {
+	/*
 	mMessageWidget->clear();
 
 	BoolValue *pauseValue = Core::getInstance()->getValueManager()->getBoolValue(
@@ -1440,6 +1456,7 @@ void NeuralNetworkEditor::saveNetworkAsSvgGraphics(const QString &fileName) {
 	if(pauseValue != 0) {
 		pauseValue->set(paused);
 	}
+	*/
 }
 
 
@@ -1448,6 +1465,7 @@ void NeuralNetworkEditor::currentTabChanged(int index) {
 	NetworkVisualization *visu = getCurrentNetworkVisualization();
 	if(visu != 0) {
 		visu->setFocus();
+		visu->updateHiddenLayerMode();
 		setWindowTitle("Network Editor [" + visu->getCurrentNetworkFileName() + "]");
 	}
 	emit tabSelectionChanged(index);
@@ -1490,6 +1508,29 @@ void NeuralNetworkEditor::autoSaveTimerExpired() {
 	}
 }
 
+void NeuralNetworkEditor::hiddenLayerStateChanged() {
+	NetworkVisualization *visu = getCurrentNetworkVisualization();
+	if(visu != 0) {
+		visu->updateHiddenLayerMode();
+	}
+}
+
+void NeuralNetworkEditor::selectAllItems() {
+	NetworkVisualization *visu = getCurrentNetworkVisualization();
+	if(visu != 0) {
+		visu->selectAllItems();
+	}
+}
+
+
+void NeuralNetworkEditor::selectAllVisibleItems() {
+	cerr << "huhu" << endl;
+	NetworkVisualization *visu = getCurrentNetworkVisualization();
+	if(visu != 0) {
+		visu->selectAllItems(true);
+	}
+}
+
 
 void NeuralNetworkEditor::setupMenuBar() {
 	addEditMenu();
@@ -1519,6 +1560,23 @@ QMenu* NeuralNetworkEditor::addEditMenu() {
 	findAction->setShortcut(tr("Ctrl+f"));
 	connect(findAction, SIGNAL(triggered()),
 			this, SLOT(searchForNetworkElement()));
+			
+	QAction *selectAllAction = editMenu->addAction("Select All");
+	connect(selectAllAction, SIGNAL(triggered()),
+			this, SLOT(selectAllItems()));
+			
+	QAction *selectAllHiddenAction = editMenu->addAction("Select All Visible");
+	connect(selectAllHiddenAction, SIGNAL(triggered()),
+			this, SLOT(selectAllVisibleItems()));
+
+	editMenu->addSeparator();
+	
+	mEnableHiddenLayersCheckbox = editMenu->addAction("Enable Hidden &Layers");
+	mEnableHiddenLayersCheckbox->setCheckable(true);
+	mEnableHiddenLayersCheckbox->setChecked(true);
+	mEnableHiddenLayersCheckbox->setShortcut(tr("Ctrl+l"));
+	connect(mEnableHiddenLayersCheckbox, SIGNAL(changed()),
+			this, SLOT(hiddenLayerStateChanged()));
 
 	mainMenu->addMenu(editMenu);
 

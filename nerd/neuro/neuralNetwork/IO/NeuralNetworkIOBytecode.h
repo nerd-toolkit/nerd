@@ -58,8 +58,8 @@ namespace nerd {
 	class NeuralNetworkIOBytecode {
 	public:
 		static const char* A_SERIES_ACCELBOARD_NAMES[8];
-		static const char* SPINAL_CHORD_ADDRESS_PROPERTY;
-		static const char* REMOVE_SPINAL_CHORD_ADDRESS_PROPERTY;
+		static const char* SPINAL_CORD_ADDRESS_PROPERTY;
+		static const char* REMOVE_SPINAL_CORD_ADDRESS_PROPERTY;
 		static const char* MEMORY_NUMBER_PROPERTY;
 	public:
 		static bool createFileFromNetwork(QString fileName, NeuralNetwork *net, QString *errorMsg);

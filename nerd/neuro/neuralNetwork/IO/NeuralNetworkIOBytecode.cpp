@@ -54,8 +54,8 @@ namespace nerd {
 
 const char* NeuralNetworkIOBytecode::A_SERIES_ACCELBOARD_NAMES[8] = {"ABML", "ABSR", "ABAL", "ABAR", "ABHL", "ABHR", "ABFL", "ABFR"};
 
-const char* NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY = "SPINAL_CORD_ADDRESS";
-const char* NeuralNetworkIOBytecode::REMOVE_SPINAL_CHORD_ADDRESS_PROPERTY = "REMOVE_SPINAL_CORD_ADDRESS";
+const char* NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY = "SPINAL_CORD_ADDRESS";
+const char* NeuralNetworkIOBytecode::REMOVE_SPINAL_CORD_ADDRESS_PROPERTY = "REMOVE_SPINAL_CORD_ADDRESS";
 const char* NeuralNetworkIOBytecode::MEMORY_NUMBER_PROPERTY = "MEMORY_NUMBER";
 
 /**
@@ -284,9 +284,9 @@ void NeuralNetworkIOBytecode::removeSpinalChordAddressesAndMemoryNumbers(NeuralN
 			if(neuron->hasProperty(MEMORY_NUMBER_PROPERTY)) {
 				neuron->removeProperty(MEMORY_NUMBER_PROPERTY);
 			}
-			if(neuron->hasProperty(REMOVE_SPINAL_CHORD_ADDRESS_PROPERTY)) {
-				neuron->removeProperty(REMOVE_SPINAL_CHORD_ADDRESS_PROPERTY);
-				neuron->removeProperty(SPINAL_CHORD_ADDRESS_PROPERTY);
+			if(neuron->hasProperty(REMOVE_SPINAL_CORD_ADDRESS_PROPERTY)) {
+				neuron->removeProperty(REMOVE_SPINAL_CORD_ADDRESS_PROPERTY);
+				neuron->removeProperty(SPINAL_CORD_ADDRESS_PROPERTY);
 			}
 		}
 	}
@@ -360,8 +360,8 @@ void NeuralNetworkIOBytecode::writeBytecode(QMap<QString, NeuroModule*> &accelbo
 								addSynapses = false;
 							}
 							out << "weight " << w << "\r\n";
-							if(sourceNeuron->hasProperty(SPINAL_CHORD_ADDRESS_PROPERTY)) {
-								out << "read " << sourceNeuron->getProperty(SPINAL_CHORD_ADDRESS_PROPERTY) 
+							if(sourceNeuron->hasProperty(SPINAL_CORD_ADDRESS_PROPERTY)) {
+								out << "read " << sourceNeuron->getProperty(SPINAL_CORD_ADDRESS_PROPERTY) 
 									<< "\r\n";
 							} else {
 								out << "read " << sourceNeuron->getProperty(MEMORY_NUMBER_PROPERTY) 
@@ -374,8 +374,8 @@ void NeuralNetworkIOBytecode::writeBytecode(QMap<QString, NeuroModule*> &accelbo
 				// Write transfer function
 				out << "tanh\r\n";
 				// Write result to MemoryNumber or SpinalChordAddress
-				if(neuron->hasProperty(SPINAL_CHORD_ADDRESS_PROPERTY)) {
-					out << "res " << neuron->getProperty(SPINAL_CHORD_ADDRESS_PROPERTY) << "\r\n\r\n";
+				if(neuron->hasProperty(SPINAL_CORD_ADDRESS_PROPERTY)) {
+					out << "res " << neuron->getProperty(SPINAL_CORD_ADDRESS_PROPERTY) << "\r\n\r\n";
 				} else {
 					out << "res " << neuron->getProperty(MEMORY_NUMBER_PROPERTY) << "\r\n\r\n";
 				}
@@ -432,10 +432,10 @@ bool NeuralNetworkIOBytecode::accelboardModuleHiddenNeuronCheck(NeuralNetwork *n
 	QListIterator<Neuron*> hiddenIt(hiddenNeurons);
 	while(hiddenIt.hasNext()) {
 		Neuron* hiddenNeuron = hiddenIt.next();
-		if(hiddenNeuron->hasProperty(SPINAL_CHORD_ADDRESS_PROPERTY)) {
-			QString address = hiddenNeuron->getProperty(SPINAL_CHORD_ADDRESS_PROPERTY);
+		if(hiddenNeuron->hasProperty(SPINAL_CORD_ADDRESS_PROPERTY)) {
+			QString address = hiddenNeuron->getProperty(SPINAL_CORD_ADDRESS_PROPERTY);
 			if(check && !freeAddresses.contains(address)) {
-				*errorMsg = QString("Hidden neuron in accelboard module %1 has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %2 = %3!").arg(accelboardName).arg(SPINAL_CHORD_ADDRESS_PROPERTY).arg(address);
+				*errorMsg = QString("Hidden neuron in accelboard module %1 has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %2 = %3!").arg(accelboardName).arg(SPINAL_CORD_ADDRESS_PROPERTY).arg(address);
 				return false;
 			}
 			freeAddresses.removeAll(address);
@@ -447,7 +447,7 @@ bool NeuralNetworkIOBytecode::accelboardModuleHiddenNeuronCheck(NeuralNetwork *n
 	hiddenIt.toFront();
 	while(hiddenIt.hasNext()) {
 		Neuron* hiddenNeuron = hiddenIt.next();
-		if(!hiddenNeuron->hasProperty(SPINAL_CHORD_ADDRESS_PROPERTY)) {
+		if(!hiddenNeuron->hasProperty(SPINAL_CORD_ADDRESS_PROPERTY)) {
 			if(isNeuronWithOutgoingConnections(net, module, hiddenNeuron)) {
 				// If neuron has outgoing connections, check if there are free SpinalChordAddresses left.
 				if(check && freeAddresses.isEmpty()) {
@@ -456,8 +456,8 @@ bool NeuralNetworkIOBytecode::accelboardModuleHiddenNeuronCheck(NeuralNetwork *n
 				}
 				// If not to check, assign the first free SpinalChordAddress to the neuron with the remove later property.
 				if(!check) {
-					hiddenNeuron->setProperty(SPINAL_CHORD_ADDRESS_PROPERTY, freeAddresses.first());
-					hiddenNeuron->setProperty(REMOVE_SPINAL_CHORD_ADDRESS_PROPERTY, "");
+					hiddenNeuron->setProperty(SPINAL_CORD_ADDRESS_PROPERTY, freeAddresses.first());
+					hiddenNeuron->setProperty(REMOVE_SPINAL_CORD_ADDRESS_PROPERTY, "");
 				}
 				freeAddresses.removeFirst();
 			} else {
@@ -476,8 +476,8 @@ bool NeuralNetworkIOBytecode::accelboardModuleHiddenNeuronCheck(NeuralNetwork *n
 					}
 					// If not to check, assign a free SpinalChordAddress with the remove later property.
 					if(!check) {
-						hiddenNeuron->setProperty(SPINAL_CHORD_ADDRESS_PROPERTY, freeAddresses.first());
-						hiddenNeuron->setProperty(REMOVE_SPINAL_CHORD_ADDRESS_PROPERTY, "");
+						hiddenNeuron->setProperty(SPINAL_CORD_ADDRESS_PROPERTY, freeAddresses.first());
+						hiddenNeuron->setProperty(REMOVE_SPINAL_CORD_ADDRESS_PROPERTY, "");
 					}
 					freeAddresses.removeFirst();
 				}
@@ -535,17 +535,17 @@ bool NeuralNetworkIOBytecode::accelboardModuleHasRightInputOutputNeurons(NeuroMo
 	while(neuronIt.hasNext()) {
 		Neuron *neuron = neuronIt.next();
 		if(neuron->hasProperty(Neuron::NEURON_TYPE_INPUT)) {
-			if(!neuron->hasProperty(SPINAL_CHORD_ADDRESS_PROPERTY)) {
-				*errorMsg = QString("There is an input neuron in accelboard module %1 which has no property %2!").arg(accelboardName).arg(SPINAL_CHORD_ADDRESS_PROPERTY);
+			if(!neuron->hasProperty(SPINAL_CORD_ADDRESS_PROPERTY)) {
+				*errorMsg = QString("There is an input neuron in accelboard module %1 which has no property %2!").arg(accelboardName).arg(SPINAL_CORD_ADDRESS_PROPERTY);
 				return false;
 			}
-			inputNeuronAddresses << neuron->getProperty(SPINAL_CHORD_ADDRESS_PROPERTY);
+			inputNeuronAddresses << neuron->getProperty(SPINAL_CORD_ADDRESS_PROPERTY);
 		} else if(neuron->hasProperty(Neuron::NEURON_TYPE_OUTPUT)) {
-			if(!neuron->hasProperty(SPINAL_CHORD_ADDRESS_PROPERTY)) {
-				*errorMsg = QString("There is an output neuron in accelboard module %1 which has no property %2!").arg(accelboardName).arg(SPINAL_CHORD_ADDRESS_PROPERTY);
+			if(!neuron->hasProperty(SPINAL_CORD_ADDRESS_PROPERTY)) {
+				*errorMsg = QString("There is an output neuron in accelboard module %1 which has no property %2!").arg(accelboardName).arg(SPINAL_CORD_ADDRESS_PROPERTY);
 				return false;
 			}
-			outputNeuronAddresses << neuron->getProperty(SPINAL_CHORD_ADDRESS_PROPERTY);
+			outputNeuronAddresses << neuron->getProperty(SPINAL_CORD_ADDRESS_PROPERTY);
 		}
 	}
 
@@ -585,7 +585,7 @@ bool NeuralNetworkIOBytecode::accelboardModuleHasRightInputOutputNeurons(NeuroMo
 	while(inputNeuronAddressesIt.hasNext()) {
 		QString inputNeuronAddress = inputNeuronAddressesIt.next();
 		if(!inputAddresses.contains(inputNeuronAddress)) {
-			*errorMsg = QString("Input neuron in accelboard module %1 has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %2 = %3!").arg(accelboardName).arg(SPINAL_CHORD_ADDRESS_PROPERTY).arg(inputNeuronAddress);
+			*errorMsg = QString("Input neuron in accelboard module %1 has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %2 = %3!").arg(accelboardName).arg(SPINAL_CORD_ADDRESS_PROPERTY).arg(inputNeuronAddress);
 			return false;
 		}
 		inputAddresses.removeAll(inputNeuronAddress);
@@ -601,7 +601,7 @@ bool NeuralNetworkIOBytecode::accelboardModuleHasRightInputOutputNeurons(NeuroMo
 	while(outputNeuronAddressesIt.hasNext()) {
 		QString outputNeuronAddress = outputNeuronAddressesIt.next();
 		if(!outputAddresses.contains(outputNeuronAddress)) {
-			*errorMsg = QString("Output neuron in accelboard module %1 has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %2 = %3!").arg(accelboardName).arg(SPINAL_CHORD_ADDRESS_PROPERTY).arg(outputNeuronAddress);
+			*errorMsg = QString("Output neuron in accelboard module %1 has invalid SpinalCordAddress or SpinalCordAddress is assigned twice: %2 = %3!").arg(accelboardName).arg(SPINAL_CORD_ADDRESS_PROPERTY).arg(outputNeuronAddress);
 			return false;
 		}
 		outputAddresses.removeAll(outputNeuronAddress);

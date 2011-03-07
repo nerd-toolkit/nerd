@@ -89,6 +89,8 @@ namespace nerd {
 		virtual void paintSelf(QPainter *painter) = 0;
 
 		virtual void updateLayout() = 0;
+		
+		virtual Properties* getEncapsulatedProperties() const;
 
 	protected:	
 		NetworkVisualization *mOwner;

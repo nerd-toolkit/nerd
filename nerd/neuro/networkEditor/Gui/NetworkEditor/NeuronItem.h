@@ -78,6 +78,8 @@ namespace nerd {
 
 		virtual void setViewMode(int mode, bool enabled);
 		virtual bool isViewModeEnabled(int mode);
+		
+		virtual Properties* getEncapsulatedProperties() const;
 
 	protected:
 		NetworkVisualization *mOwner;

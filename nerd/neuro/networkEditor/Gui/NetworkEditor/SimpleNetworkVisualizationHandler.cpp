@@ -238,6 +238,7 @@ bool SimpleNetworkVisualizationHandler::updateNetworkView() {
 			NeuronItem *item = i.next();
 			item->setHidden(true);
 			item->setActive(false);
+			item->setToHiddenLayer(false);
 			mNeuronLookup.remove(item->getNeuron());
 			item->setNeuron(0);
 			item->setParent(0);
@@ -286,6 +287,7 @@ bool SimpleNetworkVisualizationHandler::updateNetworkView() {
 			SynapseItem *item = i.next();
 			item->setHidden(true);
 			item->setActive(false);
+			item->setToHiddenLayer(false);
 			mSynapseLookup.remove(item->getSynapse());
 			item->setSynapse(0);
 			item->setParent(0);
@@ -399,6 +401,7 @@ bool SimpleNetworkVisualizationHandler::updateNetworkView() {
 			ModuleItem *item = i.next();
 			item->setHidden(true);
 			item->setActive(false);
+			item->setToHiddenLayer(false);
 			mModuleLookup.remove(item->getNeuroModule());
 			item->setModule(0);
 			item->setParent(0);
@@ -486,6 +489,7 @@ bool SimpleNetworkVisualizationHandler::updateNetworkView() {
 			GroupItem *item = i.next();
 			item->setHidden(true);
 			item->setActive(false);
+			item->setToHiddenLayer(false);
 			mGroupLookup.remove(item->getNeuronGroup());
 			item->setNeuronGroup(0);
 			item->setParent(0);
@@ -550,6 +554,10 @@ bool SimpleNetworkVisualizationHandler::updateNetworkView() {
 		clearVisualization();
 	}
 	updateVisualizationSet(); 
+	
+	if(mOwner != 0) {
+		mOwner->updateHiddenLayerMode();
+	}
 
 	return true;
 }

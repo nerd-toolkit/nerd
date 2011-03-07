@@ -92,6 +92,7 @@ bool NetworkVisualizationHandler::setNeuralNetwork(ModularNeuralNetwork *network
 	if(mOwner != 0 && mOwner->getOwner() != 0 && network != mNeuralNetwork) {
 		mOwner->getOwner()->renameCurrentNetwork("");
 	}
+	
 	mNeuralNetwork = network;
 
 	if(mNeuralNetwork != 0 && mNeuralNetwork->hasProperty("_Bookmarks") && mOwner != 0) {

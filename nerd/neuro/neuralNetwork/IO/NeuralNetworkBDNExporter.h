@@ -183,6 +183,7 @@ namespace nerd {
 			double m_bdnYPosScaling;
 			int mNumberOfModuleInterfaceInputs;
 			int mNumberOfModuleInterfaceOutputs;
+			QMap<QString, int> mCurvePlotInfo;
 	};
 
 }

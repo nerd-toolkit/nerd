@@ -151,6 +151,10 @@ bool NeuronItem::isViewModeEnabled(int mode) {
 	}
 }
 
+Properties* NeuronItem::getEncapsulatedProperties() const {
+	return mNeuron;
+}
+
 }
 
 

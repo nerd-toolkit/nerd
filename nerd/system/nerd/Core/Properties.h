@@ -72,6 +72,7 @@ namespace nerd {
 
 		virtual void setProperty(const QString &name, const QString &value = QString(""));
 		virtual QString getProperty(const QString &name) const;
+		virtual QString getExactProperty(const QString &name) const;
 		virtual bool hasExactProperty(const QString &prefixedName) const;
 		virtual bool hasProperty(const QString &name) const;
 		virtual void removeProperty(const QString &name);

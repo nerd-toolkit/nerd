@@ -141,6 +141,8 @@ namespace nerd {
 		static const QString TAG_CREATION_DATE;
 		static const QString TAG_ELEMENT_VARIABLE_MASTER;
 		static const QString TAG_ELEMENT_VARIABLE_SLAVE; 
+		static const QString TAG_HIDE_LAYERS;
+		static const QString TAG_LAYER_IDENTIFIER;
 		
 	};
 

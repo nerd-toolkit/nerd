@@ -98,6 +98,10 @@ QRectF SimpleGroupItem::getPaintingBox() {
 
 bool SimpleGroupItem::isHit(const QPointF &point, Qt::MouseButtons, double) {
 
+	if(mIsInHiddenLayer) {
+		return false;
+	}
+	
 	QPointF pos = getGlobalPosition();
 	QRectF rect(pos.x(), pos.y(), mSize.width(), mSize.height());
 
@@ -120,7 +124,7 @@ void SimpleGroupItem::mouseMoved(const QPointF &distance, Qt::MouseButtons mouse
 void SimpleGroupItem::paintSelf(QPainter *painter) {
 
 	if(mHidden || !mActive || painter == 0 || mNeuronGroup == 0 
-		|| (mHideUnselectedElements && !mSelected)) 
+		|| (mHideUnselectedElements && !mSelected) || mIsInHiddenLayer) 
 	{
 		return;
 	}

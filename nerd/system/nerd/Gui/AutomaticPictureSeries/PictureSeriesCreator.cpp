@@ -90,6 +90,7 @@ PictureSeriesCreator::PictureSeriesCreator()
 	mVideoResolutionHeight = new IntValue(600);
 	mPlayBackCommand = new StringValue("mplayer <name> -loop 0");
 	mPlayVideoBackAfterCreation = new BoolValue(true);
+	mAutoGrabSimulationWindow = new BoolValue(true);
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/ScreenRecorder/Config/ScreenShotDelay", mScreenShotDelay);
@@ -107,6 +108,7 @@ PictureSeriesCreator::PictureSeriesCreator()
 	//vm->addValue("/PictureCreator/Video/VideoResolutionHeight", mVideoResolutionHeight);
 	vm->addValue("/ScreenRecorder/Playback/PlayBackAfterCreation", mPlayVideoBackAfterCreation);
 	vm->addValue("/ScreenRecorder/Playback/PlayBackCommand", mPlayBackCommand);
+	vm->addValue("/ScreenRecorder/Config/AutoGrabSimulationWindowAsRect", mAutoGrabSimulationWindow);
 
 	mRunCreator->addValueChangedListener(this);
 
@@ -341,7 +343,7 @@ void PictureSeriesCreator::guessMainSimulationWindowRectangle() {
 	mCurrentRecordingRectangle = QRect();
 	QString rectangleString = mRecordingRectangle->get().trimmed();
 
-	if(rectangleString == "") {
+	if(rectangleString == "" || mAutoGrabSimulationWindow->get()) {
 		QWidget *mainSimulationWidget = GuiManager::getGlobalGuiManager()
 					->getWidget(NerdConstants::GUI_MAIN_SIMULATION_WINDOW);
 		

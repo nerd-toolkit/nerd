@@ -311,7 +311,7 @@ void NeuralNetworkIOSimbaV3Xml::mapInputAndOutputNeuronsToSimbaNames(ModularNeur
 	QListIterator<Neuron*> inputAndOutputNeuronsIt(inputAndOutputNeurons);
 	while(inputAndOutputNeuronsIt.hasNext()) {
 		Neuron *neuron = inputAndOutputNeuronsIt.next();
-		QString neuronAddress = neuron->getProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY);
+		QString neuronAddress = neuron->getProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY);
 		QString newName = neuronAddressToNameMap[neuronAddress];
 		// Set new name
 		neuron->getNameValue().set(newName);
@@ -595,7 +595,7 @@ bool NeuralNetworkIOSimbaV3Xml::assignSpinalChordAddressesToNeurons(ModularNeura
 				Neuron *inputNeuron = inputNeuronIt.next();
 				if(inputNeuronName == inputNeuron->getNameValue().get()) {
 					// Assign address
-					inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, inputNeuronAddress);
+					inputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, inputNeuronAddress);
 					inputNeuronFound = true;
 					break;
 				}
@@ -609,7 +609,7 @@ bool NeuralNetworkIOSimbaV3Xml::assignSpinalChordAddressesToNeurons(ModularNeura
 		inputNeuronIt.toFront();
 		while(inputNeuronIt.hasNext()) {
 			Neuron *inputNeuron = inputNeuronIt.next();
-			if(!inputNeuron->hasProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY)) {
+			if(!inputNeuron->hasProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY)) {
 				*errorMsg = QString("Input neuron has an unknown name or name is assigned twice: %1!").arg(inputNeuron->getNameValue().get());
 				return false;
 			}
@@ -634,7 +634,7 @@ bool NeuralNetworkIOSimbaV3Xml::assignSpinalChordAddressesToNeurons(ModularNeura
 				Neuron *outputNeuron = outputNeuronIt.next();
 				if(outputNeuronName == outputNeuron->getNameValue().get()) {
 					// Assign address
-					outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY, outputNeuronAddress);
+					outputNeuron->setProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY, outputNeuronAddress);
 					outputNeuronFound = true;
 					break;
 				}
@@ -648,7 +648,7 @@ bool NeuralNetworkIOSimbaV3Xml::assignSpinalChordAddressesToNeurons(ModularNeura
 		outputNeuronIt.toFront();
 		while(outputNeuronIt.hasNext()) {
 			Neuron *outputNeuron = outputNeuronIt.next();
-			if(!outputNeuron->hasProperty(NeuralNetworkIOBytecode::SPINAL_CHORD_ADDRESS_PROPERTY)) {
+			if(!outputNeuron->hasProperty(NeuralNetworkIOBytecode::SPINAL_CORD_ADDRESS_PROPERTY)) {
 				*errorMsg = QString("Output neuron has an unknown name or name is assigned twice: %1!").arg(outputNeuron->getNameValue().get());
 				return false;
 			}

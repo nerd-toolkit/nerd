@@ -150,7 +150,7 @@ QRectF SimpleSynapseItem::getPaintingBox() {
 
 bool SimpleSynapseItem::isHit(const QPointF &point, Qt::MouseButtons, double) {
 
-	if(mForcedHidden) {
+	if(mForcedHidden || mIsInHiddenLayer) {
 		return false;
 	}
 
@@ -171,7 +171,7 @@ void SimpleSynapseItem::mouseMoved(const QPointF &distance, Qt::MouseButtons mou
 
 void SimpleSynapseItem::paintSelf(QPainter *painter) {
 	if(mHidden || !mActive || painter == 0 || mSynapse == 0 
-		|| (mHideUnselectedElements && !mSelected) || mForcedHidden) 
+		|| (mHideUnselectedElements && !mSelected) || mForcedHidden || mIsInHiddenLayer) 
 	{
 		return;
 	}

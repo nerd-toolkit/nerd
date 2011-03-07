@@ -51,6 +51,7 @@
 #include <QPointF>
 #include <QPainter>
 #include <Qt>
+#include "Core/Properties.h"
 
 namespace nerd {
 
@@ -83,6 +84,8 @@ namespace nerd {
 		bool isHidden() const;
 		void setSelected(bool selected);
 		bool isSelected() const;
+		void setToHiddenLayer(bool hidden);
+		bool isInHiddenLayer() const;
 
 		virtual void setLocalPosition(const QPointF &position, bool force = false);
 		virtual QPointF getLocalPosition();
@@ -101,6 +104,8 @@ namespace nerd {
 
 		virtual void setViewMode(int mode, bool enabled);
 		virtual bool isViewModeEnabled(int mode);
+		
+		virtual Properties* getEncapsulatedProperties() const;
 
 	protected:
 		PaintItem *mParent;
@@ -115,7 +120,7 @@ namespace nerd {
 		bool mHideUnselectedElements;
 		bool mUseCosmeticLines;
 		bool mForcedHidden;
-
+		bool mIsInHiddenLayer;
 	};
 
 }

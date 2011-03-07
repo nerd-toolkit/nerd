@@ -127,6 +127,29 @@ QString Properties::getProperty(const QString &name) const {
 	if(mProperties.contains(name)) {
 		return mProperties.value(name);
 	}
+	QString rawName = name;
+	for(QListIterator<QString> j(mOptionalHiddenPrefixes); j.hasNext();) {
+		QString prefix = j.next();
+		if(rawName.startsWith(prefix)) {
+			rawName = rawName.mid(prefix.size());
+			break;
+		}
+	}
+	//try all prefix versions
+	for(QListIterator<QString> j(mOptionalHiddenPrefixes); j.hasNext();) {
+		QString prefix = j.next();
+		QString propName = prefix + name;
+		if(mProperties.contains(propName)) {
+			return mProperties.value(propName);
+		}
+	}
+	return "";
+}
+
+QString Properties::getExactProperty(const QString &name) const {
+	if(mProperties.contains(name)) {
+		return mProperties.value(name);
+	}
 	return "";
 }
 

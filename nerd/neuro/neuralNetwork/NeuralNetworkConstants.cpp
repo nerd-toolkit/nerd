@@ -249,3 +249,8 @@ const QString NeuralNetworkConstants::TAG_ELEMENT_VARIABLE_MASTER
 const QString NeuralNetworkConstants::TAG_ELEMENT_VARIABLE_SLAVE
 		= "EQ";
 
+const QString NeuralNetworkConstants::TAG_HIDE_LAYERS 
+		= "HideLayers";
+
+const QString NeuralNetworkConstants::TAG_LAYER_IDENTIFIER 
+		= "Layer";

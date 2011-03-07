@@ -67,6 +67,7 @@
 #include <QTimer>
 #include <QMutex>
 #include "Value/ValueChangedListener.h"
+#include "Core/PropertyChangedListener.h"
 
 namespace nerd {
 
@@ -79,7 +80,7 @@ namespace nerd {
 	 */
 	class NetworkVisualization : public QGLWidget,
 				public ParameterizedObject,	public virtual EventListener, 
-				public virtual ValueChangedListener
+				public virtual ValueChangedListener, public virtual PropertyChangedListener
 	{
 	Q_OBJECT
 
@@ -90,6 +91,7 @@ namespace nerd {
 		virtual QString getName() const;
 		virtual void eventOccured(Event *event);
 		virtual void valueChanged(Value *value);
+		virtual void propertyChanged(Properties *owner, const QString &property);
 
 		virtual bool setNeuralNetwork(ModularNeuralNetwork *network);
 		virtual ModularNeuralNetwork* getNeuralNetwork() const;
@@ -106,6 +108,7 @@ namespace nerd {
 		ElementPairVisualization* getElementPairVisualization() const;
 
 		void setSelectedItems(QList<PaintItem*> selectedItems);
+		void selectAllItems(bool onlyVisible = false);
 		QList<PaintItem*> getSelectedItems() const;
 		PaintItem* getLastSelectedItem() const;
 		void validateSelectedItems();
@@ -166,6 +169,8 @@ namespace nerd {
 		void setHomeBookmark(double x, double y, double scale);
 		void setBookmark(int id, double x, double y, double scale);
 		QHash<int, Vector3D> getBookmarks() const;
+		
+		void updateHiddenLayerMode();
 
 	public slots:
 		void paintTimerElapsed();	

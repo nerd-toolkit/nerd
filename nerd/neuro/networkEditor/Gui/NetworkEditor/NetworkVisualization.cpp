@@ -201,7 +201,14 @@ void NetworkVisualization::valueChanged(Value *value) {
 	}
 }
 
-
+void NetworkVisualization::propertyChanged(Properties *owner, const QString &property) {
+	if(owner == 0) {
+		return;
+	}
+	if(property == NeuralNetworkConstants::TAG_HIDE_LAYERS) {
+		updateHiddenLayerMode();
+	}
+}
 
 bool NetworkVisualization::setNeuralNetwork(ModularNeuralNetwork *network) {
 	TRACE("NetworkVisualization::setNeuralNetwork");
@@ -229,8 +236,17 @@ bool NetworkVisualization::setNeuralNetwork(ModularNeuralNetwork *network) {
 // 	}
 
 	clearSelection();
+	
+	NeuralNetwork *oldNetwork = mVisuHandler->getNeuralNetwork();
+	if(oldNetwork != 0) {
+		oldNetwork->removePropertyChangedListener(this);
+	}
 
 	mNetworkInvalid = !(mVisuHandler->setNeuralNetwork(network));
+	
+	if(!mNetworkInvalid && network != 0) {
+		network->addPropertyChangedListener(this);
+	}
 
 	clearSelection();
 
@@ -420,6 +436,52 @@ QHash<int, Vector3D> NetworkVisualization::getBookmarks() const {
 	return mBookmarks;
 }
 
+void NetworkVisualization::updateHiddenLayerMode() {
+
+	if(mOwner == 0 || mVisuHandler == 0 || mVisuHandler->getNeuralNetwork() == 0) {
+		return;
+	}
+	
+	ModularNeuralNetwork *net = mVisuHandler->getNeuralNetwork();
+	if(net != 0 && mOwner->isHiddenLayerModeEnabled()) {
+		QList<QString> _hiddenLayers = net->getProperty(NeuralNetworkConstants::TAG_HIDE_LAYERS).split(",");
+		QList<QString> hiddenLayers;
+		for(QListIterator<QString> i(_hiddenLayers); i.hasNext();) {
+			QString layer = i.next().trimmed();
+			if(layer != "") {
+				hiddenLayers.append(layer);
+			}
+		}
+		for(QListIterator<PaintItem*> i(mPaintItems); i.hasNext();) {
+			PaintItem *item = i.next();
+			Properties *props = item->getEncapsulatedProperties();
+			if(props == 0 || hiddenLayers.empty()) {
+				item->setToHiddenLayer(false);
+				continue;
+			}
+			QStringList layers = props->getProperty(NeuralNetworkConstants::TAG_LAYER_IDENTIFIER).split(",");
+			bool hidden = false;
+			for(QListIterator<QString> j(layers); j.hasNext();) {
+				QString layer = j.next();
+				if(layer != "" && hiddenLayers.contains(layer)) {
+					hidden = true;
+					break;
+				}
+			}
+			item->setToHiddenLayer(hidden);
+		}
+		removeStatusMessage("Hidden Layers");
+		addStatusMessage("Hidden Layers");
+	}
+	else {
+		for(QListIterator<PaintItem*> i(mPaintItems); i.hasNext();) {
+			PaintItem *item = i.next();
+			item->setToHiddenLayer(false);
+		}
+		removeStatusMessage("Hidden Layers");
+	}
+}
+
 void NetworkVisualization::closeEvent(QCloseEvent*) {
 	TRACE("NetworkVisualization::closeEvent");
 	Core::getInstance()->scheduleTask(new ShutDownTask());
@@ -496,6 +558,24 @@ void NetworkVisualization::setSelectedItems(QList<PaintItem*> selectedItems) {
 		i.next()->setSelected(true);
 	}
 	notifySelectionListeners();
+}
+
+
+void NetworkVisualization::selectAllItems(bool onlyVisible) {
+	QList<PaintItem*> selectedItems;
+	for(QListIterator<PaintItem*> i(mPaintItems); i.hasNext();) {
+		PaintItem *item = i.next();
+		if(dynamic_cast<NeuronItem*>(item) != 0 
+			|| dynamic_cast<SynapseItem*>(item) != 0
+			|| dynamic_cast<ModuleItem*>(item) != 0
+			|| dynamic_cast<GroupItem*>(item) != 0)
+		{
+			if(!onlyVisible || (!item->isHidden() && !item->isInHiddenLayer())) {
+				selectedItems.append(item);
+			}
+		}
+	}
+	setSelectedItems(selectedItems);
 }
 
 QList<PaintItem*> NetworkVisualization::getSelectedItems() const {
@@ -1195,8 +1275,8 @@ void NetworkVisualization::updateNetworkElementPositionProperties(QList<PaintIte
 
 void NetworkVisualization::setVisualizationCenter(double x, double y) {
 	
-	double halfWidth = ((double) width()) / 2.0;
-	double halfHeight = ((double) height()) / 2.0;
+// 	double halfWidth = ((double) width()) / 2.0;
+// 	double halfHeight = ((double) height()) / 2.0;
 
 // 	mVisualizationOffset = QPointF(
 // 			(mVisualizationOffset.x() - (halfWidth / oldScaling)) + (halfWidth / mScaling),

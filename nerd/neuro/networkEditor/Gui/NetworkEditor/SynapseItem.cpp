@@ -128,6 +128,10 @@ void SynapseItem::paintSelf(QPainter *painter) {
 	}
 }
 
+Properties* SynapseItem::getEncapsulatedProperties() const {
+	return mSynapse;
+}
+
 
 }
 

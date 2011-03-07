@@ -728,6 +728,36 @@ bool NeuralNetworkBDNExporter::createSurroundingModule(QDomDocument &xmlDoc,
 	connectionPointsElem.setAttribute("outputs", QString::number(mNumberOfModuleInterfaceOutputs));
 	mainNode.appendChild(connectionPointsElem);
 	
+	QDomElement curvesElem = xmlDoc.createElement("curves");
+	mainNode.appendChild(curvesElem);
+	
+	QList<QString> colors;
+	colors.append("Black");
+	colors.append("Red");
+	colors.append("Green");
+	colors.append("Blue");
+	colors.append("Aqua");
+	colors.append("#FFFF80");
+	
+	int maxNumberOfDisplay = 0;
+	for(int i = 0; i < mCurvePlotInfo.size(); ++i) {
+		QString neuronName = mCurvePlotInfo.keys().at(i);
+		int pos = mCurvePlotInfo.value(neuronName);
+		QDomElement curveElem = xmlDoc.createElement("curve");
+		curveElem.setAttribute("output", neuronName);
+		curveElem.setAttribute("subcurve", QString::number(pos));
+		curveElem.setAttribute("color", colors.at(i % colors.size()));
+		curvesElem.appendChild(curveElem);
+	
+		if(pos > maxNumberOfDisplay) {
+			maxNumberOfDisplay = pos;
+		}
+	}
+	
+	QDomElement numberOfPlotsElem = xmlDoc.createElement("CurveDisplaySettings");
+	numberOfPlotsElem.setAttribute("subcurves", QString::number(maxNumberOfDisplay + 1));
+	mainNode.appendChild(numberOfPlotsElem);
+	
 	//add bias value and corresponding synapses (to control output)
 	if(mNumberOfModuleInterfaceInputs > 0) {
 		QDomElement biasElem = xmlDoc.createElement("node");
@@ -794,6 +824,13 @@ bool NeuralNetworkBDNExporter::createSurroundingModule(QDomDocument &xmlDoc,
 			*/
 		}
 	}
+	
+	/*
+	<curves>
+        <curve output="/Middle/MotorWaistRoll/DesiredTorque0" color="Red" subcurve="0" />
+        <curve output="/Right/AB_BodyLower/AccelAxis2" color="Green" subcurve="0" />
+      </curves>
+	*/
 	
 	
 	/* 
@@ -959,6 +996,12 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 		m_BDNNeuronInfoList.append(outputInterfaceInfo);
 		
 		mNumberOfModuleInterfaceOutputs++;
+		
+		QString curvePos = inNeuron->getProperty(TAG_BDN_INTERFACE_OUTPUT);
+		if(curvePos != "") {
+			int pos = curvePos.toInt();
+			mCurvePlotInfo.insert(inNeuron->getNameValue().get(), pos);
+		}
 	}
 	
 	m_BDNNeuronInfoList.append(inputInfo);
@@ -1073,8 +1116,8 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 			
 			int outputSynapseID = m_nextXmlId++;
 			addBDNSynapseInfo(outputSynapseID, 
+								preOutputInfo->ID,
 								outputInterfaceInfo->ID,
-								preOutputInfo->ID, 
 								1.0, 
 								m_standardBiasSynapseType,
 								BDN_MAX_EXECUTION_POS);
@@ -1085,6 +1128,12 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 			m_BDNNeuronInfoList.append(outputInterfaceInfo);
 			
 			mNumberOfModuleInterfaceOutputs++;
+			
+			QString curvePos = outNeuron->getProperty(TAG_BDN_INTERFACE_OUTPUT);
+			if(curvePos != "") {
+				int pos = curvePos.toInt();
+				mCurvePlotInfo.insert(outNeuron->getNameValue().get(), pos);
+			}
 		}
 	}
 	
@@ -1147,6 +1196,12 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 		m_BDNNeuronInfoList.append(outputInterfaceInfo);
 		
 		mNumberOfModuleInterfaceOutputs++;
+		
+		QString curvePos = hiddenNeuron->getProperty(TAG_BDN_INTERFACE_OUTPUT);
+		if(curvePos != "") {
+			int pos = curvePos.toInt();
+			mCurvePlotInfo.insert(hiddenNeuron->getNameValue().get(), pos);
+		}
 	}
 	// create BDN interface Output if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
 	if(hiddenNeuron->hasProperty(TAG_BDN_INTERFACE_INPUT)) {

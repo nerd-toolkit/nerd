@@ -134,6 +134,10 @@ QRectF SimpleNeuronItem::getPaintingBox() {
 
 
 bool SimpleNeuronItem::isHit(const QPointF &point, Qt::MouseButtons, double) {
+	if(mIsInHiddenLayer) {
+		return false;
+	}
+	
 	if(Math::distance(point, getGlobalPosition()) <= mRadius) {
 		return true;
 	}
@@ -149,7 +153,7 @@ void SimpleNeuronItem::mouseMoved(const QPointF &distance, Qt::MouseButtons mous
 
 void SimpleNeuronItem::paintSelf(QPainter *painter) {
 	if(mHidden || !mActive || painter == 0 || getNeuron() == 0 
-		|| (mHideUnselectedElements && !mSelected)) 
+		|| (mHideUnselectedElements && !mSelected) || mIsInHiddenLayer) 
 	{
 		return;
 	}

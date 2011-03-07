@@ -160,6 +160,10 @@ void ModuleItem::setPaintLevel(int level) {
 	}
 }
 
+Properties* ModuleItem::getEncapsulatedProperties() const {
+	return mModule;
+}
+
 }
 
 

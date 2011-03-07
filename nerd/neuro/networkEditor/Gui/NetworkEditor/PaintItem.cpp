@@ -58,7 +58,7 @@ namespace nerd {
 PaintItem::PaintItem(int paintLevel)
 	: mParent(0), mInvalidated(true), mPaintLevel(paintLevel), mActive(true), mHidden(false),
 	  mSelected(false), mShowSlaveState(false), mHideUnselectedElements(false), mUseCosmeticLines(false),
-	  mForcedHidden(false)
+	  mForcedHidden(false), mIsInHiddenLayer(false)
 {
 }
 
@@ -66,7 +66,8 @@ PaintItem::PaintItem(int paintLevel)
 PaintItem::PaintItem(const PaintItem *other) 
 	: mParent(0), mInvalidated(true), mPaintLevel(other->mPaintLevel),
 	  mActive(true), mHidden(false), mSelected(false), mShowSlaveState(false), 
-	  mHideUnselectedElements(false), mUseCosmeticLines(false), mForcedHidden(false)
+	  mHideUnselectedElements(false), mUseCosmeticLines(false), mForcedHidden(false),
+	  mIsInHiddenLayer(false)
 {
 
 }
@@ -122,6 +123,15 @@ void PaintItem::setSelected(bool selected) {
 
 bool PaintItem::isSelected() const {
 	return mSelected;
+}
+
+void PaintItem::setToHiddenLayer(bool hidden) {
+	mIsInHiddenLayer = hidden;
+}
+
+
+bool PaintItem::isInHiddenLayer() const {
+	return mIsInHiddenLayer;
 }
 
 
@@ -180,6 +190,10 @@ bool PaintItem::isViewModeEnabled(int) {
 	return false;
 }
 
+
+Properties* PaintItem::getEncapsulatedProperties() const {
+	return 0;
+}
 
 
 

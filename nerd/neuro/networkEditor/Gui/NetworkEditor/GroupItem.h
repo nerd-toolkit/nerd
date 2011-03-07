@@ -76,6 +76,7 @@ namespace nerd {
 		virtual void mouseMoved(const QPointF &distance, Qt::MouseButtons mouseButton) = 0;
 		virtual void paintSelf(QPainter *painter) = 0;
 
+		virtual Properties* getEncapsulatedProperties() const;
 
 	protected:	
 		NetworkVisualization *mOwner;
