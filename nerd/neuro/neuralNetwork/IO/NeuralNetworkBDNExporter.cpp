@@ -494,7 +494,6 @@ bool NeuralNetworkBDNExporter::calcExecutionPositions(ModularNeuralNetwork *net,
 	QList<Neuron*> remainingNeurons = net->getNeurons();
 	QList<Neuron*> currentExecuteNeurons;
 	do {
-		
 		currentExecuteNeurons = net->getNeuronsWithIterationRequirement(currentNerdIteration);
 		
 		QListIterator<Neuron*> netNeuronIt(currentExecuteNeurons);
@@ -510,6 +509,7 @@ bool NeuralNetworkBDNExporter::calcExecutionPositions(ModularNeuralNetwork *net,
 		// update position of the incoming synapses of the current neurons
 		// is needed
 		if(currentExecuteNeurons.length() > 0){
+			//cerr << "Found: " << currentExecuteNeurons.size() << " for nerd " << currentNerdIteration << " and bdn " << currentBdnIteration << endl;
 			currentBdnIteration += 2;
 		}
 		
@@ -661,6 +661,7 @@ bool NeuralNetworkBDNExporter::createBDNHeadInformation(QDomElement &xmlRoot)
 	
 	// byte code mappings
 	QMapIterator<QString, QList<QString> > modulPosIter(m_byteCodeModulPositions);
+	
 	while (modulPosIter.hasNext()) {
 		
 		modulPosIter.next();
@@ -670,7 +671,7 @@ bool NeuralNetworkBDNExporter::createBDNHeadInformation(QDomElement &xmlRoot)
 		{
 			QString byteCodeMapping = m_byteCodeMapping[modulPosIter.key()];
 			byteCodeMapping.replace(BYTECODE_POS_FLAG, modulPosIter.value()[i]); 
-			
+
 			QString modulName = modulPosIter.key() + modulPosIter.value()[i];
 		
 		// if the key contains an ";", it is a neuron type, 
@@ -1207,15 +1208,15 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 	// create bias if needed
 	if(hiddenNeuron->getBiasValue().get() != 0.0 ){
 		addBDNBiasInfo(	hiddenInfo, 
-										hiddenNeuron->getBiasValue().get(), 
-									 	m_executionPositionTable[hiddenNeuron] - 1 );
+						hiddenNeuron->getBiasValue().get(), 
+						m_executionPositionTable[hiddenNeuron] - 1 );
 	}
 	
 	m_BDNNeuronInfoList.append(hiddenInfo);
 	
 	// add neuron position
 	addByteCodePosition(getBDNNeuronType(hiddenNeuron,errorMsg),
-											QString::number(m_executionPositionTable[hiddenNeuron]));
+						QString::number(m_executionPositionTable[hiddenNeuron]));
 											
 	// create BDN interface Output if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
 	if(hiddenNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT)) {
@@ -1378,9 +1379,9 @@ bool NeuralNetworkBDNExporter::addBDNSynapseInfo(int synapseID, int source, int 
 {
 	BDNSynapseInfo *synapseInfo = new BDNSynapseInfo();
 	
-	QString execPos = QString::number(executionPosition);
-	if(executionPosition == 0) {
-		execPos = "";
+	QString execPos = "";
+	if(executionPosition != 0) {
+		execPos = QString::number(executionPosition);
 	}
 	
 	synapseInfo->ID = synapseID;

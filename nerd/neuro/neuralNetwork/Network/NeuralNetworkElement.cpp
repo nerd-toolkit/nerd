@@ -117,7 +117,9 @@ int NeuralNetworkElement::getStartIteration() const {
 
 void NeuralNetworkElement::propertyChanged(Properties *owner, const QString &property) {
 	if(owner == this) {
-		if(property == NeuralNetworkConstants::TAG_FAST_ITERATIONS) {
+		if(property == NeuralNetworkConstants::TAG_FAST_ITERATIONS 
+			|| property == QString("+").append(NeuralNetworkConstants::TAG_FAST_ITERATIONS)) //TODO maybe create a properties.isProperty() method.
+		{
 			if(!hasProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS)) {
 				mRequiredIterations = 1;
 				mStartIteration = 0;

@@ -850,18 +850,9 @@ QList<Neuron*> NeuralNetwork::getNeuronsWithIterationRequirement(int requirement
 	
 	for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
 		Neuron *neuron = i.next();
-		if((neuron->getRequiredIterations() >= requirement) && !neurons.contains(neuron)) {
+
+		if(neuron->requiresUpdate(requirement)) {
 			neurons.append(neuron);
-		}
-	}
-	QList<Synapse*> synapses = getSynapses();
-	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
-		Synapse *synapse = i.next();
-		if(synapse->getRequiredIterations() >= requirement) {
-			Neuron *target = dynamic_cast<Neuron*>(synapse->getTarget());
-			if(target != 0 && !neurons.contains(target)) {
-				neurons.append(target);
-			}
 		}
 	}
 

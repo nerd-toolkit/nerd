@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <net version="NERD XML V1.0">
     <properties>
+        <prop value="0.005" name="FadeInRate"/>
         <prop value="3076.13,-2954.9,0.282429|-82.6924,-2882.99,0.254186|1375.85,3979.71,0.313811|1314.13,-628.767,0.28243|664.515,-1113.39,0.430468|6266.16,-937.564,0.0797664" name="_Bookmarks"/>
-        <prop value="6266.16,-937.564,0.0797664" name="_Viewport"/>
+        <prop value="2137.06,-1129.57,0.254187" name="_Viewport"/>
     </properties>
     <defaultTransferFunction name="MSeriesTanh"/>
     <defaultActivationFunction name="MSeries"/>
@@ -2693,7 +2694,7 @@
         <transferFunction name="MSeriesTanh"/>
         <activationFunction name="MSeries"/>
     </neuron>
-    <group id="378004" name="Default">
+    <group id="382356" name="Default">
         <properties>
             <prop value="-690.489,1146.79,0" name="_LOCATION"/>
         </properties>
