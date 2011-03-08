@@ -77,9 +77,6 @@ const QString NeuralNetworkBDNExporter::BYTECODE_MIN_FLAG = "<$MIN>";
 // Flag which gets replaced in the byte code mappings of mirror neurons with the maximum value
 // the input 
 const QString NeuralNetworkBDNExporter::BYTECODE_MAX_FLAG = "<$MAX>";
-
-const QString NeuralNetworkBDNExporter::TAG_BDN_INTERFACE_INPUT = "BDN_In";
-const QString NeuralNetworkBDNExporter::TAG_BDN_INTERFACE_OUTPUT = "BDN_Out";
 		
 // Name of the neurontype which is used as input neuron mirror
 const QString NeuralNetworkBDNExporter::INPUT_MIRROR_GUID = "InputMirror";
@@ -96,6 +93,13 @@ const QString NeuralNetworkBDNExporter::INPUT_MIRROR_FLIP_GUID = "InputMirror" +
 
 const QString NeuralNetworkBDNExporter::INPUT_MIRROR_FLIP_BYTE_CODE =
 		QString::number(BDN_MIN_EXECUTION_POS + 1) + ":\nLOAD V1, -1.0\nMUL V0, Input, V1\nwrite Output, V0";
+		
+const QString NeuralNetworkBDNExporter::OUTPUT_SYNAPSE_WITH_FADING_GUID
+		= "OutputSynapseWithFading";
+		
+const QString NeuralNetworkBDNExporter::OUTPUT_SYNAPSE_WITH_FADING_BYTE_CODE
+		= QString("10:\nload V0, 0\nwrite weight, V0\n\n") + QString::number(BDN_MAX_EXECUTION_POS) 
+			+ ":\nload V0, weight\nadd V0, V0, w\nsat V0\nwrite weight, V0\nmul V0, Input, V0\nsat V0\nwrite Output, V0";
 
 // Length of the drawing area of the braindesigner in x direction.
 // Exported network get scaled to this maximum.
@@ -132,13 +136,8 @@ NeuralNetworkBDNExporter::NeuralNetworkBDNExporter(QString standardBiasSynapseTy
 	m_bdnYPosOffset = 0;
 	m_bdnXPosScaling = 0.0;
 	m_bdnYPosScaling = 0.0;
-	
-	NeuroTagManager::getInstance()->addTag(NeuroTag(TAG_BDN_INTERFACE_INPUT,
-											NeuralNetworkConstants::TAG_TYPE_NEURON,
-											"Neuron is exported as input to wrapper module so that it can be observed and changed from there."));
-	NeuroTagManager::getInstance()->addTag(NeuroTag(TAG_BDN_INTERFACE_OUTPUT,
-											NeuralNetworkConstants::TAG_TYPE_NEURON,
-											"Neuron is exported as output to wrapper module so that it can be observed and changed from there."));
+	mFadeInRate = 1.0;
+
 }
 
 NeuralNetworkBDNExporter::~NeuralNetworkBDNExporter()
@@ -201,7 +200,7 @@ bool NeuralNetworkBDNExporter::createFileFromNetwork(QString fileName, NeuralNet
 	}
 	
 	QFileInfo fileInfo(fileName);
-	QString networkName = fileInfo.fileName().remove(".bdn");
+	QString networkName = fileInfo.fileName().remove(".bdp");
 	
 		// try to open or create file
 	QString code = exportNetwork(networkName, dynamic_cast<ModularNeuralNetwork*>(net), errorMsg);
@@ -311,6 +310,20 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 	if(ok == false){return QString::null;}
 	
 	//////////////////////////////////////////////////////////////////////
+	// Determine the motor output fade-in rate
+	{
+		QString fadeInRateString = net->getProperty(NeuralNetworkConstants::TAG_NETWORK_BDN_FADE_IN_RATE);
+		bool ok = true;
+		double rate = fadeInRateString.toDouble(&ok);
+		if(!ok) {
+			mFadeInRate = 1.0;
+		}
+		else {
+			mFadeInRate = rate;
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////////
 	// Create BDN Information about neurons and synapses
 	
 	QList<Neuron*> netNeurons = net->getNeurons();
@@ -330,6 +343,7 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 		ok &= addBDNSynapseInfo(netSynapse,errorMsg);
 		if(ok == false){return QString::null;}	
 	}
+	
 	
 	//////////////////////////////////////////////////////////////////////
 	// Create the XML Document from the collected information
@@ -530,6 +544,10 @@ bool NeuralNetworkBDNExporter::calcExecutionPositions(ModularNeuralNetwork *net,
  */
 void NeuralNetworkBDNExporter::addByteCodePosition(const QString &modulName, const QString &position)
 {
+	if(position == "") {
+		return;
+	}
+	
 	// add new element if needed
 	if(m_byteCodeModulPositions.contains(modulName) == false)
 	{
@@ -695,6 +713,36 @@ bool NeuralNetworkBDNExporter::createBDNHeadInformation(QDomElement &xmlRoot)
 			}			
 		}
 	}
+	
+	//fading output synapse
+	QDomElement xmlFadingSynapseDescr =  xmlRoot.ownerDocument().createElement( "Module" );
+	xmlFadingSynapseDescr.setAttribute( "name", NeuralNetworkBDNExporter::OUTPUT_SYNAPSE_WITH_FADING_GUID);
+	xmlFadingSynapseDescr.setAttribute( "type", "Synapse" );
+	xmlFadingSynapseDescr.setAttribute( "guid", NeuralNetworkBDNExporter::OUTPUT_SYNAPSE_WITH_FADING_GUID);
+	xmlRoot.appendChild( xmlFadingSynapseDescr );
+	
+	QDomElement xmlFadingSynapseBytecode = xmlRoot.ownerDocument().createElement( "bytecode" );
+	QDomText xmlFadingSynapseBytecodeText = xmlRoot.ownerDocument().createTextNode(OUTPUT_SYNAPSE_WITH_FADING_BYTE_CODE);
+	xmlFadingSynapseBytecode.appendChild( xmlFadingSynapseBytecodeText );
+	xmlFadingSynapseDescr.appendChild(xmlFadingSynapseBytecode);
+	
+	QDomElement xmlFadingSynapseDescrIoLabelListParams = xmlRoot.ownerDocument().createElement( "IoLabelList" );
+	xmlFadingSynapseDescrIoLabelListParams.setAttribute("name", "Parameters");
+	xmlFadingSynapseDescr.appendChild(xmlFadingSynapseDescrIoLabelListParams);
+	
+	QDomElement xmlFadingSynapseDescrIoLabelParamInc = xmlRoot.ownerDocument().createElement( "IoLabel" );
+	xmlFadingSynapseDescrIoLabelParamInc.setAttribute("name", "w");
+	xmlFadingSynapseDescrIoLabelParamInc.setAttribute("standard", QString::number(mFadeInRate));
+	xmlFadingSynapseDescrIoLabelListParams.appendChild(xmlFadingSynapseDescrIoLabelParamInc);	
+	
+	QDomElement xmlFadingSynapseDescrIoLabelListInternals = xmlRoot.ownerDocument().createElement( "IoLabelList" );
+	xmlFadingSynapseDescrIoLabelListInternals.setAttribute("name", "Internals");
+	xmlFadingSynapseDescr.appendChild(xmlFadingSynapseDescrIoLabelListInternals);
+	
+	QDomElement xmlFadingSynapseDescrIoLabelParamWeight = xmlRoot.ownerDocument().createElement( "IoLabel" );
+	xmlFadingSynapseDescrIoLabelParamWeight.setAttribute("name", "weight");
+	xmlFadingSynapseDescrIoLabelParamWeight.setAttribute("standard", "0");
+	xmlFadingSynapseDescrIoLabelListInternals.appendChild(xmlFadingSynapseDescrIoLabelParamWeight);
 		
 	return true;
 }
@@ -951,11 +999,11 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 		
 		int inputMirrorSynapseID = m_nextXmlId++;
 		addBDNSynapseInfo(inputMirrorSynapseID, 
-											inputInfo->ID, 
-											mirrorInfo->ID, 
-											1.0, 
-											m_standardBiasSynapseType,
-										  BDN_MIN_EXECUTION_POS);
+						inputInfo->ID, 
+						mirrorInfo->ID, 
+						1.0, 
+						m_standardBiasSynapseType,
+						BDN_MIN_EXECUTION_POS);
 		
 		mirrorInfo->InSynapseIDs.append(inputMirrorSynapseID);
 		inputInfo->OutSynapseIDs.append(inputMirrorSynapseID);
@@ -969,7 +1017,7 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 	}
 	
 	// create BDN interface Output if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
-	if(inNeuron->hasProperty(TAG_BDN_INTERFACE_OUTPUT)) {
+	if(inNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT)) {
 		
 		BDNNeuronInfo *outputInterfaceInfo = new BDNNeuronInfo();
 		outputInterfaceInfo->ID = m_nextXmlId++;
@@ -997,7 +1045,7 @@ bool NeuralNetworkBDNExporter::addInputBDNNeuronInfo(Neuron *inNeuron, QString *
 		
 		mNumberOfModuleInterfaceOutputs++;
 		
-		QString curvePos = inNeuron->getProperty(TAG_BDN_INTERFACE_OUTPUT);
+		QString curvePos = inNeuron->getProperty(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT);
 		if(curvePos != "") {
 			int pos = curvePos.toInt();
 			mCurvePlotInfo.insert(inNeuron->getNameValue().get(), pos);
@@ -1032,7 +1080,8 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 	if(	outNeuron->getBiasValue().get() != 0.0 
 			|| outNeuron->getSynapses().length() > 0
 			|| outNeuron->getOutgoingSynapses().length() > 0
-			|| outNeuron->hasProperty(TAG_BDN_INTERFACE_INPUT))
+			|| outNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_INPUT)
+			|| true) //create always
 	{
 		// change ID of output to assign all synapses to the pre output neuron
 		outputInfo->ID = m_nextXmlId++;
@@ -1054,9 +1103,9 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 		addBDNSynapseInfo(	preOutputSynapseID,
 							preOutputInfo->ID, 
 							outputInfo->ID, 
-							1.0, 
-							m_standardBiasSynapseType,
-							BDN_MAX_EXECUTION_POS);
+							mFadeInRate, 
+							NeuralNetworkBDNExporter::OUTPUT_SYNAPSE_WITH_FADING_GUID,
+							0);
 		
 		preOutputInfo->OutSynapseIDs.append(preOutputSynapseID);
 		outputInfo->InSynapseIDs.append(preOutputSynapseID);
@@ -1072,7 +1121,7 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 												QString::number(BDN_MAX_EXECUTION_POS - 1));
 												
 		// create BDN interface Output if the BDN_In tag was found. These interfaces are accessible via the wrapper module.
-		if(outNeuron->hasProperty(TAG_BDN_INTERFACE_INPUT)) {
+		if(outNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_INPUT)) {
 			
 			BDNNeuronInfo *inputInterfaceInfo = new BDNNeuronInfo();
 			inputInterfaceInfo->ID = m_nextXmlId++;
@@ -1101,7 +1150,7 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 			mNumberOfModuleInterfaceInputs++;
 		}
 		// create BDN interface Input if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
-		if(outNeuron->hasProperty(TAG_BDN_INTERFACE_OUTPUT)) {
+		if(outNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT)) {
 			
 			BDNNeuronInfo *outputInterfaceInfo = new BDNNeuronInfo();
 			outputInterfaceInfo->ID = m_nextXmlId++;
@@ -1116,8 +1165,8 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 			
 			int outputSynapseID = m_nextXmlId++;
 			addBDNSynapseInfo(outputSynapseID, 
-								preOutputInfo->ID,
 								outputInterfaceInfo->ID,
+								preOutputInfo->ID,
 								1.0, 
 								m_standardBiasSynapseType,
 								BDN_MAX_EXECUTION_POS);
@@ -1129,7 +1178,7 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 			
 			mNumberOfModuleInterfaceOutputs++;
 			
-			QString curvePos = outNeuron->getProperty(TAG_BDN_INTERFACE_OUTPUT);
+			QString curvePos = outNeuron->getProperty(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT);
 			if(curvePos != "") {
 				int pos = curvePos.toInt();
 				mCurvePlotInfo.insert(outNeuron->getNameValue().get(), pos);
@@ -1169,7 +1218,7 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 											QString::number(m_executionPositionTable[hiddenNeuron]));
 											
 	// create BDN interface Output if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
-	if(hiddenNeuron->hasProperty(TAG_BDN_INTERFACE_OUTPUT)) {
+	if(hiddenNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT)) {
 		
 		BDNNeuronInfo *outputInterfaceInfo = new BDNNeuronInfo();
 		outputInterfaceInfo->ID = m_nextXmlId++;
@@ -1197,14 +1246,14 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 		
 		mNumberOfModuleInterfaceOutputs++;
 		
-		QString curvePos = hiddenNeuron->getProperty(TAG_BDN_INTERFACE_OUTPUT);
+		QString curvePos = hiddenNeuron->getProperty(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT);
 		if(curvePos != "") {
 			int pos = curvePos.toInt();
 			mCurvePlotInfo.insert(hiddenNeuron->getNameValue().get(), pos);
 		}
 	}
 	// create BDN interface Output if the BDN_Out tag was found. These interfaces are accessible via the wrapper module.
-	if(hiddenNeuron->hasProperty(TAG_BDN_INTERFACE_INPUT)) {
+	if(hiddenNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_INPUT)) {
 		
 		BDNNeuronInfo *inputInterfaceInfo = new BDNNeuronInfo();
 		inputInterfaceInfo->ID = m_nextXmlId++;
@@ -1329,15 +1378,20 @@ bool NeuralNetworkBDNExporter::addBDNSynapseInfo(int synapseID, int source, int 
 {
 	BDNSynapseInfo *synapseInfo = new BDNSynapseInfo();
 	
+	QString execPos = QString::number(executionPosition);
+	if(executionPosition == 0) {
+		execPos = "";
+	}
+	
 	synapseInfo->ID = synapseID;
 	synapseInfo->TargetID = target;
 	synapseInfo->SourceID = source;
 	synapseInfo->Weight = weight;
-	synapseInfo->Type = type + QString::number(executionPosition);
+	synapseInfo->Type = type + execPos;
 	
 	m_BDNSynapseInfoList.append(synapseInfo);
 	
-	addByteCodePosition(type, QString::number(executionPosition));
+	addByteCodePosition(type, execPos);
 	
 	return true;
 }

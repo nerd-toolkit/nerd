@@ -1199,8 +1199,8 @@ void NeuralNetworkEditor::exportASeriesBDN(const QString &fileName) {
 		return;
 	}
 
-	if(!nameOfFile.endsWith(".bdn")) {
-		nameOfFile.append(".bdn");
+	if(!nameOfFile.endsWith(".bdp")) {
+		nameOfFile.append(".bdp");
 	}
 
 	ModularNeuralNetwork *network = 0;
@@ -1246,8 +1246,8 @@ void NeuralNetworkEditor::exportMSeriesBDN(const QString &fileName) {
 		return;
 	}
 
-	if(!nameOfFile.endsWith(".bdn")) {
-		nameOfFile.append(".bdn");
+	if(!nameOfFile.endsWith(".bdp")) {
+		nameOfFile.append(".bdp");
 	}
 
 	ModularNeuralNetwork *network = 0;

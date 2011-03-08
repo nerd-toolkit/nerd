@@ -102,8 +102,6 @@ namespace nerd {
 			static const QString BYTECODE_POS_FLAG;
 			static const QString BYTECODE_MIN_FLAG;
 			static const QString BYTECODE_MAX_FLAG;
-			static const QString TAG_BDN_INTERFACE_INPUT;
-			static const QString TAG_BDN_INTERFACE_OUTPUT;
 			
 		private:
 			static const QString STANDARD_POSITION_PROPERTY_NAME;
@@ -113,6 +111,8 @@ namespace nerd {
 			static const QString INPUT_MIRROR_FLIP_BYTE_CODE;
 			static const QString MODULE_INPUT_GUID;
 			static const QString MODULE_OUTPUT_GUID;
+			static const QString OUTPUT_SYNAPSE_WITH_FADING_GUID;
+			static const QString OUTPUT_SYNAPSE_WITH_FADING_BYTE_CODE;
 			static const int BDN_DRAWING_AREA_X_LENGTH;
 			static const int BDN_DRAWING_AREA_Y_LENGTH;
 			static const int ADDITIONAL_BDN_NEURON_DISTANCE;
@@ -184,6 +184,7 @@ namespace nerd {
 			int mNumberOfModuleInterfaceInputs;
 			int mNumberOfModuleInterfaceOutputs;
 			QMap<QString, int> mCurvePlotInfo;
+			double mFadeInRate;
 	};
 
 }

@@ -97,7 +97,6 @@ NeuralNetworkManager::NeuralNetworkManager()
 				NeuralNetworkConstants::EVENT_NNM_NETWORK_ITERATION_COMPLETED,
 				"This Event is triggered after each single network iteration, which can occure "
 				"multiple times during a network update.");
-				
 	
 
 	//this value can be switched to disable the neural network control.
@@ -117,7 +116,19 @@ NeuralNetworkManager::NeuralNetworkManager()
 	ntm->addTag(NeuroTag(Neuron::NEURON_TYPE_OUTPUT, 
 						 NeuralNetworkConstants::TAG_TYPE_NEURON,
 						 "Indicates that a neuron is used as output neuron."));
+						 
+	//BDN specific //TODO (may be moved into a collection ?
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_NETWORK_BDN_FADE_IN_RATE, 
+						 NeuralNetworkConstants::TAG_TYPE_NETWORK,
+						 "Gives the fade in rate when an exported BDN network is started [0,1]"));
+						 
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_NEURON_BDN_INPUT, 
+						 NeuralNetworkConstants::TAG_TYPE_NEURON,
+						 "Creates an additional input in the super module for exported BDN projects"));
 	
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT, 
+						 NeuralNetworkConstants::TAG_TYPE_NEURON,
+						 "Creates an additional output in the super module for exported BDN projects"));
 }
 
 /**

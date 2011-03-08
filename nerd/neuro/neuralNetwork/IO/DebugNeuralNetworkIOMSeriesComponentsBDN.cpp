@@ -129,7 +129,7 @@ bool DebugNeuralNetworkIOMSeriesComponentsBDN::createFileFromNetwork(QString fil
 	}
 	
 	QFileInfo fileInfo(fileName);
-	QString networkName = fileInfo.fileName().remove(".bdn");
+	QString networkName = fileInfo.fileName().remove(".bdp");
 	
 		// try to open or create file
 	QString code = exportNetwork(networkName, dynamic_cast<ModularNeuralNetwork*>(net), errorMsg);

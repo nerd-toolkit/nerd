@@ -2,8 +2,8 @@
 <net version="NERD XML V1.0">
     <properties>
         <prop value="!Control,!AccelSensors" name="HideLayers"/>
-        <prop value="3076.13,-2954.9,0.282429|-82.6924,-2882.99,0.254186|1375.85,3979.71,0.313811|1314.13,-628.767,0.28243|664.515,-1113.39,0.430468|2046.99,-1720.72,0.430468" name="_Bookmarks"/>
-        <prop value="5197.97,-1481.82,0.0797666" name="_Viewport"/>
+        <prop value="3076.13,-2954.9,0.282429|-82.6924,-2882.99,0.254186|1375.85,3979.71,0.313811|1314.13,-628.767,0.28243|664.515,-1113.39,0.430468|5197.97,-1481.82,0.0797666" name="_Bookmarks"/>
+        <prop value="2137.06,-1125.64,0.254187" name="_Viewport"/>
     </properties>
     <defaultTransferFunction name="MSeriesTanh"/>
     <defaultActivationFunction name="MSeries"/>
@@ -9987,9 +9987,9 @@
     </neuron>
     <neuron bias="0" id="380712" name="URC_A_X">
         <properties>
-            <prop value="-454.36,4188.13,0" name="_LOCATION"/>
+            <prop value="-449.714,4185.81,0" name="_LOCATION"/>
+            <prop value="588" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
-            <prop value="588" name="SPINAL_CHORD_ADDRESS"/>
         </properties>
         <transferFunction name="MSeriesTanh"/>
         <activationFunction name="MSeries"/>
@@ -9997,26 +9997,26 @@
     <neuron bias="0" id="380713" name="URC_A_Y">
         <properties>
             <prop value="-456.829,4249.9,0" name="_LOCATION"/>
+            <prop value="589" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
-            <prop value="589" name="SPINAL_CHORD_ADDRESS"/>
         </properties>
         <transferFunction name="MSeriesTanh"/>
         <activationFunction name="MSeries"/>
     </neuron>
     <neuron bias="0" id="380714" name="URC_A_Z">
         <properties>
-            <prop value="-451.891,4319.72,0" name="_LOCATION"/>
+            <prop value="-451.891,4317.4,0" name="_LOCATION"/>
+            <prop value="590" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
-            <prop value="590" name="SPINAL_CHORD_ADDRESS"/>
         </properties>
         <transferFunction name="MSeriesTanh"/>
         <activationFunction name="MSeries"/>
     </neuron>
     <neuron bias="0" id="380716" name="URC_Joy_X">
         <properties>
-            <prop value="-663.348,4201.63,0" name="_LOCATION"/>
+            <prop value="-665.671,4201.63,0" name="_LOCATION"/>
+            <prop value="597" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
-            <prop value="597" name="SPINAL_CHORD_ADDRESS"/>
         </properties>
         <transferFunction name="MSeriesTanh"/>
         <activationFunction name="MSeries"/>
@@ -10024,31 +10024,31 @@
     <neuron bias="0" id="380717" name="URC_Joy_Y">
         <properties>
             <prop value="-574.101,4201.56,0" name="_LOCATION"/>
+            <prop value="599" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
-            <prop value="599" name="SPINAL_CHORD_ADDRESS"/>
         </properties>
         <transferFunction name="MSeriesTanh"/>
         <activationFunction name="MSeries"/>
     </neuron>
     <neuron bias="0" id="380718" name="URC_Knob_Fine">
         <properties>
-            <prop value="-663.424,4326.25,0" name="_LOCATION"/>
+            <prop value="-663.424,4323.93,0" name="_LOCATION"/>
+            <prop value="598" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
-            <prop value="598" name="SPINAL_CHORD_ADDRESS"/>
         </properties>
         <transferFunction name="MSeriesTanh"/>
         <activationFunction name="MSeries"/>
     </neuron>
     <neuron bias="0" id="380719" name="URC_Knob_2">
         <properties>
-            <prop value="-558.831,4326.19,0" name="_LOCATION"/>
+            <prop value="-561.154,4328.51,0" name="_LOCATION"/>
+            <prop value="600" name="SPINAL_CORD_ADDRESS"/>
             <prop value="" name="TYPE_INPUT"/>
-            <prop value="600" name="SPINAL_CHORD_ADDRESS"/>
         </properties>
         <transferFunction name="MSeriesTanh"/>
         <activationFunction name="MSeries"/>
     </neuron>
-    <group id="381086" name="Default">
+    <group id="382022" name="Default">
         <properties>
             <prop value="-690.489,1146.79,0" name="_LOCATION"/>
         </properties>

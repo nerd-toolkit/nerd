@@ -103,6 +103,7 @@ namespace nerd {
 		static const QString TAG_TYPE_MODULE;
 		static const QString TAG_TYPE_GROUP;
 		static const QString TAG_TYPE_NETWORK_ELEMENT;
+		static const QString TAG_TYPE_NETWORK;
 		static const QString TAG_ELEMENT_LOCATION;
 		static const QString TAG_ELEMENT_PROTECTED;
 		static const QString TAG_ELEMENT_PROTECT_EXISTENCE;
@@ -143,6 +144,10 @@ namespace nerd {
 		static const QString TAG_ELEMENT_VARIABLE_SLAVE; 
 		static const QString TAG_HIDE_LAYERS;
 		static const QString TAG_LAYER_IDENTIFIER;
+		static const QString TAG_NETWORK_BDN_FADE_IN_RATE;
+		static const QString TAG_NEURON_BDN_INPUT;
+		static const QString TAG_NEURON_BDN_OUTPUT;
+		
 		
 	};
 

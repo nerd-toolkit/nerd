@@ -134,6 +134,9 @@ const QString NeuralNetworkConstants::TAG_TYPE_GROUP
 
 const QString NeuralNetworkConstants::TAG_TYPE_NETWORK_ELEMENT
 		= "E";
+		
+const QString NeuralNetworkConstants::TAG_TYPE_NETWORK
+		= "NN";
 
 const QString NeuralNetworkConstants::TAG_ELEMENT_PROTECTED
 		= "Protected";
@@ -254,3 +257,13 @@ const QString NeuralNetworkConstants::TAG_HIDE_LAYERS
 
 const QString NeuralNetworkConstants::TAG_LAYER_IDENTIFIER 
 		= "Layer";
+
+const QString NeuralNetworkConstants::TAG_NETWORK_BDN_FADE_IN_RATE
+		= "FadeInRate";
+		
+const QString NeuralNetworkConstants::TAG_NEURON_BDN_INPUT 
+		= "BDN_In";
+		
+const QString NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT
+		= "BDN_Out";
+		

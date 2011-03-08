@@ -202,6 +202,7 @@ void PictureSeriesCreator::eventOccured(Event *event) {
 void PictureSeriesCreator::createScreenshot() {
 
 	if(mFirstFrame) {
+		cerr << "Guess " << endl;
 		guessMainSimulationWindowRectangle();
 		mFirstFrame = false;
 	}
