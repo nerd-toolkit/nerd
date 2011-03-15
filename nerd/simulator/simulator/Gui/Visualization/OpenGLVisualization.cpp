@@ -156,6 +156,8 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 		mChangeViewportTimer(0), mVisualizationTimer(0), mStepsPerSecondValue(0),
 		mRunInPerformanceMode(0), mGlIsUpdating(false), mUseAsFrameGrabber(0), mDisableTexturesArg(0)
 {
+	mRealTimeRecorderRunning = 0;
+	
 	setWhatsThis("Ctrl+Shift+v:	Save current position as new initial viewpoint.\nShift+v:"
 		" 	Restore initial viewpoint.\nCtrl+x:	Show/Hide Textures.\nCtrl+t: 	"
 		"Show/Hide time information.\nCtrl+a: 	Show/Hide Coordinate Axes\nCtrl+g: 	"
@@ -584,6 +586,8 @@ void OpenGLVisualization::init() {
 			mTriggerPaintEvents.append(event);
 		}
 	}
+	
+	mRealTimeRecorderRunning = vm->getBoolValue(SimulationConstants::VALUE_RUN_REAL_TIME_RECORDER);
 
 	if(!ok)
 	{
@@ -982,6 +986,14 @@ void OpenGLVisualization::paintGL() {
 				renderText(5, 3 * posY, "SPS", font);
 				renderText(posX, 3 * posY, QString(": ")
 						.append(QString::number(mStepsPerSecondValue->get())), font);
+			}
+			
+			//show REC sign if screen recorder is running.
+			fontSize = Math::max(fontSize, 20);
+			font.setPointSize(fontSize);
+			posY = (int) (1.5 * ((double) fontSize));
+			if(mRealTimeRecorderRunning != 0 && mRealTimeRecorderRunning->get()) {
+				renderText(width() - (20.0 + ((int) (3 * ((double) fontSize)))), posY, "Rec", font);
 			}
 		}
 	}

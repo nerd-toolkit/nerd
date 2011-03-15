@@ -202,7 +202,6 @@ void PictureSeriesCreator::eventOccured(Event *event) {
 void PictureSeriesCreator::createScreenshot() {
 
 	if(mFirstFrame) {
-		cerr << "Guess " << endl;
 		guessMainSimulationWindowRectangle();
 		mFirstFrame = false;
 	}
@@ -344,14 +343,14 @@ void PictureSeriesCreator::guessMainSimulationWindowRectangle() {
 	mCurrentRecordingRectangle = QRect();
 	QString rectangleString = mRecordingRectangle->get().trimmed();
 
-	if(rectangleString == "" || mAutoGrabSimulationWindow->get()) {
+	if(rectangleString == "" || mAutoGrabSimulationWindow->get()) {;
 		QWidget *mainSimulationWidget = GuiManager::getGlobalGuiManager()
 					->getWidget(NerdConstants::GUI_MAIN_SIMULATION_WINDOW);
 		
 		if(mainSimulationWidget != 0 && mainSimulationWidget->isWindow()) {
 			if(!(mainSimulationWidget->isHidden() || !mainSimulationWidget->isVisible())) {
 				mCurrentRecordingRectangle = mainSimulationWidget->frameGeometry();
-		
+
 				Core::getInstance()->scheduleTask(new ChangeValueTask(mRecordingRectangle, 
 						QString("(" )
 							+ QString::number(mCurrentRecordingRectangle.x()) + ","
@@ -363,7 +362,7 @@ void PictureSeriesCreator::guessMainSimulationWindowRectangle() {
 	}
 
 	//determine recording rectangle
-	if(rectangleString != "") {
+	if(rectangleString != "" && !mAutoGrabSimulationWindow->get()) {
 		QString rectangleString = mRecordingRectangle->get();
 		if(rectangleString.startsWith("(") && rectangleString.endsWith(")")) {
 			QStringList coords = rectangleString.mid(1, rectangleString.size() - 2).split(",");

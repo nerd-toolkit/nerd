@@ -359,6 +359,8 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 	xmlRoot.setAttribute( "libraryname", networkName );
 	xmlDoc.appendChild( xmlRoot );
 	
+	ok &= createSurroundingModule(xmlDoc, xmlRoot, networkName);
+	
 	ok &= createBDNHeadInformation(xmlRoot);
 	if(ok == false){return QString::null;}	
 	
@@ -369,8 +371,6 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 	xmlNetModule.setAttribute( "guid", networkName + "_Network" );
 	xmlNetModule.setAttribute( "opened", "false" );
 	xmlRoot.appendChild( xmlNetModule );
-	
-	ok &= createSurroundingModule(xmlDoc, xmlRoot, networkName);
 	
 	// add information about neurons and synapses
 	QListIterator<BDNNeuronInfo*> BDNNeuronInfoIt(m_BDNNeuronInfoList);
@@ -1166,14 +1166,14 @@ bool NeuralNetworkBDNExporter::addOutputBDNNeuronInfo(Neuron *outNeuron, QString
 			
 			int outputSynapseID = m_nextXmlId++;
 			addBDNSynapseInfo(outputSynapseID, 
-								outputInterfaceInfo->ID,
 								preOutputInfo->ID,
+								outputInterfaceInfo->ID,	
 								1.0, 
 								m_standardBiasSynapseType,
 								BDN_MAX_EXECUTION_POS);
 			
-			outputInterfaceInfo->OutSynapseIDs.append(outputSynapseID);
-			preOutputInfo->InSynapseIDs.append(outputSynapseID);
+			outputInterfaceInfo->InSynapseIDs.append(outputSynapseID);
+			preOutputInfo->OutSynapseIDs.append(outputSynapseID);
 			
 			m_BDNNeuronInfoList.append(outputInterfaceInfo);
 			
@@ -1240,8 +1240,8 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 							m_standardBiasSynapseType,
 							BDN_MAX_EXECUTION_POS);
 		
-		outputInterfaceInfo->InSynapseIDs.append(outputSynapseID);
-		hiddenInfo->OutSynapseIDs.append(outputSynapseID);
+		outputInterfaceInfo->OutSynapseIDs.append(outputSynapseID);
+		hiddenInfo->InSynapseIDs.append(outputSynapseID);
 		
 		m_BDNNeuronInfoList.append(outputInterfaceInfo);
 		

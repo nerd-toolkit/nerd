@@ -71,6 +71,7 @@ namespace nerd {
 		static const QString VALUE_EXECUTION_CURRENT_STEP;
 		static const QString VALUE_NNM_BYPASS_NETWORKS;
 		static const QString VALUE_RUN_SIMULATION_IN_REALTIME;
+		static const QString VALUE_RUN_REAL_TIME_RECORDER;
 
 	//**************************************************************************
 	//Event Names

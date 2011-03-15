@@ -226,10 +226,15 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	//Add visualization chooser panel.
 	mVisualizationChooser = new VisualizationChooser();
 	QAction *visuChooserAction = viewMenu->addAction(tr("&Camera Manager"));
-	visuChooserAction->setShortcut(tr("Ctrl+c"));
 	visuChooserAction->setWhatsThis("Allows the creation and management of additional "
 									"camera viewpoints of the simulation.");
 	connect(visuChooserAction, SIGNAL(triggered()), mVisualizationChooser, SLOT(showWindow()));
+	
+	//Add real-time recorder checkbox
+	QAction *recordWithCameraAction = new BoolValueSwitcherAction("Record Video", SimulationConstants::VALUE_RUN_REAL_TIME_RECORDER);
+	recordWithCameraAction->setWhatsThis("Starts and stops the real-time recorder. When stopped, then the video is played back.");
+	recordWithCameraAction->setShortcut(tr("Ctrl+c"));
+	viewMenu->addAction(recordWithCameraAction);
 
 	//add help window.
 	HtmlInfoWidget *helpWindow = new HtmlInfoWidget(":/resources/doc/NERDHelp.html", "Help");

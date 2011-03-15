@@ -74,6 +74,9 @@ const QString SimulationConstants::VALUE_NNM_BYPASS_NETWORKS
 const QString SimulationConstants::VALUE_RUN_SIMULATION_IN_REALTIME
 		= "/Simulation/RunAtRealtime";
 
+const QString SimulationConstants::VALUE_RUN_REAL_TIME_RECORDER
+		= "/ScreenRecorder/Control/Run";
+
 //**************************************************************************
 //Event names
 //**************************************************************************
