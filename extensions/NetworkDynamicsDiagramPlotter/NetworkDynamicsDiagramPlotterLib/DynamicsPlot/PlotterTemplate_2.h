@@ -46,86 +46,37 @@
 
 
 
-#ifndef NERDDynamicsPlotter_H
-#define NERDDynamicsPlotter_H
+#ifndef NERDPlotterTemplate_2_H
+#define NERDPlotterTemplate_2_H
 
 #include <QString>
 #include <QHash>
-#include "Core/SystemObject.h"
-#include "Core/ParameterizedObject.h"
-#include "Value/BoolValue.h"
+#include "DynamicsPlot/DynamicsPlotter.h"
+#include "Value/IntValue.h"
 #include "Value/MatrixValue.h"
 #include "Value/ULongLongValue.h"
-#include "Network/NeuralNetwork.h"
 
 namespace nerd {
 
 	/**
-	 * DynamicsPlotter.
-	 *
+	 * Description of the Plotter.
 	 */
-	class DynamicsPlotter : public ParameterizedObject, public virtual SystemObject,
-							public EventListener
-	{
-	public:
-		DynamicsPlotter(const QString &name);
-		virtual ~DynamicsPlotter();
+	class PlotterTemplate_2: public DynamicsPlotter {
+		public:
+			PlotterTemplate_2();
+			virtual ~PlotterTemplate_2();
 
-		virtual QString getName() const;
+			virtual void calculateData();
 
-		virtual bool init();
-		virtual bool bind();
-		virtual bool cleanUp();
-
-		virtual void eventOccured(Event *event);
-
-		virtual void calculateData() = 0;
-
-		void execute();
-		BoolValue* getActiveValue() const;
-
-		NeuralNetwork* getCurrentNetwork() const;
-
-		
-		
-	protected:
-		void storeCurrentNetworkActivities();
-		void restoreCurrentNetworkActivites();
-		void triggerNetworkStep();
-		
-		
-		NeuralNetworkElement* getVariedNetworkElement(ULongLongValue *idOfVariedNetworkElement);
-		void setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value);
-		double getVariedNetworkElementValue(NeuralNetworkElement *variedElem);
-				
-		bool checkStringlistsItemCount(StringValue *idsString, StringValue *minsString, StringValue *maxsString);
-		QList<ULongLongValue*> createListOfIds(StringValue *idsString);
-		QList<double> createListOfDoubles(StringValue *minsString);
-		
-	protected:
-		Event *mNextStepEvent;
-		Event *mResetEvent;
-		Event *mEvaluateNetworkEvent;
-		BoolValue *mStasisValue;
-		BoolValue *mActiveValue;
-		IntValue *mExecutionTime;
-		QHash<qulonglong, double> mNetworkActivities;
-		//****Till****//
-		MatrixValue *mData;
-		StringValue *mOutputPath;
-		StringValue *mXAxisDescription;
-		StringValue *mYAxisDescription;
-		
-		Event *mStartEvent;
-		Event *mFinishEvent;
-		//***/Till****//
-
+		private:
 	};
+	
+
+
 
 }
 
 #endif
-
 
 
 

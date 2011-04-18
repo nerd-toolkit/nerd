@@ -55,6 +55,11 @@
 #include "DynamicsPlot/Isoperiod_Calculator.h"
 #include "DynamicsPlot/BasinOfAttraction_Calculator.h"
 #include "Event/EventManager.h"
+#include "DynamicsPlot/PlotterTemplate_1.h"
+#include "DynamicsPlot/PlotterTemplate_2.h"
+#include "DynamicsPlot/PlotterTemplate_3.h"
+#include "DynamicsPlot/PlotterTemplate_4.h"
+#include "DynamicsPlot/PlotterTemplate_5.h"
 
 using namespace std;
 
@@ -70,7 +75,11 @@ DynamicsPlotCollection::DynamicsPlotCollection()
 	new Transients_Calculator();
 	new Isoperiod_Calculator();
 	new BasinOfAttraction_Calculator();
-	
+	new PlotterTemplate_1();
+	new PlotterTemplate_2();
+	new PlotterTemplate_3();
+	new PlotterTemplate_4();
+	new PlotterTemplate_5();
 }
 
 

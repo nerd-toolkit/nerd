@@ -268,6 +268,12 @@ void DynamicsPlotter::restoreCurrentNetworkActivites() {
 	}
 }
 
+void DynamicsPlotter::triggerNetworkStep() {
+	if(mEvaluateNetworkEvent != 0) {
+		mEvaluateNetworkEvent->trigger();
+	}
+}
+
 
 //****Till****//
 	/**

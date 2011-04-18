@@ -46,86 +46,51 @@
 
 
 
-#ifndef NERDDynamicsPlotter_H
-#define NERDDynamicsPlotter_H
+#include "PlotterTemplate_2.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include <QTime>
+#include "Value/DoubleValue.h"
+#include "Network/Neuro.h"
+#include "Network/NeuralNetworkManager.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
+#include "math.h"
 
-#include <QString>
-#include <QHash>
-#include "Core/SystemObject.h"
-#include "Core/ParameterizedObject.h"
-#include "Value/BoolValue.h"
-#include "Value/MatrixValue.h"
-#include "Value/ULongLongValue.h"
-#include "Network/NeuralNetwork.h"
+
+using namespace std;
 
 namespace nerd {
 
-	/**
-	 * DynamicsPlotter.
-	 *
-	 */
-	class DynamicsPlotter : public ParameterizedObject, public virtual SystemObject,
-							public EventListener
-	{
-	public:
-		DynamicsPlotter(const QString &name);
-		virtual ~DynamicsPlotter();
 
-		virtual QString getName() const;
-
-		virtual bool init();
-		virtual bool bind();
-		virtual bool cleanUp();
-
-		virtual void eventOccured(Event *event);
-
-		virtual void calculateData() = 0;
-
-		void execute();
-		BoolValue* getActiveValue() const;
-
-		NeuralNetwork* getCurrentNetwork() const;
-
-		
-		
-	protected:
-		void storeCurrentNetworkActivities();
-		void restoreCurrentNetworkActivites();
-		void triggerNetworkStep();
-		
-		
-		NeuralNetworkElement* getVariedNetworkElement(ULongLongValue *idOfVariedNetworkElement);
-		void setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value);
-		double getVariedNetworkElementValue(NeuralNetworkElement *variedElem);
-				
-		bool checkStringlistsItemCount(StringValue *idsString, StringValue *minsString, StringValue *maxsString);
-		QList<ULongLongValue*> createListOfIds(StringValue *idsString);
-		QList<double> createListOfDoubles(StringValue *minsString);
-		
-	protected:
-		Event *mNextStepEvent;
-		Event *mResetEvent;
-		Event *mEvaluateNetworkEvent;
-		BoolValue *mStasisValue;
-		BoolValue *mActiveValue;
-		IntValue *mExecutionTime;
-		QHash<qulonglong, double> mNetworkActivities;
-		//****Till****//
-		MatrixValue *mData;
-		StringValue *mOutputPath;
-		StringValue *mXAxisDescription;
-		StringValue *mYAxisDescription;
-		
-		Event *mStartEvent;
-		Event *mFinishEvent;
-		//***/Till****//
-
-	};
+/**
+ * Constructs a new PlotterTemplate_2.
+ */
+PlotterTemplate_2::PlotterTemplate_2()
+	: DynamicsPlotter("DummyPlotter2")
+{
 
 }
 
-#endif
 
+
+/**
+ * Destructor.
+ */
+PlotterTemplate_2::~PlotterTemplate_2() {
+}
+
+
+	
+/**
+ * Calculates the output data
+ */
+void PlotterTemplate_2::calculateData() {
+	
+}
+
+
+}
 
 
 
