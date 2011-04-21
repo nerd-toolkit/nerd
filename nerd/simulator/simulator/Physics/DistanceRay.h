@@ -47,6 +47,7 @@
 #include "Collision/CollisionObject.h"
 #include "Collision/DistanceSensorRule.h"
 #include "Physics/RayGeom.h"
+#include "Math/Vector3D.h"
 
 namespace nerd {
 
@@ -69,6 +70,7 @@ class DistanceRay {
 
 		virtual CollisionObject* getCollisionObject() const;
 		virtual double getDistance();
+		Vector3D getClosestKnownCollisionPoint() const;
 
 		virtual void updateRay(double length);
 
@@ -80,6 +82,7 @@ class DistanceRay {
 		DistanceSensor *mOwner;
 		Color mActiveColor;
 		Color mInactiveColor;
+		Vector3D mClosestKnownCollisionPoint;
 
 };
 

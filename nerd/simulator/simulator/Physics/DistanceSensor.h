@@ -77,6 +77,7 @@ class DistanceSensor : public SimObject, public SimSensor {
 		DoubleValue *mMaxRange;
 		DoubleValue *mMinRange;
 		DoubleValue *mSensorNoise;
+		Vector3DValue *mMinIntersectionPoint;
 		IntValue *mNumberOfRays;
 		InterfaceValue *mDistance;
 		QList<DistanceRay*> mRays;

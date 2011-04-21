@@ -654,6 +654,30 @@ bool ScriptedModel::allowCollisions(const QString &bodyName1, const QString &bod
 	return true;
 }
 
+bool ScriptedModel::allowCollisionsRegExp(const QString &bodyName1, const QString &bodyName2, bool allow) {
+
+	PhysicsManager *pm = Physics::getPhysicsManager();
+	
+	QList<SimObject*> bodies1 = pm->getSimObjects(bodyName1);
+	QList<SimObject*> bodies2 = pm->getSimObjects(bodyName2);
+	
+	CollisionManager *cm = Physics::getCollisionManager();
+	
+	for(QListIterator<SimObject*> i(bodies1); i.hasNext();) {
+		SimBody *body = dynamic_cast<SimBody*>(i.next());
+		if(body == 0) {
+			continue;
+		}
+		for(QListIterator<SimObject*> j(bodies2); j.hasNext();) {
+			SimBody *body2 = dynamic_cast<SimBody*>(j.next());
+			if(body2 == 0) {
+				continue;
+			}
+			cm->disableCollisions(body->getCollisionObjects(), body2->getCollisionObjects(), allow);
+		}
+	}
+}
+
 
 bool ScriptedModel::hasEnvironmentSection() {
 	if(mScript != 0) {

@@ -55,6 +55,8 @@ DistanceRay::DistanceRay(const QString &name, const Vector3D &position,
 		: mName(name), mRule(rule), mRayCollisionObject(0), mRay(0), mOwner(0),
 		mActiveColor(active), mInactiveColor(inactive)
 {
+	mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
+	
 	RayGeom geom(length);
 	geom.setLocalPosition(position);
 	geom.setLocalOrientation(orientation);
@@ -106,6 +108,8 @@ double DistanceRay::getDistance() {
 	Vector3D pos = localpos + simpos;
 	Vector3D vto;
 	double distance = mRay->getLength();
+	
+	mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
 
 	if(mRule == 0) {
 		return distance;
@@ -117,10 +121,15 @@ double DistanceRay::getDistance() {
 		vto = pos - point;
 		if(vto.length() < distance) {
 			distance = vto.length();
+			mClosestKnownCollisionPoint = point;
 		}
 	}
 	points->clear();
 	return distance;
+}
+
+Vector3D DistanceRay::getClosestKnownCollisionPoint() const {
+	return mClosestKnownCollisionPoint;
 }
 
 void DistanceRay::updateRay(double length) {

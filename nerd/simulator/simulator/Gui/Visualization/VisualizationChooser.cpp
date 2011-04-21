@@ -51,6 +51,7 @@
 #include <QHBoxLayout>
 #include "Gui/Visualization/OpenGLVisualization.h"
 #include "Physics/Physics.h"
+#include "Gui/GuiManager.h"
 
 namespace nerd{
 
@@ -58,6 +59,8 @@ VisualizationChooser::VisualizationChooser() {
 	setWindowTitle("Camera Manager");
 	mPosX = 0;
 	mPosY = 0;
+	
+	GuiManager::getGlobalGuiManager()->addWidget("CameraManager", this);
 
 	setAttribute(Qt::WA_QuitOnClose, false);
 	setAttribute(Qt::WA_DeleteOnClose, false);

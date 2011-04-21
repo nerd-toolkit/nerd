@@ -129,6 +129,11 @@ NeuralNetworkManager::NeuralNetworkManager()
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT, 
 						 NeuralNetworkConstants::TAG_TYPE_NEURON,
 						 "Creates an additional output in the super module for exported BDN projects"));
+						 
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE,
+						NeuralNetworkConstants::TAG_TYPE_NEURON,
+						"Splits the neuron into two new neurons and creates a spinal cord interface.\n"
+						"The tag requires a number that specifies the spinal cord adress to be used."));
 }
 
 /**

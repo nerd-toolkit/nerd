@@ -62,6 +62,8 @@
 #include <QTextStream>
 #include "Math/Random.h"
 #include <iostream>
+#include <QDate>
+#include <QTime>
 
 using namespace std;
 
@@ -74,7 +76,7 @@ namespace nerd {
 ScriptingContext::ScriptingContext(const QString &name, const QString &mainContextName)
 	: mName(name), mScript(0), mScriptCode(0), mScriptFileName(0), mMainContextName(mainContextName),
 	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false),
-	  mMaxNumberOfTriesToResolveDefinitions(5)
+	  mMaxNumberOfTriesToResolveDefinitions(5), mFileIdCounter(0)
 {
 	mScriptCode = new StringValue();
 	mScriptCode->addValueChangedListener(this);
@@ -95,7 +97,8 @@ ScriptingContext::ScriptingContext(const ScriptingContext &other)
 	: QObject(), mName(other.mName), mScript(0), mScriptCode(0), mScriptFileName(0), 
 	  mMainContextName(other.mMainContextName),
 	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false),
-	  mMaxNumberOfTriesToResolveDefinitions(other.mMaxNumberOfTriesToResolveDefinitions)
+	  mMaxNumberOfTriesToResolveDefinitions(other.mMaxNumberOfTriesToResolveDefinitions),
+	  mFileIdCounter(0)
 {
 	mScriptCode = new StringValue(other.mScriptCode->get());
 	mScriptCode->addValueChangedListener(this);
@@ -118,6 +121,10 @@ ScriptingContext::ScriptingContext(const ScriptingContext &other)
 ScriptingContext::~ScriptingContext() {
 	if(mScript != 0) {
 		delete mScript;
+	}
+	QList<int> openFileIds = mOpenFiles.keys();
+	for(QListIterator<int> i(openFileIds); i.hasNext();) {
+		closeFile(i.next());
 	}
 }
 
@@ -715,6 +722,57 @@ QString ScriptingContext::loadFileToString(const QString &fileName) {
 	}
 	QTextStream input(&file);
 	return input.readAll();
+}
+
+int ScriptingContext::openFile(const QString &fileName) {
+	QFile *file = new QFile(fileName);
+	if(!file->open(QIODevice::WriteOnly | QIODevice::Text)) {
+		Core::log(QString("ScriptingContext: Could not open file ").append(fileName).append("."));
+		file->close();
+		delete file;
+		return -1;
+	}
+	int fileId = ++mFileIdCounter;
+	mOpenFiles.insert(fileId, file);
+	return fileId;
+}
+
+
+/**
+ * Closes a file and removes it from the list of open files.
+ * The fileId becomes invalid.
+ */
+bool ScriptingContext::closeFile(int fileId) {
+	QFile *file = mOpenFiles.value(fileId);
+	if(file == 0) {
+		Core::log(QString("ScriptingContext: Could not find file [").append(QString::number(fileId)).append("] to close."));
+		return false;
+	}
+	file->close();
+	mOpenFiles.remove(fileId);
+	return true;
+}
+
+
+bool ScriptingContext::writeToFile(int fileId, const QString &content) {
+	QFile *file = mOpenFiles.value(fileId);
+	if(file == 0) {
+		Core::log(QString("ScriptingContext: Could not find file [").append(QString::number(fileId)).append("] to write to."));
+		return false;
+	}
+	if(!file->isOpen()) {
+		Core::log(QString("ScriptingContext: File [").append(QString::number(fileId)).append("] is not open. Can not write."));
+		return false;
+	}
+	QTextStream output(file);
+	output << content;
+	return true;
+}
+
+
+QString ScriptingContext::getTimeStamp() {
+	return (QDate::currentDate().toString("yyMMdd")).append("_")
+			.append(QTime::currentTime().toString("hhmmss"));
 }
 
 double ScriptingContext::random() {

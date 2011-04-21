@@ -55,7 +55,7 @@ using namespace std;
 namespace nerd {
 
 DistanceSensor::DistanceSensor(const QString &name)
-	: SimObject(name), SimSensor()
+	: SimObject(name), SimSensor(), mRule(0)
 {
 	mActiveColor = new ColorValue(Color(255, 0, 0));
 	mAngle = new DoubleValue(0.0);
@@ -68,6 +68,7 @@ DistanceSensor::DistanceSensor(const QString &name)
 	mMaxRange = new DoubleValue(1.0);
 	mMinRange = new DoubleValue(0.0);
 	mSensorNoise = new DoubleValue(0.0);
+	mMinIntersectionPoint = new Vector3DValue();
 
 	mDistance = new InterfaceValue("", "Distance",
 			mMaxRange->get() - mMinRange->get(), 0.0,
@@ -75,7 +76,7 @@ DistanceSensor::DistanceSensor(const QString &name)
 	mOutputValues.append(mDistance);
 
 	//TODO this has to be solved differently to allow multiple DistanceSensors.
-	mRule = new DistanceSensorRule(getName() + "/CollisionRule");
+	//mRule = new DistanceSensorRule(getName() + "/CollisionRule");
 
 	addParameter("ActiveColor", mActiveColor);
 	addParameter("AngleOfAperture", mAngle);
@@ -89,10 +90,11 @@ DistanceSensor::DistanceSensor(const QString &name)
 	addParameter("MinRange", mMinRange);
 	addParameter("Noise", mSensorNoise);
 	addParameter("NumberOfRays", mNumberOfRays);
+	addParameter("MinIntersectionPoint", mMinIntersectionPoint);
 }
 
 DistanceSensor::DistanceSensor(const DistanceSensor &other)
-	: Object(), ValueChangedListener(), SimObject(other), SimSensor()
+	: Object(), ValueChangedListener(), SimObject(other), SimSensor(), mRule(0)
 {
 	mActiveColor = dynamic_cast<ColorValue*>(getParameter("ActiveColor"));
 	mAngle = dynamic_cast<DoubleValue*>(getParameter("AngleOfAperture"));
@@ -109,13 +111,13 @@ DistanceSensor::DistanceSensor(const DistanceSensor &other)
 	mMinRange = dynamic_cast<DoubleValue*>(getParameter("MinRange"));
 	mSensorNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
 	mNumberOfRays = dynamic_cast<IntValue*>(getParameter("NumberOfRays"));
+	mMinIntersectionPoint = dynamic_cast<Vector3DValue*>(getParameter("MinIntersectionPoint"));
 
 	if(mDistance != 0) {
 		mOutputValues.append(mDistance);
 	}
 
 	//mRule = other.mRule; //TODO
-	mRule = new DistanceSensorRule(getName() + "/CollisionRule");
 }
 
 
@@ -129,7 +131,7 @@ SimObject* DistanceSensor::createCopy() const {
 
 void DistanceSensor::updateSensorValues() {
 	double distance;
-
+	
 	if (mCalcMinDistance->get()) {
 		distance = getMinSensorValue();
 	}
@@ -143,6 +145,8 @@ double DistanceSensor::getMinSensorValue() {
 	DistanceRay *ray;
 	double d = mMinRange->get();
 	double distance = mMaxRange->get();
+	
+	Vector3D minIntersectionPoint;
 
 	for(QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
 		ray = i.next();
@@ -150,8 +154,11 @@ double DistanceSensor::getMinSensorValue() {
 		ray->updateRay(d);
 		if (mMinRange->get() < d && d < distance) {
 			distance = d;
+			minIntersectionPoint = ray->getClosestKnownCollisionPoint();
 		}
 	}
+	mMinIntersectionPoint->set(minIntersectionPoint);
+	
 	return distance - mMinRange->get();
 }
 
@@ -185,12 +192,22 @@ void DistanceSensor::valueChanged(Value *value) {
 		mDistance->setMax(mMaxRange->get() - mMinRange->get());
 	}
 	else if(value == mNameValue) {
-		mRule->setName(getName() + "/CollisionRule");
+		if(mRule != 0) {
+			mRule->setName(getName() + "/CollisionRule");
+		}
+		else {
+			//create the collision rule only when the name of the (prototype) has changed!
+			mRule = new DistanceSensorRule(getName() + "/CollisionRule");
+		}
 	}
 }
 
 void DistanceSensor::setup() {
 	SimObject::setup();
+	
+	if(mRule == 0) {
+		mRule = new DistanceSensorRule(getName() + "/CollisionRule");
+	}
 
 	mHostBody = Physics::getPhysicsManager()->getSimBody(mHostBodyName->get());
 
@@ -235,8 +252,14 @@ void DistanceSensor::setup() {
 		cRays += ray->getCollisionObject();
 	}
 
+	SimBody *hostBody = getHostBody();
+	
 	for(QListIterator<CollisionObject*> i(cRays); i.hasNext();) {
-		mRule->addToSourceGroup(i.next());
+		CollisionObject *co = i.next();
+		mRule->addToSourceGroup(co);
+		if(hostBody != 0) {
+			hostBody->addCollisionObject(co);
+		}
 	}
 }
 
@@ -245,10 +268,15 @@ void DistanceSensor::clear() {
 	QList<CollisionObject*> cRays;
 
 	SimObject::clear();
+	SimBody *hostBody = getHostBody();
+	
 	for(QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
 		CollisionObject *co = i.next()->getCollisionObject();
 		mRule->removeFromSourceGroup(co);
 		mRule->removeFromTargetGroup(co);
+		if(hostBody != 0) {
+			hostBody->removeCollisionObject(co);
+		}
 	}
 	while(!mRays.empty()) {
 		DistanceRay *dRay = mRays.front();

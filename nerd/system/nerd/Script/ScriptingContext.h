@@ -53,6 +53,7 @@
 #include <QVariantList>
 #include "Value/ValueChangedListener.h"
 #include "Event/EventListener.h"
+#include <QFile>
 
 namespace nerd {
 
@@ -108,6 +109,11 @@ namespace nerd {
 		void triggerEvent(const QString &eventName, bool createIfNotAvailable = false);
 
 		QString loadFileToString(const QString &fileName);
+		int openFile(const QString &fileName);
+		bool closeFile(int fileId);
+		bool writeToFile(int fileId, const QString &content);
+		QString getTimeStamp();
+		
 		double random();
 		int randomInt(int max);
 
@@ -138,6 +144,8 @@ namespace nerd {
 		bool mHasUnresolvedValueDefinitions;
 		bool mHasUnresolvedEventDefinitions;
 		int mMaxNumberOfTriesToResolveDefinitions;
+		int mFileIdCounter;
+		QHash<int, QFile*> mOpenFiles;
 	};
 
 }

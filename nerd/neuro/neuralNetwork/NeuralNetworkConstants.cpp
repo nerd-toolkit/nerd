@@ -267,3 +267,6 @@ const QString NeuralNetworkConstants::TAG_NEURON_BDN_INPUT
 const QString NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT
 		= "BDN_Out";
 		
+const QString NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE
+		= "BDN_BOARD_INTERFACE";
+		
