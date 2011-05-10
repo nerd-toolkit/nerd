@@ -96,6 +96,27 @@ void NetworkEditorUtil::setModuleItemSize(ModuleItem *item, const QString &size)
 	}
 }
 
+Vector3D NetworkEditorUtil::getVector3DFromString(const QString &vector) {
+	if(vector.size() < 5) {
+		return Vector3D();
+	}
+	QStringList coordinates = vector.split(",");
+	if(coordinates.size() != 3) {
+		return Vector3D();
+	}
+	bool okx = true;
+	bool oky = true;
+	bool okz = true;
+	double x = coordinates.at(0).toDouble(&okx);
+	double y = coordinates.at(1).toDouble(&oky);
+	double z = coordinates.at(2).toDouble(&okz);
+	
+	if(okx && oky && okz) {
+		return Vector3D(x, y, z);
+	}
+	return Vector3D();
+}
+
 
 
 }

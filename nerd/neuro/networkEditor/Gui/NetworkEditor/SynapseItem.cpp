@@ -89,7 +89,12 @@ SynapseItem::~SynapseItem() {
 
 
 bool SynapseItem::setSynapse(Synapse *synapse) {
+	if(mSynapse != 0) {
+		mSynapse->removePropertyChangedListener(this);
+	}
+	
 	mSynapse = synapse;
+	mPositionOffset.set(0.0, 0.0, 0.0);
 
 	if(synapse == 0) {
 		mSourceNeuron = 0;
@@ -109,6 +114,9 @@ bool SynapseItem::setSynapse(Synapse *synapse) {
 			NetworkEditorUtil::setPaintItemLocation(this, 
 					synapse->getProperty(NeuralNetworkConstants::TAG_ELEMENT_LOCATION));
 		}
+		mSynapse->addPropertyChangedListener(this);
+		mPositionOffset = NetworkEditorUtil::getVector3DFromString(
+					mSynapse->getProperty(NeuralNetworkConstants::TAG_SYNAPSE_LOCATION_OFFSET));
 	}
 	if(mSynapse == 0 || mSourceNeuron == 0 || mTarget == 0  ) {
 		return false;
@@ -130,6 +138,15 @@ void SynapseItem::paintSelf(QPainter *painter) {
 
 Properties* SynapseItem::getEncapsulatedProperties() const {
 	return mSynapse;
+}
+
+void SynapseItem::propertyChanged(Properties *owner, const QString &property) {
+	if(owner == 0 || owner != mSynapse) {
+		return;
+	}
+	if(property == NeuralNetworkConstants::TAG_SYNAPSE_LOCATION_OFFSET) {
+		mPositionOffset = NetworkEditorUtil::getVector3DFromString(owner->getProperty(property));
+	}
 }
 
 

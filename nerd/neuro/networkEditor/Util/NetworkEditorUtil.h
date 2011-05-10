@@ -50,6 +50,7 @@
 #include <QHash>
 #include "Gui/NetworkEditor/PaintItem.h"
 #include "Gui/NetworkEditor/ModuleItem.h"
+#include "Math/Vector3D.h"
 
 namespace nerd {
 
@@ -61,6 +62,7 @@ namespace nerd {
 	public:
 		static void setPaintItemLocation(PaintItem *item, const QString &location);
 		static void setModuleItemSize(ModuleItem *item, const QString &size);
+		static Vector3D getVector3DFromString(const QString &vector);
 
 	private:
 	};

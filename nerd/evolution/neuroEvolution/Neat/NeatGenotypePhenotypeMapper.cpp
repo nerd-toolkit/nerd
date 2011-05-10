@@ -121,7 +121,7 @@ bool NeatGenotypePhenotypeMapper::createPhenotype(Individual *genomeOwner) {
 			continue;
 		}
 		
-		Neuron *neuron = new Neuron("Hidden", *(network->getDefaultTransferFunction()),
+		Neuron *neuron = new Neuron("", *(network->getDefaultTransferFunction()),
 						*(network->getDefaultActivationFunction()), node->mId);
 
 		if(node->mType == NeatNodeGene::SENSOR) {

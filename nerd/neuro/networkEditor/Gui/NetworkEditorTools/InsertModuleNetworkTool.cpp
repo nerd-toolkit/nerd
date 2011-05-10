@@ -134,7 +134,7 @@ void InsertModuleNetworkTool::mouseButtonPressed(NetworkVisualization *source,
 		}
 	}
 
-	NeuroModule *newModule = new NeuroModule("Module");
+	NeuroModule *newModule = new NeuroModule("");
 
 	InsertModuleCommand *command = new InsertModuleCommand(mVisuContext, newModule, pos, module, "");
 

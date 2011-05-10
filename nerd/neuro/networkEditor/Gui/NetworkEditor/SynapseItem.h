@@ -50,6 +50,8 @@
 #include "Network/Synapse.h"
 #include "Gui/NetworkEditor/PaintItem.h"
 #include <QSize>
+#include "Core/PropertyChangedListener.h"
+#include "Math/Vector3D.h"
 
 namespace nerd {
 
@@ -60,7 +62,7 @@ namespace nerd {
 	 * SynapseItem.
 	 *
 	 */
-	class SynapseItem : public PaintItem {
+	class SynapseItem : public PaintItem, public PropertyChangedListener {
 	public:
 		SynapseItem(NetworkVisualization *owner);
 		SynapseItem(const SynapseItem &other);
@@ -76,12 +78,14 @@ namespace nerd {
 		virtual void paintSelf(QPainter *painter);
 
 		virtual Properties* getEncapsulatedProperties() const;
+		virtual void propertyChanged(Properties *owner, const QString &property);
 		
 	protected:
 		NetworkVisualization *mOwner;
 		Synapse *mSynapse;
 		NeuronItem *mSourceNeuron;
 		PaintItem *mTarget;
+		Vector3D mPositionOffset;
 	};
 
 }

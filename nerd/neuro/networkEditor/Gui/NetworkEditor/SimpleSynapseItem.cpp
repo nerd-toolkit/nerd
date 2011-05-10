@@ -247,7 +247,11 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 	QFont newFont(oldFont);
 	newFont.setPointSizeF(oldFont.pointSizeF() + 0.5);
 	painter->setFont(newFont);
-	painter->drawText(rect, Qt::AlignCenter | Qt::AlignHCenter | Qt::TextSingleLine, 
+	
+	QRectF textRect = rect;
+	textRect.moveTo(textRect.x() + mPositionOffset.getX(), textRect.y() + mPositionOffset.getY());
+	
+	painter->drawText(textRect, Qt::AlignCenter | Qt::AlignHCenter | Qt::TextSingleLine, 
 			strength);
 	painter->setFont(oldFont);
 

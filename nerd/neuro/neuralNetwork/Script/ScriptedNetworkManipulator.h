@@ -106,9 +106,9 @@ namespace nerd {
 		bool addToGroup(qlonglong elementId, qlonglong groupId);
 		bool removeFromGroup(qlonglong elementId, qlonglong groupId);
 
-		qlonglong createNeuron(const QString &name = "Hidden");
+		qlonglong createNeuron(const QString &name = "");
 		qlonglong createSynapse(qlonglong sourceId, qlonglong targetId, double weight);
-		qlonglong createNeuroModule(const QString &name = "Module");
+		qlonglong createNeuroModule(const QString &name = "");
 		qlonglong createNeuronGroup(const QString &name = "Group");
 
 		bool removeNeuron(qlonglong neuronId);

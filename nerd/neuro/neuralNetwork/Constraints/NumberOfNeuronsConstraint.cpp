@@ -166,7 +166,7 @@ bool NumberOfNeuronsConstraint::applyConstraint(NeuronGroup *owner, CommandExecu
 			TransferFunction *tf = net->getDefaultTransferFunction();
 
 			while(neurons.size() < min) {
-				Neuron *neuron = new Neuron("Hidden", *tf, *af);
+				Neuron *neuron = new Neuron("", *tf, *af);
 				net->addNeuron(neuron);
 				owner->addNeuron(neuron);
 				neurons.append(neuron);

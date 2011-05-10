@@ -162,7 +162,7 @@ bool InsertNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 			}
 
 			//add a neuron
-			Neuron *neuron = new Neuron("Hidden", 
+			Neuron *neuron = new Neuron("", 
 						*(net->getDefaultTransferFunction()),
 						*(net->getDefaultActivationFunction()));
 

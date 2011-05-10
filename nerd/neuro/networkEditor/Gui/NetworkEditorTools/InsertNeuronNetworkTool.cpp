@@ -141,7 +141,7 @@ void InsertNeuronNetworkTool::mouseButtonPressed(NetworkVisualization *source,
 		return;
 	}
 
-	Neuron *neuron = new Neuron("Hidden", *(network->getDefaultTransferFunction()),
+	Neuron *neuron = new Neuron("", *(network->getDefaultTransferFunction()),
 								*(network->getDefaultActivationFunction()));
 
 	InsertNeuronCommand *command = new InsertNeuronCommand(mVisuContext, neuron, pos, module);
