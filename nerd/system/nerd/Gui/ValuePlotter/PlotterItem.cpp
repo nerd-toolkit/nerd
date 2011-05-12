@@ -229,6 +229,20 @@ const QColor& PlotterItem::getColor() const {
 	return mColor;
 }
 
+/**
+ *  Sets the dash pattern to be used to draw this graph.
+ */
+void PlotterItem::setDashPattern(const QVector<qreal> &pattern) {
+	mDashPattern = pattern;
+}
+
+
+/**
+ * Returns the dash pattern used to draw this graph.
+ */
+QVector<qreal> PlotterItem::getDashPattern() const {
+	return mDashPattern;
+}
 
 /**
  * Sets the history to static or dynamic. A static history is NOT extended

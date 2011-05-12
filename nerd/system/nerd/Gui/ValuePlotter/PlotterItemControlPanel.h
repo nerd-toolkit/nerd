@@ -73,12 +73,14 @@ namespace nerd {
 		void visibilityCheckBoxChanged(int state);
 		void plotterNameFieldChanged();
 		void visibilityChanged(bool visible);
+		void dashPatternChanged();
 
 	private:
 		PlotterItem *mPlotterItem;
 		QPushButton *mColorButton;
 		QLineEdit *mNameEdit;
 		QCheckBox *mShowCheckBox;
+		QLineEdit *mDashPatternEdit;
 	};
 
 }

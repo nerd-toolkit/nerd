@@ -100,6 +100,7 @@ namespace nerd {
 		void loadStaticDataButtonPressed();
 		void plotterItemCollectionChanged();
 		void showLegendCheckBoxChanged(bool checked);
+		void useOpaqueLegendCheckBoxChanged(bool checked);
 		void enableLoadStaticDataButton();
 		void supportedTriggerEventsChanged();
 		void triggerEventSelected(int index);
@@ -122,6 +123,7 @@ namespace nerd {
 		QVBoxLayout *mPlotterItemScrollerLayout;
 		QVector<PlotterItemControlPanel*> mPlotterItemPanels;
 		QCheckBox *mShowLegendCheckBox;
+		QCheckBox *mUseOpaqueLegendCheckBox;
 		StaticDataLoader *mStaticDataLoader;
 		QComboBox *mUpdateEventSelector;
 		QTabWidget *mControlArea;

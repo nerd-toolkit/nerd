@@ -86,6 +86,9 @@ namespace nerd {
 
 		void setColor(const QColor &color);
 		const QColor& getColor() const;
+		
+		void setDashPattern(const QVector<qreal> &pattern);
+		QVector<qreal> getDashPattern() const;
 
 		void setStaticHistory(bool staticHistory);
 		bool hasStaticHistory() const;
@@ -114,6 +117,7 @@ namespace nerd {
 		QColor mColor;
 		bool mHasStaticHistory;
 		bool mVisible;
+		QVector<qreal> mDashPattern;
 	};
 
 }

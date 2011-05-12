@@ -89,6 +89,8 @@ namespace nerd {
 
 		void enableLegend(bool enable);
 		bool isLegendEnabled() const;
+		void setSolidLegend(bool solid);
+		bool isSolidLegend() const;
 
 	public slots:
 		void updateHistories();
@@ -124,6 +126,7 @@ namespace nerd {
 		QMutex mUpdateMutex;
 		bool mPlotStaticItems;
 		bool mPlotLegend;
+		bool mPlotSolidLegend;
 		BoolValue *mPerformanceMode;
 	};
 

@@ -56,6 +56,8 @@
 #include "Value/ValueManager.h"
 #include "NerdConstants.h"
 #include <QCoreApplication>
+#include "Math/Math.h"
+#include <qvarlengtharray.h>
 
 
 using namespace std;
@@ -64,7 +66,7 @@ namespace nerd {
 
 PlotterWidget::PlotterWidget(QWidget *parent)
 	: QFrame(parent), mHistorySize(0), mPlotStaticItems(true), mPlotLegend(true), 
-	  mPerformanceMode(0)
+	  mPlotSolidLegend(false), mPerformanceMode(0)
 {
 	moveToThread(QCoreApplication::instance()->thread());
 
@@ -295,6 +297,15 @@ bool PlotterWidget::isLegendEnabled() const {
 	return mPlotLegend;
 }
 
+void PlotterWidget::setSolidLegend(bool solid) {
+	mPlotSolidLegend = solid;
+}
+
+
+bool PlotterWidget::isSolidLegend() const {
+	return mPlotSolidLegend;
+}
+
 
 /**
  * Removes and destroys all currently available PlotterItems.
@@ -391,14 +402,20 @@ void PlotterWidget::drawHistoryGraphs(QPainter &painter) {
 			}
 
 			QVector<double> data = item->getHistory();
+			
+			QPen oldPen = painter.pen();
+			
+			QPen pen = item->getColor();
+			pen.setDashPattern(item->getDashPattern());
+			painter.setPen(pen);
 
 			//set PlotterItem color.
-			painter.setPen(item->getColor());
+			//painter.setPen(item->getColor());
 
 			double x = 0.0;
 			double y = 0.0;
-			double old_x = 0.0;
-			double old_y = 0.0;
+// 			double old_x = 0.0;
+// 			double old_y = 0.0;
 			int mPointCounter = 0;
 
 			//Plot history of current Item.
@@ -406,6 +423,8 @@ void PlotterWidget::drawHistoryGraphs(QPainter &painter) {
 
 			double drawStartingPosition = mDrawableWidth + ((double) lineWidth())
 								+ (item->getOffsetH() * localPointDist);
+								
+			QPainterPath path;
 
 			int currentIndex = item->getHistoryStartIndex() - 1;
 			for(int j = data.size() - 1; j >= 0; --j) {
@@ -418,17 +437,26 @@ void PlotterWidget::drawHistoryGraphs(QPainter &painter) {
 				y = translateValue(data[currentIndex],
 									item->getOffsetV(),
 									item->getScalingV());
-
-				if(mPointCounter != 0) {
-					painter.drawLine((int) x, (int) y, (int) old_x, (int) old_y);
+				
+				if(mPointCounter == 0) {
+					path = QPainterPath(QPointF(x, y));
+				}
+				else {
+					path.lineTo(x, y);
 				}
 
+// 				if(mPointCounter != 0) {
+// 					//painter.drawLine((int) x, (int) y, (int) old_x, (int) old_y);
+// 				}
+
 				mPointCounter++;
-				old_x = x;
-				old_y = y;
+// 				old_x = x;
+// 				old_y = y;
 
 				--currentIndex;
 			}
+			painter.drawPath(path);
+			painter.setPen(oldPen);
 		}
 	}
 }
@@ -467,6 +495,28 @@ void PlotterWidget::drawCoordinateRanges(QPainter &painter) {
  */
 void PlotterWidget::drawLegend(QPainter &painter) {
 
+	int sizeX = 0;
+	int sizeY = 0;
+	for(QListIterator<PlotterItem*> i(mPlotterItems); i.hasNext();) {
+		PlotterItem *item = i.next();
+		
+		if(item == 0 || !item->isVisible()) {
+			continue;
+		}
+		sizeX = Math::max(sizeX, item->getName().count());
+		++sizeY;
+	}
+	
+	if(mPlotSolidLegend) {
+		if(sizeY > 1) {
+			--sizeY;
+			sizeX = Math::min(mMaxValueNameSize, sizeX);
+			painter.fillRect(10, 15, (sizeX * 10.5) + 35, (sizeY * 15) + 20, QColor(255,255,255,255));
+			painter.setPen(QColor(0,0,0,255));
+			painter.drawRect(10, 15, (sizeX * 10.5) + 35, (sizeY * 15) + 20);
+		}
+	}
+		
 	int row = 0;
 	for(int i = 0; i < mPlotterItems.size(); ++i) {
 		PlotterItem *item = mPlotterItems.at(i);
@@ -474,6 +524,13 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 		if(item == 0 || !item->isVisible()) {
 			continue;
 		}
+		
+		QPen pen(item->getColor());
+		pen.setDashPattern(item->getDashPattern());
+		painter.setPen(pen);
+		
+		int yPos = 26 + (15 * row) + 5;
+		painter.drawLine(13, yPos - 5, 45, yPos - 5);
 
 		painter.setPen(item->getColor());
 		QString name = item->getName();
@@ -481,7 +538,7 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 		if(maxSize > mMaxValueNameSize) {
 			maxSize = mMaxValueNameSize;
 		}
-		painter.drawText(10, 26 + (15 * row), name.mid(name.size() - maxSize));
+		painter.drawText(48, yPos, name.mid(name.size() - maxSize));
 		row++;
 	}
 }

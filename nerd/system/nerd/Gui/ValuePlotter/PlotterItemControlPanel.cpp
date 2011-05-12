@@ -76,11 +76,15 @@ PlotterItemControlPanel::PlotterItemControlPanel(PlotterItem *item, QWidget *par
 	mColorButton = new QPushButton("", this);
 	mColorButton->setFixedSize(25, 25);
 	if(item != 0) {
-		QPalette p = mColorButton->palette();
-		p.setColor(QPalette::Button, item->getColor());
-		p.setColor(QPalette::Background, item->getColor());
-		mColorButton->setPalette(p);
+		QColor color = item->getColor();
+		mColorButton->setStyleSheet("* { background-color: rgb(" 
+					+ QString::number(color.red())
+					+ "," + QString::number(color.green()) + 
+					+ "," + QString::number(color.blue()) + ") }");
 	}
+	
+	mDashPatternEdit = new QLineEdit("", this);
+	mDashPatternEdit->setFixedWidth(25);
 
 	mNameEdit = new QLineEdit("", this);
 	mNameEdit->setMinimumWidth(250);
@@ -90,6 +94,7 @@ PlotterItemControlPanel::PlotterItemControlPanel(PlotterItem *item, QWidget *par
 
 	layout->addWidget(mShowCheckBox);
 	layout->addWidget(mColorButton);
+	layout->addWidget(mDashPatternEdit);
 	layout->addWidget(mNameEdit, 100);
 
 	connect(mShowCheckBox, SIGNAL(stateChanged(int)),
@@ -98,6 +103,8 @@ PlotterItemControlPanel::PlotterItemControlPanel(PlotterItem *item, QWidget *par
 			this, SLOT(changeColorButtonPressed()));
 	connect(mNameEdit, SIGNAL(returnPressed()),
 			this, SLOT(plotterNameFieldChanged()));
+	connect(mDashPatternEdit, SIGNAL(returnPressed()),
+			this, SLOT(dashPatternChanged()));
 }
 
 /**
@@ -125,10 +132,11 @@ void PlotterItemControlPanel::changeColorButtonPressed() {
 		QColor color = QColorDialog::getColor(mPlotterItem->getColor(), this);
 		if(color != mPlotterItem->getColor()) {
 			mPlotterItem->setColor(color);
-			QPalette p = mColorButton->palette();
-			p.setColor(QPalette::Button, color);
-			p.setColor(QPalette::Background, color);
-			mColorButton->setPalette(p);
+
+			mColorButton->setStyleSheet("* { background-color: rgb(" 
+					+ QString::number(color.red())
+					+ "," + QString::number(color.green()) + 
+					+ "," + QString::number(color.blue()) + ") }");
 		}
 	}
 }
@@ -170,6 +178,19 @@ void PlotterItemControlPanel::visibilityChanged(bool visible) {
 	if(mShowCheckBox->isChecked() != visible) {
 		mShowCheckBox->setChecked(visible);
 	}
+}
+
+void PlotterItemControlPanel::dashPatternChanged() {
+	QStringList patternItems = mDashPatternEdit->text().split(",");
+	QVector<qreal> pattern;
+	for(QListIterator<QString> i(patternItems); i.hasNext();) {
+		bool ok = true;
+		qreal item = i.next().toDouble(&ok);
+		if(ok) {
+			pattern.append(item);
+		}
+	}
+	mPlotterItem->setDashPattern(pattern);
 }
 
 }

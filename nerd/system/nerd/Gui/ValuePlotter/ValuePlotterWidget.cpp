@@ -197,6 +197,10 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	mShowLegendCheckBox = new QCheckBox("Show Legend", specialTab);
 	mShowLegendCheckBox->setChecked(true);
 	specialLayout->addWidget(mShowLegendCheckBox);
+	
+	mUseOpaqueLegendCheckBox = new QCheckBox("Use Opaque Legend", specialTab);
+	mUseOpaqueLegendCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isSolidLegend());
+	specialLayout->addWidget(mUseOpaqueLegendCheckBox);
 
 	QGroupBox *updateEventSelectorBox = new QGroupBox("Plotter Update Event", specialTab);
 	mUpdateEventSelector = new QComboBox(updateEventSelectorBox);
@@ -266,6 +270,8 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 
 	connect(mShowLegendCheckBox, SIGNAL(toggled(bool)),
 			this, SLOT(showLegendCheckBoxChanged(bool)));
+	connect(mUseOpaqueLegendCheckBox, SIGNAL(toggled(bool)),
+			this, SLOT(useOpaqueLegendCheckBoxChanged(bool)));
 
 	connect(mUpdateEventSelector, SIGNAL(activated(int)), 
 			this, SLOT(triggerEventSelected(int)));
@@ -536,6 +542,10 @@ void ValuePlotterWidget::plotterItemCollectionChanged() {
 
 void ValuePlotterWidget::showLegendCheckBoxChanged(bool) {
 	mValuePlotter->getPlotterWidget()->enableLegend(mShowLegendCheckBox->isChecked());
+}
+
+void ValuePlotterWidget::useOpaqueLegendCheckBoxChanged(bool checked) {
+	mValuePlotter->getPlotterWidget()->setSolidLegend(mUseOpaqueLegendCheckBox->isChecked());
 }
 
 void ValuePlotterWidget::enableLoadStaticDataButton() {
