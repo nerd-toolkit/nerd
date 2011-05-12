@@ -80,12 +80,17 @@ namespace nerd {
 		virtual Properties* getEncapsulatedProperties() const;
 		virtual void propertyChanged(Properties *owner, const QString &property);
 		
+		virtual void setViewMode(int mode, bool enabled);
+		virtual bool isViewModeEnabled(int mode);
+		
 	protected:
 		NetworkVisualization *mOwner;
 		Synapse *mSynapse;
 		NeuronItem *mSourceNeuron;
 		PaintItem *mTarget;
 		Vector3D mPositionOffset;
+		bool mHideWeight;
+		bool mUseSynapseTypeSymbols;
 	};
 
 }

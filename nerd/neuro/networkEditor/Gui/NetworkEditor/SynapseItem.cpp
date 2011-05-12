@@ -65,7 +65,7 @@ namespace nerd {
  * Constructs a new SynapseItem.
  */
 SynapseItem::SynapseItem(NetworkVisualization *owner)
-	: PaintItem(800), mOwner(owner)
+	: PaintItem(800), mOwner(owner), mHideWeight(false), mUseSynapseTypeSymbols(true)
 {
 }
 
@@ -76,7 +76,8 @@ SynapseItem::SynapseItem(NetworkVisualization *owner)
  * @param other the SynapseItem object to copy.
  */
 SynapseItem::SynapseItem(const SynapseItem &other) 
-	: PaintItem(other), mOwner(other.mOwner), mSynapse(0)
+	: PaintItem(other), mOwner(other.mOwner), mSynapse(0), 
+	mHideWeight(other.mHideWeight), mUseSynapseTypeSymbols(other.mUseSynapseTypeSymbols)
 {
 }
 
@@ -149,6 +150,29 @@ void SynapseItem::propertyChanged(Properties *owner, const QString &property) {
 	}
 }
 
+void SynapseItem::setViewMode(int mode, bool enabled) {
+	if(mode == PaintItem::HIDE_WEIGHTS) {
+		mHideWeight = enabled;
+	}
+	else if(mode == PaintItem::USE_SYNAPSE_TYPE_SYMBOLS) {
+		mUseSynapseTypeSymbols = enabled;
+	}
+	else {
+		PaintItem::setViewMode(mode, enabled);
+	}
+}
+
+bool SynapseItem::isViewModeEnabled(int mode) {
+	if(mode == PaintItem::HIDE_WEIGHTS) {
+		return mHideWeight;
+	}
+	else if(mode == PaintItem::USE_SYNAPSE_TYPE_SYMBOLS) {
+		return mUseSynapseTypeSymbols;
+	}
+	else {
+		return PaintItem::isViewModeEnabled(mode);
+	}
+}
 
 }
 

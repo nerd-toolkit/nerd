@@ -49,7 +49,8 @@
 #include "Gui/NetworkEditor/NetworkVisualization.h"
 #include "Gui/NetworkEditor/SimpleNetworkVisualizationHandler.h"
 #include "Gui/NetworkEditor/GroupItem.h"
-
+#include <QKeySequence>
+#include <QMenu>
 
 using namespace std;
 
@@ -62,11 +63,21 @@ namespace nerd {
 ChangeViewModeTool::ChangeViewModeTool(NeuralNetworkEditor *owner, int mode, 
 					const QString &message, Qt::Key pressedKey, bool reverseActivation)
 	: QObject(owner), mOwner(owner), mModeActive(false), mMode(mode), mStatusMessage(message),
-	  mPressedKey(pressedKey), mReverseActivation(reverseActivation)
-{
+	  mPressedKey(pressedKey), mReverseActivation(reverseActivation), mMenuAction(0),
+	  mKeyPressed(false)
+{	
 	if(mOwner != 0) {
 		connect(mOwner, SIGNAL(tabSelectionChanged(int)),
 				this, SLOT(updateKeyListenerRegistration(int)));
+		
+		QMenu *viewMenu = mOwner->getViewModeMenu();
+		if(viewMenu != 0) {
+			mMenuAction = viewMenu->addAction(message + " (" 
+							+ QKeySequence(Qt::SHIFT + pressedKey).toString() + ")");
+			mMenuAction->setCheckable(true);
+			connect(mMenuAction, SIGNAL(triggered(bool)),
+					this, SLOT(menuActionTriggered(bool)));
+		}
 	}
 	updateKeyListenerRegistration(0);
 }
@@ -80,14 +91,37 @@ ChangeViewModeTool::~ChangeViewModeTool() {
 }
 
 void ChangeViewModeTool::keyPressed(QKeyEvent *event) {
-	if(mModeActive) {
+	if(mMenuAction == 0 || mKeyPressed) {
 		return;
 	}
 	if(event->key() != mPressedKey || !(event->modifiers() & Qt::ShiftModifier)) {
 		return;
 	}
+	
+	mKeyPressed = true;
 
-	if(mOwner == 0) {
+	if(mMenuAction->isChecked()) {
+		disableViewMode();
+		mMenuAction->setChecked(false);
+	}
+	else {
+		enableViewMode();
+		mMenuAction->setChecked(true);
+	}
+}
+
+
+void ChangeViewModeTool::keyReleased(QKeyEvent *event) {
+	if(mMenuAction == 0) {
+		return;
+	}
+	if(event->key() == mPressedKey) {
+		mKeyPressed = false;
+	}
+}
+
+void ChangeViewModeTool::enableViewMode() {
+	if(mOwner == 0 || mMenuAction == 0) {
 		return;
 	}
 	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
@@ -117,14 +151,8 @@ void ChangeViewModeTool::keyPressed(QKeyEvent *event) {
 }
 
 
-void ChangeViewModeTool::keyReleased(QKeyEvent *event) {
-
-	if(!mModeActive) {
-		return;
-	}
-	if(event->key() == mPressedKey) {
-
-		if(mOwner == 0) {
+void ChangeViewModeTool::disableViewMode() {
+	if(mOwner == 0 || mMenuAction == 0) {
 			return;
 		}
 		NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
@@ -151,7 +179,6 @@ void ChangeViewModeTool::keyReleased(QKeyEvent *event) {
 		mModeActive = false;
 
 		visu->removeStatusMessage(mStatusMessage);
-	}
 }
 
 
@@ -162,6 +189,15 @@ void ChangeViewModeTool::updateKeyListenerRegistration(int) {
 	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
 	if(visu != 0) {
 		visu->addKeyListener(this);
+	}
+}
+
+void ChangeViewModeTool::menuActionTriggered(bool checked) {
+	if(mMenuAction->isChecked()) {
+		enableViewMode();
+	}
+	else {
+		disableViewMode();
 	}
 }
 

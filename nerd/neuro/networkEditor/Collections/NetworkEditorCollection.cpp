@@ -79,10 +79,20 @@ NetworkEditorCollection::NetworkEditorCollection(QMenu *targetMenu, const QStrin
 						   "Show Bias Values", Qt::Key_V);
 	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_MODULE_INPUT_OUTPUT, 
 						   "Show Module Input/Output", Qt::Key_M);
+	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_NAMES, 
+						   "Hide Module Names", Qt::Key_O, true);
 	new ChangeViewModeTool(editor, PaintItem::SHOW_ELEMENT_SLAVE_STATUS,
 							"Show Slaves", Qt::Key_S);
 	new ChangeViewModeTool(editor, PaintItem::HIDE_UNSELECTED,
 							"Hide Unselected Elements", Qt::Key_H);
+	new ChangeViewModeTool(editor, PaintItem::USE_SYNAPSE_TYPE_SYMBOLS,
+							"Use Only Synapse Arrows", Qt::Key_E, true);
+	new ChangeViewModeTool(editor, PaintItem::HIDE_WEIGHTS,
+							"Hide Synapse Weights", Qt::Key_W);
+	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_HANDLES,
+							"Hide Module Handles", Qt::Key_1, true);
+	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_BACKGROUND,
+							"Hide Module Background", Qt::Key_2, true);
 // 	new ChangeViewModeTool(editor, PaintItem::USE_COSMETIC_LINES,
 // 							"Draw Cosmetic Lines", Qt::Key_C);
 	new NeuralNetworkToolbox(editor);

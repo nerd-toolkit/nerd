@@ -60,7 +60,7 @@ namespace nerd {
  */
 ModuleItem::ModuleItem(NetworkVisualization *owner)
 	: PaintItem(100), mOwner(owner), mModule(0), mSize(50, 50), 
-	  mShowName(true)
+	  mShowName(true), mShowHandles(true), mShowBackground(true)
 {
 }
 
@@ -72,7 +72,8 @@ ModuleItem::ModuleItem(NetworkVisualization *owner)
  */
 ModuleItem::ModuleItem(const ModuleItem &other) 
 	: PaintItem(other), mOwner(other.mOwner), mModule(0), mSize(other.mSize),
-	  mShowName(other.mShowName)
+	  mShowName(other.mShowName), mShowHandles(other.mShowHandles), 
+	  mShowBackground(other.mShowBackground)
 {
 }
 
@@ -162,6 +163,36 @@ void ModuleItem::setPaintLevel(int level) {
 
 Properties* ModuleItem::getEncapsulatedProperties() const {
 	return mModule;
+}
+
+void ModuleItem::setViewMode(int mode, bool enabled) {
+	if(mode == PaintItem::SHOW_MODULE_NAMES) {
+		mShowName = enabled;
+	}
+	if(mode == PaintItem::SHOW_MODULE_HANDLES) {
+		mShowHandles = enabled;
+	}
+	if(mode == PaintItem::SHOW_MODULE_BACKGROUND) {
+		mShowBackground = enabled;
+	}
+	else {
+		PaintItem::setViewMode(mode, enabled);
+	}
+}
+
+bool ModuleItem::isViewModeEnabled(int mode) {
+	if(mode == PaintItem::SHOW_MODULE_NAMES) {
+		return mShowName;
+	}
+	else if(mode == PaintItem::SHOW_MODULE_HANDLES) {
+		return mShowHandles;
+	}
+	else if(mode == PaintItem::SHOW_MODULE_BACKGROUND) {
+		return mShowBackground;
+	}
+	else {
+		return PaintItem::isViewModeEnabled(mode);
+	}
 }
 
 }

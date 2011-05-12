@@ -111,6 +111,7 @@ namespace nerd {
 		virtual void updateRecentNetworkMenu(const QString &fileName);
 
 		bool isHiddenLayerModeEnabled() const;
+		QMenu* getViewModeMenu() const;
 
 	signals:
 		void tabSelectionChanged(int index);
@@ -151,6 +152,7 @@ namespace nerd {
 		virtual void setupMenuBar();
 		virtual QMenu* addEditMenu();
 		virtual QMenu* addPlotterMenu();
+		virtual QMenu* addViewModeMenu();
 		virtual void setupTools();
 		void updateUndoRedoActions();
 
@@ -179,6 +181,7 @@ namespace nerd {
 		IntValue *mAutoSaveNetworkTimerSeconds;
 		StringValue *mAutoSaveNetworkDirectory;
 		QMenu *mRecentNetworksMenu;
+		QMenu *mViewModeMenu;
 		Event *mShutDownEvent;
 		QAction *mEnableHiddenLayersCheckbox;
 	};

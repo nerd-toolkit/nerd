@@ -98,7 +98,7 @@ namespace nerd {
  */
 NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	: QMainWindow(parent), mMainPane(0),
-	  mUndoAction(0), mRedoAction(0), mWindowToggleState(true)
+	  mUndoAction(0), mRedoAction(0), mWindowToggleState(true), mViewModeMenu(0)
 {	
 
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -363,6 +363,10 @@ void NeuralNetworkEditor::updateRecentNetworkMenu(const QString &fileName) {
 
 bool NeuralNetworkEditor::isHiddenLayerModeEnabled() const {
 	return mEnableHiddenLayersCheckbox->isChecked();
+}
+
+QMenu* NeuralNetworkEditor::getViewModeMenu() const {
+	return mViewModeMenu;
 }
 
 void NeuralNetworkEditor::undoCommand() {
@@ -1535,6 +1539,7 @@ void NeuralNetworkEditor::selectAllVisibleItems() {
 void NeuralNetworkEditor::setupMenuBar() {
 	addEditMenu();
 	addPlotterMenu();
+	addViewModeMenu();
 }
 
 QMenu* NeuralNetworkEditor::addEditMenu() {
@@ -1608,6 +1613,17 @@ QMenu* NeuralNetworkEditor::addPlotterMenu() {
 	mainMenu->addMenu(plotterMenu);
 
 	return plotterMenu;
+}
+
+QMenu* NeuralNetworkEditor::addViewModeMenu() {
+	QMenuBar *mainMenu = menuBar();
+
+	//Edit Menu
+	mViewModeMenu = new QMenu("View", mainMenu);
+
+	mainMenu->addMenu(mViewModeMenu);
+
+	return mViewModeMenu;
 }
 
 

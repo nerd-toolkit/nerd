@@ -215,11 +215,20 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 			painter->drawLine(ownPos, targetPos);
 		}
 		
-		//draw arrow
-		QPainterPath arrow(QPointF(0, 0));
-		arrow.lineTo(-15, -7);
-		arrow.lineTo(-15, 7);
-		arrow.lineTo(0, 0);
+		
+		//draw synapse endpoint
+		QPainterPath arrow;
+		if(!mUseSynapseTypeSymbols || mSynapse->getStrengthValue().get() >= 0.0) {
+			//draw arrow
+			arrow = QPainterPath(QPointF(0, 0));
+			arrow.lineTo(-15, -7);
+			arrow.lineTo(-15, 7);
+			arrow.lineTo(0, 0);
+		}
+		else {
+			//draw circle
+			arrow.addEllipse(-15,-7, 15, 15);
+		}
 
 		QMatrix transformation = painter->worldMatrix();
 		
@@ -239,21 +248,23 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 		painter->fillRect(boundingBox, QColor(255, 0, 0, 50));
 	}
 
-	QString strength = mSynapse->getStrengthValue().getValueAsString();
-	if(strength.size() > 7) {
-		strength = strength.mid(0, 7);
+	if(!mHideWeight) {
+		QString strength = mSynapse->getStrengthValue().getValueAsString();
+		if(strength.size() > 7) {
+			strength = strength.mid(0, 7);
+		}
+		QFont oldFont = painter->font();
+		QFont newFont(oldFont);
+		newFont.setPointSizeF(oldFont.pointSizeF() + 0.5);
+		painter->setFont(newFont);
+		
+		QRectF textRect = rect;
+		textRect.moveTo(textRect.x() + mPositionOffset.getX(), textRect.y() + mPositionOffset.getY());
+		
+		painter->drawText(textRect, Qt::AlignCenter | Qt::AlignHCenter | Qt::TextSingleLine, 
+				strength);
+		painter->setFont(oldFont);
 	}
-	QFont oldFont = painter->font();
-	QFont newFont(oldFont);
-	newFont.setPointSizeF(oldFont.pointSizeF() + 0.5);
-	painter->setFont(newFont);
-	
-	QRectF textRect = rect;
-	textRect.moveTo(textRect.x() + mPositionOffset.getX(), textRect.y() + mPositionOffset.getY());
-	
-	painter->drawText(textRect, Qt::AlignCenter | Qt::AlignHCenter | Qt::TextSingleLine, 
-			strength);
-	painter->setFont(oldFont);
 
 	if(!mSynapse->getEnabledValue().get()) {
 		painter->drawLine(boundingBox.x(), 

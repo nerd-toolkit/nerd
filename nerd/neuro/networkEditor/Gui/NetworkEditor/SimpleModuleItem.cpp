@@ -257,32 +257,41 @@ void SimpleModuleItem::paintSelf(QPainter *painter) {
 		outlineColor = QColor(0, 255, 0);
 	}
 
-	if(!mUseCosmeticLines) {
+	if(!mUseCosmeticLines && mShowBackground) {
 		painter->fillRect(rect, color);
 	}
 	newPen.setColor(outlineColor);
 	painter->setPen(newPen);
 	painter->drawRect(rect);
 
-	QPainterPath upperLeftHandle(QPointF(pos.x(), pos.y()));
-	upperLeftHandle.lineTo(QPoint(pos.x(), pos.y() + mHandleSize));
-	upperLeftHandle.lineTo(QPoint(pos.x() + mHandleSize, pos.y()));
-	painter->fillPath(upperLeftHandle, outlineColor);
+	if(mShowHandles) {
+		QPainterPath upperLeftHandle(QPointF(pos.x(), pos.y()));
+		upperLeftHandle.lineTo(QPoint(pos.x(), pos.y() + mHandleSize));
+		upperLeftHandle.lineTo(QPoint(pos.x() + mHandleSize, pos.y()));
+		painter->fillPath(upperLeftHandle, outlineColor);
 
-	double x = pos.x() + mSize.width();
-	double y = pos.y() + mSize.height();
-	QPainterPath lowerRightHandle(QPointF(x, y));
-	lowerRightHandle.lineTo(QPoint(x, y - mHandleSize));
-	lowerRightHandle.lineTo(QPoint(x - mHandleSize, y));
-	painter->fillPath(lowerRightHandle, outlineColor);
+		double x = pos.x() + mSize.width();
+		double y = pos.y() + mSize.height();
+		QPainterPath lowerRightHandle(QPointF(x, y));
+		lowerRightHandle.lineTo(QPoint(x, y - mHandleSize));
+		lowerRightHandle.lineTo(QPoint(x - mHandleSize, y));
+		painter->fillPath(lowerRightHandle, outlineColor);
+	}
 
 	if(mShowName) {
-		double scale = 1.6;
-		painter->scale(scale, scale);
+		QFont font = painter->font();
+		QFont oldFont = font;
+		font.setPointSize(font.pointSize() + 2);
+		painter->setFont(font);
+		
+		double scale = 1.0;
+		//painter->scale(scale, scale);
 		painter->drawText((pos.x() - 0.0) / scale, (pos.y() + mSize.height()) / scale,
 						 (mSize.width() + 0.0) / scale, 50.0 / scale, 
 						 Qt::AlignHCenter | Qt::AlignRight, mModule->getName());
-		painter->scale(1.0 / scale, 1.0 / scale);
+		//painter->scale(1.0 / scale, 1.0 / scale);
+		
+		painter->setFont(oldFont);
 	}
 
 	painter->setPen(oldPen);

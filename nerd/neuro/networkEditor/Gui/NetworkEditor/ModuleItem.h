@@ -91,6 +91,9 @@ namespace nerd {
 		virtual void updateLayout() = 0;
 		
 		virtual Properties* getEncapsulatedProperties() const;
+		
+		virtual void setViewMode(int mode, bool enabled);
+		virtual bool isViewModeEnabled(int mode);
 
 	protected:	
 		NetworkVisualization *mOwner;
@@ -98,6 +101,8 @@ namespace nerd {
 		QList<PaintItem*> mMembers;
 		QSizeF mSize;
 		bool mShowName;
+		bool mShowHandles;
+		bool mShowBackground;
 	};
 
 }

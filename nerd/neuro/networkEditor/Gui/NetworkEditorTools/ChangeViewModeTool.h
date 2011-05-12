@@ -51,6 +51,7 @@
 #include "Gui/NetworkEditor/NeuralNetworkEditor.h"
 #include <QObject>
 #include "Gui/KeyListener.h"
+#include <QAction>
 
 namespace nerd {
 
@@ -67,9 +68,13 @@ namespace nerd {
 
 		virtual void keyPressed(QKeyEvent *event);
 		virtual void keyReleased(QKeyEvent *event);
+		
+		void enableViewMode();
+		void disableViewMode();
 
 	public slots:
 		void updateKeyListenerRegistration(int tabIndex);
+		void menuActionTriggered(bool checked = false);
 
 	private:
 		NeuralNetworkEditor *mOwner;
@@ -78,6 +83,8 @@ namespace nerd {
 		QString mStatusMessage;
 		Qt::Key mPressedKey;
 		bool mReverseActivation;
+		QAction *mMenuAction;
+		bool mKeyPressed;
 	};
 
 }

@@ -327,6 +327,7 @@ void EvaluationNetworkEditor::setupMenuBar() {
 	QMenu *editMenu = addEditMenu();
 	extendEditMenu(editMenu);
 	addPlotterMenu();
+	addViewModeMenu();
 }
 
  
