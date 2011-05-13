@@ -55,6 +55,7 @@
 #include <QMutex>
 #include "Value/BoolValue.h"
 #include "Value/ValueChangedListener.h"
+#include <qvarlengtharray.h>
 
 namespace nerd {
 
@@ -83,6 +84,7 @@ namespace nerd {
 		void setUserOffsetV(double offset);
 
 		bool saveHistoriesToFile(const QString &fileName);
+		void saveDiagramToSvg(const QString &fileName);
 
 		void enableStaticItems(bool enable);
 		bool areStaticItemsEnabled() const;
@@ -91,11 +93,24 @@ namespace nerd {
 		bool isLegendEnabled() const;
 		void setSolidLegend(bool solid);
 		bool isSolidLegend() const;
+		
+		void setTickIntervals(int major, int minor);
+		int getMajorTickInterval() const;
+		int getMinorTickInterval() const;
+		void enableDiagramMode(bool enable);
+		bool isInDiagramMode() const;
+		void showDiagramLines(bool show);
+		bool isShowingDiagramLines() const;
+		void setLegendBoxOverride(QRectF box);
+		QRectF getLegendBoxOverride() const;
+		void setDiagramShift(double shift);
+		double getDiagramShift() const;
 
 	public slots:
 		void updateHistories();
 		void plot();
 		void clear();
+		
 
 	signals:
 		void userScaleVChanged(double currentScale);
@@ -128,6 +143,14 @@ namespace nerd {
 		bool mPlotLegend;
 		bool mPlotSolidLegend;
 		BoolValue *mPerformanceMode;
+		int mMajorTickInterval;
+		int mMinorTickInterval;
+		double mHorizontalOffset;
+		bool mDiagramMode;
+		bool mShowDiagramLines;
+		QRectF mLegendBoxOverride;
+		double mDiagramShift;
+		
 	};
 
 }

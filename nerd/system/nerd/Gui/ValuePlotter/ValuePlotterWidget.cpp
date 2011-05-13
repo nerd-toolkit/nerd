@@ -56,6 +56,8 @@
 #include <QMapIterator>
 #include <QCoreApplication>
 #include "Math/Math.h"
+#include <QLabel>
+#include "Util/NerdFileSelector.h"
 
 using namespace std;
 
@@ -123,6 +125,9 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	mVerticalScale = new QLineEdit("1.0", scaleBox);
 	scaleLayout->addWidget(mVerticalScale);
 	generalLayout->addWidget(scaleBox);
+	
+	mSaveGraphButton = new QPushButton("Save Graph");
+	generalLayout->addWidget(mSaveGraphButton);
 
 	mControlArea->addTab(generalTab, "General");
 
@@ -187,20 +192,73 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 
 
 	mControlArea->addTab(offlineTab, "Offline");
+	
+	//Create Diagram tab
+	QWidget *diagramTab = new QWidget(mControlArea);
+	QVBoxLayout *diagramLayout = new QVBoxLayout(diagramTab);
+	diagramLayout->setMargin(2);
+	diagramTab->setLayout(diagramLayout);
+	
+	mShowLegendCheckBox = new QCheckBox("Show Legend", diagramTab);
+	mShowLegendCheckBox->setChecked(true);
+	diagramLayout->addWidget(mShowLegendCheckBox);
+	
+	mUseOpaqueLegendCheckBox = new QCheckBox("Use Opaque Legend", diagramTab);
+	mUseOpaqueLegendCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isSolidLegend());
+	diagramLayout->addWidget(mUseOpaqueLegendCheckBox);
+	
+	mDiagramModeCheckBox = new QCheckBox("Diagram Mode", diagramTab);
+	mDiagramModeCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isInDiagramMode());
+	diagramLayout->addWidget(mDiagramModeCheckBox);
+	
+	mShowDiagramLinesCheckBox = new QCheckBox("Show Diagram Lines", diagramTab);
+	mShowDiagramLinesCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isShowingDiagramLines());
+	diagramLayout->addWidget(mShowDiagramLinesCheckBox);
+	
+	QLabel *tickLabel = new QLabel("Ticks");
+	mDiagramMajorTickIntervalEdit = new QLineEdit("");
+	mDiagramMajorTickIntervalEdit->setText(QString::number(
+							mValuePlotter->getPlotterWidget()->getMajorTickInterval()));
+	mDiagramMajorTickIntervalEdit->setToolTip("Interval of large vertical lines (major ticks).");
+	mDiagramMinorTickIntervalEdit = new QLineEdit("");
+	mDiagramMinorTickIntervalEdit->setText(QString::number(
+							mValuePlotter->getPlotterWidget()->getMinorTickInterval()));
+	mDiagramMinorTickIntervalEdit->setToolTip("Number of minor ticks between two major ticks.");
+	
+	
+	QHBoxLayout *tickIntervalLayout = new QHBoxLayout();
+	tickIntervalLayout->addWidget(tickLabel);
+	tickIntervalLayout->addWidget(mDiagramMajorTickIntervalEdit);
+	tickIntervalLayout->addWidget(mDiagramMinorTickIntervalEdit);
+	diagramLayout->addLayout(tickIntervalLayout);
+	
+	QLabel *legendOverrideLabel = new QLabel("LB:");
+	mLegendBoxOverRideEdit = new QLineEdit("");
+	mLegendBoxOverRideEdit->setToolTip("Overrides the default size and position of the legend box.\n"
+										"Format: shiftX,shiftY or shiftX,shiftY,width,height");
+	
+	QLabel *diagramShiftLabel = new QLabel("Shift.");
+	mDiagramShiftEdit = new QLineEdit("0");
+	mDiagramShiftEdit->setToolTip("Shift entire diagram to match the front header.");
+	
+	QHBoxLayout *legendOffsetLayout = new QHBoxLayout();
+	legendOffsetLayout->addWidget(legendOverrideLabel);
+	legendOffsetLayout->addWidget(mLegendBoxOverRideEdit);
+	legendOffsetLayout->addWidget(diagramShiftLabel);
+	legendOffsetLayout->addWidget(mDiagramShiftEdit);
+	
+	diagramLayout->addLayout(legendOffsetLayout);
 
+	diagramLayout->addStretch();
+
+	mControlArea->addTab(diagramTab, "Diagram");
+	
+	
 	//Create special tab
 	QWidget *specialTab = new QWidget(mControlArea);
 	QVBoxLayout *specialLayout = new QVBoxLayout(specialTab);
 	specialLayout->setMargin(2);
 	specialTab->setLayout(specialLayout);
-
-	mShowLegendCheckBox = new QCheckBox("Show Legend", specialTab);
-	mShowLegendCheckBox->setChecked(true);
-	specialLayout->addWidget(mShowLegendCheckBox);
-	
-	mUseOpaqueLegendCheckBox = new QCheckBox("Use Opaque Legend", specialTab);
-	mUseOpaqueLegendCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isSolidLegend());
-	specialLayout->addWidget(mUseOpaqueLegendCheckBox);
 
 	QGroupBox *updateEventSelectorBox = new QGroupBox("Plotter Update Event", specialTab);
 	mUpdateEventSelector = new QComboBox(updateEventSelectorBox);
@@ -214,6 +272,15 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	mClearHistoryButton = new QPushButton("Clear History");
 	specialLayout->addWidget(mClearHistoryButton);
 	
+	QLabel *dialogSizeLabel = new QLabel("Set Dialog Size");
+	mDialogSizeEdit = new QLineEdit("");
+	mDialogSizeEdit->setToolTip("Change the size of the plotter to width,height.");
+	
+	QHBoxLayout *dialogSizeLayout = new QHBoxLayout();
+	dialogSizeLayout->addWidget(dialogSizeLabel);
+	dialogSizeLayout->addWidget(mDialogSizeEdit);
+	
+	specialLayout->addLayout(dialogSizeLayout);
 
 	specialLayout->addStretch();
 
@@ -234,6 +301,8 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 			this, SLOT(changeOffsetV()));
 	connect(mVerticalScale, SIGNAL(returnPressed()),
 			this, SLOT(changeScaleV()));
+	connect(mSaveGraphButton, SIGNAL(pressed()),
+			this,SLOT(saveDiagramToSvg()));
 
 	connect(mStaticScaleV, SIGNAL(returnPressed()),
 			this, SLOT(changeStaticScaleV()));
@@ -272,6 +341,18 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 			this, SLOT(showLegendCheckBoxChanged(bool)));
 	connect(mUseOpaqueLegendCheckBox, SIGNAL(toggled(bool)),
 			this, SLOT(useOpaqueLegendCheckBoxChanged(bool)));
+	connect(mDiagramModeCheckBox, SIGNAL(toggled(bool)),
+			this, SLOT(diagramModeCheckBoxChanged(bool)));
+	connect(mLegendBoxOverRideEdit, SIGNAL(returnPressed()),
+			this, SLOT(legendOffsetEditChanged()));
+	connect(mDiagramMajorTickIntervalEdit, SIGNAL(returnPressed()),
+			this, SLOT(tickIntervalEditChanged()));
+	connect(mDiagramMinorTickIntervalEdit, SIGNAL(returnPressed()),
+			this, SLOT(tickIntervalEditChanged()));
+	connect(mShowDiagramLinesCheckBox, SIGNAL(toggled(bool)),
+			this, SLOT(showDiagramLinesCheckBoxChanged(bool)));
+	connect(mDiagramShiftEdit, SIGNAL(returnPressed()),
+			this, SLOT(diagramShiftEditChanged()));
 
 	connect(mUpdateEventSelector, SIGNAL(activated(int)), 
 			this, SLOT(triggerEventSelected(int)));
@@ -280,6 +361,8 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 			this, SLOT(supportedTriggerEventsChanged()), Qt::QueuedConnection);
 	connect(mClearHistoryButton, SIGNAL(pressed()),
 			this, SLOT(clearHistory()));
+	connect(mDialogSizeEdit,SIGNAL(returnPressed()),
+			this, SLOT(dialogSizeChanged()));
 
 	generalLayout->addStretch(100);
 
@@ -548,6 +631,87 @@ void ValuePlotterWidget::useOpaqueLegendCheckBoxChanged(bool checked) {
 	mValuePlotter->getPlotterWidget()->setSolidLegend(mUseOpaqueLegendCheckBox->isChecked());
 }
 
+void ValuePlotterWidget::diagramModeCheckBoxChanged(bool checked) {
+	mValuePlotter->getPlotterWidget()->enableDiagramMode(mDiagramModeCheckBox->isChecked());
+}
+
+void ValuePlotterWidget::showDiagramLinesCheckBoxChanged(bool checked) {
+	mValuePlotter->getPlotterWidget()->showDiagramLines(mShowDiagramLinesCheckBox->isChecked());
+}
+
+void ValuePlotterWidget::saveDiagramToSvg() {
+	QString nameOfFile = NerdFileSelector::getFileName("Export Graph", false, this);
+	
+	if(nameOfFile == "") {
+		return;
+	}
+
+	QString svgFile = nameOfFile;
+	if(!svgFile.endsWith(".svg")) {
+		svgFile.append(".svg");
+	}
+	QString dataFile = nameOfFile;
+	if(!dataFile.endsWith(".txt")) {
+		dataFile.append(".txt");
+	}
+	
+	mValuePlotter->getPlotterWidget()->saveDiagramToSvg(svgFile);
+	mValuePlotter->getPlotterWidget()->saveHistoriesToFile(dataFile);
+}
+
+void ValuePlotterWidget::legendOffsetEditChanged() {
+	QStringList entry = mLegendBoxOverRideEdit->text().split(",");
+	QRectF box;
+	
+	bool ok = true;
+	if(entry.size() >= 2) {
+		double x = entry.at(0).toDouble(&ok);
+		double y = 0.0;
+		if(ok) {
+			y = entry.at(1).toDouble(&ok);
+		}
+		if(ok) {
+			box.setX(x);
+			box.setY(y);
+		}
+	}
+	if(entry.size() == 4) {
+		double w = entry.at(2).toDouble(&ok);
+		double h = 0.0;
+		if(ok) {
+			h = entry.at(3).toDouble(&ok);
+		}
+		if(ok) {
+			box.setWidth(w);
+			box.setHeight(h);
+		}
+	}
+	mValuePlotter->getPlotterWidget()->setLegendBoxOverride(box);
+}
+
+
+void ValuePlotterWidget::tickIntervalEditChanged() {
+	bool ok = true;
+	double major = mDiagramMajorTickIntervalEdit->text().toDouble(&ok);
+	if(ok) {
+		double minor = mDiagramMinorTickIntervalEdit->text().toDouble(&ok);
+		if(ok) {
+			mValuePlotter->getPlotterWidget()->setTickIntervals(major, minor);
+		}
+	}
+}
+
+void ValuePlotterWidget::diagramShiftEditChanged() {
+	bool ok = true;
+	double shift = mDiagramShiftEdit->text().toDouble(&ok);
+	if(ok) {
+		mValuePlotter->getPlotterWidget()->setDiagramShift(shift);
+	}
+	else {
+		mValuePlotter->getPlotterWidget()->setDiagramShift(0.0);
+	}
+}
+
 void ValuePlotterWidget::enableLoadStaticDataButton() {
 	mLoadStaticValuesButton->setText("Load Offline Data");
 	mLoadStaticValuesButton->setEnabled(true);
@@ -603,6 +767,22 @@ void ValuePlotterWidget::clearHistory() {
 		return;
 	}
 	mValuePlotter->getPlotterWidget()->clearHistory();
+}
+
+void ValuePlotterWidget::dialogSizeChanged() {
+	
+	QStringList entry = mDialogSizeEdit->text().split(",");
+	if(entry.size() != 2) {
+		return;
+	}
+	bool ok = true;
+	double width = entry.at(0).toDouble(&ok);
+	if(ok) {
+		double height = entry.at(1).toDouble(&ok);
+		if(ok) {
+			resize(width, height);
+		}
+	}
 }
 
 

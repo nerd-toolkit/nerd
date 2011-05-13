@@ -139,6 +139,7 @@ set(nerd_nerd_UIS
 FIND_PACKAGE(Qt4)
 set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTSCRIPT TRUE)
+set(QT_USE_QTSVG TRUE)
 include(${QT_USE_FILE})
 
 

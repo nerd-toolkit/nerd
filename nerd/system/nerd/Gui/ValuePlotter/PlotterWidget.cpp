@@ -58,6 +58,7 @@
 #include <QCoreApplication>
 #include "Math/Math.h"
 #include <qvarlengtharray.h>
+#include <QSvgGenerator>
 
 
 using namespace std;
@@ -66,7 +67,8 @@ namespace nerd {
 
 PlotterWidget::PlotterWidget(QWidget *parent)
 	: QFrame(parent), mHistorySize(0), mPlotStaticItems(true), mPlotLegend(true), 
-	  mPlotSolidLegend(false), mPerformanceMode(0)
+	  mPlotSolidLegend(false), mPerformanceMode(0), mMajorTickInterval(250), mMinorTickInterval(10),
+	  mHorizontalOffset(0.0),  mDiagramMode(false), mShowDiagramLines(true)
 {
 	moveToThread(QCoreApplication::instance()->thread());
 
@@ -278,6 +280,41 @@ bool PlotterWidget::saveHistoriesToFile(const QString &fileName) {
 	return true;
 }
 
+void PlotterWidget::saveDiagramToSvg(const QString &fileName) {
+	
+	QSvgGenerator generator;
+	generator.setFileName(fileName);
+	//generator.setSize(QSize(width() - (2.0 * lineWidth()), height() - (2 * lineWidth())));
+	generator.setTitle(tr("NERD Plotter Diagram"));
+	generator.setDescription(tr(""));
+	
+	QPainter p;
+	p.begin(&generator);
+	
+	p.fillRect(0, 0, width() + 5, height(), Qt::white);
+	
+	if(mDiagramMode) {
+		mDrawableHeight = ((double) height() - 40);
+		mDrawableWidth = width() - (lineWidth() * 2) - 30.0 - mDiagramShift;
+		mHorizontalOffset = 30.0 + mDiagramShift;
+	}
+	else {
+		mDrawableHeight = ((double) height() - 20);
+		mDrawableWidth = width() - (lineWidth() * 2);
+		mHorizontalOffset = 0.0;
+	}
+
+	drawCoordinateSystem(p);
+	drawHistoryGraphs(p);
+	drawCoordinateRanges(p);
+
+	if(mPlotLegend) {
+		drawLegend(p);
+	}
+	
+	p.end();
+}
+
 void PlotterWidget::enableStaticItems(bool enable) {
 	mPlotStaticItems = enable;
 }
@@ -304,6 +341,58 @@ void PlotterWidget::setSolidLegend(bool solid) {
 
 bool PlotterWidget::isSolidLegend() const {
 	return mPlotSolidLegend;
+}
+
+void PlotterWidget::setTickIntervals(int major, int minor) {
+	mMajorTickInterval = major;
+	mMinorTickInterval = minor;
+}
+
+
+int PlotterWidget::getMajorTickInterval() const {
+	return mMajorTickInterval;
+}
+
+int PlotterWidget::getMinorTickInterval() const {
+	return mMinorTickInterval;
+}
+
+void PlotterWidget::enableDiagramMode(bool enable) {
+	mDiagramMode = enable;
+}
+
+
+bool PlotterWidget::isInDiagramMode() const {
+	return mDiagramMode;
+}
+
+void PlotterWidget::showDiagramLines(bool show) {
+	mShowDiagramLines = show;
+}
+
+
+bool PlotterWidget::isShowingDiagramLines() const {
+	return mShowDiagramLines;
+}
+
+
+void PlotterWidget::setLegendBoxOverride(QRectF box) {
+	mLegendBoxOverride = box;
+}
+
+
+QRectF PlotterWidget::getLegendBoxOverride() const {
+	return mLegendBoxOverride;
+}
+
+
+void PlotterWidget::setDiagramShift(double shift) {
+	mDiagramShift = shift;
+}
+
+
+double PlotterWidget::getDiagramShift() const {
+	return mDiagramShift;
 }
 
 
@@ -337,9 +426,17 @@ void PlotterWidget::paintEvent(QPaintEvent *event) {
 
 	QPainter p(this);
 	p.fillRect(0, 0, width(), height(), Qt::white);
-
-	mDrawableHeight = ((double) height() - 20);
-	mDrawableWidth = width() - (lineWidth() * 2);
+	
+	if(mDiagramMode) {
+		mDrawableHeight = ((double) height() - 40);
+		mDrawableWidth = width() - (lineWidth() * 2) - 30.0 - mDiagramShift;
+		mHorizontalOffset = 30.0 + mDiagramShift;
+	}
+	else {
+		mDrawableHeight = ((double) height() - 20);
+		mDrawableWidth = width() - (lineWidth() * 2);
+		mHorizontalOffset = 0.0;
+	}
 
 	drawCoordinateSystem(p);
 	drawHistoryGraphs(p);
@@ -361,14 +458,58 @@ void PlotterWidget::paintEvent(QPaintEvent *event) {
 void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 	//Draw the raster of the diagram.
 	double scale = mDrawableHeight / 2.0;
-	int w = (int) mDrawableWidth;
+	int w = (int) mDrawableWidth + mHorizontalOffset + 3;
 
 	painter.setPen(Qt::lightGray);
-	painter.drawLine(lineWidth(), 9, w, 9);
-	painter.drawLine(lineWidth(), (int) (scale) + 10, w, (int) (1 * scale) + 10);
-	painter.drawLine(lineWidth(), (int) (2 * scale) + 10, w, (int) (2 * scale) + 10);
-	painter.drawLine(lineWidth(), (int) (0.5 * scale) + 10, w, (int) (0.5 * scale) + 10);
-	painter.drawLine(lineWidth(), (int) (1.5 * scale) + 10, w, (int) (1.5 * scale) + 10);
+	painter.drawLine(lineWidth() + mHorizontalOffset, 9, w, 9);
+	painter.drawLine(lineWidth() + mHorizontalOffset, (int) (2 * scale) + 10, 
+					 w, (int) (2 * scale) + 10 );
+	painter.drawLine(lineWidth() + mHorizontalOffset, 9, 
+					 lineWidth() + mHorizontalOffset, (int) (2 * scale) + 10);
+	if(mDiagramMode) {
+		painter.drawLine(w, 9, 
+						w, (int) (2 * scale) + 20);
+	}
+	else {
+		painter.drawLine(w, 9, 
+						w, (int) (2 * scale) + 10);
+	}
+	
+	if(mShowDiagramLines) {
+		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (scale) + 10, 
+						w, (int) (1 * scale) + 10);
+		
+		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (0.5 * scale) + 10, 
+						w, (int) (0.5 * scale) + 10);
+		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (1.5 * scale) + 10, 
+						w, (int) (1.5 * scale) + 10);
+	}
+	
+	
+	double tickScaling = ((double) mDrawableWidth) / ((double) mHistorySize);
+	
+	for(int i = 0; i < mHistorySize; ++i) {
+		if((i % mMajorTickInterval) == 0) {
+			if(mShowDiagramLines) {
+				if(mDiagramMode) {
+					painter.drawLine(lineWidth() + (i * tickScaling) + mHorizontalOffset, 9, 
+								lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 20);
+				}
+				else {
+					painter.drawLine(lineWidth() + (i * tickScaling) + mHorizontalOffset, 9, 
+								lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 10);
+				}
+			}
+			else {
+// 				painter.drawLine(lineWidth() + (i * tickScaling) + mHorizontalOffset,  mDrawableHeight + 20, 
+// 								lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 10);
+			}
+		}
+		else if((i % (mMajorTickInterval / mMinorTickInterval)) == 0 && mDiagramMode) {
+			painter.drawLine(lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 15, 
+							 lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 10);
+		}
+	}
 
 }
 
@@ -414,14 +555,13 @@ void PlotterWidget::drawHistoryGraphs(QPainter &painter) {
 
 			double x = 0.0;
 			double y = 0.0;
-// 			double old_x = 0.0;
-// 			double old_y = 0.0;
 			int mPointCounter = 0;
 
 			//Plot history of current Item.
 			double localPointDist = item->getScalingH() * pointDist;
 
-			double drawStartingPosition = mDrawableWidth + ((double) lineWidth())
+			double drawStartingPosition = mDrawableWidth + mHorizontalOffset 
+								+ ((double) lineWidth())
 								+ (item->getOffsetH() * localPointDist);
 								
 			QPainterPath path;
@@ -445,13 +585,7 @@ void PlotterWidget::drawHistoryGraphs(QPainter &painter) {
 					path.lineTo(x, y);
 				}
 
-// 				if(mPointCounter != 0) {
-// 					//painter.drawLine((int) x, (int) y, (int) old_x, (int) old_y);
-// 				}
-
 				mPointCounter++;
-// 				old_x = x;
-// 				old_y = y;
 
 				--currentIndex;
 			}
@@ -482,9 +616,25 @@ void PlotterWidget::drawCoordinateRanges(QPainter &painter) {
 	QString midRange = QString::number(mUserOffsetV);
 	QString lowerRange = QString::number((-1.0 / mUserScaleV) + mUserOffsetV);
 
-	painter.drawText(9, 13, upperRange);
-	painter.drawText(9, 14 + (int) scale, midRange);
-	painter.drawText(9, 13 + (int) (2 * scale), lowerRange);
+	painter.drawText(2, 13, upperRange);
+	painter.drawText(2, 14 + (int) scale, midRange);
+	painter.drawText(2, 13 + (int) (2 * scale), lowerRange);
+	
+	if(mDiagramMode) {
+		double tickScaling = ((double) mDrawableWidth) / ((double) mHistorySize);
+		for(int i = 0; i < mHistorySize; ++i) {
+			if((i % mMajorTickInterval) == 0) {
+				painter.drawText(lineWidth() + (i * tickScaling) + mHorizontalOffset - 50, 
+								mDrawableHeight + 22, 100, 35, Qt::AlignHCenter | Qt::AlignTop,
+								QString::number(i));
+			}
+		}
+		if( mHistorySize % mMajorTickInterval == 0) {
+			painter.drawText(lineWidth() + mHorizontalOffset + mDrawableWidth - 100, 
+								mDrawableHeight + 22, 100, 35, Qt::AlignRight | Qt::AlignTop,
+								QString::number(mHistorySize));
+		}
+	}
 }
 
 
@@ -507,13 +657,37 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 		++sizeY;
 	}
 	
+	bool fixedBoxSize = (mLegendBoxOverride.width() > 0 && mLegendBoxOverride.height() > 0);
+	double boxOffsetX = mLegendBoxOverride.x();
+	double boxOffsetY = mLegendBoxOverride.y();
+	
+	double horizontalOffset = 0.0;
+	if(mDiagramMode) {
+		horizontalOffset = mHorizontalOffset;
+	}
+	
 	if(mPlotSolidLegend) {
-		if(sizeY > 1) {
+		if(sizeY > 0) {
 			--sizeY;
 			sizeX = Math::min(mMaxValueNameSize, sizeX);
-			painter.fillRect(10, 15, (sizeX * 10.5) + 35, (sizeY * 15) + 20, QColor(255,255,255,255));
+			
+			double boxWidth = (sizeX * 10) + 35;
+			double boxHeight = (sizeY * 15) + 20;
+			if(fixedBoxSize) {
+				boxWidth = mLegendBoxOverride.width();
+				boxHeight = mLegendBoxOverride.height();
+			}
+			
+			painter.fillRect(10 + horizontalOffset + boxOffsetX, 
+							 15 + boxOffsetY, 
+							 boxWidth, 
+							 boxHeight, 
+							 QColor(255,255,255,255));
 			painter.setPen(QColor(0,0,0,255));
-			painter.drawRect(10, 15, (sizeX * 10.5) + 35, (sizeY * 15) + 20);
+			painter.drawRect(10 + horizontalOffset + boxOffsetX, 
+							 15 + boxOffsetY, 
+							 boxWidth, 
+							 boxHeight);
 		}
 	}
 		
@@ -530,7 +704,10 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 		painter.setPen(pen);
 		
 		int yPos = 26 + (15 * row) + 5;
-		painter.drawLine(13, yPos - 5, 45, yPos - 5);
+		painter.drawLine(13 + horizontalOffset + boxOffsetX, 
+						 yPos - 5 + boxOffsetY, 
+						 45 + horizontalOffset + boxOffsetX, 
+						 yPos - 5 + boxOffsetY);
 
 		painter.setPen(item->getColor());
 		QString name = item->getName();
@@ -538,7 +715,9 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 		if(maxSize > mMaxValueNameSize) {
 			maxSize = mMaxValueNameSize;
 		}
-		painter.drawText(48, yPos, name.mid(name.size() - maxSize));
+		painter.drawText(48 + horizontalOffset + boxOffsetX, 
+						 yPos + boxOffsetY, 
+						 name.mid(name.size() - maxSize));
 		row++;
 	}
 }

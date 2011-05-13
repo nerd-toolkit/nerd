@@ -1348,7 +1348,7 @@ void NeuralNetworkEditor::exportDebugMSeriesComponentsBDN(const QString &fileNam
 
 
 void NeuralNetworkEditor::saveNetworkAsSvgGraphics(const QString &fileName) {
-	/*
+	
 	mMessageWidget->clear();
 
 	BoolValue *pauseValue = Core::getInstance()->getValueManager()->getBoolValue(
@@ -1460,7 +1460,6 @@ void NeuralNetworkEditor::saveNetworkAsSvgGraphics(const QString &fileName) {
 	if(pauseValue != 0) {
 		pauseValue->set(paused);
 	}
-	*/
 }
 
 

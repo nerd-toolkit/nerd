@@ -85,6 +85,7 @@ PlotterItemControlPanel::PlotterItemControlPanel(PlotterItem *item, QWidget *par
 	
 	mDashPatternEdit = new QLineEdit("", this);
 	mDashPatternEdit->setFixedWidth(25);
+	mDashPatternEdit->setToolTip("Dash pattern for the line.\nExamples: 10,10 or 3,10.");
 
 	mNameEdit = new QLineEdit("", this);
 	mNameEdit->setMinimumWidth(250);

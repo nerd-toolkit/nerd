@@ -101,16 +101,24 @@ namespace nerd {
 		void plotterItemCollectionChanged();
 		void showLegendCheckBoxChanged(bool checked);
 		void useOpaqueLegendCheckBoxChanged(bool checked);
+		void diagramModeCheckBoxChanged(bool checked);
+		void showDiagramLinesCheckBoxChanged(bool checked);
+		void saveDiagramToSvg();
+		void legendOffsetEditChanged();
+		void tickIntervalEditChanged();
+		void diagramShiftEditChanged();
 		void enableLoadStaticDataButton();
 		void supportedTriggerEventsChanged();
 		void triggerEventSelected(int index);
 		void selectAllItems(int state);
 		void clearHistory();
+		void dialogSizeChanged();
 
 	protected:
 		ValuePlotter *mValuePlotter;
 		QPushButton *mLoadStaticValuesButton;
 		QPushButton *mShowStaticValuesButton;
+		QPushButton *mSaveGraphButton;
 		QLineEdit *mHistorySizeField;
 		QLineEdit *mVerticalOffset;
 		QLineEdit *mVerticalScale;
@@ -124,12 +132,19 @@ namespace nerd {
 		QVector<PlotterItemControlPanel*> mPlotterItemPanels;
 		QCheckBox *mShowLegendCheckBox;
 		QCheckBox *mUseOpaqueLegendCheckBox;
+		QCheckBox *mDiagramModeCheckBox;
+		QCheckBox *mShowDiagramLinesCheckBox;
+		QLineEdit *mLegendBoxOverRideEdit;
+		QLineEdit *mDiagramMajorTickIntervalEdit;
+		QLineEdit *mDiagramMinorTickIntervalEdit;
+		QLineEdit *mDiagramShiftEdit;
 		StaticDataLoader *mStaticDataLoader;
 		QComboBox *mUpdateEventSelector;
 		QTabWidget *mControlArea;
 		QCheckBox *mSelectAllCheckBox;
 		QSplitter *mSplitter;
 		QPushButton *mClearHistoryButton;
+		QLineEdit *mDialogSizeEdit;
 	};
 
 }
