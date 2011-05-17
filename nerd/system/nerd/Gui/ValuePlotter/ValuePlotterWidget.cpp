@@ -57,7 +57,7 @@
 #include <QCoreApplication>
 #include "Math/Math.h"
 #include <QLabel>
-#include "Util/NerdFileSelector.h"
+
 
 using namespace std;
 
@@ -640,23 +640,24 @@ void ValuePlotterWidget::showDiagramLinesCheckBoxChanged(bool checked) {
 }
 
 void ValuePlotterWidget::saveDiagramToSvg() {
-	QString nameOfFile = NerdFileSelector::getFileName("Export Graph", false, this);
-	
-	if(nameOfFile == "") {
-		return;
-	}
-
-	QString svgFile = nameOfFile;
-	if(!svgFile.endsWith(".svg")) {
-		svgFile.append(".svg");
-	}
-	QString dataFile = nameOfFile;
-	if(!dataFile.endsWith(".txt")) {
-		dataFile.append(".txt");
-	}
-	
-	mValuePlotter->getPlotterWidget()->saveDiagramToSvg(svgFile);
-	mValuePlotter->getPlotterWidget()->saveHistoriesToFile(dataFile);
+// 	QString nameOfFile = NerdFileSelector::getFileName("Export Graph", false, this);
+// 	
+// 	if(nameOfFile == "") {
+// 		return;
+// 	}
+// 
+// 	QString svgFile = nameOfFile;
+// 	if(!svgFile.endsWith(".svg")) {
+// 		svgFile.append(".svg");
+// 	}
+// 	QString dataFile = nameOfFile;
+// 	if(!dataFile.endsWith(".txt")) {
+// 		dataFile.append(".txt");
+// 	}
+// 	
+// 	mValuePlotter->getPlotterWidget()->saveDiagramToSvg(svgFile);
+// 	mValuePlotter->getPlotterWidget()->saveHistoriesToFile(dataFile);
+	mValuePlotter->saveDiagramToSvg();
 }
 
 void ValuePlotterWidget::legendOffsetEditChanged() {

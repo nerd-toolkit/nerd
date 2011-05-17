@@ -57,6 +57,7 @@
 #include "NerdConstants.h"
 #include "Gui/ValuePlotter/ValuePlotterItem.h"
 #include <QApplication>
+#include "Util/NerdFileSelector.h"
 
 using namespace std;
 
@@ -603,6 +604,27 @@ void ValuePlotter::showStaticData(bool show) {
 	emit staticDataVisibilityChanged(mShowStaticData);
 }
 
+void ValuePlotter::saveDiagramToSvg() {
+	QString nameOfFile = NerdFileSelector::getFileName("Export Graph", false, this);
+	
+	if(nameOfFile == "") {
+		return;
+	}
+
+	QString svgFile = nameOfFile;
+	if(!svgFile.endsWith(".svg")) {
+		svgFile.append(".svg");
+	}
+	QString dataFile = nameOfFile;
+	if(!dataFile.endsWith(".txt")) {
+		dataFile.append(".txt");
+	}
+	
+	getPlotterWidget()->saveDiagramToSvg(svgFile);
+	getPlotterWidget()->saveHistoriesToFile(dataFile);
+}
+
+
 
 /**
  * Called when the Widget is hidden. This stops the repaint timer to raise performance.
@@ -753,16 +775,18 @@ void ValuePlotter::keyPressEvent(QKeyEvent *event) {
 		}
 	}
 	else if(event->key() == Qt::Key_S) {
-		//Saves the current history to a file.
-		mPlotterWidget->saveHistoriesToFile(QString("history_")
-					.append(QDate::currentDate().toString("yyMMdd"))
-					.append(QTime::currentTime().toString("hhmmss"))
-					.append(".log"));
+// 		//Saves the current history to a file.
+// 		mPlotterWidget->saveHistoriesToFile(QString("history_")
+// 					.append(QDate::currentDate().toString("yyMMdd"))
+// 					.append(QTime::currentTime().toString("hhmmss"))
+// 					.append(".log"));
+		saveDiagramToSvg();
 	}
 	else {
 		event->ignore();
 	}
 }
+
 
 
 /**

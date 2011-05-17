@@ -63,12 +63,13 @@
 
 using namespace std;
 
+
 namespace nerd {
 
 PlotterWidget::PlotterWidget(QWidget *parent)
 	: QFrame(parent), mHistorySize(0), mPlotStaticItems(true), mPlotLegend(true), 
 	  mPlotSolidLegend(false), mPerformanceMode(0), mMajorTickInterval(250), mMinorTickInterval(10),
-	  mHorizontalOffset(0.0),  mDiagramMode(false), mShowDiagramLines(true)
+	  mHorizontalOffset(0.0),  mDiagramMode(false), mShowDiagramLines(true), mDiagramShift(0.0)
 {
 	moveToThread(QCoreApplication::instance()->thread());
 

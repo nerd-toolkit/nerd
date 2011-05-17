@@ -203,6 +203,9 @@ const QString NeuralNetworkConstants::TAG_SYNAPSE_RANDOM_FLIP
 		
 const QString NeuralNetworkConstants::TAG_SYNAPSE_LOCATION_OFFSET
 		= "_LOC_OFFSET";
+		
+const QString NeuralNetworkConstants::TAG_SYNAPSE_HIDE_WEIGHT
+		= "HideWeight";
 
 const QString NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY
 		= "ChangeProbability";

@@ -119,7 +119,7 @@ namespace nerd {
 		void removeAllStaticData();
 		void showStaticData(bool show);
 
-		
+		void saveDiagramToSvg();
 
 	signals:
 		void staticScaleVChanged(double scale);

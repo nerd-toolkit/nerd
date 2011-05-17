@@ -248,7 +248,7 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 		painter->fillRect(boundingBox, QColor(255, 0, 0, 50));
 	}
 
-	if(!mHideWeight) {
+	if(!mHideWeight && !mLocalHideWeight) {
 		QString strength = mSynapse->getStrengthValue().getValueAsString();
 		if(strength.size() > 7) {
 			strength = strength.mid(0, 7);

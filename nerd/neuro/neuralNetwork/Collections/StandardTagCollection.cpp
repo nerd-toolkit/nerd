@@ -135,7 +135,15 @@ StandardTagCollection::StandardTagCollection()
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_PROTOTYPE_TYPE_LIST,
 						 NeuralNetworkConstants::TAG_TYPE_MODULE,
 						 "Have no clue what this was :)"));
-
+	
+	//layout
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_SYNAPSE_LOCATION_OFFSET,
+						 NeuralNetworkConstants::TAG_TYPE_SYNAPSE,
+						 "This offset moves the weight text away from its default position."
+						 " Format: x,y,z. Currently the last coordinate (z) is ignored."));
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_SYNAPSE_HIDE_WEIGHT,
+						 NeuralNetworkConstants::TAG_TYPE_SYNAPSE,
+						 "Hides the weight text of this synapse"));
 }
 
 

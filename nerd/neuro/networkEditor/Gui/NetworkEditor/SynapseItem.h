@@ -91,6 +91,7 @@ namespace nerd {
 		Vector3D mPositionOffset;
 		bool mHideWeight;
 		bool mUseSynapseTypeSymbols;
+		bool mLocalHideWeight;
 	};
 
 }

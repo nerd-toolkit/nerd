@@ -65,7 +65,8 @@ namespace nerd {
  * Constructs a new SynapseItem.
  */
 SynapseItem::SynapseItem(NetworkVisualization *owner)
-	: PaintItem(800), mOwner(owner), mHideWeight(false), mUseSynapseTypeSymbols(true)
+	: PaintItem(800), mOwner(owner), mHideWeight(false), mUseSynapseTypeSymbols(true),
+		mLocalHideWeight(false)
 {
 }
 
@@ -96,6 +97,7 @@ bool SynapseItem::setSynapse(Synapse *synapse) {
 	
 	mSynapse = synapse;
 	mPositionOffset.set(0.0, 0.0, 0.0);
+	mLocalHideWeight = false;
 
 	if(synapse == 0) {
 		mSourceNeuron = 0;
@@ -118,6 +120,9 @@ bool SynapseItem::setSynapse(Synapse *synapse) {
 		mSynapse->addPropertyChangedListener(this);
 		mPositionOffset = NetworkEditorUtil::getVector3DFromString(
 					mSynapse->getProperty(NeuralNetworkConstants::TAG_SYNAPSE_LOCATION_OFFSET));
+		if(mSynapse->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_HIDE_WEIGHT)) {
+			mLocalHideWeight = true;
+		}
 	}
 	if(mSynapse == 0 || mSourceNeuron == 0 || mTarget == 0  ) {
 		return false;
@@ -147,6 +152,14 @@ void SynapseItem::propertyChanged(Properties *owner, const QString &property) {
 	}
 	if(property == NeuralNetworkConstants::TAG_SYNAPSE_LOCATION_OFFSET) {
 		mPositionOffset = NetworkEditorUtil::getVector3DFromString(owner->getProperty(property));
+	}
+	else if(property == NeuralNetworkConstants::TAG_SYNAPSE_HIDE_WEIGHT) {
+		if(mSynapse->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_HIDE_WEIGHT)) {
+			mLocalHideWeight = true;
+		}
+		else {
+			mLocalHideWeight = false;
+		}
 	}
 }
 
