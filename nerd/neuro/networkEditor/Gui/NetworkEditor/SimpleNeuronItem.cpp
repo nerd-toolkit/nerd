@@ -246,9 +246,11 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 	}
 
 	if(mShowName) {
+		QString name = mNeuron->getNameValue().get();
+		name = name.replace("\\\\", "\n");
 		painter->drawText(pos.x() - 80.0, pos.y() + mRadius + 2, 160.0, 100.0, 
 				Qt::AlignHCenter | Qt::AlignTop | Qt::TextWordWrap | Qt::TextWrapAnywhere,
-				mNeuron->getNameValue().get());
+				name);
 	}
 
 	if(mShowBiasAsString) {

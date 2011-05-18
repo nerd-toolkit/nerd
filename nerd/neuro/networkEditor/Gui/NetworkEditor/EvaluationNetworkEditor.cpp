@@ -349,7 +349,6 @@ QMenu* EvaluationNetworkEditor::addFileMenu() {
 	mFileMenu->addSeparator();
 
 	mSaveNetworkAction = mFileMenu->addAction("&Save Network");
-	mSaveNetworkAction->setShortcut(tr("ctrl+s"));
 	mSaveNetworkAction->setEnabled(false);
 	connect(mSaveNetworkAction, SIGNAL(triggered()),
 			this, SLOT(overwriteCurrentNetwork()));

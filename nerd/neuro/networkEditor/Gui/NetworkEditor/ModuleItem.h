@@ -50,6 +50,7 @@
 #include <QHash>
 #include "Gui/NetworkEditor/PaintItem.h"
 #include <QSizeF>
+#include "Core/PropertyChangedListener.h"
 
 namespace nerd {
 
@@ -61,7 +62,7 @@ namespace nerd {
 	 * ModuleItem.
 	 *
 	 */
-	class ModuleItem : public PaintItem {
+	class ModuleItem : public PaintItem, public PropertyChangedListener {
 	public:
 		ModuleItem(NetworkVisualization *owner);
 		ModuleItem(const ModuleItem &other);
@@ -91,6 +92,7 @@ namespace nerd {
 		virtual void updateLayout() = 0;
 		
 		virtual Properties* getEncapsulatedProperties() const;
+		virtual void propertyChanged(Properties *owner, const QString &property);
 		
 		virtual void setViewMode(int mode, bool enabled);
 		virtual bool isViewModeEnabled(int mode);
@@ -103,6 +105,8 @@ namespace nerd {
 		bool mShowName;
 		bool mShowHandles;
 		bool mShowBackground;
+		QColor mBackgroundColor;
+		bool mUseCustomBackgroundColor;
 	};
 
 }

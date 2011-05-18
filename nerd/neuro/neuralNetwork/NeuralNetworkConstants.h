@@ -118,6 +118,7 @@ namespace nerd {
 		static const QString TAG_MODULE_FORBIDDEN_PATHWAYS;
 		static const QString TAG_MODULE_IDENTIFIER;
 		static const QString TAG_MODULE_PREVENT_REPLACEMENT;
+		static const QString TAG_MODULE_CUSTOM_BACKGROUND_COLOR;
 		static const QString TAG_SYNAPSE_PROTECT_STRENGTH;
 		static const QString TAG_SYNAPSE_PREVIOUS_STRENGTH;
 		static const QString TAG_SYNAPSE_MIN_STRENGTH;

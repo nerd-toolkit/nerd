@@ -149,6 +149,10 @@ StandardTagCollection::StandardTagCollection()
 						 "Synapses with this tag will not be relocated when the 'Rearrange Synapse'"
 						 " command is triggered. However, the synapse will still be rearranged "
 						 "when the 'Rearrange Selected Synapses' command is triggered."));
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_MODULE_CUSTOM_BACKGROUND_COLOR,
+						 NeuralNetworkConstants::TAG_TYPE_MODULE,
+						 "Overwrites the default background color of the module."
+						 " Format: r,g,b,h"));
 	
 }
 

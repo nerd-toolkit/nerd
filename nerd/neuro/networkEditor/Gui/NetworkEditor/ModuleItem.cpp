@@ -60,7 +60,7 @@ namespace nerd {
  */
 ModuleItem::ModuleItem(NetworkVisualization *owner)
 	: PaintItem(100), mOwner(owner), mModule(0), mSize(50, 50), 
-	  mShowName(true), mShowHandles(true), mShowBackground(true)
+	  mShowName(true), mShowHandles(true), mShowBackground(true), mUseCustomBackgroundColor(false)
 {
 }
 
@@ -73,7 +73,8 @@ ModuleItem::ModuleItem(NetworkVisualization *owner)
 ModuleItem::ModuleItem(const ModuleItem &other) 
 	: PaintItem(other), mOwner(other.mOwner), mModule(0), mSize(other.mSize),
 	  mShowName(other.mShowName), mShowHandles(other.mShowHandles), 
-	  mShowBackground(other.mShowBackground)
+	  mShowBackground(other.mShowBackground), mBackgroundColor(other.mBackgroundColor),
+	  mUseCustomBackgroundColor(other.mUseCustomBackgroundColor)
 {
 }
 
@@ -87,12 +88,20 @@ bool ModuleItem::setModule(NeuroModule *module) {
 	if(mModule != module) {
 		mMembers.clear();
 	}
+	if(mModule != 0) {
+		mModule->removePropertyChangedListener(this);
+	}
 	mModule = module;
+	mUseCustomBackgroundColor = false;
+	
 	if(mModule != 0) {
 		NetworkEditorUtil::setPaintItemLocation(this, 
 				mModule->getProperty(NeuralNetworkConstants::TAG_ELEMENT_LOCATION));
 		NetworkEditorUtil::setModuleItemSize(this, 
 				mModule->getProperty(NeuralNetworkConstants::TAG_MODULE_SIZE));
+		
+		mModule->addPropertyChangedListener(this);
+		propertyChanged(mModule, NeuralNetworkConstants::TAG_MODULE_CUSTOM_BACKGROUND_COLOR);
 	}
 	return true;
 }
@@ -163,6 +172,39 @@ void ModuleItem::setPaintLevel(int level) {
 
 Properties* ModuleItem::getEncapsulatedProperties() const {
 	return mModule;
+}
+
+void ModuleItem::propertyChanged(Properties *owner, const QString &property) {
+	if(owner == 0 || owner != mModule) {
+		return;
+	}
+	if(property == NeuralNetworkConstants::TAG_MODULE_CUSTOM_BACKGROUND_COLOR) {
+		bool colorSpecified = false;
+		if(mModule->hasProperty(NeuralNetworkConstants::TAG_MODULE_CUSTOM_BACKGROUND_COLOR)) {
+			//Check if there is a custom background color. If so, parse it.
+			
+			QStringList colorParts = mModule->getProperty(
+					NeuralNetworkConstants::TAG_MODULE_CUSTOM_BACKGROUND_COLOR).split(",");
+			if(colorParts.size() == 4) {
+				bool okr = true;
+				bool okg = true;
+				bool okb = true;
+				bool okh = true;
+				double r = colorParts.at(0).toDouble(&okr);
+				double g = colorParts.at(1).toDouble(&okg);
+				double b = colorParts.at(2).toDouble(&okb);
+				double h = colorParts.at(3).toDouble(&okh);
+				if(okr && okg && okb && okh) {
+					mBackgroundColor = QColor(r, g, b, h);
+					mUseCustomBackgroundColor = true;
+					colorSpecified = true;
+				}
+			}
+		}
+		if(!colorSpecified) {
+			mUseCustomBackgroundColor = false;
+		}
+	}
 }
 
 void ModuleItem::setViewMode(int mode, bool enabled) {

@@ -179,6 +179,9 @@ const QString NeuralNetworkConstants::TAG_MODULE_IDENTIFIER
 
 const QString NeuralNetworkConstants::TAG_MODULE_PREVENT_REPLACEMENT
 		= "NO_MODULE_REPLACEMENT";
+		
+const QString NeuralNetworkConstants::TAG_MODULE_CUSTOM_BACKGROUND_COLOR
+		= "BackgroundColor";
 
 const QString NeuralNetworkConstants::TAG_SYNAPSE_PROTECT_STRENGTH
 		= "ProtectStrength";
