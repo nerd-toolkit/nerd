@@ -60,9 +60,12 @@
 #include "Gui/NetworkEditor/SynapseItem.h"
 #include "Gui/NetworkEditor/ModuleItem.h"
 #include "Gui/NetworkEditor/GroupItem.h"
+#include "Gui/NetworkEditor/NetworkVisualizationHandler.h"
 #include "Util/NetworkEditorUtil.h"
+#include "Util/Util.h"
 #include "NeuralNetworkConstants.h"
 #include "Gui/NetworkEditorCommands/AlignNeuronsCommand.h"
+#include <qvarlengtharray.h>
 
 using namespace std;
 
@@ -181,7 +184,14 @@ void NeuralNetworkToolbox::alignAllSynapses() {
 		return;
 	}
 
-	QList<Synapse*> synapses = net->getSynapses();
+	QList<Synapse*> allSynapses = net->getSynapses();
+	QList<Synapse*> synapses;
+	for(QListIterator<Synapse*> i(allSynapses); i.hasNext();) {
+		Synapse *synapse = i.next();
+		if(!synapse->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_FIXED_POSITION)) {
+			synapses.append(synapse);
+		}
+	}
 	if(!synapses.empty()) {
 		Command *command = new AlignSynapseCommand(visu, synapses);
 		visu->getCommandExecutor()->executeCommand(command);
@@ -217,6 +227,36 @@ void NeuralNetworkToolbox::alignSelectedSynapses() {
 	}
 }
 
+void NeuralNetworkToolbox::selectSynapsesOfMarkedNeurons() {
+	if(mOwner == 0) {
+		return;
+	}
+	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
+	if(visu == 0 && visu->getVisualizationHander() != 0) {
+		return;
+	}
+	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+
+	QList<PaintItem*> selectedItems = visu->getSelectedItems();
+	QList<Synapse*> selectedSynapses;
+	
+	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
+		NeuronItem *neuronItem = dynamic_cast<NeuronItem*>(i.next());
+		if(neuronItem != 0 && neuronItem->getNeuron() != 0) {
+			Util::addWithoutDuplicates(selectedSynapses, neuronItem->getNeuron()->getSynapses());
+			Util::addWithoutDuplicates(selectedSynapses, neuronItem->getNeuron()->getOutgoingSynapses());
+		}
+	}
+	QList<PaintItem*> newSelectedSynapseItems;
+	for(QListIterator<Synapse*> i(selectedSynapses); i.hasNext();) {
+		Synapse *synapse = i.next();
+		PaintItem *synapseItem = handler->getSynapseItem(synapse);
+		if(synapseItem != 0) {
+			newSelectedSynapseItems.append(synapseItem);
+		}
+	}
+	visu->setSelectedItems(newSelectedSynapseItems);
+}
 
 void NeuralNetworkToolbox::setAllLocationProperties() {
 	if(mOwner == 0) {
@@ -406,6 +446,13 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 			this, SLOT(useRemoveSelectedObjectsTool()));
 
 
+	mNetworkMenu->addSeparator();
+	
+	QAction *selectSynapsesOfMarkedNeurons = mNetworkMenu->addAction("Select Synapses of Selected Neurons");
+	selectSynapsesOfMarkedNeurons->setShortcut(tr("ctrl+s"));
+	connect(selectSynapsesOfMarkedNeurons, SIGNAL(triggered(bool)),
+			this, SLOT(selectSynapsesOfMarkedNeurons()));
+	
 	mNetworkMenu->addSeparator();
 
 	//add align synapse operators

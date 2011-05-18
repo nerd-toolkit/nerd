@@ -97,6 +97,7 @@ namespace nerd {
 		void enableModifications(bool enable);
 		void alignAllSynapses();
 		void alignSelectedSynapses();
+		void selectSynapsesOfMarkedNeurons();
 		void setAllLocationProperties();
 		void alignNetworkElementsAccordingToLocationProperties();
 		void alignNeuronsHoriztonally();

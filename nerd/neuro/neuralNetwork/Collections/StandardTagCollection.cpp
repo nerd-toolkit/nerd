@@ -144,6 +144,12 @@ StandardTagCollection::StandardTagCollection()
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_SYNAPSE_HIDE_WEIGHT,
 						 NeuralNetworkConstants::TAG_TYPE_SYNAPSE,
 						 "Hides the weight text of this synapse"));
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_SYNAPSE_FIXED_POSITION,
+						 NeuralNetworkConstants::TAG_TYPE_SYNAPSE,
+						 "Synapses with this tag will not be relocated when the 'Rearrange Synapse'"
+						 " command is triggered. However, the synapse will still be rearranged "
+						 "when the 'Rearrange Selected Synapses' command is triggered."));
+	
 }
 
 
