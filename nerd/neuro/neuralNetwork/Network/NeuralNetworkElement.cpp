@@ -51,6 +51,7 @@
 #include "NeuralNetworkConstants.h"
 #include <QStringList>
 #include "Math/Math.h"
+#include "Network/NeuralNetwork.h"
 
 using namespace std;
 

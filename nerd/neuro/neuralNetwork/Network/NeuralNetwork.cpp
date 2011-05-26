@@ -446,6 +446,7 @@ bool NeuralNetwork::addNeuron(Neuron *neuron) {
 	mNeuronsById.insert(neuron->getId(), neuron);
 	
 	neuron->addPropertyChangedListener(this);
+	neuron->setOwnerNetwork(this);
 
 	mMinimalIterationNumber = getMinimalStartIteration();
 
@@ -467,6 +468,7 @@ bool NeuralNetwork::removeNeuron(Neuron *neuron) {
 	mProcessibleNeurons.removeAll(neuron);
 
 	neuron->removePropertyChangedListener(this);
+	neuron->setOwnerNetwork(0);
 	return true;
 }
 

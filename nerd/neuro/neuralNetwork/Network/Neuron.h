@@ -55,6 +55,9 @@
 
 namespace nerd {
 
+	class NeuralNetwork;
+
+
 	/**
 	 * Neuron
 	 */
@@ -100,6 +103,9 @@ namespace nerd {
 		virtual bool registerOutgoingSynapse(Synapse *synapse);
 		virtual bool deregisterOutgoingSynapse(Synapse *synapse);
 		virtual QList<Synapse*> getOutgoingSynapses() const;
+		
+		virtual void setOwnerNetwork(NeuralNetwork *network);
+		virtual NeuralNetwork* getOwnerNetwork() const;
 
 		virtual bool equals(Neuron *neuron);
 
@@ -125,7 +131,7 @@ namespace nerd {
 		double mLastOutputActivation;
 		bool mActivationCalculated;
 		bool mFlipActivation;
-
+		NeuralNetwork *mOwnerNetwork;
 
 	};
 

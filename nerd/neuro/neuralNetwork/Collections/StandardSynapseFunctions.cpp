@@ -49,6 +49,7 @@
 #include "SynapseFunction/MultiplicativeSynapseFunction.h"
 #include "SynapseFunction/ASeriesMultiSynapseFunction.h"
 #include "SynapseFunction/MSeriesSynapseFunction.h"
+#include "SynapseFunction/MSeriesAdjustableSynapseFunction.h"
 
 namespace nerd {
 
@@ -76,6 +77,9 @@ StandardSynapseFunctions::StandardSynapseFunctions()
 	//Multiplicative Synapse Function
 	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
 		MultiplicativeSynapseFunction());
+	
+	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
+		MSeriesAdjustableSynapseFunction());
 }
 
 }

@@ -61,7 +61,7 @@ const QString Neuron::NEURON_TYPE_OUTPUT = "TYPE_OUTPUT";
 Neuron::Neuron(const QString &name, const TransferFunction &tf, const ActivationFunction &af, qulonglong id)
 	: mId(id), mNameValue(name), mTransferFunction(0), mActivationFunction(0),
 	  mLastActivation(0.0), mLastOutputActivation(0.0), mActivationCalculated(false),
-	  mFlipActivation(false)
+	  mFlipActivation(false), mOwnerNetwork(0)
 {
 	if(id == 0) {
 		mId = NeuralNetwork::generateNextId();
@@ -76,7 +76,8 @@ Neuron::Neuron(const Neuron &other)
 	  mNameValue(other.mNameValue.get()), 
 	  mTransferFunction(0), mActivationFunction(0),
 	  mLastActivation(other.mLastActivation), mLastOutputActivation(0.0), 
-	  mActivationCalculated(false), mFlipActivation(other.mFlipActivation)
+	  mActivationCalculated(false), mFlipActivation(other.mFlipActivation),
+	  mOwnerNetwork(0)
 {
 	mId = other.mId;
 	if(other.mTransferFunction != 0) {
@@ -292,6 +293,15 @@ bool Neuron::deregisterOutgoingSynapse(Synapse *synapse) {
 
 QList<Synapse*> Neuron::getOutgoingSynapses() const {
 	return mOutgoingSynapses;
+}
+
+void Neuron::setOwnerNetwork(NeuralNetwork *network) {
+	mOwnerNetwork = network;
+}
+
+
+NeuralNetwork* Neuron::getOwnerNetwork() const {
+	return mOwnerNetwork;
 }
 
 

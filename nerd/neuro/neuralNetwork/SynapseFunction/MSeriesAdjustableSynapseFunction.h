@@ -42,48 +42,39 @@
  ***************************************************************************/
 
 
-#ifndef NERDNeuralNetworkElement_H
-#define NERDNeuralNetworkElement_H
+#ifndef NERDMSeriesAdjustableSynapseFunction_H
+#define NERDMSeriesAdjustableSynapseFunction_H
 
-#include "Math/Vector3D.h"
-#include <QtGlobal>
-#include "Core/Properties.h"
-#include "Core/PropertyChangedListener.h"
+#include "SynapseFunction/SynapseFunction.h"
+#include <Value/ULongLongValue.h>
 
 namespace nerd {
-	
+
 	/**
-	 * NeuralNetworkElement.
+	 * MSeriesAdjustableSynapseFunction.
+	 *
+	 * The MSeriesAdjustableSynapseFunction returns the strength of the
+	 * owner Synapse truncated to the precision of the M-Series weight value.
 	 */
-	class NeuralNetworkElement : public Properties, public virtual PropertyChangedListener {
-		public: 
-			NeuralNetworkElement();
-			NeuralNetworkElement(const NeuralNetworkElement &other);
-			virtual ~NeuralNetworkElement();
+	class MSeriesAdjustableSynapseFunction : public SynapseFunction {
+	public:
+		MSeriesAdjustableSynapseFunction();
+		MSeriesAdjustableSynapseFunction(const MSeriesAdjustableSynapseFunction &other);
+		virtual ~MSeriesAdjustableSynapseFunction();
 
-			virtual qulonglong getId() const = 0;	
-			virtual void setId(qulonglong id) = 0;
-
-			virtual void setPosition(const Vector3D &position);
-			virtual Vector3D getPosition() const;
+		virtual SynapseFunction* createCopy() const;
 		
-			virtual int getRequiredIterations() const;
-			virtual void setRequiredIterations(int iterations);
+		virtual void reset(Synapse *owner);
+		virtual double calculate(Synapse *owner);
 
-			virtual int getStartIteration() const;
-// 			virtual void setStartIteration(int startIteration);
-
-			virtual void propertyChanged(Properties *owner, const QString &property);
-
-		protected:
-			void updateIterationProperty();
-
-		protected:
-			int mStartIteration;
-			int mRequiredIterations;
-
-		public:
-			NeuralNetworkElement *mCopyPtr;
+		bool equals(SynapseFunction *synapseFunction) const;
+		
+	private:
+		double map_double_to_fixed_point_4_9_precision(double d);
+		Neuron *mMasterNeuron;
+		ULongLongValue *mMasterNeuronId;
+		DoubleValue *mRangeMin;
+		DoubleValue *mRangeMax;
 	};
 
 }

@@ -41,53 +41,113 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-
-#ifndef NERDNeuralNetworkElement_H
-#define NERDNeuralNetworkElement_H
-
-#include "Math/Vector3D.h"
-#include <QtGlobal>
-#include "Core/Properties.h"
-#include "Core/PropertyChangedListener.h"
+#include "MSeriesAdjustableSynapseFunction.h"
+#include "Math/MSeriesFunctions.h"
+#include <Network/Neuron.h>
+#include <Network/NeuralNetwork.h>
 
 namespace nerd {
+
+/**
+ * Constructor.
+ */
+MSeriesAdjustableSynapseFunction::MSeriesAdjustableSynapseFunction()
+	: SynapseFunction("MSeriesAdjustable"), mMasterNeuron(0)
+{
+	mMasterNeuronId = new ULongLongValue();
+	mRangeMin = new DoubleValue(-10);
+	mRangeMax = new DoubleValue(10);
 	
-	/**
-	 * NeuralNetworkElement.
-	 */
-	class NeuralNetworkElement : public Properties, public virtual PropertyChangedListener {
-		public: 
-			NeuralNetworkElement();
-			NeuralNetworkElement(const NeuralNetworkElement &other);
-			virtual ~NeuralNetworkElement();
-
-			virtual qulonglong getId() const = 0;	
-			virtual void setId(qulonglong id) = 0;
-
-			virtual void setPosition(const Vector3D &position);
-			virtual Vector3D getPosition() const;
-		
-			virtual int getRequiredIterations() const;
-			virtual void setRequiredIterations(int iterations);
-
-			virtual int getStartIteration() const;
-// 			virtual void setStartIteration(int startIteration);
-
-			virtual void propertyChanged(Properties *owner, const QString &property);
-
-		protected:
-			void updateIterationProperty();
-
-		protected:
-			int mStartIteration;
-			int mRequiredIterations;
-
-		public:
-			NeuralNetworkElement *mCopyPtr;
-	};
-
+	addParameter("MasterId", mMasterNeuronId);
+	addParameter("RangeMin", mRangeMin);
+	addParameter("RangeMax", mRangeMax);
 }
 
-#endif
+/**
+ * Copy constructor.
+ */
+MSeriesAdjustableSynapseFunction::MSeriesAdjustableSynapseFunction(const MSeriesAdjustableSynapseFunction &other)
+	: Object(), ValueChangedListener(), SynapseFunction(other), mMasterNeuron(0)
+{
+	mMasterNeuronId = dynamic_cast<ULongLongValue*>(getParameter("MasterId"));
+	mRangeMin = dynamic_cast<DoubleValue*>(getParameter("RangeMin"));
+	mRangeMax = dynamic_cast<DoubleValue*>(getParameter("RangeMax"));
+}
+
+/**
+ * Destructor.
+ */
+MSeriesAdjustableSynapseFunction::~MSeriesAdjustableSynapseFunction() {
+}
+
+SynapseFunction* MSeriesAdjustableSynapseFunction::createCopy() const {
+	return new MSeriesAdjustableSynapseFunction(*this);
+}
+
+/**
+ * Does nothing in this implementation.
+ */
+void MSeriesAdjustableSynapseFunction::reset(Synapse*) {
+}
+
+/**
+ * Returns the strength of the owner synapse truncated to the
+ * precision of the A-Series weight value.
+ * 
+ * @param owner the owner of this SynapseFunction.
+ * @return the truncated strength of the owner.
+ */
+double MSeriesAdjustableSynapseFunction::calculate(Synapse *owner) {
+	if(owner == 0 || owner->getSource() == 0) {
+		return 0.0;
+	}
+	Neuron *neuron = owner->getSource();
+	TransferFunction *tf = neuron->getTransferFunction();
+	NeuralNetwork *network = neuron->getOwnerNetwork();
+	
+	if(tf == 0 || network == 0 || (tf->getLowerBound() == tf->getUpperBound())) {
+		owner->getStrengthValue().set(0.0);
+		return 0.0;
+	}
+	Neuron *master = network->selectNeuronById(mMasterNeuronId->get(), network->getNeurons());
+	if(master == 0) {
+		owner->getStrengthValue().set(0.0);
+		return 0.0;
+	}
+	double activity = master->getOutputActivationValue().get();
+	
+	double strength = (mRangeMin->get() + (((mRangeMax->get() - mRangeMin->get())
+						/ (tf->getUpperBound() - tf->getLowerBound())) 
+						* (activity - tf->getLowerBound())));
+	
+	owner->getStrengthValue().set(strength);
+	
+	//calculate weight in MSeries format.
+	strength = owner->getStrengthValue().get();
+	return MSeriesFunctions::fixedPoint_17_15_ToDouble(
+			MSeriesFunctions::doubleToFixedPoint_17_15(strength));
+}
+
+
+bool MSeriesAdjustableSynapseFunction::equals(SynapseFunction *synapseFunction) const {
+	if(SynapseFunction::equals(synapseFunction) == false) {
+		return false;
+	}
+
+	MSeriesAdjustableSynapseFunction *af = dynamic_cast<MSeriesAdjustableSynapseFunction*>(synapseFunction);
+
+	if(af == 0) {
+		return false;
+	}
+	if(af->mMasterNeuronId != mMasterNeuronId
+		|| af->mRangeMin != mRangeMin
+		|| af->mRangeMax != mRangeMax)
+	{
+		return false;
+	}
+	return true;
+}
+
+}
 
 
