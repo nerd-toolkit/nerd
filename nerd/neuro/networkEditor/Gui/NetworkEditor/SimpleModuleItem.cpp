@@ -243,7 +243,7 @@ void SimpleModuleItem::paintSelf(QPainter *painter) {
 	QPointF pos = getGlobalPosition();
 	QRectF rect(pos.x(), pos.y(), mSize.width(), mSize.height());
 
-	QColor color(200, 200, 200, 100);
+	QColor color(100, 100, 100, 15);
 	if(mUseCustomBackgroundColor) {
 		color = mBackgroundColor;
 	}

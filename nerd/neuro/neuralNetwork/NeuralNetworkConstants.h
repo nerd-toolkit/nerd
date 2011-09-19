@@ -139,6 +139,7 @@ namespace nerd {
 		static const QString TAG_NEURON_MAX_BIAS;
 		static const QString TAG_NEURON_INITIAL_CONNECTION_PROPORTION;
 		static const QString TAG_NEURON_REINIT_BIAS;
+		static const QString TAG_NEURON_ORDER_DEPENDENT;
 		static const QString TAG_CONSTRAINT_SLAVE;
 		static const QString TAG_FAST_ITERATIONS;
 		static const QString TAG_MAX_NUMBER_OF_SUBMODULES;

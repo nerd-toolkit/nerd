@@ -62,6 +62,7 @@ StandardConstraintCollection::StandardConstraintCollection()
 
 	cm->addConstraintPrototype(new NumberOfNeuronsConstraint());
 	cm->addConstraintPrototype(new NumberOfReadNeuronsConstraint());
+	cm->addConstraintPrototype(new SymmetryConstraint(0, "Clone", true));
 	cm->addConstraintPrototype(new SymmetryConstraint());
 	cm->addConstraintPrototype(new PreventMutualConnectionsConstraint());
 	cm->addConstraintPrototype(new ConnectionSymmetryConstraint());

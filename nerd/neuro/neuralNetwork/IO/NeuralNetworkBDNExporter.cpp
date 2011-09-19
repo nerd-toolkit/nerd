@@ -1282,18 +1282,20 @@ bool NeuralNetworkBDNExporter::addHiddenBDNNeuronInfo(Neuron *hiddenNeuron, QStr
 		
 		mNumberOfModuleInterfaceInputs++;
 	}
-	if(hiddenNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE)) {
-		bool ok = false;
-		int spinalCordAddress = hiddenNeuron->getProperty(NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE).toInt(&ok);
-		if(!ok) {
-			if(errorMsg != 0) {
-				*errorMsg = *errorMsg + QString("The neuron \"" + hiddenNeuron->getNameValue().get() + "\" ["
-					+ QString::number(hiddenNeuron->getId()) + "] has property " 
-					+ NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE + " without a valid spinal cord address!");
-			}
-			return false;
-		}
-	}
+	
+	//TODO Add code for hidden neuron BDN Board Interface stuff. (reactivate code)
+// 	if(hiddenNeuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE)) {
+// 		bool ok = false;
+// 		int spinalCordAddress = hiddenNeuron->getProperty(NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE).toInt(&ok);
+// 		if(!ok) {
+// 			if(errorMsg != 0) {
+// 				*errorMsg = *errorMsg + QString("The neuron \"" + hiddenNeuron->getNameValue().get() + "\" ["
+// 					+ QString::number(hiddenNeuron->getId()) + "] has property " 
+// 					+ NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE + " without a valid spinal cord address!");
+// 			}
+// 			return false;
+// 		}
+// 	}
 	
 	return true;
 }

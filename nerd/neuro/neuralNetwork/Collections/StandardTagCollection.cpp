@@ -84,7 +84,14 @@ StandardTagCollection::StandardTagCollection()
 						 "Specifies the maximal strength for automatic synapse changes."));
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_FAST_ITERATIONS,
 						 NeuralNetworkConstants::TAG_TYPE_NETWORK_ELEMENT,
+						 "Obsolete! Please use ODN (Order Dependent Neurons) property!\n"
 						 "Makes an element to be executed <n> times per network update."));
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT,
+						 NeuralNetworkConstants::TAG_TYPE_NEURON,
+						 "Allowes the definition of a fixed execution order or neurons."
+						 "The property value is an integer. Neurons are updated from lower to "
+						 "higher ODN numbers. Neuronw without the ODN tag are considered zero."));
+
 
 
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_MAX_NUMBER_OF_SUBMODULES,

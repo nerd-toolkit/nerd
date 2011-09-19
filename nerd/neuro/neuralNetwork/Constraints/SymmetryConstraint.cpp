@@ -70,8 +70,8 @@ const int SymmetryConstraint::CONNECTION_MODE_OUTPUT_AS = 16;
 const int SymmetryConstraint::CONNECTION_MODE_MUTUAL_AS = 32;
 const int SymmetryConstraint::CONNECTION_MODE_STRUCTURAL = 64;
 
-SymmetryConstraint::SymmetryConstraint(qulonglong id)
-	: GroupConstraint("Symmetry", id), mGroup1(0), mGroup2(0)
+SymmetryConstraint::SymmetryConstraint(qulonglong id, const QString &name, bool disableLayout)
+	: GroupConstraint(name, id), mGroup1(0), mGroup2(0), mDisableLayout(disableLayout)
 {
 	mTargetGroupId = new ULongLongValue(0);
 	addParameter("TargetId", mTargetGroupId);
@@ -80,7 +80,9 @@ SymmetryConstraint::SymmetryConstraint(qulonglong id)
 	addParameter("References", mNetworkElementPairValue);
 
 	mLayoutValue = new StringValue("");
-	addParameter("Layout", mLayoutValue);
+	if(!mDisableLayout) {
+		addParameter("Layout", mLayoutValue);
+	}
 
 	mConnectionModeValue = new StringValue("");
 	addParameter("Mode", mConnectionModeValue);
@@ -96,10 +98,20 @@ SymmetryConstraint::SymmetryConstraint(const SymmetryConstraint &other)
 	mNetworkElementPairValue = dynamic_cast<StringValue*>(getParameter("References"));
 	mLayoutValue = dynamic_cast<StringValue*>(getParameter("Layout"));
 	mConnectionModeValue = dynamic_cast<StringValue*>(getParameter("Mode"));
+	
+	if(mLayoutValue == 0) {
+		mLayoutValue = new StringValue("");
+	}
 }
 
 
 SymmetryConstraint::~SymmetryConstraint() {
+	if(mDisableLayout) {
+		ValueManager *vm = Core::getInstance()->getValueManager();
+		vm->removeValue(mLayoutValue);
+		mLayoutValue->removeValueChangedListeners();
+		delete mLayoutValue;
+	}
 }
 
 

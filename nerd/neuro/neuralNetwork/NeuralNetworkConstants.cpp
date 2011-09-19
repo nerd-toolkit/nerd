@@ -242,6 +242,9 @@ const QString NeuralNetworkConstants::TAG_NEURON_INITIAL_CONNECTION_PROPORTION
 
 const QString NeuralNetworkConstants::TAG_NEURON_REINIT_BIAS 
 		= "_ReInitBias";
+		
+const QString NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT
+		= "ODN";
 
 const QString NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE
 		= "_ConstraintSlave";

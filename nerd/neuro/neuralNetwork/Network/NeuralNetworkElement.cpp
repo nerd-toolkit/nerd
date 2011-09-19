@@ -119,14 +119,25 @@ int NeuralNetworkElement::getStartIteration() const {
 void NeuralNetworkElement::propertyChanged(Properties *owner, const QString &property) {
 	if(owner == this) {
 		if(property == NeuralNetworkConstants::TAG_FAST_ITERATIONS 
-			|| property == QString("+").append(NeuralNetworkConstants::TAG_FAST_ITERATIONS)) //TODO maybe create a properties.isProperty() method.
+			|| property == QString("+").append(NeuralNetworkConstants::TAG_FAST_ITERATIONS)
+			|| property == NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT
+			|| property == QString("+").append(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT)) //TODO maybe create a properties.isProperty() method.
 		{
-			if(!hasProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS)) {
+			if(!hasProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS)
+				&& !hasProperty(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT)) 
+			{
 				mRequiredIterations = 1;
 				mStartIteration = 0;
 			}
 			else {
-				QStringList entries = getProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS).split(",");
+				QStringList entries;
+				//prefer ODN property settings over FAST property (FAST is obolete)
+				if(hasProperty(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT)) {
+					entries = getProperty(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT).split(",");
+				}
+				else {
+					 entries = getProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS).split(",");
+				}
 				int iterations = 1;
 				int startIteration = 0;
 				if(entries.size() == 1) {
@@ -154,19 +165,33 @@ void NeuralNetworkElement::updateIterationProperty() {
 	if(mRequiredIterations <= 1) {
 		if(mStartIteration == 0) {
 			removeProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS);
+			removeProperty(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT);
 		}
 		else {
-			setProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS, 
+// 			setProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS, 
+// 					QString::number(mStartIteration) + "," + QString::number(mRequiredIterations));
+			
+			//set the property always as ODN (FAST is obsolete).
+			setProperty(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT, 
 						QString::number(mStartIteration) + "," + QString::number(mRequiredIterations));
+			
 		}
 	}
 	else {
+// 		if(mStartIteration == 0) {
+// 			setProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS, 
+// 						QString::number(mRequiredIterations));
+// 		}
+// 		else {
+// 			setProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS, 
+// 						QString::number(mStartIteration) + "," + QString::number(mRequiredIterations));
+// 		}
 		if(mStartIteration == 0) {
-			setProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS, 
+			setProperty(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT, 
 						QString::number(mRequiredIterations));
 		}
 		else {
-			setProperty(NeuralNetworkConstants::TAG_FAST_ITERATIONS, 
+			setProperty(NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT, 
 						QString::number(mStartIteration) + "," + QString::number(mRequiredIterations));
 		}
 	}

@@ -415,7 +415,9 @@ void NeuralNetwork::propertyChanged(Properties *owner, const QString &property) 
 			}
 		}
 	}
-	if(property == NeuralNetworkConstants::TAG_FAST_ITERATIONS) {
+	if(property == NeuralNetworkConstants::TAG_FAST_ITERATIONS
+		|| property == NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT) 
+	{
 		mMinimalIterationNumber = getMinimalStartIteration();
 	}
 }

@@ -73,7 +73,7 @@ namespace nerd {
 		static const int CONNECTION_MODE_STRUCTURAL;
 
 	public:
-		SymmetryConstraint(qulonglong id = 0);
+		SymmetryConstraint(qulonglong id = 0, const QString &name = "Symmetry", bool disableLayout = false);
 		SymmetryConstraint(const SymmetryConstraint &other);
 		virtual ~SymmetryConstraint();
 
@@ -125,6 +125,7 @@ namespace nerd {
 		QList<NetworkElementPair> mNetworkElementPairs;
 		QList<NetworkElementPair> mModulePairs;
 		int mFlipMode;
+		bool mDisableLayout;
 	};
 
 }
