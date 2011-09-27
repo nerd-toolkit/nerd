@@ -54,7 +54,7 @@ using namespace std;
 namespace nerd {
 
 CloneNetworkOperator::CloneNetworkOperator(const QString &name)
-	: NeuralNetworkManipulationOperator(name)
+	: NeuralNetworkManipulationOperator(name, false)
 {
 	TRACE("CloneNetworkOperator::CloneNetworkOperator");
 }

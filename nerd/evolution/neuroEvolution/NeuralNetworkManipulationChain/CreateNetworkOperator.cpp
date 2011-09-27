@@ -67,7 +67,7 @@ using namespace std;
 namespace nerd {
 
 CreateNetworkOperator::CreateNetworkOperator(const QString &name)
-	: NeuralNetworkManipulationOperator(name), mEvolutionRestartedEvent(), 
+	: NeuralNetworkManipulationOperator(name, false), mEvolutionRestartedEvent(), 
 	  mNetworkIndex(0), mFirstNetworkCycle(true)
 {
 	mNumberOfInputNeurons = new IntValue(45);

@@ -63,7 +63,7 @@ namespace nerd {
 	 */
 	class NeuralNetworkManipulationOperator : public ParameterizedObject {
 	public:
-		NeuralNetworkManipulationOperator(const QString &name);	
+		NeuralNetworkManipulationOperator(const QString &name, bool canBeDisabled = true);	
 		NeuralNetworkManipulationOperator(const NeuralNetworkManipulationOperator &other);
 		virtual ~NeuralNetworkManipulationOperator();
 
@@ -83,6 +83,8 @@ namespace nerd {
 
 		IntValue* getLastExecutionTimeValue() const;
 		
+		virtual void valueChanged(Value *value);
+		
 	private:
 		NeuralNetworkManipulationChainAlgorithm *mOwner;
 		IntValue *mMaximalNumberOfApplications;
@@ -98,6 +100,7 @@ namespace nerd {
 		int mMaxTime;
 		int mMinTime;
 		int mExecCounter;
+		BoolValue *mCanBeDisabled;
 	};
 
 }

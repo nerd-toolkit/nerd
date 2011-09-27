@@ -140,12 +140,12 @@ EvolutionOperatorPanel::EvolutionOperatorPanel(const QString &prefix, const QStr
 		parameterLayout->addWidget(placeHolder, 0, horSize);
 		++horSize;
 	}
-
+		
 	//set up enableValue to control the enable state of the operator.
+	mCanBeDisabled = vm->getBoolValue(prefix + operatorName + "/Config/CanBeDisabled");
 	mEnableValue = vm->getBoolValue(prefix + operatorName + "/Config/Enable");
 	if(mEnableValue != 0) {
 		mEnableValue->addValueChangedListener(this);
-		mDisableOperator->setChecked(!mEnableValue->get());
 	}
 	else {
 		mDisableOperator->setChecked(false);
@@ -198,6 +198,7 @@ QString EvolutionOperatorPanel::getPrefix() const {
 }
 
 void EvolutionOperatorPanel::cleanUp() {
+	mCanBeDisabled = 0;
 	if(mEnableValue != 0) {
 		mEnableValue->removeValueChangedListener(this);
 		mEnableValue = 0;
@@ -216,7 +217,12 @@ void EvolutionOperatorPanel::checkEnableState(bool) {
 		mParameterWidget->setEnabled(true);
 	}
 	else {
-		mDisableOperator->setEnabled(true);
+		if(mEnableValue != 0 && mCanBeDisabled != 0) {
+			mDisableOperator->setEnabled(mCanBeDisabled->get());
+		}
+		else {
+			mDisableOperator->setEnabled(true);
+		}
 		mEnableValue->set(!mDisableOperator->isChecked());
 		mNameLabel->setEnabled(mEnableValue->get());
 		mParameterWidget->setEnabled(mEnableValue->get());

@@ -52,7 +52,7 @@ using namespace std;
 
 namespace nerd {
 
-NeuralNetworkManipulationOperator::NeuralNetworkManipulationOperator(const QString &name)
+NeuralNetworkManipulationOperator::NeuralNetworkManipulationOperator(const QString &name, bool canBeDisabled)
 	: ParameterizedObject(name), mOwner(0), mCumulatedTime(0), mMaxTime(0), mMinTime(0),
 	  mExecCounter(0)
 {
@@ -65,6 +65,7 @@ NeuralNetworkManipulationOperator::NeuralNetworkManipulationOperator(const QStri
 	mMaxExecutionTime = new IntValue(0);
 	mMinExecutionTime = new IntValue(0);
 	mExecutionCount = new IntValue(0);
+	mCanBeDisabled = new BoolValue(canBeDisabled);
 	
 	addParameter("Config/MaximalNumberOfApplications", mMaximalNumberOfApplications);
 	addParameter("Config/OperatorIndex", mOperatorIndex);
@@ -75,6 +76,7 @@ NeuralNetworkManipulationOperator::NeuralNetworkManipulationOperator(const QStri
 	addParameter("Performance/MaxTime", mMaxExecutionTime);
 	addParameter("Performance/MinTime", mMinExecutionTime);
 	addParameter("Performance/ExecutionCount", mExecutionCount);
+	addParameter("Config/CanBeDisabled", mCanBeDisabled);
 
 	Core::log(QString("Added operator: ") + name);
 
@@ -176,6 +178,20 @@ StringValue* NeuralNetworkManipulationOperator::getDocumentationValue() const {
 IntValue* NeuralNetworkManipulationOperator::getLastExecutionTimeValue() const {
 	return mLastSingleExecutionTime;
 }
+
+void NeuralNetworkManipulationOperator::valueChanged(Value *value) {
+	ParameterizedObject::valueChanged(value);
+	if(value == 0) {
+		return;
+	}
+	else if(value == mEnableOpeatorValue) {
+		if(!mEnableOpeatorValue->get() && !mCanBeDisabled->get()) {
+			//do not allow a disabling of the operator
+			mEnableOpeatorValue->set(true);
+		}
+	}
+}
+
 
 }
 
