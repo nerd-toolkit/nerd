@@ -146,7 +146,7 @@ EvolutionOperatorPanel::EvolutionOperatorPanel(const QString &prefix, const QStr
 	mEnableValue = vm->getBoolValue(prefix + operatorName + "/Config/Enable");
 	if(mEnableValue != 0) {
 		mEnableValue->addValueChangedListener(this);
-		mDisableOperator->setChecked(mEnableValue->get());
+		mDisableOperator->setChecked(!mEnableValue->get());
 	}
 	else {
 		mDisableOperator->setChecked(false);
