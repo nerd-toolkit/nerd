@@ -41,4 +41,8 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#define NERD_VERSION "3.16"
+/*
+ * Stable release summer 2011.
+ */
+
+#define NERD_VERSION "3.2"
