@@ -461,7 +461,17 @@ bool ClusterNetworkInSimEvaluationMethod::createJobScript() {
 	script << "then shift" << endl;
 	script << "fi" << endl;
 	script << "cd $EVAL_DIR" << endl;
+	script << "ulimit -c unlimited" << endl;
 	script << applicationCall << mApplicationParameter << " -nogui -disableLogging $ARGUMENT_POSTFIX $* " << endl << endl;
+	script << "#This segment creates a backtrace of a core dump when the application crashes." << endl;
+	script << "if [ -f core ]" << endl;
+	script << "then" << endl;
+	script << " echo " << endl << " echo \"There was an error during execution.\"" << endl;
+	script << " echo \"Creating backtrace file from dumped core.\"" << endl;
+	script << " echo " << endl << " echo \"Please wait...\"" << endl << " echo" << endl << endl;
+	script << " gdb ${NERD} --core core --batch --quiet -ex \"thread apply all bt full\" -ex \"quit\"" << endl;
+	script << " rm core;" << endl;
+	script << "fi" << endl;
 	script << "exit 0" << endl;
 	return ok;
 }

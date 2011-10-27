@@ -109,6 +109,7 @@ class ClusterEvaluationMethod : public EvaluationMethod {
 		StringValue *mQSubScriptName;
 		IntValue *mCurrentGenerationID;
 		IntValue *mNumberOfRetries;
+		BoolValue *mLogGridEngineCalls;
 
 		StringValue *mStatusMessageValue;
 		StringValue *mWorkingDir;

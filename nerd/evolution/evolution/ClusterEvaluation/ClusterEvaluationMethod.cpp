@@ -162,6 +162,7 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 	mZipGenerations = new BoolValue(false);
 	mCurrentGenerationDirectory = new StringValue("");
 	mCurrentStartScriptFullFileName = new StringValue("");
+	mLogGridEngineCalls = new BoolValue(false);
 
 	setPrefix(getName() + "/");
 
@@ -176,6 +177,7 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 	vm->addValue(EvolutionConstants::VALUE_CURRENT_GENERATION_DIRECTORY, mCurrentGenerationDirectory);
 	addParameter("CurrentStartScript", mCurrentStartScriptFullFileName);
 	vm->addValue(EvolutionConstants::VALUE_CURRENT_INDIVIDUAL_EVALUATION_START_SCRIPT, mCurrentStartScriptFullFileName);
+	addParameter("LogGridEngineCalls", mLogGridEngineCalls);
 }
 
 
@@ -412,6 +414,10 @@ bool ClusterEvaluationMethod::submitJob(int startIndex, int endIndex) {
 	parameter << outputDirectory;
 	parameter << QString::number(mQsubPriority->get());
 
+	if(mLogGridEngineCalls->get()) {
+		Core::log("GridEngine Submit: " + parameter.join(" "));
+	}
+	
 	QSubRunner submitJob(parameter);
 
 	//register to ensure that the thread is not destroyed while running.
@@ -534,6 +540,10 @@ bool ClusterEvaluationMethod::reSubmitJobs() {
 		parameter << outputDirectory;
 		parameter << QString::number(mQsubPriority->get());
 	
+		if(mLogGridEngineCalls->get()) {
+			Core::log("GridEngine Resubmit: " + parameter.join(" "));
+		}
+		
 		QSubRunner *submitJob = new QSubRunner(parameter);
 		submitJob->start();
 		runningThreads.push_back(submitJob);
