@@ -90,6 +90,7 @@ class ClusterNetworkInSimEvaluationMethod : public ClusterEvaluationMethod, publ
 
 		StringValue *mAgentInterfaceNames;
 		StringValue *mApplication;
+		StringValue *mApplicationFixedParameters;
 		StringValue *mHostWithGuiName;
 
 		Event *mNextStep;

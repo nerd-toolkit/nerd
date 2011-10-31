@@ -98,11 +98,13 @@ ClusterNetworkInSimEvaluationMethod::ClusterNetworkInSimEvaluationMethod(const Q
 
 	mAgentInterfaceNames = new StringValue("");
 	mApplication = new StringValue("");
+	mApplicationFixedParameters = new StringValue("");
 	mHostWithGuiName = new StringValue("Default");
 	mRandomizeSeed = new BoolValue(true);
 
 	addParameter("AgentInterfaces", mAgentInterfaceNames, true);	
 	addParameter("Application", mApplication, true);
+	addParameter("Arguments", mApplicationFixedParameters, true);
 	addParameter("GuiHost", mHostWithGuiName, true);
 	addParameter("RandomizeSeed", mRandomizeSeed, true);
 	mFitnessFileName = "fitness.txt";
@@ -127,6 +129,7 @@ ClusterNetworkInSimEvaluationMethod::ClusterNetworkInSimEvaluationMethod(
 {
 	mRandomizeSeed = dynamic_cast<BoolValue*>(getParameter("RandomizeSeed"));
 	mApplication = dynamic_cast<StringValue*>(getParameter("Application"));
+	mApplicationFixedParameters = dynamic_cast<StringValue*>(getParameter("Arguments"));
 	mHostWithGuiName = dynamic_cast<StringValue*>(getParameter("GuiHost"));
 	mAgentInterfaceNames = dynamic_cast<StringValue*>(getParameter("AgentInterfaces"));
 
@@ -428,8 +431,11 @@ bool ClusterNetworkInSimEvaluationMethod::createJobScript() {
 	mJobScriptContent = "";
 	QTextStream script(&mJobScriptContent, QIODevice::WriteOnly | QIODevice::Truncate);
 
-	QString applicationCall = mApplication->get();
+	QString applicationBinary = mApplication->get();
+	applicationBinary = applicationBinary.replace("$HOME$", QDir::currentPath());
+	QString applicationCall = mApplication->get() + " " + mApplicationFixedParameters->get();
 	applicationCall = applicationCall.replace("$HOME$", QDir::currentPath());
+	
 
 	script << "#!/bin/sh" << endl << endl;
 	script << "TASK_ID=$1" << endl;
@@ -469,7 +475,7 @@ bool ClusterNetworkInSimEvaluationMethod::createJobScript() {
 	script << " echo " << endl << " echo \"There was an error during execution.\"" << endl;
 	script << " echo \"Creating backtrace file from dumped core.\"" << endl;
 	script << " echo " << endl << " echo \"Please wait...\"" << endl << " echo" << endl << endl;
-	script << " gdb ${NERD} --core core --batch --quiet -ex \"thread apply all bt full\" -ex \"quit\"" << endl;
+	script << " gdb " << applicationBinary << " --core core --batch --quiet -ex \"thread apply all bt full\" -ex \"quit\" >> backtrace.txt" << endl;
 	script << " rm core;" << endl;
 	script << "fi" << endl;
 	script << "exit 0" << endl;
