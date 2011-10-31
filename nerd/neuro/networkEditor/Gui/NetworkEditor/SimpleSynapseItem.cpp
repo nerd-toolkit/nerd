@@ -181,13 +181,15 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 		newPen.setCosmetic(true);
 	}
 
-	newPen.setColor(QColor(0, 0, 0, 255));
-	if(mShowSlaveState && mSynapse->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)) {
-		newPen.setColor(QColor(255, 0, 0, 255));
+	QColor currentColor(0, 0, 0, 255);
+	if(mShowSlaveState) {
+		QString rdof = mSynapse->getProperty(
+				NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
+		if(rdof.contains("W")) {
+			currentColor = QColor(255, 0, 0, 255);
+		}
 	}
-	else if(mShowSlaveState && mSynapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)) {
-		newPen.setColor(QColor(0, 255, 0, 255));
-	}
+	newPen.setColor(currentColor);
 	painter->setPen(newPen);
 
 	QPointF pos = getGlobalPosition();
@@ -238,7 +240,7 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 		painter->translate(targetPos);
 		painter->rotate(90 + (-angle / Math::PI * 180.0));
 		painter->translate(-1 * Math::min(15.0, distance - 17), 0);
-		painter->fillPath(arrow, QColor(0, 0, 0, 255));
+		painter->fillPath(arrow, currentColor);
 
 		painter->setWorldMatrix(transformation);
 	}

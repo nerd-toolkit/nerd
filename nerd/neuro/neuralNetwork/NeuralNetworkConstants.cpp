@@ -85,6 +85,9 @@ const QString NeuralNetworkConstants::EVENT_NNM_NETWORK_ITERATION_COMPLETED
 
 const QString NeuralNetworkConstants::EVENT_NETWORK_CLEAR_MODIFICATION_STACKS
 		= "/NeuralNetwork/ClearModificationStacks";
+		
+const QString NeuralNetworkConstants::EVENT_CONSTRAINTS_UPDATED
+		= "/NeuralNetwork/ConstraintsUpdated";
 
 //**************************************************************************
 //Property Names
@@ -218,6 +221,9 @@ const QString NeuralNetworkConstants::TAG_ELEMENT_CHANGE_PROBABILITY
 
 const QString NeuralNetworkConstants::TAG_ELEMENT_CHANGE_DEVIATION
 		= "ChangeDeviation";
+		
+const QString NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM
+		= "_RDOF";
 
 // const QString NeuralNetworkConstants::TAG_SYNAPSE_REINIT_STRENGTH 
 // 		= "_ReInitWeight";

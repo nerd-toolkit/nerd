@@ -53,6 +53,7 @@
 #include <QScriptEngine>
 #include "Network/NeuroTagManager.h"
 #include "Math/Math.h"
+#include "Constraints/ConstraintManager.h"
 
 using namespace std;
 
@@ -230,6 +231,7 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 
 					networkChanged = true;
 				}
+				ConstraintManager::markElementAsConstrained(neuron, "B");
 			}
 			else {
 				Synapse *synapse = dynamic_cast<Synapse*>(i.key());
@@ -242,6 +244,7 @@ bool WeightAndBiasCalculatorConstraint::applyConstraint(NeuronGroup *owner,
 
 						networkChanged = true;
 					}
+					ConstraintManager::markElementAsConstrained(synapse, "W");
 				}
 			}
 		}

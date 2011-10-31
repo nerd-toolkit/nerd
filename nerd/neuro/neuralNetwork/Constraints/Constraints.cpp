@@ -63,7 +63,8 @@ bool Constraints::install() {
 			->getGlobalObject(NeuralNetworkConstants::OBJECT_CONSTRAINT_MANAGER));
 	if(cm == 0) {
 		cm = new ConstraintManager();
-		core->addGlobalObject(NeuralNetworkConstants::OBJECT_CONSTRAINT_MANAGER, cm);
+		//core->addGlobalObject(NeuralNetworkConstants::OBJECT_CONSTRAINT_MANAGER, cm);
+		cm->registerAsGlobalObject();
 	}
 	else if(dynamic_cast<ConstraintManager*>(cm) == 0) {
 		Core::log(QString("Constraint::install() : There was a global object named [")

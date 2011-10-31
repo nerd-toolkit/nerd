@@ -49,11 +49,14 @@
 #include "Core/SystemObject.h"
 #include <QStringList>
 #include "Command/CommandExecutor.h"
+#include "Event/Event.h"
+
 
 namespace nerd {
 
 	class ModularNeuralNetwork;
 	class NeuroModule;
+	class NeuralNetworkElement;
 
 	/**
 	 * ConstraintManager.
@@ -74,6 +77,8 @@ namespace nerd {
 		virtual bool removeConstrantPrototype(GroupConstraint *constraint);
 		virtual GroupConstraint* getConstraintPrototype(const QString &name) const;
 		virtual QList<GroupConstraint*> getConstraintPrototypes() const;
+		
+		void notifyConstraintsUpdated();
 
 		static QStringList verifyAllConstraints(ModularNeuralNetwork *net);
 		static QStringList verifyConstraints(NeuronGroup *group);
@@ -84,8 +89,13 @@ namespace nerd {
 					CommandExecutor *executor, QList<NeuralNetworkElement*> &trashcan,
 					QStringList &errors);
 		
+		static void markElementAsConstrained(NeuralNetworkElement *elem, const QString &dof);
+		
 	private:
 		QList<GroupConstraint*> mConstraintPrototypes;
+		static bool mMarkConstrainedElements;
+		static ConstraintManager *sConstraintManager;
+		Event* mConstraintsUpdatedEvent;
 	};
 
 }

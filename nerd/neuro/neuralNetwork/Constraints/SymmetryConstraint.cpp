@@ -53,6 +53,7 @@
 #include "Util/Util.h"
 #include "Math/Math.h"
 #include "NeuralNetworkConstants.h"
+#include "Constraints/ConstraintManager.h"
 
 using namespace std;
 
@@ -298,6 +299,9 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 			if(pair.mOwnerElement != 0 && pair.mReferenceElement != 0) {
 				elementPairs.append(pair);
 			}
+			
+			ConstraintManager::markElementAsConstrained(rModule, "E");
+			ConstraintManager::markElementAsConstrained(rModule, "C");
 		}
 	}
 
@@ -523,6 +527,12 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 			if(pair.mOwnerElement != 0 && pair.mReferenceElement != 0) {
 				elementPairs.append(pair);
 			}
+			ConstraintManager::markElementAsConstrained(rNeuron, "E");
+			if((connectionMode & CONNECTION_MODE_STRUCTURAL) == 0) {
+				ConstraintManager::markElementAsConstrained(rNeuron, "B");
+				ConstraintManager::markElementAsConstrained(rNeuron, "T");
+				ConstraintManager::markElementAsConstrained(rNeuron, "A");
+			}
 		}
 	}
 
@@ -655,6 +665,11 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 			networkWasModified = true;
 		}
 		
+		ConstraintManager::markElementAsConstrained(refSynapse, "E");
+		if((connectionMode & CONNECTION_MODE_STRUCTURAL) == 0) {
+			ConstraintManager::markElementAsConstrained(refSynapse, "W");
+			ConstraintManager::markElementAsConstrained(refSynapse, "S");
+		}
 	}
 
 	QList<Synapse*> allRefSynapses;

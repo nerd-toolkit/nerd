@@ -77,6 +77,7 @@ set(nerd_neuralNetwork_SRCS
 	ActivationFunction/MSeriesActivationFunction.cpp
 	SynapseFunction/MSeriesSynapseFunction.cpp
 	SynapseFunction/MSeriesAdjustableSynapseFunction.cpp
+	PlugIns/NetworkDegreeOfFreedomCalculator.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

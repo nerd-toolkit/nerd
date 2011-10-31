@@ -46,13 +46,32 @@
 #include "NeuralNetworkConstants.h"
 #include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 #include <iostream>
+#include "Network/NeuroTagManager.h"
+#include "Core/Properties.h"
+#include "Network/NeuralNetworkElement.h"
+#include "Event/EventManager.h"
 
 using namespace std;
 
 namespace nerd {
+	
+bool ConstraintManager::mMarkConstrainedElements = false;
+ConstraintManager* ConstraintManager::sConstraintManager = 0;
 
 ConstraintManager::ConstraintManager()
 {
+	NeuroTagManager *ntm = NeuroTagManager::getInstance();
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM, 
+						 NeuralNetworkConstants::TAG_TYPE_NETWORK_ELEMENT,
+						 "Contains a list of all restricted degrees of freedom of the "
+						 "network element.\n"
+						 "(B,W,TF,SF,AF,E)"));
+	
+	ConstraintManager::mMarkConstrainedElements = false;
+	
+	mConstraintsUpdatedEvent = Core::getInstance()->getEventManager()->getEvent(
+			NeuralNetworkConstants::EVENT_CONSTRAINTS_UPDATED, true);
+
 }
 
 ConstraintManager::~ConstraintManager() {
@@ -69,6 +88,8 @@ QString ConstraintManager::getName() const {
 }
 
 bool ConstraintManager::registerAsGlobalObject() {
+	sConstraintManager = this;
+	
 	Core::getInstance()->addGlobalObject(
 		NeuralNetworkConstants::OBJECT_CONSTRAINT_MANAGER, this);
 
@@ -130,7 +151,11 @@ QList<GroupConstraint*> ConstraintManager::getConstraintPrototypes() const {
 	return mConstraintPrototypes;
 }
 
-
+void ConstraintManager::notifyConstraintsUpdated() {
+	if(mConstraintsUpdatedEvent != 0) {
+		mConstraintsUpdatedEvent->trigger();
+	}
+}
 
 /**
  * Checks whether all constraints of a all NeuronGroups in the given network are valid.
@@ -186,13 +211,64 @@ bool ConstraintManager::runConstraints(QList<NeuronGroup*> groups, int maxIterat
 						CommandExecutor *executor, QList<NeuralNetworkElement*> &trashcan,
 						QStringList &errors)
 {
-
+	ConstraintManager::mMarkConstrainedElements = true;
+	
+	if(!groups.empty() && groups.at(0) != 0) {
+		ModularNeuralNetwork *net = groups.at(0)->getOwnerNetwork();
+		if(net != 0) {
+			{
+				QList<Neuron*> elements = net->getNeurons();
+				for(int i = 0; i < elements.size(); ++i) {
+					Neuron *neuron = elements.at(i);
+					neuron->removeProperty(
+						NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
+					
+					if(neuron->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)) {
+						ConstraintManager::markElementAsConstrained(neuron, "BTA");
+					}
+					else {
+						if(neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_PROTECT_BIAS))
+						{
+							ConstraintManager::markElementAsConstrained(neuron, "B");
+						}
+					}
+				}
+			}
+			{
+				QList<Synapse*> elements = net->getSynapses();
+				for(int i = 0; i < elements.size(); ++i) {
+					Synapse *synapse = elements.at(i);
+					synapse->removeProperty(
+						NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
+					
+					if(synapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)) {
+						ConstraintManager::markElementAsConstrained(synapse, "WS");
+					}
+					else {
+						if(synapse->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_PROTECT_STRENGTH))
+						{
+							ConstraintManager::markElementAsConstrained(synapse, "W");
+						}
+					}
+				}
+			}
+			{
+				QList<NeuronGroup*> elements = net->getNeuronGroups();
+				for(int i = 0; i < elements.size(); ++i) {
+					elements.at(i)->removeProperty(
+						NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
+				}
+			}
+		}
+	}
+	
 	//check if all constraints are valid.
 	for(QListIterator<NeuronGroup*> i(groups); i.hasNext();) {
 		errors << ConstraintManager::verifyConstraints(i.next());
 	}
 
 	if(!errors.empty()) {
+		ConstraintManager::mMarkConstrainedElements = false;
 		return false;
 	}
 
@@ -219,10 +295,17 @@ bool ConstraintManager::runConstraints(QList<NeuronGroup*> groups, int maxIterat
 		}
 
 		if(allOk) {
+			ConstraintManager::mMarkConstrainedElements = false;
+			if(sConstraintManager != 0) {
+				sConstraintManager->notifyConstraintsUpdated();
+			}
 			return true;
 		}
 	}
-
+	ConstraintManager::mMarkConstrainedElements = false;
+	if(sConstraintManager != 0) {
+		sConstraintManager->notifyConstraintsUpdated();
+	}
 	return false;
 }
 
@@ -251,6 +334,23 @@ bool ConstraintManager::runGroupConstraints(NeuronGroup *group,
 	}
 
 	return false;
+}
+
+void ConstraintManager::markElementAsConstrained(NeuralNetworkElement *elem, const QString &dof) {
+	if(!ConstraintManager::mMarkConstrainedElements) {
+		return;
+	}
+	Properties *prop = dynamic_cast<Properties*>(elem);
+	if(prop == 0 || dof == "") {
+		return;
+	}
+	QString rdofString = prop->getProperty(
+			NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
+	if(rdofString.contains(dof)) {
+		return;
+	}
+	rdofString = rdofString.append(dof);
+	prop->setProperty(NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM, rdofString);
 }
 
 

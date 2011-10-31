@@ -76,6 +76,7 @@ namespace nerd {
 		static const QString EVENT_NNM_NETWORK_EXECUTION_COMPLETED;
 		static const QString EVENT_NNM_NETWORK_ITERATION_COMPLETED;
 		static const QString EVENT_NETWORK_CLEAR_MODIFICATION_STACKS;
+		static const QString EVENT_CONSTRAINTS_UPDATED;
 
 	//**************************************************************************
 	//Property Names
@@ -131,6 +132,7 @@ namespace nerd {
 		static const QString TAG_SYNAPSE_FIXED_POSITION;
 		static const QString TAG_ELEMENT_CHANGE_PROBABILITY;
 		static const QString TAG_ELEMENT_CHANGE_DEVIATION;
+		static const QString TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM;
 // 		static const QString TAG_SYNAPSE_REINIT_STRENGTH;
 		static const QString TAG_NEURON_PROTECT_BIAS;
 		static const QString TAG_NEURON_PROTECT_BIAS_EXISTENCE;

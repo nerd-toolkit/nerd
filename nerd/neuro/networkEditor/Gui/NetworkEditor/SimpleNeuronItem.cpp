@@ -173,11 +173,18 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 
 	QColor outlineColor(0, 0, 0, 255);
 
-	if(mShowSlaveState && mNeuron->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)) {
-		outlineColor = QColor(255, 0, 0, 255);
-	}
-	else if(mShowSlaveState && mNeuron->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)) {
-		outlineColor = QColor(0, 255, 0, 255);
+// 	if(mShowSlaveState && mNeuron->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)) {
+// 		outlineColor = QColor(255, 0, 0, 255);
+// 	}
+// 	else if(mShowSlaveState && mNeuron->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)) {
+// 		outlineColor = QColor(0, 255, 0, 255);
+// 	}
+	if(mShowSlaveState) {
+		QString rdof = mNeuron->getProperty(
+				NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
+		if(rdof.contains("B")) {
+			outlineColor = QColor(255, 0, 0, 255);
+		}
 	}
 
 	if(mShowBias) {

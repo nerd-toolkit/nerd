@@ -81,6 +81,7 @@
 #include "Collections/UniversalNeuroScriptLoader.h"
 #include "Collections/ScriptedModelLoader.h"
 #include "Collections/Simple2D_Physics.h"
+#include "PlugIns/NetworkDegreeOfFreedomCalculator.h"
 
 using namespace std;
 
@@ -181,6 +182,9 @@ bool NerdNeuroSimApplication::setupApplication()
 
 	UniversalNeuroScriptLoader();
 	ScriptedModelLoader();
+	
+	//Add plugin to calculate the open degrees of freedom of the network during evolution.
+	new NetworkDegreeOfFreedomCalculator();
 
 	return true;
 }

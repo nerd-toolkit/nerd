@@ -43,74 +43,51 @@
 
 
 
-#include "NetworkEditorCollection.h"
-#include <iostream>
-#include <QList>
-#include "Core/Core.h"
-#include <QAction>
-#include "Gui/NetworkEditor/EvaluationNetworkEditor.h"
-#include "Gui/NetworkEditorTools/ChangeViewModeTool.h"
-#include "Gui/NetworkEditorTools/NeuralNetworkToolbox.h"
+#ifndef NERDNetworkDegreeOfFreedomCalculator_H
+#define NERDNetworkDegreeOfFreedomCalculator_H
 
-using namespace std;
+#include <QString>
+#include <QHash>
+#include "Event/EventListener.h"
+#include "Event/Event.h"
+#include "Value/IntValue.h"
+#include "Core/SystemObject.h"
 
 namespace nerd {
 
+	/**
+	 * NetworkDegreeOfFreedomCalculator.
+	 *
+	 */
+	class NetworkDegreeOfFreedomCalculator : public virtual SystemObject, public virtual EventListener {
+	public:
+		NetworkDegreeOfFreedomCalculator();
+		virtual ~NetworkDegreeOfFreedomCalculator();
 
-/**
- * Constructs a new NetworkEditorCollection. 
- */
-NetworkEditorCollection::NetworkEditorCollection(QMenu *targetMenu, const QString &name, 
-												 bool allowManualStasisControl)
-{
-	EvaluationNetworkEditor *editor = new EvaluationNetworkEditor(allowManualStasisControl);
-	editor->resize(1000, 700);
-	editor->initialize();
+		virtual QString getName() const;
+		virtual void eventOccured(Event *event);
 
-	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_INPUT_OUTPUT, 
-						   "Show Neuron Input/Output", Qt::Key_I);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_BIAS, 
-						   "Show Neuron Bias", Qt::Key_B);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_ACTIVATION_FLIPPED, 
-						   "Show Neuron Flipped State", Qt::Key_F);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_NAME, 
-						   "Hide Neuron Names", Qt::Key_N , true);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_BIAS_AS_NUMBER, 
-						   "Show Bias Values", Qt::Key_V);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_MODULE_INPUT_OUTPUT, 
-						   "Show Module Input/Output", Qt::Key_M);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_NAMES, 
-						   "Hide Module Names", Qt::Key_O, true);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_ELEMENT_SLAVE_STATUS,
-							"Show Degrees of Freedom", Qt::Key_S);
-	new ChangeViewModeTool(editor, PaintItem::HIDE_UNSELECTED,
-							"Hide Unselected Elements", Qt::Key_H);
-	new ChangeViewModeTool(editor, PaintItem::USE_SYNAPSE_TYPE_SYMBOLS,
-							"Use Only Synapse Arrows", Qt::Key_E, true);
-	new ChangeViewModeTool(editor, PaintItem::HIDE_WEIGHTS,
-							"Hide Synapse Weights", Qt::Key_W);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_HANDLES,
-							"Hide Module Handles", Qt::Key_1, true);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_BACKGROUND,
-							"Hide Module Background", Qt::Key_2, true);
-// 	new ChangeViewModeTool(editor, PaintItem::USE_COSMETIC_LINES,
-// 							"Draw Cosmetic Lines", Qt::Key_C);
-	new NeuralNetworkToolbox(editor);
+		virtual bool init();
+		virtual bool bind();
+		virtual bool cleanUp();
 
-	if(targetMenu != 0) {
-		QAction *action = targetMenu->addAction(name);
-		action->setShortcut(Qt::Key_F4);
-		QObject::connect(action, SIGNAL(triggered()),
-						 editor, SLOT(show()));
-	}
-}
+		void calculateDegreesOfFreedom();
 
-
-
-
-
+	private:
+		Event *mUpdateDegreeOfFreedomInformationEvent;
+		IntValue *mDOFAll;
+		IntValue *mDOFMain;
+		IntValue *mDOFBiasTerms;
+		IntValue *mDOFSynapseWeights;
+		IntValue *mDOFTransferFunctions;
+		IntValue *mDOFActivationFunctions;
+		IntValue *mDOFSynapseFunctions;
+		
+	};
 
 }
+
+#endif
 
 
 

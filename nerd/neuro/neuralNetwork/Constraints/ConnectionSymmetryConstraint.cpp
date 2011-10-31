@@ -56,6 +56,7 @@
 #include "Math/Math.h"
 #include "NeuralNetworkConstants.h"
 #include "Math/Random.h"
+#include "Constraints/ConstraintManager.h"
 
 using namespace std;
 
@@ -398,6 +399,11 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			networkWasModified = true;
 		}
 		
+		ConstraintManager::markElementAsConstrained(refSynapse, "E");
+		if((synapseMode & CONNECTION_MODE_STRUCTURAL) == 0) {
+			ConstraintManager::markElementAsConstrained(refSynapse, "W");
+			ConstraintManager::markElementAsConstrained(refSynapse, "S");
+		}
 	}
 
 	QList<Synapse*> allRefSynapses;
