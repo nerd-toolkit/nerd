@@ -110,7 +110,7 @@ SymmetryConstraint::~SymmetryConstraint() {
 		ValueManager *vm = Core::getInstance()->getValueManager();
 		vm->removeValue(mLayoutValue);
 		mLayoutValue->removeValueChangedListeners();
-		delete mLayoutValue;
+		//delete mLayoutValue;
 	}
 }
 
