@@ -13,7 +13,7 @@ DIRECTORY=/dev/null
 # -sync y: submit the job "synchronized" -> execution blocks until the job is terminated.
 # -l arch=\"lx24-amd64\": ensure, that jobs or tasks of an array job are only sent to 64bit machines.
 # -cwd: use current directory as working directory.
-QSUB_OPTIONS="-q nkg -r y -sync y -l arch=lx24-amd64 -cwd "
+QSUB_OPTIONS="-q nkg -r y -sync y -l hostname=gene*&!(gene50) -l arch=lx26-amd64 "
 GROUP_NAME=nkg;
 
 
