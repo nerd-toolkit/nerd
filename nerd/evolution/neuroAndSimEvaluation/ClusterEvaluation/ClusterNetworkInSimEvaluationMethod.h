@@ -101,6 +101,7 @@ class ClusterNetworkInSimEvaluationMethod : public ClusterEvaluationMethod, publ
 		IntValue *mGenerationSimulationSeed;
 		BoolValue *mRandomizeSeed;
 		BoolValue *mPauseSimulation;
+		BoolValue *mIncludeBacktraceCodeInScripts;
 	
 };
 }

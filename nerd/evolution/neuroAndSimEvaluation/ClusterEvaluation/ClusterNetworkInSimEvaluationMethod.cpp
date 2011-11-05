@@ -101,12 +101,14 @@ ClusterNetworkInSimEvaluationMethod::ClusterNetworkInSimEvaluationMethod(const Q
 	mApplicationFixedParameters = new StringValue("");
 	mHostWithGuiName = new StringValue("Default");
 	mRandomizeSeed = new BoolValue(true);
+	mIncludeBacktraceCodeInScripts = new BoolValue(false);
 
 	addParameter("AgentInterfaces", mAgentInterfaceNames, true);	
 	addParameter("Application", mApplication, true);
 	addParameter("Arguments", mApplicationFixedParameters, true);
 	addParameter("GuiHost", mHostWithGuiName, true);
 	addParameter("RandomizeSeed", mRandomizeSeed, true);
+	addParameter("IncudeBacktraceCodeInScripts", mIncludeBacktraceCodeInScripts, true);
 	mFitnessFileName = "fitness.txt";
 
 	mNextStep = mCore->getEventManager()->createEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP);
@@ -132,6 +134,7 @@ ClusterNetworkInSimEvaluationMethod::ClusterNetworkInSimEvaluationMethod(
 	mApplicationFixedParameters = dynamic_cast<StringValue*>(getParameter("Arguments"));
 	mHostWithGuiName = dynamic_cast<StringValue*>(getParameter("GuiHost"));
 	mAgentInterfaceNames = dynamic_cast<StringValue*>(getParameter("AgentInterfaces"));
+	mIncludeBacktraceCodeInScripts = dynamic_cast<BoolValue*>(getParameter("IncudeBacktraceCodeInScripts"));
 
 }
 
@@ -467,17 +470,21 @@ bool ClusterNetworkInSimEvaluationMethod::createJobScript() {
 	script << "then shift" << endl;
 	script << "fi" << endl;
 	script << "cd $EVAL_DIR" << endl;
-	script << "ulimit -c unlimited" << endl;
+	if(mIncludeBacktraceCodeInScripts->get()) {
+		script << "ulimit -c unlimited" << endl;
+	}
 	script << applicationCall << mApplicationParameter << " -nogui -disableLogging $ARGUMENT_POSTFIX $* " << endl << endl;
-	script << "#This segment creates a backtrace of a core dump when the application crashes." << endl;
-	script << "if [ -f core ]" << endl;
-	script << "then" << endl;
-	script << " echo " << endl << " echo \"There was an error during execution.\"" << endl;
-	script << " echo \"Creating backtrace file from dumped core.\"" << endl;
-	script << " echo " << endl << " echo \"Please wait...\"" << endl << " echo" << endl << endl;
-	script << " gdb " << applicationBinary << " --core core --batch --quiet -ex \"thread apply all bt full\" -ex \"quit\" >> backtrace.txt" << endl;
-	script << " rm core;" << endl;
-	script << "fi" << endl;
+	if(mIncludeBacktraceCodeInScripts->get()) {
+		script << "#This segment creates a backtrace of a core dump when the application crashes." << endl;
+		script << "if [ -f core ]" << endl;
+		script << "then" << endl;
+		script << " echo " << endl << " echo \"There was an error during execution.\"" << endl;
+		script << " echo \"Creating backtrace file from dumped core.\"" << endl;
+		script << " echo " << endl << " echo \"Please wait...\"" << endl << " echo" << endl << endl;
+		script << " gdb " << applicationBinary << " --core core --batch --quiet -ex \"thread apply all bt full\" -ex \"quit\" >> backtrace.txt" << endl;
+		script << " rm core;" << endl;
+		script << "fi" << endl;
+	}
 	script << "exit 0" << endl;
 	return ok;
 }
