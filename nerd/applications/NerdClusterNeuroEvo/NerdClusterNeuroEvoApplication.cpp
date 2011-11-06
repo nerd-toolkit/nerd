@@ -84,6 +84,7 @@
 #include "PlugIns/EvolutionTerminationTrigger.h"
 #include "Collections/EvolutionPropertyPanelCollection.h"
 #include "Logging/SettingsLogger.h"
+#include "Collections/UniversalNeuroScriptLoader.h"
 
 
 using namespace std;
@@ -193,6 +194,8 @@ bool NerdClusterNeuroEvoApplication::setupApplication()
 	//enable toggle mode for preview windows.
 	new CommandLineArgument("toggle", "toggle", "", 
 						"Makes the OpenGL windows toggle.", 0, 0, true, false);
+	
+	UniversalNeuroScriptLoader();
 
 	return ok;
 }
