@@ -202,14 +202,14 @@ void PopulationOverviewWidget::updateGenerationData() {
 	}
 	QStringList tablePropertyNames = mPropertiesToVisualize;
 	QStringList oldPossibleProperties = mPossibleProperties;
-	QStringList individualProperties; 
+	QStringList individualProps; 
 	QList<Individual*> individuals = mPopulation->getIndividuals();
 
 	mGenerationData.clear();
 	mPossibleProperties.clear();
 	for(int i = 0; i < individuals.size(); i++) {
 		QList<QString> properties = individuals.at(i)->getPropertyNames();	
-		individualProperties += properties;
+		individualProps += properties;
 		QHash <QString, QString> individualProperties;
 		for(int j = 0; j < properties.size(); j++) {	
 			individualProperties[properties.at(j)] = individuals.at(i)->
@@ -227,11 +227,22 @@ void PopulationOverviewWidget::updateGenerationData() {
 	}
 	// check, whether there are properties from the old table, that do no longer exist in any individual.
 	for(int i = 1; i < mPropertiesToVisualize.size(); i++) {
-		if(!individualProperties.contains(mPropertiesToVisualize.at(i))) {
+		if(!individualProps.contains(mPropertiesToVisualize.at(i))) {
 			tablePropertyNames.removeAt(tablePropertyNames.indexOf(mPropertiesToVisualize.at(i)));
 		}
 	}
-	mPropertiesToVisualize = tablePropertyNames;
+	
+	//Sort fitness values to the front
+	QStringList sortedTablePropertyNames = tablePropertyNames;
+	for(int i = 0; i < tablePropertyNames.size(); ++i) {
+		QString name = tablePropertyNames.at(i);
+		if(name.contains("Fit - ")) {
+			sortedTablePropertyNames.removeAll(name);
+			sortedTablePropertyNames.prepend(name);
+		}
+	}
+	
+	mPropertiesToVisualize = sortedTablePropertyNames;
 
 	bool update = false;
 	if(oldPossibleProperties.size() == mPossibleProperties.size()) {
