@@ -97,6 +97,7 @@ namespace nerd {
 		StringValue *mFirstPhrase;
 		StringValue *mSecondPhrase;
 		StringValue *mBlackList;
+		BoolValue *mForceReplacements;
 	};
 
 }

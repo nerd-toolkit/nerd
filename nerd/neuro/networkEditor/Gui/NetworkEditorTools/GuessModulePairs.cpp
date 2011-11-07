@@ -77,10 +77,12 @@ GuessModulePairs::GuessModulePairs(NeuralNetworkEditor *editor, NeuralNetworkToo
 	mFirstPhrase = new StringValue("Left");
 	mSecondPhrase = new StringValue("Right");
 	mBlackList = new StringValue("Module,Hidden");
+	mForceReplacements = new BoolValue(false);
 
 	vm->addValue("/Tools/GuessModulePairs/FirstPhrase", mFirstPhrase);
 	vm->addValue("/Tools/GuessModulePairs/SecondPhrase", mSecondPhrase);
 	vm->addValue("/Tools/GuessModulePairs/IgnoredNames", mBlackList);
+	vm->addValue("/Tools/GuessModulePairs/ForceReplacements", mForceReplacements);
 
 	connect(this, SIGNAL(showElementPairs()),
 			owner, SLOT(useVisualizeElementPairTool()));
@@ -194,6 +196,7 @@ void GuessModulePairs::mouseDragged(NetworkVisualization*,
 
 void GuessModulePairs::createPairString() {
 	QString mIdString;
+	
 
 	QStringList firstPhrases = mFirstPhrase->get().split(",");
 	QStringList secondPhrases = mSecondPhrase->get().split(",");
@@ -231,6 +234,9 @@ void GuessModulePairs::createPairString() {
 				QString name = m1->getName();
 				
 				name = name.replace(firstPhrases.at(k).trimmed(), secondPhrases.at(k).trimmed()).trimmed();
+				if(mForceReplacements->get() && (name == m1->getName().trimmed())) {
+					continue;
+				}
 				if(name == m2->getName()) {
 					if(mIdString != "") {
 						mIdString.append("|");
@@ -238,6 +244,7 @@ void GuessModulePairs::createPairString() {
 					mIdString.append(QString::number(m1->getId())).append(",")
 							 .append(QString::number(m2->getId()));
 					foundPartner = true;
+					
 					break;
 				}
 			}
@@ -258,6 +265,11 @@ void GuessModulePairs::createPairString() {
 			for(int k = 0; k < firstPhrases.size() && k < secondPhrases.size(); ++k) {
 				QString name = n1->getNameValue().get();
 				name = name.replace(firstPhrases.at(k).trimmed(), secondPhrases.at(k).trimmed()).trimmed();
+				
+				if(mForceReplacements->get() && (name == n1->getNameValue().get().trimmed())) {
+					continue;
+				}
+				
 				if(name == n2->getNameValue().get()) {
 					if(mIdString != "") {
 						mIdString.append("|");
