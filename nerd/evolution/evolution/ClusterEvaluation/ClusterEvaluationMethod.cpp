@@ -567,6 +567,12 @@ bool ClusterEvaluationMethod::reSubmitJobs() {
 
 		QCoreApplication::instance()->thread()->wait(200);
 	}
+	while(!runningThreads.empty()) {
+		QSubRunner *runner = runningThreads.front();
+		runningThreads.removeAll(runner);
+		delete runner;
+	}
+	
 	return true;
 }
 
