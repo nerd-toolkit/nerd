@@ -102,6 +102,8 @@ namespace nerd {
 		static const QString EVENT_EVO_EVOLUTION_TERMINATED;
 		static const QString EVENT_EVO_EVOLUTION_RESTARTED;
 		static const QString EVENT_PHYSICS_ENVIRONMENT_CHANGED;
+		static const QString EVENT_EVO_GENERATE_INDIVIDUAL_STARTED;
+		static const QString EVENT_EVO_GENERATE_INDIVIDUAL_COMPLETED;
 
 
 	//**************************************************************************

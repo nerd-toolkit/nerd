@@ -57,6 +57,7 @@
 #include "Evolution/Evolution.h"
 #include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 #include "IO/NeuralNetworkIO.h"
+#include "EvolutionConstants.h"
 
 using namespace std;
 
@@ -72,6 +73,14 @@ NeuralNetworkManipulationChainAlgorithm::NeuralNetworkManipulationChainAlgorithm
 
 	addParameter("CurrentState", mCurrentStateValue);
 	addParameter("VerboseState", mVerboseState);
+	
+	
+	EventManager *em = Core::getInstance()->getEventManager();
+	mGenerateIndividualStartedEvent = em->getEvent(
+				EvolutionConstants::EVENT_EVO_GENERATE_INDIVIDUAL_STARTED, true);
+	mGenerateIndividualCompletedEvent = em->getEvent(
+				EvolutionConstants::EVENT_EVO_GENERATE_INDIVIDUAL_COMPLETED, true);
+	
 }
 
 NeuralNetworkManipulationChainAlgorithm::NeuralNetworkManipulationChainAlgorithm(
@@ -84,6 +93,13 @@ NeuralNetworkManipulationChainAlgorithm::NeuralNetworkManipulationChainAlgorithm
 	}
 	
 	mCurrentStateValue = dynamic_cast<StringValue*>(getParameter("CurrentState"));
+	
+	
+	EventManager *em = Core::getInstance()->getEventManager();
+	mGenerateIndividualStartedEvent = em->getEvent(
+				EvolutionConstants::EVENT_EVO_GENERATE_INDIVIDUAL_STARTED, true);
+	mGenerateIndividualCompletedEvent = em->getEvent(
+				EvolutionConstants::EVENT_EVO_GENERATE_INDIVIDUAL_COMPLETED, true);
 }
 
 /**
@@ -165,7 +181,7 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 	for(QListIterator<Population*> i(populations); i.hasNext() && !core->isShuttingDown();) {
 		Population *pop = i.next();
 		QList<Individual*> individuals = pop->getIndividuals();
-
+		
 		resetOperators();
 
 		int individualCounter = 0;
@@ -181,6 +197,8 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 			}
 			
 			Individual *ind = j.next();
+			
+			mGenerateIndividualStartedEvent->trigger();
 
 			//set index property
 			ind->setProperty("Index", QString::number(individualCounter));
@@ -200,6 +218,7 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 
 			//ignore protected individuals
 			if(ind->isGenomeProtected()) {
+				mGenerateIndividualCompletedEvent->trigger();
 				continue;
 			}
 
@@ -209,6 +228,7 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 				pop->getIndividuals().removeAll(ind);
 
 				trashcan.append(ind); //move to thrash
+				mGenerateIndividualCompletedEvent->trigger();
 				continue;
 			}
 
@@ -318,6 +338,8 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 					}
 				}
 			}
+			
+			mGenerateIndividualCompletedEvent->trigger();
 		}
 		em->setCurrentNumberOfCompletedIndividualsDuringEvolution(individuals.size());
 

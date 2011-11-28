@@ -77,6 +77,8 @@ namespace nerd {
 		QList<NeuralNetworkManipulationOperator*> mOperators;
 		StringValue *mCurrentStateValue;
 		BoolValue *mVerboseState;
+		Event *mGenerateIndividualStartedEvent;
+		Event *mGenerateIndividualCompletedEvent;
 	};
 
 }

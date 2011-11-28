@@ -145,6 +145,12 @@ const QString EvolutionConstants::EVENT_EVO_EVOLUTION_RESTARTED
 
 const QString EvolutionConstants::EVENT_PHYSICS_ENVIRONMENT_CHANGED
 		= "/Simulation/PhysicsEnvironmentChanged";
+		
+const QString EvolutionConstants::EVENT_EVO_GENERATE_INDIVIDUAL_STARTED
+		= "/Evolution/GenerateIndividualStarted";
+		
+const QString EvolutionConstants::EVENT_EVO_GENERATE_INDIVIDUAL_COMPLETED
+		= "/Evolution/GenerateIndividualCompleted";
 
 //**************************************************************************
 //Value Names
