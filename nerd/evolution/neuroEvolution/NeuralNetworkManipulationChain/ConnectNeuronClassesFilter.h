@@ -50,6 +50,7 @@
 #include "Value/IntValue.h"
 #include "Value/StringValue.h"
 #include "Value/NormalizedDoubleValue.h"
+#include "Value/BoolValue.h"
 
 namespace nerd {
 
@@ -71,7 +72,9 @@ namespace nerd {
 
 	private:
 		bool hasPathToNeuronClass(Neuron *targetNeuron, QList<Neuron*> &neuronsToCheck);
+		bool hasPathFromNeuronClass(Neuron *targetNeuron, QList<Neuron*> &neuronsToCheck);
 		QList<Neuron*> mVisitedNeurons;
+		BoolValue *mSourceToTarget;
 	};
 
 }

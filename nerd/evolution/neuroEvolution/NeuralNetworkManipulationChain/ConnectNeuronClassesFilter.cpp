@@ -68,6 +68,8 @@ namespace nerd {
 ConnectNeuronClassesFilter::ConnectNeuronClassesFilter(const QString &name)
 	: NeuralNetworkManipulationOperator(name)
 {
+	mSourceToTarget = new BoolValue(true);
+	addParameter("SourceToTarget", mSourceToTarget);
 }
 
 
@@ -79,6 +81,7 @@ ConnectNeuronClassesFilter::ConnectNeuronClassesFilter(const QString &name)
 ConnectNeuronClassesFilter::ConnectNeuronClassesFilter(const ConnectNeuronClassesFilter &other) 
 	: NeuralNetworkManipulationOperator(other)
 {
+	mSourceToTarget = dynamic_cast<BoolValue*>(getParameter("SourceToTarget"));
 }
 
 /**
@@ -133,11 +136,16 @@ bool ConnectNeuronClassesFilter::applyOperator(Individual *individual, CommandEx
 	bool allNeuronsConnected = true;
 
 	QList<QString> classNames = mSources.keys();
-
+	
 	for(QListIterator<QString> i(classNames); i.hasNext();) {
 		QString className = i.next();
 		QList<Neuron*> *sources = mSources.value(className);
 		QList<Neuron*> *targets = mTargets.value(className);
+		
+		if(!mSourceToTarget->get()) {
+			sources = mTargets.value(className);
+			targets = mSources.value(className);
+		}
 
 		if(sources == 0 || targets == 0) {
 			continue;
@@ -149,9 +157,17 @@ bool ConnectNeuronClassesFilter::applyOperator(Individual *individual, CommandEx
 			mVisitedNeurons.clear();
 			QList<Neuron*> targetsToCheck(*targets);
 
-			if(!hasPathToNeuronClass(source, targetsToCheck)) {
-				allNeuronsConnected = false;
-				break;
+			if(mSourceToTarget->get()) {
+				if(!hasPathToNeuronClass(source, targetsToCheck)) {
+					allNeuronsConnected = false;
+					break;
+				}
+			}
+			else {
+				if(!hasPathFromNeuronClass(source, targetsToCheck)) {
+					allNeuronsConnected = false;
+					break;
+				}
 			}
 		}
 
@@ -221,6 +237,40 @@ bool ConnectNeuronClassesFilter::hasPathToNeuronClass(Neuron *targetNeuron, QLis
 		}
 	}
 	return hasPathToNeuronClass(targetNeuron, newNeuronList);
+}
+
+bool ConnectNeuronClassesFilter::hasPathFromNeuronClass(Neuron *targetNeuron, QList<Neuron*> &neuronsToCheck) {
+	if(targetNeuron == 0) {
+		return false;
+	}
+
+	if(neuronsToCheck.empty()) {
+		return false;
+	}
+	QList<Neuron*> newNeuronList;
+	for(QListIterator<Neuron*> i(neuronsToCheck); i.hasNext();) {
+		Neuron *neuron = i.next();
+		if(neuron == targetNeuron) {
+			return true;
+		}
+		if(!mVisitedNeurons.contains(neuron)) {
+			mVisitedNeurons.append(neuron);
+			
+			QList<Synapse*> synapses = neuron->getOutgoingSynapses();
+			for(QListIterator<Synapse*> j(synapses); j.hasNext();) {
+				Synapse *synapse = j.next();
+				Neuron *target = dynamic_cast<Neuron*>(synapse->getTarget());
+				if(target == 0) {
+					continue;
+				}
+				if(!mVisitedNeurons.contains(target)) {
+					newNeuronList.append(target);
+				}
+			}
+		}
+	}
+	return hasPathFromNeuronClass(targetNeuron, newNeuronList);
+
 }
 
 
