@@ -594,15 +594,41 @@ void NeuralNetworkToolbox::alignNeurons(bool horizontally, bool adjustDistance) 
 	}
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
-	QList<Neuron*> selectedNeurons;
+	QList<NeuralNetworkElement*> selectedNeurons;
 
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
-		NeuronItem *neuronItem = dynamic_cast<NeuronItem*>(i.next());
+		PaintItem *item = i.next();
+		NeuronItem *neuronItem = dynamic_cast<NeuronItem*>(item);
 		if(neuronItem != 0) {
 			Neuron *neuron = neuronItem->getNeuron();
 			if(neuron != 0) {
 				selectedNeurons.append(neuron);
 			}
+			continue;
+		}
+		ModuleItem *moduleItem = dynamic_cast<ModuleItem*>(item);
+		if(moduleItem != 0) {
+			NeuroModule *module = moduleItem->getNeuroModule();
+			if(module != 0) {
+				selectedNeurons.append(module);
+			}
+			continue;
+		}
+		GroupItem *groupItem = dynamic_cast<GroupItem*>(item);
+		if(groupItem != 0) {
+			NeuronGroup *group = groupItem->getNeuronGroup();
+			if(group != 0) {
+				selectedNeurons.append(group);
+			}
+			continue;
+		}
+		SynapseItem *synapseItem = dynamic_cast<SynapseItem*>(item);
+		if(synapseItem != 0) {
+			Synapse *synapse = synapseItem->getSynapse();
+			if(synapse != 0) {
+				selectedNeurons.append(synapse);
+			}
+			continue;
 		}
 	}
 

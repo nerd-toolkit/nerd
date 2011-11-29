@@ -224,6 +224,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		BoolValue *mRealTimeRecorderRunning;
 
 		BoolValue *mIsTranslationalValue;
+		BoolValue *mIgnoreTranslationalYAxis;
 
 		QString mVisualizationName;
 

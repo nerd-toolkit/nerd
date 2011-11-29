@@ -63,9 +63,12 @@ namespace nerd {
 
 /**
  * Constructs a new AlignNeuronsCommand.
+ * 
+ * TODO: Temporariliy added modules and other network items here, but did not rename
+ * 			the neuron related variable names!
  */
 AlignNeuronsCommand::AlignNeuronsCommand(int mode, bool adjustDistance, NetworkVisualization *context, 
-										 QList<Neuron*> neurons)
+										 QList<NeuralNetworkElement*> neurons)
 	: Command(mode == HORIZONTAL ? "AlignHorizontal" : "AlignVertical"), 
 	  mMode(mode), mAdjustDistance(adjustDistance), mVisualizationContext(context), 
 	  mNeuronsToAlign(neurons)
@@ -109,9 +112,9 @@ bool AlignNeuronsCommand::doCommand() {
 	double distance = 1.0;
 	double startingPos = 0.0;
 
-	QList<Neuron*> mSortedNeurons;
-	for(QListIterator<Neuron*> i(mNeuronsToAlign); i.hasNext();) {
-		Neuron *neuron = i.next();
+	QList<NeuralNetworkElement*> mSortedNeurons;
+	for(QListIterator<NeuralNetworkElement*> i(mNeuronsToAlign); i.hasNext();) {
+		NeuralNetworkElement *neuron = i.next();
 		Vector3D pos = neuron->getPosition();
 		
 		bool added = false;
@@ -156,7 +159,7 @@ bool AlignNeuronsCommand::doCommand() {
 	mNeuronsToAlign = mSortedNeurons;
 
 	for(int i = 0; i < mNeuronsToAlign.size(); ++i) {
-		Neuron *neuron = mNeuronsToAlign.at(i);
+		NeuralNetworkElement *neuron = mNeuronsToAlign.at(i);
 
 		if(neuron == 0) {
 			continue;
@@ -180,7 +183,13 @@ bool AlignNeuronsCommand::doCommand() {
 				pos.setX(startingPos);
 			}
 		}
-		neuron->setPosition(pos);
+		if(dynamic_cast<NeuroModule*>(neuron) != 0) {
+			NeuralNetworkUtil::moveNeuroModuleTo(dynamic_cast<NeuroModule*>(neuron),
+												 pos.getX(), pos.getY(), pos.getZ());
+		}
+		else {
+			neuron->setPosition(pos);
+		}
 	}
 
 	//handler->rebuildView();
@@ -211,14 +220,19 @@ bool AlignNeuronsCommand::undoCommand() {
 
 	
 	for(int i = 0; i < mNeuronsToAlign.size() && i < mPreviousPositions.size(); ++i) {
-		Neuron *neuron = mNeuronsToAlign.at(i);
+		NeuralNetworkElement *neuron = mNeuronsToAlign.at(i);
 		Vector3D pos = mPreviousPositions.at(i);
 
 		if(neuron == 0) {
 			continue;
 		}
-
-		neuron->setPosition(pos);
+		if(dynamic_cast<NeuroModule*>(neuron) != 0) {
+			NeuralNetworkUtil::moveNeuroModuleTo(dynamic_cast<NeuroModule*>(neuron),
+												 pos.getX(), pos.getY(), pos.getZ());
+		}
+		else {
+			neuron->setPosition(pos);
+		}
 	}
 	
 	//handler->rebuildView();

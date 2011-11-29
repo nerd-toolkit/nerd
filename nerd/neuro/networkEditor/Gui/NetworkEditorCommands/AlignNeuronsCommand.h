@@ -68,7 +68,7 @@ namespace nerd {
 		enum modes{HORIZONTAL, VERTICAL};
 	public:
 		AlignNeuronsCommand(int mode, bool adjustDistance, NetworkVisualization *context, 
-							QList<Neuron*> neurons);
+							QList<NeuralNetworkElement*> neurons);
 		virtual ~AlignNeuronsCommand();
 	
 		virtual bool isUndoable() const;
@@ -80,7 +80,7 @@ namespace nerd {
 		int mMode;
 		bool mAdjustDistance;
 		NetworkVisualization *mVisualizationContext;	
-		QList<Neuron*> mNeuronsToAlign;
+		QList<NeuralNetworkElement*> mNeuronsToAlign;
 		QList<Vector3D> mPreviousPositions;
 
 	};

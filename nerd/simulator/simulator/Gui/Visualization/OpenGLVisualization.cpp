@@ -238,6 +238,8 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 
 	mIsTranslationalValue = new BoolValue(false);
 	mIsTranslationalValue->setDescription("In translation mode, the camera is not following the orientation.");
+	mIgnoreTranslationalYAxis = new BoolValue(true);
+	mIgnoreTranslationalYAxis->setDescription("In translational mode, the camera ignores the y axis changes of the reference body.");
 	mUseAsFrameGrabber = new BoolValue(false);
 	mUseAsFrameGrabber->setDescription("In frame grabber mode the camera image is stored in a buffer file.");
 
@@ -261,6 +263,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	addParameter("MinCutoff", mMinDistanceCutoffValue, publishValues);
 	addParameter("MaxCutoff", mMaxDistanceCutoffValue, publishValues);
 	addParameter("Translational", mIsTranslationalValue, publishValues);
+	addParameter("IgnoreTranslationalY", mIgnoreTranslationalYAxis, publishValues);
 	addParameter("ReferenceBodyName", mReferenceBodyName, publishValues);
 	addParameter("UseAsFrameGrabber", mUseAsFrameGrabber, publishValues);
 	addParameter("DisplaySimulationTime", mDisplaySimulationTime, publishValues);
@@ -636,9 +639,16 @@ void OpenGLVisualization::updateVisualization() {
 		glRotated(-angle, x, y, z);
 	}
 
-	glTranslated(-mReferenceBodyPosition->getX(),
-				-mReferenceBodyPosition->getY(),
-				-mReferenceBodyPosition->getZ());
+	if(mIgnoreTranslationalYAxis->get()) {
+		glTranslated(-mReferenceBodyPosition->getX(),
+					0.0,
+					-mReferenceBodyPosition->getZ());
+	}
+	else {
+		glTranslated(-mReferenceBodyPosition->getX(),
+					-mReferenceBodyPosition->getY(),
+					-mReferenceBodyPosition->getZ());
+	}
 
 
 	//synchronize with PhysicsManager reset.
@@ -655,9 +665,7 @@ void OpenGLVisualization::updateVisualization() {
 	mSimBodies = Physics::getPhysicsManager()->getSimBodies().toVector();
 	mSimJoints = Physics::getPhysicsManager()->getSimJoints().toVector();
 
-	if(mDrawCoordinateAxes->get()) {
-		drawAxis();
-	}
+	drawAxis();
 
 	if(mUseTexturesValue->get() && !mSkyTextureImage.isNull()) {
 		drawSky();
@@ -855,29 +863,35 @@ void OpenGLVisualization::drawPlane(PlaneBody *plane) {
 
 void OpenGLVisualization::drawAxis() {
 	glShadeModel(GL_FLAT);
+	
 	double axisLength = 1;
-	glLineWidth(2);
-	glColor3f(255,0,0);
-	glBegin(GL_LINES);
-	glVertex3d(0,0,0);
-	glVertex3d(axisLength,0,0);
-	glEnd();
-	glColor3f(0,255,0);
-	glBegin(GL_LINES);
-	glVertex3d(0,0,0);
-	glVertex3d(0,axisLength,0);
-	glEnd();
-	glColor3f(0,0,255);
-	glBegin(GL_LINES);
-	glVertex3d(0,0,0);
-	glVertex3d(0,0,axisLength);
+	
+	if(mDrawCoordinateAxes->get()) {
+		glLineWidth(2);
+		glColor3f(255,0,0);
+		glBegin(GL_LINES);
+		glVertex3d(0,0,0);
+		glVertex3d(axisLength,0,0);
+		glEnd();
+		glColor3f(0,255,0);
+		glBegin(GL_LINES);
+		glVertex3d(0,0,0);
+		glVertex3d(0,axisLength,0);
+		glEnd();
+		glColor3f(0,0,255);
+		glBegin(GL_LINES);
+		glVertex3d(0,0,0);
+		glVertex3d(0,0,axisLength);
 
-	glEnd();
-
+		glEnd();
+	}
+	
+	
 	glColor4f(0, 0, 0, 100);
 	axisLength = 2 * PLANE_SIZE;
 				glLineWidth(2.0);
 	double off = 0.0005;
+	
 	if(mShowCoordinateSystemLines->get()){
 		for(int k = 0; k < 1; k++) {
 			for(int i = -PLANE_SIZE; i < PLANE_SIZE; i++) {

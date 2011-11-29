@@ -78,6 +78,8 @@ namespace nerd {
 
 		static QList<Synapse*> getRecurrenceChain(Neuron *neuron, Neuron *currentNeuron, 
 							QList<Neuron*> allConsideredNeurons, QList<Neuron*> visitedNeurons = QList<Neuron*>());
+		
+		static void moveNeuroModuleTo(NeuroModule *module, double x, double y, double z);
 	private:
 	};
 

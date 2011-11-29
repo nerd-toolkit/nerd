@@ -75,7 +75,7 @@ void TestAccelSensor::testConstruction() {
 	AccelSensor *accelBoard = new AccelSensor("AccelBoard", 3);
 	QVERIFY(accelBoard->getParameter("Name")->getValueAsString().compare("AccelBoard") == 0);
 	QVERIFY(accelBoard->getParameter("ReferenceBody")->getValueAsString().compare("") == 0);
-	QCOMPARE(accelBoard->getParameters().size(), 11);
+	QCOMPARE(accelBoard->getParameters().size(), 12);
 	
 	core->getValueManager()->getDoubleValue("/AccelSensor/Deviation")->set(0.0);
 
@@ -149,7 +149,7 @@ void TestAccelSensor::testConstruction() {
 	AccelSensor *copy = dynamic_cast<AccelSensor*>(accelBoard->createCopy());
 	QVERIFY(copy != 0);
 	
-	QCOMPARE(copy->getParameters().size(), 11);
+	QCOMPARE(copy->getParameters().size(), 12);
 
 	QVERIFY(copy->getParameter("LocalPosition")->getValueAsString().compare("(0.5,-0.1,2.21)") == 0);
 

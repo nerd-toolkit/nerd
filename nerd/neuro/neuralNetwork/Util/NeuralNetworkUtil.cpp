@@ -263,6 +263,27 @@ QList<Synapse*> NeuralNetworkUtil::getRecurrenceChain(Neuron *neuron, Neuron *cu
 	return chain;
 }
 
+
+void NeuralNetworkUtil::moveNeuroModuleTo(NeuroModule *module, double x, double y, double z) {
+	if(module == 0) {
+		return;
+	}
+	
+	Vector3D modulePos = module->getPosition();
+	Vector3D moveVector(x - modulePos.getX(), y - modulePos.getY(), z - modulePos.getZ());
+	
+	QList<NeuralNetworkElement*> movedObjects = module->getAllEnclosedNetworkElements();
+	movedObjects.append(module);
+	
+	for(QListIterator<NeuralNetworkElement*> i(movedObjects); i.hasNext();) {
+		NeuralNetworkElement *elem = i.next();
+		Vector3D pos = elem->getPosition();
+		elem->setPosition(Vector3D(pos.getX() + moveVector.getX(), 
+								   pos.getY() + moveVector.getY(), 
+								   pos.getZ() + moveVector.getZ()));
+	}
+}
+
 }
 
 
