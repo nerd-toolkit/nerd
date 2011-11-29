@@ -121,14 +121,14 @@ ModularNeuroEvolution1::ModularNeuroEvolution1(World *world)
 				new ChangeBiasOperator("ChangeBias");
 	ChangeSynapseStrengthOperator *changeSynapseStrengthOp =
 				new ChangeSynapseStrengthOperator("ChangeSynapseStrength");	
-// 	ConnectNeuronClassesFilter *connectNeuronClassFilter =
-// 				new ConnectNeuronClassesFilter("ConnectNeuronClasses");
 	EnableSynapseOperator *enableSynapseOperator =
 				new EnableSynapseOperator("EnableSynapse", true);
 	EnableSynapseOperator *disableSynapseOperator =
 				new EnableSynapseOperator("DisableSynapse", false);
 	ResolveConstraintsOperator *constraintResolver =
 				new ResolveConstraintsOperator("ConstraintResolver");
+	ConnectNeuronClassesFilter *connectNeuronClassFilter =
+				new ConnectNeuronClassesFilter("ConnectNeuronClasses");
 
 
 	evo->addOperator(createNetOp);
@@ -147,7 +147,7 @@ ModularNeuroEvolution1::ModularNeuroEvolution1(World *world)
 	evo->addOperator(initBiasOp);
 	evo->addOperator(changeBias);
 	evo->addOperator(changeSynapseStrengthOp);
-// 	evo->addOperator(connectNeuronClassFilter);
+	evo->addOperator(connectNeuronClassFilter);
 
 	createNetOp->getOperatorIndexValue()->set(0);
 	modularCrossover->getOperatorIndexValue()->set(10);
@@ -165,8 +165,8 @@ ModularNeuroEvolution1::ModularNeuroEvolution1(World *world)
 	enableSynapseOperator->getOperatorIndexValue()->set(160);
 	changeBias->getOperatorIndexValue()->set(180);
 	changeSynapseStrengthOp->getOperatorIndexValue()->set(200);
-// 	connectNeuronClassFilter->getOperatorIndexValue()->set(1100);
 	constraintResolver->getOperatorIndexValue()->set(1000);
+	connectNeuronClassFilter->getOperatorIndexValue()->set(1100);
 	evo->addOperator(constraintResolver);
 
 
