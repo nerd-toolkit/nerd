@@ -42,96 +42,30 @@
  ***************************************************************************/
 
 
-
-#ifndef NERDPaintItem_H
-#define NERDPaintItem_H
+#ifndef NERDNetworkEditorConstants_H
+#define NERDNetworkEditorConstants_H
 
 #include <QString>
-#include <QHash>
-#include <QPointF>
-#include <QPainter>
-#include <Qt>
-#include "Core/Properties.h"
-#include "Value/ColorValue.h"
+
 
 namespace nerd {
 
-	class NetworkVisualization;
-
 	/**
-	 * PaintItem.
-	 *
+	 * NetworkEditorConstants.
 	 */
-	class PaintItem {
+	class NetworkEditorConstants {
 	public:
-		enum {SHOW_NEURON_INPUT_OUTPUT, SHOW_NEURON_BIAS, SHOW_NEURON_BIAS_AS_NUMBER,
-			  SHOW_NEURON_ACTIVATION, SHOW_NEURON_OUTPUT_ACTIVATION,
-			  SHOW_NEURON_NAME, SHOW_MODULE_NAMES, SHOW_NEURON_ACTIVATION_FLIPPED,
-			  SHOW_NEURON_MODULE_INPUT_OUTPUT, SHOW_ELEMENT_SLAVE_STATUS,
-			  HIDE_UNSELECTED, USE_COSMETIC_LINES, FORCED_HIDDEN, HIDE_WEIGHTS, 
-			  USE_SYNAPSE_TYPE_SYMBOLS, SHOW_MODULE_HANDLES, SHOW_MODULE_BACKGROUND};
-	public:
-		PaintItem(int paintLevel);
-		PaintItem(const PaintItem *other);
-		virtual ~PaintItem();
-
-		void setParent(PaintItem *parent);
-		PaintItem* getParent();
-
-		virtual void invalidate();
-
-		void setActive(bool active);
-		bool isActive() const;
-		void setHidden(bool hidden);
-		bool isHidden() const;
-		void setSelected(bool selected);
-		bool isSelected() const;
-		void setToHiddenLayer(bool hidden);
-		bool isInHiddenLayer() const;
-
-		virtual void setLocalPosition(const QPointF &position, bool force = false);
-		virtual QPointF getLocalPosition();
-		virtual QPointF getGlobalPosition();
-
-		virtual bool isHit(const QPointF &point, Qt::MouseButtons mouseButton, double scaling) = 0;
-		virtual void mouseMoved(const QPointF &distance, Qt::MouseButtons mouseButton) = 0;
-
-		virtual void setPaintLevel(int level);
-		virtual int getPaintLevel() const;
-		virtual QRectF getBoundingBox() = 0;
-		virtual QRectF getPaintingBox() = 0;
-		virtual void updateLayout();
-
-		virtual void paintSelf(QPainter *painter) = 0;
-
-		virtual void setViewMode(int mode, bool enabled);
-		virtual bool isViewModeEnabled(int mode);
 		
-		virtual Properties* getEncapsulatedProperties() const;
-
-	protected:
-		PaintItem *mParent;
-		QPointF mLocalPosition;
-		QPointF mGlobalPosition;
-		bool mInvalidated;
-		int mPaintLevel;
-		bool mActive;	
-		bool mHidden;
-		bool mSelected;
-		bool mShowSlaveState;
-		bool mHideUnselectedElements;
-		bool mUseCosmeticLines;
-		bool mForcedHidden;
-		bool mIsInHiddenLayer;
-		
-		ColorValue *mDOFNormalColor;
-		ColorValue *mDOFHighlightColor;
+	//**************************************************************************
+	//Value Names
+	//**************************************************************************
+	
+	static const QString VALUE_DOF_MODE_COLOR_NORMAL;
+	static const QString VALUE_DOF_MODE_COLOR_HIGHLIGHT;
+	
+	
 	};
 
 }
 
 #endif
-
-
-
-

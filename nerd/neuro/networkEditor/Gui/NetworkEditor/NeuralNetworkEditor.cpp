@@ -87,6 +87,8 @@
 #include "Gui/NetworkEditor/NetworkSearchDialog.h"
 #include "Util/NerdFileSelector.h"
 #include "Gui/NetworkEditor/LoadRecentNetworkAction.h"
+#include "NetworkEditorConstants.h"
+#include "Value/ColorValue.h"
 
 using namespace std;
 
@@ -132,6 +134,11 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	mAutoSaveNetworkTimerSeconds = new IntValue(30);
 	vm->addValue("/NetworkEditor/AutoSaveNetwork/IntervalSeconds", mAutoSaveNetworkTimerSeconds);
 	mAutoSaveNetworkTimerSeconds->addValueChangedListener(this);
+	
+	vm->addValue(NetworkEditorConstants::VALUE_DOF_MODE_COLOR_NORMAL,
+					new ColorValue(0, 0, 0, 255));
+	vm->addValue(NetworkEditorConstants::VALUE_DOF_MODE_COLOR_HIGHLIGHT,
+					new ColorValue(255, 0, 0, 255));
 
 	connect(&mAutoSaveTimer, SIGNAL(timeout()),
 			this, SLOT(autoSaveTimerExpired()));

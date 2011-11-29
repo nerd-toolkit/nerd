@@ -251,13 +251,32 @@ void SimpleModuleItem::paintSelf(QPainter *painter) {
 	if(mSelected) {
 		color = QColor(100, 100, 100, 100);
 	}
-	if(mShowSlaveState && mModule->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)) {
-		color.setRed(Math::min(255, color.red() + 100));
-		outlineColor = QColor(255, 0, 0);
-	}
-	else if(mShowSlaveState && mModule->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)) {
-		color.setGreen(255);
-		outlineColor = QColor(0, 255, 0);
+// 	if(mShowSlaveState && mModule->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)) {
+// 		color.setRed(Math::min(255, color.red() + 100));
+// 		outlineColor = QColor(255, 0, 0);
+// 	}
+// 	else if(mShowSlaveState && mModule->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)) {
+// 		color.setGreen(255);
+// 		outlineColor = QColor(0, 255, 0);
+// 	}
+	if(mShowSlaveState) {
+		QString rdof = mModule->getProperty(
+				NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
+		if(rdof.contains("C")) {
+			if(mDOFHighlightColor != 0) {
+				Color c = mDOFHighlightColor->get();
+				outlineColor = QColor(c.red(), c.green(), c.blue(), c.alpha());
+			}
+			else {
+				outlineColor = QColor(255, 0, 0, 255);
+			}
+		}
+		else {
+			if(mDOFNormalColor != 0) {
+				Color c = mDOFNormalColor->get();
+				outlineColor = QColor(c.red(), c.green(), c.blue(), c.alpha());
+			}
+		}
 	}
 
 	if(!mUseCosmeticLines && mShowBackground) {

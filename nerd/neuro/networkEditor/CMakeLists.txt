@@ -78,6 +78,7 @@ set(nerd_networkEditor_SRCS
 	Gui/NetworkEditorTools/AddFirstReturnMapPlotterAction.cpp
 	Gui/NetworkEditor/LoadRecentNetworkAction.cpp
 	Gui/NetworkEditorTools/GuessModulePairsByPosition.cpp
+	NetworkEditorConstants.cpp
 )
 
 set(nerd_networkEditor_MOC_HDRS

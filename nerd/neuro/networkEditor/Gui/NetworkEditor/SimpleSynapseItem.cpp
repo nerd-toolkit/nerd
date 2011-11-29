@@ -54,6 +54,7 @@
 #include <math.h>
 #include "Math/Math.h"
 #include "NeuralNetworkConstants.h"
+#include "Value/ColorValue.h"
 
 using namespace std;
 
@@ -186,7 +187,19 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 		QString rdof = mSynapse->getProperty(
 				NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
 		if(rdof.contains("W")) {
-			currentColor = QColor(255, 0, 0, 255);
+			if(mDOFHighlightColor != 0) {
+				Color c = mDOFHighlightColor->get();
+				currentColor = QColor(c.red(), c.green(), c.blue(), c.alpha());
+			}
+			else {
+				currentColor = QColor(255, 0, 0, 255);
+			}
+		}
+		else {
+			if(mDOFNormalColor != 0) {
+				Color c = mDOFNormalColor->get();
+				currentColor = QColor(c.red(), c.green(), c.blue(), c.alpha());
+			}
 		}
 	}
 	newPen.setColor(currentColor);

@@ -183,7 +183,19 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 		QString rdof = mNeuron->getProperty(
 				NeuralNetworkConstants::TAG_ELEMENT_REDUCED_DEGREES_OF_FREEDOM);
 		if(rdof.contains("B")) {
-			outlineColor = QColor(255, 0, 0, 255);
+			if(mDOFHighlightColor != 0) {
+				Color c = mDOFHighlightColor->get();
+				outlineColor = QColor(c.red(), c.green(), c.blue(), c.alpha());
+			}
+			else {
+				outlineColor = QColor(255, 0, 0, 255);
+			}
+		}
+		else {
+			if(mDOFNormalColor != 0) {
+				Color c = mDOFNormalColor->get();
+				outlineColor = QColor(c.red(), c.green(), c.blue(), c.alpha());
+			}
 		}
 	}
 
