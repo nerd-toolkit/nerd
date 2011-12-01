@@ -77,6 +77,8 @@ namespace nerd {
 		virtual bool detachFromGroup(NeuronGroup *group);
 
 		virtual void networkElementIdChanged(NeuronGroup *owner, qulonglong oldId, qulonglong newId);
+		
+		virtual void reset();
 
 		virtual bool isValid(NeuronGroup *owner) = 0;
 		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor,

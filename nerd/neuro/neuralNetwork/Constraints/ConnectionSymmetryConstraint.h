@@ -56,6 +56,7 @@
 #include "Constraints/NetworkElementPair.h"
 #include "Value/ULongLongValue.h"
 #include "ModularNeuralNetwork/NeuroModule.h"
+#include "Network/NeuralNetwork.h"
 
 namespace nerd {
 
@@ -82,6 +83,8 @@ namespace nerd {
 
 		virtual bool attachToGroup(NeuronGroup *group);
 		virtual bool detachFromGroup(NeuronGroup *group);
+		
+		virtual void reset();
 
 		virtual bool isValid(NeuronGroup *owner);
 		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor,
@@ -116,6 +119,7 @@ namespace nerd {
 		BoolValue *mIgnoreSlaveElements;
 		QList<NetworkElementPair> mNetworkElementPairs;
 		QList<NetworkElementPair> mModulePairs;
+		bool mFirstIteration;
 
 	};
 

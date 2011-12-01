@@ -132,6 +132,12 @@ bool ConnectionSymmetryConstraint::detachFromGroup(NeuronGroup *group) {
 	return GroupConstraint::detachFromGroup(group);
 }
 
+void ConnectionSymmetryConstraint::reset() {
+	GroupConstraint::reset();
+	
+	mFirstIteration = true;
+}
+
 
 bool ConnectionSymmetryConstraint::isValid(NeuronGroup *owner) {
 	mErrorMessage = "";
@@ -158,6 +164,7 @@ bool ConnectionSymmetryConstraint::isValid(NeuronGroup *owner) {
 	}
 
 	if(!updateNetworkElementPairs(mGroup2, mGroup1)) {
+		mErrorMessage = QString("Could not update the network id pairs!");
 		return false;
 	}
 
@@ -169,7 +176,10 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 									 QList<NeuralNetworkElement*> &trashcan)
 {
 
+	//cerr << "### Constraint ************************************************" << endl;
+	
 	if(!isValid(owner)) {
+		mErrorMessage.append("\nConstraint was not valid!");
 		return false;
 	}
 
@@ -386,21 +396,23 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			if(refSynapse->getStrengthValue().get() != strength) {
 				refSynapse->getStrengthValue().set(strength);
 				networkWasModified = true;
+				mErrorMessage.append(",w" + QString::number(refSynapse->getId()));
 			}
 		}
 	
 		//center __new__ synapses, give new ids and remove marker property.
 		if(refSynapse->hasProperty("__new__")) {
 			refSynapse->centerPosition();
-		}
-
-		if(refSynapse->hasProperty("__new__")) {
+// 		}
+// 
+// 		if(refSynapse->hasProperty("__new__")) {
 			//TODO make sure that this here happens AFTER higher-order synapses are handled
 			//TODO when higher order synapses are supported.
 
 			refSynapse->setId(NeuralNetwork::generateNextId());
 			refSynapse->removeProperty("__new__");
 			networkWasModified = true;
+			mErrorMessage.append(",a" + QString::number(refSynapse->getId()));
 		}
 		
 		ConstraintManager::markElementAsConstrained(refSynapse, "E");
@@ -421,12 +433,12 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 		}
 	}
 
-
 	//remove all superfluous synapses.
 	QList<Synapse*> allRefSynapsesCopy = allRefSynapses;
 	while(!allRefSynapses.empty()) {
 		Synapse *synapse = allRefSynapses.at(0);
 		allRefSynapses.removeAll(synapse);
+		//cerr << "Size: " << allRefSynapses.size() << " syn: " << synapse << endl;
 
 		bool mutualMode = false;
 		bool inputMode = false;
@@ -483,9 +495,9 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 		}
 
 		if(inputMode) {
-			cerr << "input mode " << endl;
+			//cerr << "input mode " << endl;
 			if((connectionMode & CONNECTION_MODE_INPUT) == 0) {
-				cerr << "not input mode" << endl;
+				//cerr << "not input mode" << endl;
 // 				if(!allReferenceNeurons.contains(synapse->getSource())
 // 					&& !allOwnerNeurons.contains(synapse->getSource())) 
 // 				{
@@ -517,14 +529,24 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 
 		//remove all non-matching synapses.
 		if(!referencedSynapses.contains(synapse)) {
-			trashcan << net->savelyRemoveNetworkElement(synapse);
+			//Only remove in the second iteration, so that all other connection symmetry
+			//constraints can set their CSYM markers before anything gets deleted.
+			//Network is marked as modified to ensure a second resolver run.
+			if(!mFirstIteration) {
+				trashcan << net->savelyRemoveNetworkElement(synapse);
+				mErrorMessage.append(",r" + QString::number(synapse->getId()));
+			}
 			networkWasModified = true;
+			
 		}
 	}
 
 	mNetworkElementPairs = elementPairs;
 
 	updateNetworkElementPairValue();
+	
+	mFirstIteration = false;
+	
 	return !networkWasModified;
 }
 

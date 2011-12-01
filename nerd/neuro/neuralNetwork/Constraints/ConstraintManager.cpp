@@ -263,13 +263,21 @@ bool ConstraintManager::runConstraints(QList<NeuronGroup*> groups, int maxIterat
 	}
 	
 	//check if all constraints are valid.
-	for(QListIterator<NeuronGroup*> i(groups); i.hasNext();) {
-		errors << ConstraintManager::verifyConstraints(i.next());
-	}
+// 	for(QListIterator<NeuronGroup*> i(groups); i.hasNext();) {
+// 		errors << ConstraintManager::verifyConstraints(i.next());
+// 	}
 
 	if(!errors.empty()) {
 		ConstraintManager::mMarkConstrainedElements = false;
 		return false;
+	}
+	
+	//reset all constraints
+	for(QListIterator<NeuronGroup*> g(groups); g.hasNext();) {
+		QList<GroupConstraint*> constraints = g.next()->getConstraints();
+		for(QListIterator<GroupConstraint*> gc(constraints); gc.hasNext();) {
+			gc.next()->reset();
+		}
 	}
 
 	errors.clear();

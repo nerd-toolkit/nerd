@@ -102,6 +102,15 @@ void GroupConstraint::networkElementIdChanged(NeuronGroup *owner, qulonglong old
 
 
 /**
+ * Is called before the first iteration of constraint resolver attempts.
+ * This can be used to count the current resolver iteration or to do
+ * things stepwise.
+ */
+void GroupConstraint::reset() {
+	mErrorMessage = "";
+}
+
+/**
  * Called to notify the constraint that some of the eventually controlled network elements
  * have changed ids now. The changedIds hash table contains all affected ids.
  * This method should be used to adapt id pointers to the new ids. 
