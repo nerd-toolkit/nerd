@@ -153,6 +153,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
         mMinSideStepSize(0), mMaxSideStepSize(0), mMouseRotationStepSize(0), mSimulationTime(0),
         mRealTime(0), mTimeDisplaySize(0), mClearColorValue(0), mTimeTextColorValue(0),
 		mIsManipulatable(0), mPauseValue(0), mUseTexturesValue(0), mDisplaySimulationTime(0),
+		mShowOnlySimulationTime(0),
 		mChangeViewportTimer(0), mVisualizationTimer(0), mStepsPerSecondValue(0),
 		mRunInPerformanceMode(0), mGlIsUpdating(false), mUseAsFrameGrabber(0), mDisableTexturesArg(0)
 {
@@ -248,10 +249,14 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 
 	mDisplaySimulationTime = new BoolValue(false);
     mDisplaySimulationTime->setDescription("Displays the simulation and acutally passed time.");
+	mShowOnlySimulationTime = new BoolValue(false);
+	mShowOnlySimulationTime->setDescription("In the time display, show only simulation time.");
 	mTimeDisplaySize = new IntValue(10);
 	mTimeDisplaySize->setDescription("The font size of the simulation time display.");
 	mTimeTextColorValue = new ColorValue("white");
     mTimeTextColorValue->setDescription("The font color of the simulation time display");
+	mHideRecordSymbol = new BoolValue(false);
+	mHideRecordSymbol->setDescription("Hides the REC text when the screen recorder is running.");
 
 	addParameter("StartOrientation", mStartOrientation, publishValues);
 	addParameter("StartPosition", mStartPosition, publishValues);
@@ -267,8 +272,10 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	addParameter("ReferenceBodyName", mReferenceBodyName, publishValues);
 	addParameter("UseAsFrameGrabber", mUseAsFrameGrabber, publishValues);
 	addParameter("DisplaySimulationTime", mDisplaySimulationTime, publishValues);
+	addParameter("ShowOnlySimulationTime", mShowOnlySimulationTime, publishValues);
 	addParameter("TimeDisplaySize", mTimeDisplaySize, publishValues);
 	addParameter("TimeDisplayColor", mTimeTextColorValue, mPublishValues);
+	addParameter("HideRecordSymbol", mHideRecordSymbol, mPublishValues);
 
 	mIsManipulatable = new BoolValue(isManipulatable);
 	setUp();
@@ -987,11 +994,18 @@ void OpenGLVisualization::paintGL() {
 			font.setPointSize(fontSize);
 
 			if(mSimulationTime != 0) {
-				renderText(5, posY, "Sim. Time", font);
-				renderText(posX, posY,
-					QString(": ").append(QString::number(mSimulationTime->get())), font);
+				if(mShowOnlySimulationTime->get()) {
+					renderText(5, posY, "Time", font);
+					renderText((posX - 5) / 2.0 + 5, posY,
+						QString(": ").append(QString::number(mSimulationTime->get())), font);
+				}
+				else {
+					renderText(5, posY, "Sim. Time", font);
+					renderText(posX, posY,
+						QString(": ").append(QString::number(mSimulationTime->get())), font);
+				}
 			}
-			if(mRealTime != 0) {
+			if(!(mShowOnlySimulationTime->get()) && mRealTime != 0) {
 				renderText(5, 2 * posY, "Real Time", font);
 				renderText(posX, 2 * posY, QString(": ")
 						.append(QString::number(mRealTime->get())), font);
@@ -1002,12 +1016,14 @@ void OpenGLVisualization::paintGL() {
 						.append(QString::number(mStepsPerSecondValue->get())), font);
 			}
 			
-			//show REC sign if screen recorder is running.
-			fontSize = Math::max(fontSize, 20);
-			font.setPointSize(fontSize);
-			posY = (int) (1.5 * ((double) fontSize));
-			if(mRealTimeRecorderRunning != 0 && mRealTimeRecorderRunning->get()) {
-				renderText(width() - (20.0 + ((int) (3 * ((double) fontSize)))), posY, "Rec", font);
+			if(!mHideRecordSymbol->get()) {
+				//show REC sign if screen recorder is running.
+				fontSize = Math::max(fontSize, 20);
+				font.setPointSize(fontSize);
+				posY = (int) (1.5 * ((double) fontSize));
+				if(mRealTimeRecorderRunning != 0 && mRealTimeRecorderRunning->get()) {
+					renderText(width() - (20.0 + ((int) (3 * ((double) fontSize)))), posY, "Rec", font);
+				}
 			}
 		}
 	}

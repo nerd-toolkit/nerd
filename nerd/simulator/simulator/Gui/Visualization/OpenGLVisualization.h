@@ -219,9 +219,11 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		BoolValue *mPauseValue;	
 		BoolValue *mUseTexturesValue;
 		BoolValue *mDisplaySimulationTime;
+		BoolValue *mShowOnlySimulationTime;
 		BoolValue *mShowCoordinateSystemLines;
 		BoolValue *mShowStepsPerSecond;
 		BoolValue *mRealTimeRecorderRunning;
+		BoolValue *mHideRecordSymbol;
 
 		BoolValue *mIsTranslationalValue;
 		BoolValue *mIgnoreTranslationalYAxis;

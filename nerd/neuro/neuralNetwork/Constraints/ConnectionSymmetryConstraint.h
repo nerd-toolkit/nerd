@@ -113,6 +113,7 @@ namespace nerd {
 		StringValue *mNetworkElementPairValue;
 		StringValue *mConnectionModeValue;
 		BoolValue *mAutoSelectPairs;
+		BoolValue *mIgnoreSlaveElements;
 		QList<NetworkElementPair> mNetworkElementPairs;
 		QList<NetworkElementPair> mModulePairs;
 

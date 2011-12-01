@@ -76,6 +76,7 @@ namespace nerd {
 		virtual bool hasExactProperty(const QString &prefixedName) const;
 		virtual bool hasProperty(const QString &name) const;
 		virtual void removeProperty(const QString &name);
+		virtual void removePropertyByPattern(const QString &namePattern);
 
 		virtual QList<QString> getPropertyNames() const;
 

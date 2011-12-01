@@ -322,7 +322,7 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 				trashcan.append(ind);
 			}
 			else {
-				//remove modification markers
+				//remove modification markers and temporary markers (starting with __ and ending __
 				NeuralNetwork *network = dynamic_cast<NeuralNetwork*>(ind->getGenome());
 
 				if(network != 0) {
@@ -334,6 +334,7 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 						Properties *p = dynamic_cast<Properties*>(elem);
 						if(p != 0) {
 							p->removeProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+							p->removePropertyByPattern("__.*__");
 						}
 					}
 				}

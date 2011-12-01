@@ -369,6 +369,7 @@ NeuroModule* ModularNeuralNetwork::getSubModuleOwner(NeuroModule *module) const 
 	return 0;
 }
 
+
 QList<NeuralNetworkElement*> ModularNeuralNetwork::savelyRemoveNetworkElement(
 					NeuralNetworkElement *element) 
 {

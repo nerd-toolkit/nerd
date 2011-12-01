@@ -81,6 +81,7 @@ namespace nerd {
 		QList<NeuronGroup*> getNeuronGroups() const;
 		QList<NeuroModule*> getNeuroModules() const;
 		NeuroModule* getSubModuleOwner(NeuroModule *module) const;
+		
 
 		virtual QList<NeuralNetworkElement*> savelyRemoveNetworkElement(NeuralNetworkElement *element);
 

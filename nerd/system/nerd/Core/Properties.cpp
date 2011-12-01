@@ -202,6 +202,31 @@ void Properties::removeProperty(const QString &name) {
 	}
 }
 
+void Properties::removePropertyByPattern(const QString &namePattern) {
+	QRegExp expr(namePattern);
+	
+	QList<QString> removedProperties;
+	
+	bool removed = false;
+	for(QListIterator<QString> i(mProperties.keys()); i.hasNext();) {
+		QString name = i.next();
+		if(expr.exactMatch(name)) {
+			mProperties.remove(name);
+			removedProperties.append(name);
+			removed = true;
+		}
+	}
+
+	if(removed) {
+		for(QListIterator<PropertyChangedListener*> i(mListeners); i.hasNext();) {
+			PropertyChangedListener *listener = i.next();
+			for(QListIterator<QString> j(removedProperties); j.hasNext();) {
+				listener->propertyChanged(this, j.next());
+			}
+		}
+	}
+}
+
 
 /**
  * Returns a list with all property names that exist in this Properties list.

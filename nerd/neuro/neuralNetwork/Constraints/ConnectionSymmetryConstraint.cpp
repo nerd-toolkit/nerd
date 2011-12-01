@@ -88,6 +88,9 @@ ConnectionSymmetryConstraint::ConnectionSymmetryConstraint(qulonglong id)
 
 	mAutoSelectPairs = new BoolValue(false);
 	addParameter("AutoSelectPairs", mAutoSelectPairs);
+	
+	mIgnoreSlaveElements = new BoolValue(false);
+	addParameter("IgnoreSlaves", mIgnoreSlaveElements);
 }
 
 
@@ -104,6 +107,7 @@ ConnectionSymmetryConstraint::ConnectionSymmetryConstraint(const ConnectionSymme
 	mNetworkElementPairValue = dynamic_cast<StringValue*>(getParameter("References"));
 	mConnectionModeValue = dynamic_cast<StringValue*>(getParameter("Mode"));
 	mAutoSelectPairs = dynamic_cast<BoolValue*>(getParameter("AutoSelectPairs"));
+	mIgnoreSlaveElements = dynamic_cast<BoolValue*>(getParameter("IgnoreSlaves"));
 }
 
 /**
@@ -404,6 +408,8 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			ConstraintManager::markElementAsConstrained(refSynapse, "W");
 			ConstraintManager::markElementAsConstrained(refSynapse, "S");
 		}
+		
+		refSynapse->setProperty("__CSYM__");
 	}
 
 	QList<Synapse*> allRefSynapses;
@@ -431,7 +437,7 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			|| (ownerNeurons.contains(synapse->getSource())
 				&& ownerNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))))
 		{
-			cerr << "R-normal" << endl;
+			//cerr << "R-normal" << endl;
 			connectionMode = CONNECTION_MODE_NORMAL;
 		}	
 		else if((referenceNeurons.contains(synapse->getSource()) 
@@ -439,7 +445,7 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			|| (referenceNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))
 				&& ownerNeurons.contains(synapse->getSource())))
 		{
-			cerr << "R-mutual" << endl;
+			//cerr << "R-mutual" << endl;
 			connectionMode = mutualConnectionMode;
 			mutualMode = true;
 		}	
@@ -448,7 +454,7 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			&& !referenceNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))
 			&& !ownerNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget())))
 		{
-			cerr << "R-output" << endl;
+			//cerr << "R-output" << endl;
 			connectionMode = outputConnectionMode;
 			outputMode = true;
 		}
@@ -457,7 +463,7 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			&& !referenceNeurons.contains(synapse->getSource())
 			&& !ownerNeurons.contains(synapse->getSource()))
 		{
-			cerr << "R-input" << endl;
+			//cerr << "R-input" << endl;
 			connectionMode = inputConnectionMode;
 			inputMode = true;
 		}
@@ -497,6 +503,15 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 // 				{
 					continue;
 // 				}
+			}
+		}
+		
+		//Check if this synapse should be ignored, because it's existence is 
+		//controlled by another constraint...
+		if(mIgnoreSlaveElements->get()) {
+			if(synapse->hasProperty("__CSYM__"))
+			{
+				continue;
 			}
 		}
 

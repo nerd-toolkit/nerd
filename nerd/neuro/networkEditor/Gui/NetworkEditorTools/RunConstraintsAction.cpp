@@ -119,6 +119,8 @@ void RunConstraintsAction::runConstraints() {
 	if(network == 0) {
 		return;
 	}
+	
+	
 
 	EditorMessageWidget *messageBoard = mEditor->getMessageWidget();
 
@@ -161,6 +163,15 @@ void RunConstraintsAction::runConstraints() {
 		resolvedSucessfully = ConstraintManager::runConstraints(groups, mMaxResolverSteps, 
 								executor, trashcan, errors);
 	}
+	
+	//remove all temporary tags.
+	{
+		QList<NeuralNetworkElement*> elements;
+		network->getNetworkElements(elements);
+		for(QListIterator<NeuralNetworkElement*> i(elements); i.hasNext();) {
+			i.next()->removePropertyByPattern("__.*__");
+		}
+	}
 
 	for(QListIterator<QString> i(errors); i.hasNext();) {
 		messageBoard->addMessage(i.next());
@@ -172,7 +183,7 @@ void RunConstraintsAction::runConstraints() {
 		
 		messageBoard->addMessage("\nFailure!");
 	}
-
+	
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
 	visu->validateSelectedItems();
 	handler->updateNetworkView();
