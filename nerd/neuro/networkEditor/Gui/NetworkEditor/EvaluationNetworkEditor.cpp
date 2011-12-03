@@ -68,6 +68,8 @@
 #include "PlugIns/PlugIn.h"
 #include "PlugIns/PlugInManager.h"
 #include "PlugIns/CommandLineArgument.h"
+#include "Gui/Control/BoolValueSwitcherAction.h"
+#include "NerdConstants.h"
 
 using namespace std;
 
@@ -431,6 +433,13 @@ QMenu* EvaluationNetworkEditor::addControlMenu() {
 			this, SLOT(activationVisualizationModeChanged()));
 	
 
+	//Add pause checkbox
+	BoolValueSwitcherAction *pauseAction =
+			new BoolValueSwitcherAction("&Pause", NerdConstants::VALUE_EXECUTION_PAUSE);
+	pauseAction->setShortcut(tr("Ctrl+p"));
+	pauseAction->setWhatsThis("Pauses and resumes the simulation.");
+	controlMenu->addAction(pauseAction);
+	
 	mainMenu->addMenu(controlMenu);
 
 	return controlMenu;
