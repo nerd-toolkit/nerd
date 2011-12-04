@@ -50,6 +50,7 @@
 #include "Gui/NetworkEditor/ModuleItem.h"
 #include "ModularNeuralNetwork/NeuroModule.h"
 #include "NeuralNetworkConstants.h"
+#include <QFont>
 
 
 using namespace std;
@@ -198,6 +199,8 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 			}
 		}
 	}
+	
+	newPen.setColor(outlineColor);
 
 	if(mShowBias) {
 		QColor neuronColor(255, 255, 255, 255);
@@ -283,16 +286,30 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 
 	if(mShowInputOutputMarker) {
 		if(getNeuron()->hasProperty(Neuron::NEURON_TYPE_OUTPUT)) {
-			QPainterPath blackCircle;
-			blackCircle.addEllipse(pos.x() - 10.0, pos.y() - 10.0, 20.0, 20.0);
-			painter->fillPath(blackCircle, QColor(0, 0, 0, 255));
-			QPainterPath whiteCircle;
-			whiteCircle.addEllipse(pos.x() - 6.0, pos.y() - 6.0, 12.0, 12.0);
-			painter->fillPath(whiteCircle, QColor(255, 255, 255, 255));
+// 			QPainterPath blackCircle;
+// 			blackCircle.addEllipse(pos.x() - 10.0, pos.y() - 10.0, 20.0, 20.0);
+// 			painter->fillPath(blackCircle, outlineColor);
+// 			QPainterPath whiteCircle;
+// 			whiteCircle.addEllipse(pos.x() - 6.0, pos.y() - 6.0, 12.0, 12.0);
+// 			painter->fillPath(whiteCircle, QColor(255, 255, 255, 255));
+			QFont oldFont = painter->font();
+			QFont newFont = oldFont;
+			newFont.setPixelSize(25.0);
+			painter->setFont(newFont);
+			painter->drawText(pos.x() - 9.0, pos.y() - 11.0, 20.0, 20.0,
+					Qt::AlignCenter, "M");
+			painter->setFont(oldFont);
 		}
 		if(getNeuron()->hasProperty(Neuron::NEURON_TYPE_INPUT)) {
-			painter->fillRect(QRectF(pos.x() - 2.0, pos.y() - 8.5, 5.0, 17.0), 
-								QColor(0, 0, 0, 255));
+// 			painter->fillRect(QRectF(pos.x() - 2.0, pos.y() - 8.5, 5.0, 17.0), 
+// 								outlineColor);
+			QFont oldFont = painter->font();
+			QFont newFont = oldFont;
+			newFont.setPixelSize(25.0);
+			painter->setFont(newFont);
+			painter->drawText(pos.x() - 9.0, pos.y() - 11.0, 20.0, 20.0,
+					Qt::AlignCenter, "S");
+			painter->setFont(oldFont);
 		}
 		
 	}
@@ -302,7 +319,7 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 		if(getNeuron()->hasProperty(NeuralNetworkConstants::TAG_MODULE_OUTPUT)) {
 			QPainterPath blackCircle;
 			blackCircle.addEllipse(pos.x() - 10.0, pos.y() - 10.0, 20.0, 20.0);
-			painter->fillPath(blackCircle, QColor(0, 0, 0, 255));
+			painter->fillPath(blackCircle, outlineColor);
 			QPainterPath whiteCircle;
 			whiteCircle.addEllipse(pos.x() - 6.0, pos.y() - 6.0, 12.0, 12.0);
 			painter->fillPath(whiteCircle, QColor(255, 255, 255, 255));
@@ -311,7 +328,7 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 		}
 		if(getNeuron()->hasProperty(NeuralNetworkConstants::TAG_MODULE_INPUT)) {
 			painter->fillRect(QRectF(pos.x() - 2.0, pos.y() - 8.5, 5.0, 17.0), 
-								QColor(0, 0, 0, 255));
+								outlineColor);
 		
 			inputLevelString = getNeuron()->getProperty(NeuralNetworkConstants::TAG_MODULE_INPUT);
 		}

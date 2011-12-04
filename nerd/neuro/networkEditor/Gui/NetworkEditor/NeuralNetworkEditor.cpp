@@ -138,7 +138,7 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	vm->addValue(NetworkEditorConstants::VALUE_DOF_MODE_COLOR_NORMAL,
 					new ColorValue(0, 0, 0, 255));
 	vm->addValue(NetworkEditorConstants::VALUE_DOF_MODE_COLOR_HIGHLIGHT,
-					new ColorValue(255, 0, 0, 255));
+					new ColorValue(100,100,100,150));
 
 	connect(&mAutoSaveTimer, SIGNAL(timeout()),
 			this, SLOT(autoSaveTimerExpired()));

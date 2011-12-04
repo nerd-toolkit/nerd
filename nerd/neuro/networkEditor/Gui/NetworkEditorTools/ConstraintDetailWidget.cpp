@@ -434,6 +434,7 @@ void ConstraintDetailWidget::updateView() {
 		mCurrentConstraints.clear();
 		mGroupInfoLabel->setText("");
 		setEnabled(false);
+		mConstraintParameterEditor->setParameterizedObject(0);
 	}
 	else {	
 		QString type = (dynamic_cast<ModuleItem*>(mCurrentGroup) == 0) ? "Group" : "Module";
