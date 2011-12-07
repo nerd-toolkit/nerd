@@ -252,6 +252,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		QList<Event*> mTriggerPaintEvents;
 		QGLFramebufferObject *mFrameBuffer;
 		BoolValue *mUseAsFrameGrabber;
+		BoolValue *mDrawOnTopOfPreviousFrame;
 
 		CommandLineArgument *mDisableTexturesArg;
 };

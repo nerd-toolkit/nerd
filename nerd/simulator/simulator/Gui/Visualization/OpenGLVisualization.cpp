@@ -243,6 +243,8 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	mIgnoreTranslationalYAxis->setDescription("In translational mode, the camera ignores the y axis changes of the reference body.");
 	mUseAsFrameGrabber = new BoolValue(false);
 	mUseAsFrameGrabber->setDescription("In frame grabber mode the camera image is stored in a buffer file.");
+	mDrawOnTopOfPreviousFrame = new BoolValue(false);
+	mDrawOnTopOfPreviousFrame->setDescription("Prevents that the drawing area is cleared before drawing.");
 
 	mValuePrefix = "/OpenGLVisualization/";
 	mValuePrefix.append(name).append("/");
@@ -271,6 +273,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	addParameter("IgnoreTranslationalY", mIgnoreTranslationalYAxis, publishValues);
 	addParameter("ReferenceBodyName", mReferenceBodyName, publishValues);
 	addParameter("UseAsFrameGrabber", mUseAsFrameGrabber, publishValues);
+	addParameter("DrawOnTopOfPreviousFrame", mDrawOnTopOfPreviousFrame, publishValues);
 	addParameter("DisplaySimulationTime", mDisplaySimulationTime, publishValues);
 	addParameter("ShowOnlySimulationTime", mShowOnlySimulationTime, publishValues);
 	addParameter("TimeDisplaySize", mTimeDisplaySize, publishValues);
@@ -611,7 +614,7 @@ void OpenGLVisualization::init() {
 
 void OpenGLVisualization::updateVisualization() {
 
-
+	
 	glClearColor (mClearColorValue->get().red() / 255.0,
 					mClearColorValue->get().green() / 255.0,
 					mClearColorValue->get().blue() / 255.0,
@@ -666,7 +669,7 @@ void OpenGLVisualization::updateVisualization() {
 		return;
 	}
 	QMutexLocker resetMutexLocker(resetMutex);
-	resetMutex->unlock();
+	resetMutex->unlock(); //TODO: why is this unlocked here? Check.
 
 
 	mSimBodies = Physics::getPhysicsManager()->getSimBodies().toVector();
@@ -674,7 +677,7 @@ void OpenGLVisualization::updateVisualization() {
 
 	drawAxis();
 
-	if(mUseTexturesValue->get() && !mSkyTextureImage.isNull()) {
+	if(mUseTexturesValue->get() && !mSkyTextureImage.isNull() && !mDrawOnTopOfPreviousFrame->get()) {
 		drawSky();
 	}
 
@@ -966,7 +969,12 @@ void OpenGLVisualization::paintGL() {
 
 		return;
 	}
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if(!mDrawOnTopOfPreviousFrame->get()) {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	else {
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 
