@@ -479,6 +479,8 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 							rNeuron->setActivationFunction(*oNeuron->getActivationFunction());
 							networkWasModified = true;
 						}
+						
+						//check disable mode
 					}
 				}
 				//do not check for flipped state.
@@ -581,7 +583,7 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 				networkWasModified = true;
 			}
 			if(!refSynapse->getSynapseFunction()->equals(synapse->getSynapseFunction())) {
-				refSynapse->setSynapseFunction(*synapse->getSynapseFunction());
+				refSynapse->setSynapseFunction(*(synapse->getSynapseFunction()));
 				networkWasModified = true;
 			}
 			double strength = synapse->getStrengthValue().get();
@@ -611,6 +613,7 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 				refSynapse->getStrengthValue().set(strength);
 				networkWasModified = true;
 			}
+			
 		}
 
 		//check for marked (+) properties (also in structure mode)
