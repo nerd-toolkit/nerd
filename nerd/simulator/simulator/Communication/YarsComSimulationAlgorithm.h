@@ -199,6 +199,7 @@ class YarsComSimulationAlgorithm : public PhysicalSimulationAlgorithm,
 		bool mResetRunning;
 		bool mResetRequested;
 		bool mSendXML;
+		BoolValue *mTerminateTryAtAbortSignal;
 };
 
 }

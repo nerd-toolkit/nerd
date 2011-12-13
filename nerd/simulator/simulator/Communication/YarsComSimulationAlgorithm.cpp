@@ -91,6 +91,7 @@ YarsComSimulationAlgorithm::YarsComSimulationAlgorithm()
 	//create and publish parameters
 	mConnectToYars = new BoolValue(false);
 	mPort = new IntValue(_STANDARD_COMPORT_SERVER);
+	mTerminateTryAtAbortSignal = new BoolValue(false);
 	mSendBuffer = new UdpDatagram();
 	mRecBuffer = new UdpDatagram();
 	mAddress = new QHostAddress(_STANDARD_IP_SERVER);
@@ -103,6 +104,7 @@ YarsComSimulationAlgorithm::YarsComSimulationAlgorithm()
 	addParameter("Yars/ConnectToYars", mConnectToYars);
 	addParameter("Yars/Port", mPort);
 	addParameter("Yars/EnvironmentXML", mEnvironmentXML);
+	addParameter("Yars/TerminateTryAtAbort", mTerminateTryAtAbortSignal);
 
 	publishAllParameters();
 }
@@ -271,7 +273,7 @@ bool YarsComSimulationAlgorithm::executeSimulationStep(PhysicsManager*) {
 		return false;
 	}
 
-	if(mRobotStates == _STANDARD_ROBOT_STATE_ABORT) {
+	if(mTerminateTryAtAbortSignal->get() && mRobotStates == _STANDARD_ROBOT_STATE_ABORT) {
 		//terminate current try
 		if(mTerminateTryEvent != 0) {
 			mTerminateTryEvent->trigger();
