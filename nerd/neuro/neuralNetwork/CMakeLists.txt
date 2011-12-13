@@ -78,6 +78,7 @@ set(nerd_neuralNetwork_SRCS
 	SynapseFunction/MSeriesSynapseFunction.cpp
 	SynapseFunction/MSeriesAdjustableSynapseFunction.cpp
 	PlugIns/NetworkDegreeOfFreedomCalculator.cpp
+	Constraints/RestrictWeightAndBiasRangeConstraint.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

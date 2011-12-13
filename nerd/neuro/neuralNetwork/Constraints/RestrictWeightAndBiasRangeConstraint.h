@@ -41,41 +41,51 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardConstraintCollection.h"
-#include "Constraints/Constraints.h"
-#include "Constraints/ConstraintManager.h"
-#include "Constraints/NumberOfNeuronsConstraint.h"
-#include "Constraints/NumberOfReadNeuronsConstraint.h"
-#include "Constraints/SymmetryConstraint.h"
-#include "Constraints/PreventMutualConnectionsConstraint.h"
-#include "Constraints/ConnectionSymmetryConstraint.h"
-#include "Constraints/WeightAndBiasCalculatorConstraint.h"
-#include "Constraints/FeedForwardConstraint.h"
-#include "Constraints/BackpropagationConstraint.h"
-#include "Constraints/RestrictWeightAndBiasRangeConstraint.h"
+
+#ifndef NERDRestrictWeightAndBiasRangeConstraint_H
+#define NERDRestrictWeightAndBiasRangeConstraint_H
+
+#include <QString>
+#include <QHash>
+#include "Constraints/GroupConstraint.h"
+#include "Value/IntValue.h"
+#include "Value/BoolValue.h"
+#include "Value/StringValue.h"
 
 namespace nerd {
 
-StandardConstraintCollection::StandardConstraintCollection()
-{
+	/**
+	 * RestrictWeightAndBiasRangeConstraint.
+	 *
+	 */
+	class RestrictWeightAndBiasRangeConstraint : public GroupConstraint {
+	public:
+		RestrictWeightAndBiasRangeConstraint();
+		RestrictWeightAndBiasRangeConstraint(const RestrictWeightAndBiasRangeConstraint &other);
+		virtual ~RestrictWeightAndBiasRangeConstraint();
 
-	ConstraintManager *cm = Constraints::getConstraintManager();
+		virtual GroupConstraint* createCopy() const;
 
-	cm->addConstraintPrototype(new NumberOfNeuronsConstraint());
-	cm->addConstraintPrototype(new NumberOfReadNeuronsConstraint());
-	cm->addConstraintPrototype(new SymmetryConstraint(0, "Clone", true));
-	cm->addConstraintPrototype(new SymmetryConstraint());
-	cm->addConstraintPrototype(new PreventMutualConnectionsConstraint());
-	cm->addConstraintPrototype(new ConnectionSymmetryConstraint());
-	cm->addConstraintPrototype(new WeightAndBiasCalculatorConstraint());
-	cm->addConstraintPrototype(new FeedForwardConstraint());
-	cm->addConstraintPrototype(new BackpropagationConstraint());
-	cm->addConstraintPrototype(new RestrictWeightAndBiasRangeConstraint());
+		virtual bool isValid(NeuronGroup *owner);
+		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor, 
+									 QList<NeuralNetworkElement*> &trashcan);
+		
+		virtual bool equals(GroupConstraint *constraint);
+		
+	private:
+		bool checkSynapses(QList<Synapse*> &synapses, double min, double max);
+
+	private:
+		StringValue *mMode;
+		StringValue *mModeParams;
+		DoubleValue *mMin;
+		DoubleValue *mMax;
+		BoolValue *mRecursive;
+	};
+
 }
 
-StandardConstraintCollection::~StandardConstraintCollection() {
-}
+#endif
 
-}
 
 

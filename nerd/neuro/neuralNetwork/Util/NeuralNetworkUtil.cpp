@@ -52,6 +52,7 @@
 #include "NeuralNetworkConstants.h"
 #include "Network/Synapse.h"
 #include "Network/Neuron.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 
 using namespace std;
 
@@ -282,6 +283,32 @@ void NeuralNetworkUtil::moveNeuroModuleTo(NeuroModule *module, double x, double 
 								   pos.getY() + moveVector.getY(), 
 								   pos.getZ() + moveVector.getZ()));
 	}
+}
+
+
+QList<NeuronGroup*> NeuralNetworkUtil::getGroupsFromIdList(ModularNeuralNetwork *network, const QString &idList) {
+	QList<NeuronGroup*> groups;
+	
+	if(network == 0 || idList.trimmed() == "") {
+		return groups;
+	}
+	
+	QString unifiedList = idList;
+	unifiedList.replace("|", ",");
+	
+	QStringList ids = unifiedList.split(",");
+	for(QListIterator<QString> i(ids); i.hasNext();) {
+		bool ok = true;
+		qulonglong id = i.next().toULongLong(&ok);
+		if(ok) {
+			NeuronGroup *group = ModularNeuralNetwork::selectNeuronGroupById(id, network->getNeuronGroups());
+			if(group != 0) {
+				groups.append(group);
+			}
+		}
+	}
+	
+	return groups;
 }
 
 }
