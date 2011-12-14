@@ -88,6 +88,8 @@ namespace nerd {
 		void updatePermittedPaths(ModularNeuralNetwork *net);
 		bool canBeConnected(Neuron *source, Neuron *target, ModularNeuralNetwork *net);
 		
+		void updateConsideredNeurons();
+		
 	private:
 		NormalizedDoubleValue *mInsertionProbability;
 		NormalizedDoubleValue *mInitialInsertionProbability;

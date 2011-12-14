@@ -179,7 +179,7 @@ bool InsertSynapseModularOperator::applyOperator(Individual *individual, Command
 			}
 		}
 	}
-
+	
 	mConsideredTargetNeurons = consideredNeurons;
 	for(QListIterator<Neuron*> i(consideredNeurons); i.hasNext();) {
 		//remove all neurons that can not be a source neuron.
@@ -202,15 +202,45 @@ bool InsertSynapseModularOperator::applyOperator(Individual *individual, Command
 			}
 		}
 	}
-
+	
 	if(mConsideredSourceNeurons.empty() || mConsideredTargetNeurons.empty()) {
 		return true;
 	}
+	
+	//cerr << "1s: " << mConsideredSourceNeurons.size() << "t: " << mConsideredTargetNeurons.size() << endl;
 
 	updatePermittedPaths(net);
-
+	
+// 	cerr << "Permitted by source" << endl;
+// 	for(QHashIterator<NeuroModule*, QList<NeuroModule*>*> i(mPermittedPathsBySource); i.hasNext();) {
+// 		i.next();
+// 		QList<NeuroModule*> *list = i.value();
+// 		for(QListIterator<NeuroModule*> j(*list); j.hasNext();) {
+// 			cerr << i.key()->getId() << " -> " << j.next()->getId() << endl;
+// 		}
+// 	}
+// 	cerr << "Permitted from dest" << endl;
+// 	for(QHashIterator<NeuroModule*, QList<NeuroModule*>*> i(mPermittedPathsFromDest); i.hasNext();) {
+// 		i.next();
+// 		QList<NeuroModule*> *list = i.value();
+// 		for(QListIterator<NeuroModule*> j(*list); j.hasNext();) {
+// 			cerr << i.key()->getId() << " -> " << j.next()->getId() << endl;
+// 		}
+// 	}
+// 	cerr << "Forbidden by source" << endl;
+// 	for(QHashIterator<NeuroModule*, QList<NeuroModule*>*> i(mForbiddenPathsBySource); i.hasNext();) {
+// 		i.next();
+// 		QList<NeuroModule*> *list = i.value();
+// 		for(QListIterator<NeuroModule*> j(*list); j.hasNext();) {
+// 			cerr << i.key()->getId() << " -> " << j.next()->getId() << endl;
+// 		}
+// 	}
+	
 	connectNewNeurons(net);
+	
 	randomlyConnect(net);
+	
+	//cerr << "4s: " << mConsideredSourceNeurons.size() << "t: " << mConsideredTargetNeurons.size() << endl;
 	
 	if(net->getSynapses().size() != currentNumberOfSynapses) {
 		//mark the individual as significantly modified
@@ -258,6 +288,8 @@ bool InsertSynapseModularOperator::connectNewNeurons(ModularNeuralNetwork *net) 
 		numberOfPossibleOutputConnections -= neuron->getOutgoingSynapses().size();
 
 		double initInsertionProb = mInitialInsertionProbability->get();
+		
+		updateConsideredNeurons();
 
 		if(mConsideredTargetNeurons.contains(neuron)) {
 			for(int i = 0; i < numberOfPossibleInputConnections; ++i) {
@@ -293,8 +325,8 @@ bool InsertSynapseModularOperator::randomlyConnect(ModularNeuralNetwork *net) {
 		return true;
 	}
 	
-	cerr << "Got source: " << mConsideredSourceNeurons.size() << " target: " << mConsideredTargetNeurons.size() << endl;
-
+	updateConsideredNeurons();
+	
 	for(int i = 0; i < maxNumberOfNewSynapses && !mConsideredSourceNeurons.empty()
 			&& !mConsideredTargetNeurons.empty(); ++i) 
 	{
@@ -304,25 +336,23 @@ bool InsertSynapseModularOperator::randomlyConnect(ModularNeuralNetwork *net) {
 		}
 
 		//choose the smaller stack as heuristic
-		if(mConsideredSourceNeurons.size() <= mConsideredTargetNeurons.size()) {
+		//if(mConsideredSourceNeurons.size() <= mConsideredTargetNeurons.size()) {
+		if(true) {
 			//select source neuron
 			Neuron *source = mConsideredSourceNeurons.value(
 						Random::nextInt(mConsideredSourceNeurons.size()));
 	
 			addSynapseToSourceNeuron(source, net);
 		}
-		else {
+		else { //TODO this branch seems to be faulty!
 			//select target neuron
 			Neuron *target = mConsideredTargetNeurons.value(
 						Random::nextInt(mConsideredTargetNeurons.size()));
-	
-			if(target->getId() == 377511) {
-				cerr << "Found neuron!" << endl;
-			}
 			
 			addSynapseToTargetNeuron(target, net);
 		}
 		
+		updateConsideredNeurons();
 	}
 
 	return true;
@@ -421,21 +451,6 @@ bool InsertSynapseModularOperator::addSynapseToTargetNeuron(Neuron *target, Modu
 
 	QList<Neuron*> allOutputModuleNeurons = 
 				getValidSourceNeurons(target, net);
-				
-	//support the explicit exclusion of source neurons
-	QList<qulonglong> invalidSourceIds;
-	if(target->hasProperty(NeuralNetworkConstants::TAG_NEURON_SOURCE_EXCLUDE_LIST)) {
-		QString excludeList = target->getProperty(NeuralNetworkConstants::TAG_NEURON_SOURCE_EXCLUDE_LIST);
-		excludeList.replace("|", ",");
-		QStringList idStrings = excludeList.split(",");
-		for(QListIterator<QString> idl(idStrings); idl.hasNext();) {
-			bool ok = true;
-			qulonglong id = idl.next().toULongLong(&ok);
-			if(ok) {
-				invalidSourceIds.append(id);
-			}
-		}
-	}
 
 	//make sure that the target candidates contain only considerable neurons (not protected etc.)
 	QList<Neuron*> validSourceCandidates;
@@ -461,12 +476,7 @@ bool InsertSynapseModularOperator::addSynapseToTargetNeuron(Neuron *target, Modu
 		if(!validSource) {
 			continue;
 		}
-		
-		if(invalidSourceIds.contains(neuron->getId())) {
-			continue;
-		}
 
-		
 		validSourceCandidates.append(neuron);
 	}
 
@@ -765,7 +775,7 @@ void InsertSynapseModularOperator::updatePermittedPaths(ModularNeuralNetwork *ne
 				}
 			}
 		}
-		//Collect the conenction relations for all modules and store them in the hashtables.
+		//Collect the connection relations for all modules and store them in the hashtables.
 		QListIterator<NeuroModule*> s(sources);
 		QListIterator<NeuroModule*> t(targets);
 		for(; s.hasNext() && t.hasNext();) {
@@ -784,7 +794,8 @@ void InsertSynapseModularOperator::updatePermittedPaths(ModularNeuralNetwork *ne
 			}
 			if(forbiddenBySource == 0) {
 				forbiddenBySource = new QList<NeuroModule*>();
-				mForbiddenPathsBySource.insert(target, forbiddenBySource);
+				//mForbiddenPathsBySource.insert(target, forbiddenBySource);
+				mForbiddenPathsBySource.insert(source, forbiddenBySource); 
 			}
 			if(!permittedBySource->contains(target)) {
 				permittedBySource->append(target);
@@ -802,6 +813,8 @@ void InsertSynapseModularOperator::updatePermittedPaths(ModularNeuralNetwork *ne
 			QList<NeuroModule*> permittedSubmodules;
 
 			QList<NeuroModule*> sourceSubModules = source->getAllEnclosedModules();
+			//TODO next ok?
+			//sourceSubModules.prepend(source);
 			for(QListIterator<NeuroModule*> k(sourceSubModules); k.hasNext();) {
 				NeuroModule *module = k.next();
 				if(mModulesWithPermissionTag.contains(module)) {
@@ -897,6 +910,21 @@ bool InsertSynapseModularOperator::canBeConnected(Neuron *source, Neuron *target
 	if(source == 0 || target == 0 || net == 0) {
 		return false;
 	}
+	
+	//support the explicit exclusion of source neurons
+	if(target->hasProperty(NeuralNetworkConstants::TAG_NEURON_SOURCE_EXCLUDE_LIST)) {
+		QString excludeList = target->getProperty(NeuralNetworkConstants::TAG_NEURON_SOURCE_EXCLUDE_LIST);
+		excludeList.replace("|", ",");
+		QStringList idStrings = excludeList.split(",");
+		for(QListIterator<QString> idl(idStrings); idl.hasNext();) {
+			bool ok = true;
+			qulonglong id = idl.next().toULongLong(&ok);
+			if(ok && id == source->getId()) {
+				return false;
+			}
+		}
+	}
+	
 
 	NeuroModule *sourceModule = net->getOwnerModule(source);
 	NeuroModule *targetModule = net->getOwnerModule(target);
@@ -941,6 +969,43 @@ bool InsertSynapseModularOperator::canBeConnected(Neuron *source, Neuron *target
 	return true;
 }
 
+
+/**
+ * Removes neurons that are not further considered because of dynamic properties,
+ * whose conditions may change after each insertion (e.g. restrictions in number of
+ * synapses.
+ */
+void InsertSynapseModularOperator::updateConsideredNeurons() {
+	QList<Neuron*> consideredNeurons = mConsideredSourceNeurons;
+	for(QListIterator<Neuron*> i(consideredNeurons); i.hasNext();) {
+		//remove all neurons that can not be a source neuron.
+		Neuron *neuron = i.next();
+		if(neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_OUT_SYNAPSES)) {
+			bool ok = true;
+			int max = neuron->getProperty(NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_OUT_SYNAPSES)
+										.toInt(&ok);
+			if(ok && neuron->getOutgoingSynapses().size() >= max) {
+				mConsideredSourceNeurons.removeAll(neuron);
+				continue;
+			}
+		}
+	}
+	
+	consideredNeurons = mConsideredTargetNeurons;
+	for(QListIterator<Neuron*> i(consideredNeurons); i.hasNext();) {
+		//remove all neurons that can not be a source neuron.
+		Neuron *neuron = i.next();
+		if(neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_IN_SYNAPSES)) {
+			bool ok = true;
+			int max = neuron->getProperty(NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_IN_SYNAPSES)
+										.toInt(&ok);
+			if(ok && neuron->getSynapses().size() >= max) {
+				mConsideredTargetNeurons.removeAll(neuron);
+				continue;
+			}
+		}
+	}
+}
 
 }
 
