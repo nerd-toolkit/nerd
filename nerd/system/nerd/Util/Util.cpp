@@ -47,6 +47,7 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
+#include <QStringList>
 
 using namespace std;
 
@@ -54,7 +55,46 @@ namespace nerd {
 
 
 
-
+QStringList Util::getItemsFromCurlyBraceSeparatedString(const QString &braceSeparatedString,
+														const QChar startBrace,
+														const QChar endBrace,
+														bool *ok) {
+	QStringList items;
+	
+	if(ok != 0) {
+		(*ok) = true;
+	}
+	
+	int depth = 0;
+	int startPos = 0;
+	for(int i = 0; i < braceSeparatedString.length(); ++i) {
+		if(braceSeparatedString.at(i) == startBrace) {
+			if(depth == 0) {
+				startPos = i;
+			}
+			++depth;
+		}
+		else if(braceSeparatedString.at(i) == endBrace) {
+			--depth;
+			if(depth == 0) {
+				items.append(braceSeparatedString.mid(startPos + 1, i - startPos - 1));
+			}
+			if(depth < 0) {
+				//Error
+				depth = 0;
+				//Core::log("Warning: Ill-formatted string could not be parsed: [" + braceSeparatedString + "]", true);
+				if(ok != 0) {
+					(*ok) = false;
+				}
+			}
+		}
+	}
+	if(depth != 0 && ok != 0) {
+		(*ok) = false;
+	}
+	
+	return items;
+}
 
 
 

@@ -49,6 +49,7 @@
 #include <QString>
 #include <QHash>
 #include <QList>
+#include <QStringList>
 
 namespace nerd {
 
@@ -67,6 +68,11 @@ namespace nerd {
 				}
 			}
 		}
+		
+		static QStringList getItemsFromCurlyBraceSeparatedString(const QString &braceSeparatedString, 
+																 const QChar startBrace = '{',
+																 const QChar endBrace = '}',
+																 bool *ok = 0);
 
 	private:
 	};

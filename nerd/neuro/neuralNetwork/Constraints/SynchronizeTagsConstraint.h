@@ -41,43 +41,54 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardConstraintCollection.h"
-#include "Constraints/Constraints.h"
-#include "Constraints/ConstraintManager.h"
-#include "Constraints/NumberOfNeuronsConstraint.h"
-#include "Constraints/NumberOfReadNeuronsConstraint.h"
-#include "Constraints/SymmetryConstraint.h"
-#include "Constraints/PreventMutualConnectionsConstraint.h"
-#include "Constraints/ConnectionSymmetryConstraint.h"
-#include "Constraints/WeightAndBiasCalculatorConstraint.h"
-#include "Constraints/FeedForwardConstraint.h"
-#include "Constraints/BackpropagationConstraint.h"
-#include "Constraints/RestrictWeightAndBiasRangeConstraint.h"
-#include "Constraints/SynchronizeTagsConstraint.h"
+
+#ifndef NERDSynchronizeTagsConstraint_H
+#define NERDSynchronizeTagsConstraint_H
+
+#include <QString>
+#include <QHash>
+#include "Constraints/GroupConstraint.h"
+#include "Value/IntValue.h"
+#include "Value/BoolValue.h"
+#include "Value/StringValue.h"
+#include "Value/ULongLongValue.h"
+#include <QMap>
 
 namespace nerd {
 
-StandardConstraintCollection::StandardConstraintCollection()
-{
+	/**
+	 * SynchronizeTagsConstraint.
+	 *
+	 */
+	class SynchronizeTagsConstraint : public GroupConstraint {
+	public:
+		SynchronizeTagsConstraint();
+		SynchronizeTagsConstraint(const SynchronizeTagsConstraint &other);
+		virtual ~SynchronizeTagsConstraint();
 
-	ConstraintManager *cm = Constraints::getConstraintManager();
+		virtual GroupConstraint* createCopy() const;
 
-	cm->addConstraintPrototype(new NumberOfNeuronsConstraint());
-	cm->addConstraintPrototype(new NumberOfReadNeuronsConstraint());
-	cm->addConstraintPrototype(new SymmetryConstraint(0, "Clone", true));
-	cm->addConstraintPrototype(new SymmetryConstraint());
-	cm->addConstraintPrototype(new PreventMutualConnectionsConstraint());
-	cm->addConstraintPrototype(new ConnectionSymmetryConstraint());
-	cm->addConstraintPrototype(new WeightAndBiasCalculatorConstraint());
-	cm->addConstraintPrototype(new FeedForwardConstraint());
-	cm->addConstraintPrototype(new BackpropagationConstraint());
-	cm->addConstraintPrototype(new RestrictWeightAndBiasRangeConstraint());
-	cm->addConstraintPrototype(new SynchronizeTagsConstraint());
+		virtual bool isValid(NeuronGroup *owner);
+		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor, 
+									 QList<NeuralNetworkElement*> &trashcan);
+		
+		virtual bool equals(GroupConstraint *constraint);
+		
+	private:
+		QHash<QString, QString> getPropertyTags(ModularNeuralNetwork *net);
+		bool synchronizeTags(NeuralNetworkElement *element, QHash<QString, QString> &tags);
+
+	private:
+		StringValue *mTagList;
+		ULongLongValue *mPrototypeId;
+		StringValue *mMode;
+		StringValue *mModeParams;
+		BoolValue *mRecursive;
+	};
+
 }
 
-StandardConstraintCollection::~StandardConstraintCollection() {
-}
+#endif
 
-}
 
 

@@ -79,6 +79,7 @@ namespace nerd {
 		virtual void removePropertyByPattern(const QString &namePattern);
 
 		virtual QList<QString> getPropertyNames() const;
+		const QHash<QString, QString>& getProperties() const;
 
 		virtual QString getPropertyList() const;
 		virtual bool saveToFile(const QString &fileName);

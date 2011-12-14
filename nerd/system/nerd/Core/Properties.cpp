@@ -237,6 +237,13 @@ QList<QString> Properties::getPropertyNames() const {
 	return mProperties.keys();
 }
 
+/**
+ * Returns the internal hash table with the properties.
+ */
+const QHash<QString, QString>&  Properties::getProperties() const {
+	return mProperties;
+}
+
 
 /**
  * Returns list with all properties as QString, containing all properties and their
