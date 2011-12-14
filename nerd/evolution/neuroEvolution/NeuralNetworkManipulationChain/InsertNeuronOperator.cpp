@@ -55,6 +55,7 @@
 #include "Evolution/EvolutionManager.h"
 #include "Network/Synapse.h"
 #include "EvolutionConstants.h"
+#include "Network/NeuroTagManager.h"
 
 using namespace std;
 
@@ -77,6 +78,14 @@ InsertNeuronOperator::InsertNeuronOperator(const QString &name)
 	addParameter("AddToModuleProbability", mInsertToModuleProbability);
 // 	addParameter("ExtendSynapticConnections", mExtendSynapticConnections);
 	addParameter("InitConnectionProportion", mInitialConnectionProportion);
+	
+	NeuroTagManager *ntm = NeuroTagManager::getInstance();
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_MODULE_MAX_NUMBER_OF_NEURONS,
+						NeuralNetworkConstants::TAG_TYPE_MODULE,
+						"Restricts the number of neurons for a single group or neuro-module."));
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_MODULE_PROTECT_NEURONS,
+						NeuralNetworkConstants::TAG_TYPE_MODULE,
+						"Prevents the addition and removal of neurons to/from a neuro-module."));
 }
 
 InsertNeuronOperator::InsertNeuronOperator(const InsertNeuronOperator &other)
@@ -172,6 +181,57 @@ bool InsertNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 				neuron->setProperty(NeuralNetworkConstants::TAG_NEURON_INITIAL_CONNECTION_PROPORTION,
 									QString::number(initConnectionProportion));
 			}
+			
+			NeuroModule *ownerModule = 0;
+			
+			//check whether to put the new neuron to a module
+			ModularNeuralNetwork *modularNetwork = dynamic_cast<ModularNeuralNetwork*>(net);
+			if(net != 0 && Random::nextDouble() < mInsertToModuleProbability->get()) {
+				QList<NeuroModule*> modules = modularNetwork->getNeuroModules();
+				QList<NeuroModule*> candidates;
+
+				for(QListIterator<NeuroModule*> j(modules); j.hasNext();) {
+					NeuroModule *module = j.next();
+
+					if(module->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
+						|| module->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)
+						|| module->hasProperty("ProtectNeurons"))
+					{
+						continue;
+					}
+					
+					//Check if the maximal number of neurons for this module is reached.
+					if(module->hasProperty(NeuralNetworkConstants::TAG_MODULE_MAX_NUMBER_OF_NEURONS)) {
+						bool ok = true;
+						int size = module->getProperty(NeuralNetworkConstants::TAG_MODULE_MAX_NUMBER_OF_NEURONS)
+											.toInt(&ok);
+						if(ok && size <= module->getNeurons().size()) {
+							continue;
+						}
+					}
+
+					candidates.append(module);
+				}
+
+				if(!candidates.empty()) {
+					ownerModule = candidates.at(Random::nextInt(candidates.size()));
+// 					NeuroModule *parentModule = candidates.at(Random::nextInt(candidates.size()));
+// 					if(parentModule != 0) {
+// 						parentModule->addNeuron(neuron);
+// 
+// 						Vector3D pos = parentModule->getPosition();
+// 						QSizeF size = parentModule->getSize();
+// 						neuron->setPosition(Vector3D(
+// 								pos.getX() + 10.0 + (Random::nextDouble() * (size.width() - 20.0)),
+// 								pos.getY() + 10.0 + (Random::nextDouble() * (size.height() - 20.0)),
+// 								0.0));
+// 					}
+				}
+				else if(mInsertToModuleProbability->get() >= 1.0) {
+					//stop trying to add neurons, because there is no place in modules left...
+					return true;
+				}
+			}
 
 			net->addNeuron(neuron);
 
@@ -190,6 +250,17 @@ bool InsertNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 				s->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
 				target->addSynapse(s);
 			}
+			
+			if(ownerModule != 0) {
+				ownerModule->addNeuron(neuron);
+
+				Vector3D pos = ownerModule->getPosition();
+				QSizeF size = ownerModule->getSize();
+				neuron->setPosition(Vector3D(
+						pos.getX() + 10.0 + (Random::nextDouble() * (size.width() - 20.0)),
+						pos.getY() + 10.0 + (Random::nextDouble() * (size.height() - 20.0)),
+						0.0));
+			}
 
 			//mark as modified.
 			neuron->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
@@ -198,38 +269,7 @@ bool InsertNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 			individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,
 									currentGenString);
 
-			//check whether to put the new neuron to a module
-			ModularNeuralNetwork *modularNetwork = dynamic_cast<ModularNeuralNetwork*>(net);
-			if(net != 0 && Random::nextDouble() < mInsertToModuleProbability->get()) {
-				QList<NeuroModule*> modules = modularNetwork->getNeuroModules();
-				QList<NeuroModule*> candidates;
-
-				for(QListIterator<NeuroModule*> j(modules); j.hasNext();) {
-					NeuroModule *module = j.next();
-
-					if(module->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
-						|| module->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)
-						|| module->hasProperty("ProtectNeurons"))
-					{
-						continue;
-					}
-					candidates.append(module);
-				}
-
-				if(!candidates.empty()) {
-					NeuroModule *parentModule = candidates.at(Random::nextInt(candidates.size()));
-					if(parentModule != 0) {
-						parentModule->addNeuron(neuron);
-
-						Vector3D pos = parentModule->getPosition();
-						QSizeF size = parentModule->getSize();
-						neuron->setPosition(Vector3D(
-								pos.getX() + 10.0 + (Random::nextDouble() * (size.width() - 20.0)),
-								pos.getY() + 10.0 + (Random::nextDouble() * (size.height() - 20.0)),
-								0.0));
-					}
-				}
-			}
+			
 		}
 	}
 

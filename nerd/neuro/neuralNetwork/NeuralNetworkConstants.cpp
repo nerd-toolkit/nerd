@@ -185,6 +185,15 @@ const QString NeuralNetworkConstants::TAG_MODULE_PREVENT_REPLACEMENT
 		
 const QString NeuralNetworkConstants::TAG_MODULE_CUSTOM_BACKGROUND_COLOR
 		= "BackgroundColor";
+		
+const QString NeuralNetworkConstants::TAG_MODULE_PROTECT_NEURONS
+		= "ProtectNeurons";
+		
+const QString NeuralNetworkConstants::TAG_MODULE_MAX_NUMBER_OF_NEURONS
+		= "MaxNumberOfNeurons";
+		
+// const QString NeuralNetworkConstants::TAG_MODULE_MAX_NUMBER_OF_NEURONS_RECURSIVE
+// 		= "MaxNumberOfEnclosedNeurons";
 
 const QString NeuralNetworkConstants::TAG_SYNAPSE_PROTECT_STRENGTH
 		= "ProtectStrength";
@@ -251,6 +260,15 @@ const QString NeuralNetworkConstants::TAG_NEURON_REINIT_BIAS
 		
 const QString NeuralNetworkConstants::TAG_NEURON_ORDER_DEPENDENT
 		= "ODN";
+		
+const QString NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_IN_SYNAPSES
+		= "MaxNumberOfInSynapses";
+		
+const QString NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_OUT_SYNAPSES
+		= "MaxNumberOfOutSynapses";
+		
+const QString NeuralNetworkConstants::TAG_NEURON_SOURCE_EXCLUDE_LIST
+		= "NeuronSourceExcludeList";
 
 const QString NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE
 		= "_ConstraintSlave";

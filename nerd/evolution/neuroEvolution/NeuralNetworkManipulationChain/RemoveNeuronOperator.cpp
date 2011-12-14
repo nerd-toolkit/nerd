@@ -54,6 +54,8 @@
 #include <iostream>
 #include "EvolutionConstants.h"
 #include "Evolution/Evolution.h"
+#include "ModularNeuralNetwork/NeuronGroup.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 
 using namespace std;
 
@@ -90,7 +92,7 @@ NeuralNetworkManipulationOperator* RemoveNeuronOperator::createCopy() const
 
 bool RemoveNeuronOperator::applyOperator(Individual *individual, CommandExecutor*) {
 
-	NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(individual->getGenome());
+	ModularNeuralNetwork *net = dynamic_cast<ModularNeuralNetwork*>(individual->getGenome());
 
 	if(net == 0) {
 		Core::log("RemoveNeuronOperator: Could not apply operator because individual did not "
@@ -114,6 +116,9 @@ bool RemoveNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 			neurons.removeAll(i.next());
 		}
 	}
+	
+	QList<NeuronGroup*> neuronGroups = net->getNeuronGroups();
+	
 	//remove all protected neurons
 	{
 		QList<Neuron*> allNeurons = neurons;
@@ -129,6 +134,20 @@ bool RemoveNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 				|| neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_INPUT)
 				|| neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_OUTPUT))
 			{
+				neurons.removeAll(neuron);
+				continue;
+			}
+			bool isProtectedByOwnerModule = false;
+			for(QListIterator<NeuronGroup*> i(neuronGroups); i.hasNext();) {
+				NeuronGroup *group = i.next();
+				if(group->getNeurons().contains(neuron)) {
+					if(group->hasProperty(NeuralNetworkConstants::TAG_MODULE_PROTECT_NEURONS)) {
+						isProtectedByOwnerModule = true;
+						break;
+					}
+				}
+			}
+			if(isProtectedByOwnerModule) {
 				neurons.removeAll(neuron);
 				continue;
 			}

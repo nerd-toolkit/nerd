@@ -120,6 +120,9 @@ namespace nerd {
 		static const QString TAG_MODULE_IDENTIFIER;
 		static const QString TAG_MODULE_PREVENT_REPLACEMENT;
 		static const QString TAG_MODULE_CUSTOM_BACKGROUND_COLOR;
+		static const QString TAG_MODULE_PROTECT_NEURONS;
+		static const QString TAG_MODULE_MAX_NUMBER_OF_NEURONS;
+// 		static const QString TAG_MODULE_MAX_NUMBER_OF_NEURONS_RECURSIVE;
 		static const QString TAG_SYNAPSE_PROTECT_STRENGTH;
 		static const QString TAG_SYNAPSE_PREVIOUS_STRENGTH;
 		static const QString TAG_SYNAPSE_MIN_STRENGTH;
@@ -142,6 +145,9 @@ namespace nerd {
 		static const QString TAG_NEURON_INITIAL_CONNECTION_PROPORTION;
 		static const QString TAG_NEURON_REINIT_BIAS;
 		static const QString TAG_NEURON_ORDER_DEPENDENT;
+		static const QString TAG_NEURON_MAX_NUMBER_OF_IN_SYNAPSES;
+		static const QString TAG_NEURON_MAX_NUMBER_OF_OUT_SYNAPSES;
+		static const QString TAG_NEURON_SOURCE_EXCLUDE_LIST;
 		static const QString TAG_CONSTRAINT_SLAVE;
 		static const QString TAG_FAST_ITERATIONS;
 		static const QString TAG_MAX_NUMBER_OF_SUBMODULES;
