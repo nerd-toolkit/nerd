@@ -157,7 +157,8 @@ bool InitializeBiasOperator::applyOperator(Individual *individual, CommandExecut
 		Neuron *neuron = i.next();
 
 		if(Random::nextDouble() >= initProbability 
-			&& !neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_REINIT_BIAS)) 
+			&& !neuron->hasProperty(NeuralNetworkConstants::TAG_NEURON_REINIT_BIAS)
+			&& !neuron->hasProperty("AddBias")) 
 		{
 			continue;
 		}

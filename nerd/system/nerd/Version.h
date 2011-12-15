@@ -42,7 +42,7 @@
  ***************************************************************************/
 
 /*
- * Stable release summer 2011.
+ * Stable release winter 2011. Additional constraints and editor features.
  */
 
-#define NERD_VERSION "3.2"
+#define NERD_VERSION "3.3"

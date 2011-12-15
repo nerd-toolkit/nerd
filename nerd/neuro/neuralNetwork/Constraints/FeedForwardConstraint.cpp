@@ -95,6 +95,8 @@ bool FeedForwardConstraint::applyConstraint(NeuronGroup *owner,
 									CommandExecutor*, 
 									QList<NeuralNetworkElement*> &trashcan)
 {
+	mErrorMessage = "";
+	
 	if(owner == 0) {
 		//do not do anything.
 		return true;
@@ -114,30 +116,39 @@ bool FeedForwardConstraint::applyConstraint(NeuronGroup *owner,
 	QList<Neuron*> neurons = owner->getNeurons();
 	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 		Neuron *neuron = i.next();
+		
+		bool retry = true;
+		while(retry) {
 
-		QList<Synapse*> recurrentChain = NeuralNetworkUtil::getRecurrenceChain(neuron, neuron, neurons);
-
-		if(!recurrentChain.empty()) {
+			retry = false;
 			
-			for(QListIterator<Synapse*> j(recurrentChain); j.hasNext();) {
-				Synapse *synapse = j.next();
-				if(synapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
-					|| synapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECT_EXISTENCE))
-				{
-					continue;
-				}
-				QString date = synapse->getProperty(NeuralNetworkConstants::TAG_CREATION_DATE);
-				if(date != "") {
-					int generation = date.toInt();
-					if(generation == currentGeneration) {
-						trashcan <<  net->savelyRemoveNetworkElement(synapse);
+			QList<Synapse*> recurrentChain = NeuralNetworkUtil::getRecurrenceChain(neuron, neuron, neurons);
+
+			if(!recurrentChain.empty()) {
+				
+				//find newest synapse and delete that one, then recheck if the loop is resolved.
+				//heuristic: newest synapse is the one with the largest unique id.
+				Synapse *newest = 0;
+				for(QListIterator<Synapse*> j(recurrentChain); j.hasNext();) {
+					Synapse *synapse = j.next();
+					if(synapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
+						|| synapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECT_EXISTENCE))
+					{
+						continue;
+					}
+					if(newest == 0 || newest->getId() < synapse->getId()) {
+						newest = synapse;
 					}
 				}
+				if(newest != 0) {
+					trashcan <<  net->savelyRemoveNetworkElement(newest);
+					retry = true;
+				}
+				mErrorMessage += QString("There was a loop of size ") 
+								+ QString::number(recurrentChain.size()) 
+								+ QString(" detected!\n");
+				networkChanged = true;
 			}
-			mErrorMessage = QString("There was a loop of size ") 
-							+ QString::number(recurrentChain.size()) 
-							+ QString(" detected!");
-			networkChanged = true;
 		}
 	}
 

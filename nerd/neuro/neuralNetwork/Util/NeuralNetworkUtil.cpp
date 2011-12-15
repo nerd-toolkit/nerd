@@ -244,7 +244,8 @@ QList<Synapse*> NeuralNetworkUtil::getRecurrenceChain(Neuron *neuron, Neuron *cu
 		}
 
 		if(!allConsideredNeurons.contains(source)) {
-			return chain; //empty;
+			continue;
+			//return chain; //empty;
 		}
 
 		if(visitedNeurons.contains(source)) {
