@@ -336,8 +336,8 @@ bool InsertSynapseModularOperator::randomlyConnect(ModularNeuralNetwork *net) {
 		}
 
 		//choose the smaller stack as heuristic
-		//if(mConsideredSourceNeurons.size() <= mConsideredTargetNeurons.size()) {
-		if(true) {
+		if(mConsideredSourceNeurons.size() <= mConsideredTargetNeurons.size()) {
+		//if(true) {
 			//select source neuron
 			Neuron *source = mConsideredSourceNeurons.value(
 						Random::nextInt(mConsideredSourceNeurons.size()));
@@ -377,7 +377,7 @@ bool InsertSynapseModularOperator::addSynapseToSourceNeuron(Neuron *source, Modu
 	for(QListIterator<Neuron*> k(allInputModuleNeurons); k.hasNext();) {
 		Neuron *neuron = k.next();
 
-		if(!mConsideredTargetNeurons.contains(neuron)) {
+		if(!mConsideredTargetNeurons.contains(neuron)) {			
 			continue;
 		}			
 
@@ -397,9 +397,13 @@ bool InsertSynapseModularOperator::addSynapseToSourceNeuron(Neuron *source, Modu
 			continue;
 		}
 
-		
 		validTargetCandidates.append(neuron);
 	}
+	
+// 	for(int i = 0; i < validTargetCandidates.size(); ++i) {
+// 		Neuron *n = validTargetCandidates.at(i);
+// 		cerr << "Valid? " << n->getId() << " : " << ((bool) canBeConnected(source, n, net)) << endl;
+// 	}
 
 	bool foundValidSynapseConnection = false;
 	while(!foundValidSynapseConnection) {
@@ -422,7 +426,6 @@ bool InsertSynapseModularOperator::addSynapseToSourceNeuron(Neuron *source, Modu
 			validTargetCandidates.removeAll(synapseTarget);
 			continue;
 		}
-	
 
 		foundValidSynapseConnection = true;
 		//create synapse
@@ -443,7 +446,7 @@ bool InsertSynapseModularOperator::addSynapseToTargetNeuron(Neuron *target, Modu
 	if(target == 0) {
 		return true;
 	}
-
+	
 	QList<Neuron*> rootNeurons = net->getRootNeurons();
 
 	//select source candidates
@@ -476,9 +479,14 @@ bool InsertSynapseModularOperator::addSynapseToTargetNeuron(Neuron *target, Modu
 		if(!validSource) {
 			continue;
 		}
-
+		
 		validSourceCandidates.append(neuron);
 	}
+	
+// 	for(int i = 0; i < validSourceCandidates.size(); ++i) {
+// 		Neuron *n = validSourceCandidates.at(i);
+// 		cerr << "Valid? " << n->getId() << " : " << ((bool) canBeConnected(n, target, net)) << endl;
+// 	}
 
 	bool foundValidSynapseConnection = false;
 
@@ -925,6 +933,14 @@ bool InsertSynapseModularOperator::canBeConnected(Neuron *source, Neuron *target
 		}
 	}
 	
+	//Check if restrictions have to be considered.
+	bool hasPathwayRestrictions = false;
+	if(!mPermittedPathsBySource.empty() || !mPermittedPathsFromDest.empty() 
+		|| !mForbiddenPathsBySource.empty())
+	{
+		hasPathwayRestrictions = true;
+	}
+	
 
 	NeuroModule *sourceModule = net->getOwnerModule(source);
 	NeuroModule *targetModule = net->getOwnerModule(target);
@@ -938,33 +954,38 @@ bool InsertSynapseModularOperator::canBeConnected(Neuron *source, Neuron *target
 		return true;
 	}
 
-	QList<NeuroModule*> *permittedFrom = mPermittedPathsFromDest.value(targetModule);
+	if(hasPathwayRestrictions) {
+		QList<NeuroModule*> *permittedFrom = mPermittedPathsFromDest.value(targetModule);
 
-	//walk through the sourceModule and all of its parents until a restriction is found.
-	NeuroModule *parentModule = sourceModule;
-	while(parentModule != 0) {
-		QList<NeuroModule*> *pathwaysBySource = mPermittedPathsBySource.value(parentModule);
+		//walk through the sourceModule and all of its parents until a restriction is found.
+		NeuroModule *parentModule = sourceModule;
+		while(parentModule != 0) {
+			QList<NeuroModule*> *pathwaysBySource = mPermittedPathsBySource.value(parentModule);
 
-		if(pathwaysBySource != 0) {
-			if(pathwaysBySource->contains(targetModule)) {
-				if(permittedFrom == 0) {
-					return true;
+			if(pathwaysBySource != 0) {
+				if(pathwaysBySource->contains(targetModule)) {
+					if(permittedFrom == 0) {
+						return true;
+					}
+					else if(permittedFrom->contains(sourceModule)) {
+						return true;
+					}
+					return false;
 				}
-				else if(permittedFrom->contains(sourceModule)) {
-					return true;
+				else {
+					return false;
 				}
-				return false;
 			}
-			else {
-				return false;
-			}
+
+			parentModule = parentModule->getParentModule();
 		}
-
-		parentModule = parentModule->getParentModule();
-	}
-	if(permittedFrom != 0) {
+// 		if(permittedFrom != 0) {
+// 			cerr << "cc :";
+// 			return false;
+// 		}
 		return false;
 	}
+	
 	//no restriction was found
 	return true;
 }

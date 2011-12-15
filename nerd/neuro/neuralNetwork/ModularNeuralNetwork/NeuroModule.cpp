@@ -234,7 +234,7 @@ bool NeuroModule::removeInputNeuron(Neuron *neuron) {
 	return true;
 }
 
-
+//TODO not tested yet
 QList<Neuron*> NeuroModule::getInputNeurons(int startLevel) const {
 	TRACE("NeuroModule::getInputNeurons");
 
@@ -297,7 +297,7 @@ QList<Neuron*> NeuroModule::getInputNeurons(int startLevel) const {
 
 
 
-
+//TODO not tested yet
 bool NeuroModule::addOutputNeuron(Neuron *neuron) {
 	TRACE("NeuroModule::addOutputNeuron");
 
@@ -342,7 +342,7 @@ QList<Neuron*> NeuroModule::getOutputNeurons(int startLevel) const {
 
 			int level = 0;
 			bool isExtendedInterface = false;
-			QString levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_INPUT);
+			QString levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_OUTPUT);
 
 			if(neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE)) {
 				levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
