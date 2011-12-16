@@ -43,112 +43,49 @@
 
 
 
-#ifndef NERDNeuralNetworkToolbox_H
-#define NERDNeuralNetworkToolbox_H
+#ifndef NERDAlignModuleSizeCommand_H
+#define NERDAlignModuleSizeCommand_H
 
 #include <QString>
 #include <QHash>
-#include <QObject>
-#include <QMenu>
-#include "Gui/NetworkEditor/NeuralNetworkEditor.h"
-#include "Gui/NetworkEditorTools/NetworkManipulationTool.h"
-#include "Gui/NetworkEditorTools/InsertNeuronNetworkTool.h"
-#include "Gui/NetworkEditorTools/InsertModuleNetworkTool.h"
-#include "Gui/NetworkEditorTools/InsertSynapseNetworkTool.h"
-#include "Gui/NetworkEditorTools/RemoveObjectsNetworkTool.h"
-#include "Gui/NetworkEditorTools/RemoveSelectedObjectsNetworkTool.h"
-#include "Gui/NetworkEditorTools/GrabNetworkElementIdTool.h"
-#include "Gui/NetworkEditor/ModuleItem.h"
-#include "Gui/NetworkEditorTools/ShowElementPairTool.h"
-#include "Gui/NetworkEditorTools/CopyPasteNetworkTool.h"
-#include "Gui/NetworkEditorTools/ReconnectSynapseNetworkTool.h"
-#include "Gui/NetworkEditorTools/ReplaceModuleTool.h"
-#include "Gui/NetworkEditorTools/GuessModulePairs.h"
-#include "Gui/NetworkEditorTools/GuessModulePairsByPosition.h"
-
-
+#include <QSizeF>
+#include "Command/Command.h"
+#include "ModularNeuralNetwork/NeuroModule.h"
+#include <QPointF>
+#include "Gui/NetworkEditor/NetworkVisualization.h"
+#include "Network/Neuron.h"
+#include "Network/SynapseTarget.h"
 
 namespace nerd {
 
 	/**
-	 * NeuralNetworkToolbox.
+	 * AlignModuleSizeCommand.
 	 *
 	 */
-	class NeuralNetworkToolbox : public QObject {
-	Q_OBJECT
+	class AlignModuleSizeCommand : public Command {
 	public:
-		enum {NoTool, InsertNeuronTool, RemoveNeuronTool, InsertSynapseTool};
-
+		enum modes{HORIZONTAL, VERTICAL};
 	public:
-		NeuralNetworkToolbox(NeuralNetworkEditor *owner);
-		virtual ~NeuralNetworkToolbox();
+		AlignModuleSizeCommand(int mode, NetworkVisualization *context, 
+							QList<NeuroModule*> modules);
+		virtual ~AlignModuleSizeCommand();
+	
+		virtual bool isUndoable() const;
 
-	public slots:
-		void editorTabChanged(int index);
-		void toolIsDone();
-		void useInsertNeuronTool();
-		void useInsertModuleTool();
-		void useInsertSynapseTool();
-		void useRemoveObjectsTool();
-		void useRemoveSelectedObjectsTool();
-		void useGrabIdTool();
-		void useCopyPasteTool();
-		void resetCurrentNetwork();
-		void enableModifications(bool enable);
-		void alignAllSynapses();
-		void alignSelectedSynapses();
-		void selectSynapsesOfMarkedNeurons();
-		void setAllLocationProperties();
-		void alignNetworkElementsAccordingToLocationProperties();
-		void alignNeuronsHoriztonally();
-		void alignNeuronsVertically();
-		void alignNeuronDistanceHorizontally();
-		void alignNeuronDistanceVertically();
-		void alignModuleSizeHorizontally();
-		void alignModuleSizeVertically();
-		void useVisualizeElementPairTool();
-		void useReconnectSynapseTool();
-		void useReplaceModuleTool();
-		void useGuessGroupIdsTool();
-		void useGuessGroupIdsByPositionTool();
-		void updateViewMode();
-
-	protected:
-		virtual void addNetworkMenu();
-		void setTool(NetworkManipulationTool *currentTool);
+		virtual bool doCommand();
+		virtual bool undoCommand();
 
 	private:
-		void alignNeurons(bool horizontally, bool adjustDistance);
-		void alignModuleSize(bool horizontally);
-// 		void setLocation(PaintItem *item, const QString &location);
-// 		void setLocationSize(ModuleItem *item, const QString &location);
+		int mMode;
+		NetworkVisualization *mVisualizationContext;	
+		QList<NeuroModule*> mModulesToAlign;
+		QList<QSizeF> mPreviousDimensions;
 
-	private:
-		NeuralNetworkEditor *mOwner;
-		NetworkManipulationTool *mCurrentTool;
-		InsertNeuronNetworkTool *mInsertNeuronTool;
-		InsertModuleNetworkTool *mInsertModuleTool;
-		InsertSynapseNetworkTool *mInsertSynapseTool;	
-		RemoveObjectsNetworkTool *mRemoveObjectsTool;
-		RemoveSelectedObjectsNetworkTool *mRemoveSelectedObjectsTool;
-		GrabNetworkElementIdTool *mGrabIdTool;
-		ShowElementPairTool *mShowElementPairTool;
-		CopyPasteNetworkTool *mCopyPasteTool;
-		ReconnectSynapseNetworkTool *mReconnectSynapseTool;
-		bool mModificationsEnabled;
-		QMenu *mNetworkMenu;
-		QMenu *mToolsMenu;
-		QMenu *mViewMenu;
-		ReplaceModuleTool *mReplaceModuleTool;
-		GuessModulePairs *mGuessGroupPairsTool;
-		GuessModulePairsByPosition *mGuessGroupPairsByPositionTool;
-		
 	};
 
 }
 
 #endif
-
 
 
 

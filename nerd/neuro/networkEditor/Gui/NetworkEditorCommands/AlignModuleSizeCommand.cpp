@@ -43,7 +43,7 @@
 
 
 
-#include "AlignNeuronsCommand.h"
+#include "AlignModuleSizeCommand.h"
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
@@ -62,16 +62,14 @@ namespace nerd {
 
 
 /**
- * Constructs a new AlignNeuronsCommand.
+ * Constructs a new AlignModuleSizeCommand.
  * 
- * TODO: Temporariliy added modules and other network items here, but did not rename
- * 			the neuron related variable names!
  */
-AlignNeuronsCommand::AlignNeuronsCommand(int mode, bool adjustDistance, NetworkVisualization *context, 
-										 QList<NeuralNetworkElement*> neurons)
+AlignModuleSizeCommand::AlignModuleSizeCommand(int mode, NetworkVisualization *context, 
+										 QList<NeuroModule*> modules)
 	: Command(mode == HORIZONTAL ? "AlignHorizontal" : "AlignVertical"), 
-	  mMode(mode), mAdjustDistance(adjustDistance), mVisualizationContext(context), 
-	  mNeuronsToAlign(neurons)
+	  mMode(mode), mVisualizationContext(context), 
+	  mModulesToAlign(modules)
 {
 }
 
@@ -79,17 +77,17 @@ AlignNeuronsCommand::AlignNeuronsCommand(int mode, bool adjustDistance, NetworkV
 /**
  * Destructor.
  */
-AlignNeuronsCommand::~AlignNeuronsCommand() {
+AlignModuleSizeCommand::~AlignModuleSizeCommand() {
 }
 
-bool AlignNeuronsCommand::isUndoable() const {
+bool AlignModuleSizeCommand::isUndoable() const {
 	return true;
 }
 
 
-bool AlignNeuronsCommand::doCommand() {
+bool AlignModuleSizeCommand::doCommand() {
 
-	if(mNeuronsToAlign.size() < 2 || mVisualizationContext == 0) {
+	if(mModulesToAlign.size() < 2 || mVisualizationContext == 0) {
 		return false;
 	}	
 	SimpleNetworkVisualizationHandler *handler = dynamic_cast<SimpleNetworkVisualizationHandler*>(
@@ -106,106 +104,34 @@ bool AlignNeuronsCommand::doCommand() {
 		return false;
 	}
 
-	mPreviousPositions.clear();
+	QSizeF refSize = mModulesToAlign.front()->getSize();
 
-	//calculate desired distance based on the positions of the upperleft elements.
-	double distance = 1.0;
-	double startingPos = 0.0;
+	for(int i = 0; i < mModulesToAlign.size(); ++i) {
+		NeuroModule *module = mModulesToAlign.at(i);
 
-	QList<NeuralNetworkElement*> mSortedNeurons = mNeuronsToAlign;
-	
-	//Not required any more, because the new behavior is better 
-	//(select order and reference via selection)
-// 	QList<NeuralNetworkElement*> mSortedNeurons;
-// 	for(QListIterator<NeuralNetworkElement*> i(mNeuronsToAlign); i.hasNext();) {
-// 		NeuralNetworkElement *neuron = i.next();
-// 		Vector3D pos = neuron->getPosition();
-// 		
-// 		bool added = false;
-// 		for(int j = 0; j < mSortedNeurons.size(); ++j) {
-// 			Vector3D currentPos = mSortedNeurons.at(j)->getPosition();
-// 			if((mMode == HORIZONTAL && currentPos.getX() > pos.getX())
-// 				|| (mMode != HORIZONTAL && currentPos.getY() > pos.getY())) 
-// 			{
-// 				mSortedNeurons.insert(j, neuron);
-// 				added = true;
-// 				break;
-// 			}
-// 		}
-// 		if(!added) {
-// 			mSortedNeurons.append(neuron);
-// 		}
-// 	}
-
-	if(mSortedNeurons.size() < 2) {
-		return true;
-	}
-
-	if(mMode == HORIZONTAL) {
-		if(mAdjustDistance) {
-			startingPos = mSortedNeurons.at(0)->getPosition().getX();
-			distance = mSortedNeurons.at(1)->getPosition().getX() - startingPos;
-		}
-		else {
-			startingPos = mSortedNeurons.at(0)->getPosition().getY();
-		}
-	}
-	else {
-		if(mAdjustDistance) {
-			startingPos = mSortedNeurons.at(0)->getPosition().getY();
-			distance = mSortedNeurons.at(1)->getPosition().getY() - startingPos;
-		}
-		else {
-			startingPos = mSortedNeurons.at(0)->getPosition().getX();
-		}
-	}
-
-	//mNeuronsToAlign = mSortedNeurons;
-
-	for(int i = 0; i < mNeuronsToAlign.size(); ++i) {
-		NeuralNetworkElement *neuron = mNeuronsToAlign.at(i);
-
-		if(neuron == 0) {
+		if(module == 0) {
 			continue;
 		}
 
-		mPreviousPositions.append(neuron->getPosition());
-		Vector3D pos = neuron->getPosition();
+		mPreviousDimensions.append(module->getSize());
+		QSizeF size = module->getSize();
 		if(mMode == HORIZONTAL) {
-			if(mAdjustDistance) {
-				pos.setX(startingPos + (i * distance));
-			}
-			else {
-				pos.setY(startingPos);
-			}
+			size.setWidth(refSize.width());
 		}
 		else {
-			if(mAdjustDistance) {
-				pos.setY(startingPos + (i * distance));
-			}
-			else {
-				pos.setX(startingPos);
-			}
+			size.setHeight(refSize.height());
 		}
-		if(dynamic_cast<NeuroModule*>(neuron) != 0) {
-			NeuralNetworkUtil::moveNeuroModuleTo(dynamic_cast<NeuroModule*>(neuron),
-												 pos.getX(), pos.getY(), pos.getZ());
-		}
-		else {
-			neuron->setPosition(pos);
-		}
+		module->setSize(size);
 	}
 
-	//handler->rebuildView();
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
-	//mVisualizationContext->notifyNeuralNetworkModified();
 
 	return true;
 }
 
 
-bool AlignNeuronsCommand::undoCommand() {
-	if(mNeuronsToAlign.empty() || mVisualizationContext == 0) {
+bool AlignModuleSizeCommand::undoCommand() {
+	if(mModulesToAlign.empty() || mVisualizationContext == 0) {
 		return false;
 	}	
 	SimpleNetworkVisualizationHandler *handler = dynamic_cast<SimpleNetworkVisualizationHandler*>(
@@ -223,20 +149,14 @@ bool AlignNeuronsCommand::undoCommand() {
 	}
 
 	
-	for(int i = 0; i < mNeuronsToAlign.size() && i < mPreviousPositions.size(); ++i) {
-		NeuralNetworkElement *neuron = mNeuronsToAlign.at(i);
-		Vector3D pos = mPreviousPositions.at(i);
+	for(int i = 0; i < mModulesToAlign.size() && i < mPreviousDimensions.size(); ++i) {
+		NeuroModule *module = mModulesToAlign.at(i);
+		QSizeF size = mPreviousDimensions.at(i);
 
-		if(neuron == 0) {
+		if(module == 0) {
 			continue;
 		}
-		if(dynamic_cast<NeuroModule*>(neuron) != 0) {
-			NeuralNetworkUtil::moveNeuroModuleTo(dynamic_cast<NeuroModule*>(neuron),
-												 pos.getX(), pos.getY(), pos.getZ());
-		}
-		else {
-			neuron->setPosition(pos);
-		}
+		module->setSize(size);
 	}
 	
 	//handler->rebuildView();

@@ -79,6 +79,7 @@ set(nerd_networkEditor_SRCS
 	Gui/NetworkEditor/LoadRecentNetworkAction.cpp
 	Gui/NetworkEditorTools/GuessModulePairsByPosition.cpp
 	NetworkEditorConstants.cpp
+	Gui/NetworkEditorCommands/AlignModuleSizeCommand.cpp
 )
 
 set(nerd_networkEditor_MOC_HDRS

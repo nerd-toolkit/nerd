@@ -65,6 +65,7 @@
 #include "Util/Util.h"
 #include "NeuralNetworkConstants.h"
 #include "Gui/NetworkEditorCommands/AlignNeuronsCommand.h"
+#include "Gui/NetworkEditorCommands/AlignModuleSizeCommand.h"
 #include <qvarlengtharray.h>
 
 using namespace std;
@@ -369,7 +370,15 @@ void NeuralNetworkToolbox::alignNeuronDistanceHorizontally() {
 
 
 void NeuralNetworkToolbox::alignNeuronDistanceVertically() {
-		alignNeurons(false, true);
+	alignNeurons(false, true);
+}
+
+void NeuralNetworkToolbox::alignModuleSizeHorizontally() {
+	alignModuleSize(true);
+}
+
+void NeuralNetworkToolbox::alignModuleSizeVertically() {
+	alignModuleSize(false);
 }
 
 
@@ -461,33 +470,43 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	alignAllSynapses->setShortcut(tr("ctrl+a"));
 	connect(alignAllSynapses, SIGNAL(triggered()),
 			this, SLOT(alignAllSynapses()));
+	
+	QAction *alignSelectedSynapses = mNetworkMenu->addAction("&Align Selected Synapses");
+	alignSelectedSynapses->setShortcut(tr("ctrl+shift+a"));
+	connect(alignSelectedSynapses, SIGNAL(triggered()),
+			this, SLOT(alignSelectedSynapses()));
 
-	QAction *alignSelectedNeuronsHorizontally = mNetworkMenu->addAction("Align Neurons Horizontally");
+	QAction *alignSelectedNeuronsHorizontally = mNetworkMenu->addAction("Align Elements Horizontally");
 	alignSelectedNeuronsHorizontally->setShortcut(tr("ctrl+shift+h"));
 	connect(alignSelectedNeuronsHorizontally, SIGNAL(triggered()),
 			this, SLOT(alignNeuronsHoriztonally()));
 
-	QAction *alignSelectedNeuronsVertically = mNetworkMenu->addAction("Align Neurons Vertically");
+	QAction *alignSelectedNeuronsVertically = mNetworkMenu->addAction("Align Elements Vertically");
 	alignSelectedNeuronsVertically->setShortcut(tr("ctrl+shift+v"));
 	connect(alignSelectedNeuronsVertically, SIGNAL(triggered()),
 			this, SLOT(alignNeuronsVertically()));
 
 	QAction *alignSelectedNeuronDistancesHorizontally = 
-					mNetworkMenu->addAction("Align Neuron Dist Horizontally");
+					mNetworkMenu->addAction("Align Element Dist Horizontally");
 	alignSelectedNeuronDistancesHorizontally->setShortcut(tr("ctrl+shift+alt+h"));
 	connect(alignSelectedNeuronDistancesHorizontally, SIGNAL(triggered()),
 			this, SLOT(alignNeuronDistanceHorizontally()));
 
 	QAction *alignSelectedNeuronDistancesVertically = 
-					mNetworkMenu->addAction("Align Neuron Dist Vertically");
+					mNetworkMenu->addAction("Align Element Dist Vertically");
 	alignSelectedNeuronDistancesVertically->setShortcut(tr("ctrl+shift+alt+v"));
 	connect(alignSelectedNeuronDistancesVertically, SIGNAL(triggered()),
 			this, SLOT(alignNeuronDistanceVertically()));
+	
+	QAction *alignSelectedModuleSizesHorizontally = 
+					mNetworkMenu->addAction("Align Module Widths");
+	connect(alignSelectedModuleSizesHorizontally, SIGNAL(triggered()),
+			this, SLOT(alignModuleSizeHorizontally()));
 
-	QAction *alignSelectedSynapses = mNetworkMenu->addAction("&Align Selected Synapses");
-	alignSelectedSynapses->setShortcut(tr("ctrl+shift+a"));
-	connect(alignSelectedSynapses, SIGNAL(triggered()),
-			this, SLOT(alignSelectedSynapses()));
+	QAction *alignSelectedModuleSizesVertically = 
+					mNetworkMenu->addAction("Align Module Heights");
+	connect(alignSelectedModuleSizesVertically, SIGNAL(triggered()),
+			this, SLOT(alignModuleSizeVertically()));
 
 // 	QAction *alignAccordingToLocations = mNetworkMenu->addAction("Align to Location Properties");
 // 	alignAccordingToLocations->setShortcut(tr("ctrl+shift+alt+a"));
@@ -635,6 +654,37 @@ void NeuralNetworkToolbox::alignNeurons(bool horizontally, bool adjustDistance) 
 	if(!selectedNeurons.empty()) {
 		int mode = horizontally ? AlignNeuronsCommand::HORIZONTAL : AlignNeuronsCommand::VERTICAL;
 		Command *command = new AlignNeuronsCommand(mode, adjustDistance, visu, selectedNeurons);
+		visu->getCommandExecutor()->executeCommand(command);
+	}
+}
+
+void NeuralNetworkToolbox::alignModuleSize(bool horizontally) {
+	if(mOwner == 0) {
+		return;
+	}
+	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
+	if(visu == 0) {
+		return;
+	}
+
+	QList<PaintItem*> selectedItems = visu->getSelectedItems();
+	QList<NeuroModule*> selectedModules;
+
+	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
+		PaintItem *item = i.next();
+		ModuleItem *moduleItem = dynamic_cast<ModuleItem*>(item);
+		if(moduleItem != 0) {
+			NeuroModule *module = moduleItem->getNeuroModule();
+			if(module != 0) {
+				selectedModules.append(module);
+			}
+			continue;
+		}
+	}
+
+	if(!selectedModules.empty()) {
+		int mode = horizontally ? AlignModuleSizeCommand::HORIZONTAL : AlignModuleSizeCommand::VERTICAL;
+		Command *command = new AlignModuleSizeCommand(mode, visu, selectedModules);
 		visu->getCommandExecutor()->executeCommand(command);
 	}
 }
