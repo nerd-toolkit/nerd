@@ -124,6 +124,9 @@ namespace nerd {
 		int getNumberOfEntries() const;
 		QStringList getEntries() const;
 		QStringList getEntryParameters(int entry) const;
+		
+		void deactivate();
+		bool isDeactivated();
 
 	private:
 		QString mFullName;
@@ -135,6 +138,7 @@ namespace nerd {
 		StringValue *mParameterContainer;
 		bool mProcessed;
 		bool mArgumentPublished;
+		bool mDeactivated;
 	};
 
 }

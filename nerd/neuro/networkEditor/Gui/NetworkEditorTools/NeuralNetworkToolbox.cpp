@@ -513,10 +513,9 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 // 	connect(alignAccordingToLocations, SIGNAL(triggered()),
 // 			this, SLOT(alignNetworkElementsAccordingToLocationProperties()));
 // 
-// 	QAction *setAllLocationProperties = mNetworkMenu->addAction("Sync Location Properties");
-// 	setAllLocationProperties->setShortcut(tr("ctrl+shift+alt+s"));
-// 	connect(setAllLocationProperties, SIGNAL(triggered()),
-// 			this, SLOT(setAllLocationProperties()));
+	QAction *setAllLocationProperties = mNetworkMenu->addAction("Sync Location Properties");
+	connect(setAllLocationProperties, SIGNAL(triggered()),
+			this, SLOT(setAllLocationProperties()));
 
 	mNetworkMenu->addSeparator();
 

@@ -73,7 +73,8 @@ CommandLineArgument::CommandLineArgument(
 	  mParameterDescription(parameterDescription),
 	  mNumberOfRequiredParameters(numberOfRequiredParameters), 
 	  mNumberOfOptionalParameters(numberOfOptionalParameters),
-	  mParameterContainer(0), mProcessed(false), mArgumentPublished(publishInRepository)
+	  mParameterContainer(0), mProcessed(false), mArgumentPublished(publishInRepository),
+	  mDeactivated(false)
 {
 	if(isCommonArgument) {
 		setProperty("common");
@@ -255,6 +256,17 @@ QStringList CommandLineArgument::getEntryParameters(int entry) const {
 	return entries.at(entry).split(" ");
 }
 
+
+void CommandLineArgument::deactivate() {
+	mDeactivated = true;
+	//erase content.
+	mParameterContainer->set("");
+}
+
+
+bool CommandLineArgument::isDeactivated() {
+	return mDeactivated;
+}
 
 
 

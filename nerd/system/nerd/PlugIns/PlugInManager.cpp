@@ -326,7 +326,7 @@ bool PlugInManager::parseCommandLine()
 	}	
 	if(currentDescription != 0) {
 		//add parameters to the parameter value of the current argument.
-		if(!currentDescription->isProcessed()) { 
+		if(!currentDescription->isProcessed() && !currentDescription->isDeactivated()) { 
 			StringValue *params = currentDescription->getParameterValue();
 			params->set(params->get().append("{").append(parameterList.trimmed()).append("}"));
 			currentDescription = 0;
@@ -474,6 +474,9 @@ QString PlugInManager::getCommandLineHelpMessage(const QString &type) const {
 		CommandLineArgument *c = i.next();
 		if(c->hasProperty(selectedType)) {
 			message.append("\n");
+			if(c->isDeactivated()) {
+				message.append("[deactivated] ");
+			}
 			message.append("-").append(c->getShortArgumentName());
 			message.append(" [--").append(c->getFullArgumentName()).append("]");
 			

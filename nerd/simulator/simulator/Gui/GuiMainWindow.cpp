@@ -61,6 +61,8 @@
 #include "Gui/Control/NextStepTriggerAction.h"
 #include "Util/SetSnapshotValueTask.h"
 #include "Gui/GuiManager.h"
+#include <QDir>
+#include <QFile>
 
 
 using namespace std;
@@ -250,8 +252,12 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	mPluginWindows.append(aboutWindow);
 	helpMenu->addAction(aboutWindow->getAction());
 
+	QFile noToggleFile(QDir::homePath() + "/.nerd/noToggle");
 	mToggleWindowArgument = new CommandLineArgument("toggle", "toggle", "", 
 						"Makes the OpenGL windows toggle.", 0, 0, true, false);
+	if(noToggleFile.exists()) {
+		mToggleWindowArgument->deactivate();
+	}
 }
 
 
