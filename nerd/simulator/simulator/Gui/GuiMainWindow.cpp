@@ -253,8 +253,8 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	helpMenu->addAction(aboutWindow->getAction());
 
 // 	QFile noToggleFile(QDir::homePath() + "/.nerd/noToggle");
-// 	mToggleWindowArgument = new CommandLineArgument("toggle", "toggle", "", 
-// 						"Makes the OpenGL windows toggle.", 0, 0, true, false);
+	mToggleWindowArgument = new CommandLineArgument("toggle", "toggle", "", 
+						"Makes the OpenGL windows toggle.", 0, 0, true, false);
 // 	if(noToggleFile.exists()) {
 // 		mToggleWindowArgument->deactivate();
 // 	}
