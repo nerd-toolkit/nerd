@@ -263,7 +263,7 @@ void EvaluationLoop::eventOccured(Event *event){
 	}
 	else if(event == mResetEvent && mCurrentStep != 0) {
 		//TODO hack, remove later!
-		mNumberOfStepsValue->set(99999999);
+// 		mNumberOfStepsValue->set(99999999);
 		mCurrentStep->set(0);
 	}
 }
