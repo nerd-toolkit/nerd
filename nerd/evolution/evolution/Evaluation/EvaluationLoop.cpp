@@ -216,6 +216,9 @@ bool EvaluationLoop::bind() {
 	
 	if(!mIsEvolutionMode && mRunInRealTime != 0) {
 		mRunInRealTime->set(true);
+		
+		//TODO hack, undo later!
+// 		mRunInRealTime->set(false);
 	}
 
 	return bindOk;
@@ -259,6 +262,8 @@ void EvaluationLoop::eventOccured(Event *event){
 		}
 	}
 	else if(event == mResetEvent && mCurrentStep != 0) {
+		//TODO hack, remove later!
+		mNumberOfStepsValue->set(99999999);
 		mCurrentStep->set(0);
 	}
 }

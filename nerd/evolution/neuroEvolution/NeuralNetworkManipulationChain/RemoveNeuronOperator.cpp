@@ -130,9 +130,9 @@ bool RemoveNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 				neurons.removeAll(neuron);
 				continue;
 			}
-			if(neuron->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)
-				|| neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_INPUT)
-				|| neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_OUTPUT))
+			if(neuron->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE))
+// 				|| neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_INPUT)
+// 				|| neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_OUTPUT))
 			{
 				neurons.removeAll(neuron);
 				continue;
