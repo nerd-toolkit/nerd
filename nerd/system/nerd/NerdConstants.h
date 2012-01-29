@@ -124,6 +124,8 @@ namespace nerd {
 
 		static const QString EVENT_NNM_NETWORK_ITERATION_COMPLETED;
 		
+		static const bool HackMode;
+		
 	};
 
 }

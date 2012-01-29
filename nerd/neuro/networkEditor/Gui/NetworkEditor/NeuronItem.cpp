@@ -63,7 +63,7 @@ NeuronItem::NeuronItem(NetworkVisualization *owner)
 	: PaintItem(1000), mOwner(owner), mNeuron(0), 
 	  mShowName(true), mShowInputOutputMarker(false), mShowBias(false),
 	  mShowActivationFlipped(false), mShowBiasAsString(false),
-	  mShowModuleInputOutputMarker(false)
+	  mShowModuleInputOutputMarker(true)
 {
 }
 

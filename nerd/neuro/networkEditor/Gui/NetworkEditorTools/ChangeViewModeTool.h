@@ -62,8 +62,12 @@ namespace nerd {
 	class ChangeViewModeTool : public QObject, public virtual KeyListener {
 	Q_OBJECT
 	public:
-		ChangeViewModeTool(NeuralNetworkEditor *owner, int mode, const QString &message,
-						  Qt::Key pressedKey, bool reverseActivation = false);
+		static const int MENU_SEPARATOR = -1000;
+		
+	public:
+		ChangeViewModeTool(NeuralNetworkEditor *owner, int mode, const QString &message = "",
+						  Qt::Key pressedKey = Qt::Key_unknown, bool reverseActivation = false, 
+						  bool initiallySelect = false);
 		virtual ~ChangeViewModeTool();
 
 		virtual void keyPressed(QKeyEvent *event);

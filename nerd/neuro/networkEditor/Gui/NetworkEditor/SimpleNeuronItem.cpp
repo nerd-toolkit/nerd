@@ -270,7 +270,19 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 	if(mShowName) {
 		QString name = mNeuron->getNameValue().get();
 		name = name.replace("\\\\", "\n");
-		painter->drawText(pos.x() - 80.0, pos.y() + mRadius + 2, 160.0, 100.0, 
+		
+		QRectF textRect(pos.x() - 80.0, pos.y() + mRadius + 2, 160.0, 100.0);
+		
+		if(mIncreaseReadability) {
+			QRectF textBoundingRect = painter->boundingRect(textRect, 
+							Qt::AlignHCenter | Qt::AlignTop | Qt::TextWordWrap | Qt::TextWrapAnywhere, 
+							name);
+			painter->fillRect(QRectF(textBoundingRect.x(), textBoundingRect.y() + 2,
+									 textBoundingRect.width(), textBoundingRect.height() - 4), 
+							  QColor(255,255,255,180));
+		}
+		
+		painter->drawText(textRect, 
 				Qt::AlignHCenter | Qt::AlignTop | Qt::TextWordWrap | Qt::TextWrapAnywhere,
 				name);
 	}
@@ -278,8 +290,21 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 	if(mShowBiasAsString) {
 		
 		if(mNeuron->getBiasValue().get() != 0.0) {
-			painter->drawText(pos.x() + 20.0, pos.y() - 6.0, 150.0, 20.0, 
-					Qt::AlignLeft, mNeuron->getBiasValue().getValueAsString());
+			
+			QRectF textRect(pos.x() + 20.0, pos.y() - 6.0, 150.0, 20.0);
+			
+			QString biasText = mNeuron->getBiasValue().getValueAsString();
+		
+			if(mIncreaseReadability) {
+				QRectF textBoundingRect = painter->boundingRect(textRect, 
+								Qt::AlignLeft, 
+								biasText);
+				painter->fillRect(QRectF(textBoundingRect.x(), textBoundingRect.y() + 2,
+										textBoundingRect.width(), textBoundingRect.height() - 4), 
+								QColor(255,255,255,180));
+			}
+			
+			painter->drawText(textRect, Qt::AlignLeft, biasText);
 		}
 	}
 

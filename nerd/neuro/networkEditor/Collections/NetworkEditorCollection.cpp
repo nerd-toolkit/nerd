@@ -68,31 +68,46 @@ NetworkEditorCollection::NetworkEditorCollection(QMenu *targetMenu, const QStrin
 	editor->initialize();
 
 	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_INPUT_OUTPUT, 
-						   "Show Neuron Input/Output", Qt::Key_I);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_BIAS, 
-						   "Show Neuron Bias", Qt::Key_B);
+						   "Show Motor / Sensor Neurons", Qt::Key_I);
+	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_MODULE_INPUT_OUTPUT, 
+						   "Show Module Input/Output", Qt::Key_M, false, true);
 	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_ACTIVATION_FLIPPED, 
 						   "Show Neuron Flipped State", Qt::Key_F);
+	
+	new ChangeViewModeTool(editor, ChangeViewModeTool::MENU_SEPARATOR);
+	
+	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_NAMES, 
+						   "Show Module Names", Qt::Key_O, false, true);
 	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_NAME, 
-						   "Hide Neuron Names", Qt::Key_N , true);
+						   "Show Neuron Names", Qt::Key_N , false, true);
+	new ChangeViewModeTool(editor, PaintItem::HIDE_WEIGHTS,
+						   "Show Synapse Weights", Qt::Key_W, true, true);
 	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_BIAS_AS_NUMBER, 
 						   "Show Bias Values", Qt::Key_V);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_MODULE_INPUT_OUTPUT, 
-						   "Show Module Input/Output", Qt::Key_M);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_NAMES, 
-						   "Hide Module Names", Qt::Key_O, true);
-	new ChangeViewModeTool(editor, PaintItem::SHOW_ELEMENT_SLAVE_STATUS,
-							"Show Degrees of Freedom", Qt::Key_S);
+	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURON_BIAS, 
+						   "Highlight Biased Neurons", Qt::Key_B);
+	
+	new ChangeViewModeTool(editor, ChangeViewModeTool::MENU_SEPARATOR);
+	
 	new ChangeViewModeTool(editor, PaintItem::HIDE_UNSELECTED,
 							"Hide Unselected Elements", Qt::Key_H);
-	new ChangeViewModeTool(editor, PaintItem::USE_SYNAPSE_TYPE_SYMBOLS,
-							"Use Only Synapse Arrows", Qt::Key_E, true);
-	new ChangeViewModeTool(editor, PaintItem::HIDE_WEIGHTS,
-							"Hide Synapse Weights", Qt::Key_W);
+	
+	
+	new ChangeViewModeTool(editor, ChangeViewModeTool::MENU_SEPARATOR);
+	
 	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_HANDLES,
 							"Hide Module Handles", Qt::Key_1, true);
 	new ChangeViewModeTool(editor, PaintItem::SHOW_MODULE_BACKGROUND,
 							"Hide Module Background", Qt::Key_2, true);
+	new ChangeViewModeTool(editor, PaintItem::USE_SYNAPSE_TYPE_SYMBOLS,
+							"Use Only Synapse Arrows", Qt::Key_E, true);
+	new ChangeViewModeTool(editor, PaintItem::INCREASE_READABILITY,
+							"Increase Text Readability", Qt::Key_R, false, true);
+	
+	new ChangeViewModeTool(editor, ChangeViewModeTool::MENU_SEPARATOR);
+	
+	new ChangeViewModeTool(editor, PaintItem::SHOW_ELEMENT_SLAVE_STATUS,
+							"Show Degrees of Freedom", Qt::Key_S);
 // 	new ChangeViewModeTool(editor, PaintItem::USE_COSMETIC_LINES,
 // 							"Draw Cosmetic Lines", Qt::Key_C);
 	new NeuralNetworkToolbox(editor);

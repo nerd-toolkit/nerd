@@ -276,6 +276,15 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 		QRectF textRect = rect;
 		textRect.moveTo(textRect.x() + mPositionOffset.getX(), textRect.y() + mPositionOffset.getY());
 		
+		if(mIncreaseReadability) {
+			QRectF textBoundingRect = painter->boundingRect(textRect, 
+										Qt::AlignCenter | Qt::AlignHCenter | Qt::TextSingleLine, 
+										strength);
+			painter->fillRect(QRectF(textBoundingRect.x(), textBoundingRect.y() + 2,
+									 textBoundingRect.width(), textBoundingRect.height() - 4), 
+									 QColor(255,255,255,180));
+		}
+		
 		painter->drawText(textRect, Qt::AlignCenter | Qt::AlignHCenter | Qt::TextSingleLine, 
 				strength);
 		painter->setFont(oldFont);

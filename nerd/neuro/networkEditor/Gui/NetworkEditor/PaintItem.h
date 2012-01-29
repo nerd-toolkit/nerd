@@ -69,7 +69,9 @@ namespace nerd {
 			  SHOW_NEURON_NAME, SHOW_MODULE_NAMES, SHOW_NEURON_ACTIVATION_FLIPPED,
 			  SHOW_NEURON_MODULE_INPUT_OUTPUT, SHOW_ELEMENT_SLAVE_STATUS,
 			  HIDE_UNSELECTED, USE_COSMETIC_LINES, FORCED_HIDDEN, HIDE_WEIGHTS, 
-			  USE_SYNAPSE_TYPE_SYMBOLS, SHOW_MODULE_HANDLES, SHOW_MODULE_BACKGROUND};
+			  USE_SYNAPSE_TYPE_SYMBOLS, SHOW_MODULE_HANDLES, SHOW_MODULE_BACKGROUND,
+			  INCREASE_READABILITY
+		};
 	public:
 		PaintItem(int paintLevel);
 		PaintItem(const PaintItem *other);
@@ -123,6 +125,7 @@ namespace nerd {
 		bool mUseCosmeticLines;
 		bool mForcedHidden;
 		bool mIsInHiddenLayer;
+		bool mIncreaseReadability;
 		
 		ColorValue *mDOFNormalColor;
 		ColorValue *mDOFHighlightColor;

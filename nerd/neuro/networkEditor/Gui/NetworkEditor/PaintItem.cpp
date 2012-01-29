@@ -61,7 +61,8 @@ namespace nerd {
 PaintItem::PaintItem(int paintLevel)
 	: mParent(0), mInvalidated(true), mPaintLevel(paintLevel), mActive(true), mHidden(false),
 	  mSelected(false), mShowSlaveState(false), mHideUnselectedElements(false), mUseCosmeticLines(false),
-	  mForcedHidden(false), mIsInHiddenLayer(false), mDOFNormalColor(0), mDOFHighlightColor(0)
+	  mForcedHidden(false), mIsInHiddenLayer(false), mDOFNormalColor(0), mDOFHighlightColor(0),
+	  mIncreaseReadability(true)
 {
 }
 
@@ -70,7 +71,8 @@ PaintItem::PaintItem(const PaintItem *other)
 	: mParent(0), mInvalidated(true), mPaintLevel(other->mPaintLevel),
 	  mActive(true), mHidden(false), mSelected(false), mShowSlaveState(false), 
 	  mHideUnselectedElements(false), mUseCosmeticLines(false), mForcedHidden(false),
-	  mIsInHiddenLayer(false), mDOFNormalColor(0), mDOFHighlightColor(0)
+	  mIsInHiddenLayer(false), mDOFNormalColor(0), mDOFHighlightColor(0),
+	  mIncreaseReadability(true)
 {
 
 }
@@ -193,6 +195,9 @@ void PaintItem::setViewMode(int mode, bool state) {
 	}
 	else if(mode == FORCED_HIDDEN) {
 		mForcedHidden = state;
+	}
+	else if(mode == INCREASE_READABILITY) {
+		mIncreaseReadability = state;
 	}
 }
 

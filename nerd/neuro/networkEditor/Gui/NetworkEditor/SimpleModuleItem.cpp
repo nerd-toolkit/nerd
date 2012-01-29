@@ -308,8 +308,21 @@ void SimpleModuleItem::paintSelf(QPainter *painter) {
 		
 		double scale = 1.0;
 		//painter->scale(scale, scale);
-		painter->drawText((pos.x() - 0.0) / scale, (pos.y() + mSize.height()) / scale,
-						 (mSize.width() + 0.0) / scale, 50.0 / scale, 
+		
+		QRectF textRect((pos.x() - 0.0) / scale, (pos.y() + mSize.height()) / scale,
+						 (mSize.width() + 0.0) / scale, 50.0 / scale);
+		
+		if(mIncreaseReadability) {
+			QRectF textBoundingRect = painter->boundingRect(textRect, 
+							Qt::AlignHCenter | Qt::AlignRight, 
+							mModule->getName());
+			painter->fillRect(QRectF(textBoundingRect.x(), textBoundingRect.y() + 2,
+									 textBoundingRect.width(), textBoundingRect.height() - 4), 
+							  QColor(255,255,255,180));
+		}
+		
+		
+		painter->drawText(textRect, 
 						 Qt::AlignHCenter | Qt::AlignRight, mModule->getName());
 		//painter->scale(1.0 / scale, 1.0 / scale);
 		

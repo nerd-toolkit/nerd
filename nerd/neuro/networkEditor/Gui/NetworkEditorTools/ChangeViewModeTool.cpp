@@ -61,25 +61,36 @@ namespace nerd {
  * Constructs a new ChangeViewModeTool.
  */
 ChangeViewModeTool::ChangeViewModeTool(NeuralNetworkEditor *owner, int mode, 
-					const QString &message, Qt::Key pressedKey, bool reverseActivation)
+					const QString &message, Qt::Key pressedKey, bool reverseActivation,
+					bool initiallySelect)
 	: QObject(owner), mOwner(owner), mModeActive(false), mMode(mode), mStatusMessage(message),
 	  mPressedKey(pressedKey), mReverseActivation(reverseActivation), mMenuAction(0),
 	  mKeyPressed(false)
 {	
 	if(mOwner != 0) {
-		connect(mOwner, SIGNAL(tabSelectionChanged(int)),
-				this, SLOT(updateKeyListenerRegistration(int)));
-		
 		QMenu *viewMenu = mOwner->getViewModeMenu();
-		if(viewMenu != 0) {
-			mMenuAction = viewMenu->addAction(message + " (" 
-							+ QKeySequence(Qt::SHIFT + pressedKey).toString() + ")");
-			mMenuAction->setCheckable(true);
-			connect(mMenuAction, SIGNAL(triggered(bool)),
-					this, SLOT(menuActionTriggered(bool)));
+		if(mode == MENU_SEPARATOR) {
+			if(viewMenu != 0) {
+				viewMenu->addSeparator();
+			}
+		}
+		else {
+			connect(mOwner, SIGNAL(tabSelectionChanged(int)),
+					this, SLOT(updateKeyListenerRegistration(int)));
+			
+			if(viewMenu != 0) {
+					mMenuAction = viewMenu->addAction(message + " (" 
+									+ QKeySequence(Qt::SHIFT + pressedKey).toString() + ")");
+					mMenuAction->setCheckable(true);
+					if(initiallySelect) {
+						mMenuAction->setChecked(true);
+					}
+					connect(mMenuAction, SIGNAL(triggered(bool)),
+							this, SLOT(menuActionTriggered(bool)));
+			}
+			updateKeyListenerRegistration(0);
 		}
 	}
-	updateKeyListenerRegistration(0);
 }
 
 
