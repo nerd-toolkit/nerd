@@ -211,9 +211,19 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	mDiagramModeCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isInDiagramMode());
 	diagramLayout->addWidget(mDiagramModeCheckBox);
 	
-	mShowDiagramLinesCheckBox = new QCheckBox("Show Diagram Lines", diagramTab);
-	mShowDiagramLinesCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isShowingDiagramLines());
-	diagramLayout->addWidget(mShowDiagramLinesCheckBox);
+	QLabel *dashPatternLabel = new QLabel("Line");
+	mDiagramLineDashPattern = new QLineEdit("1,5", diagramTab);
+	mDiagramLineDashPattern->setToolTip("The dash pattern used for the interval lines in the diagram.");
+	mDiagramLineWidthEdit = new QLineEdit("0", diagramTab);
+	mDiagramLineWidthEdit->setToolTip("The line width. A 0 means cosmetic (always 1).");
+	QHBoxLayout *dashPatternLayout = new QHBoxLayout();
+	dashPatternLayout->addWidget(dashPatternLabel);
+	dashPatternLayout->addWidget(mDiagramLineDashPattern);
+	dashPatternLayout->addWidget(mDiagramLineWidthEdit);
+	diagramLayout->addLayout(dashPatternLayout);
+// 	mShowDiagramLinesCheckBox = new QCheckBox("Show Diagram Lines", diagramTab);
+// 	mShowDiagramLinesCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isShowingDiagramLines());
+// 	diagramLayout->addWidget(mShowDiagramLinesCheckBox);
 	
 	QLabel *tickLabel = new QLabel("Ticks");
 	mDiagramMajorTickIntervalEdit = new QLineEdit("");
@@ -349,8 +359,12 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 			this, SLOT(tickIntervalEditChanged()));
 	connect(mDiagramMinorTickIntervalEdit, SIGNAL(returnPressed()),
 			this, SLOT(tickIntervalEditChanged()));
-	connect(mShowDiagramLinesCheckBox, SIGNAL(toggled(bool)),
-			this, SLOT(showDiagramLinesCheckBoxChanged(bool)));
+// 	connect(mShowDiagramLinesCheckBox, SIGNAL(toggled(bool)),
+// 			this, SLOT(showDiagramLinesCheckBoxChanged(bool)));
+	connect(mDiagramLineDashPattern, SIGNAL(returnPressed()),
+			this, SLOT(diagramLineDashPatternEditChanged()));
+	connect(mDiagramLineWidthEdit, SIGNAL(returnPressed()),
+			this, SLOT(diagramLineWidthEditChanged()));
 	connect(mDiagramShiftEdit, SIGNAL(returnPressed()),
 			this, SLOT(diagramShiftEditChanged()));
 
@@ -365,6 +379,10 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 			this, SLOT(dialogSizeChanged()));
 
 	generalLayout->addStretch(100);
+	
+	//trigger an update of the dash pattern and line width.
+	diagramLineDashPatternEditChanged();
+	diagramLineWidthEditChanged();
 
 	resize(542, 200);
 
@@ -635,8 +653,40 @@ void ValuePlotterWidget::diagramModeCheckBoxChanged(bool checked) {
 	mValuePlotter->getPlotterWidget()->enableDiagramMode(mDiagramModeCheckBox->isChecked());
 }
 
-void ValuePlotterWidget::showDiagramLinesCheckBoxChanged(bool checked) {
-	mValuePlotter->getPlotterWidget()->showDiagramLines(mShowDiagramLinesCheckBox->isChecked());
+// void ValuePlotterWidget::showDiagramLinesCheckBoxChanged(bool checked) {
+// 	mValuePlotter->getPlotterWidget()->showDiagramLines(mShowDiagramLinesCheckBox->isChecked());
+// }
+
+void ValuePlotterWidget::diagramLineDashPatternEditChanged() {
+	QVector<qreal> dashPattern;
+	QStringList dashPatternParts = mDiagramLineDashPattern->text().split(",");
+	if(dashPatternParts.size() != 0 && dashPatternParts.size() % 2 == 0) {
+		bool ok = true;
+		for(int i = 0; i < dashPatternParts.size(); ++i) {
+			qreal val = dashPatternParts.at(i).toFloat(&ok);
+			if(!ok) {
+				dashPattern = QVector<qreal>();
+				break;
+			}
+			dashPattern << val;
+		}
+	}
+	mValuePlotter->getPlotterWidget()->setDiagramLineDashPattern(dashPattern);
+}
+
+void ValuePlotterWidget::diagramLineWidthEditChanged() {
+	bool ok = true;
+	double lineWidth = mDiagramLineWidthEdit->text().toDouble(&ok);
+	if(ok) {
+		if(lineWidth != 0) {
+			double newLineWidth = Math::max(lineWidth, 0.1);
+			if(lineWidth != newLineWidth) {
+				mDiagramLineWidthEdit->setText(QString::number(newLineWidth));
+				lineWidth = newLineWidth;
+			}
+		}
+		mValuePlotter->getPlotterWidget()->setLineWidth(lineWidth);
+	}
 }
 
 void ValuePlotterWidget::saveDiagramToSvg() {

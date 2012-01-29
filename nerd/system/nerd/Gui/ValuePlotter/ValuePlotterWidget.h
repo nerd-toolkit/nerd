@@ -102,7 +102,9 @@ namespace nerd {
 		void showLegendCheckBoxChanged(bool checked);
 		void useOpaqueLegendCheckBoxChanged(bool checked);
 		void diagramModeCheckBoxChanged(bool checked);
-		void showDiagramLinesCheckBoxChanged(bool checked);
+		//void showDiagramLinesCheckBoxChanged(bool checked);
+		void diagramLineDashPatternEditChanged();
+		void diagramLineWidthEditChanged();
 		void saveDiagramToSvg();
 		void legendOffsetEditChanged();
 		void tickIntervalEditChanged();
@@ -133,7 +135,9 @@ namespace nerd {
 		QCheckBox *mShowLegendCheckBox;
 		QCheckBox *mUseOpaqueLegendCheckBox;
 		QCheckBox *mDiagramModeCheckBox;
-		QCheckBox *mShowDiagramLinesCheckBox;
+		//QCheckBox *mShowDiagramLinesCheckBox;
+		QLineEdit *mDiagramLineDashPattern;
+		QLineEdit *mDiagramLineWidthEdit;
 		QLineEdit *mLegendBoxOverRideEdit;
 		QLineEdit *mDiagramMajorTickIntervalEdit;
 		QLineEdit *mDiagramMinorTickIntervalEdit;

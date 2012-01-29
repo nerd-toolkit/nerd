@@ -69,7 +69,8 @@ namespace nerd {
 PlotterWidget::PlotterWidget(QWidget *parent)
 	: QFrame(parent), mHistorySize(0), mPlotStaticItems(true), mPlotLegend(true), 
 	  mPlotSolidLegend(false), mPerformanceMode(0), mMajorTickInterval(250), mMinorTickInterval(10),
-	  mHorizontalOffset(0.0),  mDiagramMode(false), mShowDiagramLines(true), mDiagramShift(0.0)
+	  mHorizontalOffset(0.0),  mDiagramMode(false), mShowDiagramLines(true), mDiagramShift(0.0),
+	  mLineWidth(0)
 {
 	moveToThread(QCoreApplication::instance()->thread());
 
@@ -397,6 +398,27 @@ double PlotterWidget::getDiagramShift() const {
 }
 
 
+void PlotterWidget::setDiagramLineDashPattern(const QVector<qreal> &dashPattern) {
+	mDiagramLineDashPattern = dashPattern;
+}
+
+
+QVector<qreal> PlotterWidget::getDiagramLineDashPattern() const {
+	return mDiagramLineDashPattern;
+}
+
+
+void PlotterWidget::setLineWidth(double lineWidth) {
+	mLineWidth = lineWidth;
+}
+
+
+double PlotterWidget::getLineWidth() const {
+	return mLineWidth;
+}
+
+		
+
 /**
  * Removes and destroys all currently available PlotterItems.
  */
@@ -460,8 +482,12 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 	//Draw the raster of the diagram.
 	double scale = mDrawableHeight / 2.0;
 	int w = (int) mDrawableWidth + mHorizontalOffset + 3;
-
-	painter.setPen(Qt::lightGray);
+	
+	QPen solidLinePen(Qt::lightGray, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	QPen dashedPen(Qt::lightGray, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	dashedPen.setDashPattern(mDiagramLineDashPattern);
+	
+	painter.setPen(solidLinePen);
 	painter.drawLine(lineWidth() + mHorizontalOffset, 9, w, 9);
 	painter.drawLine(lineWidth() + mHorizontalOffset, (int) (2 * scale) + 10, 
 					 w, (int) (2 * scale) + 10 );
@@ -477,6 +503,8 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 	}
 	
 	if(mShowDiagramLines) {
+		painter.setPen(dashedPen);
+		
 		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (scale) + 10, 
 						w, (int) (1 * scale) + 10);
 		
@@ -484,6 +512,8 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 						w, (int) (0.5 * scale) + 10);
 		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (1.5 * scale) + 10, 
 						w, (int) (1.5 * scale) + 10);
+		
+		painter.setPen(solidLinePen);
 	}
 	
 	
@@ -493,12 +523,19 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 		if((i % mMajorTickInterval) == 0) {
 			if(mShowDiagramLines) {
 				if(mDiagramMode) {
+					painter.setPen(dashedPen);
 					painter.drawLine(lineWidth() + (i * tickScaling) + mHorizontalOffset, 9, 
+								lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 10);
+					
+					painter.setPen(solidLinePen);
+					painter.drawLine(lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 10, 
 								lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 20);
 				}
 				else {
+					painter.setPen(dashedPen);
 					painter.drawLine(lineWidth() + (i * tickScaling) + mHorizontalOffset, 9, 
 								lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 10);
+					painter.setPen(solidLinePen);
 				}
 			}
 			else {
@@ -507,6 +544,7 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 			}
 		}
 		else if((i % (mMajorTickInterval / mMinorTickInterval)) == 0 && mDiagramMode) {
+			painter.setPen(solidLinePen);
 			painter.drawLine(lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 15, 
 							 lineWidth() + (i * tickScaling) + mHorizontalOffset, mDrawableHeight + 10);
 		}
@@ -547,7 +585,8 @@ void PlotterWidget::drawHistoryGraphs(QPainter &painter) {
 			
 			QPen oldPen = painter.pen();
 			
-			QPen pen = item->getColor();
+			//QPen pen = item->getColor();
+			QPen pen(item->getColor(), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 			pen.setDashPattern(item->getDashPattern());
 			painter.setPen(pen);
 
@@ -611,7 +650,8 @@ void PlotterWidget::drawCoordinateRanges(QPainter &painter) {
 
 	double scale = mDrawableHeight / 2.0;
 
-	painter.setPen(Qt::black);
+	QPen pen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	painter.setPen(pen);
 
 	QString upperRange = QString::number((1.0 / mUserScaleV) + mUserOffsetV);
 	QString midRange = QString::number(mUserOffsetV);
@@ -662,6 +702,8 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 	double boxOffsetX = mLegendBoxOverride.x();
 	double boxOffsetY = mLegendBoxOverride.y();
 	
+	QPen blackPen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	
 	double horizontalOffset = 0.0;
 	if(mDiagramMode) {
 		horizontalOffset = mHorizontalOffset;
@@ -684,7 +726,7 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 							 boxWidth, 
 							 boxHeight, 
 							 QColor(255,255,255,255));
-			painter.setPen(QColor(0,0,0,255));
+			painter.setPen(blackPen);
 			painter.drawRect(10 + horizontalOffset + boxOffsetX, 
 							 15 + boxOffsetY, 
 							 boxWidth, 
@@ -700,9 +742,14 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 			continue;
 		}
 		
-		QPen pen(item->getColor());
-		pen.setDashPattern(item->getDashPattern());
-		painter.setPen(pen);
+		QPen linePen(item->getColor(), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+		QPen textPen(item->getColor(), mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+		linePen.setDashPattern(item->getDashPattern());
+		painter.setPen(linePen);
+			
+// 		QPen pen(item->getColor());
+// 		pen.setDashPattern(item->getDashPattern());
+// 		painter.setPen(pen);
 		
 		int yPos = 26 + (15 * row) + 5;
 		painter.drawLine(13 + horizontalOffset + boxOffsetX, 
@@ -710,7 +757,7 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 						 45 + horizontalOffset + boxOffsetX, 
 						 yPos - 5 + boxOffsetY);
 
-		painter.setPen(item->getColor());
+		painter.setPen(textPen);
 		QString name = item->getName();
 		int maxSize = name.count();
 		if(maxSize > mMaxValueNameSize) {

@@ -105,6 +105,10 @@ namespace nerd {
 		QRectF getLegendBoxOverride() const;
 		void setDiagramShift(double shift);
 		double getDiagramShift() const;
+		void setDiagramLineDashPattern(const QVector<qreal> &dashPattern);
+		QVector<qreal> getDiagramLineDashPattern() const;
+		void setLineWidth(double lineWidth);
+		double getLineWidth() const;
 
 	public slots:
 		void updateHistories();
@@ -150,6 +154,8 @@ namespace nerd {
 		bool mShowDiagramLines;
 		QRectF mLegendBoxOverride;
 		double mDiagramShift;
+		QVector<qreal> mDiagramLineDashPattern;
+		double mLineWidth;
 		
 	};
 
