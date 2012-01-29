@@ -461,8 +461,11 @@ void PlotterWidget::paintEvent(QPaintEvent *event) {
 		mHorizontalOffset = 0.0;
 	}
 
+	//TODO: brak drawCoordinateSystem down to two separate methods (inner lines, outer frame).
+	//Then draw histroy graphs from here again.
+
 	drawCoordinateSystem(p);
-	drawHistoryGraphs(p);
+	//drawHistoryGraphs(p);
 	drawCoordinateRanges(p);
 
 	if(mPlotLegend) {
@@ -481,11 +484,28 @@ void PlotterWidget::paintEvent(QPaintEvent *event) {
 void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 	//Draw the raster of the diagram.
 	double scale = mDrawableHeight / 2.0;
-	int w = (int) mDrawableWidth + mHorizontalOffset + 3;
+	int w = (int) mDrawableWidth + mHorizontalOffset + (3 * mLineWidth);
 	
 	QPen solidLinePen(Qt::lightGray, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 	QPen dashedPen(Qt::lightGray, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 	dashedPen.setDashPattern(mDiagramLineDashPattern);
+	
+	if(mShowDiagramLines) {
+		painter.setPen(dashedPen);
+		
+		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (scale) + 10, 
+						w, (int) (1 * scale) + 10);
+		
+		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (0.5 * scale) + 10, 
+						w, (int) (0.5 * scale) + 10);
+		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (1.5 * scale) + 10, 
+						w, (int) (1.5 * scale) + 10);
+		
+		painter.setPen(solidLinePen);
+	}
+	
+	//draw history graphs before frame so that the frame is on top.
+	drawHistoryGraphs(painter);
 	
 	painter.setPen(solidLinePen);
 	painter.drawLine(lineWidth() + mHorizontalOffset, 9, w, 9);
@@ -500,20 +520,6 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 	else {
 		painter.drawLine(w, 9, 
 						w, (int) (2 * scale) + 10);
-	}
-	
-	if(mShowDiagramLines) {
-		painter.setPen(dashedPen);
-		
-		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (scale) + 10, 
-						w, (int) (1 * scale) + 10);
-		
-		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (0.5 * scale) + 10, 
-						w, (int) (0.5 * scale) + 10);
-		painter.drawLine(lineWidth() + mHorizontalOffset, (int) (1.5 * scale) + 10, 
-						w, (int) (1.5 * scale) + 10);
-		
-		painter.setPen(solidLinePen);
 	}
 	
 	
