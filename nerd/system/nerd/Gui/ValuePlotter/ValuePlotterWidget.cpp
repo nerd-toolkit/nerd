@@ -57,7 +57,7 @@
 #include <QCoreApplication>
 #include "Math/Math.h"
 #include <QLabel>
-
+#include "Value/ColorValue.h"
 
 using namespace std;
 
@@ -214,13 +214,19 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	QLabel *dashPatternLabel = new QLabel("Line");
 	mDiagramLineDashPattern = new QLineEdit("1,5", diagramTab);
 	mDiagramLineDashPattern->setToolTip("The dash pattern used for the interval lines in the diagram.");
+	mDiagramLineDashPattern->setFixedWidth(40);
 	mDiagramLineWidthEdit = new QLineEdit("0", diagramTab);
 	mDiagramLineWidthEdit->setToolTip("The line width. A 0 means cosmetic (always 1).");
+	mDiagramLineWidthEdit->setFixedWidth(25);
+	mDiagramLineColorEdit = new QLineEdit("black", diagramTab);
+	mDiagramLineColorEdit->setToolTip("The color of the diagram lines.");
 	QHBoxLayout *dashPatternLayout = new QHBoxLayout();
 	dashPatternLayout->addWidget(dashPatternLabel);
-	dashPatternLayout->addWidget(mDiagramLineDashPattern);
 	dashPatternLayout->addWidget(mDiagramLineWidthEdit);
+	dashPatternLayout->addWidget(mDiagramLineDashPattern);
+	dashPatternLayout->addWidget(mDiagramLineColorEdit);
 	diagramLayout->addLayout(dashPatternLayout);
+	
 // 	mShowDiagramLinesCheckBox = new QCheckBox("Show Diagram Lines", diagramTab);
 // 	mShowDiagramLinesCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isShowingDiagramLines());
 // 	diagramLayout->addWidget(mShowDiagramLinesCheckBox);
@@ -367,6 +373,8 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 			this, SLOT(diagramLineWidthEditChanged()));
 	connect(mDiagramShiftEdit, SIGNAL(returnPressed()),
 			this, SLOT(diagramShiftEditChanged()));
+	connect(mDiagramLineColorEdit, SIGNAL(returnPressed()),
+			this, SLOT(diagramLineColorEditChanged()));
 
 	connect(mUpdateEventSelector, SIGNAL(activated(int)), 
 			this, SLOT(triggerEventSelected(int)));
@@ -383,6 +391,7 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	//trigger an update of the dash pattern and line width.
 	diagramLineDashPatternEditChanged();
 	diagramLineWidthEditChanged();
+	diagramLineColorEditChanged();
 
 	resize(542, 200);
 
@@ -687,6 +696,12 @@ void ValuePlotterWidget::diagramLineWidthEditChanged() {
 		}
 		mValuePlotter->getPlotterWidget()->setLineWidth(lineWidth);
 	}
+}
+
+void ValuePlotterWidget::diagramLineColorEditChanged() {
+	ColorValue cv(mDiagramLineColorEdit->text());
+	Color c = cv.get();
+	mValuePlotter->getPlotterWidget()->setLineColor(QColor(c.red(), c.green(), c.blue(), c.alpha()));
 }
 
 void ValuePlotterWidget::saveDiagramToSvg() {

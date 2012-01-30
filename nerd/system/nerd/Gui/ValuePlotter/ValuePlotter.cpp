@@ -621,7 +621,7 @@ void ValuePlotter::saveDiagramToSvg() {
 	}
 	
 	getPlotterWidget()->saveDiagramToSvg(svgFile);
-	getPlotterWidget()->saveHistoriesToFile(dataFile);
+	getPlotterWidget()->saveHistoriesToFile(dataFile, false);
 }
 
 

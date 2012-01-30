@@ -70,7 +70,7 @@ PlotterWidget::PlotterWidget(QWidget *parent)
 	: QFrame(parent), mHistorySize(0), mPlotStaticItems(true), mPlotLegend(true), 
 	  mPlotSolidLegend(false), mPerformanceMode(0), mMajorTickInterval(250), mMinorTickInterval(10),
 	  mHorizontalOffset(0.0),  mDiagramMode(false), mShowDiagramLines(true), mDiagramShift(0.0),
-	  mLineWidth(0)
+	  mLineWidth(0), mLineColor(Qt::black)
 {
 	moveToThread(QCoreApplication::instance()->thread());
 
@@ -236,7 +236,7 @@ void PlotterWidget::setUserOffsetV(double offset) {
  * @param fileName the name of the file to write the histories to.
  * @return true if successful, otherwise false.
  */
-bool PlotterWidget::saveHistoriesToFile(const QString &fileName) {
+bool PlotterWidget::saveHistoriesToFile(const QString &fileName, bool ignoreStaticData) {
 
 	QFile file(fileName);
 
@@ -256,7 +256,7 @@ bool PlotterWidget::saveHistoriesToFile(const QString &fileName) {
 	//Add the names of the PlotterItems.
 	for(int i = 0; i < mPlotterItems.size(); ++i) {
 		PlotterItem *item = mPlotterItems.at(i);
-		if(item->hasStaticHistory() || !item->isVisible()) {
+		if((ignoreStaticData && item->hasStaticHistory()) || !item->isVisible()) {
 			continue;
 		}
 		output << "# " << item->getName() << endl;
@@ -307,7 +307,7 @@ void PlotterWidget::saveDiagramToSvg(const QString &fileName) {
 	}
 
 	drawCoordinateSystem(p);
-	drawHistoryGraphs(p);
+	//drawHistoryGraphs(p);
 	drawCoordinateRanges(p);
 
 	if(mPlotLegend) {
@@ -417,6 +417,15 @@ double PlotterWidget::getLineWidth() const {
 	return mLineWidth;
 }
 
+void PlotterWidget::setLineColor(const QColor &color) {
+	mLineColor = color;
+}
+
+
+QColor PlotterWidget::getLineColor() const {
+	return mLineColor;
+}
+		
 		
 
 /**
@@ -486,8 +495,8 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 	double scale = mDrawableHeight / 2.0;
 	int w = (int) mDrawableWidth + mHorizontalOffset + (3 * mLineWidth);
 	
-	QPen solidLinePen(Qt::lightGray, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-	QPen dashedPen(Qt::lightGray, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	QPen solidLinePen(Qt::black, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+	QPen dashedPen(mLineColor, mLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 	dashedPen.setDashPattern(mDiagramLineDashPattern);
 	
 	if(mShowDiagramLines) {
@@ -504,13 +513,19 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 		painter.setPen(solidLinePen);
 	}
 	
-	//draw history graphs before frame so that the frame is on top.
-	drawHistoryGraphs(painter);
-	
 	painter.setPen(solidLinePen);
 	painter.drawLine(lineWidth() + mHorizontalOffset, 9, w, 9);
 	painter.drawLine(lineWidth() + mHorizontalOffset, (int) (2 * scale) + 10, 
 					 w, (int) (2 * scale) + 10 );
+	
+	//TODO try to ensure that the lines plot over the graphs (except of the lower line)
+	//draw history graphs before frame so that the frame is on top.
+	drawHistoryGraphs(painter);
+	
+	painter.setPen(solidLinePen);
+// 	painter.drawLine(lineWidth() + mHorizontalOffset, 9, w, 9);
+// 	painter.drawLine(lineWidth() + mHorizontalOffset, (int) (2 * scale) + 10, 
+// 					 w, (int) (2 * scale) + 10 );
 	painter.drawLine(lineWidth() + mHorizontalOffset, 9, 
 					 lineWidth() + mHorizontalOffset, (int) (2 * scale) + 10);
 	if(mDiagramMode) {

@@ -83,7 +83,7 @@ namespace nerd {
 		double getUserOffsetV() const;
 		void setUserOffsetV(double offset);
 
-		bool saveHistoriesToFile(const QString &fileName);
+		bool saveHistoriesToFile(const QString &fileName, bool ignoreStaticData = true);
 		void saveDiagramToSvg(const QString &fileName);
 
 		void enableStaticItems(bool enable);
@@ -109,6 +109,8 @@ namespace nerd {
 		QVector<qreal> getDiagramLineDashPattern() const;
 		void setLineWidth(double lineWidth);
 		double getLineWidth() const;
+		void setLineColor(const QColor &color);
+		QColor getLineColor() const;
 
 	public slots:
 		void updateHistories();
@@ -156,6 +158,7 @@ namespace nerd {
 		double mDiagramShift;
 		QVector<qreal> mDiagramLineDashPattern;
 		double mLineWidth;
+		QColor mLineColor;
 		
 	};
 
