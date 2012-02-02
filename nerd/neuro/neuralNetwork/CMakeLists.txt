@@ -80,6 +80,7 @@ set(nerd_neuralNetwork_SRCS
 	PlugIns/NetworkDegreeOfFreedomCalculator.cpp
 	Constraints/RestrictWeightAndBiasRangeConstraint.cpp
 	Constraints/SynchronizeTagsConstraint.cpp
+	TransferFunction/TransferFunctionGauss.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

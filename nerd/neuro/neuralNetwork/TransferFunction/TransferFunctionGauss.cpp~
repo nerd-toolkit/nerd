@@ -41,40 +41,98 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardTransferFunctions.h"
-#include "Network/Neuro.h"
-#include "TransferFunction/TransferFunctionTanh.h"
-#include "TransferFunction/TransferFunctionRamp.h"
-#include "TransferFunction/TransferFunctionASeriesTanh.h"
-#include "TransferFunction/TransferFunctionParameterizedSigmoid.h"
-#include "TransferFunction/TransferFunctionSigmoid.h"
-#include "TransferFunction/TransferFunctionTanh01.h"
-#include "TransferFunction/TransferFunctionMSeriesTanh.h"
-#include "TransferFunction/TransferFunctionGauss.h"
 
+
+#include "TransferFunctionGauss.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include <math.h>
+#include "Math/Math.h"
+
+using namespace std;
 
 namespace nerd {
 
-StandardTransferFunctions::StandardTransferFunctions()
+
+/**
+ * Constructs a new TransferFunctionGauss.
+ */
+TransferFunctionGauss::TransferFunctionGauss(double deviation, double shift)
+	: TransferFunction("Gauss", 0.0, 1.0)
 {
-	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
-	//Tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh());
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh01());
-	nnm->addTransferFunctionPrototype(TransferFunctionASeriesTanh());
-	nnm->addTransferFunctionPrototype(TransferFunctionMSeriesTanh());
-	//Ramp
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-1,1]", -1.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[0,1]", 0.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-u,u]", -1000000.0, 100000.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[n,m]", -1.0, 1.0, true));
-	//Sigmoids
-	nnm->addTransferFunctionPrototype(TransferFunctionSigmoid());
-	nnm->addTransferFunctionPrototype(TransferFunctionParameterizedSigmoid(5.0, 10.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionGauss());
-	
+	mDeviation = new DoubleValue(deviation);
+	mShift = new DoubleValue(shift);
+
+	addParameter("Deviation", mDeviation);
+	addParameter("Shift", mShift);
 }
 
+
+/**
+ * Copy constructor. 
+ * 
+ * @param other the TransferFunctionGauss object to copy.
+ */
+TransferFunctionGauss::TransferFunctionGauss(
+			const TransferFunctionGauss &other) 
+	: Object(), ValueChangedListener(), TransferFunction(other)
+{
+	mDeviation = dynamic_cast<DoubleValue*>(getParameter("Deviation"));
+	mShift = dynamic_cast<DoubelValue*>(getParameter("Shift"));
 }
+
+/**
+ * Destructor.
+ */
+TransferFunctionGauss::~TransferFunctionGauss() 
+{
+}
+
+
+TransferFunction* TransferFunctionGauss::createCopy() const {
+	return new TransferFunctionGauss(*this);
+}
+
+
+void TransferFunctionGauss::reset(Neuron*) {
+}
+
+
+double TransferFunctionGauss::transferActivation(double activation, Neuron*) {
+	double sigma = mDeviation->get();
+	
+	//avoid division by zero.
+	if(sigma == 0) {
+			return 0.0;
+	}
+	return ((1.0 / (sqrt(2 * Math::PI) * sigma)) 
+			* exp(-1 * ((activation * activation) / (2 * sigma * sigma)))) - mShift->get();
+}
+
+bool TransferFunctionGauss::equals(TransferFunction *transferFunction) const {
+	if(TransferFunction::equals(transferFunction) == false) {
+		return false;
+	}
+
+	TransferFunctionGauss *tf = 
+			dynamic_cast<TransferFunctionGauss*>(transferFunction);
+
+	if(tf == 0) {
+		return false;
+	}
+	if(tf->mDeviation->get() != mDeviation->get()) {
+		return false;
+	}
+	if(tf->mShift->get() != mShift->get()) {
+		return false;
+	}
+	return true;
+}
+
+
+
+}
+
 
 
