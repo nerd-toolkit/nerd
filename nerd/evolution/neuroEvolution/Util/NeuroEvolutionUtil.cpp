@@ -53,7 +53,14 @@ using namespace std;
 namespace nerd {
 
 
-
+/**
+ * Generates a local evolution setting from a given string. 
+ * The string can be a fixed number, a percentage (ends with %) 
+ * or a global network variable (starts with $).
+ * A percentage term is relative to the setting given with parameter currentSetting.
+ * If allowVars is active, then a global variable may be used (property of the network).
+ * If the settingString could not be interpreted, then the returned value is the currentSetting.
+ */
 double NeuroEvolutionUtil::getLocalNetworkSetting(const QString &settingString, 
 				double currentSetting, ModularNeuralNetwork *network, bool *ok, bool allowVars)
 {

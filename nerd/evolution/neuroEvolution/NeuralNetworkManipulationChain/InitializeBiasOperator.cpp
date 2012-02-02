@@ -56,6 +56,8 @@
 #include "Evolution/EvolutionManager.h"
 #include "Math/Math.h"
 #include "EvolutionConstants.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
+#include "Util/NeuroEvolutionUtil.h"
 
 
 using namespace std;
@@ -97,7 +99,7 @@ NeuralNetworkManipulationOperator* InitializeBiasOperator::createCopy() const
 
 bool InitializeBiasOperator::applyOperator(Individual *individual, CommandExecutor*) {
 
-	NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(individual->getGenome());
+	ModularNeuralNetwork *net = dynamic_cast<ModularNeuralNetwork*>(individual->getGenome());
 
 	if(net == 0) {
 		Core::log("InitializeBiasOperator: Could not apply operator because individual did not "
@@ -149,7 +151,6 @@ bool InitializeBiasOperator::applyOperator(Individual *individual, CommandExecut
 	double initProbability = 0.0; //mInitializationProbability->get();
 	double min = mMinimumBias->get();
 	double max = Math::max(mMaximumBias->get(), min);
-	double range = max - min;
 	
 
 	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
@@ -162,14 +163,58 @@ bool InitializeBiasOperator::applyOperator(Individual *individual, CommandExecut
 		{
 			continue;
 		}
+		
+		double minBias = min;
+		double maxBias = max;
+		
+		//check if there are local overwrites for min and max.
+		{
+			QString minString = neuron->getProperty(
+						NeuralNetworkConstants::TAG_NEURON_MIN_BIAS);
+
+			bool ok = true;
+			minBias = NeuroEvolutionUtil::getLocalNetworkSetting(minString, 
+							minBias, net, &ok);
+			if(!ok) {
+				Core::log("InitializeBiasOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_NEURON_MIN_BIAS
+					+ "] with content [" + minString + "]", true);
+			}
+		}
+		{
+			QString maxString = neuron->getProperty(
+						NeuralNetworkConstants::TAG_NEURON_MAX_BIAS);
+
+			bool ok = true;
+			maxBias = NeuroEvolutionUtil::getLocalNetworkSetting(maxString, 
+							maxBias, net, &ok);
+			if(!ok) {
+				Core::log("InitializeBiasOperator: Could not interpret "
+					" tag [" + NeuralNetworkConstants::TAG_NEURON_MAX_BIAS
+					+ "] with content [" + maxString + "]", true);
+			}
+		}
+		
+		if(maxBias < minBias) {
+			
+			Core::log("InitializeBiasOperator: Inconsistent range found for neuron ["
+					+ QString::number(neuron->getId()) + ": "
+					+ "[" + QString::number(minBias) + "," + QString::number(maxBias)
+					+ "]. Set to min!", true);
+			
+			maxBias = minBias;
+		}
+		
+		double range = maxBias - minBias;
 
 		//initialize bias
-		double bias = min + (Random::nextDouble() * (range));
+		double bias = minBias + (Random::nextDouble() * (range));
 		neuron->getBiasValue().set(bias);
 
 		//mark as modified.
 		neuron->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
 		neuron->removeProperty(NeuralNetworkConstants::TAG_NEURON_REINIT_BIAS);
+		neuron->removeProperty("AddBias"); //check if this tag is really needed...
 	}
 
 	return true;

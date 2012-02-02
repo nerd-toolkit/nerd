@@ -43,6 +43,7 @@
 
 #include "InitializeSynapsesOperator.h"
 #include "Network/NeuralNetwork.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 #include "Core/Core.h"
 #include "TransferFunction/TransferFunction.h"
 #include "ActivationFunction/ActivationFunction.h"
@@ -53,6 +54,7 @@
 #include "Network/Neuron.h"
 #include <iostream>
 #include <QListIterator>
+#include "Util/NeuroEvolutionUtil.h"
 
 using namespace std;
 
@@ -89,7 +91,7 @@ bool InitializeSynapsesOperator::applyOperator(Individual *individual,
 												CommandExecutor*) 
 {
 
-	NeuralNetwork *net = dynamic_cast<NeuralNetwork*>(individual->getGenome());
+	ModularNeuralNetwork *net = dynamic_cast<ModularNeuralNetwork*>(individual->getGenome());
 
 	if(net == 0) {
 		Core::log("InitializeSynapsesOperator: Could not apply operator because individual did not "
@@ -118,7 +120,42 @@ bool InitializeSynapsesOperator::applyOperator(Individual *individual,
 		{
 			double min = mMinStrength->get();
 			double max = mMaxStrength->get();
+			
+			//check if the neuron strength is forced to a spefic range.
+			{
+				bool ok = true;
+				QString minString = synapse->getProperty(
+							NeuralNetworkConstants::TAG_SYNAPSE_MIN_STRENGTH);
+				
+				min = NeuroEvolutionUtil::getLocalNetworkSetting(minString, 
+								min, net, &ok);
+				if(!ok) {
+					Core::log("InitializeSynapsesOperator: Could not interpret "
+						" tag [" + NeuralNetworkConstants::TAG_SYNAPSE_MIN_STRENGTH
+						+ "] with content [" + minString + "]", true);
+				}
+			}
+			{
+				bool ok = true;
+				QString maxString = synapse->getProperty(
+							NeuralNetworkConstants::TAG_SYNAPSE_MAX_STRENGTH);
+				
+				max = NeuroEvolutionUtil::getLocalNetworkSetting(maxString, 
+								max, net, &ok);
+				if(!ok) {
+					Core::log("InitializeSynapsesOperator: Could not interpret "
+						" tag [" + NeuralNetworkConstants::TAG_SYNAPSE_MAX_STRENGTH
+						+ "] with content [" + maxString + "]", true);
+				}
+			}
+			
+			
 			if(max < min) {
+				Core::log("InitializeSynapsesOperator: Inconsistent range found for synapse ["
+					+ QString::number(synapse->getId()) + ": "
+					+ "[" + QString::number(min) + "," + QString::number(max)
+					+ "]. Set to min!", true);
+				
 				max = min;
 			}
 			double strength = min + (Random::nextDouble() * (max - min));
