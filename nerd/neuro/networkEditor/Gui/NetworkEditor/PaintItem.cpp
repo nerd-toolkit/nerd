@@ -62,7 +62,7 @@ PaintItem::PaintItem(int paintLevel)
 	: mParent(0), mInvalidated(true), mPaintLevel(paintLevel), mActive(true), mHidden(false),
 	  mSelected(false), mShowSlaveState(false), mHideUnselectedElements(false), mUseCosmeticLines(false),
 	  mForcedHidden(false), mIsInHiddenLayer(false), mDOFNormalColor(0), mDOFHighlightColor(0),
-	  mIncreaseReadability(true)
+	  mIncreaseReadability(true), mDrawNamesSolid(true)
 {
 }
 
@@ -72,7 +72,7 @@ PaintItem::PaintItem(const PaintItem *other)
 	  mActive(true), mHidden(false), mSelected(false), mShowSlaveState(false), 
 	  mHideUnselectedElements(false), mUseCosmeticLines(false), mForcedHidden(false),
 	  mIsInHiddenLayer(false), mDOFNormalColor(0), mDOFHighlightColor(0),
-	  mIncreaseReadability(true)
+	  mIncreaseReadability(true), mDrawNamesSolid(true)
 {
 
 }
@@ -198,6 +198,9 @@ void PaintItem::setViewMode(int mode, bool state) {
 	}
 	else if(mode == INCREASE_READABILITY) {
 		mIncreaseReadability = state;
+	}
+	else if(mode == DRAW_NAMES_SOLID) {
+		mDrawNamesSolid = state;
 	}
 }
 

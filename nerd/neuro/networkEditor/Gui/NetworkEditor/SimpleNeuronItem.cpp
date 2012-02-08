@@ -282,9 +282,15 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 							  QColor(255,255,255,180));
 		}
 		
+		if(mDrawNamesSolid) {
+			painter->setPen(QColor(0, 0, 0, 255));
+		}
+		
 		painter->drawText(textRect, 
 				Qt::AlignHCenter | Qt::AlignTop | Qt::TextWordWrap | Qt::TextWrapAnywhere,
 				name);
+		
+		painter->setPen(newPen);
 	}
 
 	if(mShowBiasAsString) {

@@ -321,6 +321,9 @@ void SimpleModuleItem::paintSelf(QPainter *painter) {
 							  QColor(255,255,255,180));
 		}
 		
+		if(mDrawNamesSolid) {
+			painter->setPen(QColor(0, 0, 0, 255));
+		}
 		
 		painter->drawText(textRect, 
 						 Qt::AlignHCenter | Qt::AlignRight, mModule->getName());
