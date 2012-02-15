@@ -61,8 +61,9 @@ namespace nerd {
 PaintItem::PaintItem(int paintLevel)
 	: mParent(0), mInvalidated(true), mPaintLevel(paintLevel), mActive(true), mHidden(false),
 	  mSelected(false), mShowSlaveState(false), mHideUnselectedElements(false), mUseCosmeticLines(false),
-	  mForcedHidden(false), mIsInHiddenLayer(false), mDOFNormalColor(0), mDOFHighlightColor(0),
-	  mIncreaseReadability(true), mDrawNamesSolid(true)
+	  mForcedHidden(false), mIsInHiddenLayer(false), mIncreaseReadability(true), mDrawNamesSolid(true),
+	  mDOFNormalColor(0), mDOFHighlightColor(0), mDOFHighlightWidth(0)
+	  
 {
 }
 
@@ -71,8 +72,9 @@ PaintItem::PaintItem(const PaintItem *other)
 	: mParent(0), mInvalidated(true), mPaintLevel(other->mPaintLevel),
 	  mActive(true), mHidden(false), mSelected(false), mShowSlaveState(false), 
 	  mHideUnselectedElements(false), mUseCosmeticLines(false), mForcedHidden(false),
-	  mIsInHiddenLayer(false), mDOFNormalColor(0), mDOFHighlightColor(0),
-	  mIncreaseReadability(true), mDrawNamesSolid(true)
+	  mIsInHiddenLayer(false), mIncreaseReadability(true), mDrawNamesSolid(true),
+	  mDOFNormalColor(0), mDOFHighlightColor(0), mDOFHighlightWidth(0)
+	  
 {
 
 }
@@ -178,12 +180,14 @@ void PaintItem::updateLayout() {
 
 void PaintItem::setViewMode(int mode, bool state) {
 	if(mode == SHOW_ELEMENT_SLAVE_STATUS) {
-		if(state && (mDOFNormalColor == 0 || mDOFHighlightColor == 0)) {
+		if(state && (mDOFNormalColor == 0 || mDOFHighlightColor == 0 || mDOFHighlightWidth == 0)) {
 			ValueManager *vm = Core::getInstance()->getValueManager();
 			mDOFNormalColor = dynamic_cast<ColorValue*>(
 						vm->getValue(NetworkEditorConstants::VALUE_DOF_MODE_COLOR_NORMAL));
 			mDOFHighlightColor = dynamic_cast<ColorValue*>(
 						vm->getValue(NetworkEditorConstants::VALUE_DOF_MODE_COLOR_HIGHLIGHT));
+			mDOFHighlightWidth = dynamic_cast<IntValue*>(
+						vm->getValue(NetworkEditorConstants::VALUE_DOF_MODE_WIDTH_HIGHLIGHT));
 		}
 		mShowSlaveState = state;
 	}

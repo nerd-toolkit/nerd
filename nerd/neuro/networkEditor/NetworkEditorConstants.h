@@ -62,7 +62,7 @@ namespace nerd {
 	
 	static const QString VALUE_DOF_MODE_COLOR_NORMAL;
 	static const QString VALUE_DOF_MODE_COLOR_HIGHLIGHT;
-	
+	static const QString VALUE_DOF_MODE_WIDTH_HIGHLIGHT;
 	
 	};
 

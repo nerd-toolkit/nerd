@@ -55,6 +55,7 @@ const QString NetworkEditorConstants::VALUE_DOF_MODE_COLOR_NORMAL
 const QString NetworkEditorConstants::VALUE_DOF_MODE_COLOR_HIGHLIGHT
 		= "/NetworkEditor/ViewModes/DOF/HighlightColor";
 
-
+const QString NetworkEditorConstants::VALUE_DOF_MODE_WIDTH_HIGHLIGHT
+		= "/NetworkEditor/ViewModes/DOF/HighlightWidth";
 
 

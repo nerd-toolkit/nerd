@@ -53,6 +53,7 @@
 #include <Qt>
 #include "Core/Properties.h"
 #include "Value/ColorValue.h"
+#include "Value/IntValue.h"
 
 namespace nerd {
 
@@ -130,6 +131,7 @@ namespace nerd {
 		
 		ColorValue *mDOFNormalColor;
 		ColorValue *mDOFHighlightColor;
+		IntValue *mDOFHighlightWidth;
 	};
 
 }

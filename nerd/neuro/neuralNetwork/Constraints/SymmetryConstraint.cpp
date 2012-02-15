@@ -213,9 +213,11 @@ bool SymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
 	updateFlipMode();
 
 	if(mGroup1 == 0) {
-		mErrorMessage = "The owner group was NULL.";
+		mErrorMessage = "The target group was NULL.";
 		return false;
 	}
+	
+	ConstraintManager::markElementAsConstrained(mGroup2, "C");
 
 	
 	int connectionMode = 0;

@@ -141,6 +141,8 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 // 					new ColorValue(100,100,100,150));
 	vm->addValue(NetworkEditorConstants::VALUE_DOF_MODE_COLOR_HIGHLIGHT,
 					new ColorValue(130,130,130,255));
+	vm->addValue(NetworkEditorConstants::VALUE_DOF_MODE_WIDTH_HIGHLIGHT,
+					new IntValue(3));
 	
 
 	connect(&mAutoSaveTimer, SIGNAL(timeout()),

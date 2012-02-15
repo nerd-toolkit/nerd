@@ -193,9 +193,10 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 			}
 		}
 		else {
-			if(mDOFNormalColor != 0) {
+			if(mDOFNormalColor != 0 && mDOFHighlightWidth != 0) {
 				Color c = mDOFNormalColor->get();
 				outlineColor = QColor(c.red(), c.green(), c.blue(), c.alpha());
+				newPen.setWidth(mDOFHighlightWidth->get());
 			}
 		}
 	}
