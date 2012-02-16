@@ -59,7 +59,8 @@ namespace nerd {
 	class AddActivationPlotterAction : public QAction {
 	Q_OBJECT
 	public:
-		AddActivationPlotterAction(const QString &name, NeuralNetworkEditor *editor, int plotMode, 
+		AddActivationPlotterAction(const QString &name, const QString &titleName, 
+								   NeuralNetworkEditor *editor, int plotMode, 
 								   QObject *owner = 0);
 		virtual ~AddActivationPlotterAction();
 
@@ -69,6 +70,7 @@ namespace nerd {
 	private:
 		NeuralNetworkEditor *mEditor;
 		int mPlotMode;
+		QString mTitleName;
 	};
 
 }

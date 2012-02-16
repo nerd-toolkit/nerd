@@ -144,7 +144,7 @@ NeuronActivityPlotter::~NeuronActivityPlotter() {
 		mValuePlotter->invalidateEvents();
 	}
 
-	removeAllNeurons();
+	removeAllNetworkElements();
 
 	if(mEditor != 0) {
 		disconnect(mEditor, SIGNAL(tabSelectionChanged(int)),
@@ -174,10 +174,10 @@ NeuronActivityPlotter::~NeuronActivityPlotter() {
 }
 
 
-void NeuronActivityPlotter::addPlottedNeuron(Neuron *neuron) {
+void NeuronActivityPlotter::addPlottedNetworkElement(NeuralNetworkElement *element) {
 	TRACE("NeuronActivityPlotter::addPlottedNeuron()");
 
-	if(mEditor == 0 || neuron == 0 || mNetworksReplacedEvent == 0 
+	if(mEditor == 0 || element == 0 || mNetworksReplacedEvent == 0 
 		|| mNetworksModifiedEvent == 0 || mShutDownEvent == 0) 
 	{
 		return;
@@ -185,31 +185,42 @@ void NeuronActivityPlotter::addPlottedNeuron(Neuron *neuron) {
 
 	NetworkVisualization *visu = mEditor->getCurrentNetworkVisualization();
 	if(visu == 0) {
-		removeAllNeurons();
+		removeAllNetworkElements();
 		return;
 	}
 
 	NeuralNetwork *net = visu->getNeuralNetwork();
 	if(net == 0) {
-		removeAllNeurons();
+		removeAllNetworkElements();
+		return;
+	}
+	
+	QList<NeuralNetworkElement*> availableElements;
+	net->getNetworkElements(availableElements);
+	if(!availableElements.contains(element)) {
 		return;
 	}
 
 	DoubleValue *valueToPlot = 0;
-	if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION) {
-		valueToPlot = &neuron->getActivationValue();
-	}
-	else {
-		valueToPlot = &neuron->getOutputActivationValue();
+	QString name = "";
+	if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION ||
+		mPlotMode == NeuronActivityPlotter::PLOT_NEURON_OUTPUT)
+	{
+		Neuron *neuron = dynamic_cast<Neuron*>(element);
+		if(neuron != 0) {
+			if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION) {
+				valueToPlot = &neuron->getActivationValue();
+			}
+			else {
+				valueToPlot = &neuron->getOutputActivationValue();
+			}
+			name = neuron->getNameValue().get();
+		}
 	}
 
-	if(!net->getNeurons().contains(neuron)) {
-		return;
-	}
-
-	if(!mPlottedNeurons.contains(neuron)) {
-		getValuePlotter()->addValue(neuron->getNameValue().get(), valueToPlot);
-		mPlottedNeurons.append(neuron);
+	if(!mPlottedNetworkElements.contains(element)) {
+		getValuePlotter()->addValue(name, valueToPlot);
+		mPlottedNetworkElements.append(element);
 	}
 }
 
@@ -226,13 +237,13 @@ void NeuronActivityPlotter::eventOccured(Event *event) {
 		return;
 	}
 	else if(event == mNetworksReplacedEvent) {
-		removeAllNeurons();
+		removeAllNetworkElements();
 	}
 	else if(event == mNetworksModifiedEvent) {
 		neuralNetworkModified(0);
 	}
 	else if(event == mShutDownEvent) {
-		removeAllNeurons();
+		removeAllNetworkElements();
 	}
 }
 
@@ -240,7 +251,7 @@ void NeuronActivityPlotter::eventOccured(Event *event) {
 void NeuronActivityPlotter::currentTabChanged(int) {
 	TRACE("NeuronActivityPlotter::currentTabChanged()");
 
-	removeAllNeurons();
+	removeAllNetworkElements();
 	
 	if(mEditor == 0) {
 		return;
@@ -261,27 +272,32 @@ void NeuronActivityPlotter::neuralNetworkModified(ModularNeuralNetwork*) {
 
 	//check if all neurons are still valid
 	if(mEditor == 0) {
-		removeAllNeurons();
+		removeAllNetworkElements();
 	}
 	NetworkVisualization *visu = mEditor->getCurrentNetworkVisualization();
 	if(visu == 0) {
-		removeAllNeurons();
+		removeAllNetworkElements();
 		return;
 	}
 
 	NeuralNetwork *net = visu->getNeuralNetwork();
 	if(net == 0) {
-		removeAllNeurons();
+		removeAllNetworkElements();
 		return;
 	}	
 
-	QList<Neuron*> neurons = mPlottedNeurons;
-	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
-		Neuron *neuron = i.next();
-		if(!net->getNeurons().contains(neuron)) {
-			getValuePlotter()->removeValue(&neuron->getActivationValue());
-			getValuePlotter()->removeValue(&neuron->getOutputActivationValue());
-			mPlottedNeurons.removeAll(neuron);
+	QList<NeuralNetworkElement*> elements = mPlottedNetworkElements;
+	for(QListIterator<NeuralNetworkElement*> i(elements); i.hasNext();) {
+		NeuralNetworkElement *element = i.next();
+		if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION ||
+			mPlotMode == NeuronActivityPlotter::PLOT_NEURON_OUTPUT)
+		{
+			Neuron *neuron = dynamic_cast<Neuron*>(element);
+			if(neuron != 0 && !net->getNeurons().contains(neuron)) {
+				getValuePlotter()->removeValue(&neuron->getActivationValue());
+				getValuePlotter()->removeValue(&neuron->getOutputActivationValue());
+				mPlottedNetworkElements.removeAll(element);
+			}
 		}
 	}
 }
@@ -289,17 +305,17 @@ void NeuronActivityPlotter::neuralNetworkModified(ModularNeuralNetwork*) {
 void NeuronActivityPlotter::neuralNetworkChanged(ModularNeuralNetwork*) {
 	TRACE("NeuronActivityPlotter::neuralNetworkChanged()");
 
-	removeAllNeurons();
+	removeAllNetworkElements();
 }
 
-void NeuronActivityPlotter::removeAllNeurons() {
-	TRACE("NeuronActivityPlotter::removeAllNeurons()");
+void NeuronActivityPlotter::removeAllNetworkElements() {
+	TRACE("NeuronActivityPlotter::removeAllNetworkElements()");
 
 	QList<Value*> values = getValuePlotter()->getPlottedValues();
 	for(QListIterator<Value*> i(values); i.hasNext();) {
 		getValuePlotter()->removeValue(i.next());
 	}
-	mPlottedNeurons.clear();
+	mPlottedNetworkElements.clear();
 }
 
 
@@ -316,18 +332,23 @@ void NeuronActivityPlotter::addSelectedNeuronsButtonPressed() {
 	
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
-		NeuronItem *item = dynamic_cast<NeuronItem*>(i.next());
+		
+		if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION ||
+			mPlotMode == NeuronActivityPlotter::PLOT_NEURON_OUTPUT)
+		{
+			NeuronItem *item = dynamic_cast<NeuronItem*>(i.next());
 
-		if(item != 0 && !mPlottedNeurons.contains(item->getNeuron())) {
-			Neuron *neuron = item->getNeuron();
-			mPlottedNeurons.append(neuron);
-			if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION) {
-				getValuePlotter()->addValue(neuron->getNameValue().get(), 
-											&neuron->getActivationValue());
-			}
-			else {
-				getValuePlotter()->addValue(neuron->getNameValue().get(),
-											&neuron->getOutputActivationValue());
+			if(item != 0 && !mPlottedNetworkElements.contains(item->getNeuron())) {
+				Neuron *neuron = item->getNeuron();
+				mPlottedNetworkElements.append(neuron);
+				if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION) {
+					getValuePlotter()->addValue(neuron->getNameValue().get(), 
+												&neuron->getActivationValue());
+				}
+				else {
+					getValuePlotter()->addValue(neuron->getNameValue().get(),
+												&neuron->getOutputActivationValue());
+				}
 			}
 		}
 	}
@@ -339,7 +360,7 @@ void NeuronActivityPlotter::addSelectedNeuronsButtonPressed() {
 void NeuronActivityPlotter::removeNeuronsButtonPressed() {
 	TRACE("NeuronActivityPlotter::removeNeuronsButtonPressed()");
 
-	removeAllNeurons();
+	removeAllNetworkElements();
 }
 
 

@@ -66,14 +66,14 @@ namespace nerd {
 	{
 	Q_OBJECT
 	public:
-		enum {PLOT_NEURON_ACTIVATION, PLOT_NEURON_OUTPUT};
+		enum {PLOT_NEURON_ACTIVATION, PLOT_NEURON_OUTPUT, PLOT_PARAMETERS};
 
 	public:
 		NeuronActivityPlotter(const QString &name, int plotMode, NeuralNetworkEditor *editor, 
 							  int activeTab = 0, QWidget *parent = 0);
 		virtual ~NeuronActivityPlotter();
 
-		virtual void addPlottedNeuron(Neuron *neuron);
+		virtual void addPlottedNetworkElement(NeuralNetworkElement *element);
 
 		virtual QString getName() const;
 		virtual void eventOccured(Event *event);
@@ -86,7 +86,7 @@ namespace nerd {
 		void removeNeuronsButtonPressed();
 
 	private:
-		void removeAllNeurons();
+		void removeAllNetworkElements();
 
 	private:
 		NeuralNetworkEditor *mEditor;
@@ -94,7 +94,7 @@ namespace nerd {
 		Event *mShutDownEvent;
 		Event *mNetworksReplacedEvent;
 		Event *mNetworksModifiedEvent;
-		QList<Neuron*> mPlottedNeurons;
+		QList<NeuralNetworkElement*> mPlottedNetworkElements;
 		QPushButton *mAddSelectedButton;
 		QPushButton *mRemoveNeuronsButton;
 		

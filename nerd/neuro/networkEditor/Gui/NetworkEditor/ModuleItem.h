@@ -70,6 +70,7 @@ namespace nerd {
 
 		virtual ModuleItem* createCopy() const = 0;
 
+		virtual NeuralNetworkElement* getNetworkElement() const;
 		virtual bool setModule(NeuroModule *module);
 		NeuroModule* getNeuroModule() const;
 	

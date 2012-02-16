@@ -82,7 +82,7 @@ void FirstReturnMapPlotterWidget::enableConnectedPoints(bool enable) {
 }
 
 
-void FirstReturnMapPlotterWidget::drawCoordinateSystem(QPainter&) {
+void FirstReturnMapPlotterWidget::drawCoordinateSystem(QPainter &painter) {
 	//Draw the raster of the diagram.
 // 	double scale = mDrawableHeight / 2.0;
 // 	int w = (int) mDrawableWidth;
@@ -94,6 +94,7 @@ void FirstReturnMapPlotterWidget::drawCoordinateSystem(QPainter&) {
 // 	painter.drawLine(lineWidth(), (int) (0.5 * scale) + 10, w, (int) (0.5 * scale) + 10);
 // 	painter.drawLine(lineWidth(), (int) (1.5 * scale) + 10, w, (int) (1.5 * scale) + 10);
 
+	drawHistoryGraphs(painter);
 }
 
 /**
@@ -192,6 +193,7 @@ void FirstReturnMapPlotterWidget::drawCoordinateRanges(QPainter&) {
 // 	painter.drawText(9, 13, upperRange);
 // 	painter.drawText(9, 14 + (int) scale, midRange);
 // 	painter.drawText(9, 13 + (int) (2 * scale), lowerRange);
+
 }
 
 

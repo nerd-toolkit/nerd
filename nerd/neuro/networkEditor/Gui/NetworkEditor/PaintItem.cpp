@@ -97,7 +97,9 @@ PaintItem* PaintItem::getParent() {
 	return mParent;
 }
 
-
+NeuralNetworkElement* PaintItem::getNetworkElement() const {
+	return 0;
+}
 
 void PaintItem::invalidate() {
 	mInvalidated = true;

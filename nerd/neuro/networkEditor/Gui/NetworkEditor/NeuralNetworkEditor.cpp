@@ -1607,14 +1607,19 @@ QMenu* NeuralNetworkEditor::addPlotterMenu() {
 	QMenu *plotterMenu = new QMenu("Plotter", mainMenu);
 
 	AddActivationPlotterAction *addOutputPlotterAction = 
-						new AddActivationPlotterAction("Add Output Plotter",
+						new AddActivationPlotterAction("Add Output Plotter", "Output Plotter",
 									this, NeuronActivityPlotter::PLOT_NEURON_OUTPUT, plotterMenu);
 	plotterMenu->addAction(addOutputPlotterAction);
 
 	AddActivationPlotterAction *addActivationPlotterAction = 
-						new AddActivationPlotterAction("Add Activation Plotter",
+						new AddActivationPlotterAction("Add Activation Plotter", "Activation Plotter",
 									this, NeuronActivityPlotter::PLOT_NEURON_ACTIVATION, plotterMenu);
 	plotterMenu->addAction(addActivationPlotterAction);
+	
+	AddActivationPlotterAction *addParameterPlotterAction = 
+						new AddActivationPlotterAction("Add Parameter Plotter", "Parameter Plotter",
+									this, NeuronActivityPlotter::PLOT_NEURON_ACTIVATION, plotterMenu);
+	plotterMenu->addAction(addParameterPlotterAction);
 
 	AddFirstReturnMapPlotterAction *addFirstReturnMapPlotterAction =
 						new AddFirstReturnMapPlotterAction("Add FirstReturnMap Plotter",

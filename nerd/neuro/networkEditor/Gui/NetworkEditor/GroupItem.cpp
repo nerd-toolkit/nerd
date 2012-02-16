@@ -83,6 +83,10 @@ GroupItem::GroupItem(const GroupItem &other)
 GroupItem::~GroupItem() {
 }
 
+NeuralNetworkElement* GroupItem::getNetworkElement() const {
+	return mNeuronGroup;
+}
+
 bool GroupItem::setNeuronGroup(NeuronGroup *group) {
 	mNeuronGroup = group;
 	if(mNeuronGroup != 0) {

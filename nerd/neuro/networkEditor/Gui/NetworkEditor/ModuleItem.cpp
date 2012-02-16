@@ -84,6 +84,11 @@ ModuleItem::ModuleItem(const ModuleItem &other)
 ModuleItem::~ModuleItem() {
 }
 
+
+NeuralNetworkElement* ModuleItem::getNetworkElement() const {
+	return mModule;
+}
+
 bool ModuleItem::setModule(NeuroModule *module) {
 	if(mModule != module) {
 		mMembers.clear();

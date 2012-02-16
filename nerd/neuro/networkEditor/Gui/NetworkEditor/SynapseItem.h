@@ -70,6 +70,7 @@ namespace nerd {
 
 		virtual SynapseItem* createCopy() const = 0;
 
+		virtual NeuralNetworkElement* getNetworkElement() const;
 		virtual bool setSynapse(Synapse *synapse);
 		Synapse* getSynapse() const;
 

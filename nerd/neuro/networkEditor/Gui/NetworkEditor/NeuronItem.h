@@ -69,6 +69,7 @@ namespace nerd {
 
 		virtual NeuronItem* createCopy() const = 0;
 
+		virtual NeuralNetworkElement* getNetworkElement() const;
 		virtual bool setNeuron(Neuron *neuron);
 		virtual Neuron* getNeuron() const;
 

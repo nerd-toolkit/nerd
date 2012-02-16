@@ -46,7 +46,7 @@
 using namespace nerd;
 
 
-const bool NerdConstants::HackMode = false;
+const bool NerdConstants::HackMode = true;
 
 
 //**************************************************************************

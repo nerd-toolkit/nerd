@@ -69,6 +69,7 @@ namespace nerd {
 
 		virtual GroupItem* createCopy() const = 0;
 
+		virtual NeuralNetworkElement* getNetworkElement() const;
 		virtual bool setNeuronGroup(NeuronGroup *group);
 		NeuronGroup* getNeuronGroup() const;
 

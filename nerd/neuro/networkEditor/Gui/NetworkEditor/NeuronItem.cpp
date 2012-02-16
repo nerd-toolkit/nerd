@@ -85,6 +85,9 @@ NeuronItem::~NeuronItem() {
 }
 
 
+NeuralNetworkElement* NeuronItem::getNetworkElement() const {
+	return mNeuron;
+}
 
 bool NeuronItem::setNeuron(Neuron *neuron) {
 	mNeuron = neuron;

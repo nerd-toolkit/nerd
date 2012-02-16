@@ -54,6 +54,7 @@
 #include "Core/Properties.h"
 #include "Value/ColorValue.h"
 #include "Value/IntValue.h"
+#include "Network/NeuralNetworkElement.h"
 
 namespace nerd {
 
@@ -80,6 +81,8 @@ namespace nerd {
 
 		void setParent(PaintItem *parent);
 		PaintItem* getParent();
+		
+		virtual NeuralNetworkElement* getNetworkElement() const;
 
 		virtual void invalidate();
 

@@ -61,8 +61,9 @@ namespace nerd {
  * Constructs a new AddActivationPlotterAction.
  */
 AddActivationPlotterAction::AddActivationPlotterAction(const QString &name, 
-					NeuralNetworkEditor *editor, int plotMode, QObject *owner)
-	: QAction(name, owner), mEditor(editor), mPlotMode(plotMode)
+					const QString &titleName, NeuralNetworkEditor *editor, 
+					int plotMode, QObject *owner)
+	: QAction(name, owner), mEditor(editor), mPlotMode(plotMode), mTitleName(titleName)
 {
 	connect(this, SIGNAL(triggered()),
 			this, SLOT(addPlotter()));
@@ -89,15 +90,15 @@ void AddActivationPlotterAction::addPlotter() {
 		selectedItems = visu->getSelectedItems();
 	}
 
-	NeuronActivityPlotter *plotter = new NeuronActivityPlotter("Plotter", mPlotMode, mEditor, 0, 0);
+	NeuronActivityPlotter *plotter = new NeuronActivityPlotter(mTitleName, mPlotMode, mEditor, 0, 0);
 	//TODO organize destruction.
 
 
 	//fill with selected neurons
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
-		NeuronItem *neuronItem = dynamic_cast<NeuronItem*>(i.next());
-		if(neuronItem != 0) {
-			plotter->addPlottedNeuron(neuronItem->getNeuron());
+		PaintItem *paintItem = dynamic_cast<PaintItem*>(i.next());
+		if(paintItem != 0) {
+			plotter->addPlottedNetworkElement(paintItem->getNetworkElement());
 		}
 	}
 

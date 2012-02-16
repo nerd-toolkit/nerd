@@ -256,6 +256,8 @@ FirstReturnMapPlotter::FirstReturnMapPlotter(const QString &name, int plotMode,
 	generalLayout->addStretch(100);
 
 	resize(400, 200);
+	
+	setTriggerEventName("StepCompleted");
 }
 
 
@@ -477,6 +479,7 @@ void FirstReturnMapPlotter::showLegendCheckBoxChanged(bool) {
 }
 
 void FirstReturnMapPlotter::supportedTriggerEventsChanged() {
+	cerr << "trigger " << endl;
 	mUpdateEventSelector->clear();
 	QMap<Event*, QString> triggerEvents = mValuePlotter->getSupportedUpdateTriggerEvents();
 
@@ -490,6 +493,7 @@ void FirstReturnMapPlotter::supportedTriggerEventsChanged() {
 		if(mValuePlotter->getUpdateTriggerEvent() == i.key()) {
 			mUpdateEventSelector->setCurrentIndex(index);
 		}
+		cerr << "added event " << index << endl;
 		++index;
 	}
 }

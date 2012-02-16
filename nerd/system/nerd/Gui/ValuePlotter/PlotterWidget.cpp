@@ -474,7 +474,7 @@ void PlotterWidget::paintEvent(QPaintEvent *event) {
 	//Then draw histroy graphs from here again.
 
 	drawCoordinateSystem(p);
-	//drawHistoryGraphs(p);
+	//drawHistoryGraphs(p); //Note: this also affects the FirstReturnMap plotter!
 	drawCoordinateRanges(p);
 
 	if(mPlotLegend) {

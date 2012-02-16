@@ -89,6 +89,10 @@ SynapseItem::~SynapseItem() {
 }
 
 
+NeuralNetworkElement* SynapseItem::getNetworkElement() const {
+	return mSynapse;
+}
+
 
 bool SynapseItem::setSynapse(Synapse *synapse) {
 	if(mSynapse != 0) {
