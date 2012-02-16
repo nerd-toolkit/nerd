@@ -50,6 +50,7 @@
 #include <QHash>
 #include "Gui/ValuePlotter/ValuePlotterWidget.h"
 #include "Network/Neuron.h"
+#include "Network/Synapse.h"
 #include "Event/EventListener.h"
 #include "Event/Event.h"
 #include "Gui/NetworkEditor/NeuralNetworkEditor.h"
@@ -66,7 +67,7 @@ namespace nerd {
 	{
 	Q_OBJECT
 	public:
-		enum {PLOT_NEURON_ACTIVATION, PLOT_NEURON_OUTPUT, PLOT_PARAMETERS};
+		enum {PLOT_NEURON_ACTIVATION, PLOT_NEURON_OUTPUT, PLOT_SYNAPSE_WEIGHTS, PLOT_PARAMETERS};
 
 	public:
 		NeuronActivityPlotter(const QString &name, int plotMode, NeuralNetworkEditor *editor, 
@@ -87,6 +88,7 @@ namespace nerd {
 
 	private:
 		void removeAllNetworkElements();
+		QString getSynapseName(Synapse *synapse) const;
 
 	private:
 		NeuralNetworkEditor *mEditor;

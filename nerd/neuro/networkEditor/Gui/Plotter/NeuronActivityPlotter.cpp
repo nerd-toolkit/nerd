@@ -65,6 +65,9 @@
 #include "Network/Neuro.h"
 #include "Network/NeuralNetworkManager.h"
 #include <QMutexLocker>
+#include "Gui/NetworkEditor/SynapseItem.h"
+#include "ActivationFunction/ActivationFunction.h"
+#include "SynapseFunction/SynapseFunction.h"
 
 #define TRACE(message)
 //#define TRACE(message) Tracer _ttt_(message);
@@ -209,14 +212,32 @@ void NeuronActivityPlotter::addPlottedNetworkElement(NeuralNetworkElement *eleme
 		Neuron *neuron = dynamic_cast<Neuron*>(element);
 		if(neuron != 0) {
 			if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION) {
-				valueToPlot = &neuron->getActivationValue();
+				valueToPlot = &(neuron->getActivationValue());
 			}
 			else {
-				valueToPlot = &neuron->getOutputActivationValue();
+				valueToPlot = &(neuron->getOutputActivationValue());
 			}
 			name = neuron->getNameValue().get();
 		}
 	}
+	else if(mPlotMode == PLOT_SYNAPSE_WEIGHTS) {
+		Synapse *synapse = dynamic_cast<Synapse*>(element);
+		if(synapse != 0) {
+			valueToPlot = &(synapse->getStrengthValue());
+			name = getSynapseName(synapse);
+		}
+	}
+// 	else if(mPlotMode == PLOT_PARAMETERS) { //TODO use QList per network element with params.
+// 		Neuron *neuron = dynamic_cast<Neuron*>(element);
+// 		Synapse *synapse = dynamic_cast<Synapse*>(element);
+// 		
+// 		ParameterizedObject *po = 0;
+// 		if(neuron != 0) {
+// 			ActivationFunction *activationFunction = neuron->getActivationFunction();
+// 			po = activationFunction;
+// 			name = neuron->getNameValue().get() + "
+// 		}
+// 	}
 
 	if(!mPlottedNetworkElements.contains(element)) {
 		getValuePlotter()->addValue(name, valueToPlot);
@@ -285,6 +306,11 @@ void NeuronActivityPlotter::neuralNetworkModified(ModularNeuralNetwork*) {
 		removeAllNetworkElements();
 		return;
 	}	
+	
+	QList<Synapse*> synapses;
+	if(mPlotMode == NeuronActivityPlotter::PLOT_SYNAPSE_WEIGHTS) {
+		synapses = net->getSynapses();
+	}
 
 	QList<NeuralNetworkElement*> elements = mPlottedNetworkElements;
 	for(QListIterator<NeuralNetworkElement*> i(elements); i.hasNext();) {
@@ -294,9 +320,16 @@ void NeuronActivityPlotter::neuralNetworkModified(ModularNeuralNetwork*) {
 		{
 			Neuron *neuron = dynamic_cast<Neuron*>(element);
 			if(neuron != 0 && !net->getNeurons().contains(neuron)) {
-				getValuePlotter()->removeValue(&neuron->getActivationValue());
-				getValuePlotter()->removeValue(&neuron->getOutputActivationValue());
+				getValuePlotter()->removeValue(&(neuron->getActivationValue()));
+				getValuePlotter()->removeValue(&(neuron->getOutputActivationValue()));
 				mPlottedNetworkElements.removeAll(element);
+			}
+		}
+		else if(mPlotMode == NeuronActivityPlotter::PLOT_SYNAPSE_WEIGHTS) {
+			Synapse *synapse = dynamic_cast<Synapse*>(element);
+			if(synapse != 0 && !synapses.contains(synapse)) {
+				getValuePlotter()->removeValue(&(synapse->getStrengthValue()));
+				mPlottedNetworkElements.removeAll(synapse);
 			}
 		}
 	}
@@ -316,6 +349,13 @@ void NeuronActivityPlotter::removeAllNetworkElements() {
 		getValuePlotter()->removeValue(i.next());
 	}
 	mPlottedNetworkElements.clear();
+}
+
+QString NeuronActivityPlotter::getSynapseName(Synapse *synapse) const {
+	if(synapse == 0) {
+		return "";
+	}
+	return QString("Synapse ").append(QString::number(synapse->getId()));
 }
 
 
@@ -343,12 +383,21 @@ void NeuronActivityPlotter::addSelectedNeuronsButtonPressed() {
 				mPlottedNetworkElements.append(neuron);
 				if(mPlotMode == NeuronActivityPlotter::PLOT_NEURON_ACTIVATION) {
 					getValuePlotter()->addValue(neuron->getNameValue().get(), 
-												&neuron->getActivationValue());
+												&(neuron->getActivationValue()));
 				}
 				else {
 					getValuePlotter()->addValue(neuron->getNameValue().get(),
-												&neuron->getOutputActivationValue());
+												&(neuron->getOutputActivationValue()));
 				}
+			}
+		}
+		else if(mPlotMode == NeuronActivityPlotter::PLOT_SYNAPSE_WEIGHTS) {
+			SynapseItem *item = dynamic_cast<SynapseItem*>(i.next());
+			if(item != 0 && !mPlottedNetworkElements.contains(item->getSynapse())) {
+				Synapse *synapse = item->getSynapse();
+				
+				mPlottedNetworkElements.append(synapse);
+				getValuePlotter()->addValue(getSynapseName(synapse), &(synapse->getStrengthValue()));
 			}
 		}
 	}

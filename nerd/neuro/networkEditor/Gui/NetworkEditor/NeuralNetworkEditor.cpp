@@ -1607,19 +1607,28 @@ QMenu* NeuralNetworkEditor::addPlotterMenu() {
 	QMenu *plotterMenu = new QMenu("Plotter", mainMenu);
 
 	AddActivationPlotterAction *addOutputPlotterAction = 
-						new AddActivationPlotterAction("Add Output Plotter", "Output Plotter",
+						new AddActivationPlotterAction("Add Output Plotter", "Output",
 									this, NeuronActivityPlotter::PLOT_NEURON_OUTPUT, plotterMenu);
 	plotterMenu->addAction(addOutputPlotterAction);
 
 	AddActivationPlotterAction *addActivationPlotterAction = 
-						new AddActivationPlotterAction("Add Activation Plotter", "Activation Plotter",
+						new AddActivationPlotterAction("Add Activation Plotter", "Activation",
 									this, NeuronActivityPlotter::PLOT_NEURON_ACTIVATION, plotterMenu);
 	plotterMenu->addAction(addActivationPlotterAction);
 	
+	plotterMenu->addSeparator();
+	
+	AddActivationPlotterAction *addWeightPlotterAction = 
+						new AddActivationPlotterAction("Add Weight Plotter", "Weight",
+									this, NeuronActivityPlotter::PLOT_SYNAPSE_WEIGHTS, plotterMenu);
+	plotterMenu->addAction(addWeightPlotterAction);
+	
 	AddActivationPlotterAction *addParameterPlotterAction = 
-						new AddActivationPlotterAction("Add Parameter Plotter", "Parameter Plotter",
+						new AddActivationPlotterAction("Add Parameter Plotter", "Parameter",
 									this, NeuronActivityPlotter::PLOT_NEURON_ACTIVATION, plotterMenu);
 	plotterMenu->addAction(addParameterPlotterAction);
+	
+	plotterMenu->addSeparator();
 
 	AddFirstReturnMapPlotterAction *addFirstReturnMapPlotterAction =
 						new AddFirstReturnMapPlotterAction("Add FirstReturnMap Plotter",
