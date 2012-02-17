@@ -1,3 +1,5 @@
+
+
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
@@ -42,37 +44,27 @@
  ***************************************************************************/
 
 
+#ifndef NERDObservableNetworkElement_H
+#define NERDObservableNetworkElement_H
 
-#ifndef NERDMultiplicativeSynapseFunction_H
-#define NERDMultiplicativeSynapseFunction_H
-
-#include <QString>
+#include "Value/Value.h"
 #include <QHash>
-#include "Value/DoubleValue.h"
-
-#include "SynapseFunction/SynapseFunction.h"
+#include <QString>
 
 namespace nerd {
 
 	/**
-	 * MultiplicativeSynapseFunction.
-	 *
+	 * ObservableNetworkElement
 	 */
-	class MultiplicativeSynapseFunction : public SynapseFunction {
+	class ObservableNetworkElement {
 	public:
-		MultiplicativeSynapseFunction();
-		MultiplicativeSynapseFunction(const MultiplicativeSynapseFunction &other);
-		virtual ~MultiplicativeSynapseFunction();
-
-		virtual SynapseFunction* createCopy() const;
+		virtual bool addObserableOutput(const QString &name, Value *observableOutput);
+		virtual Value* getObservableOutput(const QString &name) const;
+		virtual QList<QString> getObservableOutputNames() const;
+		virtual QList<Value*> getObservableOutputs() const;
 		
-		virtual void reset(Synapse *owner);
-		virtual double calculate(Synapse *owner);
-
-		bool equals(SynapseFunction *synapseFunction) const;
-
 	private:
-		DoubleValue *mEffectiveWeight;
+		QHash<QString, Value*> mObservableOutputs;
 	};
 
 }

@@ -46,6 +46,7 @@
 #define NERDSynapseFunction_H
 
 #include "Network/Synapse.h"
+#include "Network/ObservableNetworkElement.h"
 #include "Core/ParameterizedObject.h"
 
 
@@ -54,7 +55,7 @@ namespace nerd {
 	/**
 	 * SynapseFunction
 	 */
-	class SynapseFunction : public ParameterizedObject {
+	class SynapseFunction : public ParameterizedObject, public ObservableNetworkElement {
 	public:
 		SynapseFunction(const QString &name);
 		SynapseFunction(const SynapseFunction &other);
@@ -67,7 +68,8 @@ namespace nerd {
 
 		bool equals(SynapseFunction *synapseFunction) const;
 		
-	private:		
+	private:
+		
 	};
 
 }

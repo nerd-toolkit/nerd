@@ -47,6 +47,7 @@
 
 
 #include "Core/ParameterizedObject.h"
+#include "Network/ObservableNetworkElement.h"
 
 namespace nerd {
 
@@ -55,7 +56,7 @@ namespace nerd {
 	/**
 	 * ActivationFunction
 	 */
-	class ActivationFunction : public ParameterizedObject {
+	class ActivationFunction : public ParameterizedObject, public virtual ObservableNetworkElement {
 	public:
 		ActivationFunction(const QString &name);
 		ActivationFunction(const ActivationFunction &other);

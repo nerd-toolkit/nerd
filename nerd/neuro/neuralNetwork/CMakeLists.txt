@@ -81,6 +81,7 @@ set(nerd_neuralNetwork_SRCS
 	Constraints/RestrictWeightAndBiasRangeConstraint.cpp
 	Constraints/SynchronizeTagsConstraint.cpp
 	TransferFunction/TransferFunctionGauss.cpp
+	Network/ObservableNetworkElement.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

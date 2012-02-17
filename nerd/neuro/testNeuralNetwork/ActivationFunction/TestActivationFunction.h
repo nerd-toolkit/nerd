@@ -60,6 +60,7 @@ private slots:
 
 	void testAdditiveTimeDiscreteActivationFunction();
 	void testASeriesActivationFunction();
+	void testObservableParameters();
 
 private:
 	

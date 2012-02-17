@@ -1625,7 +1625,7 @@ QMenu* NeuralNetworkEditor::addPlotterMenu() {
 	
 	AddActivationPlotterAction *addParameterPlotterAction = 
 						new AddActivationPlotterAction("Add Parameter Plotter", "Parameter",
-									this, NeuronActivityPlotter::PLOT_NEURON_ACTIVATION, plotterMenu);
+									this, NeuronActivityPlotter::PLOT_PARAMETERS, plotterMenu);
 	plotterMenu->addAction(addParameterPlotterAction);
 	
 	plotterMenu->addSeparator();

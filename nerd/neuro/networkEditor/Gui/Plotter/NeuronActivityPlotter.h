@@ -97,6 +97,7 @@ namespace nerd {
 		Event *mNetworksReplacedEvent;
 		Event *mNetworksModifiedEvent;
 		QList<NeuralNetworkElement*> mPlottedNetworkElements;
+		QHash<NeuralNetworkElement*, QList<Value*> > mPlottedParameters;
 		QPushButton *mAddSelectedButton;
 		QPushButton *mRemoveNeuronsButton;
 		

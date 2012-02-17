@@ -46,12 +46,12 @@
 namespace nerd {
 
 SynapseFunction::SynapseFunction(const QString &name)
-	: ParameterizedObject(name)
+	: ParameterizedObject(name), ObservableNetworkElement()
 {
 }
 
 SynapseFunction::SynapseFunction(const SynapseFunction &other) : Object(), 
-	ValueChangedListener(), ParameterizedObject(other)
+	ValueChangedListener(), ParameterizedObject(other), ObservableNetworkElement()
 {
 }
 

@@ -60,6 +60,8 @@ namespace nerd {
 MultiplicativeSynapseFunction::MultiplicativeSynapseFunction()
 	: SynapseFunction("Multiplicative")
 {
+	mEffectiveWeight = new DoubleValue();
+	addObserableOutput("EffectiveWeight", mEffectiveWeight);
 }
 
 
@@ -69,7 +71,10 @@ MultiplicativeSynapseFunction::MultiplicativeSynapseFunction()
  * @param other the MultiplicativeSynapseFunction object to copy.
  */
 MultiplicativeSynapseFunction::MultiplicativeSynapseFunction(const MultiplicativeSynapseFunction &other)
-	: Object(), ValueChangedListener(), SynapseFunction(other) {
+	: Object(), ValueChangedListener(), SynapseFunction(other) 
+{
+	mEffectiveWeight = new DoubleValue();
+	addObserableOutput("EffectiveWeight", mEffectiveWeight);
 }
 
 /**
@@ -109,6 +114,7 @@ double MultiplicativeSynapseFunction::calculate(Synapse *owner) {
 			strength *= synapse->calculateActivation();
 		}
 	}
+	mEffectiveWeight->set(strength);
 	
 	return strength;
 }

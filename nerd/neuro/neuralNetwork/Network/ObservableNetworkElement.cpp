@@ -41,43 +41,33 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-
-
-#ifndef NERDMultiplicativeSynapseFunction_H
-#define NERDMultiplicativeSynapseFunction_H
-
-#include <QString>
-#include <QHash>
-#include "Value/DoubleValue.h"
-
-#include "SynapseFunction/SynapseFunction.h"
+#include "ObservableNetworkElement.h"
 
 namespace nerd {
 
-	/**
-	 * MultiplicativeSynapseFunction.
-	 *
-	 */
-	class MultiplicativeSynapseFunction : public SynapseFunction {
-	public:
-		MultiplicativeSynapseFunction();
-		MultiplicativeSynapseFunction(const MultiplicativeSynapseFunction &other);
-		virtual ~MultiplicativeSynapseFunction();
-
-		virtual SynapseFunction* createCopy() const;
-		
-		virtual void reset(Synapse *owner);
-		virtual double calculate(Synapse *owner);
-
-		bool equals(SynapseFunction *synapseFunction) const;
-
-	private:
-		DoubleValue *mEffectiveWeight;
-	};
-
+bool ObservableNetworkElement::addObserableOutput(const QString &name, Value *observableOutput) 
+{
+	if(mObservableOutputs.keys().contains(name) || observableOutput == 0) {
+		return false;
+	}
+	mObservableOutputs.insert(name, observableOutput);
+	return true;
 }
 
-#endif
 
+Value* ObservableNetworkElement::getObservableOutput(const QString &name) const {
+	return mObservableOutputs.value(name);
+}
+
+
+QList<QString> ObservableNetworkElement::getObservableOutputNames() const {
+	return mObservableOutputs.keys();
+}
+
+QList<Value*> ObservableNetworkElement::getObservableOutputs() const {
+	return mObservableOutputs.values();
+}
+
+}
 
 
