@@ -41,49 +41,57 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
+
+#ifndef NERDSelfRegulatingNeuronActivationFunction_H
+#define NERDSelfRegulatingNeuronActivationFunction_H
+
+#include <QString>
+#include <QHash>
+#include "ActivationFunction/ActivationFunction.h"
+#include "Value/DoubleValue.h"
+#include "Value/StringValue.h"
+
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	/**
+	 * SelfRegulatingNeuronActivationFunction.
+	 *
+	 */
+	class SelfRegulatingNeuronActivationFunction : public ActivationFunction {
+	public:
+		SelfRegulatingNeuronActivationFunction(const QString &name = "SRN_V1");
+		SelfRegulatingNeuronActivationFunction(const SelfRegulatingNeuronActivationFunction &other);
+		virtual ~SelfRegulatingNeuronActivationFunction();
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+		virtual ActivationFunction* createCopy() const;
+
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
+
+		bool equals(ActivationFunction *activationFunction) const;
 		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
+	protected:
+		virtual double getReceptorStrengthUpdate(double activation);
+		virtual double getTransmitterStrengthUpdate(double activation);
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
-
-}
+	protected:
+		DoubleValue *mXi;
+		DoubleValue *mEta;
+		DoubleValue *mAlpha;
+		DoubleValue *mBeta;
+		DoubleValue *mGamma;
+		DoubleValue *mDelta;
+		DoubleValue *mAStar;
+		
+		Neuron *mOwner;
+		
+	};
 
 }
+
+#endif
+
+
 
 

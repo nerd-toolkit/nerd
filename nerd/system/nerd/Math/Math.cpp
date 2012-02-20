@@ -190,6 +190,19 @@ double Math::abs(double value) {
 }
 
 
+/**
+ * Returns -1.0 for negative and 1.0 for positive values.
+ * If zeroIsThirdSign is false, then value == 0 is treated as positive value.
+ * Otherwise, if value == zero, the third "sign" 0 is returned.
+ */
+double Math::sign(double value, bool zeroIsThirdSign) {
+	if(value == 0.0 && zeroIsThirdSign) {
+		return 0.0;
+	}
+	return value < 0.0 ? -1.0 : 1.0;
+}
+
+
 
 double Math::min(double value1, double value2) {
 	return value1 < value2 ? value1 : value2;

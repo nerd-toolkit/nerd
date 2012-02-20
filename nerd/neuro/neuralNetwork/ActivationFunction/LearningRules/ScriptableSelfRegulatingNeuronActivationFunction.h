@@ -41,49 +41,75 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
+
+#ifndef NERDScriptableSelfRegulatingNeuronActivationFunction_H
+#define NERDScriptableSelfRegulatingNeuronActivationFunction_H
+
+#include <QString>
+#include <QHash>
 #include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
+#include "Value/DoubleValue.h"
+#include "Value/StringValue.h"
+#include <QScriptEngine>
+#include <QObject>
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
-
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+	/**
+	 * ScriptableSelfRegulatingNeuronActivationFunction.
+	 *
+	 */
+	class ScriptableSelfRegulatingNeuronActivationFunction 
+			:  public virtual QObject,
+			   public virtual SelfRegulatingNeuronActivationFunction
+	{
+		Q_OBJECT
 		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
+		Q_PROPERTY(QString stringBuffer WRITE setStringBuffer READ getStringBuffer);
+		
+	public:
+		ScriptableSelfRegulatingNeuronActivationFunction();
+		ScriptableSelfRegulatingNeuronActivationFunction(const ScriptableSelfRegulatingNeuronActivationFunction &other);
+		virtual ~ScriptableSelfRegulatingNeuronActivationFunction();
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
+		virtual ActivationFunction* createCopy() const;
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
+		bool equals(ActivationFunction *activationFunction) const;
+		
+	public slots:
+		
+		double tf(double activation);
+		
+		void setStringBuffer(const QString &string);
+		QString getStringBuffer() const;
+		
+	protected:
+		virtual double getReceptorStrengthUpdate(double activation);
+		virtual double getTransmitterStrengthUpdate(double activation);
+		virtual void setupScriptingContext(double activation);
+
+	protected:	
+		StringValue *mReceptorEquation;
+		StringValue *mTransmitterEquation;
+		
+		QScriptEngine *mEquationScript;
+		QString mVariableBuffer;
+	};
 
 }
 
-}
+#endif
+
+
+
+
+
+
+
+
+
 
 

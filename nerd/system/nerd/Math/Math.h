@@ -74,6 +74,8 @@ namespace nerd {
 
 		static int abs(int value);
 		static double abs(double value);
+		
+		static double sign(double value, bool zeroIsThirdSign = false);
 
 		static double min(double value1, double value2);
 		static int min(int value1, int value2);

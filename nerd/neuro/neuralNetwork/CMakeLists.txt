@@ -82,10 +82,13 @@ set(nerd_neuralNetwork_SRCS
 	Constraints/SynchronizeTagsConstraint.cpp
 	TransferFunction/TransferFunctionGauss.cpp
 	Network/ObservableNetworkElement.cpp
+	ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.cpp
+	ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
-	Script/ScriptedNetworkManipulator.h  
+	Script/ScriptedNetworkManipulator.h 
+	ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h
 )
 
 set(nerd_neuralNetwork_RCS
