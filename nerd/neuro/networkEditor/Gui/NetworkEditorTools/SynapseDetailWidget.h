@@ -131,6 +131,8 @@ namespace nerd {
 		DoubleValue *mStrengthValue;
 		BoolValue *mEnabledValue;
 		bool mUpdatingChangedSelection;
+		
+		QList<Synapse*> mSlaveSynapses;
 	};
 
 }

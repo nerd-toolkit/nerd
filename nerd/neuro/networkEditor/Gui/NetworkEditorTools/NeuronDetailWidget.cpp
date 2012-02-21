@@ -798,7 +798,7 @@ void NeuronDetailWidget::updateNeuronView() {
 					mSlaveNeurons.append(neuron);
 				}
 			}
-		}
+		} 
 	}
 
 	if(mNeuron == 0) {

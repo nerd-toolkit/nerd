@@ -65,6 +65,7 @@
 #include "Network/Neuro.h"
 #include "Network/NeuralNetworkManager.h"
 #include <QMutexLocker>
+#include <typeinfo>
 
 
 #define TRACE(message)
@@ -510,6 +511,7 @@ void SynapseDetailWidget::updateSynapseView() {
 		mEnabledValue->removeValueChangedListener(this);
 	}
 	mEnabledValue = 0;
+	mSlaveSynapses.clear();
 
 	if(mEditor == 0) {
 		return;
@@ -524,19 +526,44 @@ void SynapseDetailWidget::updateSynapseView() {
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	for(int i = selectedItems.size() - 1; i >= 0; --i) {
 		SynapseItem *item = dynamic_cast<SynapseItem*>(selectedItems.at(i));
-		if(item != 0) {
-			mSynapse = item->getSynapse();
-			enableStrengthObservation(0);
+		
+		if(item != 0 && item->getSynapse() != 0) {
+			if(mSynapse == 0) {
+				//first synapse is the primary synapse
+				mSynapse = item->getSynapse();
+				enableStrengthObservation(0);
 
-			if(mSynapse != 0) {
-				mSynapseStrengthField->setText(
-						mSynapse->getStrengthValue().getValueAsString());
+				if(mSynapse != 0) {
+					mSynapseStrengthField->setText(
+							mSynapse->getStrengthValue().getValueAsString());
+				}
+				mEnabledValue = &(mSynapse->getEnabledValue());
+				mEnabledValue->addValueChangedListener(this);
+				mEnableSynapseCheckBox->setChecked(!mEnabledValue->get());
 			}
-			mEnabledValue = &(mSynapse->getEnabledValue());
-			mEnabledValue->addValueChangedListener(this);
-			mEnableSynapseCheckBox->setChecked(!mEnabledValue->get());
-			break;
+			else {
+				//all others are treated as slaves
+				Synapse *synapse = item->getSynapse();
+				if(!mSlaveSynapses.contains(synapse)) {
+					mSlaveSynapses.append(synapse);
+				}
+			}
 		}
+		
+		
+// 		if(item != 0) {
+// 			mSynapse = item->getSynapse();
+// 			enableStrengthObservation(0);
+// 
+// 			if(mSynapse != 0) {
+// 				mSynapseStrengthField->setText(
+// 						mSynapse->getStrengthValue().getValueAsString());
+// 			}
+// 			mEnabledValue = &(mSynapse->getEnabledValue());
+// 			mEnabledValue->addValueChangedListener(this);
+// 			mEnableSynapseCheckBox->setChecked(!mEnabledValue->get());
+// 			break;
+// 		}
 	}
 
 	if(mSynapse == 0) {
@@ -566,7 +593,17 @@ void SynapseDetailWidget::udpateFunctionViews() {
 	else {
 		SynapseFunction *sf = mSynapse->getSynapseFunction();
 
-		mSynapseFunctionParameterEditor->setParameterizedObject(sf);
+		QList<ParameterizedObject*> slaveSynapseFunctions;
+		for(QListIterator<Synapse*> i(mSlaveSynapses); i.hasNext();) {
+			Synapse *synapse = i.next();
+			SynapseFunction *synapseSF = synapse->getSynapseFunction();
+			
+			if(typeid(*synapseSF) == typeid(*sf)) {
+				slaveSynapseFunctions.append(synapseSF);
+			}
+		}
+		
+		mSynapseFunctionParameterEditor->setParameterizedObject(sf, slaveSynapseFunctions);
 
 		mSynapseFunctionSelector->setCurrentIndex(
 					mSynapseFunctionSelector->findText(sf->getName()));
