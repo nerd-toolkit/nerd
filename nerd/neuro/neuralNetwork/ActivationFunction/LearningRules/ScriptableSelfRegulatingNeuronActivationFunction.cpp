@@ -122,6 +122,10 @@ bool ScriptableSelfRegulatingNeuronActivationFunction::equals(ActivationFunction
 }
 
 
+/**
+ * Helper function used to apply the transfer function to an activation. 
+ * This function is used in the scriptin context with nerd.tf().
+ */
 double ScriptableSelfRegulatingNeuronActivationFunction::tf(double activation) {
 	if(mOwner == 0 || mOwner->getTransferFunction() == 0) {
 		return 0.0;
@@ -130,17 +134,29 @@ double ScriptableSelfRegulatingNeuronActivationFunction::tf(double activation) {
 }
 
 
+/**
+ * Setter of the string buffer used to transfer strings between the 
+ * scripting context and the C++ programm.
+ */
 void ScriptableSelfRegulatingNeuronActivationFunction::setStringBuffer(const QString &string) {
 	mVariableBuffer = string;
 }
 
+/**
+ * Getter of the string buffer used to transfer strings between the 
+ * scripting context and the C++ programm.
+ */
 QString ScriptableSelfRegulatingNeuronActivationFunction::getStringBuffer() const {
 	return mVariableBuffer;
 }
 
 
 
-
+/**
+ * Calculates the receptor strength g(x). If an equation is found in the
+ * receptor field, then that equation is executed in the scripting context.
+ * Otherwise, the g(x) of the C++ superclass is used.
+ */
 double ScriptableSelfRegulatingNeuronActivationFunction::getReceptorStrengthUpdate(double activation) {
 	
 	//is called first => here, we do the initialization of the scripting context if necessary.
@@ -167,7 +183,11 @@ double ScriptableSelfRegulatingNeuronActivationFunction::getReceptorStrengthUpda
 	return 0.0;
 }
 
-
+/**
+ * Calculates the transmitter strength h(x). If an equation is found in the
+ * transmitter field, then that equation is executed in the scripting context.
+ * Otherwise, the h(x) of the C++ superclass is used.
+ */
 double ScriptableSelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(double activation) {
 	
 	if(mTransmitterEquation->get() != "") {
@@ -186,6 +206,25 @@ double ScriptableSelfRegulatingNeuronActivationFunction::getTransmitterStrengthU
 	return 0.0;
 }
 
+
+/**
+ * Called the first time, this function creates the scripting context and declares all
+ * available variable names. This includes the parameters (a, b, g, d => alpha, beta, gamma, delta),
+ * act (activation), actp (activation of previous step), xi, eta, aStar and the freely useable 
+ * variables x, y and z (initialized to 0). Also the tf() function is declared, that can be
+ * used to apply the transfer function of the corresponding neuron to a number.
+ * 
+ * At any call, the variables are set to their current value, so that they can be used
+ * in the scripting context. 
+ * 
+ * Note, that the scripting context is not a fully program with functions, but instead a
+ * an equation call of the form x = "Text in the Parameter Field", i.e. you do NOT
+ * need to assign your calculated value to a variable or to return a value.
+ * 
+ * So, in the parameter field, you would just write 
+ * 2 * eta + tf(Math.pow(a, 2))
+ * to calculate the new g(x) or h(x).
+ */
 void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(double activation) {
 	
 	if(mEquationScript == 0) {

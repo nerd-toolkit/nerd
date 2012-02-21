@@ -163,14 +163,14 @@ double SelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner
 				dynamic_cast<SelfRegulatingNeuronActivationFunction*>(
 						sourceNeuron->getActivationFunction());
 		
-		//source neuron is NOT a self-regulating neuron with a valid eta.
-		//Treat like a neuron with eta=1
+		//if source neuron is NOT a self-regulating neuron with a valid eta,
+		//then treat it like a neuron with eta=1
 		double eta = 1;		
 		if(af != 0) {
 			eta = af->mEta->get();
 		}
 		
-		double sign = Math::sign(weight, true);
+		double sign = Math::sign(weight); //zero is treated as positive value.
 		
 		if(adjustWeights) {
 			synapse->getStrengthValue().set(sign * eta * mXi->get());
