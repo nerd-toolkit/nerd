@@ -68,7 +68,7 @@ namespace nerd {
  */
 ParameterEditor::ParameterEditor(QWidget *owner, NeuralNetworkEditor *editor)
 	: QWidget(owner), mScrollArea(0), mParameterWidget(0), mParameterLayout(0),
-	   mParameterizedObject(0), mEditor(editor)
+	   mParameterizedObject(0), mCurrentParameterizedObject(0), mEditor(editor)
 {
 	TRACE("ParameterEditor::ParameterEditor");
 
@@ -83,6 +83,9 @@ ParameterEditor::ParameterEditor(QWidget *owner, NeuralNetworkEditor *editor)
 
 	mParameterWidget = new QWidget(mScrollArea);
 	mScrollArea->setWidget(mParameterWidget);
+	mParameterLayout = new QGridLayout();
+	mParameterWidget->setLayout(mParameterLayout);
+	
 
 	updateParameterView();
 }
@@ -135,23 +138,44 @@ void ParameterEditor::updateParameterView() {
 
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
-	for(QListIterator<ParameterPanel*> i(mParameterPanels); i.hasNext();) {
-		ParameterPanel *panel = i.next();
-		disconnect(panel, SIGNAL(parameterChanged(Value*, const QString&, const QString&)),
-					this, SLOT(parameterChanged(Value*, const QString&, const QString&)));
-		delete panel;
-	}	
-	mParameterPanels.clear();
-
-	mParameterWidget = new QWidget(mScrollArea);
-	mParameterLayout = new QGridLayout();
-	mParameterWidget->setLayout(mParameterLayout);
-	mScrollArea->setWidget(mParameterWidget);
-
+	QList<QString> names;
+	QList<Value*> values;
+	bool keepPanels = true;
+	
 	if(mParameterizedObject != 0) {
-		QList<QString> names = mParameterizedObject->getParameterNames();
-		QList<Value*> values = mParameterizedObject->getParameters();
+		names = mParameterizedObject->getParameterNames();
+		values = mParameterizedObject->getParameters();
+	}
+	
+	//Check if the parameter panel has to be rebuilt.
+	if(mCurrentParameterizedObject != mParameterizedObject
+		|| names.size() != mParameterPanels.size()
+		|| values.size() != mParameterPanels.size())
+	{
+		keepPanels = false;
+	}
+	else {
+		for(QListIterator<ParameterPanel*> i(mParameterPanels); i.hasNext();) {
+			ParameterPanel *panel = i.next();
 
+			int index = values.indexOf(panel->getParameterValue());
+			if(index < 0 || names.indexOf(panel->getParameterName()) != index) {
+				keepPanels = false;
+			}
+		}	
+	}
+	
+	
+	if(!keepPanels) {
+		for(QListIterator<ParameterPanel*> i(mParameterPanels); i.hasNext();) {
+			ParameterPanel *panel = i.next();
+			disconnect(panel, SIGNAL(parameterChanged(Value*, const QString&, const QString&)),
+					this, SLOT(parameterChanged(Value*, const QString&, const QString&)));
+			panel->removeFromLayout(mParameterLayout);
+			delete panel;
+		}
+		mParameterPanels.clear();
+	
 		for(int i = 0; i < names.size() && i < values.size(); ++i) {
 			ParameterPanel *panel = new ParameterPanel(mParameterWidget, mParameterLayout, 
 											names.at(i), values.at(i));
@@ -162,7 +186,8 @@ void ParameterEditor::updateParameterView() {
 			mParameterPanels.append(panel);
 
 		}
-	}	
+		mCurrentParameterizedObject = mParameterizedObject;
+	}
 }
 
 void ParameterEditor::parameterChanged(Value *parameter, const QString &name, 

@@ -68,6 +68,7 @@ namespace nerd {
 
 		virtual void valueChanged(Value *value);
 		virtual void forceListenerDeregistration(Value *value);
+		virtual void removeFromLayout(QGridLayout *layout);
 
 		virtual QString getName() const;
 

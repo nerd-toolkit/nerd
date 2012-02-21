@@ -115,6 +115,12 @@ void ParameterPanel::forceListenerDeregistration(Value *value) {
 }
 
 
+void ParameterPanel::removeFromLayout(QGridLayout *layout) {
+	layout->removeWidget(mNameLabel);
+	layout->removeWidget(mParameterContent);
+}
+
+
 QString ParameterPanel::getName() const {
 	return QString("ParameterPanel [" + mParameterName + "]");
 }
@@ -141,14 +147,14 @@ void ParameterPanel::parameterContentChanged() {
 	if(mParameter == 0 || mInvalid) {
 		return;
 	}
-	QString newContent = mParameterContent->text().trimmed();
+	QString newContent = mParameterContent->text();
 
 	if(mParameter->getValueAsString() == newContent) {
 		return;
 	}
 
-	emit parameterChanged(mParameter, mParameterName, newContent);
 	emit markAsValueUpdated();
+	emit parameterChanged(mParameter, mParameterName, newContent);
 }
 
 /**

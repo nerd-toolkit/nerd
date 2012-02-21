@@ -725,6 +725,7 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 		if(item == 0 || !item->isVisible()) {
 			continue;
 		}
+		
 		sizeX = Math::max(sizeX, item->getName().count());
 		++sizeY;
 	}

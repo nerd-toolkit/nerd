@@ -87,6 +87,7 @@ namespace nerd {
 		QWidget *mParameterWidget;
 		QGridLayout *mParameterLayout;
 		ParameterizedObject *mParameterizedObject;
+		ParameterizedObject *mCurrentParameterizedObject;
 		NeuralNetworkEditor *mEditor;
 		QList<ParameterizedObject*> mSlaveObjects;
 	};
