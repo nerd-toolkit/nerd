@@ -205,10 +205,11 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 		mEquationScript->evaluate("var g = 0;");
 		mEquationScript->evaluate("var d = 0;");
 		mEquationScript->evaluate("var aStar = 0;");
-		mEquationScript->evaluate("var activation = 0;");
+		mEquationScript->evaluate("var act = 0;");
 		mEquationScript->evaluate("var xi = 0;");
 		mEquationScript->evaluate("var eta = 0;");
-		mEquationScript->evaluate("var ap = 0;");
+		mEquationScript->evaluate("var actp = 0;");
+		mEquationScript->evaluate("var x = 0; var y = 0; var z = 0;");
 	}
 	
 	
@@ -218,10 +219,10 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 	mEquationScript->evaluate(QString("g = " + mGamma->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("d = " + mDelta->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("aStar = " + mAStar->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("activation = " + QString::number(activation) + ";"));
+	mEquationScript->evaluate(QString("act = " + QString::number(activation) + ";"));
 	mEquationScript->evaluate(QString("xi = " + mXi->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("eta = " + mEta->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("ap = " + QString::number(mOwner->getLastActivation()) + ";"));
+	mEquationScript->evaluate(QString("actp = " + QString::number(mOwner->getLastActivation()) + ";"));
 		
 }
 

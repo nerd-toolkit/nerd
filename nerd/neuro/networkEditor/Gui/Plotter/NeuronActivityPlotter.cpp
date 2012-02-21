@@ -132,7 +132,8 @@ NeuronActivityPlotter::NeuronActivityPlotter(const QString &name, int plotMode, 
 	connect(mRemoveNeuronsButton, SIGNAL(pressed()),
 			this, SLOT(removeNeuronsButtonPressed()));
 	
-	if(mPlotMode == NeuronActivityPlotter::PLOT_PARAMETERS
+	if((mPlotMode == NeuronActivityPlotter::PLOT_PARAMETERS
+			|| mPlotMode == NeuronActivityPlotter::PLOT_SYNAPSE_WEIGHTS)
 		&& getValuePlotter() != 0 
 		&& getValuePlotter()->getPlotterWidget() != 0)
 	{
@@ -447,7 +448,7 @@ QString NeuronActivityPlotter::getSynapseName(Synapse *synapse) const {
 	if(synapse == 0) {
 		return "";
 	}
-	return QString("Synapse ").append(QString::number(synapse->getId()));
+	return QString("S ").append(QString::number(synapse->getId()));
 }
 
 

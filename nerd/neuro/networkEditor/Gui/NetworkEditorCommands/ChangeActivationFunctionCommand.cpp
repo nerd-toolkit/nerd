@@ -75,6 +75,11 @@ ChangeActivationFunctionCommand::~ChangeActivationFunctionCommand() {
 		mOldActivationFunctions.removeAll(af);
 		delete af;
 	}
+	while(!mNewActivationFunctions.empty()) {
+		ActivationFunction *af = mNewActivationFunctions.front();
+		mNewActivationFunctions.removeAll(af);
+		delete af;
+	}
 	delete mNewActivationFunction;
 }
 
@@ -90,27 +95,65 @@ bool ChangeActivationFunctionCommand::doCommand() {
 	}	
 
 	QMutexLocker guard(mVisualizationContext->getSelectionMutex());
-
-	while(!mOldActivationFunctions.empty()) {
-		ActivationFunction *af = mOldActivationFunctions.front();
-		mOldActivationFunctions.removeAll(af);
-		delete af;
+	
+	bool allowUndo = true;
+	
+	if(!mNewActivationFunctions.empty() && mNewActivationFunctions.size() == mNeurons.size()) {
+		for(int i = 0; i < mNeurons.size() && i < mNewActivationFunctions.size(); ++i) {
+			Neuron *neuron = mNeurons.at(i);
+			ActivationFunction *af = mNewActivationFunctions.at(i);
+			
+			if(neuron == 0 || af == 0) {
+				allowUndo = false;
+				continue;
+			}
+			mOldActivationFunctions.append(neuron->getActivationFunction());
+			neuron->setActivationFunction(af);
+		}
+		mNewActivationFunctions.clear();
 	}
+	else {
 
-	for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
-		Neuron *neuron = i.next();
-		if(neuron == 0) {
-			continue;
+		if(!mNewActivationFunctions.empty()) {
+			while(!mNewActivationFunctions.empty()) {
+				ActivationFunction *af = mNewActivationFunctions.front();
+				mNewActivationFunctions.removeAll(af);
+				delete af;
+			}
+			allowUndo = false;
 		}
 
-		mOldActivationFunctions.append(neuron->getActivationFunction()->createCopy());
-		neuron->setActivationFunction(*mNewActivationFunction);
+		for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
+			Neuron *neuron = i.next();
+			if(neuron == 0) {
+				continue;
+			}
+			mOldActivationFunctions.append(neuron->getActivationFunction());
+			neuron->setActivationFunction(mNewActivationFunction->createCopy());
+		}
+		mNewActivationFunctions.clear();
 	}
+
+// 	while(!mOldActivationFunctions.empty()) {
+// 		ActivationFunction *af = mOldActivationFunctions.front();
+// 		mOldActivationFunctions.removeAll(af);
+// 		delete af;
+// 	}
+// 
+// 	for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
+// 		Neuron *neuron = i.next();
+// 		if(neuron == 0) {
+// 			continue;
+// 		}
+// 
+// 		mOldActivationFunctions.append(neuron->getActivationFunction()->createCopy());
+// 		neuron->setActivationFunction(*mNewActivationFunction);
+// 	}
 
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
 	//mVisualizationContext->notifyNeuralNetworkModified();
 
-	return true;
+	return allowUndo;
 }
 
 
@@ -119,6 +162,8 @@ bool ChangeActivationFunctionCommand::undoCommand() {
 	{
 		return false;
 	}	
+	
+	bool allowUndo = true;
 
 	QMutexLocker guard(mVisualizationContext->getSelectionMutex());
 
@@ -126,15 +171,28 @@ bool ChangeActivationFunctionCommand::undoCommand() {
 		Neuron *neuron = mNeurons.at(i);
 		ActivationFunction *af = mOldActivationFunctions.at(i);
 		if(neuron == 0 || af == 0) {
+			allowUndo = false;
 			continue;
 		}
-		neuron->setActivationFunction(*af);
+		mNewActivationFunctions.append(neuron->getActivationFunction());
+		neuron->setActivationFunction(af);
 	}
+	
+	mOldActivationFunctions.clear();
+	
+// 	for(int i = 0; i < mNeurons.size() && i < mOldActivationFunctions.size(); ++i) {
+// 		Neuron *neuron = mNeurons.at(i);
+// 		ActivationFunction *af = mOldActivationFunctions.at(i);
+// 		if(neuron == 0 || af == 0) {
+// 			continue;
+// 		}
+// 		neuron->setActivationFunction(*af);
+// 	}
 	
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
 	//mVisualizationContext->notifyNeuralNetworkModified();
 
-	return true;
+	return allowUndo;
 }
 
 

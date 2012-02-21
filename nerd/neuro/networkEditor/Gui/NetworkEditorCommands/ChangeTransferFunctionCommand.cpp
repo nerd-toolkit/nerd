@@ -76,6 +76,11 @@ ChangeTransferFunctionCommand::~ChangeTransferFunctionCommand() {
 		mOldTransferFunctions.removeAll(tf);
 		delete tf;
 	}
+	while(!mNewTransferFunctions.empty()) {
+		TransferFunction *tf = mNewTransferFunctions.front();
+		mNewTransferFunctions.removeAll(tf);
+		delete tf;
+	}
 	delete mNewTransferFunction;
 }
 
@@ -86,32 +91,54 @@ bool ChangeTransferFunctionCommand::isUndoable() const {
 
 bool ChangeTransferFunctionCommand::doCommand() {
 
+	bool allowUndo = true;
+	
 	if( mNewTransferFunction == 0 || mVisualizationContext == 0) {
 		return false;
 	}	
 	
 	QMutexLocker guard(mVisualizationContext->getSelectionMutex());
-
-	while(!mOldTransferFunctions.empty()) {
-		TransferFunction *tf = mOldTransferFunctions.front();
-		mOldTransferFunctions.removeAll(tf);
-		delete tf;
-	}
-
-	for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
-		Neuron *neuron = i.next();
-		if(neuron == 0) {
-			continue;
+	
+	if(!mNewTransferFunctions.empty() && mNewTransferFunctions.size() == mNeurons.size()) {
+		for(int i = 0; i < mNeurons.size() && i < mNewTransferFunctions.size(); ++i) {
+			Neuron *neuron = mNeurons.at(i);
+			TransferFunction *tf = mNewTransferFunctions.at(i);
+			
+			if(neuron == 0 || tf == 0) {
+				allowUndo = false;
+				continue;
+			}
+			mOldTransferFunctions.append(neuron->getTransferFunction());
+			neuron->setTransferFunction(tf);
 		}
-		mOldTransferFunctions.append(neuron->getTransferFunction()->createCopy());
-		neuron->setTransferFunction(*mNewTransferFunction);
+		mNewTransferFunctions.clear();
+	}
+	else {
 
+		if(!mNewTransferFunctions.empty()) {
+			while(!mNewTransferFunctions.empty()) {
+				TransferFunction *tf = mNewTransferFunctions.front();
+				mNewTransferFunctions.removeAll(tf);
+				delete tf;
+			}
+			allowUndo = false;
+		}
+
+		for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
+			Neuron *neuron = i.next();
+			if(neuron == 0) {
+				continue;
+			}
+			mOldTransferFunctions.append(neuron->getTransferFunction());
+			neuron->setTransferFunction(mNewTransferFunction->createCopy());
+		}
+		mNewTransferFunctions.clear();
 	}
 
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
 	//mVisualizationContext->notifyNeuralNetworkModified();
 
-	return true;
+	return allowUndo;
 }
 
 
@@ -119,6 +146,8 @@ bool ChangeTransferFunctionCommand::undoCommand() {
 	if(mNewTransferFunction == 0 || mVisualizationContext == 0) {
 		return false;
 	}	
+	
+	bool allowUndo = true;
 
 	QMutexLocker guard(mVisualizationContext->getSelectionMutex());
 
@@ -126,15 +155,19 @@ bool ChangeTransferFunctionCommand::undoCommand() {
 		Neuron *neuron = mNeurons.at(i);
 		TransferFunction *tf = mOldTransferFunctions.at(i);
 		if(neuron == 0 || tf == 0) {
+			allowUndo = false;
 			continue;
 		}
-		neuron->setTransferFunction(*tf);
+		mNewTransferFunctions.append(neuron->getTransferFunction());
+		neuron->setTransferFunction(tf);
 	}
+	
+	mOldTransferFunctions.clear();
 	
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
 	//mVisualizationContext->notifyNeuralNetworkModified();
 
-	return true;
+	return allowUndo;
 }
 
 

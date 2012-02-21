@@ -74,6 +74,11 @@ ChangeSynapseFunctionCommand::~ChangeSynapseFunctionCommand() {
 		mOldSynapseFunctions.removeAll(sf);
 		delete sf;
 	}
+	while(!mNewSynapseFunctions.empty()) {
+		SynapseFunction *sf = mNewSynapseFunctions.front();
+		mNewSynapseFunctions.removeAll(sf);
+		delete sf;
+	}
 	delete mNewSynapseFunction;
 }
 
@@ -87,29 +92,66 @@ bool ChangeSynapseFunctionCommand::doCommand() {
 	if(mNewSynapseFunction == 0 || mVisualizationContext == 0) {
 		return false;
 	}	
+	
+	bool allowUndo = true;
 
 	QMutexLocker guard(mVisualizationContext->getSelectionMutex());
 
-	while(!mOldSynapseFunctions.empty()) {
-		SynapseFunction *sf = mOldSynapseFunctions.front();
-		mOldSynapseFunctions.removeAll(sf);
-		delete sf;
-	}
-
-	for(QListIterator<Synapse*> i(mSynapses); i.hasNext();) {
-		Synapse *synapse = i.next();
-		if(synapse == 0) {
-			continue;
+	if(!mNewSynapseFunctions.empty() && mNewSynapseFunctions.size() == mSynapses.size()) {
+		for(int i = 0; i < mSynapses.size() && i < mNewSynapseFunctions.size(); ++i) {
+			Synapse *synapse = mSynapses.at(i);
+			SynapseFunction *sf = mNewSynapseFunctions.at(i);
+			if(synapse == 0 || sf == 0) {
+				allowUndo = false;
+				continue;
+			}
+			mOldSynapseFunctions.append(synapse->getSynapseFunction());
+			synapse->setSynapseFunction(sf);
 		}
-		mOldSynapseFunctions.append(synapse->getSynapseFunction()->createCopy());
-		synapse->setSynapseFunction(*mNewSynapseFunction);
-
+		mNewSynapseFunctions.clear();
 	}
+	else {
+
+		if(!mNewSynapseFunctions.empty()) {
+			while(!mNewSynapseFunctions.empty()) {
+				SynapseFunction *sf = mNewSynapseFunctions.front();
+				mNewSynapseFunctions.removeAll(sf);
+				delete sf;
+			}
+			allowUndo = false;
+		}
+
+		for(QListIterator<Synapse*> i(mSynapses); i.hasNext();) {
+			Synapse *synapse = i.next();
+			if(synapse == 0) {
+				continue;
+			}
+			mOldSynapseFunctions.append(synapse->getSynapseFunction());
+			synapse->setSynapseFunction(mNewSynapseFunction->createCopy());
+		}
+		mNewSynapseFunctions.clear();
+	}
+	
+// 	while(!mOldSynapseFunctions.empty()) {
+// 		SynapseFunction *sf = mOldSynapseFunctions.front();
+// 		mOldSynapseFunctions.removeAll(sf);
+// 		delete sf;
+// 	}
+// 
+// 	for(QListIterator<Synapse*> i(mSynapses); i.hasNext();) {
+// 		Synapse *synapse = i.next();
+// 		if(synapse == 0) {
+// 			continue;
+// 		}
+// 		mOldSynapseFunctions.append(synapse->getSynapseFunction()->createCopy());
+// 		synapse->setSynapseFunction(*mNewSynapseFunction);
+// 
+// 	}
 
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
 	//mVisualizationContext->notifyNeuralNetworkModified();
 
-	return true;
+	return allowUndo;
 }
 
 
@@ -117,6 +159,8 @@ bool ChangeSynapseFunctionCommand::undoCommand() {
 	if(mNewSynapseFunction == 0 || mVisualizationContext == 0) {
 		return false;
 	}	
+	
+	bool allowUndo = true;
 
 	QMutexLocker guard(mVisualizationContext->getSelectionMutex());
 
@@ -124,15 +168,28 @@ bool ChangeSynapseFunctionCommand::undoCommand() {
 		Synapse *synapse = mSynapses.at(i);
 		SynapseFunction *sf = mOldSynapseFunctions.at(i);
 		if(synapse == 0 || sf == 0) {
+			allowUndo = false;
 			continue;
 		}
-		synapse->setSynapseFunction(*sf);
+		mNewSynapseFunctions.append(synapse->getSynapseFunction());
+		synapse->setSynapseFunction(sf);
 	}
+	
+	mOldSynapseFunctions.clear();
+	
+// 	for(int i = 0; i < mSynapses.size() && i < mOldSynapseFunctions.size(); ++i) {
+// 		Synapse *synapse = mSynapses.at(i);
+// 		SynapseFunction *sf = mOldSynapseFunctions.at(i);
+// 		if(synapse == 0 || sf == 0) {
+// 			continue;
+// 		}
+// 		synapse->setSynapseFunction(*sf);
+// 	}
 		
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
 	//mVisualizationContext->notifyNeuralNetworkModified();
 
-	return true;
+	return allowUndo;
 }
 
 

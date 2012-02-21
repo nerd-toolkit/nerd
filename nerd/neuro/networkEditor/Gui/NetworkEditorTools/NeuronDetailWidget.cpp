@@ -66,6 +66,7 @@
 #include "Network/Neuro.h"
 #include "Network/NeuralNetworkManager.h"
 #include <QMutexLocker>
+#include <typeinfo>
 
 
 #define TRACE(message)
@@ -279,6 +280,7 @@ void NeuronDetailWidget::invalidateView() {
 		mBiasValue->removeValueChangedListener(this);
 		mBiasValue = 0;
 	}
+	mSlaveNeurons.clear();
 }
 
 
@@ -762,6 +764,7 @@ void NeuronDetailWidget::updateNeuronView() {
 		mOutputValue->removeValueChangedListener(this);
 	}
 	mOutputValue = 0;
+	mSlaveNeurons.clear();
 
 	if(mEditor == 0) {
 		return;
@@ -776,15 +779,25 @@ void NeuronDetailWidget::updateNeuronView() {
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	for(int i = selectedItems.size() - 1; i >= 0; --i) {
 		NeuronItem*item = dynamic_cast<NeuronItem*>(selectedItems.at(i));
-		if(item != 0) {
-			mNeuron = item->getNeuron();
-			enableActivityObservation(0);
-			enableBiasObservation(0);
-			enableOutputObservation(0);
-			if(mNeuron != 0) {
-				mNeuronNameField->setText(mNeuron->getNameValue().get());
+		
+		if(item != 0 && item->getNeuron() != 0) {
+			if(mNeuron == 0) {
+				//first neuron is the primary neuron
+				mNeuron = item->getNeuron();
+				enableActivityObservation(0);
+				enableBiasObservation(0);
+				enableOutputObservation(0);
+				if(mNeuron != 0) {
+					mNeuronNameField->setText(mNeuron->getNameValue().get());
+				}
 			}
-			break;
+			else {
+				//all others are treated as slaves
+				Neuron *neuron = item->getNeuron();
+				if(!mSlaveNeurons.contains(neuron)) {
+					mSlaveNeurons.append(neuron);
+				}
+			}
 		}
 	}
 
@@ -818,15 +831,32 @@ void NeuronDetailWidget::udpateFunctionViews() {
 	}
 	else {
 		TransferFunction *tf = mNeuron->getTransferFunction();
+		ActivationFunction *af = mNeuron->getActivationFunction();
+		
+		
+		QList<ParameterizedObject*> slaveTransferFunctions;
+		QList<ParameterizedObject*> slaveActivationFunctions;
+		for(QListIterator<Neuron*> i(mSlaveNeurons); i.hasNext();) {
+			Neuron *neuron = i.next();
+			TransferFunction *neuronTF = neuron->getTransferFunction();
+			ActivationFunction *neuronAF = neuron->getActivationFunction();
+			
+			if(typeid(*neuronTF) == typeid(*tf)) {
+				slaveTransferFunctions.append(neuronTF);
+			}
+			if(typeid(*neuronAF) == typeid(*af)) {
+				slaveActivationFunctions.append(neuronAF);
+			}
+		}
 
-		mTransferFunctionParameterEditor->setParameterizedObject(tf);
+		mTransferFunctionParameterEditor->setParameterizedObject(tf, slaveTransferFunctions);
 
 		mTransferFunctionSelector->setCurrentIndex(
 					mTransferFunctionSelector->findText(tf->getName()));
 
-		ActivationFunction *af = mNeuron->getActivationFunction();
+		
 
-		mActivationFunctionParameterEditor->setParameterizedObject(af);
+		mActivationFunctionParameterEditor->setParameterizedObject(af, slaveActivationFunctions);
 		mActivationFunctionSelector->setCurrentIndex(
 					mActivationFunctionSelector->findText(af->getName()));
 	}

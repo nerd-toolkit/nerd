@@ -223,6 +223,20 @@ void Neuron::setTransferFunction(const TransferFunction &tf) {
 }
 
 
+/**
+ * Test!
+ * Was added to support the undo of transfer function changes!
+ * 
+ * If tf is 0, then nothing is changed.
+ */
+void Neuron::setTransferFunction(TransferFunction *tf) {
+	if(tf == 0) {
+		return;
+	}
+	mTransferFunction = tf;
+}
+
+
 TransferFunction* Neuron::getTransferFunction() const {
 	return mTransferFunction;
 }
@@ -233,6 +247,17 @@ void Neuron::setActivationFunction(const ActivationFunction &af) {
 		delete mActivationFunction;
 	}
 	mActivationFunction = af.createCopy();
+}
+
+/**
+ * Test!
+ * Same as above
+ */
+void Neuron::setActivationFunction(ActivationFunction *af) {
+	if(af == 0) {
+		return;
+	}
+	mActivationFunction = af;
 }
 
 

@@ -150,6 +150,8 @@ namespace nerd {
 		DoubleValue *mBiasValue;
 		DoubleValue *mOutputValue;
 		bool mUpdatingChangedSelection;
+		
+		QList<Neuron*> mSlaveNeurons;
 
 	};
 

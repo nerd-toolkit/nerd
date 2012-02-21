@@ -253,6 +253,18 @@ void Synapse::setSynapseFunction(const SynapseFunction &synapseFunction) {
 	mSynapseFunction = synapseFunction.createCopy();
 }
 
+/**
+ * Test!
+ * Was added to allow an undoable synapse function chance!
+ * If synapsefunction is 0, then nothing is changed.
+ */
+void Synapse::setSynapseFunction(SynapseFunction *synapseFunction) {
+	if(synapseFunction == 0) {
+		return;
+	}
+	mSynapseFunction = synapseFunction;
+}
+
 
 SynapseFunction* Synapse::getSynapseFunction() {
 	return mSynapseFunction;

@@ -75,6 +75,7 @@ namespace nerd {
 		QList<Synapse*> mSynapses;
 		SynapseFunction *mNewSynapseFunction;
 		QList<SynapseFunction*> mOldSynapseFunctions;
+		QList<SynapseFunction*> mNewSynapseFunctions;
 	};
 
 }

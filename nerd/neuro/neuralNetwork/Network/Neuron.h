@@ -92,8 +92,10 @@ namespace nerd {
 		QList<DoubleValue*> getInputValues() const;
 
 		void setTransferFunction(const TransferFunction &tf);
+		void setTransferFunction(TransferFunction *tf);
 		TransferFunction* getTransferFunction() const;
 		void setActivationFunction(const ActivationFunction &af);
+		void setActivationFunction(ActivationFunction *af);
 		ActivationFunction* getActivationFunction() const;
 
 		

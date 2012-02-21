@@ -75,6 +75,7 @@ namespace nerd {
 		QList<Neuron*> mNeurons;
 		ActivationFunction *mNewActivationFunction;
 		QList<ActivationFunction*> mOldActivationFunctions;
+		QList<ActivationFunction*> mNewActivationFunctions;
 	};
 
 }

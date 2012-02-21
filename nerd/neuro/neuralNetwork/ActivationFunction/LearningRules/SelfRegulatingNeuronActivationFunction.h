@@ -50,7 +50,7 @@
 #include "ActivationFunction/ActivationFunction.h"
 #include "Value/DoubleValue.h"
 #include "Value/StringValue.h"
-
+#include "Value/BoolValue.h"
 
 namespace nerd {
 
@@ -83,6 +83,7 @@ namespace nerd {
 		DoubleValue *mGamma;
 		DoubleValue *mDelta;
 		DoubleValue *mAStar;
+		BoolValue *mAdjustWeights;
 		
 		Neuron *mOwner;
 		

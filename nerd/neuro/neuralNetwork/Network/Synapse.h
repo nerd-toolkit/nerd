@@ -90,6 +90,7 @@ namespace nerd {
 		virtual SynapseTarget* getTarget();
 
 		virtual void setSynapseFunction(const SynapseFunction &synapseFunction);
+		virtual void setSynapseFunction(SynapseFunction *synapseFunction);
 		virtual SynapseFunction* getSynapseFunction();
 
 		virtual bool equals(Synapse *synapse);

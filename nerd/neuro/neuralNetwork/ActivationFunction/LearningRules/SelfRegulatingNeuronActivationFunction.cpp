@@ -72,6 +72,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mDelta = new DoubleValue(0.1);
 	mAStar = new DoubleValue(0.658479);
 	
+	mAdjustWeights = new BoolValue(true);
+	
 	addParameter("Xi (Rec)", mXi);
 	addParameter("Eta (Tra)", mEta);
 	addParameter("Alpha", mAlpha);
@@ -79,6 +81,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	addParameter("Gamma", mGamma);
 	addParameter("Delta", mDelta);
 	addParameter("A*", mAStar);	
+	
+	addParameter("AdjustWeights", mAdjustWeights);
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
@@ -101,6 +105,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 	mGamma = dynamic_cast<DoubleValue*>(getParameter("Gamma"));
 	mDelta = dynamic_cast<DoubleValue*>(getParameter("Delta"));
 	mAStar = dynamic_cast<DoubleValue*>(getParameter("A*"));
+	mAdjustWeights = dynamic_cast<BoolValue*>(getParameter("AdjustWeights"));
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
@@ -141,6 +146,7 @@ double SelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner
 	//Calculate new activation of the neuron.
 	
 	double inputSum = 0.0;
+	bool adjustWeights = mAdjustWeights->get();
 
 	QList<Synapse*> synapses = owner->getSynapses();
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
@@ -164,8 +170,14 @@ double SelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner
 			eta = af->mEta->get();
 		}
 		
+		double sign = Math::sign(weight, true);
+		
+		if(adjustWeights) {
+			synapse->getStrengthValue().set(sign * eta * mXi->get());
+		}
+		
 		//I_i(t) = c_ij * eta_j(t) * o_j(t)
-		inputSum += Math::sign(weight, true) * eta * sourceNeuron->getOutputActivationValue().get();
+		inputSum += sign * eta * sourceNeuron->getOutputActivationValue().get();
 	}
 
 	//a_i(t+1) = theta + xi_i(t) + I_i(t)
