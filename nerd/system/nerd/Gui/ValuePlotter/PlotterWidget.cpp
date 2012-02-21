@@ -70,7 +70,7 @@ PlotterWidget::PlotterWidget(QWidget *parent)
 	: QFrame(parent), mHistorySize(0), mPlotStaticItems(true), mPlotLegend(true), 
 	  mPlotSolidLegend(false), mPerformanceMode(0), mMajorTickInterval(250), mMinorTickInterval(10),
 	  mHorizontalOffset(0.0),  mDiagramMode(false), mShowDiagramLines(true), mDiagramShift(0.0),
-	  mLineWidth(0), mLineColor(Qt::black)
+	  mLineWidth(0), mLineColor(Qt::black), mShowValuesInLegend(false)
 {
 	moveToThread(QCoreApplication::instance()->thread());
 
@@ -426,6 +426,16 @@ QColor PlotterWidget::getLineColor() const {
 	return mLineColor;
 }
 		
+
+void PlotterWidget::showValuesInLegend(bool show) {
+	mShowValuesInLegend = show;
+}
+
+
+bool PlotterWidget::isShowingValuesInLegend() const {
+	return mShowValuesInLegend;
+}
+
 		
 
 /**
@@ -737,6 +747,11 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 			
 			double boxWidth = (sizeX * 10) + 35;
 			double boxHeight = (sizeY * 15) + 20;
+			
+			if(mShowValuesInLegend) {
+				boxWidth += 85;
+			}
+			
 			if(fixedBoxSize) {
 				boxWidth = mLegendBoxOverride.width();
 				boxHeight = mLegendBoxOverride.height();
@@ -784,9 +799,17 @@ void PlotterWidget::drawLegend(QPainter &painter) {
 		if(maxSize > mMaxValueNameSize) {
 			maxSize = mMaxValueNameSize;
 		}
+		QString plottedText = name.mid(name.size() - maxSize);
+		
+		int dataPos = item->getHistory().size() - 1;
+		
+		if(mShowValuesInLegend && dataPos >= 0) {
+			plottedText = plottedText + ": " + QString::number(item->getHistoryValue(dataPos));
+		}
+		
 		painter.drawText(48 + horizontalOffset + boxOffsetX, 
 						 yPos + boxOffsetY, 
-						 name.mid(name.size() - maxSize));
+						 plottedText);
 		row++;
 	}
 }

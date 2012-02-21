@@ -132,6 +132,13 @@ NeuronActivityPlotter::NeuronActivityPlotter(const QString &name, int plotMode, 
 	connect(mRemoveNeuronsButton, SIGNAL(pressed()),
 			this, SLOT(removeNeuronsButtonPressed()));
 	
+	if(mPlotMode == NeuronActivityPlotter::PLOT_PARAMETERS
+		&& getValuePlotter() != 0 
+		&& getValuePlotter()->getPlotterWidget() != 0)
+	{
+		getValuePlotter()->getPlotterWidget()->showValuesInLegend(true);
+	}
+	
 }
 
 

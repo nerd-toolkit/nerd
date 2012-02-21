@@ -111,6 +111,9 @@ namespace nerd {
 		double getLineWidth() const;
 		void setLineColor(const QColor &color);
 		QColor getLineColor() const;
+		
+		void showValuesInLegend(bool show);
+		bool isShowingValuesInLegend() const;
 
 	public slots:
 		void updateHistories();
@@ -159,6 +162,7 @@ namespace nerd {
 		QVector<qreal> mDiagramLineDashPattern;
 		double mLineWidth;
 		QColor mLineColor;
+		bool mShowValuesInLegend;
 		
 	};
 

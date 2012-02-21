@@ -86,48 +86,75 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	mValuePlotter->show();
 	mSplitter->addWidget(mValuePlotter);
 
+	
 	mControlArea = new QTabWidget(mSplitter);
-	mSplitter->addWidget(mControlArea);
 	mControlArea->setMinimumSize(0, 0);
 	mControlArea->resize(50, 100);
+	
+	
+	QScrollArea *mainScrollArea = new QScrollArea(mSplitter);
+	mainScrollArea->setWidgetResizable(true);
+	mainScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	mainScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	mainScrollArea->setMinimumWidth(200);
+	mainScrollArea->setWidget(mControlArea);
+	mSplitter->addWidget(mainScrollArea);
+	
+	
+	//mSplitter->addWidget(mControlArea);
+	
 
 	mSplitter->setStretchFactor(0, 100);
 	mSplitter->setStretchFactor(1, 1);
 
 	//create general tab
 	QWidget *generalTab = new QWidget(mControlArea);
-	QVBoxLayout *generalLayout = new QVBoxLayout(generalTab);
+	QVBoxLayout *generalLayout = new QVBoxLayout();
 	generalLayout->setMargin(2);
+	generalLayout->setSpacing(1);
 	generalTab->setLayout(generalLayout);
 
-	QGroupBox *historyBox = new QGroupBox("Plotter Range", generalTab);
-	QVBoxLayout *historySizeLayout = new QVBoxLayout(historyBox);
-	historySizeLayout->setMargin(2);
-	historyBox->setLayout(historySizeLayout);
+	QHBoxLayout *historyRangeLayout = new QHBoxLayout();
+	historyRangeLayout->setMargin(2);
+	QLabel *rangeLabel = new QLabel("Range", generalTab);
+	rangeLabel->setMinimumWidth(65);
+	historyRangeLayout->addWidget(rangeLabel);
 
 	mHistorySizeField = new QLineEdit(QString::number(mValuePlotter->getPlotterWidget()
-						->getNumberOfValuesToPlot()), historyBox);
-	historySizeLayout->addWidget(mHistorySizeField);
-	generalLayout->addWidget(historyBox);
+						->getNumberOfValuesToPlot()), generalTab);
+	historyRangeLayout->addWidget(mHistorySizeField);
+	generalLayout->addLayout(historyRangeLayout);
 
-	QGroupBox *offsetBox = new QGroupBox("Vertical Offset", generalTab);
-	QVBoxLayout *offsetLayout = new QVBoxLayout(offsetBox);
-	offsetLayout->setMargin(2);
-	offsetBox->setLayout(offsetLayout);
-	mVerticalOffset = new QLineEdit("0", offsetBox);
-	offsetLayout->addWidget(mVerticalOffset);
-	generalLayout->addWidget(offsetBox);
+	QHBoxLayout *historyOffsetLayout = new QHBoxLayout();
+	historyOffsetLayout->setMargin(2);
+	QLabel *offsetLabel = new QLabel("Y Offset", generalTab);
+	offsetLabel->setMinimumWidth(65);
+	mVerticalOffset = new QLineEdit("0", generalTab);
+	historyOffsetLayout->addWidget(offsetLabel);
+	historyOffsetLayout->addWidget(mVerticalOffset);
+	generalLayout->addLayout(historyOffsetLayout);
+	
+	QHBoxLayout *historyScaleLayout = new QHBoxLayout();
+	historyScaleLayout->setMargin(2);
+	QLabel *scaleLabel = new QLabel("Y Scaling", generalTab);
+	scaleLabel->setMinimumWidth(65);
+	mVerticalScale = new QLineEdit("1.0", generalTab);
+	historyScaleLayout->addWidget(scaleLabel);
+	historyScaleLayout->addWidget(mVerticalScale);
+	generalLayout->addLayout(historyScaleLayout);
 
-	QGroupBox *scaleBox = new QGroupBox("Vertical Scaling", generalTab);
-	QVBoxLayout *scaleLayout = new QVBoxLayout(scaleBox);
-	scaleLayout->setMargin(2);
-	scaleBox->setLayout(scaleLayout);
-	mVerticalScale = new QLineEdit("1.0", scaleBox);
-	scaleLayout->addWidget(mVerticalScale);
-	generalLayout->addWidget(scaleBox);
+// 	QGroupBox *scaleBox = new QGroupBox("Vertical Scaling", generalTab);
+// 	QVBoxLayout *scaleLayout = new QVBoxLayout(scaleBox);
+// 	scaleLayout->setMargin(2);
+// 	scaleBox->setLayout(scaleLayout);
+// 	mVerticalScale = new QLineEdit("1.0", scaleBox);
+// 	scaleLayout->addWidget(mVerticalScale);
+// 	generalLayout->addWidget(scaleBox);
 	
 	mSaveGraphButton = new QPushButton("Save Graph");
 	generalLayout->addWidget(mSaveGraphButton);
+	
+	generalLayout->addStretch(100);
 
 	mControlArea->addTab(generalTab, "General");
 
@@ -164,25 +191,27 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	mLoadStaticValuesButton = new QPushButton("Load Offline Data", offlineTab);
 	offlineLayout->addWidget(mLoadStaticValuesButton);
 
-	QGroupBox *staticOffsetBox = new QGroupBox("Vert. / Hori. Offset", offlineTab);
-	mStaticOffsetV = new QLineEdit("0", staticOffsetBox);
-	mStaticOffsetH = new QLineEdit("0", staticOffsetBox);
-	QHBoxLayout *staticOffsetLayout = new QHBoxLayout(staticOffsetBox);
+	QHBoxLayout *staticOffsetLayout = new QHBoxLayout();
 	staticOffsetLayout->setMargin(2);
-	staticOffsetBox->setLayout(staticOffsetLayout);
+	QLabel *staticOffsetLabel = new QLabel("X/Y Offset", offlineTab);
+	staticOffsetLabel->setMinimumWidth(75);
+	mStaticOffsetV = new QLineEdit("0", offlineTab);
+	mStaticOffsetH = new QLineEdit("0", offlineTab);
+	staticOffsetLayout->addWidget(staticOffsetLabel);
 	staticOffsetLayout->addWidget(mStaticOffsetV);
 	staticOffsetLayout->addWidget(mStaticOffsetH);
-	offlineLayout->addWidget(staticOffsetBox);
+	offlineLayout->addLayout(staticOffsetLayout);
 
-	QGroupBox *staticScaleBox = new QGroupBox("Vert. / Hori. Scale", offlineTab);
-	mStaticScaleV = new QLineEdit("1.0", staticScaleBox);
-	mStaticScaleH = new QLineEdit("1.0", staticScaleBox);
-	QHBoxLayout *staticScaleLayout = new QHBoxLayout(staticScaleBox);
+	QHBoxLayout *staticScaleLayout = new QHBoxLayout();
 	staticScaleLayout->setMargin(2);
-	staticScaleBox->setLayout(staticScaleLayout);
+	QLabel *staticScaleLabel = new QLabel("X/Y Scale", offlineTab);
+	staticScaleLabel->setMinimumWidth(75);
+	mStaticScaleV = new QLineEdit("1.0", offlineTab);
+	mStaticScaleH = new QLineEdit("1.0", offlineTab);
+	staticScaleLayout->addWidget(staticScaleLabel);
 	staticScaleLayout->addWidget(mStaticScaleV);
 	staticScaleLayout->addWidget(mStaticScaleH);
-	offlineLayout->addWidget(staticScaleBox);
+	offlineLayout->addLayout(staticScaleLayout);
 
 	offlineLayout->addStretch(100);
 
@@ -199,17 +228,27 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	diagramLayout->setMargin(2);
 	diagramTab->setLayout(diagramLayout);
 	
-	mShowLegendCheckBox = new QCheckBox("Show Legend", diagramTab);
+	QHBoxLayout *legendLayout = new QHBoxLayout();
+	mShowLegendCheckBox = new QCheckBox("Legend", diagramTab);
 	mShowLegendCheckBox->setChecked(true);
-	diagramLayout->addWidget(mShowLegendCheckBox);
+	legendLayout->addWidget(mShowLegendCheckBox);
 	
-	mUseOpaqueLegendCheckBox = new QCheckBox("Use Opaque Legend", diagramTab);
+	mUseOpaqueLegendCheckBox = new QCheckBox("Opaque", diagramTab);
 	mUseOpaqueLegendCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isSolidLegend());
-	diagramLayout->addWidget(mUseOpaqueLegendCheckBox);
+	legendLayout->addWidget(mUseOpaqueLegendCheckBox);
+	diagramLayout->addLayout(legendLayout);
 	
-	mDiagramModeCheckBox = new QCheckBox("Diagram Mode", diagramTab);
+	QHBoxLayout *diagramConfigLayout = new QHBoxLayout();
+	mDiagramModeCheckBox = new QCheckBox("Diagram", diagramTab);
 	mDiagramModeCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isInDiagramMode());
-	diagramLayout->addWidget(mDiagramModeCheckBox);
+	diagramConfigLayout->addWidget(mDiagramModeCheckBox);
+	
+	mPlotValuesInLegendCheckBox = new QCheckBox("Values", diagramTab);
+	mPlotValuesInLegendCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isShowingValuesInLegend());
+	diagramConfigLayout->addWidget(mPlotValuesInLegendCheckBox);
+	
+	diagramLayout->addLayout(diagramConfigLayout);
+	
 	
 	QLabel *dashPatternLabel = new QLabel("Line");
 	mDiagramLineDashPattern = new QLineEdit("1,5", diagramTab);
@@ -231,7 +270,7 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 // 	mShowDiagramLinesCheckBox->setChecked(mValuePlotter->getPlotterWidget()->isShowingDiagramLines());
 // 	diagramLayout->addWidget(mShowDiagramLinesCheckBox);
 	
-	QLabel *tickLabel = new QLabel("Ticks");
+// 	QLabel *tickLabel = new QLabel("Ticks");
 	mDiagramMajorTickIntervalEdit = new QLineEdit("");
 	mDiagramMajorTickIntervalEdit->setText(QString::number(
 							mValuePlotter->getPlotterWidget()->getMajorTickInterval()));
@@ -242,28 +281,35 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 	mDiagramMinorTickIntervalEdit->setToolTip("Number of minor ticks between two major ticks.");
 	
 	
-	QHBoxLayout *tickIntervalLayout = new QHBoxLayout();
-	tickIntervalLayout->addWidget(tickLabel);
-	tickIntervalLayout->addWidget(mDiagramMajorTickIntervalEdit);
-	tickIntervalLayout->addWidget(mDiagramMinorTickIntervalEdit);
-	diagramLayout->addLayout(tickIntervalLayout);
 	
-	QLabel *legendOverrideLabel = new QLabel("LB:");
+	
+// 	QLabel *legendOverrideLabel = new QLabel("LB:");
 	mLegendBoxOverRideEdit = new QLineEdit("");
 	mLegendBoxOverRideEdit->setToolTip("Overrides the default size and position of the legend box.\n"
 										"Format: shiftX,shiftY or shiftX,shiftY,width,height");
 	
-	QLabel *diagramShiftLabel = new QLabel("Shift.");
+// 	QLabel *diagramShiftLabel = new QLabel("Shift.");
 	mDiagramShiftEdit = new QLineEdit("0");
 	mDiagramShiftEdit->setToolTip("Shift entire diagram to match the front header.");
 	
-	QHBoxLayout *legendOffsetLayout = new QHBoxLayout();
-	legendOffsetLayout->addWidget(legendOverrideLabel);
-	legendOffsetLayout->addWidget(mLegendBoxOverRideEdit);
-	legendOffsetLayout->addWidget(diagramShiftLabel);
-	legendOffsetLayout->addWidget(mDiagramShiftEdit);
+	QHBoxLayout *tickIntervalLayout = new QHBoxLayout();
+// 	tickIntervalLayout->addWidget(tickLabel);
+	tickIntervalLayout->addWidget(mDiagramMajorTickIntervalEdit);
+	tickIntervalLayout->addWidget(mDiagramMinorTickIntervalEdit);
 	
-	diagramLayout->addLayout(legendOffsetLayout);
+// 	tickIntervalLayout->addWidget(legendOverrideLabel);
+	tickIntervalLayout->addWidget(mLegendBoxOverRideEdit);
+// 	tickIntervalLayout->addWidget(diagramShiftLabel);
+	tickIntervalLayout->addWidget(mDiagramShiftEdit);
+	diagramLayout->addLayout(tickIntervalLayout);
+	
+// 	QHBoxLayout *legendOffsetLayout = new QHBoxLayout();
+// 	legendOffsetLayout->addWidget(legendOverrideLabel);
+// 	legendOffsetLayout->addWidget(mLegendBoxOverRideEdit);
+// 	legendOffsetLayout->addWidget(diagramShiftLabel);
+// 	legendOffsetLayout->addWidget(mDiagramShiftEdit);
+	
+// 	diagramLayout->addLayout(legendOffsetLayout);
 
 	diagramLayout->addStretch();
 
@@ -359,6 +405,8 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 			this, SLOT(useOpaqueLegendCheckBoxChanged(bool)));
 	connect(mDiagramModeCheckBox, SIGNAL(toggled(bool)),
 			this, SLOT(diagramModeCheckBoxChanged(bool)));
+	connect(mPlotValuesInLegendCheckBox, SIGNAL(toggled(bool)),
+			this, SLOT(plotValuesInLegendCheckBoxChanged(bool)));
 	connect(mLegendBoxOverRideEdit, SIGNAL(returnPressed()),
 			this, SLOT(legendOffsetEditChanged()));
 	connect(mDiagramMajorTickIntervalEdit, SIGNAL(returnPressed()),
@@ -660,6 +708,10 @@ void ValuePlotterWidget::useOpaqueLegendCheckBoxChanged(bool checked) {
 
 void ValuePlotterWidget::diagramModeCheckBoxChanged(bool checked) {
 	mValuePlotter->getPlotterWidget()->enableDiagramMode(mDiagramModeCheckBox->isChecked());
+}
+
+void ValuePlotterWidget::plotValuesInLegendCheckBoxChanged(bool checked) {
+	mValuePlotter->getPlotterWidget()->showValuesInLegend(mPlotValuesInLegendCheckBox->isChecked());
 }
 
 // void ValuePlotterWidget::showDiagramLinesCheckBoxChanged(bool checked) {
