@@ -208,6 +208,7 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 		mEquationScript->evaluate("var activation = 0;");
 		mEquationScript->evaluate("var xi = 0;");
 		mEquationScript->evaluate("var eta = 0;");
+		mEquationScript->evaluate("var ap = 0;");
 	}
 	
 	
@@ -220,6 +221,7 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 	mEquationScript->evaluate(QString("activation = " + QString::number(activation) + ";"));
 	mEquationScript->evaluate(QString("xi = " + mXi->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("eta = " + mEta->getValueAsString() + ";"));
+	mEquationScript->evaluate(QString("ap = " + QString::number(mOwner->getLastActivation()) + ";"));
 		
 }
 
