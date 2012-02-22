@@ -89,11 +89,16 @@ namespace nerd {
 	protected:
 		virtual double getReceptorStrengthUpdate(double activation);
 		virtual double getTransmitterStrengthUpdate(double activation);
+		virtual void updateXi(double activation);
+		virtual void updateEta(double activation);
+		
 		virtual void setupScriptingContext(double activation);
 
 	protected:	
 		StringValue *mReceptorEquation;
 		StringValue *mTransmitterEquation;
+		StringValue *mEtaEquation;
+		StringValue *mXiEquation;
 		
 		QScriptEngine *mEquationScript;
 		QString mVariableBuffer;

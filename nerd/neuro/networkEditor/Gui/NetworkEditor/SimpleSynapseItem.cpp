@@ -266,6 +266,9 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 
 	if(!mHideWeight && !mLocalHideWeight) {
 		QString strength = mSynapse->getStrengthValue().getValueAsString();
+		if(strength.contains("e-")) {
+			strength = "0.000x";
+		}
 		if(strength.size() > 7) {
 			strength = strength.mid(0, 7);
 		}

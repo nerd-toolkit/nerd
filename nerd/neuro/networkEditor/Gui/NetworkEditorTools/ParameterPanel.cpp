@@ -64,12 +64,15 @@ ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
 {
 
 	mParameterContent = new QLineEdit();
+	mNameLabel = new QLabel(name);
+	
 	if(mParameter != 0) {
 		mParameterContent->setText(mParameter->getValueAsString());
 		mParameter->addValueChangedListener(this);
 		mRegisteredAsListener = true;
+		mNameLabel->setToolTip(mParameter->getDescription());
 	}
-	mNameLabel = new QLabel(name);
+
 	int row = targetLayout->rowCount();
 	targetLayout->addWidget(mNameLabel, row, 0);
 	targetLayout->addWidget(mParameterContent, row, 1);

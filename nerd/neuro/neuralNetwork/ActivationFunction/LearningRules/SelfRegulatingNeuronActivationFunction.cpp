@@ -61,7 +61,7 @@ namespace nerd {
  * Constructs a new SelfRegulatingNeuronActivationFunction.
  */
 SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(const QString &name)
-	: ActivationFunction(name), mOwner(0)
+	: ActivationFunction(name), mOwner(0), mTransmitterResult(0), mReceptorResult(0)
 {
 	mXi = new DoubleValue(1);
 	mEta = new DoubleValue(1);
@@ -73,6 +73,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mAStar = new DoubleValue(0.658479);
 	
 	mAdjustWeights = new BoolValue(true);
+	mAdjustWeights->setDescription("Enables an update of the synapse weights in the network.");
 	
 	addParameter("Xi (Rec)", mXi);
 	addParameter("Eta (Tra)", mEta);
@@ -96,7 +97,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
  */
 SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 						const SelfRegulatingNeuronActivationFunction &other) 
-	: ActivationFunction(other),  mOwner(0)
+	: ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0)
 {
 	mXi = dynamic_cast<DoubleValue*>(getParameter("Xi (Rec)"));
 	mEta = dynamic_cast<DoubleValue*>(getParameter("Eta (Tra)"));
@@ -132,70 +133,13 @@ double SelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner
 		return 0.0;
 	}
 	
-// 	if(mBeta->get() <= 0.0) {
-// 		mBeta->set(0.0000001);
-// 	}
-// 	if(mGamma->get() <= 0.0 || mGamma->get() >=1.0) {
-// 		mGamma->set(Math::max(0.0000001, Math::min(0.9999999, mGamma->get())));
-// 	}
-// 	if(mDelta->get() <= 0.0 || mDelta->get() >=1.0) {
-// 		mDelta->set(Math::max(0.0000001, Math::min(0.9999999, mDelta->get())));
-// 	}
+	double activation = updateActivity();
 	
-	
-	//Calculate new activation of the neuron.
-	
-	double inputSum = 0.0;
-	bool adjustWeights = mAdjustWeights->get();
+	mReceptorResult = getReceptorStrengthUpdate(activation);
+	mTransmitterResult = getTransmitterStrengthUpdate(activation);
+	updateXi(activation);
+	updateEta(activation);
 
-	QList<Synapse*> synapses = owner->getSynapses();
-	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
-		Synapse *synapse = i.next();
-		if(synapse == 0 || synapse->getSource() == 0) {
-			continue;
-		}
-		
-		//weight only used to get the sign of the synapse (-1, 0, 1)
-		double weight = synapse->getStrengthValue().get();
-		
-		Neuron *sourceNeuron = synapse->getSource();
-		SelfRegulatingNeuronActivationFunction *af = 
-				dynamic_cast<SelfRegulatingNeuronActivationFunction*>(
-						sourceNeuron->getActivationFunction());
-		
-		//if source neuron is NOT a self-regulating neuron with a valid eta,
-		//then treat it like a neuron with eta=1
-		double eta = 1;		
-		if(af != 0) {
-			eta = af->mEta->get();
-		}
-		
-		double sign = Math::sign(weight); //zero is treated as positive value.
-		
-		if(adjustWeights) {
-			synapse->getStrengthValue().set(sign * eta * mXi->get());
-		}
-		
-		//I_i(t) = c_ij * eta_j(t) * o_j(t)
-		inputSum += sign * eta * sourceNeuron->getOutputActivationValue().get();
-	}
-
-	//a_i(t+1) = theta + xi_i(t) + I_i(t)
-	double activation = owner->getBiasValue().get() + mXi->get() * inputSum;
-	
-	
-	//update learning parameter Xi
-	//xi_i(t+1) = xi_i(t) * (1 + (beta * g(a(t)))
-	mXi->set(Math::min(100.0, Math::max(-100.0,
-				0.0001 + mXi->get() * (1.0 + (mBeta->get() * getReceptorStrengthUpdate(activation))))));
-	
-	//update learning parameter Eta
-	//eta_i(t+1) = ((1 - gamma) * eta_i(t)) + (delta * h(a(t)))
-	mEta->set(Math::min(100.0, Math::max(-100.0,
-				0.0001 + ((1.0 - mGamma->get()) * mEta->get()) 
-					+ (mDelta->get() * getTransmitterStrengthUpdate(activation)))));
-	
-	
 	return activation;
 }
 
@@ -263,6 +207,71 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 	}
 	
 	return 0.0;
+}
+
+void SelfRegulatingNeuronActivationFunction::updateXi(double activation) {
+	//update learning parameter Xi
+	//xi_i(t+1) = xi_i(t) * (1 + (beta * g(a(t)))
+	mXi->set(Math::min(100.0, Math::max(-100.0,
+				0.0001 + mXi->get() * (1.0 + (mBeta->get() * mReceptorResult)))));
+}
+
+
+void SelfRegulatingNeuronActivationFunction::updateEta(double activation) {
+	//update learning parameter Eta
+	//eta_i(t+1) = ((1 - gamma) * eta_i(t)) + (delta * h(a(t)))
+	mEta->set(Math::min(100.0, Math::max(-100.0,
+				0.0001 + ((1.0 - mGamma->get()) * mEta->get()) 
+					+ (mDelta->get() * mTransmitterResult))));
+}
+
+
+double SelfRegulatingNeuronActivationFunction::updateActivity() {
+
+	if(mOwner == 0) {
+		return 0.0;
+	}
+	
+	//Calculate new activation of the neuron.
+	
+	double inputSum = 0.0;
+	bool adjustWeights = mAdjustWeights->get();
+
+	QList<Synapse*> synapses = mOwner->getSynapses();
+	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
+		Synapse *synapse = i.next();
+		if(synapse == 0 || synapse->getSource() == 0 || !synapse->getEnabledValue().get()) {
+			continue;
+		}
+		
+		//weight only used to get the sign of the synapse (-1, 0, 1)
+		double weight = synapse->getStrengthValue().get();
+		
+		Neuron *sourceNeuron = synapse->getSource();
+		SelfRegulatingNeuronActivationFunction *af = 
+				dynamic_cast<SelfRegulatingNeuronActivationFunction*>(
+						sourceNeuron->getActivationFunction());
+		
+		//if source neuron is NOT a self-regulating neuron with a valid eta,
+		//then treat it like a neuron with eta=1
+		double eta = 1;		
+		if(af != 0) {
+			eta = af->mEta->get();
+		}
+		
+		double sign = Math::sign(weight); //zero is treated as positive value.
+		
+		if(adjustWeights) {
+			synapse->getStrengthValue().set(sign * eta * mXi->get());
+		}
+		
+		//I_i(t) = c_ij * eta_j(t) * o_j(t)
+		inputSum += sign * eta * sourceNeuron->getOutputActivationValue().get();
+	}
+
+	//a_i(t+1) = theta + xi_i(t) + I_i(t)
+	double activation = mOwner->getBiasValue().get() + mXi->get() * inputSum;
+	return activation;
 }
 
 

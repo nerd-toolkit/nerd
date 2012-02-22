@@ -63,11 +63,32 @@ namespace nerd {
 ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuronActivationFunction()
 	: QObject(), SelfRegulatingNeuronActivationFunction("Script_SRN_V1"), mEquationScript(0)
 {
-	mTransmitterEquation = new StringValue();
-	mReceptorEquation = new StringValue();
+	mTransmitterEquation = new StringValue("default");
+	mReceptorEquation = new StringValue("default");
+	mEtaEquation = new StringValue("default");
+	mXiEquation = new StringValue("default");
 	
-	addParameter("Trans-Eq", mTransmitterEquation);
-	addParameter("Recept-Eq", mReceptorEquation);
+	addParameter("Trans-Eq (eta,h)", mTransmitterEquation);
+	addParameter("Recept-Eq (xi,g)", mReceptorEquation);
+	addParameter("Eta-Eq", mEtaEquation);
+	addParameter("Xi-Eq", mXiEquation);
+	
+	mTransmitterEquation->setDescription("2. Equation"
+										 "\nVariables: alpha, beta, gamma, delta, eta, xi, a, ap, x, y, z"
+										 "\nFunctions: tf()"
+										 "\n<default> recovers standard equation.");
+	mReceptorEquation->setDescription("1. Equation"
+										 "\nVariables: alpha, beta, gamma, delta, eta, xi, a, ap, x, y, z"
+										 "\nFunctions: tf()"
+										 "\n<default> recovers standard equation.");
+	mEtaEquation->setDescription("4. Equation"
+										 "\nVariables: alpha, beta, gamma, delta, eta, xi, a, ap, x, y, z, g, h"
+										 "\nFunctions: tf()"
+										 "\n<default> recovers standard equation.");
+	mXiEquation->setDescription("3. Equation"
+										 "\nVariables: alpha, beta, gamma, delta, eta, xi, a, ap, x, y, z, g, h"
+										 "\nFunctions: tf()"
+										 "\n<default> recovers standard equation.");
 }
 
 
@@ -80,8 +101,10 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 						const ScriptableSelfRegulatingNeuronActivationFunction &other) 
 	: QObject(), SelfRegulatingNeuronActivationFunction(other), mEquationScript(0)
 {
-	mTransmitterEquation = dynamic_cast<StringValue*>(getParameter("Trans-Eq"));
-	mReceptorEquation = dynamic_cast<StringValue*>(getParameter("Recept-Eq"));
+	mTransmitterEquation = dynamic_cast<StringValue*>(getParameter("Trans-Eq (eta,h)"));
+	mReceptorEquation = dynamic_cast<StringValue*>(getParameter("Recept-Eq (xi,g)"));
+	mEtaEquation = dynamic_cast<StringValue*>(getParameter("Eta-Eq"));
+	mXiEquation = dynamic_cast<StringValue*>(getParameter("Xi-Eq"));
 }
 
 /**
@@ -103,6 +126,19 @@ void ScriptableSelfRegulatingNeuronActivationFunction::reset(Neuron *owner) {
 }
 
 double ScriptableSelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner) {
+	
+	if(mEtaEquation->get() == "default") {
+		mEtaEquation->set("((1 - gamma) * eta) + (delta * h)");
+	}
+	if(mXiEquation->get() == "default") {
+		mXiEquation->set("xi * (1 + (beta * g))");
+	}
+	if(mTransmitterEquation->get() == "default") {
+		mTransmitterEquation->set("1 + tf(a)");
+	}
+	if(mReceptorEquation->get() == "default") {
+		mReceptorEquation->set("Math.abs(tf(aStar)) - Math.abs(tf(a))");
+	}
 	
 	return SelfRegulatingNeuronActivationFunction::calculateActivation(owner);
 }
@@ -174,6 +210,7 @@ double ScriptableSelfRegulatingNeuronActivationFunction::getReceptorStrengthUpda
 						+ mReceptorEquation->get() + ")", true);
 		}
 		else {
+			mEquationScript->evaluate(QString("g = " + mVariableBuffer));
 			return mVariableBuffer.toDouble();
 		}
 	}
@@ -197,6 +234,7 @@ double ScriptableSelfRegulatingNeuronActivationFunction::getTransmitterStrengthU
 						+ mTransmitterEquation->get() + ")", true);
 		}
 		else {
+			mEquationScript->evaluate(QString("h = " + mVariableBuffer));
 			return mVariableBuffer.toDouble();
 		}
 	}
@@ -204,6 +242,39 @@ double ScriptableSelfRegulatingNeuronActivationFunction::getTransmitterStrengthU
 		return SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(activation);
 	}
 	return 0.0;
+}
+
+void ScriptableSelfRegulatingNeuronActivationFunction::updateXi(double activation) {
+	if(mXiEquation->get() != "") {
+		mEquationScript->evaluate("nerd.stringBuffer = " + mXiEquation->get());
+		if(mEquationScript->hasUncaughtException()) {
+			Core::log("ScriptableSRNActivationFunction: Could not evaluate xi equation ["
+						+ mXiEquation->get() + ")", true);
+		}
+		else {
+			mXi->set(Math::min(1000.0, Math::max(-1000.0, mVariableBuffer.toDouble())));
+		}
+	}
+	else {
+		SelfRegulatingNeuronActivationFunction::updateXi(activation);
+	}
+}
+
+
+void ScriptableSelfRegulatingNeuronActivationFunction::updateEta(double activation) {
+	if(mEtaEquation->get() != "") {
+		mEquationScript->evaluate("nerd.stringBuffer = " + mEtaEquation->get());
+		if(mEquationScript->hasUncaughtException()) {
+			Core::log("ScriptableSRNActivationFunction: Could not evaluate eta equation ["
+						+ mEtaEquation->get() + ")", true);
+		}
+		else {
+			mEta->set(Math::min(1000.0, Math::max(-1000.0, mVariableBuffer.toDouble())));
+		}
+	}
+	else {
+		SelfRegulatingNeuronActivationFunction::updateEta(activation);
+	}
 }
 
 
@@ -239,29 +310,33 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 		mEquationScript->evaluate(QString("function tf(act) { return nerd.tf(act); }"));
 		
 		
-		mEquationScript->evaluate("var a = 0;");
-		mEquationScript->evaluate("var b = 0;");
-		mEquationScript->evaluate("var g = 0;");
-		mEquationScript->evaluate("var d = 0;");
+		mEquationScript->evaluate("var alpha = 0;");
+		mEquationScript->evaluate("var beta = 0;");
+		mEquationScript->evaluate("var gamma = 0;");
+		mEquationScript->evaluate("var delta = 0;");
 		mEquationScript->evaluate("var aStar = 0;");
-		mEquationScript->evaluate("var act = 0;");
+		mEquationScript->evaluate("var a = 0;");
 		mEquationScript->evaluate("var xi = 0;");
 		mEquationScript->evaluate("var eta = 0;");
-		mEquationScript->evaluate("var actp = 0;");
+		mEquationScript->evaluate("var ap = 0;");
+		mEquationScript->evaluate("var g = 0;");
+		mEquationScript->evaluate("var h = 0;");
 		mEquationScript->evaluate("var x = 0; var y = 0; var z = 0;");
 	}
 	
 	
 	//update parameters
-	mEquationScript->evaluate(QString("a = " + mAlpha->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("b = " + mBeta->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("g = " + mGamma->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("d = " + mDelta->getValueAsString() + ";"));
+	mEquationScript->evaluate(QString("alpha = " + mAlpha->getValueAsString() + ";"));
+	mEquationScript->evaluate(QString("beta = " + mBeta->getValueAsString() + ";"));
+	mEquationScript->evaluate(QString("gamma = " + mGamma->getValueAsString() + ";"));
+	mEquationScript->evaluate(QString("delta = " + mDelta->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("aStar = " + mAStar->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("act = " + QString::number(activation) + ";"));
+	mEquationScript->evaluate(QString("a = " + QString::number(activation) + ";"));
 	mEquationScript->evaluate(QString("xi = " + mXi->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("eta = " + mEta->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("actp = " + QString::number(mOwner->getLastActivation()) + ";"));
+	mEquationScript->evaluate(QString("ap = " + QString::number(mOwner->getLastActivation()) + ";"));
+	mEquationScript->evaluate(QString("g = 0"));
+	mEquationScript->evaluate(QString("h = 0"));
 		
 }
 

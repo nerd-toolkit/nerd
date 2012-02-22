@@ -74,6 +74,10 @@ namespace nerd {
 	protected:
 		virtual double getReceptorStrengthUpdate(double activation);
 		virtual double getTransmitterStrengthUpdate(double activation);
+		virtual void updateXi(double activation);
+		virtual void updateEta(double activation);
+		
+		virtual double updateActivity();
 
 	protected:
 		DoubleValue *mXi;
@@ -86,6 +90,8 @@ namespace nerd {
 		BoolValue *mAdjustWeights;
 		
 		Neuron *mOwner;
+		double mTransmitterResult;
+		double mReceptorResult;
 		
 	};
 
