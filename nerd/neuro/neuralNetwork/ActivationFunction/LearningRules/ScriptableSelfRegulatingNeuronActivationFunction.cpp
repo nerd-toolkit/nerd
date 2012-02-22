@@ -74,19 +74,19 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 	addParameter("Xi-Eq", mXiEquation);
 	
 	mTransmitterEquation->setDescription("2. Equation"
-										 "\nVariables: alpha, beta, gamma, delta, eta, xi, a, ap, x, y, z"
+										 "\nVariables: alpha, beta, gamma, delta, aStar, eta, xi, a, ap, x, y, z"
 										 "\nFunctions: tf()"
 										 "\n<default> recovers standard equation.");
 	mReceptorEquation->setDescription("1. Equation"
-										 "\nVariables: alpha, beta, gamma, delta, eta, xi, a, ap, x, y, z"
+										 "\nVariables: alpha, beta, gamma, delta, aStar, eta, xi, a, ap, x, y, z"
 										 "\nFunctions: tf()"
 										 "\n<default> recovers standard equation.");
 	mEtaEquation->setDescription("4. Equation"
-										 "\nVariables: alpha, beta, gamma, delta, eta, xi, a, ap, x, y, z, g, h"
+										 "\nVariables: alpha, beta, gamma, delta, aStar, eta, xi, a, ap, x, y, z, g, h"
 										 "\nFunctions: tf()"
 										 "\n<default> recovers standard equation.");
 	mXiEquation->setDescription("3. Equation"
-										 "\nVariables: alpha, beta, gamma, delta, eta, xi, a, ap, x, y, z, g, h"
+										 "\nVariables: alpha, beta, gamma, delta, aStar, eta, xi, a, ap, x, y, z, g, h"
 										 "\nFunctions: tf()"
 										 "\n<default> recovers standard equation.");
 }

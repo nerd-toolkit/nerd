@@ -250,6 +250,16 @@ QList<Individual*> PoissonDistributionRanking::createSeed(
 // 				<< "  gamma: " << gamma << endl;
 // 			cerr << "limit: " << limit << " birthrate: " << birthRate <<  " abs: " << Math::abs(birthRate) << " average: " << average << "  normOffspringSum: " << normalizedOffspringProbabilitySum << endl;
 
+// algorithm poisson random number (Knuth):
+//     init:
+//          Let L ← e−λ, k ← 0 and p ← 1.
+//     do:
+//          k ← k + 1.
+//          Generate uniform random number u in [0,1] and let p ← p × u.
+//     while p > L.
+//     return k − 1.
+			
+			
 			do {
 				++numberOfChildren;
 				product *= Random::nextDouble();

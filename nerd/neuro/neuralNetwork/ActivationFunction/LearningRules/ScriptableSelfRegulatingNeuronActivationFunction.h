@@ -60,8 +60,8 @@ namespace nerd {
 	 *
 	 */
 	class ScriptableSelfRegulatingNeuronActivationFunction 
-			:  public virtual QObject,
-			   public virtual SelfRegulatingNeuronActivationFunction
+			:  public QObject,
+			   public SelfRegulatingNeuronActivationFunction
 	{
 		Q_OBJECT
 		
