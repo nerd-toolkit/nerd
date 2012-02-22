@@ -78,6 +78,8 @@ ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
 			this, SLOT(parameterContentChanged()));
     connect(mParameterContent, SIGNAL(textEdited(const QString&)),
 			this, SLOT(markAsValueEdited()));
+	connect(this, SIGNAL(setParameterText(QString)),
+			mParameterContent, SLOT(setText(QString)));
 }
 
 
@@ -101,7 +103,8 @@ void ParameterPanel::valueChanged(Value *value)  {
 		return;
 	}
 	if(value == mParameter) {
-		mParameterContent->setText(mParameter->getValueAsString());
+		//mParameterContent->setText(mParameter->getValueAsString());
+		emit setParameterText(mParameter->getValueAsString());
 		emit markAsValueUpdated();
 	}
 }
@@ -156,6 +159,18 @@ void ParameterPanel::parameterContentChanged() {
 	emit markAsValueUpdated();
 	emit parameterChanged(mParameter, mParameterName, newContent);
 }
+
+
+// void ParameterPanel::parameterContentUpdated() {
+// 	if(mParameter == 0 || mInvalid) {
+// 		return;
+// 	}
+// 	QString content = mParameter->getValueAsString();
+// 	if(mParameterContent->text() != content) {
+// 		mParameterContent->setText(content);
+// 		emit markAsValueUpdated();
+// 	}
+// }
 
 /**
  * Marks the background color of the text label red to show that the content

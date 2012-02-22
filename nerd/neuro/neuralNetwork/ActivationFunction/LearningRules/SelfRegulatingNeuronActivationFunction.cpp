@@ -68,8 +68,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	
 	mAlpha = new DoubleValue(0.5);
 	mBeta = new DoubleValue(0.1);
-	mGamma = new DoubleValue(0.1);
-	mDelta = new DoubleValue(0.1);
+	mGamma = new DoubleValue(0.01);
+	mDelta = new DoubleValue(0.015);
 	mAStar = new DoubleValue(0.658479);
 	
 	mAdjustWeights = new BoolValue(true);
@@ -187,12 +187,12 @@ double SelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner
 	//update learning parameter Xi
 	//xi_i(t+1) = xi_i(t) * (1 + (beta * g(a(t)))
 	mXi->set(Math::min(100.0, Math::max(-100.0,
-				mXi->get() * (1.0 + (mBeta->get() * getReceptorStrengthUpdate(activation))))));
+				0.0001 + mXi->get() * (1.0 + (mBeta->get() * getReceptorStrengthUpdate(activation))))));
 	
 	//update learning parameter Eta
 	//eta_i(t+1) = ((1 - gamma) * eta_i(t)) + (delta * h(a(t)))
 	mEta->set(Math::min(100.0, Math::max(-100.0,
-				((1.0 - mGamma->get()) * mEta->get()) 
+				0.0001 + ((1.0 - mGamma->get()) * mEta->get()) 
 					+ (mDelta->get() * getTransmitterStrengthUpdate(activation)))));
 	
 	
@@ -253,7 +253,7 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 	if(true) {
 		//h(a) = 1 + tau(a)
 		TransferFunction *tf = mOwner->getTransferFunction();
-		return 1 + tf->transferActivation(mAStar->get(), mOwner); 
+		return 1 + tf->transferActivation(activation, mOwner); 
 	}
 	else {
 		//h(a) = tau(a(t) - (tau(a(t-1)))   //CHECK if brackets are correct!

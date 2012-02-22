@@ -86,6 +86,7 @@ namespace nerd {
 
 	signals:
 		void parameterChanged(Value *parameter, const QString &name, const QString &content);
+		void setParameterText(const QString &text);
 
 	private:
 		bool mRegisteredAsListener;
