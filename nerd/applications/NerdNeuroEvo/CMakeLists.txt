@@ -73,6 +73,7 @@ if(WIN32)
 elseif(UNIX)
 TARGET_LINK_LIBRARIES(NerdNeuroEvo
 	-lGLU
+	-lGL
 )
 endif(WIN32)
 

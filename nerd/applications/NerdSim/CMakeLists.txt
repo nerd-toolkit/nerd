@@ -65,6 +65,7 @@ if(WIN32)
 elseif(UNIX)
 TARGET_LINK_LIBRARIES(NerdSim
 	-lGLU
+	-lGL
 )
 endif(WIN32)
 

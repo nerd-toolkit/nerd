@@ -64,7 +64,7 @@ namespace nerd {
 	 * EvolutionProgressBar.
 	 *
 	 */
-	class EvolutionProgressBar : public virtual QWidget, public virtual SystemObject, 
+	class EvolutionProgressBar : public QWidget, public virtual SystemObject, 
 								 public virtual EventListener, public virtual ValueChangedListener
 	{
 	Q_OBJECT

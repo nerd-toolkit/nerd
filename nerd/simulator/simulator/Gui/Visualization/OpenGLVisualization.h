@@ -65,7 +65,7 @@
 #include <QImage>
 #include <QGLFramebufferObject>
 #include "PlugIns/CommandLineArgument.h"
-
+#include <GL/glu.h>
 
 namespace nerd{
 
