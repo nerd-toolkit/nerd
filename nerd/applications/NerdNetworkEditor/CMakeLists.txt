@@ -52,3 +52,10 @@ TARGET_LINK_LIBRARIES(NerdNetworkEditor
 	${QT_LIBRARIES}
 )
 
+if(WIN32)
+elseif(UNIX)
+TARGET_LINK_LIBRARIES(NerdNetworkEditor
+	-lGLU
+	-lGL
+)
+endif(WIN32)

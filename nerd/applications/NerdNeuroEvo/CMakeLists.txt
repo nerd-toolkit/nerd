@@ -58,8 +58,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/${ODE_INCLUDE_PATH})
 TARGET_LINK_LIBRARIES(NerdNeuroEvo
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/neuroAndSimEvaluation/libneuroAndSimEvaluation.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/neuroEvolution/libneuroEvolution.a
-	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/networkEditor/libnetworkEditor.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/odePhysics/libodePhysics.a
 	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}

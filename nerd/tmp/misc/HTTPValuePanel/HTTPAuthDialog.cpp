@@ -10,7 +10,7 @@
  *                                                                         *
  *   Project homepage: nerd.x-bot.org                                      *
  *                                                                         *
- *   Copyright (C) 2008 - 2010 by the Neurocybernetics Groups Osnabrück    *
+ *   Copyright (C) 2008 - 2012 by the Neurocybernetics Group Osnabrück    *
  *   Contact: Christian Rempis                                             *
  *   christian.rempis@uni-osnabrueck.de                                    *
  *   Contributors: see contributors.txt in the nerd main directory.        *
@@ -19,7 +19,7 @@
  *   Acknowledgments:                                                      *
  *   The NERD Kit is part of the EU project ALEAR                          *
  *   (Artificial Language Evolution on Autonomous Robots) www.ALEAR.eu     *
- *   This work is funded by EU-Project Number ICT 214856                   *
+ *   This work was funded (2008 - 2011) by EU-Project Number ICT 214856    *
  *                                                                         *
  *                                                                         *
  *   License Agreement:                                                    *

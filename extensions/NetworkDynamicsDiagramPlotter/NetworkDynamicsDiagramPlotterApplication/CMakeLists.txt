@@ -46,18 +46,19 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../NetworkDynamicsDiagramPlotter
 
 
 TARGET_LINK_LIBRARIES(NetworkDynamicsDiagramPlotterApplication
-	${QT_LIBRARIES}
 	${CMAKE_CURRENT_BINARY_DIR}/../NetworkDynamicsDiagramPlotterLib/libNetworkDynamicsDiagramPlotterLib.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/neuro/networkEditor/libnetworkEditor.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/system/nerd/libnerd.a
+	${QT_LIBRARIES}
 )
 
 if(WIN32)
 elseif(UNIX)
 TARGET_LINK_LIBRARIES(NetworkDynamicsDiagramPlotterApplication
 	-lGLU
+	-lGL
 )
 endif(WIN32)
 

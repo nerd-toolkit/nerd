@@ -58,3 +58,11 @@ TARGET_LINK_LIBRARIES(NerdClusterNeuroEvo
 	${QT_LIBRARIES}
 )
 
+
+if(WIN32)
+elseif(UNIX)
+TARGET_LINK_LIBRARIES(NerdClusterNeuroEvo
+	-lGLU
+	-lGL
+)
+endif(WIN32)
