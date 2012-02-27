@@ -49,12 +49,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../evolution/neuroAndSimEvalu
 
 
 TARGET_LINK_LIBRARIES(NerdClusterNeuroEvo
-	${QT_LIBRARIES}
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/neuroAndSimEvaluation/libneuroAndSimEvaluation.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/neuroEvolution/libneuroEvolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/networkEditor/libnetworkEditor.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
+	${QT_LIBRARIES}
 )
 

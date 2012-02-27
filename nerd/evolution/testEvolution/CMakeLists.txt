@@ -67,10 +67,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/neuralNetwork)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simulator)
 
 TARGET_LINK_LIBRARIES(testEvolution
-	${QT_LIBRARIES}
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
+	${QT_LIBRARIES}
 )
 

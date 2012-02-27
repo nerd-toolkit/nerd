@@ -55,17 +55,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../evolution/neuroAndSimEvalu
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/${ODE_INCLUDE_PATH})
 
 TARGET_LINK_LIBRARIES(NerdNeuroSim
-	${QT_LIBRARIES}
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/neuroAndSimEvaluation/libneuroAndSimEvaluation.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/neuroEvolution/libneuroEvolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/networkEditor/libnetworkEditor.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/odePhysics/libodePhysics.a
+	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simple2DPhysics/libsimple2DPhysics.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
-	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}
+	${QT_LIBRARIES}
 )
 
 if(WIN32)

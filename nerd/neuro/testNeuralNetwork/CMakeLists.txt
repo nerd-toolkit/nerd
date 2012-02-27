@@ -83,8 +83,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/neuralNetwork)
 
 TARGET_LINK_LIBRARIES(testNeuralNetwork
-	${QT_LIBRARIES}
 	${CMAKE_CURRENT_BINARY_DIR}/../../neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
+	${QT_LIBRARIES}
 )
 
