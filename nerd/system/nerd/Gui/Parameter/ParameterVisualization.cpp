@@ -128,8 +128,9 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mMoveDownButton->setWhatsThis("Moves this property down in the list");
 
 	if(mValue != 0) {
-        mNameLabel->setWhatsThis(mValue->getDescription());
-        mValueBox->setWhatsThis(mValue->getDescription());
+        //mNameLabel->setWhatsThis(mValue->getDescription());
+        //mValueBox->setWhatsThis(mValue->getDescription());
+		mNameLabel->setToolTip(mValue->getDescription());
 	}
 
 	mUpdateSnapshotButton = new QPushButton("Set Init");
