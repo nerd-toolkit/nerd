@@ -73,6 +73,7 @@
 #include "NeuralNetworkManipulationChain/InsertNeuroModuleOperator.h"
 #include "NeuralNetworkManipulationChain/InsertBiasOperator.h"
 #include "NeuralNetworkManipulationChain/RemoveBiasOperator.h"
+#include "NeuralNetworkManipulationChain/AdaptSRNParametersOperator.h"
 
 
 using namespace std;
@@ -121,6 +122,8 @@ ModularNeuroEvolution1::ModularNeuroEvolution1(World *world)
 				new ChangeBiasOperator("ChangeBias");
 	ChangeSynapseStrengthOperator *changeSynapseStrengthOp =
 				new ChangeSynapseStrengthOperator("ChangeSynapseStrength");	
+	AdaptSRNParametersOperator *adaptSRNParametersOperator =
+				new AdaptSRNParametersOperator("AdaptSRNParameters");
 	EnableSynapseOperator *enableSynapseOperator =
 				new EnableSynapseOperator("EnableSynapse", true);
 	EnableSynapseOperator *disableSynapseOperator =
@@ -146,6 +149,7 @@ ModularNeuroEvolution1::ModularNeuroEvolution1(World *world)
 	evo->addOperator(disableSynapseOperator);
 	evo->addOperator(initBiasOp);
 	evo->addOperator(changeBias);
+	evo->addOperator(adaptSRNParametersOperator);
 	evo->addOperator(changeSynapseStrengthOp);
 	evo->addOperator(connectNeuronClassFilter);
 
@@ -165,9 +169,18 @@ ModularNeuroEvolution1::ModularNeuroEvolution1(World *world)
 	enableSynapseOperator->getOperatorIndexValue()->set(160);
 	changeBias->getOperatorIndexValue()->set(180);
 	changeSynapseStrengthOp->getOperatorIndexValue()->set(200);
+	adaptSRNParametersOperator->getOperatorIndexValue()->set(220);
 	constraintResolver->getOperatorIndexValue()->set(1000);
 	connectNeuronClassFilter->getOperatorIndexValue()->set(1100);
 	evo->addOperator(constraintResolver);
+	
+	modularCrossover->getEnableOperatorValue()->set(false);
+	enableSynapseOperator->getEnableOperatorValue()->set(false);
+	disableSynapseOperator->getEnableOperatorValue()->set(false);
+	
+	modularCrossover->getHiddenValue()->set(true);
+	enableSynapseOperator->getHiddenValue()->set(true);
+	disableSynapseOperator->getHiddenValue()->set(true);
 
 
 	//Add Selection Methods and genotypePhenotypeMapper

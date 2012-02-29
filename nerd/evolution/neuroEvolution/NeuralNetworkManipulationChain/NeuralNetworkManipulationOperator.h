@@ -80,6 +80,7 @@ namespace nerd {
 		IntValue* getOperatorIndexValue() const;
 		BoolValue* getEnableOperatorValue() const;
 		StringValue* getDocumentationValue() const;
+		BoolValue* getHiddenValue() const;
 
 		IntValue* getLastExecutionTimeValue() const;
 		
@@ -101,6 +102,7 @@ namespace nerd {
 		int mMinTime;
 		int mExecCounter;
 		BoolValue *mCanBeDisabled;
+		BoolValue *mHidden;
 	};
 
 }

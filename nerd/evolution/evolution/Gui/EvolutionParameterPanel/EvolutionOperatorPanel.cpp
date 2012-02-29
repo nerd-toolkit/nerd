@@ -144,6 +144,7 @@ EvolutionOperatorPanel::EvolutionOperatorPanel(const QString &prefix, const QStr
 	//set up enableValue to control the enable state of the operator.
 	mCanBeDisabled = vm->getBoolValue(prefix + operatorName + "/Config/CanBeDisabled");
 	mEnableValue = vm->getBoolValue(prefix + operatorName + "/Config/Enable");
+	mIsHiddenValue = vm->getBoolValue(prefix + operatorName + "/Config/Hidden");
 	if(mEnableValue != 0) {
 		mEnableValue->addValueChangedListener(this);
 		mDisableOperator->setChecked(!mEnableValue->get());
@@ -152,7 +153,14 @@ EvolutionOperatorPanel::EvolutionOperatorPanel(const QString &prefix, const QStr
 		mDisableOperator->setChecked(false);
 	}
 	checkEnableState();
-	mHideParameters->setChecked(false);
+	if(mIsHiddenValue != 0) {
+		mIsHiddenValue->addValueChangedListener(this);
+		mHideParameters->setChecked(mIsHiddenValue->get());
+	}
+	else {
+		mHideParameters->setChecked(false);
+	}
+	checkHideState();
 
 
 	connect(mDisableOperator, SIGNAL(toggled(bool)),
@@ -180,6 +188,9 @@ void EvolutionOperatorPanel::valueChanged(Value *value) {
 	}
 	else if(value == mEnableValue) {
 		mDisableOperator->setChecked(!mEnableValue->get());
+	}
+	else if(value == mIsHiddenValue) {
+		mHideParameters->setChecked(mIsHiddenValue->get());
 	}
 }
 
@@ -232,6 +243,9 @@ void EvolutionOperatorPanel::checkEnableState(bool) {
 
 
 void EvolutionOperatorPanel::checkHideState(bool) {
+	if(mIsHiddenValue != 0 && mIsHiddenValue->get() != mHideParameters->isChecked()) {
+		mIsHiddenValue->set(mHideParameters->isChecked());
+	}
 	if(mHideParameters->isChecked()) {
 		mParameterWidget->hide();
 	}

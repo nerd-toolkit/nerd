@@ -148,6 +148,8 @@ namespace nerd {
 		static const QString TAG_NEURON_MAX_NUMBER_OF_IN_SYNAPSES;
 		static const QString TAG_NEURON_MAX_NUMBER_OF_OUT_SYNAPSES;
 		static const QString TAG_NEURON_SOURCE_EXCLUDE_LIST;
+		static const QString TAG_NEURON_PROTECT_TRANSFER_FUNCTION;
+		static const QString TAG_NEURON_PROTECT_ACTIVATION_FUNCTION;
 		static const QString TAG_CONSTRAINT_SLAVE;
 		static const QString TAG_FAST_ITERATIONS;
 		static const QString TAG_MAX_NUMBER_OF_SUBMODULES;

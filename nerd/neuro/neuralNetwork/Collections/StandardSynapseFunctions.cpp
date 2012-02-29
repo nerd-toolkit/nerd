@@ -50,6 +50,7 @@
 #include "SynapseFunction/ASeriesMultiSynapseFunction.h"
 #include "SynapseFunction/MSeriesSynapseFunction.h"
 #include "SynapseFunction/MSeriesAdjustableSynapseFunction.h"
+#include "SynapseFunction/SimpleLinkSynapseFunction.h"
 
 namespace nerd {
 
@@ -80,6 +81,9 @@ StandardSynapseFunctions::StandardSynapseFunctions()
 	
 	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
 		MSeriesAdjustableSynapseFunction());
+	
+	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
+		SimpleLinkSynapseFunction());
 }
 
 }

@@ -42,70 +42,37 @@
  ***************************************************************************/
 
 
-#ifndef NERDSelfRegulatingNeuronActivationFunction_H
-#define NERDSelfRegulatingNeuronActivationFunction_H
+#ifndef NERDSimpleLinkSynapseFunction_H
+#define NERDSimpleLinkSynapseFunction_H
 
-#include <QString>
-#include <QHash>
-#include "ActivationFunction/ActivationFunction.h"
-#include "Value/DoubleValue.h"
-#include "Value/StringValue.h"
-#include "Value/BoolValue.h"
+#include "SynapseFunction/SynapseFunction.h"
 
 namespace nerd {
 
 	/**
-	 * SelfRegulatingNeuronActivationFunction.
+	 * SimpleSynapseFunction.
 	 *
+	 * The SimpleSynapseFunction simply returns the strength of the
+	 * owner Synapse. This strength is not modulated in any way.
 	 */
-	class SelfRegulatingNeuronActivationFunction : public ActivationFunction {
+	class SimpleLinkSynapseFunction : public SynapseFunction {
 	public:
-		SelfRegulatingNeuronActivationFunction(const QString &name = "SRN_V1");
-		SelfRegulatingNeuronActivationFunction(const SelfRegulatingNeuronActivationFunction &other);
-		virtual ~SelfRegulatingNeuronActivationFunction();
+		SimpleLinkSynapseFunction();
+		SimpleLinkSynapseFunction(const SimpleLinkSynapseFunction &other);
+		virtual ~SimpleLinkSynapseFunction();
 
-		virtual ActivationFunction* createCopy() const;
+		virtual SynapseFunction* createCopy() const;
+		
+		virtual void reset(Synapse *owner);
+		virtual double calculate(Synapse *owner);
 
-		virtual void reset(Neuron *owner);
-		virtual double calculateActivation(Neuron *owner);
+		bool equals(SynapseFunction *synapseFunction) const;
 		
-		DoubleValue* getAlpha() const;
-		DoubleValue* getBeta() const;
-		DoubleValue* getGamma() const;
-		DoubleValue* getDelta() const;
-		DoubleValue* getAStar() const;
-
-		bool equals(ActivationFunction *activationFunction) const;
-		
-	protected:
-		virtual double getReceptorStrengthUpdate(double activation);
-		virtual double getTransmitterStrengthUpdate(double activation);
-		virtual void updateXi(double activation);
-		virtual void updateEta(double activation);
-		
-		virtual double updateActivity();
-
-	protected:
-		DoubleValue *mXi;
-		DoubleValue *mEta;
-		DoubleValue *mAlpha;
-		DoubleValue *mBeta;
-		DoubleValue *mGamma;
-		DoubleValue *mDelta;
-		DoubleValue *mAStar;
-		BoolValue *mAdjustWeights;
-		BoolValue *mRestrictToLinkSynapses;
-		
-		Neuron *mOwner;
-		double mTransmitterResult;
-		double mReceptorResult;
-		
+	private:		
 	};
 
 }
 
 #endif
-
-
 
 

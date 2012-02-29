@@ -70,6 +70,9 @@ ConnectNeuronClassesFilter::ConnectNeuronClassesFilter(const QString &name)
 {
 	mSourceToTarget = new BoolValue(true);
 	addParameter("SourceToTarget", mSourceToTarget);
+	
+	getEnableOperatorValue()->set(false);
+	getHiddenValue()->set(true);
 }
 
 

@@ -109,6 +109,8 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
 			this, SLOT(valueTextChanged(const QString&)));
     connect(mValueBox, SIGNAL(activated(const QString&)),
             this, SLOT(itemSelected(const QString&)));
+	connect(this, SIGNAL(setParameterText(QString)),
+			mValueContent, SLOT(setText(QString)));
 }
 
 
@@ -124,7 +126,10 @@ void ParameterControlWidget::valueChanged(Value *value) {
 		return;
 	}
 	else if(value == mValue) {
-		mValueBox->setEditText(mValue->getValueAsString());
+		if(mValue->getValueAsString() != mValueBox->currentText()) {
+			//mValueBox->setEditText(mValue->getValueAsString());
+			emit setParameterText(mValue->getValueAsString());
+		}
 	}
 }
 

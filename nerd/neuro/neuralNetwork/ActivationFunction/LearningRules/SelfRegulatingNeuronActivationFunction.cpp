@@ -50,7 +50,7 @@
 #include "Network/Neuron.h"
 #include "Math/Math.h"
 #include <math.h>
-
+#include "SynapseFunction/SimpleLinkSynapseFunction.h"
 
 using namespace std;
 
@@ -75,6 +75,9 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mAdjustWeights = new BoolValue(true);
 	mAdjustWeights->setDescription("Enables an update of the synapse weights in the network.");
 	
+	mRestrictToLinkSynapses = new BoolValue(false);
+	mRestrictToLinkSynapses->setDescription("Restricts weight changes to synapses with the SimpleLinkSynapseFunction.");
+	
 	addParameter("Xi (Rec)", mXi);
 	addParameter("Eta (Tra)", mEta);
 	addParameter("Alpha", mAlpha);
@@ -84,6 +87,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	addParameter("A*", mAStar);	
 	
 	addParameter("AdjustWeights", mAdjustWeights);
+	addParameter("RestrictToLinks", mRestrictToLinkSynapses);
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
@@ -107,6 +111,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 	mDelta = dynamic_cast<DoubleValue*>(getParameter("Delta"));
 	mAStar = dynamic_cast<DoubleValue*>(getParameter("A*"));
 	mAdjustWeights = dynamic_cast<BoolValue*>(getParameter("AdjustWeights"));
+	mRestrictToLinkSynapses = dynamic_cast<BoolValue*>(getParameter("RestrictToLinks"));
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
@@ -142,6 +147,31 @@ double SelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner
 
 	return activation;
 }
+
+DoubleValue* SelfRegulatingNeuronActivationFunction::getAlpha() const {
+	return mAlpha;
+}
+
+
+DoubleValue* SelfRegulatingNeuronActivationFunction::getBeta() const {
+	return mBeta;
+}
+
+
+DoubleValue* SelfRegulatingNeuronActivationFunction::getGamma() const {
+	return mGamma;
+}
+
+
+DoubleValue* SelfRegulatingNeuronActivationFunction::getDelta() const {
+	return mDelta;
+}
+
+
+DoubleValue* SelfRegulatingNeuronActivationFunction::getAStar() const {
+	return mAStar;
+}
+
 
 
 bool SelfRegulatingNeuronActivationFunction::equals(ActivationFunction *activationFunction) const {
@@ -259,14 +289,32 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 			eta = af->mEta->get();
 		}
 		
-		double sign = Math::sign(weight); //zero is treated as positive value.
+		bool isLink = true;
 		
-		if(adjustWeights) {
-			synapse->getStrengthValue().set(sign * eta * mXi->get());
+		if(mRestrictToLinkSynapses->get()) {
+			//consider only weights that 
+			if(dynamic_cast<SimpleLinkSynapseFunction*>(synapse->getSynapseFunction()) == 0) {
+				isLink = false;
+			}
+		}
+
+		double act = 0.0;
+		
+		if(isLink) {
+			double sign = Math::sign(weight); //zero is treated as positive value.
+			
+			if(adjustWeights) {
+				synapse->getStrengthValue().set(sign * eta * mXi->get());
+			}
+			act = sign * eta * sourceNeuron->getOutputActivationValue().get();
+		}
+		else {
+			act = synapse->calculateActivation();
 		}
 		
 		//I_i(t) = c_ij * eta_j(t) * o_j(t)
-		inputSum += sign * eta * sourceNeuron->getOutputActivationValue().get();
+		//inputSum += sign * eta * sourceNeuron->getOutputActivationValue().get();
+		inputSum += act;
 	}
 
 	//a_i(t+1) = theta + xi_i(t) + I_i(t)

@@ -41,6 +41,7 @@ set(nerd_neuroEvolution_SRCS
 	Collections/NeuroFitnessPrototypes.cpp  
 	FitnessFunctions/ScriptedNeuroFitnessFunction.cpp
 	Util/NeuroEvolutionUtil.cpp
+	NeuralNetworkManipulationChain/AdaptSRNParametersOperator.cpp
 )
 
 set(nerd_neuroEvolution_MOC_HDRS

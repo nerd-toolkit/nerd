@@ -269,6 +269,12 @@ const QString NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_OUT_SYNAPSES
 		
 const QString NeuralNetworkConstants::TAG_NEURON_SOURCE_EXCLUDE_LIST
 		= "NeuronSourceExcludeList";
+		
+const QString NeuralNetworkConstants::TAG_NEURON_PROTECT_TRANSFER_FUNCTION
+		= "ProtectTF";
+		
+const QString NeuralNetworkConstants::TAG_NEURON_PROTECT_ACTIVATION_FUNCTION
+		= "ProtectAF";
 
 const QString NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE
 		= "_ConstraintSlave";

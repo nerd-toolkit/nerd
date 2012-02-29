@@ -66,6 +66,7 @@ NeuralNetworkManipulationOperator::NeuralNetworkManipulationOperator(const QStri
 	mMinExecutionTime = new IntValue(0);
 	mExecutionCount = new IntValue(0);
 	mCanBeDisabled = new BoolValue(canBeDisabled);
+	mHidden = new BoolValue(false);
 	
 	addParameter("Config/MaximalNumberOfApplications", mMaximalNumberOfApplications);
 	addParameter("Config/OperatorIndex", mOperatorIndex);
@@ -77,6 +78,7 @@ NeuralNetworkManipulationOperator::NeuralNetworkManipulationOperator(const QStri
 	addParameter("Performance/MinTime", mMinExecutionTime);
 	addParameter("Performance/ExecutionCount", mExecutionCount);
 	addParameter("Config/CanBeDisabled", mCanBeDisabled);
+	addParameter("Config/Hidden", mHidden);
 
 	Core::log(QString("Added operator: ") + name);
 
@@ -98,6 +100,7 @@ NeuralNetworkManipulationOperator::NeuralNetworkManipulationOperator(
 	mMaxExecutionTime = dynamic_cast<IntValue*>(getParameter("Performance/MaxTime"));
 	mMinExecutionTime = dynamic_cast<IntValue*>(getParameter("Performance/MinTime"));
 	mExecutionCount = dynamic_cast<IntValue*>(getParameter("Performance/ExecutionCount"));
+	mHidden = dynamic_cast<BoolValue*>(getParameter("Config/Hidden"));
 
 	Core::log("Copied Operator");
 }
@@ -173,6 +176,10 @@ BoolValue* NeuralNetworkManipulationOperator::getEnableOperatorValue() const {
 
 StringValue* NeuralNetworkManipulationOperator::getDocumentationValue() const {
 	return mDocumentation;
+}
+
+BoolValue* NeuralNetworkManipulationOperator::getHiddenValue() const {
+	return mHidden;
 }
 
 IntValue* NeuralNetworkManipulationOperator::getLastExecutionTimeValue() const {

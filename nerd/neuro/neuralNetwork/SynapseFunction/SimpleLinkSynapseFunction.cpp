@@ -41,71 +41,74 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
+#include "SimpleLinkSynapseFunction.h"
+#include <iostream>
 
-#ifndef NERDSelfRegulatingNeuronActivationFunction_H
-#define NERDSelfRegulatingNeuronActivationFunction_H
-
-#include <QString>
-#include <QHash>
-#include "ActivationFunction/ActivationFunction.h"
-#include "Value/DoubleValue.h"
-#include "Value/StringValue.h"
-#include "Value/BoolValue.h"
+using namespace std;
 
 namespace nerd {
 
-	/**
-	 * SelfRegulatingNeuronActivationFunction.
-	 *
-	 */
-	class SelfRegulatingNeuronActivationFunction : public ActivationFunction {
-	public:
-		SelfRegulatingNeuronActivationFunction(const QString &name = "SRN_V1");
-		SelfRegulatingNeuronActivationFunction(const SelfRegulatingNeuronActivationFunction &other);
-		virtual ~SelfRegulatingNeuronActivationFunction();
 
-		virtual ActivationFunction* createCopy() const;
-
-		virtual void reset(Neuron *owner);
-		virtual double calculateActivation(Neuron *owner);
-		
-		DoubleValue* getAlpha() const;
-		DoubleValue* getBeta() const;
-		DoubleValue* getGamma() const;
-		DoubleValue* getDelta() const;
-		DoubleValue* getAStar() const;
-
-		bool equals(ActivationFunction *activationFunction) const;
-		
-	protected:
-		virtual double getReceptorStrengthUpdate(double activation);
-		virtual double getTransmitterStrengthUpdate(double activation);
-		virtual void updateXi(double activation);
-		virtual void updateEta(double activation);
-		
-		virtual double updateActivity();
-
-	protected:
-		DoubleValue *mXi;
-		DoubleValue *mEta;
-		DoubleValue *mAlpha;
-		DoubleValue *mBeta;
-		DoubleValue *mGamma;
-		DoubleValue *mDelta;
-		DoubleValue *mAStar;
-		BoolValue *mAdjustWeights;
-		BoolValue *mRestrictToLinkSynapses;
-		
-		Neuron *mOwner;
-		double mTransmitterResult;
-		double mReceptorResult;
-		
-	};
-
+/**
+ * Constructor.
+ */
+SimpleLinkSynapseFunction::SimpleLinkSynapseFunction()
+	: SynapseFunction("SimpleLink")
+{
 }
 
-#endif
+
+/**
+ * Copy constructor.
+ */
+SimpleLinkSynapseFunction::SimpleLinkSynapseFunction(const SimpleLinkSynapseFunction &other)
+	: Object(), ValueChangedListener(), SynapseFunction(other)
+{
+}
 
 
+/**
+ * Destructor.
+ */
+SimpleLinkSynapseFunction::~SimpleLinkSynapseFunction() {
+}
+
+SynapseFunction* SimpleLinkSynapseFunction::createCopy() const {
+	return new SimpleLinkSynapseFunction(*this);
+}
+
+
+/**
+ * Does nothing in this implementation.
+ */
+void SimpleLinkSynapseFunction::reset(Synapse*) {
+}
+
+
+/**
+ * Returns the strength of the owner synapse.
+ * 
+ * @param owner the owner of this SynapseFunction.
+ * @return the strength of the owner.
+ */
+double SimpleLinkSynapseFunction::calculate(Synapse *owner) {
+	return 0.0;
+}
+
+bool SimpleLinkSynapseFunction::equals(SynapseFunction *synapseFunction) const {
+	if(SynapseFunction::equals(synapseFunction) == false) {
+		return false;
+	}
+
+	SimpleLinkSynapseFunction *sf = dynamic_cast<SimpleLinkSynapseFunction*>(synapseFunction);
+
+	if(sf == 0) {
+		return false;
+	}
+	return true;
+}
+
+
+}
 
 

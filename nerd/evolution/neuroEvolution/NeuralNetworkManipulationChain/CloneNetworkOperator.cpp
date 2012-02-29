@@ -57,6 +57,7 @@ CloneNetworkOperator::CloneNetworkOperator(const QString &name)
 	: NeuralNetworkManipulationOperator(name, false)
 {
 	TRACE("CloneNetworkOperator::CloneNetworkOperator");
+	getHiddenValue()->set(true);
 }
 
 CloneNetworkOperator::CloneNetworkOperator(const CloneNetworkOperator &other)

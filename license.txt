@@ -1,5 +1,6 @@
 /***************************************************************************
- *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
+ *   NERD Toolkit                                                          *
+ *   Neurodynamics and Evolutionary Robotics Development Toolkit           *
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
@@ -8,7 +9,7 @@
  *                                                                         *
  *   Project homepage: nerd.x-bot.org                                      *
  *                                                                         *
- *   Copyright (C) 2008 - 2012 by the Neurocybernetics Group Osnabrück    *
+ *   Copyright (C) 2008 - 2012 by the Neurocybernetics Group Osnabrück     *
  *   Contact: Christian Rempis                                             *
  *   christian.rempis@uni-osnabrueck.de                                    *
  *   Contributors: see contributors.txt in the nerd main directory.        *
@@ -40,72 +41,3 @@
  *   Publications based on work using the NERD kit have to state this      *
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
-
-
-#ifndef NERDSelfRegulatingNeuronActivationFunction_H
-#define NERDSelfRegulatingNeuronActivationFunction_H
-
-#include <QString>
-#include <QHash>
-#include "ActivationFunction/ActivationFunction.h"
-#include "Value/DoubleValue.h"
-#include "Value/StringValue.h"
-#include "Value/BoolValue.h"
-
-namespace nerd {
-
-	/**
-	 * SelfRegulatingNeuronActivationFunction.
-	 *
-	 */
-	class SelfRegulatingNeuronActivationFunction : public ActivationFunction {
-	public:
-		SelfRegulatingNeuronActivationFunction(const QString &name = "SRN_V1");
-		SelfRegulatingNeuronActivationFunction(const SelfRegulatingNeuronActivationFunction &other);
-		virtual ~SelfRegulatingNeuronActivationFunction();
-
-		virtual ActivationFunction* createCopy() const;
-
-		virtual void reset(Neuron *owner);
-		virtual double calculateActivation(Neuron *owner);
-		
-		DoubleValue* getAlpha() const;
-		DoubleValue* getBeta() const;
-		DoubleValue* getGamma() const;
-		DoubleValue* getDelta() const;
-		DoubleValue* getAStar() const;
-
-		bool equals(ActivationFunction *activationFunction) const;
-		
-	protected:
-		virtual double getReceptorStrengthUpdate(double activation);
-		virtual double getTransmitterStrengthUpdate(double activation);
-		virtual void updateXi(double activation);
-		virtual void updateEta(double activation);
-		
-		virtual double updateActivity();
-
-	protected:
-		DoubleValue *mXi;
-		DoubleValue *mEta;
-		DoubleValue *mAlpha;
-		DoubleValue *mBeta;
-		DoubleValue *mGamma;
-		DoubleValue *mDelta;
-		DoubleValue *mAStar;
-		BoolValue *mAdjustWeights;
-		BoolValue *mRestrictToLinkSynapses;
-		
-		Neuron *mOwner;
-		double mTransmitterResult;
-		double mReceptorResult;
-		
-	};
-
-}
-
-#endif
-
-
-
-

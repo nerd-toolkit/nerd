@@ -42,70 +42,51 @@
  ***************************************************************************/
 
 
-#ifndef NERDSelfRegulatingNeuronActivationFunction_H
-#define NERDSelfRegulatingNeuronActivationFunction_H
 
-#include <QString>
-#include <QHash>
-#include "ActivationFunction/ActivationFunction.h"
-#include "Value/DoubleValue.h"
+#ifndef NERDAdaptSRNParametersOperator_H
+#define NERDAdaptSRNParametersOperator_H
+
+#include "NeuralNetworkManipulationChain/NeuralNetworkManipulationOperator.h"
+#include "Value/IntValue.h"
 #include "Value/StringValue.h"
+#include "Value/NormalizedDoubleValue.h"
 #include "Value/BoolValue.h"
 
 namespace nerd {
 
 	/**
-	 * SelfRegulatingNeuronActivationFunction.
+	 * AdaptSRNParametersOperator.
 	 *
 	 */
-	class SelfRegulatingNeuronActivationFunction : public ActivationFunction {
+	class AdaptSRNParametersOperator : public NeuralNetworkManipulationOperator {
 	public:
-		SelfRegulatingNeuronActivationFunction(const QString &name = "SRN_V1");
-		SelfRegulatingNeuronActivationFunction(const SelfRegulatingNeuronActivationFunction &other);
-		virtual ~SelfRegulatingNeuronActivationFunction();
+		AdaptSRNParametersOperator(const QString &name);
+		AdaptSRNParametersOperator(const AdaptSRNParametersOperator &other);
+		virtual ~AdaptSRNParametersOperator();
 
-		virtual ActivationFunction* createCopy() const;
+		virtual NeuralNetworkManipulationOperator* createCopy() const;
 
-		virtual void reset(Neuron *owner);
-		virtual double calculateActivation(Neuron *owner);
-		
-		DoubleValue* getAlpha() const;
-		DoubleValue* getBeta() const;
-		DoubleValue* getGamma() const;
-		DoubleValue* getDelta() const;
-		DoubleValue* getAStar() const;
-
-		bool equals(ActivationFunction *activationFunction) const;
+		virtual bool applyOperator(Individual *individual, CommandExecutor *executor = 0);
 		
 	protected:
-		virtual double getReceptorStrengthUpdate(double activation);
-		virtual double getTransmitterStrengthUpdate(double activation);
-		virtual void updateXi(double activation);
-		virtual void updateEta(double activation);
+		virtual double mutateParameter(DoubleValue *param, int index);
 		
-		virtual double updateActivity();
-
-	protected:
-		DoubleValue *mXi;
-		DoubleValue *mEta;
-		DoubleValue *mAlpha;
-		DoubleValue *mBeta;
-		DoubleValue *mGamma;
-		DoubleValue *mDelta;
-		DoubleValue *mAStar;
-		BoolValue *mAdjustWeights;
-		BoolValue *mRestrictToLinkSynapses;
+	private:
+		void addParameters(const QString &prefix, int index);
+		void fetchParameters(const QString &prefix);
 		
-		Neuron *mOwner;
-		double mTransmitterResult;
-		double mReceptorResult;
-		
+	private:
+		NormalizedDoubleValue *mChangeProbability;
+		BoolValue *mGlobalSettings;
+		QList<DoubleValue*> mProbabilities;
+		QList<DoubleValue*> mDeviations;
+		QList<DoubleValue*> mMins;
+		QList<DoubleValue*> mMaxs;
 	};
 
 }
 
 #endif
-
 
 
 

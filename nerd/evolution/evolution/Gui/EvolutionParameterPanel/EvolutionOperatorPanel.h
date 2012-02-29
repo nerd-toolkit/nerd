@@ -87,6 +87,7 @@ namespace nerd {
 	private:
 		BoolValue *mEnableValue;
 		BoolValue *mCanBeDisabled;
+		BoolValue *mIsHiddenValue;
 		QString mPrefix;
 		QString mOperatorName;
 		QFrame *mParameterWidget;

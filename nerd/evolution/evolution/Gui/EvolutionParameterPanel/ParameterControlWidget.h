@@ -72,6 +72,9 @@ namespace nerd {
 		int getWidth();
 
 		void cleadUp();
+		
+	signals:
+		void setParameterText(const QString &text);
 
 	public slots:
 		void valueTextChanged(const QString &text = "");
