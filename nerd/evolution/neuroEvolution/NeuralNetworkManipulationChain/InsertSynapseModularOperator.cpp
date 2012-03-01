@@ -433,6 +433,10 @@ bool InsertSynapseModularOperator::addSynapseToSourceNeuron(Neuron *source, Modu
 								*(net->getDefaultSynapseFunction()));
 	
 		synapse->setProperty(EvolutionConstants::TAG_EVO_CREATION_DATE, mGenerationDate);
+		
+		//mark as new
+		synapse->setProperty(NeuralNetworkConstants::TAG_EVOLUTION_NEW_ELEMENT);
+		
 		synapseTarget->addSynapse(synapse);
 	
 		//mark as modified.
@@ -518,6 +522,10 @@ bool InsertSynapseModularOperator::addSynapseToTargetNeuron(Neuron *target, Modu
 								*(net->getDefaultSynapseFunction()));
 	
 		synapse->setProperty(EvolutionConstants::TAG_EVO_CREATION_DATE, mGenerationDate);
+		
+		//mark as new
+		synapse->setProperty(NeuralNetworkConstants::TAG_EVOLUTION_NEW_ELEMENT);
+			
 		target->addSynapse(synapse);
 	
 		//mark as modified.

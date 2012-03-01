@@ -163,6 +163,8 @@ namespace nerd {
 		static const QString TAG_NEURON_BDN_INPUT;
 		static const QString TAG_NEURON_BDN_OUTPUT;
 		static const QString TAG_NEURON_BDN_BOARD_INTERFACE;
+		static const QString TAG_EVOLUTION_NEW_ELEMENT;
+		static const QString TAG_EVOLUTION_NEW_BIAS;
 		
 		
 	};

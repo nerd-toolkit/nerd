@@ -244,6 +244,9 @@ bool InsertNeuroModuleOperator::applyOperator(Individual *individual, CommandExe
 
 			//mark as modified.
 			newModule->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+			
+			//mark as new
+			newModule->setProperty(NeuralNetworkConstants::TAG_EVOLUTION_NEW_ELEMENT);
 
 			//mark the individual as significantly modified
 			individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,

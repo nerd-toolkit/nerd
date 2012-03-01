@@ -168,6 +168,7 @@ bool InsertBiasOperator::applyOperator(Individual *individual, CommandExecutor*)
 
 		neuron->setProperty(NeuralNetworkConstants::TAG_NEURON_REINIT_BIAS);
 		neuron->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+		neuron->setProperty(NeuralNetworkConstants::TAG_EVOLUTION_NEW_BIAS);
 
 		//mark the individual as significantly modified
 		individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,

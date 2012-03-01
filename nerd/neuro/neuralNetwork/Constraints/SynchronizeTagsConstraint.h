@@ -84,6 +84,7 @@ namespace nerd {
 		StringValue *mMode;
 		StringValue *mModeParams;
 		BoolValue *mRecursive;
+		StringValue *mRequiredTags;
 	};
 
 }

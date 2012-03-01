@@ -222,6 +222,9 @@ bool InsertSynapseOperator::applyOperator(Individual *individual, CommandExecuto
 
 		synapse->setProperty(EvolutionConstants::TAG_EVO_CREATION_DATE, generationDate);
 		synapseTarget->addSynapse(synapse);
+		
+		//mark as new
+		synapse->setProperty(NeuralNetworkConstants::TAG_EVOLUTION_NEW_ELEMENT);
 
 		//mark as modified.
 		synapse->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);

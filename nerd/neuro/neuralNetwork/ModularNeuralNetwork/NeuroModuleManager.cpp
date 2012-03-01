@@ -280,7 +280,7 @@ bool NeuroModuleManager::saveNeuroModulePrototypes(const QString &directoryName)
 		}
 	}
 
-	return false;
+	return ok;
 }
 
 

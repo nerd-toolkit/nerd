@@ -315,3 +315,12 @@ const QString NeuralNetworkConstants::TAG_NEURON_BDN_OUTPUT
 const QString NeuralNetworkConstants::TAG_NEURON_BDN_BOARD_INTERFACE
 		= "BDN_BOARD_INTERFACE";
 		
+const QString NeuralNetworkConstants::TAG_EVOLUTION_NEW_ELEMENT
+		= "__NEW__";
+		
+const QString NeuralNetworkConstants::TAG_EVOLUTION_NEW_BIAS
+		= "__NEW_BIAS__";
+		
+		
+		
+		

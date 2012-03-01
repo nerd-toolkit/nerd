@@ -52,6 +52,7 @@
 #include "Util/NeuralNetworkUtil.h"
 #include "NeuralNetworkConstants.h"
 #include <Value/ULongLongValue.h>
+#include <QString>
 
 
 using namespace std;
@@ -70,12 +71,41 @@ SynchronizeTagsConstraint::SynchronizeTagsConstraint()
 	mMode = new StringValue("s");
 	mModeParams = new StringValue("");
 	mRecursive = new BoolValue(false);
+	mRequiredTags = new StringValue("");
+	
+	mTagList->setDescription("List of tags that are added to the target elements\n"
+							 "if no prototype id is given.\n"
+							 "Format: {TagName1=TagValue1}{TagName2=TagValue2}...");
+
+	mPrototypeId->setDescription("Optional. If set, then all tags of the prototype element\n"
+								 "are copied to the target elements.");
+	
+	mMode->setDescription("The mode specifies, which elements are affected:\n"
+						  "s (synapses), n (neurons), i (incoming synapses),\n"
+						  "o (outgoing synapses), g (group internal synapses).\n"
+						  "The mode letters can be combined in any permutation.");
+	
+	mModeParams->setDescription("Parameters for the s mode. Here, a list of group ids\n"
+								"can be given to limit the constraint only to the subset\n"
+								"of synapses coming / going to specific other modules.\n"
+								"Format: id,id|id,id|... or id,id,id,...");
+	
+	mRecursive->setDescription("If true, then also all elements of submodules are affected.\n"
+							   "Otherwise, only direct members of the module / group are synchronized.");
+	
+	mRequiredTags->setDescription("A list of tags that have to be present at a network\n"
+								  "element to qualify it for a synchronization.\n"
+								  "Format: +{tagName=Value}&{-{tagName=Value}|{tagName}}\n"
+								  "+ (required), - (forbidden), & (and), | (or) \n"
+								  "Currently only + and & is supported (no -, |).");
+	
 	
 	addParameter("TagList", mTagList);
 	addParameter("PrototypeId", mPrototypeId);
 	addParameter("Mode", mMode);
 	addParameter("ModeParams", mModeParams);
 	addParameter("Recursive", mRecursive);
+	addParameter("RequiredTags", mRequiredTags);
 }
 
 
@@ -92,6 +122,7 @@ SynchronizeTagsConstraint::SynchronizeTagsConstraint(const SynchronizeTagsConstr
 	mMode = dynamic_cast<StringValue*>(getParameter("Mode"));
 	mModeParams = dynamic_cast<StringValue*>(getParameter("ModeParams"));
 	mRecursive = dynamic_cast<BoolValue*>(getParameter("Recursive"));
+	mRequiredTags = dynamic_cast<StringValue*>(getParameter("RequiredTags"));
 }
 
 /**
@@ -290,6 +321,26 @@ bool SynchronizeTagsConstraint::synchronizeTags(NeuralNetworkElement *element,
 		return false;
 	}
 	bool networkModified = false;
+	
+	if(mRequiredTags->get() != "") {
+		QStringList tagNames = mRequiredTags->get().split("&");
+		for(QListIterator<QString> i(tagNames); i.hasNext();) {
+			QString tag = i.next();
+			if(tag.startsWith("+{") && tag.endsWith("}")) {
+				tag = tag.mid(2, tag.length() - 3);
+				QStringList tagParts = tag.split("=");
+				if(tagParts.size() == 1 && !element->hasProperty(tagParts.at(0))) {
+					return false;
+				}
+				else if(tagParts.size() == 2 
+						&& element->getProperty(tagParts.at(0)) != tagParts.at(1)) 
+				{
+					return false;
+				}
+			}
+		}
+	}
+	
 	for(QHashIterator<QString, QString> i(tags); i.hasNext();) {
 		i.next();
 		if(!element->hasExactProperty(i.key())

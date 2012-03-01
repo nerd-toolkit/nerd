@@ -57,7 +57,6 @@ Constraints::~Constraints() {
 
 bool Constraints::install() {
 	bool ok = true;
-	Core *core = Core::getInstance();
 
 	ConstraintManager *cm = dynamic_cast<ConstraintManager*>(Core::getInstance()
 			->getGlobalObject(NeuralNetworkConstants::OBJECT_CONSTRAINT_MANAGER));
