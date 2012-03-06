@@ -65,6 +65,12 @@ namespace nerd {
 
 		//Values
 		static const QString VALUE_PLOTTER_EXECUTE;
+		static const QString VALUE_PLOTTER_ACTIVE_PLOTTER;
+		static const QString VALUE_PLOTTER_OUTPUT_FORMAT;
+		
+		//Event Names
+		static const QString EVENT_CALCULATION_STARTED;
+		static const QString EVENT_CALCULATION_COMPLETED;
 
 	private:
 	};

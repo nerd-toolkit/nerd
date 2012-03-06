@@ -236,7 +236,7 @@ namespace nerd {
 		if(dataMatrix == 0 || name == 0){
 			Core::log("OnlinePlotterWindow: Couldn't find data Matrix or Name");
 			return;
-		}		
+		}
 		mMatrix = dataMatrix;
 		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
 			return;
@@ -258,6 +258,9 @@ namespace nerd {
 	 *
 	 */
 	void OnlinePlotterWindow::updateData(){
+		if(mMatrix == 0) {
+			return;
+		}
 		mVM = Core::getInstance()->getValueManager();
 		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
 		mIsSetUp = false;
@@ -346,6 +349,9 @@ namespace nerd {
 	 * 
 	 */
 	void OnlinePlotterWindow::finishedProcessing(){
+		if(mMatrix == 0) {
+			return;
+		}
 		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
 			return;
 		}

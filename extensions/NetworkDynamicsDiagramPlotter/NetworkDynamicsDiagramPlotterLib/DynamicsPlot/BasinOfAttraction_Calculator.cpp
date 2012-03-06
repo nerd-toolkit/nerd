@@ -132,20 +132,30 @@ namespace nerd {
 			return;
 		}
 		
-		QList<ULongLongValue*>vIdsListX = createListOfIds(mIdsOfVariedNeuronsX);//list of IDs of varied elements
-		QList<double> vMinsListX = createListOfDoubles(mMinimaOfVariedNeuronsX);
-		QList<double> vMaxsListX = createListOfDoubles(mMaximaOfVariedNeuronsX);
+		//list of IDs of varied elements
+		QList<qulonglong>vIdsListX = createListOfIds(mIdsOfVariedNeuronsX->get());
 		
-		QList<ULongLongValue*>vIdsListY = createListOfIds(mIdsOfVariedNeuronsY);//list of IDs of varied elements
-		QList<double> vMinsListY = createListOfDoubles(mMinimaOfVariedNeuronsY);
-		QList<double> vMaxsListY = createListOfDoubles(mMaximaOfVariedNeuronsY);
+		QList<double> vMinsListX = createListOfDoubles(mMinimaOfVariedNeuronsX->get());
+		QList<double> vMaxsListX = createListOfDoubles(mMaximaOfVariedNeuronsX->get());
+		
+		
+		//list of IDs of varied elements
+		QList<qulonglong>vIdsListY = createListOfIds(mIdsOfVariedNeuronsY->get());
+		QList<double> vMinsListY = createListOfDoubles(mMinimaOfVariedNeuronsY->get());
+		QList<double> vMaxsListY = createListOfDoubles(mMaximaOfVariedNeuronsY->get());
 		
 		//check IDs, minima, and maxima
-		if(!checkStringlistsItemCount(mIdsOfVariedNeuronsX, mMinimaOfVariedNeuronsX, mMaximaOfVariedNeuronsX)){
+		if(!checkStringListsItemCount(mIdsOfVariedNeuronsX->get(), 
+									  mMinimaOfVariedNeuronsX->get(), 
+									  mMaximaOfVariedNeuronsX->get()))
+		{
 			Core::log("BasinOfAttractionCalculator: The number of IDs, minima and maxima (x-axis parameters) must be the same!", true);		
 			return;
 		}
-		if(!checkStringlistsItemCount(mIdsOfVariedNeuronsY, mMinimaOfVariedNeuronsY, mMaximaOfVariedNeuronsY)){
+		if(!checkStringListsItemCount(mIdsOfVariedNeuronsY->get(), 
+									  mMinimaOfVariedNeuronsY->get(), 
+									  mMaximaOfVariedNeuronsY->get()))
+		{
 			Core::log("BasinOfAttractionCalculator: The number of IDs, minima and maxima (y-axis parameters) must be the same!", true);		
 			return;
 		}
@@ -155,7 +165,7 @@ namespace nerd {
 		
 		for(int j = 0; j < noOfvNeuronsX; j++){
 			for(int k = 0; k < noOfvNeuronsY; k++){
-				if(vIdsListX[j]->get() == vIdsListY[k]->get()){
+				if(vIdsListX[j] == vIdsListY[k]){
 					Core::log("BasinOfAttraction_Calculator: Warning! IDs should not be used in both parameters!", true);
 				}
 			}
@@ -166,7 +176,7 @@ namespace nerd {
 	
 		//get pointer to the varied neurons on the x-axis
 		for(int j = 0; j < noOfvNeuronsX; j++){
-			vNeuronsListX.append(NeuralNetwork::selectNeuronById(vIdsListX[j]->get(), network->getNeurons()));	
+			vNeuronsListX.append(NeuralNetwork::selectNeuronById(vIdsListX[j], network->getNeurons()));	
 			if(vNeuronsListX[j] == 0){
 				Core::log("BasinOfAttractionCalculator: Could not find required (varied) neurons (x-axis)!", true);		
 				return;	
@@ -174,7 +184,7 @@ namespace nerd {
 		}
 		//y-axis
 		for(int j = 0; j < noOfvNeuronsY; j++){
-			vNeuronsListY.append(NeuralNetwork::selectNeuronById(vIdsListY[j]->get(), network->getNeurons()));	
+			vNeuronsListY.append(NeuralNetwork::selectNeuronById(vIdsListY[j], network->getNeurons()));	
 			if(vNeuronsListY[j] == 0){
 				Core::log("BasinOfAttractionCalculator: Could not find required (varied) neurons(y-axis)!", true);		
 				return;	

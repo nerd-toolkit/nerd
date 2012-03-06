@@ -64,20 +64,22 @@ namespace nerd {
  */
 DynamicsPlotManager::DynamicsPlotManager()
 {
-	//**************Till**************//
+	//**************Till**************c//
 	mValueManager = Core::getInstance()->getValueManager();
-	mPlotterProgram = new StringValue("Inbuilt");
-	mActivePlotter = new StringValue(0);
+	mPlotterProgram = new StringValue();
+	mActivePlotter = new StringValue();
 	mInbuiltPlotterOnline = new BoolValue(true);
 	
 	mInbuiltPlotterOnline->setDescription("If TRUE, the inbuilt diagram is updated during calculation.");
-	mPlotterProgram->setDescription("Specifies the output program, for example the inbuilt plotters or external ones like Matlab");
-	mPlotterProgram->getOptionList().append("Inbuilt");
+	mPlotterProgram->setDescription("Specifies the output program, for example the internal plotter or external ones like Matlab");
+	mPlotterProgram->getOptionList().append("Internal");
 	mPlotterProgram->getOptionList().append("Matlab");
-	mValueManager->addValue("/DynamicsPlotters/PlotterProgram", mPlotterProgram);
-	mValueManager->addValue("/DynamicsPlotters/ActiveCalculator", mActivePlotter);
+	
+	mValueManager->addValue(DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT, mPlotterProgram);
+	mValueManager->addValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER, mActivePlotter);
 	mValueManager->addValue("/DynamicsPlotters/InbuiltPlotterOnline", mInbuiltPlotterOnline);
-	//**************/Till**************//
+	
+	//**************/Till**************c//
 	
 	
 }

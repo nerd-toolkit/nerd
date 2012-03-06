@@ -132,20 +132,31 @@ namespace nerd {
 			return;
 		}
 		
-		QList<ULongLongValue*>vIdsListX = createListOfIds(mIdsOfVariedNetworkElementsX);//list of IDs of varied elements
-		QList<double> vMinsListX = createListOfDoubles(mMinimaOfVariedNetworkElementsX);
-		QList<double> vMaxsListX = createListOfDoubles(mMaximaOfVariedNetworkElementsX);
+		//list of IDs of varied elements
+		QList<qulonglong>vIdsListX = createListOfIds(mIdsOfVariedNetworkElementsX->get());
 		
-		QList<ULongLongValue*>vIdsListY = createListOfIds(mIdsOfVariedNetworkElementsY);//list of IDs of varied elements
-		QList<double> vMinsListY = createListOfDoubles(mMinimaOfVariedNetworkElementsY);
-		QList<double> vMaxsListY = createListOfDoubles(mMaximaOfVariedNetworkElementsY);
+		QList<double> vMinsListX = createListOfDoubles(mMinimaOfVariedNetworkElementsX->get());
+		QList<double> vMaxsListX = createListOfDoubles(mMaximaOfVariedNetworkElementsX->get());
+		
+		
+		//list of IDs of varied elements
+		QList<qulonglong>vIdsListY = createListOfIds(mIdsOfVariedNetworkElementsY->get());
+		
+		QList<double> vMinsListY = createListOfDoubles(mMinimaOfVariedNetworkElementsY->get());
+		QList<double> vMaxsListY = createListOfDoubles(mMaximaOfVariedNetworkElementsY->get());
 		
 		//check IDs, minima, and maxima
-		if(!checkStringlistsItemCount(mIdsOfVariedNetworkElementsX, mMinimaOfVariedNetworkElementsX, mMaximaOfVariedNetworkElementsX)){
+		if(!checkStringListsItemCount(mIdsOfVariedNetworkElementsX->get(), 
+									  mMinimaOfVariedNetworkElementsX->get(), 
+									  mMaximaOfVariedNetworkElementsX->get()))
+		{
 			Core::log("Isoperiod_Calculator: The number of IDs, minima and maxima (x-axis parameters) must be the same!", true);		
 			return;
 		}
-		if(!checkStringlistsItemCount(mIdsOfVariedNetworkElementsY, mMinimaOfVariedNetworkElementsY, mMaximaOfVariedNetworkElementsY)){
+		if(!checkStringListsItemCount(mIdsOfVariedNetworkElementsY->get(), 
+									  mMinimaOfVariedNetworkElementsY->get(), 
+									  mMaximaOfVariedNetworkElementsY->get()))
+		{
 			Core::log("Isoperiod_Calculator: The number of IDs, minima and maxima (y-axis parameters) must be the same!", true);		
 			return;
 		}

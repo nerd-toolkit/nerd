@@ -53,6 +53,7 @@
 #include "Value/MatrixValue.h"
 #include "Value/BoolValue.h"
 #include "Event/EventManager.h"
+#include "DynamicsPlotConstants.h"
 
 using namespace std;
 
@@ -86,18 +87,24 @@ namespace nerd {
 		
 		EventManager *em = Core::getInstance()->getEventManager();
 		 
-// 		mNextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP); //das benutzen?
-		mStartEvent = em->getEvent("calculatorStarts");
-		mFinishEvent = em->getEvent("calculatorFinishes");
+		mStartEvent = em->registerForEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED, this);
+		mFinishEvent = em->registerForEvent(DynamicsPlotConstants::EVENT_CALCULATION_COMPLETED, this);
 		
 		mVM = Core::getInstance()->getValueManager();
-		mActiveCalculatorValue = mVM->getValue("/DynamicsPlotters/ActiveCalculator");
-		mPlotterProgramValue = mVM->getValue("/DynamicsPlotters/PlotterProgram");		
-		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
-		if(em != 0){
-			em->registerForEvent("calculatorStarts", this);
-			em->registerForEvent("calculatorFinishes", this);
+		mActiveCalculatorValue = mVM->getStringValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER);
+		mPlotterProgramValue = mVM->getStringValue(DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT);		
+		mPlotterOnlineValue = mVM->getBoolValue("/DynamicsPlotters/InbuiltPlotterOnline");
+
+		if(mStartEvent == 0 
+			|| mFinishEvent == 0 
+			|| mActiveCalculatorValue == 0
+			|| mPlotterProgramValue == 0 
+			|| mPlotterOnlineValue == 0)
+		{
+			Core::log("OnlinePlotter: Could not find all required value objects!", true);
+			ok = false;
 		}
+		
 		return ok;
 	}
 
@@ -114,15 +121,28 @@ namespace nerd {
 	void OnlinePlotter::eventOccured(Event *event) {
 		if(event == 0) {
 			return;
-		}else if(event == mStartEvent) {
-			if(mPlotterProgramValue->getValueAsString().contains("inbuilt", Qt::CaseInsensitive)){
-				mRunningCalculator = dynamic_cast<StringValue*>(mActiveCalculatorValue)->get();//vM->getValue("/DynamicsPlotters/ActiveCalculator")->getValueAsString();
+		}
+		else if(event == mStartEvent) {
+			if(mPlotterProgramValue->get() == ""  
+				|| mPlotterProgramValue->get().contains("internal", Qt::CaseInsensitive))
+			{
+				mRunningCalculator = mActiveCalculatorValue->get();
+				
+				cerr << "OnlinePlotter: eventOccured1" << endl;
+				
 				emit startProcessing();
+				
 				prepareData(mRunningCalculator);
 			}
 
-		}else if(event == mFinishEvent){
-			if(mPlotterProgramValue->getValueAsString().contains("inbuilt", Qt::CaseInsensitive)){//if the calculator stopped running:			 
+		}
+		else if(event == mFinishEvent){
+			//if the calculator stopped running:	
+			
+			if(mPlotterProgramValue->get() == "" 
+				|| mPlotterProgramValue->get().contains("internal", Qt::CaseInsensitive))
+			{ 
+				//TODO (chris) What the hell is this???
 				if(qPrintable(mRunningCalculator) != 0){
 // 					 prepareData(mRunningCalculator);
 					 emit finishedProcessing();
@@ -143,18 +163,23 @@ namespace nerd {
 	{
 		ValueManager *vM = Core::getInstance()->getValueManager();
 		QString pathToValues = "/DynamicsPlotters/" + calculator + "/";
-		if(calculator == 0)return;
-		else if(calculator == "Bifurcation_Calculator" || calculator == "Transients_Calculator" || calculator == "Isoperiod_Calculator" || calculator == "BasinOfAttraction_Calculator"){
- 			MatrixValue *dataMatrixValue = dynamic_cast<MatrixValue*>(vM->getValue(QString(pathToValues + QString("Data"))));
-			if(dataMatrixValue == 0){
-				Core::log("OnlinePlotter: Couldn't find data Matrix");
-			}
-			QString xDescr = mVM->getValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("xAxisDescription")))->getValueAsString(); //Description for x-axis
-			QString yDescr = mVM->getValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("yAxisDescription")))->getValueAsString();		
 		
-			
-			emit dataPrepared(pathToValues, dataMatrixValue, xDescr, yDescr);//calls OnlinePlotterWindow::printData(...)
-		}else{
+		if(calculator == 0) {
+			return;
+		}
+		else if(calculator == "Bifurcation_Calculator" || calculator == "Transients_Calculator" || calculator == "Isoperiod_Calculator" || calculator == "BasinOfAttraction_Calculator"){
+ 			MatrixValue *dataMatrixValue = dynamic_cast<MatrixValue*>(vM->getValue(QString(pathToValues + QString("Internal/Data"))));
+			StringValue *xDescV = mVM->getStringValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("Config/XAxisDescription"))); //Description for x-axis
+			StringValue *yDescV = mVM->getStringValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("Config/YAxisDescription")));		
+				
+			if(dataMatrixValue == 0 || xDescV == 0 || yDescV == 0){
+				Core::log("OnlinePlotter: Couldn't find data Matrix or x/y label values.");
+			}
+			else {
+				emit dataPrepared(pathToValues, dataMatrixValue, xDescV->get(), yDescV->get());//calls OnlinePlotterWindow::printData(...)
+			}
+		}
+		else{
 			Core::log("OnlinePlotter: Unknown calculator name: " + calculator, true);
 		}
 

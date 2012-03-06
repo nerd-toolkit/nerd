@@ -54,6 +54,7 @@
 #include "Core/SystemObject.h"
 #include "Core/ParameterizedObject.h"
 #include "Value/BoolValue.h"
+#include "Value/IntValue.h"
 #include "Value/MatrixValue.h"
 #include "Value/ULongLongValue.h"
 #include "Network/NeuralNetwork.h"
@@ -94,13 +95,15 @@ namespace nerd {
 		void triggerNetworkStep();
 		
 		
-		NeuralNetworkElement* getVariedNetworkElement(ULongLongValue *idOfVariedNetworkElement);
+		NeuralNetworkElement* getVariedNetworkElement(qulonglong idOfVariedNetworkElement);
 		void setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value);
 		double getVariedNetworkElementValue(NeuralNetworkElement *variedElem);
 				
-		bool checkStringlistsItemCount(StringValue *idsString, StringValue *minsString, StringValue *maxsString);
-		QList<ULongLongValue*> createListOfIds(StringValue *idsString);
-		QList<double> createListOfDoubles(StringValue *minsString);
+		bool checkStringListsItemCount(const QString &idsString, 
+									   const QString &minsString, 
+									   const QString &maxsString);
+		QList<qulonglong> createListOfIds(const QString &idsString);
+		QList<double> createListOfDoubles(const QString &doubleString);
 		
 	protected:
 		Event *mNextStepEvent;
@@ -110,6 +113,7 @@ namespace nerd {
 		BoolValue *mActiveValue;
 		IntValue *mExecutionTime;
 		QHash<qulonglong, double> mNetworkActivities;
+		
 		//****Till****//
 		MatrixValue *mData;
 		StringValue *mOutputPath;

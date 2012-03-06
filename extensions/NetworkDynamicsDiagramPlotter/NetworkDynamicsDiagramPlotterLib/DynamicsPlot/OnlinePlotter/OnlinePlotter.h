@@ -85,8 +85,8 @@ namespace nerd {
 			ValueManager *mVM;
 
 		private:
-			Value *mPlotterProgramValue;
-			Value *mActiveCalculatorValue;
+			StringValue *mPlotterProgramValue;
+			StringValue *mActiveCalculatorValue;
 			QString mRunningCalculator;
 			BoolValue *mPlotterOnlineValue;
 			Event *mStartEvent;

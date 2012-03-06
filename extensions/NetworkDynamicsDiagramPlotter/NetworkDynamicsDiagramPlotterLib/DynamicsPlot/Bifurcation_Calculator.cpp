@@ -140,24 +140,30 @@ namespace nerd {
 			return;
 		}
 		
-		QList<ULongLongValue*>obsIdsList = createListOfIds(mIdsOfObservedNeurons);//list of IDs of observed neurons
+		//list of IDs of observed neurons
+		QList<qulonglong>obsIdsList = createListOfIds(mIdsOfObservedNeurons->get());
+		
 		int noOfobsNeurons = obsIdsList.size();//No. of neurons
 		QList<Neuron*> obsNeuronsList; //list of neurons
 		//get pointer to the observed neurons 
 		for(int j = 0; j < noOfobsNeurons; j++){
-			obsNeuronsList.append(NeuralNetwork::selectNeuronById(obsIdsList[j]->get(), network->getNeurons()));	
+			obsNeuronsList.append(NeuralNetwork::selectNeuronById(obsIdsList[j], network->getNeurons()));	
 			if(obsNeuronsList[j] == 0){
 				Core::log("BasinOfAttractionCalculator: Could not find required (observed) neurons!", true);		
 				return;	
 			}
 		}
 		
+		//list of IDs of varied elements
+		QList<qulonglong>vIdsList = createListOfIds(mIdsOfVariedNetworkElements->get());
 		
-		QList<ULongLongValue*>vIdsList = createListOfIds(mIdsOfVariedNetworkElements);//list of IDs of varied elements
-		QList<double> vMinsList = createListOfDoubles(mMinimaOfVariedNetworkElements);
-		QList<double> vMaxsList = createListOfDoubles(mMaximaOfVariedNetworkElements);
+		QList<double> vMinsList = createListOfDoubles(mMinimaOfVariedNetworkElements->get());
+		QList<double> vMaxsList = createListOfDoubles(mMaximaOfVariedNetworkElements->get());
 		//check IDs, minima, and maxima
-		if(!checkStringlistsItemCount(mIdsOfVariedNetworkElements, mMinimaOfVariedNetworkElements, mMaximaOfVariedNetworkElements)){
+		if(!checkStringListsItemCount(mIdsOfVariedNetworkElements->get(), 
+									  mMinimaOfVariedNetworkElements->get(), 
+									  mMaximaOfVariedNetworkElements->get()))
+		{
 			Core::log("Bifurcation_Calculator: The number of IDs, minima and maxima must be the same!", true);		
 			return;
 		}
@@ -237,7 +243,7 @@ namespace nerd {
 		qulonglong posOutputNeuron[noOfobsNeurons];
 		for(int j = 0; j < noOfobsNeurons; j++){
 			for(int k = 0; k < numberNeurons; k++){ 
-				if(static_cast<nerd::Neuron*>(neuronsList.at(k))->getId() == obsIdsList[j]->get()){
+				if(static_cast<nerd::Neuron*>(neuronsList.at(k))->getId() == obsIdsList[j]){
 					posOutputNeuron[j] = k;
 					break;
 				}

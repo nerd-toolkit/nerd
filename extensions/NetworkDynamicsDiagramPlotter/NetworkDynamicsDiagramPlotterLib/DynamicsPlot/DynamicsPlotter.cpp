@@ -61,6 +61,7 @@
 #include "Network/NeuralNetworkManager.h"
 #include "Network/Neuro.h"
 #include <QStringList>
+#include "DynamicsPlotConstants.h"
 
 using namespace std;
 
@@ -92,12 +93,13 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	
 	addParameter("Config/Activate", mActiveValue, true);
 	addParameter("Performance/ExecutionTime", mExecutionTime, true);
-	//****Till****//
-	addParameter("Data", mData, true);
-	addParameter("OutputPath", mOutputPath, true);
-	addParameter("xAxisDescription", mXAxisDescription, true);
-	addParameter("yAxisDescription", mYAxisDescription, true);
-	//***/Till****//
+	
+	//****Till****c//
+	addParameter("Internal/Data", mData, true);
+	addParameter("Config/OutputPath", mOutputPath, true);
+	addParameter("Config/XAxisDescription", mXAxisDescription, true);
+	addParameter("Config/YAxisDescription", mYAxisDescription, true);
+	//***/Till****c//
 }
 
 /**
@@ -113,19 +115,24 @@ QString DynamicsPlotter::getName() const {
 
 bool DynamicsPlotter::init() {
 	bool ok = true;
-	//****Till****//
+	//****Till****c//
 	EventManager *em = Core::getInstance()->getEventManager();
-// 	mStartEvent = em->createEvent("calculatorStarts", "Triggers the preparation of the exporters and inbuilt plotters, informing about the start of the calculation process.");
-// 	mFinishEvent = em->createEvent("calculatorFinishes", "Triggers the execution of the exporters and inbuilt plotters, informing about the completion of the calculation process.");
-	mStartEvent = em->getEvent("calculatorStarts");
-	mFinishEvent = em->getEvent("calculatorFinishes");
+
+	//Obtain the events for calculation start and completed.
+	//If not available, create them (only once).
+	mStartEvent = em->getEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED);
+	mFinishEvent = em->getEvent(DynamicsPlotConstants::EVENT_CALCULATION_COMPLETED);
 	if(mStartEvent == 0){
-		mStartEvent = em->createEvent("calculatorStarts", "Triggers the preparation of the exporters and inbuilt plotters, informing about the start of the calculation process.");
+		mStartEvent = em->createEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED, 
+						"Triggers the preparation of the exporters and inbuilt plotters, "
+						"informing about the start of the calculation process.");
 	}
 	if(mFinishEvent == 0){
-		mFinishEvent = em->createEvent("calculatorFinishes", "Triggers the execution of the exporters and inbuilt plotters, informing about the completion of the calculation process.");
+		mFinishEvent = em->createEvent(DynamicsPlotConstants::EVENT_CALCULATION_COMPLETED, 
+						"Triggers the execution of the exporters and inbuilt plotters, "
+						"informing about the completion of the calculation process.");
 	}
-	//***/Till****//
+	//***/Till****c//
 	
 	
 	return ok;
@@ -169,12 +176,12 @@ void DynamicsPlotter::execute() {
 	QTime currentTime;
 	currentTime.start();
 
-	//****Till***//
-	mValueManager = Core::getInstance()->getValueManager();
-	mValueManager->getValue("/DynamicsPlotters/ActiveCalculator")->setValueFromString(getName());
+	//****Till***c//
+	mValueManager->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER)
+						->setValueFromString(getName());
 	Core::getInstance()->executePendingTasks();
 	mStartEvent->trigger();
-	//***/Till***//
+	//***/Till***c//
 	
 	if(!Core::getInstance()->isMainExecutionThread()) {
 		return;
@@ -191,18 +198,23 @@ void DynamicsPlotter::execute() {
 	if(mStasisValue != 0) {
 		mStasisValue->set(previousStasisSetting);
 	}
+	
 	//****Till***//
 	//set calculator inactive after every run:
-	QString path = QString("/DynamicsPlotters/") + mValueManager->getValue("/DynamicsPlotters/ActiveCalculator")->getValueAsString() + QString("/Config/Activate");
-	mValueManager->getValue(path)->setValueFromString("F"); 
 	
-	mValueManager = Core::getInstance()->getValueManager();
-	mValueManager->getValue("/DynamicsPlotters/ActiveCalculator")->setValueFromString(""); //weg?
+	//QString path = QString("/DynamicsPlotters/") + mValueManager->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER)->getValueAsString() + QString("/Config/Activate");
+	//mValueManager->getValue(path)->setValueFromString("F"); 
+	getActiveValue()->set(false);
+	
+	mValueManager->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER)->setValueFromString("");
+	
 	Core::getInstance()->executePendingTasks();
+	
 	mFinishEvent->trigger();
 	
 	
-	//***/Till***//
+	//***/Till***c//
+	
 	mExecutionTime->set(currentTime.elapsed());
 	
 }
@@ -216,14 +228,14 @@ NeuralNetwork* DynamicsPlotter::getCurrentNetwork() const {
 	QList<NeuralNetwork*> networks = nnm->getNeuralNetworks();
 
 	if(networks.empty()) {
-		Core::log("ExampleDynamicsPlotter: Could not find a neural network!", true);
+		Core::log("DynamicsPlotter: Could not find a neural network!", true);
 		return 0;
 	}
 
 	NeuralNetwork *network = networks.at(0);
 
 	if(network == 0) {
-		Core::log("DynamicsPlotter: Could not find a modular neural network!", true);
+		Core::log("DynamicsPlotter: Could not find a neural network!", true);
 	}
 	return network;
 }
@@ -241,6 +253,7 @@ void DynamicsPlotter::storeCurrentNetworkActivities() {
 	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 		Neuron *neuron = i.next();
 		mNetworkActivities.insert(neuron->getId(), neuron->getOutputActivationValue().get());
+		//TODO: chris: check if this should be activationvalue.
 	}
 }
 
@@ -264,7 +277,6 @@ void DynamicsPlotter::restoreCurrentNetworkActivites() {
 			Core::log("DynamicsPlotter::restoreCurrentNetworkActivities: Could not find neuron "
 						+ QString::number(i.key()), true);
 		}
-// 		mNetworkActivities.insert(neuron->getId(), neuron->getActivationValue().get());
 	}
 }
 
@@ -281,20 +293,25 @@ void DynamicsPlotter::triggerNetworkStep() {
 	 * @param idOfVariedNetworkElement ID of the element, that is varied. 
 	 * @return Neuron or synapse which is varied.
 	 */
-	NeuralNetworkElement* DynamicsPlotter::getVariedNetworkElement(ULongLongValue *idOfVariedNetworkElement) {
+	NeuralNetworkElement* DynamicsPlotter::getVariedNetworkElement(qulonglong idOfVariedNetworkElement) {
 		NeuralNetwork *network = getCurrentNetwork();
-	//Get pointers to the relevant varied element:
-		if(NeuralNetwork::selectSynapseById(idOfVariedNetworkElement->get(), network->getSynapses()) != 0){ // element is synapse
-			Synapse *variedElem = NeuralNetwork::selectSynapseById(idOfVariedNetworkElement->get(), network->getSynapses());
-			return variedElem;
-		}else if(NeuralNetwork::selectNeuronById(idOfVariedNetworkElement->get(), network->getNeurons()) != 0){ // element is neuron
-			Neuron *variedElem = NeuralNetwork::selectNeuronById(idOfVariedNetworkElement->get(), network->getNeurons());
-			return variedElem;
-		}else{
-			Core::log("DynamicsPlotter::getVariedNetworkElement: Could not find neuron or synapse from given ID", true);
-			return 0;
+		
+		//Get pointers to the relevant varied element:
+		Synapse *synapse = NeuralNetwork::selectSynapseById(idOfVariedNetworkElement, 
+															network->getSynapses());													
+		if(synapse != 0) { // element is synapse
+			return synapse;
 		}
-	
+		
+		Neuron *neuron = NeuralNetwork::selectNeuronById(idOfVariedNetworkElement, 
+														 network->getNeurons());
+		if(neuron != 0){ // element is neuron
+			return neuron;
+		}
+
+		//if the object was neither a neuron, nor a synapse...
+		Core::log("DynamicsPlotter::getVariedNetworkElement: Could not find neuron or synapse from given ID", true);
+		return 0;
 	}
 
 
@@ -341,20 +358,32 @@ void DynamicsPlotter::triggerNetworkStep() {
 
 	/**
 	 * Checks if all strings contain the same amount of elements
-	 * @param idsString StringValue containing the user input. This should be a list of network elements ids.
-	 * @param minsString StringValue containing the user input. This should be a list of the minima of the varied values.
-	 * @param maxsString StringValue containing the user input. This should be a list of the maxima of the varied values.
+	 * @param idsString QString containing the user input. 
+	 *                  This should be a list of network elements ids.
+	 * @param minsString QString containing the user input. 
+	 *                   This should be a list of the minima of the varied values.
+	 * @param maxsString QString containing the user input. 
+	 *                   This should be a list of the maxima of the varied values.
 	 * @return Return True the number of parts of the string after splitting at | or , are the same.
 	 */
-	bool DynamicsPlotter::checkStringlistsItemCount(StringValue *idsString, StringValue *minsString, StringValue *maxsString){
-		QString ids = idsString->get().replace("|", ","); // allow | and , as seperators
+	bool DynamicsPlotter::checkStringListsItemCount(const QString &idsString, 
+													const QString &minsString, 
+													const QString &maxsString)
+	{	
+		// allow | and , as seperators
+		QString ids = idsString;
+		ids.replace("|", ","); 
+		
 		QStringList idsList1 = ids.split(",", QString::SkipEmptyParts);
-		QStringList minsList1 = minsString->get().split(",", QString::SkipEmptyParts);
-		QStringList maxsList1 = maxsString->get().split(",", QString::SkipEmptyParts);
+		QStringList minsList1 = minsString.split(",", QString::SkipEmptyParts);
+		QStringList maxsList1 = maxsString.split(",", QString::SkipEmptyParts);
+		
 		if(idsList1.removeDuplicates() > 0){
-			Core::log("DynamicsPlotter::checkStringlistsItemCount: Please avoid double IDs.", true);
+			Core::log("DynamicsPlotter::checkStringListsItemCount: Please avoid double IDs.", true);
 			return true;
 		}
+		
+		//TODO (chris): What the heck is this?? Can be removed?
 		if(idsList1.size() == 1){ //if no separator could be found
 			bool ok = false;
 			QString str = idsList1[0];
@@ -364,31 +393,44 @@ void DynamicsPlotter::triggerNetworkStep() {
 				return false;
 			}
 		}
+		
+		
 		if(idsList1.size() == minsList1.size() && idsList1.size() == maxsList1.size()){
 			return true;
-		}else{
+		}
+		else {
 			return false;
 		}
 	}
 	
+	
+	
 	/**
 	 * Creates a QList of doubles from a string. Elements in string must be seperated by commas or '|'.
-	 * @param idsString StringValue containing a list of elements seperated by commas or '|'. All elements must be convertable to ULongLong. 
+	 * @param idsString StringValue containing a list of elements seperated by commas or '|'. 
+	 *                  All elements must be convertable to ULongLong. 
 	 * @return List of ULongLongValues. 
 	 */
-	QList<ULongLongValue*> DynamicsPlotter::createListOfIds(StringValue *idsString){
-		QString ids = idsString->get().replace("|", ","); //replace all | by , to have a comma-seperated list.
-		QList<ULongLongValue*> idsList;
+	QList<qulonglong> DynamicsPlotter::createListOfIds(const QString &idsString){
+		QList<qulonglong> idsList;
+		
+		//replace all | by , to have a comma-seperated list.
+		QString ids = idsString;
+		ids.replace("|", ","); 
+		
 		QStringList idsStringList = ids.split(",", QString::SkipEmptyParts);
+		
 		bool ok = false;
 		for(int j = 0; j < idsStringList.size(); j++){
-			idsList.append(new ULongLongValue(idsStringList[j].toULongLong(&ok)));
-			if(ok == false){
-				Core::log("DynamicsPlotter::createListOfIds: Could not convert string entry to uLongLong.", true);
-			}else{
-				ok = false;
-			}
+			qulonglong id = idsStringList[j].toULongLong(&ok);
 			
+			if(ok){
+				idsList.append(id);
+			}
+			else {
+				Core::log("DynamicsPlotter::createListOfIds: Could not convert string entry "
+						  "to uLongLong.", true);
+			}
 		}
 		
 		return idsList;
@@ -399,24 +441,28 @@ void DynamicsPlotter::triggerNetworkStep() {
 	 * @param idsString String Value containing a list of elements seperated by commas. 
 	 * @return List of doubles. 
 	 */
-	QList<double>  DynamicsPlotter::createListOfDoubles(StringValue *doublesString){
+	QList<double>  DynamicsPlotter::createListOfDoubles(const QString &doublesString){
 		QList<double> doublesList;
-		QStringList doublesStringList = doublesString->get().split(",", QString::SkipEmptyParts);
+
+		QStringList doublesStringList = doublesString.split(",", QString::SkipEmptyParts);
+		
 		bool ok = false;
-		for(int j = 0; j < doublesStringList.size(); j++){
-			doublesList.append(doublesStringList[j].toDouble(&ok));
-			if(ok == false){
-				Core::log("DynamicsPlotter::createListOfDoubles: Could not convert string entry to double.", true);
-			}else{
-				ok = false;
-			}
+		for(int j = 0; j < doublesStringList.size(); j++) {
+			double value = doublesStringList[j].toDouble(&ok);
 			
+			if(ok) {
+				doublesList.append(value);
+			}
+			else {
+				Core::log("DynamicsPlotter::createListOfDoubles: Could not convert string "
+						  "entry to double.", true);
+			}
 		}
 		
 		return doublesList;
 	}
 
-//***/Till****//
+//***/Till****c//
 
 
 

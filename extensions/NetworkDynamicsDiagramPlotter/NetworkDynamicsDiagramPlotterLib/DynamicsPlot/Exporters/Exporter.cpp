@@ -51,7 +51,7 @@
 #include <QTextStream>
 #include "Event/EventManager.h"
 #include <QVector>
-
+#include "DynamicsPlotConstants.h"
 
 using namespace std;
 
@@ -88,10 +88,8 @@ namespace nerd {
 
 		EventManager *em = Core::getInstance()->getEventManager();
 		if(em != 0){
-			em->registerForEvent("calculatorStarts", this);
-			em->registerForEvent("calculatorFinishes", this);
-			mStartEvent = em->getEvent("calculatorStarts");
-			mFinishEvent = em->getEvent("calculatorFinishes");
+			mStartEvent = em->registerForEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED, this);
+			mFinishEvent = em->registerForEvent(DynamicsPlotConstants::EVENT_CALCULATION_COMPLETED, this);
 		}
 	
 		if(mStartEvent == 0 || mFinishEvent == 0) {
@@ -100,8 +98,8 @@ namespace nerd {
 		}
 
 		vM = Core::getInstance()->getValueManager();
-		mActiveCalculatorValue = vM->getValue("/DynamicsPlotters/ActiveCalculator");
-		mPlotterProgramValue = vM->getValue("/DynamicsPlotters/PlotterProgram");		
+		mActiveCalculatorValue = vM->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER);
+		mPlotterProgramValue = vM->getValue(DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT);		
 		
 		return ok;
 	}
@@ -127,7 +125,7 @@ namespace nerd {
 	 * @param plotters String containing the names of the plotter programs that will be used.
 	 */
 	void Exporter::prepareExport(QString plotters){
-		MatrixValue *matrix = dynamic_cast<MatrixValue*>(vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Data"))));
+		MatrixValue *matrix = dynamic_cast<MatrixValue*>(vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Internal/Data"))));
 		if(matrix == 0) {
 			Core::log("Exporter: Could not find matrix value.", true);
 			return;
@@ -152,8 +150,8 @@ namespace nerd {
 				outV[l * height + 1][1] = QString("{") + outV[l * height + 1][1];
 				outV[l * height + height - 1][width - 1] = outV[l * height + height -1][width - 1].simplified() + QString("}");
 			}
-			QString xDescr = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("xAxisDescription")))->getValueAsString(); //Description for x-axis
-			QString yDescr = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("yAxisDescription")))->getValueAsString();
+			QString xDescr = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Config/XAxisDescription")))->getValueAsString(); //Description for x-axis
+			QString yDescr = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Config/YAxisDescription")))->getValueAsString();
 			outV[0][0] = "\"" + mRunningCalculator + " ;; " + xDescr + " ;; " + yDescr + "\" "; // add name of calculator; add quotation marks to keep text together
 			if(vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("OutputPath")))->getValueAsString() == ""){
 				writeToFile(outV, "matlabExport");

@@ -62,6 +62,19 @@ const QString DynamicsPlotConstants::OBJECT_DYNAMICS_PLOT_MANAGER
 const QString DynamicsPlotConstants::VALUE_PLOTTER_EXECUTE
 		= "/Plotter/Execute";
 
+const QString DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER
+		= "/Plotter/ActivePlotter";
+		
+const QString DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT
+		= "/Plotter/OutputFormat";
+		
+const QString DynamicsPlotConstants::EVENT_CALCULATION_STARTED
+		= "/Plotter/CalculationStarted";
+		
+const QString DynamicsPlotConstants::EVENT_CALCULATION_COMPLETED
+		= "/Plotter/CalculationCompleted";
+		
+		
 }
 
 
