@@ -167,7 +167,7 @@ namespace nerd {
 		if(calculator == 0) {
 			return;
 		}
-		else if(calculator == "Bifurcation_Calculator" || calculator == "Transients_Calculator" || calculator == "Isoperiod_Calculator" || calculator == "BasinOfAttraction_Calculator"){
+		else if(calculator == "Bifurcation" || calculator == "Transients_Calculator" || calculator == "Isoperiod_Calculator" || calculator == "BasinOfAttraction_Calculator"){
  			MatrixValue *dataMatrixValue = dynamic_cast<MatrixValue*>(vM->getValue(QString(pathToValues + QString("Internal/Data"))));
 			StringValue *xDescV = mVM->getStringValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("Config/XAxisDescription"))); //Description for x-axis
 			StringValue *yDescV = mVM->getStringValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("Config/YAxisDescription")));		

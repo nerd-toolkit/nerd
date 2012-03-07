@@ -1,9 +1,6 @@
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   till.faber@uni-osnabrueck.de
- *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -45,58 +42,35 @@
  ***************************************************************************/
 
 
+#ifndef BIFURCATIONPLOTTER_H
+#define BIFURCATIONPLOTTER_H
 
-#include "DynamicsPlotCollection.h"
-#include <iostream>
-#include <QList>
-#include "Core/Core.h"
-#include "DynamicsPlot/Bifurcation_Calculator.h"
-#include "DynamicsPlot/BifurcationPlotter.h"
-#include "DynamicsPlot/Transients_Calculator.h"
-#include "DynamicsPlot/Isoperiod_Calculator.h"
-#include "DynamicsPlot/BasinOfAttraction_Calculator.h"
-#include "Event/EventManager.h"
-#include "DynamicsPlot/PlotterTemplate_1.h"
-#include "DynamicsPlot/PlotterTemplate_2.h"
-#include "DynamicsPlot/PlotterTemplate_3.h"
-#include "DynamicsPlot/PlotterTemplate_4.h"
-#include "DynamicsPlot/PlotterTemplate_5.h"
-
-using namespace std;
+#include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
+  class BifurcationPlotter : public DynamicsPlotter
+  {
 
-
-/**
- * Constructs a new DynamicsPlotCollection.
- */
-DynamicsPlotCollection::DynamicsPlotCollection()
-{
-	new Bifurcation_Calculator();
-	new BifurcationPlotter();
-	new Transients_Calculator();
-	new Isoperiod_Calculator();
-	new BasinOfAttraction_Calculator();
-	new PlotterTemplate_1();
-	new PlotterTemplate_2();
-	new PlotterTemplate_3();
-	new PlotterTemplate_4();
-	new PlotterTemplate_5();
+  public:
+      BifurcationPlotter();
+      virtual ~BifurcationPlotter();
+      virtual void calculateData();
+      
+  private:
+    StringValue *mObservedElements;
+    StringValue *mObservedRange;
+    IntValue *mObservedPoints;
+    
+    StringValue *mVariedElements;
+    StringValue *mVariedRanges;
+    IntValue *mVariedPoints;
+    
+    IntValue *mNumberPreSteps;
+    IntValue *mNumberSteps;
+	IntValue *mPlottedSteps;
+	
+	BoolValue *mResetNetworkActivation;
+  };
 }
 
-
-
-/**
- * Destructor.
- */
-DynamicsPlotCollection::~DynamicsPlotCollection() {
-}
-
-
-
-
-}
-
-
-
-
+#endif // BIFURCATION_H

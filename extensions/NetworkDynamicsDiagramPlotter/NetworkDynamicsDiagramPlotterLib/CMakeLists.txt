@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.6)
 project(nerd_dynamicsPlotLib)
 
 set(nerd_dynamicsPlotLib_SRCS
+	Util/DynamicsPlotterUtil.cpp
+	DynamicsPlot/BifurcationPlotter.cpp
 	Gui/DynamicsPlotterMainWindow.cpp  
 	Execution/PlotterExecutionLoop.cpp  
 	DynamicsPlot/DynamicsPlotManager.cpp  
@@ -60,6 +62,3 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/neuralNetwork)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/networkEditor)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/simulator/simulator)
-
-
-

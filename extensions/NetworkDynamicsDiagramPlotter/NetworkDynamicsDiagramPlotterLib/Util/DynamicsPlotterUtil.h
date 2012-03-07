@@ -1,9 +1,6 @@
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   till.faber@uni-osnabrueck.de
- *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -45,58 +42,33 @@
  ***************************************************************************/
 
 
+#ifndef DYNAMICSPLOTTERUTIL_H
+#define DYNAMICSPLOTTERUTIL_H
 
-#include "DynamicsPlotCollection.h"
-#include <iostream>
+#include "Core/SystemObject.h"
+#include "Core/ParameterizedObject.h"
+#include "Value/DoubleValue.h"
 #include <QList>
-#include "Core/Core.h"
-#include "DynamicsPlot/Bifurcation_Calculator.h"
-#include "DynamicsPlot/BifurcationPlotter.h"
-#include "DynamicsPlot/Transients_Calculator.h"
-#include "DynamicsPlot/Isoperiod_Calculator.h"
-#include "DynamicsPlot/BasinOfAttraction_Calculator.h"
-#include "Event/EventManager.h"
-#include "DynamicsPlot/PlotterTemplate_1.h"
-#include "DynamicsPlot/PlotterTemplate_2.h"
-#include "DynamicsPlot/PlotterTemplate_3.h"
-#include "DynamicsPlot/PlotterTemplate_4.h"
-#include "DynamicsPlot/PlotterTemplate_5.h"
-
-using namespace std;
+#include "Network/NeuralNetwork.h"
 
 namespace nerd {
 
+class DynamicsPlotterUtil {
 
-/**
- * Constructs a new DynamicsPlotCollection.
- */
-DynamicsPlotCollection::DynamicsPlotCollection()
-{
-	new Bifurcation_Calculator();
-	new BifurcationPlotter();
-	new Transients_Calculator();
-	new Isoperiod_Calculator();
-	new BasinOfAttraction_Calculator();
-	new PlotterTemplate_1();
-	new PlotterTemplate_2();
-	new PlotterTemplate_3();
-	new PlotterTemplate_4();
-	new PlotterTemplate_5();
-}
+public:
+	static QList<DoubleValue*>
+	getElementValuesFromIDs(QList<qulonglong> &idlist, NeuralNetwork *&network, int type = 0);
+	
+	static QList<qulonglong> getIDsFromString(const QString &list, const QString &separator = ",", const QString &replace = "|");
+	
+	static QList<double>
+	getDoublesFromString(const QString &list, const QString &separator = ",");
+	
+	static QList< QPair<double, double> >
+	getPairsFromString(const QString &list, const QString &elem_separator = ",", const QString &pair_separator = "|");
 
-
-
-/**
- * Destructor.
- */
-DynamicsPlotCollection::~DynamicsPlotCollection() {
-}
-
-
-
+};
 
 }
 
-
-
-
+#endif // DYNAMICSPLOTTERUTIL_H

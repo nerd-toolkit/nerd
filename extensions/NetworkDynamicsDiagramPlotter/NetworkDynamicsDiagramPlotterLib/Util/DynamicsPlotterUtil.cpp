@@ -1,9 +1,6 @@
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   till.faber@uni-osnabrueck.de
- *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -45,58 +42,122 @@
  ***************************************************************************/
 
 
-
-#include "DynamicsPlotCollection.h"
-#include <iostream>
-#include <QList>
-#include "Core/Core.h"
-#include "DynamicsPlot/Bifurcation_Calculator.h"
-#include "DynamicsPlot/BifurcationPlotter.h"
-#include "DynamicsPlot/Transients_Calculator.h"
-#include "DynamicsPlot/Isoperiod_Calculator.h"
-#include "DynamicsPlot/BasinOfAttraction_Calculator.h"
-#include "Event/EventManager.h"
-#include "DynamicsPlot/PlotterTemplate_1.h"
-#include "DynamicsPlot/PlotterTemplate_2.h"
-#include "DynamicsPlot/PlotterTemplate_3.h"
-#include "DynamicsPlot/PlotterTemplate_4.h"
-#include "DynamicsPlot/PlotterTemplate_5.h"
-
-using namespace std;
+#include "DynamicsPlotterUtil.h"
+#include <Core/Core.h>
+#include <QStringList>
 
 namespace nerd {
 
+QList<DoubleValue *> DynamicsPlotterUtil::getElementValuesFromIDs(QList<qulonglong> &idlist, NeuralNetwork *&network, int type) {
+	
+	QListIterator<qulonglong> iterator(idlist);
+	QList<Neuron *> neurons = network->getNeurons();
+	QList<Synapse *> synapses = network->getSynapses();
+	QList<DoubleValue *> values;
+	DoubleValue *value;
+	qulonglong id;
 
-/**
- * Constructs a new DynamicsPlotCollection.
- */
-DynamicsPlotCollection::DynamicsPlotCollection()
-{
-	new Bifurcation_Calculator();
-	new BifurcationPlotter();
-	new Transients_Calculator();
-	new Isoperiod_Calculator();
-	new BasinOfAttraction_Calculator();
-	new PlotterTemplate_1();
-	new PlotterTemplate_2();
-	new PlotterTemplate_3();
-	new PlotterTemplate_4();
-	new PlotterTemplate_5();
+	while(iterator.hasNext()) {
+		id = iterator.next();
+		
+		Neuron *n = NeuralNetwork::selectNeuronById(id, neurons);
+		if(n != 0) {
+			switch(type) {
+				case 1:
+					value = &n->getActivationValue();
+					break;
+				case 2:
+					value = &n->getOutputActivationValue();
+					break;
+				case 0:
+				default:
+					value = &n->getBiasValue();
+					break;
+			}
+			values.append(value);
+			continue;
+		}
+
+		Synapse *s = NeuralNetwork::selectSynapseById(id, synapses);
+
+		if(s != 0) {
+			values.append(&s->getStrengthValue());
+			continue;
+		}
+
+		Core::log("Could not find network element with id " + id, true);
+	}
+
+	return values;
 }
 
+QList<qulonglong> DynamicsPlotterUtil::getIDsFromString(const QString &list, const QString &separator, const QString &replace) {
+	QString tmp = QString(list);
+	if(!replace.isEmpty()) {
+		QStringList replist = replace.split(" ", QString::KeepEmptyParts);
+		for(int i = 0; i < replist.size(); ++i) {
+			tmp.replace(replace.at(i), separator);
+		}
+	}
+	QStringList idlist = tmp.split(separator, QString::SkipEmptyParts);
+	QList<qulonglong> output;
+	bool ok;
+	
+	for(int i = 0; i < idlist.size(); ++i) {
+		qulonglong id = idlist.at(i).toULongLong(&ok);
+		
+		if(!ok) {
+			Core::log("Conversion to ULongLong failed!", true);
+			continue;
+		}
+		
+		output.append(id);
+	}
+	return output;
+}
+		
 
-
-/**
- * Destructor.
- */
-DynamicsPlotCollection::~DynamicsPlotCollection() {
+QList< double > DynamicsPlotterUtil::getDoublesFromString(const QString &list, const QString &separator) {
+	QStringList doublelist = list.split(separator, QString::SkipEmptyParts);
+	QList<double> output;
+	bool ok;
+	
+	for(int i = 0; i < doublelist.size(); ++i) {
+		double d = doublelist.at(i).toDouble(&ok);
+		
+		if(!ok) {
+			Core::log("Conversion to double failed, check values please");
+		}
+		
+		output.append(d);
+	}
+	return output;
 }
 
+QList< QPair<double, double> > DynamicsPlotterUtil::getPairsFromString(const QString &list, const QString &elem_separator, const QString &pair_separator) {
+	QStringList pairlist = list.split(pair_separator, QString::SkipEmptyParts);
+	QList< QPair<double, double> > output;
+	bool ok;
 
+	for(int i = 0; i < pairlist.size(); ++i) {
+		QStringList pair = pairlist.at(i).split(elem_separator, QString::SkipEmptyParts);
 
+		if(pair.size() != 2) {
+			Core::log("Not a pair, continuing w/o error", true);
+			continue;
+		}
 
+		double first = pair.at(0).toDouble(&ok);
+		double second = pair.at(1).toDouble(&ok);
+
+		if(!ok) {
+			Core::log("Conversion to double failed, check values please", true);
+		}
+
+		output.append(QPair<double, double>(first, second));
+	}
+
+	return output;
 }
 
-
-
-
+}
