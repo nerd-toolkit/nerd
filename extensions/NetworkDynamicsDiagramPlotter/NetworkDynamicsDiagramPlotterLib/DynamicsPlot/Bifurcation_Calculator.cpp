@@ -258,6 +258,8 @@ namespace nerd {
 			mData->set(minOutputRange + (j - 1) * yIncrement, 0, j, 0); //set first matrix column: indices
 		}
 		
+		int steps = 0;
+		
 		storeCurrentNetworkActivities();
 		//evaluate:
 		for(int i = 0;  i < plotPixelsX; i++) { //runs through parameter changes
@@ -290,6 +292,8 @@ namespace nerd {
 			for(int j = 0; j < maxSteps && attractorFound == false; j++){ //evaluate network with current parameters
 				//this executes the neural network once.
 				mEvaluateNetworkEvent->trigger();
+				
+				steps++;
 				
 				for(int k = 0; k < numberNeurons; k++){ //add all neuron activations to temporary matrix
 					tempMatrix[j][k] = neuronsList.at(k)->getOutputActivationValue().get(); 
@@ -385,6 +389,8 @@ namespace nerd {
 			core->executePendingTasks();
 
 		} //for-loop
+		
+		cerr << "Mean steps: " << (((double) steps) / ((double) plotPixelsX)) << endl;
 		
 		if(mBidirectional->get()){
 // 			restoreCurrentNetworkActivites(); //??

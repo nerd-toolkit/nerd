@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
@@ -46,59 +47,64 @@
 
 
 
-#ifndef NERDBifurcation_Calculator_H
-#define NERDBifurcation_Calculator_H
+#ifndef NERDOnlinePlotterTabbedWindow_H
+#define NERDOnlinePlotterTabbedWindow_H
 
 #include <QString>
-#include <QHash>
-#include "DynamicsPlot/DynamicsPlotter.h"
-#include "Value/IntValue.h"
+#include <QWidget>
+#include <QLabel>
+#include <DynamicsPlot/OnlinePlotter/MouseMoveLabel.h>
+#include "Core/SystemObject.h"
 #include "Value/MatrixValue.h"
-#include "Value/ULongLongValue.h"
+#include <QVBoxLayout>
+#include <QGridLayout>
+#include "OnlinePlotterWindow.h"
 
 namespace nerd {
 
+class OnlinePlotterWindow;
+
 	/**
-	 * The standard bifurcation plotter provides a tool for displaying changes 
-	 * in the qualitative behavior of an neural network. Therefore a synapse
-	 * strength or a bias is varied and the activation or output of a neuron
-	 * is observed. The plotter consists of three parts, one to extract the data,
-	 * one to export it and an external script to create the diagram.
+	 * OnlinePlotterTabbedWindow.
+	 *
 	 */
-	class Bifurcation_Calculator: public DynamicsPlotter {
+	class OnlinePlotterTabbedWindow : public QWidget, public virtual SystemObject  {
+		Q_OBJECT
 		public:
-			Bifurcation_Calculator();
-			virtual ~Bifurcation_Calculator();
-
-			virtual void calculateData();
-
+			OnlinePlotterTabbedWindow(QWidget *parent = 0);
+			virtual ~OnlinePlotterTabbedWindow();
+			virtual bool init();
+			virtual bool bind();
+			virtual bool cleanUp();
+			virtual QString getName() const;
+			
+		public slots:
+			void printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr);
+			void updateData();
+			void finishedProcessing();
+			void processing();
+			void showWindow();
+			
+			void timerStopped();
+			void timerStarted();
+			
+		signals:
+			void timerStart();
+			void timerStop();
+			
 		private:
-			IntValue *mPlotPixelsX;
+			QList<OnlinePlotterWindow*> mPlotterWindows;
 			
-			StringValue *mIdsOfVariedNetworkElements;
-			StringValue *mMinimaOfVariedNetworkElements;
-			StringValue *mMaximaOfVariedNetworkElements;
 			
-			StringValue *mIdsOfObservedNeurons;
-			DoubleValue *mMaxOutputRange;
-			DoubleValue *mMinOutputRange;
-			DoubleValue *mTolerance;
-			IntValue *mPlotPixelsY;		
-			BoolValue *mResetToInitState;
-			IntValue *mMaxSteps;
-			BoolValue *mBidirectional;
-			DoubleValue *mPrerunSteps;
-
-			QList<DoubleValue*> mObservedValues;
 			
 	};
-	
-
-
 
 }
 
 #endif
+
+
+
 
 
 

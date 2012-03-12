@@ -73,8 +73,8 @@ namespace nerd {
 /**
  * Constructs a new OnlinePlotterWindow.
  */
-	OnlinePlotterWindow::OnlinePlotterWindow(QWidget *parent)
-		: mMatrix(0)
+	OnlinePlotterWindow::OnlinePlotterWindow(int index, QWidget *parent)
+		: mMatrix(0), mIndex(index)
 	{
 		setMouseTracking(true);
 		mIsSetUp = false;
@@ -155,7 +155,7 @@ namespace nerd {
 	void OnlinePlotterWindow::setupGUI()
 	{
 		setAttribute(Qt::WA_QuitOnClose, false);
-		setWindowTitle("Inbuilt Dynamics Plotter");
+		setWindowTitle("Diagram [" + QString::number(mIndex) + "]");
 		
 		
 		mLabel = new MouseMoveLabel(this);
@@ -240,8 +240,13 @@ namespace nerd {
 		mMatrix = dataMatrix;
 		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
 			return;
-			
 		}
+		
+		if(mMatrix->getMatrixDepth() <= mIndex) {
+			hide();
+			return;
+		}
+		
 		mIsSetUp = false;
 		mWidth = mMatrix->getMatrixWidth();
 		mHeight = mMatrix->getMatrixHeight();
@@ -261,6 +266,11 @@ namespace nerd {
 		if(mMatrix == 0) {
 			return;
 		}
+		if(mMatrix->getMatrixDepth() <= mIndex) {
+			hide();
+			return;
+		}
+		
 		mVM = Core::getInstance()->getValueManager();
 		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
 		mIsSetUp = false;
@@ -352,6 +362,11 @@ namespace nerd {
 		if(mMatrix == 0) {
 			return;
 		}
+		if(mMatrix->getMatrixDepth() <= mIndex) {
+			hide();
+			return;
+		}
+		
 		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
 			return;
 		}
@@ -374,6 +389,11 @@ namespace nerd {
 		if(mMatrix == 0) {
 			return;
 		}
+		if(mMatrix->getMatrixDepth() <= mIndex) {
+			hide();
+			return;
+		}
+		
 		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
 			return;
 		}

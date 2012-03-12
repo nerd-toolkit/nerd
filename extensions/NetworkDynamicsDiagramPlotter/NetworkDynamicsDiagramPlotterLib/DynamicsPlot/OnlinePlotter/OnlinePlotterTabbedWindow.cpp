@@ -46,59 +46,158 @@
 
 
 
-#ifndef NERDBifurcation_Calculator_H
-#define NERDBifurcation_Calculator_H
-
-#include <QString>
-#include <QHash>
-#include "DynamicsPlot/DynamicsPlotter.h"
-#include "Value/IntValue.h"
+#include "OnlinePlotterTabbedWindow.h"
+#include <iostream>
+#include <QList>
+#include <QCoreApplication>
+#include <QApplication>
+#include <QImage>
+#include <QPainter>
+#include <QPixmap>
+#include <QPoint>
+#include <DynamicsPlot/OnlinePlotter/MouseMoveLabel.h>
+#include <QLabel>
+#include <QLineEdit>
+#include "Core/Core.h"
 #include "Value/MatrixValue.h"
-#include "Value/ULongLongValue.h"
+#include "Value/BoolValue.h"
+#include "QHBoxLayout"
+#include "QVBoxLayout"
+#include "QGridLayout"
+#include <QTabWidget>
+#include "OnlinePlotterWindow.h"
+// #include "vector"
+using namespace std;
 
 namespace nerd {
 
-	/**
-	 * The standard bifurcation plotter provides a tool for displaying changes 
-	 * in the qualitative behavior of an neural network. Therefore a synapse
-	 * strength or a bias is varied and the activation or output of a neuron
-	 * is observed. The plotter consists of three parts, one to extract the data,
-	 * one to export it and an external script to create the diagram.
-	 */
-	class Bifurcation_Calculator: public DynamicsPlotter {
-		public:
-			Bifurcation_Calculator();
-			virtual ~Bifurcation_Calculator();
 
-			virtual void calculateData();
+/**
+ * Constructs a new OnlinePlotterTabbedWindow.
+ */
+	OnlinePlotterTabbedWindow::OnlinePlotterTabbedWindow(QWidget *parent)
+		: QWidget(parent)
+	{
+		moveToThread(QCoreApplication::instance()->thread());	
+		
+		QTabWidget *tabWidget = new QTabWidget(this);
+		QHBoxLayout *layout = new QHBoxLayout(this);
+		setLayout(layout);
+		
+		resize(300, 200);
+		
+		for(int i = 0; i < 5; ++i) {
+			OnlinePlotterWindow *opw = new OnlinePlotterWindow(i);
+			
+			mPlotterWindows.append(opw);
+			
+			connect(opw, SIGNAL(timerStart()),
+					this, SLOT(timerStarted()));
+			connect(opw, SIGNAL(timerStop()),
+					this, SLOT(timerStopped()));
+			
+			//tabWidget->addTab(opw, "Plot " + QString::number(i));
+		}
+		
+		setAttribute(Qt::WA_QuitOnClose, false);
+		setAttribute(Qt::WA_DeleteOnClose, false);
+	}
 
-		private:
-			IntValue *mPlotPixelsX;
-			
-			StringValue *mIdsOfVariedNetworkElements;
-			StringValue *mMinimaOfVariedNetworkElements;
-			StringValue *mMaximaOfVariedNetworkElements;
-			
-			StringValue *mIdsOfObservedNeurons;
-			DoubleValue *mMaxOutputRange;
-			DoubleValue *mMinOutputRange;
-			DoubleValue *mTolerance;
-			IntValue *mPlotPixelsY;		
-			BoolValue *mResetToInitState;
-			IntValue *mMaxSteps;
-			BoolValue *mBidirectional;
-			DoubleValue *mPrerunSteps;
 
-			QList<DoubleValue*> mObservedValues;
-			
-	};
+
+/**
+ * Destructor.
+ */
+	OnlinePlotterTabbedWindow::~OnlinePlotterTabbedWindow() {
+	}
+	
+	bool OnlinePlotterTabbedWindow::init() {
+		bool ok = true;
+
+		return ok;
+	}
+
+	bool OnlinePlotterTabbedWindow::bind() {
+		bool ok = true;
+		
+		return ok;
+	}
+
+	bool OnlinePlotterTabbedWindow::cleanUp() {
+		bool ok = true;
+
+		return ok;
+	}
+	
+	QString OnlinePlotterTabbedWindow::getName() const {
+		return "OnlinePlotterTabbedWindow";
+	}
 	
 
 
+	/**
+	 * Prints the data matrix to a label. 
+	 *
+	 * @param name Name of active calculator
+	 * @param dataMatrix Matrix with data from active calculator
+	 * 
+	*/
+	void OnlinePlotterTabbedWindow::printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr){
+		//notify tabs
+		for(int i = 0; i < mPlotterWindows.size(); ++i) {
+			mPlotterWindows.at(i)->printData(name, dataMatrix, xDescr, yDescr);
+		}
+	}
+	
+	/**
+	 * Updates the diagram during calculation. 
+	 *
+	 */
+	void OnlinePlotterTabbedWindow::updateData(){
+		cerr << "update data" << endl;
+		//notify tabs
+		for(int i = 0; i < mPlotterWindows.size(); ++i) {
+			mPlotterWindows.at(i)->updateData();
+		}
+	}
+	
+	/**
+	 * Sets message label to 'Done' when finished at set min and max labels 
+	 * 
+	 */
+	void OnlinePlotterTabbedWindow::finishedProcessing(){
+		//notify tabs
+		for(int i = 0; i < mPlotterWindows.size(); ++i) {
+			mPlotterWindows.at(i)->finishedProcessing();
+		}
+	}
+	
 
+	
+	void OnlinePlotterTabbedWindow::processing(){
+		//Notify tabs
+		for(int i = 0; i < mPlotterWindows.size(); ++i) {
+			mPlotterWindows.at(i)->processing();
+		}
+	}
+	
+	
+	void OnlinePlotterTabbedWindow::showWindow() {
+		show();
+	}
+	
+	
+	void OnlinePlotterTabbedWindow::timerStopped() {
+		cerr << "stopped timer"  << endl;
+		emit timerStop();
+	}
+	
+	
+	void OnlinePlotterTabbedWindow::timerStarted() {
+		cerr << "start timer" << endl;
+		emit timerStart();
+	}
 }
-
-#endif
 
 
 

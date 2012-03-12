@@ -67,7 +67,7 @@ namespace nerd {
 	class OnlinePlotterWindow : public QWidget, public virtual SystemObject  {
 		Q_OBJECT
 		public:
-			OnlinePlotterWindow(QWidget *parent = 0);
+			OnlinePlotterWindow(int index, QWidget *parent = 0);
 			virtual ~OnlinePlotterWindow();
 			virtual bool init();
 			virtual bool bind();
@@ -120,7 +120,7 @@ namespace nerd {
 			
 			void setupGUI();
 			ValueManager *mVM;
-			
+			int mIndex;
 			
 	};
 

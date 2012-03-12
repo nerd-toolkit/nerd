@@ -1,8 +1,6 @@
+
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
- *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   tfaber@uni-osnabrueck.de
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
@@ -45,60 +43,50 @@
  ***************************************************************************/
 
 
+#include "AddInternalDiagramPlotterAction.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "Value/DoubleValue.h"
+#include "Gui/InternalDiagramPlotter/InternalDiagramPlotterMainWidget.h"
 
-#ifndef NERDBifurcation_Calculator_H
-#define NERDBifurcation_Calculator_H
 
-#include <QString>
-#include <QHash>
-#include "DynamicsPlot/DynamicsPlotter.h"
-#include "Value/IntValue.h"
-#include "Value/MatrixValue.h"
-#include "Value/ULongLongValue.h"
+using namespace std;
 
 namespace nerd {
 
-	/**
-	 * The standard bifurcation plotter provides a tool for displaying changes 
-	 * in the qualitative behavior of an neural network. Therefore a synapse
-	 * strength or a bias is varied and the activation or output of a neuron
-	 * is observed. The plotter consists of three parts, one to extract the data,
-	 * one to export it and an external script to create the diagram.
-	 */
-	class Bifurcation_Calculator: public DynamicsPlotter {
-		public:
-			Bifurcation_Calculator();
-			virtual ~Bifurcation_Calculator();
 
-			virtual void calculateData();
+/**
+ * Constructs a new AddInternalDiagramPlotterAction.
+ */
+AddInternalDiagramPlotterAction::AddInternalDiagramPlotterAction(const QString &name, 
+					const QString &titleName, QObject *owner)
+	: QAction(name, owner), mTitleName(titleName)
+{
+	connect(this, SIGNAL(triggered()),
+			this, SLOT(addPlotter()));
+}
 
-		private:
-			IntValue *mPlotPixelsX;
-			
-			StringValue *mIdsOfVariedNetworkElements;
-			StringValue *mMinimaOfVariedNetworkElements;
-			StringValue *mMaximaOfVariedNetworkElements;
-			
-			StringValue *mIdsOfObservedNeurons;
-			DoubleValue *mMaxOutputRange;
-			DoubleValue *mMinOutputRange;
-			DoubleValue *mTolerance;
-			IntValue *mPlotPixelsY;		
-			BoolValue *mResetToInitState;
-			IntValue *mMaxSteps;
-			BoolValue *mBidirectional;
-			DoubleValue *mPrerunSteps;
 
-			QList<DoubleValue*> mObservedValues;
-			
-	};
-	
 
+/**
+ * Destructor.
+ */
+AddInternalDiagramPlotterAction::~AddInternalDiagramPlotterAction() {
+}
+
+
+void AddInternalDiagramPlotterAction::addPlotter() {
+
+
+	InternalDiagramPlotterMainWidget *plotter = new InternalDiagramPlotterMainWidget(mTitleName, 0, 0);
+	//TODO organize destruction.
+
+	plotter->showWidget();
+}
 
 
 }
-
-#endif
 
 
 

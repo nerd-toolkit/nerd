@@ -23,12 +23,20 @@ set(nerd_dynamicsPlotLib_SRCS
 	DynamicsPlot/PlotterTemplate_3.cpp
 	DynamicsPlot/PlotterTemplate_4.cpp
 	DynamicsPlot/PlotterTemplate_5.cpp
+	Gui/InternalDiagramPlotter/InternalDiagramPlotterWidget.cpp
+	Gui/InternalDiagramPlotter/InternalDiagramPlotterMainWidget.cpp
+	Gui/InternalDiagramPlotter/AddInternalDiagramPlotterAction.cpp
+	DynamicsPlot/OnlinePlotter/OnlinePlotterTabbedWindow.cpp
 )
 
 set(nerd_dynamicsPlotLib_MOC_HDRS
 	Gui/DynamicsPlotterMainWindow.h   
 	DynamicsPlot/OnlinePlotter/OnlinePlotter.h  
 	DynamicsPlot/OnlinePlotter/OnlinePlotterWindow.h  
+	Gui/InternalDiagramPlotter/InternalDiagramPlotterWidget.h
+	Gui/InternalDiagramPlotter/InternalDiagramPlotterMainWidget.h
+	Gui/InternalDiagramPlotter/AddInternalDiagramPlotterAction.h
+	DynamicsPlot/OnlinePlotter/OnlinePlotterTabbedWindow.h
 )
 
 set(nerd_dynamicsPlotLib_RCS

@@ -47,6 +47,7 @@
 #include "DynamicsPlotterMainWindow.h"
 #include "Core/Core.h"
 #include "Gui/Control/BoolValueSwitcherAction.h"
+#include "Gui/InternalDiagramPlotter/AddInternalDiagramPlotterAction.h"
 #include <QDir>
 
 
@@ -110,6 +111,11 @@ void DynamicsPlotterMainWindow::setup(bool enableDebugging) {
 	QAction *parameterListAction = toolMenu->addAction(tr("&Object Properties"));
 	parameterListAction->setShortcut(tr("Ctrl+o"));
 	connect(parameterListAction, SIGNAL(triggered()), mParameterLists, SLOT(show()));
+	
+	AddInternalDiagramPlotterAction *addDiagramPlotterAction = 
+						new AddInternalDiagramPlotterAction("Diagram Plotter", "Diagram",
+									toolMenu);
+	toolMenu->addAction(addDiagramPlotterAction);
 
 	if(enableDebugging) {
 		QMenu *debugMenu = getMenu(QString("Debug"));

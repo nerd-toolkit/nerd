@@ -1,9 +1,6 @@
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   tfaber@uni-osnabrueck.de
- *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -45,56 +42,32 @@
  ***************************************************************************/
 
 
-
-#ifndef NERDBifurcation_Calculator_H
-#define NERDBifurcation_Calculator_H
+#ifndef NERDAddInternalDiagramPlotterAction_H
+#define NERDAddInternalDiagramPlotterAction_H
 
 #include <QString>
 #include <QHash>
-#include "DynamicsPlot/DynamicsPlotter.h"
-#include "Value/IntValue.h"
-#include "Value/MatrixValue.h"
-#include "Value/ULongLongValue.h"
+#include <QAction>
 
 namespace nerd {
 
 	/**
-	 * The standard bifurcation plotter provides a tool for displaying changes 
-	 * in the qualitative behavior of an neural network. Therefore a synapse
-	 * strength or a bias is varied and the activation or output of a neuron
-	 * is observed. The plotter consists of three parts, one to extract the data,
-	 * one to export it and an external script to create the diagram.
+	 * AddInternalDiagramPlotterAction.
+	 *
 	 */
-	class Bifurcation_Calculator: public DynamicsPlotter {
-		public:
-			Bifurcation_Calculator();
-			virtual ~Bifurcation_Calculator();
+	class AddInternalDiagramPlotterAction : public QAction {
+	Q_OBJECT
+	public:
+		AddInternalDiagramPlotterAction(const QString &name, const QString &titleName,
+								   QObject *owner = 0);
+		virtual ~AddInternalDiagramPlotterAction();
 
-			virtual void calculateData();
+	public slots:
+		void addPlotter();
 
-		private:
-			IntValue *mPlotPixelsX;
-			
-			StringValue *mIdsOfVariedNetworkElements;
-			StringValue *mMinimaOfVariedNetworkElements;
-			StringValue *mMaximaOfVariedNetworkElements;
-			
-			StringValue *mIdsOfObservedNeurons;
-			DoubleValue *mMaxOutputRange;
-			DoubleValue *mMinOutputRange;
-			DoubleValue *mTolerance;
-			IntValue *mPlotPixelsY;		
-			BoolValue *mResetToInitState;
-			IntValue *mMaxSteps;
-			BoolValue *mBidirectional;
-			DoubleValue *mPrerunSteps;
-
-			QList<DoubleValue*> mObservedValues;
-			
+	private:
+		QString mTitleName;
 	};
-	
-
-
 
 }
 

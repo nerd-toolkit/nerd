@@ -122,20 +122,26 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 
 	connect(this, SIGNAL(showGui()), mMainWindow, SLOT(show()));
 
-	//****Till****//
-	op = new OnlinePlotter();
-	opw = new OnlinePlotterWindow();
-	connect(op, SIGNAL(dataPrepared(QString, MatrixValue*, QString, QString)), opw, SLOT(printData(QString, MatrixValue*, QString, QString)));
-
-
+	
 	timer = new QTimer();
 // 	timer->start(500);
 	timer->setInterval(500);
-	connect(timer, SIGNAL(timeout()), opw, SLOT(updateData()));
-	connect(opw, SIGNAL(timerStart()), timer, SLOT(start()));
-	connect(op, SIGNAL(startProcessing()), opw, SLOT(processing()));
+	
+	//****Till****//
+	op = new OnlinePlotter();
+	
+	for(int i = 0; i < 6; ++i) {
+		opw = new OnlinePlotterWindow(i);
+		connect(op, SIGNAL(dataPrepared(QString, MatrixValue*, QString, QString)), opw, SLOT(printData(QString, MatrixValue*, QString, QString)));
+		connect(timer, SIGNAL(timeout()), opw, SLOT(updateData()));
+		connect(opw, SIGNAL(timerStart()), timer, SLOT(start()));
+		connect(op, SIGNAL(startProcessing()), opw, SLOT(processing()));
+		connect(op, SIGNAL(finishedProcessing()), opw, SLOT(finishedProcessing()));
+	}
+
+	
 	connect(op, SIGNAL(finishedProcessing()), timer, SLOT(stop()));
-	connect(op, SIGNAL(finishedProcessing()), opw, SLOT(finishedProcessing()));
+	
 	//***/Till****//
 	
 	return true;

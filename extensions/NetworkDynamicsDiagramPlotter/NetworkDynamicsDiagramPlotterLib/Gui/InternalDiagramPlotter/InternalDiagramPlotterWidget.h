@@ -1,8 +1,7 @@
+
+
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
- *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   tfaber@uni-osnabrueck.de
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
@@ -46,59 +45,112 @@
 
 
 
-#ifndef NERDBifurcation_Calculator_H
-#define NERDBifurcation_Calculator_H
+#ifndef NERDInternalDiagramPlotterWidget_H
+#define NERDInternalDiagramPlotterWidget_H
 
-#include <QString>
-#include <QHash>
-#include "DynamicsPlot/DynamicsPlotter.h"
-#include "Value/IntValue.h"
-#include "Value/MatrixValue.h"
-#include "Value/ULongLongValue.h"
+
+#include "Math/Matrix.h"
+#include <QTimer>
+#include <QFrame>
+#include <QPaintEvent>
+#include <QList>
+#include <QMutex>
+#include "Value/BoolValue.h"
+#include "Value/ValueChangedListener.h"
 
 namespace nerd {
 
 	/**
-	 * The standard bifurcation plotter provides a tool for displaying changes 
-	 * in the qualitative behavior of an neural network. Therefore a synapse
-	 * strength or a bias is varied and the activation or output of a neuron
-	 * is observed. The plotter consists of three parts, one to extract the data,
-	 * one to export it and an external script to create the diagram.
+	 * InternalDiagramPlotterWidget
 	 */
-	class Bifurcation_Calculator: public DynamicsPlotter {
-		public:
-			Bifurcation_Calculator();
-			virtual ~Bifurcation_Calculator();
+	class InternalDiagramPlotterWidget : public QFrame {
+	Q_OBJECT
 
-			virtual void calculateData();
+	public:
+		InternalDiagramPlotterWidget(QWidget *parent = 0);
+		virtual ~InternalDiagramPlotterWidget();
 
-		private:
-			IntValue *mPlotPixelsX;
-			
-			StringValue *mIdsOfVariedNetworkElements;
-			StringValue *mMinimaOfVariedNetworkElements;
-			StringValue *mMaximaOfVariedNetworkElements;
-			
-			StringValue *mIdsOfObservedNeurons;
-			DoubleValue *mMaxOutputRange;
-			DoubleValue *mMinOutputRange;
-			DoubleValue *mTolerance;
-			IntValue *mPlotPixelsY;		
-			BoolValue *mResetToInitState;
-			IntValue *mMaxSteps;
-			BoolValue *mBidirectional;
-			DoubleValue *mPrerunSteps;
+		bool loadMatrixFromFile(const QString &fileName);
+		bool saveMatrixToFile(const QString &fileName);
+		void saveDiagramToSvg(const QString &fileName);
+		
+		double getUserScale() const;
+		void setUserScale(double scale);
+		double getUserOffsetX() const;
+		double getUserOffsetY() const;
+		void setUserOffset(double offsetX, double offsetY);
+		void setTickIntervals(double major, int minor);
+		double getMajorTickInterval() const;
+		int getMinorTickInterval() const;
+		void enableDiagramMode(bool enable);
+		bool isInDiagramMode() const;
+		void showDiagramLines(bool show);
+		bool isShowingDiagramLines() const;
+		void setDiagramLineDashPattern(const QVector<qreal> &dashPattern);
+		QVector<qreal> getDiagramLineDashPattern() const;
+		void setLineWidth(double lineWidth);
+		double getLineWidth() const;
+		void setLineColor(const QColor &color);
+		QColor getLineColor() const;
+		void enableAutoScale(bool enable);
+		bool isUsingAutoScale() const;
 
-			QList<DoubleValue*> mObservedValues;
-			
+	public slots:
+		void updateMatrix(const Matrix &matrix);
+		void plot();
+		void clearMatrix();
+		void centerDiagram();
+
+	signals:
+		void userScaleChanged(double currentScale);
+		void userOffsetChanged(double currentOffsetX, double currentOffsetY);
+
+
+	protected:
+		virtual void paintEvent(QPaintEvent *event);
+
+		virtual void drawCoordinateSystem(QPainter &painter);
+		virtual void drawMatrix(QPainter &painter);
+		virtual void drawCoordinateRanges(QPainter &painter);
+		//virtual double translateValue(double value, double offsetX, offsetY, double scale);
+		virtual void mouseDoubleClickEvent(QMouseEvent *event);
+		
+		const QColor& getColor(int index) const;
+		
+	protected:
+		virtual void hideEvent(QHideEvent *event);
+		virtual void showEvent(QShowEvent *event);
+		virtual void keyPressEvent(QKeyEvent *event);
+		virtual void mouseMoveEvent(QMouseEvent *event);
+		virtual void mousePressEvent(QMouseEvent *event);
+		virtual void mouseReleaseEvent(QMouseEvent *event);
+		virtual void wheelEvent(QWheelEvent *event);
+
+	protected:
+		Matrix mMatrix;
+		double mDrawableHeight;
+		double mDrawableWidth;
+		double mUserScale;
+		double mUserOffsetX;
+		double mUserOffsetY;
+		QMutex mUpdateMutex;
+		BoolValue *mPerformanceMode;
+		double mMajorTickInterval;
+		int mMinorTickInterval;
+		double mHorizontalOffset;
+		double mVerticalOffset;
+		bool mDiagramMode;
+		bool mShowDiagramLines;
+		double mDiagramShift;
+		QVector<qreal> mDiagramLineDashPattern;
+		double mLineWidth;
+		QColor mLineColor;
+		QVector<QColor> mPointColors;
+		BoolValue *mAutoScale;
 	};
-	
-
-
 
 }
 
 #endif
-
 
 
