@@ -170,8 +170,11 @@ bool NerdClusterNeuroEvoApplication::setupApplication()
 
 // 	Statistics::install();
 	SettingsLogger *settingsLogger = new SettingsLogger();
-	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/Algorithm/.*");
-	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/Pop/.*");
+	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/.*/Algorithm/.*");
+	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/.*/Pop/.*");
+	settingsLogger->addValues("/Evo/.*/Fitness/.*/Fitness/CalculationMode");
+// 	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/Main/Algorithm/.*");
+// 	settingsLogger->addValues("(?!.*/Evo/.*/Fitness/.*/Fitness/.*)(?!.*/Performance/.*)/Evo/Main/Pop/.*");
 	settingsLogger->addValues("/Control/NumberOfSteps");
 	settingsLogger->addValues("/Control/NumberOfTries");
 
