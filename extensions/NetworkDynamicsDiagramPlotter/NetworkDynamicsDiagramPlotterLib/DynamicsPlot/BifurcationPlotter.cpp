@@ -46,6 +46,7 @@
 #include <Util/DynamicsPlotterUtil.h>
 #include "Core/Core.h"
 #include "math.h"
+#include <Math/Math.h>
 #include <iostream>
 
 using namespace std;
@@ -55,19 +56,28 @@ namespace nerd {
 BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	// initialising
 	mObservedElements = new StringValue("0");
-	mObservedElements->setDescription("IDs of network elements whose activations should "
-									  "be observed"); ///NOTE////
+	mObservedElements->setDescription("Elements to observe, syntax "
+									"ID[[:FUNC]:PARAM] \n"
+									 "with FUNC = {tf, af, sf) \n"
+									 "and PARAM = {a, b, o, w}");
+									
 	mObservedRanges = new StringValue("-1,1");
 	mObservedRanges->setDescription("Minimum and maximum values for netwerk elements that "
 									"are observed (eg 0,1)");
+	
 	mObservedResolution = new IntValue(600);
 	mObservedResolution->setDescription("Defines how many points the ranges span");
 
 	mVariedElement = new StringValue("0");
-	mVariedElement->setDescription("");
+	mVariedElement->setDescription("Network element to vary over time. Syntax "
+								"is ID[[:FUNC:]PARAM]  (default is output "
+								"value of neuron or synapse strength, so "
+								"for the bias value use ID:b)");
+	
 	mVariedRange = new StringValue("0,1");
 	mVariedRange->setDescription("Comma-separated start and end values for parameter variation "
 								 "(eg 0,1)");
+	
 	mVariedResolution = new IntValue(600);
 	mVariedResolution->setDescription("Defines how many points inside the given range for an "
 									  "element parameter are being generated");
@@ -102,6 +112,7 @@ void BifurcationPlotter::calculateData() {
 	
 	// get program core
 	Core *core = Core::getInstance();
+	
 	// get network
 	ModularNeuralNetwork *network = getCurrentNetwork();
 	QList<NeuralNetworkElement*> networkElements;
@@ -113,31 +124,36 @@ void BifurcationPlotter::calculateData() {
 		Core::log("BifurcationPlotter: No elements to observe. Aborting.", true);
 		return;
 	}
-	///NOTE////
+
 	QList<QStringList> observedElementsList = 
-				DynamicsPlotterUtil::parseElementString(observedElements); ///NOTE////
+				DynamicsPlotterUtil::parseElementString(observedElements); 
 	
 	QList< QList< DoubleValue *> > observedValuesList = 
-				DynamicsPlotterUtil::getElementValues(observedElementsList, networkElements);
+				DynamicsPlotterUtil::getElementValues(observedElementsList,
+networkElements);
 	
 	QList<double> observedRanges = 
 				DynamicsPlotterUtil::getDoublesFromString(mObservedRanges->get());
 	
 	if(observedRanges.isEmpty() || observedRanges.size() != 2*observedValuesList.size()) {
 		Core::log("BifurcationPlotter: Invalid number of ranges given, maybe mismatch to "
-				  "number of elements.", true); ///NOTE////
+				  "number of elements.", true);
 		return;
 	}
 
 	// Get parameters for varied network element
 	QString variedElement = mVariedElement->get();
 	if(variedElement.isEmpty()) {
-		Core::log("BifurcationPlotter: No elements to vary. Aborting.", true); ///NOTE////
+		Core::log("BifurcationPlotter: No elements to vary. Aborting.", true); 
 		return;
 	}
 	
-	DoubleValue *variedValue = DynamicsPlotterUtil::getElementValue(variedElement, networkElements);
-	QList<double> variedRange = DynamicsPlotterUtil::getDoublesFromString(mVariedRange->get());
+	DoubleValue *variedValue =
+		DynamicsPlotterUtil::getElementValue(variedElement, networkElements);
+	
+	QList<double> variedRange =
+		DynamicsPlotterUtil::getDoublesFromString(mVariedRange->get());
+	
 	if(variedRange.size() != 2) {
 		Core::log("BifurcationPlotter: Invalid number of range parameters given. Aborting.", true);
 		return;
@@ -146,14 +162,31 @@ void BifurcationPlotter::calculateData() {
 	// save original value for clean-up
 	double variedValueOrig = variedValue->get();
 	storeCurrentNetworkActivities();
-
+	
 	// PREPARE data matrix
 	mData->clear();
-	mData->resize(mVariedResolution->get(), mObservedResolution->get(), observedValuesList.size());
+	mData->resize(mVariedResolution->get()+1, mObservedResolution->get()+1,
+observedValuesList.size());
 	mData->fill(0);
+	
+	// fill with observer range for each plot
+	QList< QList <double> > oParams;
+	
+	for(int i = 0; i < observedValuesList.size(); ++i) {
+		double oStart = observedRanges.at(i*2);
+		double oEnd = observedRanges.at(i*2+1);
+		double oStepSize = (oEnd - oStart) / (double)mObservedResolution->get();
+		
+		for(int y = 1; y <= mObservedResolution->get(); ++y) {
+			mData->set(Math::round(oStart+(y-1)*oStepSize,5), 0, y, i);
+		}
+		
+		// store parameters for later
+		oParams.append(QList<double>() << oStart << oEnd << oStepSize);
+	}
 
 	// MAIN LOOP over parameter points
-	for(int x = 1; x <= mVariedResolution->get() && mActiveValue->get(); ++x) { ///NOTE////
+	for(int x = 1; x <= mVariedResolution->get() && mActiveValue->get(); ++x) {
 		
 		if(mResetNetworkActivation->get()) {
 			restoreCurrentNetworkActivites();
@@ -163,21 +196,32 @@ void BifurcationPlotter::calculateData() {
 		double vStart = variedRange.first();
 		double vEnd = variedRange.last();
 		double vStepSize = (vEnd - vStart) / (double) mVariedResolution->get();
-		variedValue->set(vStart + (x-1) * vStepSize);
+		double vVal = vStart + (x-1) * vStepSize;
+		variedValue->set(vVal); // set actual value
 		
-		// TODO call DynamicsPlotter:networkChanged (or similar), if available
-		notifyNetworkParametersChanged(network); ///NOTE////
+		// draw x axis values
+		for(int i = 0; i < observedValuesList.size(); ++i) {
+			mData->set(vVal, x, 0, i);
+		}
+		
+		notifyNetworkParametersChanged(network);
 
 		// INNER LOOP over steps
-		for(int j = 1; j <= mNumberSteps->get() && mActiveValue->get(); ++j) { ///NOTE////
+		for(int j = 0; j < mNumberSteps->get() && mActiveValue->get(); ++j) {
 			// let the network run for 1 timestep
 			triggerNetworkStep();
 			
 			// plot values
 			if(j > mNumberSteps->get() - mPlottedSteps->get()) {
+				
 				// Calculate average neuron activation
 				for(int i = 0; i < observedValuesList.size(); ++i) {
-					QList<DoubleValue*> observedValues = observedValuesList.at(i);
+					
+					QList<DoubleValue*> observedValues =
+										observedValuesList.at(i);
+					double oStart = oParams.at(i).at(0);
+					double oEnd = oParams.at(i).at(1);
+					double oStepSize = oParams.at(i).at(2);
 					double act = 0;
 					
 					for(int k = 0; k < observedValues.size(); ++k) {
@@ -185,13 +229,10 @@ void BifurcationPlotter::calculateData() {
 					}
 					act = act / observedValues.size();
 
-					double oStart = observedRanges.at(i*2);
-					double oEnd = observedRanges.at(i*2+1);
-
 					if(oStart <= act && act <= oEnd) {
-						double oStepSize = (oEnd - oStart) / (double) mObservedResolution->get();
 						double y = floor(act/oStepSize - oStart/oStepSize);
-						mData->set(1, x, y, i);
+						
+						mData->set(1, x, y+1, i);
 					}
 				}
 			}
@@ -206,7 +247,7 @@ void BifurcationPlotter::calculateData() {
 	
 	// CLEAN UP
 	variedValue->set(variedValueOrig);
-	notifyNetworkParametersChanged(network); ///NOTE////
+	notifyNetworkParametersChanged(network);
 	
 	restoreCurrentNetworkActivites();
 }

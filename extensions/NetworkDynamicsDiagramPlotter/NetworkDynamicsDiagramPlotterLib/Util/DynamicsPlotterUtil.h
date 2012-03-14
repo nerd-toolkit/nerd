@@ -69,16 +69,6 @@ public:
 	static QList< double >
 	getDoublesFromString(const QString &list, const QString &separator = ",", const QString &replace = "|");
 
-	// DEPRECATED
-	static QList< DoubleValue * >
-	getElementValuesFromIDs(QList<qulonglong> &idlist, NeuralNetwork *&network, int type = 0);
-
-	static QList< qulonglong >
-	getIDsFromString(const QString &list, const QString &separator = ",", const QString &replace = "|");
-
-	static QList< QPair< double, double > >
-	getPairsFromString(const QString &list, const QString &elem_separator = ",", const QString &pair_separator = "|");
-
 };
 
 }
