@@ -47,7 +47,109 @@
 #include <QStringList>
 
 namespace nerd {
+	
+DoubleValue *DynamicsPlotterUtil::getElementValue(QString const &string, QList<NeuralNetworkElement*> const &elemList) {
+	// string Syntax: ID[[:FUNC]:PARAM]
+	QStringList stringList = string.split(":", QString::SkipEmptyParts);
+	if(stringList.isEmpty() || stringList.size() > 3) {
+		return 0;
+	}
+	bool ok;
+	qulonglong id = stringList.first().toULongLong(&ok);
+	if(!ok) {
+		return 0;
+	}
+	NeuralNetworkElement *elem = NeuralNetwork::selectNetworkElementById(id, elemList);
+	if(elem == 0) {
+		return 0;
+	}
+	Neuron *neuron = static_cast<Neuron*>(elem);
+	if(neuron != 0) {
+		if(stringList.size() == 1 || stringList.at(1) == "o") {
+			return &(neuron->getOutputActivationValue());
+		}
+		if(stringList.at(1) == "a") {
+			return &(neuron->getActivationValue());
+		}
+		if(stringList.at(1) == "b") {
+			return &(neuron->getBiasValue());
+		}
+		if(stringList.size() == 3) {
+			QString param = stringList.at(2);
+			if(stringList.at(1) == "tf") {
+				return static_cast<DoubleValue*>(neuron->getTransferFunction()->getParameter(param));
+			}
+			if(stringList.at(1) == "af") {
+				return static_cast<DoubleValue*>(neuron->getActivationFunction()->getParameter(param));
+			}
+		}
+		return 0;
+	}
+	Synapse *synapse = static_cast<Synapse*>(elem);
+	if(synapse != 0) {
+		if(stringList.size() == 1 || stringList.at(1) == "w") {
+			return &(synapse->getStrengthValue());
+		}
+		if(stringList.size() == 3 && stringList.at(2) == "sf") {
+			return static_cast<DoubleValue*>(synapse->getSynapseFunction()->getParameter(stringList.at(2)));
+		}
+		return 0;
+	}
+	return 0;
+}
 
+// Wrapper for above method to get values for multiple strings in a list of lists
+QList< QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStringList > const &listList, QList<NeuralNetworkElement*> const &elemList) {
+	QList< QList< DoubleValue *> > outer;
+	for(int i = 0; i < listList.size(); ++i) {
+		QList< DoubleValue *> inner;
+		QStringList stringList = listList.at(i);
+		for(int j = 0; j < stringList.size(); ++j) {
+			inner.append(getElementValue(stringList.at(j), elemList));
+		}
+		outer.append(inner);
+	}
+	return outer;
+}
+	
+QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &string) {
+	// Syntax: ID:FUNC:PARAM (eg I1:F1:P1,I2:F2:P2|I3:F3:P3)	
+	QList<QStringList> plots;
+	// Create list of plots
+	QStringList plotlist = string.split("|", QString::SkipEmptyParts);
+	for(int i = 0; i < plotlist.size(); ++i) {
+		QStringList elems = plotlist.at(i).split(",", QString::SkipEmptyParts);
+		plots.append(elems);
+	}
+	return plots;
+}
+
+QList< double > DynamicsPlotterUtil::getDoublesFromString(const QString &list, const QString &separator, const QString &replace) {
+	QString tmp(list);
+	if(!replace.isEmpty()) {
+		QStringList replist = replace.split(separator, QString::SkipEmptyParts);
+		for(int i = 0; i < replist.size(); ++i) {
+			tmp.replace(replist.at(i), separator);
+		}
+	}
+	QStringList doublelist = tmp.split(separator, QString::SkipEmptyParts);
+	QList<double> output;
+	bool ok;
+	
+	for(int i = 0; i < doublelist.size(); ++i) {
+		double d = doublelist.at(i).toDouble(&ok);
+		
+		if(!ok) {
+			Core::log("Conversion to double failed, check values please");
+		}
+		
+		output.append(d);
+	}
+	return output;
+}
+
+
+// DEPRECATED
 QList<DoubleValue *> DynamicsPlotterUtil::getElementValuesFromIDs(QList<qulonglong> &idlist, NeuralNetwork *&network, int type) {
 	
 	QListIterator<qulonglong> iterator(idlist);
@@ -91,12 +193,17 @@ QList<DoubleValue *> DynamicsPlotterUtil::getElementValuesFromIDs(QList<qulonglo
 	return values;
 }
 
-QList<qulonglong> DynamicsPlotterUtil::getIDsFromString(const QString &list, const QString &separator, const QString &replace) {
-	QString tmp = QString(list);
+/*
+ * Returns a QList of IDs found in QString string separated by QString separator
+ * beforehand, every occurence of a String in string which is given in QString
+ * replace as a list of items separated by the same String given in separator
+ */
+QList<qulonglong> DynamicsPlotterUtil::getIDsFromString(const QString &string, const QString &separator, const QString &replace) {
+	QString tmp = QString(string);
 	if(!replace.isEmpty()) {
-		QStringList replist = replace.split(" ", QString::KeepEmptyParts);
+		QStringList replist = replace.split(separator, QString::SkipEmptyParts);
 		for(int i = 0; i < replist.size(); ++i) {
-			tmp.replace(replace.at(i), separator);
+			tmp.replace(replist.at(i), separator);
 		}
 	}
 	QStringList idlist = tmp.split(separator, QString::SkipEmptyParts);
@@ -107,29 +214,11 @@ QList<qulonglong> DynamicsPlotterUtil::getIDsFromString(const QString &list, con
 		qulonglong id = idlist.at(i).toULongLong(&ok);
 		
 		if(!ok) {
-			Core::log("Conversion to ULongLong failed!", true);
+			Core::log("Conversion to ULongLong failed at position"+QString(i)+"!", true);
 			continue;
 		}
 		
 		output.append(id);
-	}
-	return output;
-}
-		
-
-QList< double > DynamicsPlotterUtil::getDoublesFromString(const QString &list, const QString &separator) {
-	QStringList doublelist = list.split(separator, QString::SkipEmptyParts);
-	QList<double> output;
-	bool ok;
-	
-	for(int i = 0; i < doublelist.size(); ++i) {
-		double d = doublelist.at(i).toDouble(&ok);
-		
-		if(!ok) {
-			Core::log("Conversion to double failed, check values please");
-		}
-		
-		output.append(d);
 	}
 	return output;
 }
@@ -152,6 +241,7 @@ QList< QPair<double, double> > DynamicsPlotterUtil::getPairsFromString(const QSt
 
 		if(!ok) {
 			Core::log("Conversion to double failed, check values please", true);
+			continue;
 		}
 
 		output.append(QPair<double, double>(first, second));

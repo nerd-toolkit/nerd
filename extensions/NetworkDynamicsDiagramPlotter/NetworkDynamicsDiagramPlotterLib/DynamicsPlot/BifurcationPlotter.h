@@ -58,14 +58,13 @@ namespace nerd {
       
   private:
     StringValue *mObservedElements;
-    StringValue *mObservedRange;
-    IntValue *mObservedPoints;
+    StringValue *mObservedRanges;
+    IntValue *mObservedResolution;
     
-    StringValue *mVariedElements;
-    StringValue *mVariedRanges;
-    IntValue *mVariedPoints;
+    StringValue *mVariedElement;
+    StringValue *mVariedRange;
+    IntValue *mVariedResolution;
     
-    IntValue *mNumberPreSteps;
     IntValue *mNumberSteps;
 	IntValue *mPlottedSteps;
 	

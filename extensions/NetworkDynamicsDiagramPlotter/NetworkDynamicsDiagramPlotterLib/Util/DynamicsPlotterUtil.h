@@ -50,21 +50,33 @@
 #include "Value/DoubleValue.h"
 #include <QList>
 #include "Network/NeuralNetwork.h"
+#include <QStringList>
 
 namespace nerd {
 
 class DynamicsPlotterUtil {
 
 public:
-	static QList<DoubleValue*>
+	static DoubleValue *
+	getElementValue(const QString &string, const QList< nerd::NeuralNetworkElement * > &elemList);
+
+	static QList< QList< DoubleValue *> >
+	getElementValues(const QList< QStringList >& listList, const QList< nerd::NeuralNetworkElement * >& elemList);
+
+	static QList< QStringList >
+	parseElementString(QString const &string);
+
+	static QList< double >
+	getDoublesFromString(const QString &list, const QString &separator = ",", const QString &replace = "|");
+
+	// DEPRECATED
+	static QList< DoubleValue * >
 	getElementValuesFromIDs(QList<qulonglong> &idlist, NeuralNetwork *&network, int type = 0);
-	
-	static QList<qulonglong> getIDsFromString(const QString &list, const QString &separator = ",", const QString &replace = "|");
-	
-	static QList<double>
-	getDoublesFromString(const QString &list, const QString &separator = ",");
-	
-	static QList< QPair<double, double> >
+
+	static QList< qulonglong >
+	getIDsFromString(const QString &list, const QString &separator = ",", const QString &replace = "|");
+
+	static QList< QPair< double, double > >
 	getPairsFromString(const QString &list, const QString &elem_separator = ",", const QString &pair_separator = "|");
 
 };

@@ -94,7 +94,7 @@ namespace nerd {
 		void restoreCurrentNetworkActivites();
 		void triggerNetworkStep();
 		
-		
+		// DEPRECATED
 		NeuralNetworkElement* getVariedNetworkElement(qulonglong idOfVariedNetworkElement);
 		void setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value);
 		double getVariedNetworkElementValue(NeuralNetworkElement *variedElem);
