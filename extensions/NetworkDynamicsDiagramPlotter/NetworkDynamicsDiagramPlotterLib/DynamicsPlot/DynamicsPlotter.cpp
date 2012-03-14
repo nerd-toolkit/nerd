@@ -223,7 +223,7 @@ BoolValue* DynamicsPlotter::getActiveValue() const {
 	return mActiveValue;
 }
 
-NeuralNetwork* DynamicsPlotter::getCurrentNetwork() const {
+ModularNeuralNetwork* DynamicsPlotter::getCurrentNetwork() const {
 	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
 	QList<NeuralNetwork*> networks = nnm->getNeuralNetworks();
 
@@ -232,7 +232,7 @@ NeuralNetwork* DynamicsPlotter::getCurrentNetwork() const {
 		return 0;
 	}
 
-	NeuralNetwork *network = networks.at(0);
+	ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(networks.at(0));
 
 	if(network == 0) {
 		Core::log("DynamicsPlotter: Could not find a neural network!", true);
@@ -284,6 +284,10 @@ void DynamicsPlotter::triggerNetworkStep() {
 	if(mEvaluateNetworkEvent != 0) {
 		mEvaluateNetworkEvent->trigger();
 	}
+}
+
+void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *network) {
+	
 }
 
 

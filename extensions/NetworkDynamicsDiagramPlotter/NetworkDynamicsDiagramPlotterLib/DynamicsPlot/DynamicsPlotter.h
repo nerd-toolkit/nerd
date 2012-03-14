@@ -58,6 +58,7 @@
 #include "Value/MatrixValue.h"
 #include "Value/ULongLongValue.h"
 #include "Network/NeuralNetwork.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 
 namespace nerd {
 
@@ -83,9 +84,9 @@ namespace nerd {
 		virtual void calculateData() = 0;
 
 		void execute();
+		
 		BoolValue* getActiveValue() const;
-
-		NeuralNetwork* getCurrentNetwork() const;
+		ModularNeuralNetwork* getCurrentNetwork() const;
 
 		
 		
@@ -93,6 +94,7 @@ namespace nerd {
 		void storeCurrentNetworkActivities();
 		void restoreCurrentNetworkActivites();
 		void triggerNetworkStep();
+		void notifyNetworkParametersChanged(ModularNeuralNetwork *network);
 		
 		// DEPRECATED
 		NeuralNetworkElement* getVariedNetworkElement(qulonglong idOfVariedNetworkElement);
