@@ -129,8 +129,7 @@ void BifurcationPlotter::calculateData() {
 				DynamicsPlotterUtil::parseElementString(observedElements); 
 	
 	QList< QList< DoubleValue *> > observedValuesList = 
-				DynamicsPlotterUtil::getElementValues(observedElementsList,
-networkElements);
+				DynamicsPlotterUtil::getElementValues(observedElementsList, networkElements);
 	
 	QList<double> observedRanges = 
 				DynamicsPlotterUtil::getDoublesFromString(mObservedRanges->get());
@@ -163,10 +162,12 @@ networkElements);
 	double variedValueOrig = variedValue->get();
 	storeCurrentNetworkActivities();
 	
+	int resolutionX = mVariedResolution->get();
+	int resolutionY = mObservedResolution->get();
+	
 	// PREPARE data matrix
 	mData->clear();
-	mData->resize(mVariedResolution->get()+1, mObservedResolution->get()+1,
-observedValuesList.size());
+	mData->resize(resolutionX + 1, resolutionY + 1, observedValuesList.size());
 	mData->fill(0);
 	
 	// fill with observer range for each plot
@@ -175,9 +176,9 @@ observedValuesList.size());
 	for(int i = 0; i < observedValuesList.size(); ++i) {
 		double oStart = observedRanges.at(i*2);
 		double oEnd = observedRanges.at(i*2+1);
-		double oStepSize = (oEnd - oStart) / (double)mObservedResolution->get();
+		double oStepSize = (oEnd - oStart) / (double) resolutionY;
 		
-		for(int y = 1; y <= mObservedResolution->get(); ++y) {
+		for(int y = 1; y <= resolutionY; ++y) {
 			mData->set(Math::round(oStart+(y-1)*oStepSize,5), 0, y, i);
 		}
 		
@@ -186,7 +187,7 @@ observedValuesList.size());
 	}
 
 	// MAIN LOOP over parameter points
-	for(int x = 1; x <= mVariedResolution->get() && mActiveValue->get(); ++x) {
+	for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
 		
 		if(mResetNetworkActivation->get()) {
 			restoreCurrentNetworkActivites();
@@ -195,7 +196,7 @@ observedValuesList.size());
 		// change values of varied element
 		double vStart = variedRange.first();
 		double vEnd = variedRange.last();
-		double vStepSize = (vEnd - vStart) / (double) mVariedResolution->get();
+		double vStepSize = (vEnd - vStart) / (double) resolutionX;
 		double vVal = vStart + (x-1) * vStepSize;
 		variedValue->set(vVal); // set actual value
 		
@@ -229,10 +230,18 @@ observedValuesList.size());
 					}
 					act = act / observedValues.size();
 
-					if(oStart <= act && act <= oEnd) {
-						double y = floor(act/oStepSize - oStart/oStepSize);
+					if(oStart > act) {
+						//Indivate that a value is out of bound (mark with 2)
+						mData->set(2, x, 1, i);
+					}
+					else if(act > oEnd) {
+						//Indivate that a value is out of bound (mark with 2)
+						mData->set(2, x, resolutionY, i);
+					}
+					else {
+						int y = Math::round(act/oStepSize - oStart/oStepSize);
 						
-						mData->set(1, x, y+1, i);
+						mData->set(1, x, y + 1, i);
 					}
 				}
 			}

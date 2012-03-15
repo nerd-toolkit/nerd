@@ -271,6 +271,9 @@ namespace nerd {
 			return;
 		}
 		
+// 		cerr << "Matrix size: " << mMatrix->getMatrixWidth() << " " << mMatrix->getMatrixHeight()
+// 				<< " " << mMatrix->getMatrixDepth() << endl;
+		
 		mVM = Core::getInstance()->getValueManager();
 		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
 		mIsSetUp = false;
@@ -317,25 +320,25 @@ namespace nerd {
 			image.fill(qRgb(255, 0, 0));
 			for(int j = 1; j < mWidth; j++){
 				for (int k = 1; k < mHeight; k++){
-					if(mMatrix->get(j, k, 0) == 0){
+					if(mMatrix->get(j, k, mIndex) == 0){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 255)); //no attractor
-					}else if(mMatrix->get(j, k, 0) == 1){
+					}else if(mMatrix->get(j, k, mIndex) == 1){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 0));
-					}else if(mMatrix->get(j, k, 0) == 2){
+					}else if(mMatrix->get(j, k, mIndex) == 2){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 0));
-					}else if(mMatrix->get(j, k, 0) == 3){
+					}else if(mMatrix->get(j, k, mIndex) == 3){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 0));
-					}else if(mMatrix->get(j, k, 0) == 4){
+					}else if(mMatrix->get(j, k, mIndex) == 4){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 255));
-					}else if(mMatrix->get(j, k, 0) == 5){
+					}else if(mMatrix->get(j, k, mIndex) == 5){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 0));
-					}else if(mMatrix->get(j, k, 0) == 6){
+					}else if(mMatrix->get(j, k, mIndex) == 6){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 255));
-					}else if(mMatrix->get(j, k, 0) == 7){
+					}else if(mMatrix->get(j, k, mIndex) == 7){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 255));
-					}else if(mMatrix->get(j, k, 0) == 8){
+					}else if(mMatrix->get(j, k, mIndex) == 8){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(150, 0, 255));
-					}else if(mMatrix->get(j, k, 0) == 9){
+					}else if(mMatrix->get(j, k, mIndex) == 9){
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 160, 0));
 					}else{
 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(220, 220, 220));//period to high
@@ -370,13 +373,21 @@ namespace nerd {
 		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
 			return;
 		}
+		
+		
 		mForceUpdate = true; // makes using the updateData() function once possible
 		updateData();
 		mMessageLabel->setText("<font color='red'>Done!</font>");
-		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, mMatrix->getMatrixHeight() - 1, 0))));
-		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(mMatrix->get(0, 1, 0))));
-		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(mMatrix->get(1, 0, 0))));
-		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(mMatrix->getMatrixWidth() - 1, 0, 0))));
+		
+// 		cerr << "W Matrix size: " << mMatrix->getMatrixWidth() << " " << mMatrix->getMatrixHeight()
+// 				<< " " << mMatrix->getMatrixDepth() << endl;
+// 		cerr << "GG " << mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex) 
+// 			<< " " << mMatrix->get(0, 1, mIndex) << endl;
+		
+		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex))));
+		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(mMatrix->get(0, 1, mIndex))));
+		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(mMatrix->get(1, 0, mIndex))));
+		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(mMatrix->getMatrixWidth() - 1, 0, mIndex))));
 		mIsSetUp = true;
 
 	}
