@@ -102,8 +102,14 @@ bool Math::compareDoubles(double value1, double value2, double maxError) {
  * @return the rounded value
  */
 double Math::round(double value, int numberOfDigits) {
-	return (double) (((long) ((value * pow(10.0, numberOfDigits)) + 0.5))
+	if(value > 0) {
+		return (double) (((long) ((value * pow(10.0, numberOfDigits)) + 0.5))
 											/ pow(10.0, numberOfDigits));
+	}
+	else {
+		return (double) (((long) ((value * pow(10.0, numberOfDigits)) - 0.5))
+											/ pow(10.0, numberOfDigits));
+	}
 }
 
 

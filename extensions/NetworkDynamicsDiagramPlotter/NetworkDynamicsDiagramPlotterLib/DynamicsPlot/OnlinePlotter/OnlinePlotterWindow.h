@@ -88,8 +88,8 @@ namespace nerd {
 		private:
 			MouseMoveLabel *mLabel;
 			QPixmap mPixmap;
-			QLabel *mYLabel;
-			QLabel *mXLabel;
+			//QLabel *mYLabel;
+			//QLabel *mXLabel;
 			QLabel *mTitleLabel;
 			QLabel *mBlankLabel;
 			QLabel *mInInUppTopLabel;

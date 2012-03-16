@@ -64,6 +64,8 @@
 #include "QHBoxLayout"
 #include "QVBoxLayout"
 #include "QGridLayout"
+#include "Math/Math.h"
+
 // #include "vector"
 using namespace std;
 
@@ -163,8 +165,8 @@ namespace nerd {
 		mLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 		mTitleLabel = new QLabel( this);
 
-		mYLabel = new QLabel("", this);
-		mXLabel = new QLabel("", this);
+		//mYLabel = new QLabel("", this);
+		//mXLabel = new QLabel("", this);
 		mBlankLabel = new QLabel(this);
 		mBlankLabel2 = new QLabel(this);
 		mMessageLabel = new QLabel("", this);
@@ -181,9 +183,9 @@ namespace nerd {
 		
 		mTitleLabel->setAlignment(Qt::AlignHCenter);
 		mLabel->setAlignment(Qt::AlignTop);
-		mYLabel->setAlignment(Qt::AlignRight);
-		mYLabel->setAlignment(Qt::AlignVCenter);
-		mXLabel->setAlignment(Qt::AlignHCenter);
+		//mYLabel->setAlignment(Qt::AlignRight);
+		//mYLabel->setAlignment(Qt::AlignVCenter);
+		//mXLabel->setAlignment(Qt::AlignHCenter);
 		
 		mYMaxLabel->setAlignment(Qt::AlignRight);
 		mYMaxLabel->setAlignment(Qt::AlignTop);
@@ -205,10 +207,10 @@ namespace nerd {
 		mInnerLayout->setRowStretch(2, 0);
 	
 		
-		mOuterLayout->addWidget(mYLabel, 0, 0);
+		//mOuterLayout->addWidget(mYLabel, 0, 0);
 		mOuterLayout->addLayout(mInnerLayout, 0, 1);
 		mOuterLayout->addWidget(mBlankLabel, 1, 0);
-		mOuterLayout->addWidget(mXLabel, 1, 1);
+		//mOuterLayout->addWidget(mXLabel, 1, 1);
 		mOuterLayout->setColumnStretch(0, 0);
 		mOuterLayout->setColumnStretch(1, 1);
 		mOuterLayout->setRowStretch(1, 0);
@@ -238,7 +240,9 @@ namespace nerd {
 			return;
 		}
 		mMatrix = dataMatrix;
-		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
+		emit timerStart();
+		
+		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
 		}
 		
@@ -252,10 +256,10 @@ namespace nerd {
 		mHeight = mMatrix->getMatrixHeight();
 		mTitleLabel->setText(QString("<b><big>") + name + QString("<\big><\b>"));
 
-		mYLabel->setText(yDescr);
-		mXLabel->setText(xDescr);
+		//mYLabel->setText(yDescr);
+		//mXLabel->setText(xDescr);
 		resize(1,1);
-		emit timerStart();
+		show();
 	}
 	
 	/**
@@ -263,13 +267,18 @@ namespace nerd {
 	 *
 	 */
 	void OnlinePlotterWindow::updateData(){
+
 		if(mMatrix == 0) {
+			return;
+		}
+		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
 		}
 		if(mMatrix->getMatrixDepth() <= mIndex) {
 			hide();
 			return;
 		}
+		show();
 		
 // 		cerr << "Matrix size: " << mMatrix->getMatrixWidth() << " " << mMatrix->getMatrixHeight()
 // 				<< " " << mMatrix->getMatrixDepth() << endl;
@@ -312,10 +321,17 @@ namespace nerd {
 				mMessageLabel->setText("<font color='red'>Updating...</font>");	
 				mDots = 0;
 			}
-			mYMaxLabel->setText("yMax: ... ");
-			mYMinLabel->setText("yMin: ... ");
-			mXMinLabel->setText("xMin: ... ");
-			mXMaxLabel->setText("xMax: ... ");
+// 			mYMaxLabel->setText("yMax: ... ");
+// 			mYMinLabel->setText("yMin: ... ");
+// 			mXMinLabel->setText("xMin: ... ");
+// 			mXMaxLabel->setText("xMax: ... ");
+
+
+			mYMaxLabel->setText(QString::number(Math::round(mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex), 4)));
+			mYMinLabel->setText(QString::number(Math::round(mMatrix->get(0, 1, mIndex), 4)));
+			mXMinLabel->setText(QString::number(Math::round(mMatrix->get(1, 0, mIndex), 4)));
+			mXMaxLabel->setText(QString::number(Math::round(mMatrix->get(mMatrix->getMatrixWidth() - 1, 0, mIndex), 4)));
+			
 			QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
 			image.fill(qRgb(255, 0, 0));
 			for(int j = 1; j < mWidth; j++){
@@ -365,12 +381,11 @@ namespace nerd {
 		if(mMatrix == 0) {
 			return;
 		}
-		if(mMatrix->getMatrixDepth() <= mIndex) {
-			hide();
+		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
 		}
-		
-		if(mMatrix->getMatrixWidth() == 1 || mMatrix->getMatrixHeight() == 1){
+		if(mMatrix->getMatrixDepth() <= mIndex) {
+			hide();
 			return;
 		}
 		
@@ -384,10 +399,10 @@ namespace nerd {
 // 		cerr << "GG " << mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex) 
 // 			<< " " << mMatrix->get(0, 1, mIndex) << endl;
 		
-		mYMaxLabel->setText(QString("yMax: " + QString("%1").arg(mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex))));
-		mYMinLabel->setText(QString("yMin: " + QString("%1").arg(mMatrix->get(0, 1, mIndex))));
-		mXMinLabel->setText(QString("xMin: " + QString("%1").arg(mMatrix->get(1, 0, mIndex))));
-		mXMaxLabel->setText(QString("xMax: " + QString("%1").arg(mMatrix->get(mMatrix->getMatrixWidth() - 1, 0, mIndex))));
+		mYMaxLabel->setText(QString::number(Math::round(mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex), 4)));
+		mYMinLabel->setText(QString::number(Math::round(mMatrix->get(0, 1, mIndex), 4)));
+		mXMinLabel->setText(QString::number(Math::round(mMatrix->get(1, 0, mIndex), 4)));
+		mXMaxLabel->setText(QString::number(Math::round(mMatrix->get(mMatrix->getMatrixWidth() - 1, 0, mIndex), 4)));
 		mIsSetUp = true;
 
 	}
@@ -398,6 +413,9 @@ namespace nerd {
 	 */
 	void OnlinePlotterWindow::processing(){
 		if(mMatrix == 0) {
+			return;
+		}
+		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
 		}
 		if(mMatrix->getMatrixDepth() <= mIndex) {

@@ -90,6 +90,9 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	mResetNetworkActivation = new BoolValue(true);
 	mResetNetworkActivation->setDescription("Whether or not to reset the network's activation "
 											"after each parameter change");
+	
+	mRunBackwards = new BoolValue(true);
+	mRunBackwards->setDescription("If true, the plot is additionally run backwards.");
 
 	
 	addParameter("Config/ObservedElements", mObservedElements, true);
@@ -104,6 +107,7 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	addParameter("Config/PlottedSteps", mPlottedSteps, true);
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
+	addParameter("Config/RunBackwards", mRunBackwards, true);
 }
 
 BifurcationPlotter::~BifurcationPlotter() {}
@@ -162,8 +166,15 @@ void BifurcationPlotter::calculateData() {
 	double variedValueOrig = variedValue->get();
 	storeCurrentNetworkActivities();
 	
+	///NOTE/// Decouple all variable values from their value objects, because these may change during execution
 	int resolutionX = mVariedResolution->get();
 	int resolutionY = mObservedResolution->get();
+	
+	///NOTE/// Make sure there cannot be a division by zero
+	//avoid division by zero!
+	if(resolutionX < 2 || resolutionY < 2) {
+		return;
+	}
 	
 	// PREPARE data matrix
 	mData->clear();
@@ -176,7 +187,7 @@ void BifurcationPlotter::calculateData() {
 	for(int i = 0; i < observedValuesList.size(); ++i) {
 		double oStart = observedRanges.at(i*2);
 		double oEnd = observedRanges.at(i*2+1);
-		double oStepSize = (oEnd - oStart) / (double) resolutionY;
+		double oStepSize = (oEnd - oStart) / (double) (resolutionY - 1); ///NOTE/// n buckets including min and max
 		
 		for(int y = 1; y <= resolutionY; ++y) {
 			mData->set(Math::round(oStart+(y-1)*oStepSize,5), 0, y, i);
@@ -187,71 +198,111 @@ void BifurcationPlotter::calculateData() {
 	}
 
 	// MAIN LOOP over parameter points
-	for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
+	
+	
+	///NOTE/// Added switch for backwards movement
+	//check if the diagram also has to be drawn in backwards mode.
+	bool runBackwards = mRunBackwards->get();
+	int runSecondIteration = runBackwards ? 1 : 0;
+	
+	
+	///NOTE/// Moved this block before the for loop
+	double vStart = variedRange.first();
+	double vEnd = variedRange.last();
+	double vStepSize = (vEnd - vStart) / (double) (resolutionX - 1); ///NOTE/// n buckets including min and maximum
 		
-		if(mResetNetworkActivation->get()) {
-			restoreCurrentNetworkActivites();
-		}
+	
+	///NOTE/// Added switch for backwards movement
+	for(int phase = 0; phase <= runSecondIteration; ++phase) {
 		
-		// change values of varied element
-		double vStart = variedRange.first();
-		double vEnd = variedRange.last();
-		double vStepSize = (vEnd - vStart) / (double) resolutionX;
-		double vVal = vStart + (x-1) * vStepSize;
-		variedValue->set(vVal); // set actual value
-		
-		// draw x axis values
-		for(int i = 0; i < observedValuesList.size(); ++i) {
-			mData->set(vVal, x, 0, i);
-		}
-		
-		notifyNetworkParametersChanged(network);
-
-		// INNER LOOP over steps
-		for(int j = 0; j < mNumberSteps->get() && mActiveValue->get(); ++j) {
-			// let the network run for 1 timestep
-			triggerNetworkStep();
+		for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
 			
-			// plot values
-			if(j > mNumberSteps->get() - mPlottedSteps->get()) {
-				
-				// Calculate average neuron activation
+			if(mResetNetworkActivation->get()) {
+				restoreCurrentNetworkActivites();
+			}
+			
+			// change values of varied element
+			double vVal = vStart + (x-1) * vStepSize;
+			
+			///NOTE/// Added switch for backwards movement
+			//switch between forwards and backwards movement
+			if(phase == 0) { 	
+				// draw x axis values
 				for(int i = 0; i < observedValuesList.size(); ++i) {
-					
-					QList<DoubleValue*> observedValues =
-										observedValuesList.at(i);
-					double oStart = oParams.at(i).at(0);
-					double oEnd = oParams.at(i).at(1);
-					double oStepSize = oParams.at(i).at(2);
-					double act = 0;
-					
-					for(int k = 0; k < observedValues.size(); ++k) {
-						act += observedValues.at(k)->get();
-					}
-					act = act / observedValues.size();
+					mData->set(vVal, x, 0, i);
+				}
+			}
+			else {
+				//go backwards (start with max value and incrementally become smaller
+				vVal = vEnd - (x-1) * vStepSize;
+			}
+			
+			variedValue->set(vVal); // set actual value
+			
+			notifyNetworkParametersChanged(network);
 
-					if(oStart > act) {
-						//Indivate that a value is out of bound (mark with 2)
-						mData->set(2, x, 1, i);
-					}
-					else if(act > oEnd) {
-						//Indivate that a value is out of bound (mark with 2)
-						mData->set(2, x, resolutionY, i);
-					}
-					else {
-						int y = Math::round(act/oStepSize - oStart/oStepSize);
+			// INNER LOOP over steps
+			for(int j = 0; j < mNumberSteps->get() && mActiveValue->get(); ++j) {
+				// let the network run for 1 timestep
+				triggerNetworkStep();
+				
+				// plot values
+				if(j > mNumberSteps->get() - mPlottedSteps->get()) {
+					
+					// Calculate average neuron activation
+					for(int i = 0; i < observedValuesList.size(); ++i) {
 						
-						mData->set(1, x, y + 1, i);
+						QList<DoubleValue*> observedValues =
+											observedValuesList.at(i);
+						double oStart = oParams.at(i).at(0);
+						double oEnd = oParams.at(i).at(1);
+						double oStepSize = oParams.at(i).at(2);
+						double act = 0;
+						
+						///NOTE/// Make sure there cannot be a division by zero
+						if(observedValues.empty()) {
+							//maybe report problem
+							continue;
+						}
+						
+						for(int k = 0; k < observedValues.size(); ++k) {
+							act += observedValues.at(k)->get();
+						}
+						act = act / observedValues.size();
+						
+						int posX = x;
+						
+						///NOTE/// Added switch for backwards movement
+						//backwards movement (draw from right to left)
+						if(phase > 0) {
+							posX = mData->getMatrixWidth() - x;
+						}
+
+						
+						///NOTE/// Added red (2) dots for values out of bound
+						if(oStart > act) {
+							//Indivate that a value is out of bound (mark with 2)
+							mData->set(2, posX, 1, i);
+						}
+						else if(act > oEnd) {
+							//Indivate that a value is out of bound (mark with 2)
+							mData->set(2, posX, resolutionY, i);
+						}
+						else {
+							int y = Math::round(act/oStepSize - oStart/oStepSize);
+							
+							mData->set(1, posX, y + 1, i);
+						}
 					}
 				}
 			}
+			
+			// runtime maintencance
+			if(core->isShuttingDown()) {
+				return;
+			}
+			core->executePendingTasks();
 		}
-		
-		// runtime maintencance
-		if(core->isShuttingDown()) {
-			return;
-		}
-		core->executePendingTasks();
 	}
 	
 	// CLEAN UP

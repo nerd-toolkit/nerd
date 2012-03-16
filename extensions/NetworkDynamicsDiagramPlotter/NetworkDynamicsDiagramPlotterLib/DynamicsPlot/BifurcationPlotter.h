@@ -57,18 +57,19 @@ public:
 	virtual void calculateData();
 
 private:
-	StringValue * mObservedElements;
-	StringValue * mObservedRanges;
-	IntValue * mObservedResolution;
+	StringValue *mObservedElements;
+	StringValue *mObservedRanges;
+	IntValue *mObservedResolution;
 
-	StringValue * mVariedElement;
-	StringValue * mVariedRange;
-	IntValue * mVariedResolution;
+	StringValue *mVariedElement;
+	StringValue *mVariedRange;
+	IntValue *mVariedResolution;
 
-	IntValue * mNumberSteps;
-	IntValue * mPlottedSteps;
+	IntValue *mNumberSteps;
+	IntValue *mPlottedSteps;
 	
-	BoolValue * mResetNetworkActivation;
+	BoolValue *mResetNetworkActivation;
+	BoolValue *mRunBackwards;
 };
 }
 
