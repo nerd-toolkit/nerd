@@ -61,7 +61,7 @@ namespace nerd {
  * Constructs a new ScriptableSelfRegulatingNeuronActivationFunction.
  */
 ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuronActivationFunction()
-	: QObject(), SelfRegulatingNeuronActivationFunction("Script_SRN_V1"), mEquationScript(0)
+	: QObject(), SelfRegulatingNeuronActivationFunction("Script_SRN_V1", false), mEquationScript(0)
 {
 	mTransmitterEquation = new StringValue("default");
 	mReceptorEquation = new StringValue("default");

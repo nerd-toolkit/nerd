@@ -60,7 +60,8 @@ namespace nerd {
 /**
  * Constructs a new SelfRegulatingNeuronActivationFunction.
  */
-SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(const QString &name)
+SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(const QString &name, 
+																			   bool showModes)
 	: ActivationFunction(name), mOwner(0), mTransmitterResult(0), mReceptorResult(0)
 {
 	mXi = new DoubleValue(1);
@@ -69,7 +70,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mAlpha = new DoubleValue(0.5);
 	mBeta = new DoubleValue(0.1);
 	mGamma = new DoubleValue(0.01);
-	mDelta = new DoubleValue(0.015);
+	mDelta = new DoubleValue(0.02);
 	mAStar = new DoubleValue(0.658479);
 	
 	mAdjustWeights = new BoolValue(true);
@@ -77,6 +78,15 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	
 	mRestrictToLinkSynapses = new BoolValue(false);
 	mRestrictToLinkSynapses->setDescription("Restricts weight changes to synapses with the SimpleLinkSynapseFunction.");
+	
+	mReceptorMode = new IntValue(0);
+	mReceptorMode->setDescription("Switches g():\n"
+						"0: g = |tf(a*)| - |tf(a)|\n"
+						"1: g = tf(a*)^2-tf(a)^2");
+	mTransmitterMode = new IntValue(0);
+	mTransmitterMode->setDescription("Switches h():\n"
+						"0: h = 1 + tf(a)\n"
+						"1: h = 1 + 0.5 * (tf(a(t)) - tf(a(t-1)))");
 	
 	addParameter("Xi (Rec)", mXi);
 	addParameter("Eta (Tra)", mEta);
@@ -91,6 +101,11 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
+	
+	if(showModes) {
+		addParameter("ReceptorMode", mReceptorMode);
+		addParameter("TransmitterMode", mTransmitterMode);
+	}
 }
 
 
@@ -112,6 +127,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 	mAStar = dynamic_cast<DoubleValue*>(getParameter("A*"));
 	mAdjustWeights = dynamic_cast<BoolValue*>(getParameter("AdjustWeights"));
 	mRestrictToLinkSynapses = dynamic_cast<BoolValue*>(getParameter("RestrictToLinks"));
+	mReceptorMode = dynamic_cast<IntValue*>(getParameter("ReceptorMode"));
+	mTransmitterMode = dynamic_cast<IntValue*>(getParameter("TransmitterMode"));
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
@@ -201,13 +218,13 @@ double SelfRegulatingNeuronActivationFunction::getReceptorStrengthUpdate(double 
 		return 0.0;
 	}
 	
-	if(true) {
+	if(mReceptorMode == 0 || mReceptorMode->get() == 0) {
 		//g(a) = |tau(a*)| - |tau(a)|
 		TransferFunction *tf = mOwner->getTransferFunction();
 		return Math::abs(tf->transferActivation(mAStar->get(), mOwner)) 
 					- Math::abs(tf->transferActivation(activation, mOwner)); 
 	}
-	else {
+	else if(mReceptorMode->get() == 1) {
 		//g(a) = tau²(a*) - tau²(a)
 		TransferFunction *tf = mOwner->getTransferFunction();
 		return pow(tf->transferActivation(mAStar->get(), mOwner), 2) 
@@ -224,17 +241,17 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 		return 0.0;
 	}
 	
-	if(true) {
+	if(mTransmitterMode == 0 || mTransmitterMode->get() == 0) {
 		//h(a) = 1 + tau(a)
 		TransferFunction *tf = mOwner->getTransferFunction();
 		return 1 + tf->transferActivation(activation, mOwner); 
 	}
-	else {
+	else if(mTransmitterMode->get() == 1) {
 		//h(a) = tau(a(t) - (tau(a(t-1)))   //CHECK if brackets are correct!
 		TransferFunction *tf = mOwner->getTransferFunction();
-		return tf->transferActivation(mAStar->get() 
-					- tf->transferActivation(mOwner->getLastActivation(), mOwner), mOwner); 
-	}
+		return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
+					- tf->transferActivation(mOwner->getLastActivation(), mOwner)); 
+	} 
 	
 	return 0.0;
 }

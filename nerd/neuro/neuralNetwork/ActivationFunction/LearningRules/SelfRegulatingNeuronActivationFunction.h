@@ -51,6 +51,7 @@
 #include "Value/DoubleValue.h"
 #include "Value/StringValue.h"
 #include "Value/BoolValue.h"
+#include "Value/IntValue.h"
 
 namespace nerd {
 
@@ -60,7 +61,7 @@ namespace nerd {
 	 */
 	class SelfRegulatingNeuronActivationFunction : public ActivationFunction {
 	public:
-		SelfRegulatingNeuronActivationFunction(const QString &name = "SRN_V1");
+		SelfRegulatingNeuronActivationFunction(const QString &name = "SRN_V1", bool showModes = true);
 		SelfRegulatingNeuronActivationFunction(const SelfRegulatingNeuronActivationFunction &other);
 		virtual ~SelfRegulatingNeuronActivationFunction();
 
@@ -95,6 +96,9 @@ namespace nerd {
 		DoubleValue *mAStar;
 		BoolValue *mAdjustWeights;
 		BoolValue *mRestrictToLinkSynapses;
+		
+		IntValue *mReceptorMode;
+		IntValue *mTransmitterMode;
 		
 		Neuron *mOwner;
 		double mTransmitterResult;
