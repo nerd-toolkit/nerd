@@ -268,7 +268,7 @@ void EvaluationLoop::eventOccured(Event *event){
 		
 		//TODO hack, remove later!
 		if(NerdConstants::HackMode) {
-			mNumberOfStepsValue->set(99999999);
+			mNumberOfStepsValue->set(6000);
 		}
 		
 		mCurrentStep->set(0);

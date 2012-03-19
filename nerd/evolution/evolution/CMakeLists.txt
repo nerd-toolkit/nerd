@@ -60,6 +60,7 @@ set(nerd_evolution_SRCS
 	Gui/EvolutionProgressBar/EvolutionProgressBar.cpp
 	Gui/CommentWidget/CommentWidget.cpp
 	Gui/PopulationOverview/IndividualPreviewButton.cpp
+	Logging/SimpleFitnessLogger.cpp
 )
 
 set(nerd_evolution_MOC_HDRS

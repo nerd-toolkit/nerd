@@ -71,6 +71,7 @@ namespace nerd {
 		static const QString OBJECT_SETTINGS_LOGGER;
 		static const QString OBJECT_FITNESS_MANAGER;
 		static const QString OBJECT_TERMINATE_TRY_COLLISION_RULE;
+		static const QString OBJECT_SIMPLE_FITNESS_LOGGER;
 
 	//**************************************************************************
 	//Path Names

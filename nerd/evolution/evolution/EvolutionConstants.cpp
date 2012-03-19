@@ -73,6 +73,9 @@ const QString EvolutionConstants::OBJECT_FITNESS_MANAGER
 
 const QString EvolutionConstants::OBJECT_TERMINATE_TRY_COLLISION_RULE 
 		= "TerminateTry";
+		
+const QString EvolutionConstants::OBJECT_SIMPLE_FITNESS_LOGGER
+		= "SimpleFitnessLogger";
 
 //**************************************************************************
 //Path Names

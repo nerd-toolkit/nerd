@@ -82,6 +82,8 @@
 #include "Collections/ScriptedModelLoader.h"
 #include "Collections/Simple2D_Physics.h"
 #include "PlugIns/NetworkDegreeOfFreedomCalculator.h"
+#include "Logging/SimpleFitnessLogger.h"
+#include <NerdConstants.h>
 
 using namespace std;
 
@@ -185,6 +187,20 @@ bool NerdNeuroSimApplication::setupApplication()
 	
 	//Add plugin to calculate the open degrees of freedom of the network during evolution.
 	new NetworkDegreeOfFreedomCalculator();
+	
+	//add simple fitness logger
+	CommandLineArgument *useSimpleFitnessLogger = 
+			new CommandLineArgument("simpleFitnessLogger", "sfl", "<logfile name>",
+			"Loggs all fitness values of all fitness functions\n"
+			"     incrementally to a file.", 1, 0, true, false);
+	if(useSimpleFitnessLogger->getNumberOfEntries() != 0 
+			&& !useSimpleFitnessLogger->getEntryParameters(0).empty())
+	{
+		new SimpleFitnessLogger(useSimpleFitnessLogger->getEntryParameters(0).at(0));
+	}
+	else if(NerdConstants::HackMode == true) { //HACK MODE remove!
+		new SimpleFitnessLogger("simpleFitnessLog.txt");
+	}
 
 	return true;
 }
