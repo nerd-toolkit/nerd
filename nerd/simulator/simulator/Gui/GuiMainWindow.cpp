@@ -76,11 +76,12 @@ GuiMainWindow::GuiMainWindow(bool simulationIsControllable, bool enableDebugging
 	  mEventList(0), mVisualizationChooser(0), mEventDetailPanel(0),
 	  mValueDetailPanel(0), mDebugLoggerPanel(0), mValueLoggerPanel(0),
 	  mMotorControlGui(0), mParameterLists(0), mShutDownTriggered(false),
-	  mWindowToggleState(true)
+	  mWindowToggleState(true), mToggleWindowValue(0)
 {
 	GuiManager::getGlobalGuiManager()->addWidget(NerdConstants::GUI_MAIN_SIMULATION_WINDOW, this);
 
 	setup(simulationIsControllable, enableDebugging);
+	
 }
 
 GuiMainWindow::~GuiMainWindow() {
@@ -121,6 +122,29 @@ GuiMainWindow::~GuiMainWindow() {
 	}
 }
 
+void GuiMainWindow::valueChanged(Value *value) {
+	if(value == 0) {
+		return;
+	}
+	else if(value == mToggleWindowValue) {
+		if(mToggleWindowArgument->getNumberOfEntries() > 0) {
+			QStringList entry = mToggleWindowArgument->getEntryParameters(0);
+			if(entry.empty() || entry.at(0).trimmed() == "toggle" || entry.at(0).trimmed() == "") {
+				mWindowToggleTimer.setInterval(100);
+				mWindowToggleTimer.start(100);
+			}
+			else {
+				mWindowToggleTimer.stop();
+			}
+		}
+	}
+}
+
+QString GuiMainWindow::getName() const {
+	return "GuiMainWindow";
+}
+		
+		
 QString GuiMainWindow::getIconName() {
 	return "orcsLogo.png";
 }
@@ -255,6 +279,11 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	
 	mToggleWindowArgument = new CommandLineArgument("toggle", "toggle", "", 
 						"Makes the OpenGL windows toggle.", 0, 0, true, false);
+	
+	mToggleWindowValue = mToggleWindowArgument->getParameterValue();
+	if(mToggleWindowValue != 0) {
+		mToggleWindowValue->addValueChangedListener(this);
+	}
 	
 	//Hack to undo the toggle in cluster evolutions permanently. Check later for a better way to do that.
 	if(NerdConstants::HackMode) {
@@ -395,12 +424,11 @@ void GuiMainWindow::showWindow() {
 	}
 	show();
 	//mWindowToggleTimer.setInterval(100);
-	if(mToggleWindowArgument->getNumberOfEntries() > 0) {
-		mWindowToggleTimer.setInterval(100);
-		mWindowToggleTimer.start(100);
-		connect(&mWindowToggleTimer, SIGNAL(timeout()),
-				this, SLOT(toggleTimerExpired()));
-	}
+	
+	//update toggle state.
+	connect(&mWindowToggleTimer, SIGNAL(timeout()),
+						this, SLOT(toggleTimerExpired()));
+	valueChanged(mToggleWindowValue);
 }
 
 }

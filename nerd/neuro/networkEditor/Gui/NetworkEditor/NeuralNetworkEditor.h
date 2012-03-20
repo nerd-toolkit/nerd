@@ -184,6 +184,7 @@ namespace nerd {
 		QMenu *mViewModeMenu;
 		Event *mShutDownEvent;
 		QAction *mEnableHiddenLayersCheckbox;
+		StringValue *mToggleWindowArgument;
 	};
 
 }

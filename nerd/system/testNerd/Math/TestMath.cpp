@@ -55,6 +55,8 @@ void TestMath::testRound() {
 	double number1 = 0.34545;
 	double rounded1 = Math::round(number1, 2);
 	QCOMPARE(rounded1, 0.35);
+	double negativeRounded1 = Math::round(-1.0 * number1, 2);
+	QCOMPARE(negativeRounded1, -0.35);
 
 	double number2 = 33.9754;
 	double rounded2 = Math::round(number2, 0);
@@ -62,6 +64,10 @@ void TestMath::testRound() {
 
 	double rounded2a = Math::round(number2, 1);
 	QCOMPARE(rounded2a, 34.0);
+	double negativeRounded2a = Math::round(-1.0 * number2, 1);
+	QCOMPARE(negativeRounded2a, -34.0);
+	
+	
 
 }
 

@@ -107,7 +107,7 @@ bool SimpleFitnessLogger::bind() {
 	if(NerdConstants::HackMode) {
 		BoolValue *p = Core::getInstance()->getValueManager()->getBoolValue(NerdConstants::VALUE_EXECUTION_PAUSE);
 		if(p != 0) {
-			p->set(true);
+			//p->set(true);
 		}
 	}
 

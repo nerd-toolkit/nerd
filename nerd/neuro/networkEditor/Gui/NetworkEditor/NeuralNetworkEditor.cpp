@@ -100,7 +100,8 @@ namespace nerd {
  */
 NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	: QMainWindow(parent), mMainPane(0),
-	  mUndoAction(0), mRedoAction(0), mWindowToggleState(true), mViewModeMenu(0)
+	  mUndoAction(0), mRedoAction(0), mWindowToggleState(true), mViewModeMenu(0),
+	  mToggleWindowArgument(0)
 {	
 
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -166,14 +167,15 @@ void NeuralNetworkEditor::initialize() {
 	setupMenuBar();
 	setupTools();
 
-	StringValue *toggleValue = Core::getInstance()->getValueManager()->getStringValue(
+	mToggleWindowArgument = Core::getInstance()->getValueManager()->getStringValue(
 								"/CommandLineArguments/toggle");
-	if(toggleValue != 0 && toggleValue->get().trimmed() != "") {
-		mWindowToggleTimer.setInterval(100);
-		mWindowToggleTimer.start(100);
-		connect(&mWindowToggleTimer, SIGNAL(timeout()),
-				this, SLOT(toggleTimerExpired()));
-	}
+	mToggleWindowArgument->addValueChangedListener(this);
+	connect(&mWindowToggleTimer, SIGNAL(timeout()),
+					this, SLOT(toggleTimerExpired()));
+	//update toggle state
+	valueChanged(mToggleWindowArgument);
+	
+	
 	mShutDownEvent = Core::getInstance()->getShutDownEvent();
 	mShutDownEvent->addEventListener(this);
 
@@ -282,6 +284,18 @@ void NeuralNetworkEditor::valueChanged(Value *value) {
 	}
 	else if(value == mAutoSaveNetworkTimerSeconds) {
 		mAutoSaveTimer.setInterval(Math::max(5, mAutoSaveNetworkTimerSeconds->get()) * 1000);
+	}
+	else if(value == mToggleWindowArgument) {
+		if(mToggleWindowArgument != 0) {
+			QString entry = mToggleWindowArgument->get();
+			if(entry.trimmed() == "{toggle}" || entry.trimmed() == "{}") {
+				mWindowToggleTimer.setInterval(100);
+				mWindowToggleTimer.start(100);
+			}
+			else {
+				mWindowToggleTimer.stop();
+			}
+		}
 	}
 }
 

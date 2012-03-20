@@ -67,6 +67,7 @@
 #include "Gui/Containers/MainWindowContainer.h"
 #include <QTimer>
 #include "PlugIns/CommandLineArgument.h"
+#include "Value/ValueChangedListener.h"
 
 namespace nerd{
 
@@ -75,13 +76,16 @@ class MotorControlGui;
 class MotorControlManager;
 
 
-class GuiMainWindow : public QWidget {
+class GuiMainWindow : public QWidget, ValueChangedListener {
 
 	Q_OBJECT
 	
 	public:
 		GuiMainWindow(bool simulationIsControllable, bool enableDebugging = false);
 		virtual ~GuiMainWindow();
+		
+		virtual void valueChanged(Value *value);
+		virtual QString getName() const;
 
 		QMenuBar* getMenuBar();
 		QMenu* getMenu(const QString &name);
@@ -90,9 +94,19 @@ class GuiMainWindow : public QWidget {
 		void addWidget(QWidget *newView);
 
 		virtual void createBasicControlMenu();
+		
+		static QString getIconName();
 
 	private:
 		void setup(bool openGLControllable, bool enableDebugging);
+		
+	protected slots:
+		void closeEvent(QCloseEvent *e);
+		
+
+	public slots:
+		void toggleTimerExpired();
+		void showWindow();
 
 	private:
 		OpenGLVisualization *mVisualization;
@@ -117,17 +131,9 @@ class GuiMainWindow : public QWidget {
 		bool mWindowToggleState;
 		QTimer mWindowToggleTimer;
 		CommandLineArgument *mToggleWindowArgument;
+		StringValue *mToggleWindowValue;
 
-	protected slots:
-		void closeEvent(QCloseEvent *e);
-		
-
-	public slots:
-		void toggleTimerExpired();
-		void showWindow();
-
-	public:
-		static QString getIconName();
+	
 
 };
 }
