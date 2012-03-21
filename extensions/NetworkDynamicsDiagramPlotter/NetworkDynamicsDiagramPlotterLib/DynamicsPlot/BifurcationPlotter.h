@@ -70,6 +70,7 @@ private:
 	
 	BoolValue *mResetNetworkActivation;
 	BoolValue *mRunBackwards;
+	BoolValue *mRestoreNetworkConfiguration;
 };
 }
 

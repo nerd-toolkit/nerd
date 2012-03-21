@@ -93,6 +93,10 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	
 	mRunBackwards = new BoolValue(true);
 	mRunBackwards->setDescription("If true, the plot is additionally run backwards.");
+	
+	mRestoreNetworkConfiguration = new BoolValue(true);
+	mRestoreNetworkConfiguration->setDescription("If true, then all network parameters like bias, "
+					"weight, observable parameters are reset to the initial state before each run");
 
 	
 	addParameter("Config/ObservedElements", mObservedElements, true);
@@ -108,6 +112,7 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RunBackwards", mRunBackwards, true);
+	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
 }
 
 BifurcationPlotter::~BifurcationPlotter() {}
@@ -166,6 +171,9 @@ void BifurcationPlotter::calculateData() {
 	double variedValueOrig = variedValue->get();
 	storeCurrentNetworkActivities();
 	
+	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
+	storeNetworkConfiguration();
+	
 	///NOTE/// Decouple all variable values from their value objects, because these may change during execution
 	int resolutionX = mVariedResolution->get();
 	int resolutionY = mObservedResolution->get();
@@ -216,6 +224,10 @@ void BifurcationPlotter::calculateData() {
 	for(int phase = 0; phase <= runSecondIteration; ++phase) {
 		
 		for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
+			
+			if(restoreNetConfiguration) {
+				restoreNetworkConfiguration();
+			}
 			
 			if(mResetNetworkActivation->get()) {
 				restoreCurrentNetworkActivites();
@@ -308,8 +320,10 @@ void BifurcationPlotter::calculateData() {
 	// CLEAN UP
 	variedValue->set(variedValueOrig);
 	notifyNetworkParametersChanged(network);
-	
+
+	restoreNetworkConfiguration();
 	restoreCurrentNetworkActivites();
+
 }
 
 }

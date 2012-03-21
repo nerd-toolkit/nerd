@@ -260,7 +260,7 @@ void SelfRegulatingNeuronActivationFunction::updateXi(double activation) {
 	//update learning parameter Xi
 	//xi_i(t+1) = xi_i(t) * (1 + (beta * g(a(t)))
 	mXi->set(Math::min(100.0, Math::max(-100.0,
-				0.0001 + mXi->get() * (1.0 + (mBeta->get() * mReceptorResult)))));
+				mXi->get() * (1.0 + (mBeta->get() * mReceptorResult)))));
 }
 
 
@@ -268,7 +268,7 @@ void SelfRegulatingNeuronActivationFunction::updateEta(double activation) {
 	//update learning parameter Eta
 	//eta_i(t+1) = ((1 - gamma) * eta_i(t)) + (delta * h(a(t)))
 	mEta->set(Math::min(100.0, Math::max(-100.0,
-				0.0001 + ((1.0 - mGamma->get()) * mEta->get()) 
+				((1.0 - mGamma->get()) * mEta->get()) 
 					+ (mDelta->get() * mTransmitterResult))));
 }
 
@@ -334,7 +334,7 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 		inputSum += act;
 	}
 
-	//a_i(t+1) = theta + xi_i(t) + I_i(t)
+	//a_i(t+1) = theta_i + xi_i(t) * I_i(t)
 	double activation = mOwner->getBiasValue().get() + mXi->get() * inputSum;
 	return activation;
 }

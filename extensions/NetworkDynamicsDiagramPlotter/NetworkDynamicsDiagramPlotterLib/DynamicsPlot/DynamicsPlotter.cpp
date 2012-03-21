@@ -280,6 +280,76 @@ void DynamicsPlotter::restoreCurrentNetworkActivites() {
 	}
 }
 
+void DynamicsPlotter::storeNetworkConfiguration() {
+	NeuralNetwork *network = getCurrentNetwork();
+
+	if(network == 0) {
+		return;
+	}
+	mNetworkConfigurationValues.clear();
+
+	QList<Neuron*> neurons = network->getNeurons();
+	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
+		Neuron *neuron = i.next();
+		
+		mNetworkConfigurationValues.insert(&neuron->getBiasValue(), neuron->getBiasValue().get());
+		
+		QList<Value*> observables;
+		
+		{
+			TransferFunction *tf = neuron->getTransferFunction();
+			if(tf != 0) {
+				observables << tf->getObservableOutputs();
+			}
+		}
+		{
+			ActivationFunction *af = neuron->getActivationFunction();
+			if(af != 0) {
+				observables << af->getObservableOutputs();
+			}
+		}
+		
+		QList<Synapse*> synapses = neuron->getSynapses();
+		for(QListIterator<Synapse*> j(synapses); j.hasNext();) {
+			Synapse *synapse = j.next();
+			
+			mNetworkConfigurationValues.insert(&synapse->getStrengthValue(),
+								synapse->getStrengthValue().get());
+			
+			SynapseFunction *sf = synapse->getSynapseFunction();
+			if(sf != 0) {
+				observables << sf->getObservableOutputs();
+			}
+		}
+		
+		 
+		for(QListIterator<Value*> j(observables); j.hasNext();) {
+			DoubleValue *value = dynamic_cast<DoubleValue*>(j.next());
+			if(value != 0) {
+				mNetworkConfigurationValues.insert(value, value->get());
+			}
+		}
+	}
+}
+
+
+void DynamicsPlotter::restoreNetworkConfiguration() {
+	NeuralNetwork *network = getCurrentNetwork();
+
+	if(network == 0) {
+		return;
+	}
+
+	for(QHashIterator<DoubleValue*, double> i(mNetworkConfigurationValues); i.hasNext();) {
+		i.next();
+		DoubleValue *value = i.key();
+		if(value != 0) {
+			value->set(i.value());
+		}
+	}
+}
+
+
 void DynamicsPlotter::triggerNetworkStep() {
 	if(mEvaluateNetworkEvent != 0) {
 		mEvaluateNetworkEvent->trigger();

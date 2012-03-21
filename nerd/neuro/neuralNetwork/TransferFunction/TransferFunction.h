@@ -46,6 +46,7 @@
 #define NERDTransferFunction_H
 
 #include "Core/ParameterizedObject.h"
+#include "Network/ObservableNetworkElement.h"
 
 namespace nerd {
 
@@ -54,7 +55,7 @@ namespace nerd {
 	/**
 	 * TransferFunction
 	 */
-	class TransferFunction : public ParameterizedObject {
+	class TransferFunction : public ParameterizedObject, public virtual ObservableNetworkElement  {
 	public:
 		TransferFunction(const QString &name, double lowerBound, double upperBound);
 		TransferFunction(const TransferFunction &other);

@@ -128,8 +128,6 @@ namespace nerd {
 			{
 				mRunningCalculator = mActiveCalculatorValue->get();
 				
-				cerr << "OnlinePlotter: eventOccured1" << endl;
-				
 				emit startProcessing();
 				
 				prepareData(mRunningCalculator);

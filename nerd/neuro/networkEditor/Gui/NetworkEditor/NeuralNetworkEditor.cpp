@@ -169,11 +169,13 @@ void NeuralNetworkEditor::initialize() {
 
 	mToggleWindowArgument = Core::getInstance()->getValueManager()->getStringValue(
 								"/CommandLineArguments/toggle");
-	mToggleWindowArgument->addValueChangedListener(this);
-	connect(&mWindowToggleTimer, SIGNAL(timeout()),
+	if(mToggleWindowArgument != 0) {
+		mToggleWindowArgument->addValueChangedListener(this);
+		connect(&mWindowToggleTimer, SIGNAL(timeout()),
 					this, SLOT(toggleTimerExpired()));
-	//update toggle state
-	valueChanged(mToggleWindowArgument);
+		//update toggle state
+		valueChanged(mToggleWindowArgument);
+	}
 	
 	
 	mShutDownEvent = Core::getInstance()->getShutDownEvent();

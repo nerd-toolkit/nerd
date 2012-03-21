@@ -93,6 +93,8 @@ namespace nerd {
 	protected:
 		void storeCurrentNetworkActivities();
 		void restoreCurrentNetworkActivites();
+		void storeNetworkConfiguration();
+		void restoreNetworkConfiguration();
 		void triggerNetworkStep();
 		void notifyNetworkParametersChanged(ModularNeuralNetwork *network);
 		
@@ -115,6 +117,7 @@ namespace nerd {
 		BoolValue *mActiveValue;
 		IntValue *mExecutionTime;
 		QHash<qulonglong, double> mNetworkActivities;
+		QHash<DoubleValue*, double> mNetworkConfigurationValues;
 		
 		//****Till****//
 		MatrixValue *mData;
