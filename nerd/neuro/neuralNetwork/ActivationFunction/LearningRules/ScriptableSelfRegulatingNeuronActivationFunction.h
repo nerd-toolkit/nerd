@@ -91,6 +91,7 @@ namespace nerd {
 		virtual double getTransmitterStrengthUpdate(double activation);
 		virtual void updateXi(double activation);
 		virtual void updateEta(double activation);
+		virtual void updateTheta(double activation);
 		
 		virtual void setupScriptingContext(double activation);
 
@@ -99,6 +100,7 @@ namespace nerd {
 		StringValue *mTransmitterEquation;
 		StringValue *mEtaEquation;
 		StringValue *mXiEquation;
+		StringValue *mThetaEquation;
 		
 		QScriptEngine *mEquationScript;
 		QString mVariableBuffer;

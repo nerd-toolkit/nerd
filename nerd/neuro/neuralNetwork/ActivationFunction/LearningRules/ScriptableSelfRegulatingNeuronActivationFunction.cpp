@@ -67,28 +67,33 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 	mReceptorEquation = new StringValue("default");
 	mEtaEquation = new StringValue("default");
 	mXiEquation = new StringValue("default");
+	mThetaEquation = new StringValue("");
 	
 	addParameter("Trans-Eq (eta,h)", mTransmitterEquation);
 	addParameter("Recept-Eq (xi,g)", mReceptorEquation);
 	addParameter("Eta-Eq", mEtaEquation);
 	addParameter("Xi-Eq", mXiEquation);
+	addParameter("Theta-Eq", mThetaEquation);
 	
 	mTransmitterEquation->setDescription("2. Equation"
-										 "\nVariables: alpha, beta, gamma, delta, aStar, eta, xi, a, ap, x, y, z"
+										 "\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z"
 										 "\nFunctions: tf()"
 										 "\n<default> recovers standard equation.");
 	mReceptorEquation->setDescription("1. Equation"
-										 "\nVariables: alpha, beta, gamma, delta, aStar, eta, xi, a, ap, x, y, z"
+										 "\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z"
 										 "\nFunctions: tf()"
 										 "\n<default> recovers standard equation.");
 	mEtaEquation->setDescription("4. Equation"
-										 "\nVariables: alpha, beta, gamma, delta, aStar, eta, xi, a, ap, x, y, z, g, h"
+										 "\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z, g, h"
 										 "\nFunctions: tf()"
 										 "\n<default> recovers standard equation.");
 	mXiEquation->setDescription("3. Equation"
-										 "\nVariables: alpha, beta, gamma, delta, aStar, eta, xi, a, ap, x, y, z, g, h"
+										 "\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z, g, h"
 										 "\nFunctions: tf()"
 										 "\n<default> recovers standard equation.");
+	mThetaEquation->setDescription("An optional equation to update the neuron bias."
+										"\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z, g, h"
+										 "\nFunctions: tf()");
 }
 
 
@@ -105,6 +110,7 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 	mReceptorEquation = dynamic_cast<StringValue*>(getParameter("Recept-Eq (xi,g)"));
 	mEtaEquation = dynamic_cast<StringValue*>(getParameter("Eta-Eq"));
 	mXiEquation = dynamic_cast<StringValue*>(getParameter("Xi-Eq"));
+	mThetaEquation = dynamic_cast<StringValue*>(getParameter("Theta-Eq"));
 }
 
 /**
@@ -277,6 +283,24 @@ void ScriptableSelfRegulatingNeuronActivationFunction::updateEta(double activati
 	}
 }
 
+void ScriptableSelfRegulatingNeuronActivationFunction::updateTheta(double activation) {
+	if(mThetaEquation->get() != "") {
+		mEquationScript->evaluate("nerd.stringBuffer = " + mThetaEquation->get());
+		if(mEquationScript->hasUncaughtException()) {
+			Core::log("ScriptableSRNActivationFunction: Could not evaluate theta equation ["
+						+ mThetaEquation->get() + ")", true);
+		}
+		else {
+			if(mOwner != 0) {
+				mOwner->getBiasValue().set(mVariableBuffer.toDouble());
+			}
+		}
+	}
+	else {
+		SelfRegulatingNeuronActivationFunction::updateTheta(activation);
+	}
+}
+
 
 /**
  * Called the first time, this function creates the scripting context and declares all
@@ -322,6 +346,7 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 		mEquationScript->evaluate("var g = 0;");
 		mEquationScript->evaluate("var h = 0;");
 		mEquationScript->evaluate("var x = 0; var y = 0; var z = 0;");
+		mEquationScript->evaluate("var theta = 0;");
 	}
 	
 	
@@ -337,6 +362,9 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 	mEquationScript->evaluate(QString("ap = " + QString::number(mOwner->getLastActivation()) + ";"));
 	mEquationScript->evaluate(QString("g = 0"));
 	mEquationScript->evaluate(QString("h = 0"));
+	if(mOwner != 0) {
+		mEquationScript->evaluate(QString("theta = " + mOwner->getBiasValue().getValueAsString() + ";"));
+	}
 		
 }
 

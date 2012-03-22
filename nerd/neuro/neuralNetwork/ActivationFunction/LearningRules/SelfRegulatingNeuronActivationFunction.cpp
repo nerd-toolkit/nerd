@@ -161,6 +161,7 @@ double SelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner
 	mTransmitterResult = getTransmitterStrengthUpdate(activation);
 	updateXi(activation);
 	updateEta(activation);
+	updateTheta(activation);
 
 	return activation;
 }
@@ -256,6 +257,8 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 	return 0.0;
 }
 
+
+
 void SelfRegulatingNeuronActivationFunction::updateXi(double activation) {
 	//update learning parameter Xi
 	//xi_i(t+1) = xi_i(t) * (1 + (beta * g(a(t)))
@@ -270,6 +273,10 @@ void SelfRegulatingNeuronActivationFunction::updateEta(double activation) {
 	mEta->set(Math::min(100.0, Math::max(-100.0,
 				((1.0 - mGamma->get()) * mEta->get()) 
 					+ (mDelta->get() * mTransmitterResult))));
+}
+
+void SelfRegulatingNeuronActivationFunction::updateTheta(double activation) {
+	//do nothing
 }
 
 
