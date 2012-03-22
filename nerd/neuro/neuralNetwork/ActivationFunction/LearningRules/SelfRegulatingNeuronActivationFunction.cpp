@@ -82,11 +82,13 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mReceptorMode = new IntValue(0);
 	mReceptorMode->setDescription("Switches g():\n"
 						"0: g = |tf(a*)| - |tf(a)|\n"
-						"1: g = tf(a*)^2-tf(a)^2");
+						"1: g = tf(a*)^2-tf(a)^2\n"
+						"2: g = tf(theta) - tf(a(t))");
 	mTransmitterMode = new IntValue(0);
 	mTransmitterMode->setDescription("Switches h():\n"
 						"0: h = 1 + tf(a)\n"
-						"1: h = 1 + 0.5 * (tf(a(t)) - tf(a(t-1)))");
+						"1: h = 1 + 0.5 * (tf(a(t)) - tf(a(t-1)))\n"
+						"2: h = 1 + tf(a(t) - theta)");
 	
 	mBiasMode = new IntValue(0);
 	mBiasMode->setDescription("Switches the bias update function:\n"
@@ -238,6 +240,12 @@ double SelfRegulatingNeuronActivationFunction::getReceptorStrengthUpdate(double 
 		return pow(tf->transferActivation(mAStar->get(), mOwner), 2) 
 					- pow(tf->transferActivation(activation, mOwner), 2); 
 	}
+	else if(mReceptorMode->get() == 2) {
+		//g(a) = tf(theta) - tf(a(t))
+		TransferFunction *tf = mOwner->getTransferFunction();
+		return tf->transferActivation(mOwner->getBiasValue().get(), mOwner) 
+					- tf->transferActivation(activation, mOwner); 
+	}
 	
 	return 0.0;
 }
@@ -259,7 +267,13 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 		TransferFunction *tf = mOwner->getTransferFunction();
 		return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
 					- tf->transferActivation(mOwner->getLastActivation(), mOwner)); 
-	} 
+	}
+	else if(mTransmitterMode->get() == 2) {
+		//h(a) = 1 + tf(a(t) - theta)
+		TransferFunction *tf = mOwner->getTransferFunction();
+		return 1 + (tf->transferActivation(activation, mOwner)
+					- mOwner->getBiasValue().get()); 
+	}
 	
 	return 0.0;
 }

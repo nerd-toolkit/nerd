@@ -67,6 +67,7 @@
 #include "Network/NeuralNetworkManager.h"
 #include <QMutexLocker>
 #include <typeinfo>
+#include <qsplitter.h>
 
 
 #define TRACE(message)
@@ -130,31 +131,37 @@ NeuronDetailWidget::NeuronDetailWidget(NeuralNetworkEditor *owner)
 	biasFieldLayout->addWidget(mBiasField, 0, 0);
 	neuronLayout->addWidget(new QLabel("Bias:", this), 3, 0);
 	neuronLayout->addWidget(biasArea, 3, 1);
+	
+	QSplitter *splitter = new QSplitter(Qt::Vertical);
 
 	QGroupBox *transferFunctionBox = new QGroupBox("TransferFunction", this);
 	QVBoxLayout *tfBoxLayout = new QVBoxLayout();
 	tfBoxLayout->setContentsMargins(4, 4, 4, 4);
 	transferFunctionBox->setLayout(tfBoxLayout);
-	layout->addWidget(transferFunctionBox);
+	
 	mTransferFunctionSelector = new QComboBox(transferFunctionBox);
 	tfBoxLayout->addWidget(mTransferFunctionSelector);
 
 	mTransferFunctionParameterEditor = new ParameterEditor(transferFunctionBox, mEditor);
 	tfBoxLayout->addWidget(mTransferFunctionParameterEditor);
 
+	splitter->addWidget(transferFunctionBox);
 
 
 	QGroupBox *activationFunctionBox = new QGroupBox("ActivationFunction", this);
 	QVBoxLayout *afBoxLayout = new QVBoxLayout();
 	afBoxLayout->setContentsMargins(4, 4, 4, 4);
 	activationFunctionBox->setLayout(afBoxLayout);
-	layout->addWidget(activationFunctionBox);
+	//layout->addWidget(activationFunctionBox);
 	mActivationFunctionSelector = new QComboBox(activationFunctionBox);
 	afBoxLayout->addWidget(mActivationFunctionSelector);
 
 	mActivationFunctionParameterEditor = new ParameterEditor(activationFunctionBox, mEditor);
 	afBoxLayout->addWidget(mActivationFunctionParameterEditor);
 
+	splitter->addWidget(activationFunctionBox);
+	
+	layout->addWidget(splitter);
 
 	if(mEditor != 0) {
 		connect(mEditor, SIGNAL(tabSelectionChanged(int)),
