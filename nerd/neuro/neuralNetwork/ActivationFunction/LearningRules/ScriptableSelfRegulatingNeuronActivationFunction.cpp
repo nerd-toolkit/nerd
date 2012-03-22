@@ -296,9 +296,6 @@ void ScriptableSelfRegulatingNeuronActivationFunction::updateTheta(double activa
 			}
 		}
 	}
-	else {
-		SelfRegulatingNeuronActivationFunction::updateTheta(activation);
-	}
 }
 
 

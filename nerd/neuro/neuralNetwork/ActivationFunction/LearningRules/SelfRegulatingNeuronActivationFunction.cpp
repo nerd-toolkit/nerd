@@ -88,6 +88,11 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 						"0: h = 1 + tf(a)\n"
 						"1: h = 1 + 0.5 * (tf(a(t)) - tf(a(t-1)))");
 	
+	mBiasMode = new IntValue(0);
+	mBiasMode->setDescription("Switches the bias update function:\n"
+						"0: none\n"
+						"1: theta(t+1) = theta(t) + alpha * (tf(a(t)) - tf(a(t-1)))\n");
+	
 	addParameter("Xi (Rec)", mXi);
 	addParameter("Eta (Tra)", mEta);
 	addParameter("Alpha", mAlpha);
@@ -105,6 +110,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	if(showModes) {
 		addParameter("ReceptorMode", mReceptorMode);
 		addParameter("TransmitterMode", mTransmitterMode);
+		addParameter("ThetaMode", mBiasMode);
 	}
 }
 
@@ -129,6 +135,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 	mRestrictToLinkSynapses = dynamic_cast<BoolValue*>(getParameter("RestrictToLinks"));
 	mReceptorMode = dynamic_cast<IntValue*>(getParameter("ReceptorMode"));
 	mTransmitterMode = dynamic_cast<IntValue*>(getParameter("TransmitterMode"));
+	mBiasMode = dynamic_cast<IntValue*>(getParameter("ThetaMode"));
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
@@ -248,7 +255,7 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 		return 1 + tf->transferActivation(activation, mOwner); 
 	}
 	else if(mTransmitterMode->get() == 1) {
-		//h(a) = tau(a(t) - (tau(a(t-1)))   //CHECK if brackets are correct!
+		//h(a) = tau(a(t)) - (tau(a(t-1)))   //CHECK if brackets are correct!
 		TransferFunction *tf = mOwner->getTransferFunction();
 		return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
 					- tf->transferActivation(mOwner->getLastActivation(), mOwner)); 
@@ -276,7 +283,22 @@ void SelfRegulatingNeuronActivationFunction::updateEta(double activation) {
 }
 
 void SelfRegulatingNeuronActivationFunction::updateTheta(double activation) {
-	//do nothing
+	if(mBiasMode->get() == 0) {
+		//do nothing
+		return;
+	}
+	else if(mBiasMode->get() == 1) {
+		//theta(t+1) = theta(t) + alpha * (tf(a(t)) - tf(a(t-1)))
+		if(mOwner != 0) {
+			TransferFunction *tf = mOwner->getTransferFunction();
+			double newBias = mOwner->getBiasValue().get() 
+						+ mAlpha->get() 
+							* (tf->transferActivation(activation, mOwner)
+								- tf->transferActivation(mOwner->getLastActivation(), mOwner));
+			mOwner->getBiasValue().set(newBias);
+		}
+	}
+	
 }
 
 

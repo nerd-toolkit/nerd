@@ -1651,7 +1651,7 @@ QMenu* NeuralNetworkEditor::addPlotterMenu() {
 	plotterMenu->addSeparator();
 	
 	AddActivationPlotterAction *addWeightPlotterAction = 
-						new AddActivationPlotterAction("Add Weight Plotter", "Weight",
+						new AddActivationPlotterAction("Add Weight and Bias Plotter", "Weight / Bias",
 									this, NeuronActivityPlotter::PLOT_SYNAPSE_WEIGHTS, plotterMenu);
 	plotterMenu->addAction(addWeightPlotterAction);
 	

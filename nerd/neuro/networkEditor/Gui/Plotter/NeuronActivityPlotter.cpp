@@ -270,10 +270,18 @@ void NeuronActivityPlotter::addPlottedNetworkElement(NeuralNetworkElement *eleme
 			}
 		}
 		else if(mPlotMode == PLOT_SYNAPSE_WEIGHTS) {
+			//allow synaptic weights and neuron bias terms
 			Synapse *synapse = dynamic_cast<Synapse*>(element);
 			if(synapse != 0) {
 				valueToPlot = &(synapse->getStrengthValue());
 				name = getSynapseName(synapse);
+			}
+			else {
+				Neuron *neuron = dynamic_cast<Neuron*>(element);
+				if(neuron != 0) {
+					valueToPlot = &(neuron->getBiasValue());
+					name = neuron->getNameValue().get() + "(Th)";
+				}
 			}
 		}
 

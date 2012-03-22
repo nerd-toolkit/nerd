@@ -100,6 +100,7 @@ namespace nerd {
 		
 		IntValue *mReceptorMode;
 		IntValue *mTransmitterMode;
+		IntValue *mBiasMode;
 		
 		Neuron *mOwner;
 		double mTransmitterResult;
