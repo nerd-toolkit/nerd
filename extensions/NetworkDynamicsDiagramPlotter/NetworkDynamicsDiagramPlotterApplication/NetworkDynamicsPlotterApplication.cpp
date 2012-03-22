@@ -125,7 +125,7 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 	
 	timer = new QTimer();
 // 	timer->start(500);
-	timer->setInterval(500);
+	timer->setInterval(2000);
 	
 	//****Till****//
 	op = new OnlinePlotter();

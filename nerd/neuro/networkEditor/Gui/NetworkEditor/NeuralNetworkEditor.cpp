@@ -145,6 +145,10 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	vm->addValue(NetworkEditorConstants::VALUE_DOF_MODE_WIDTH_HIGHLIGHT,
 					new IntValue(3));
 	
+	mClearSelectionsEvent = Core::getInstance()->getEventManager()
+					->createEvent(NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS);
+	mClearSelectionsEvent->addEventListener(this);
+	
 
 	connect(&mAutoSaveTimer, SIGNAL(timeout()),
 			this, SLOT(autoSaveTimerExpired()));
@@ -309,6 +313,9 @@ void NeuralNetworkEditor::eventOccured(Event *event) {
 	if(event == mShutDownEvent) {
 		saveRecentNetworkFileNames();
 	}
+	else if(event == mClearSelectionsEvent) {
+		clearAllSelections();
+	}
 }
 
 
@@ -395,6 +402,15 @@ bool NeuralNetworkEditor::isHiddenLayerModeEnabled() const {
 
 QMenu* NeuralNetworkEditor::getViewModeMenu() const {
 	return mViewModeMenu;
+}
+
+void NeuralNetworkEditor::clearAllSelections() {
+	for(QListIterator<NetworkVisualization*> i(mNetworkVisualizations); i.hasNext();) {
+		NetworkVisualization *visu = i.next();
+		if(visu != 0) {
+			visu->setSelectedItems(QList<PaintItem*>());
+		}
+	}
 }
 
 void NeuralNetworkEditor::undoCommand() {

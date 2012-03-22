@@ -58,4 +58,8 @@ const QString NetworkEditorConstants::VALUE_DOF_MODE_COLOR_HIGHLIGHT
 const QString NetworkEditorConstants::VALUE_DOF_MODE_WIDTH_HIGHLIGHT
 		= "/NetworkEditor/ViewModes/DOF/HighlightWidth";
 
+const QString NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS
+		= "/NetworkEditor/ClearAllSelections";
+		
+		
 

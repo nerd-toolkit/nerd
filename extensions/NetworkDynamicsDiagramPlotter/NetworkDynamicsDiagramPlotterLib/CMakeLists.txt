@@ -70,3 +70,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/neuralNetwork)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/networkEditor)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/simulator/simulator)
+

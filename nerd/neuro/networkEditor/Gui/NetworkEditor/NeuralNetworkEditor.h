@@ -112,6 +112,8 @@ namespace nerd {
 
 		bool isHiddenLayerModeEnabled() const;
 		QMenu* getViewModeMenu() const;
+		
+		virtual void clearAllSelections();
 
 	signals:
 		void tabSelectionChanged(int index);
@@ -185,6 +187,7 @@ namespace nerd {
 		Event *mShutDownEvent;
 		QAction *mEnableHiddenLayersCheckbox;
 		StringValue *mToggleWindowArgument;
+		Event *mClearSelectionsEvent;
 	};
 
 }

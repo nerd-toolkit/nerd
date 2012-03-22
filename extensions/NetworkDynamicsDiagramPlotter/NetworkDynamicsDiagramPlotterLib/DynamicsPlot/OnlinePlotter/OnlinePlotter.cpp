@@ -128,9 +128,9 @@ namespace nerd {
 			{
 				mRunningCalculator = mActiveCalculatorValue->get();
 				
-				emit startProcessing();
-				
 				prepareData(mRunningCalculator);
+				
+				emit startProcessing();
 			}
 
 		}

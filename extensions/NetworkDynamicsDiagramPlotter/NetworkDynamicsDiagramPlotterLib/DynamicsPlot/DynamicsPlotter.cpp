@@ -62,6 +62,7 @@
 #include "Network/Neuro.h"
 #include <QStringList>
 #include "DynamicsPlotConstants.h"
+#include "NetworkEditorConstants.h"
 
 using namespace std;
 
@@ -122,6 +123,8 @@ bool DynamicsPlotter::init() {
 	//If not available, create them (only once).
 	mStartEvent = em->getEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED);
 	mFinishEvent = em->getEvent(DynamicsPlotConstants::EVENT_CALCULATION_COMPLETED);
+	mClearAllEditorSelections = em->getEvent(NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS);
+	
 	if(mStartEvent == 0){
 		mStartEvent = em->createEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED, 
 						"Triggers the preparation of the exporters and inbuilt plotters, "
@@ -186,6 +189,11 @@ void DynamicsPlotter::execute() {
 	if(!Core::getInstance()->isMainExecutionThread()) {
 		return;
 	}
+	
+	if(mClearAllEditorSelections != 0) {
+		mClearAllEditorSelections->trigger();
+	}
+	
 
 	bool previousStasisSetting = true;
 	if(mStasisValue != 0) {
