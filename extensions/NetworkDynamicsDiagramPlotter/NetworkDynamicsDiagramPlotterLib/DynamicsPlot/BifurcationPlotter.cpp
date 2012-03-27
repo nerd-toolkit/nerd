@@ -171,6 +171,8 @@ void BifurcationPlotter::calculateData() {
 	double variedValueOrig = variedValue->get();
 	storeCurrentNetworkActivities();
 	
+	///NOTE/// Added storing / restoring of network configurations.
+	//store network configuration (bias terms, synapse weights, observable parameters of TFs, AFs, SFs.
 	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
 	storeNetworkConfiguration();
 	
@@ -225,6 +227,7 @@ void BifurcationPlotter::calculateData() {
 		
 		for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
 			
+			///NOTE/// Added restore network configuration (if option was true)
 			if(restoreNetConfiguration) {
 				restoreNetworkConfiguration();
 			}
@@ -259,7 +262,7 @@ void BifurcationPlotter::calculateData() {
 				triggerNetworkStep();
 				
 				// plot values
-				if(j > mNumberSteps->get() - mPlottedSteps->get()) {
+				if(j > mNumberSteps->get() - mPlottedSteps->get()) {  ///NOTE/// TODO mPlottedSteps should be decoupled from value object (to prevent changed at runtime)
 					
 					// Calculate average neuron activation
 					for(int i = 0; i < observedValuesList.size(); ++i) {
@@ -291,7 +294,7 @@ void BifurcationPlotter::calculateData() {
 						}
 
 						
-						///NOTE/// Added red (2) dots for values out of bound
+						///NOTE/// Added red (2) dots for values that are out of bound
 						if(oStart > act) {
 							//Indivate that a value is out of bound (mark with 2)
 							mData->set(2, posX, 1, i);
@@ -321,6 +324,7 @@ void BifurcationPlotter::calculateData() {
 	variedValue->set(variedValueOrig);
 	notifyNetworkParametersChanged(network);
 
+	///NOTE/// Added restoreNetworkConfigurations (for ALL runs, also those with the restore option set to false).
 	restoreNetworkConfiguration();
 	restoreCurrentNetworkActivites();
 
