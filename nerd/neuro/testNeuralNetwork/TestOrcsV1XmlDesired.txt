@@ -131,14 +131,14 @@
         </subModules>
         <constraints>
             <constraint id="13" name="NumberOfNeurons">
-                <param value="F" name="AutoAdapt"/>
                 <param value="1" name="Min"/>
                 <param value="10" name="Max"/>
+                <param value="F" name="AutoAdapt"/>
             </constraint>
             <constraint id="14" name="NumberOfNeurons">
-                <param value="F" name="AutoAdapt"/>
                 <param value="-5" name="Min"/>
                 <param value="5" name="Max"/>
+                <param value="F" name="AutoAdapt"/>
             </constraint>
         </constraints>
     </group>
