@@ -94,11 +94,11 @@ ParameterizedObject::ParameterizedObject(const ParameterizedObject &object)
 	mValueManager = Core::getInstance()->getValueManager();
 
 	//Copy parameters, but do not publish any of them.
-	QList<QString> parameterNames = object.mParameters.keys();
-	while(!parameterNames.empty()) {
-		QString name = parameterNames.front();
-		parameterNames.pop_front();
-		Value *value = object.mParameters.value(name);
+	QList<QString> parameterNames = object.mNames;
+	QList<Value*> parameterValues = object.mValues;
+	for(int i = 0; i < parameterNames.size() && i < parameterValues.size(); ++i) {
+		QString name = parameterNames.at(i);
+		Value *value = parameterValues.at(i);
 		if(value != 0) {
 			Value *copy = value->createCopy();
 			addParameter(name, copy);
@@ -146,10 +146,11 @@ bool ParameterizedObject::addParameter(const QString &name, Value *value) {
  * @param publish a flag that determines whether to publish the parameter globally.
  */
 bool ParameterizedObject::addParameter(const QString &name, Value *value, bool publish) {
-	if(value == 0 || mParameters.contains(name)) {
+	if(value == 0 || mNames.contains(name)) {
 		return false;
 	}
-	mParameters.insert(name, value);
+	mNames.append(name);
+	mValues.append(value);
 	value->addValueChangedListener(this);
 
 	if(publish && mValueManager != 0) {
@@ -168,10 +169,10 @@ bool ParameterizedObject::addParameter(const QString &name, Value *value, bool p
  * @return the parameter identified with the given name if available, otherwise NULL.
  */
 Value* ParameterizedObject::getParameter(const QString &name) const {
-	if(!mParameters.contains(name)) {
+	if(!mNames.contains(name)) {
 		return 0;
 	}
-	return mParameters.value(name);
+	return mValues.at(mNames.indexOf(name));
 }
 
 
@@ -181,11 +182,10 @@ bool ParameterizedObject::publishParameter(Value *value, bool publish) {
 		return false;
 	}
 	
-	for(QListIterator<QString> i(mParameters.keys()); i.hasNext();) {
-		QString name = i.next();
-		Value *value = mParameters.value(name);
-		if(value == value) {
-
+	for(int i = 0; i < mNames.size() && i < mValues.size(); ++i) {
+		QString name = mNames.at(i);
+		Value *value = mValues.at(i);
+		if(value != 0) {
 			if(publish) {
 				mValueManager->addValue(QString("").append(mValuePrefix).append(name), value);
 			}
@@ -205,21 +205,20 @@ bool ParameterizedObject::publishParameter(Value *value, bool publish) {
 void ParameterizedObject::removeParameters() {
 
 	//Erase all values from the ValueManager that have eventually been published.
-	QList<Value*> parameters = mParameters.values();
-	mValueManager->removeValues(parameters);
+	mValueManager->removeValues(mValues);
 
 	//Destroy all parameters.
-	while(!parameters.empty()) {
-		Value* value = parameters.front();
-		parameters.pop_front();
+	while(!mValues.empty()) {
+		Value* value = mValues.front();
 		if(value != 0) {
 			value->removeValueChangedListener(this);
 			//make sure that there is no value twice registered.
-			parameters.removeAll(value);
+			mValues.removeAll(value);
 			delete value;
 		}
 	}
-	mParameters.clear();
+	mNames.clear();
+	mValues.clear();
 }
 
 
@@ -228,7 +227,7 @@ void ParameterizedObject::removeParameters() {
  * @return all available parameter Values.
  */
 QList<Value*> ParameterizedObject::getParameters() const {
-	return mParameters.values();
+	return mValues;
 }
 
 
@@ -238,7 +237,7 @@ QList<Value*> ParameterizedObject::getParameters() const {
  * @param the names of all parameters.
  */
 QList<QString> ParameterizedObject::getParameterNames() const {
-	return mParameters.keys();
+	return mNames;
 }
 
 
@@ -249,10 +248,9 @@ QList<QString> ParameterizedObject::getParameterNames() const {
  */
 void ParameterizedObject::publishAllParameters() {
 
-	QList<QString> names = mParameters.keys();
-	for(QListIterator<QString> i(names); i.hasNext();) {
-		QString name = i.next();
-		Value *value = mParameters.value(name);
+	for(int i = 0; i < mNames.size() && i < mValues.size(); ++i) {
+		QString name = mNames.at(i);
+		Value *value = mValues.at(i);
 		if(value != 0) {
 			mValueManager->addValue(QString("").append(mValuePrefix).append(name), value);
 		}
@@ -267,7 +265,7 @@ void ParameterizedObject::publishAllParameters() {
  */
 void ParameterizedObject::unpublishAllParameters() {
 
-	mValueManager->removeValues(mParameters.values());
+	mValueManager->removeValues(mValues);
 }
 
 
@@ -334,8 +332,8 @@ bool ParameterizedObject::equals(const ParameterizedObject *obj) const {
 		return false;
 	}
 
-	QList<QString> paramNames = getParameterNames();
-	QList<QString> otherParamNames = obj->getParameterNames();
+	QList<QString> paramNames = mNames;
+	QList<QString> otherParamNames = obj->mNames;
 
 	if(paramNames.size() != otherParamNames.size()) {
 		return false;

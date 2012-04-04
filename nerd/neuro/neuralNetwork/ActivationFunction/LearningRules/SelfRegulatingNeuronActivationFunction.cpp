@@ -51,6 +51,7 @@
 #include "Math/Math.h"
 #include <math.h>
 #include "SynapseFunction/SimpleLinkSynapseFunction.h"
+#include <QStringList>
 
 using namespace std;
 
@@ -62,7 +63,9 @@ namespace nerd {
  */
 SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(const QString &name, 
 																			   bool showModes)
-	: ActivationFunction(name), mOwner(0), mTransmitterResult(0), mReceptorResult(0)
+	: ActivationFunction(name), mOwner(0), mTransmitterResult(0), mReceptorResult(0),
+		mActivationT2(0), mAdjustWeights(true), mRestrictToLinks(false), 
+		mUseDecayTerm(false), mUseCurrentActivations(false)
 {
 	mXi = new DoubleValue(1);
 	mEta = new DoubleValue(1);
@@ -73,11 +76,18 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mDelta = new DoubleValue(0.02);
 	mAStar = new DoubleValue(0.658479);
 	
-	mAdjustWeights = new BoolValue(true);
-	mAdjustWeights->setDescription("Enables an update of the synapse weights in the network.");
+	mOptions = new StringValue("w");
+	mOptions->setDescription("Selection of SRN options Syntax: [o1,o2,o3].\n"
+							 "w : adapt weights\n"
+							 "rl : restrict weight adaptions to synapses with SimpleLink synapse function\n"
+							 "dt : use decay term in equation\n"
+							 "t+1 : use the new activation of t+1");
 	
-	mRestrictToLinkSynapses = new BoolValue(false);
-	mRestrictToLinkSynapses->setDescription("Restricts weight changes to synapses with the SimpleLinkSynapseFunction.");
+// 	mAdjustWeights = new BoolValue(true);
+// 	mAdjustWeights->setDescription("Enables an update of the synapse weights in the network.");
+// 	
+// 	mRestrictToLinkSynapses = new BoolValue(false);
+// 	mRestrictToLinkSynapses->setDescription("Restricts weight changes to synapses with the SimpleLinkSynapseFunction.");
 	
 	mReceptorMode = new IntValue(0);
 	mReceptorMode->setDescription("Switches g():\n"
@@ -103,8 +113,10 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	addParameter("Delta", mDelta);
 	addParameter("A*", mAStar);	
 	
-	addParameter("AdjustWeights", mAdjustWeights);
-	addParameter("RestrictToLinks", mRestrictToLinkSynapses);
+	addParameter("Options", mOptions);
+	
+// 	addParameter("AdjustWeights", mAdjustWeights);
+// 	addParameter("RestrictToLinks", mRestrictToLinkSynapses);
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
@@ -124,7 +136,9 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
  */
 SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 						const SelfRegulatingNeuronActivationFunction &other) 
-	: ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0)
+	: ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0),
+		mAdjustWeights(other.mAdjustWeights), mRestrictToLinks(other.mRestrictToLinks), 
+		mUseDecayTerm(other.mUseDecayTerm), mUseCurrentActivations(other.mUseCurrentActivations)	
 {
 	mXi = dynamic_cast<DoubleValue*>(getParameter("Xi (Rec)"));
 	mEta = dynamic_cast<DoubleValue*>(getParameter("Eta (Tra)"));
@@ -133,8 +147,9 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 	mGamma = dynamic_cast<DoubleValue*>(getParameter("Gamma"));
 	mDelta = dynamic_cast<DoubleValue*>(getParameter("Delta"));
 	mAStar = dynamic_cast<DoubleValue*>(getParameter("A*"));
-	mAdjustWeights = dynamic_cast<BoolValue*>(getParameter("AdjustWeights"));
-	mRestrictToLinkSynapses = dynamic_cast<BoolValue*>(getParameter("RestrictToLinks"));
+// 	mAdjustWeights = dynamic_cast<BoolValue*>(getParameter("AdjustWeights"));
+// 	mRestrictToLinkSynapses = dynamic_cast<BoolValue*>(getParameter("RestrictToLinks"));
+	mOptions = dynamic_cast<StringValue*>(getParameter("Options"));
 	mReceptorMode = dynamic_cast<IntValue*>(getParameter("ReceptorMode"));
 	mTransmitterMode = dynamic_cast<IntValue*>(getParameter("TransmitterMode"));
 	mBiasMode = dynamic_cast<IntValue*>(getParameter("ThetaMode"));
@@ -154,6 +169,22 @@ ActivationFunction* SelfRegulatingNeuronActivationFunction::createCopy() const {
 	return new SelfRegulatingNeuronActivationFunction(*this);
 }
 
+
+void SelfRegulatingNeuronActivationFunction::valueChanged(Value *value) {
+	if(value == 0) {
+		return;
+	}
+	else if(value == mOptions) {
+		QStringList options = mOptions->get().split(",");
+		mAdjustWeights = options.contains("w");
+		mRestrictToLinks = options.contains("rl");
+		mUseDecayTerm = options.contains("dt");
+		mUseCurrentActivations = options.contains("t+1");
+	}
+	ActivationFunction::valueChanged(value);
+}
+
+
 void SelfRegulatingNeuronActivationFunction::reset(Neuron *owner) {
 }
 
@@ -166,11 +197,20 @@ double SelfRegulatingNeuronActivationFunction::calculateActivation(Neuron *owner
 	
 	double activation = updateActivity();
 	
-	mReceptorResult = getReceptorStrengthUpdate(activation);
-	mTransmitterResult = getTransmitterStrengthUpdate(activation);
-	updateXi(activation);
-	updateEta(activation);
-	updateTheta(activation);
+	double usedActivation = activation;
+	
+	//switch wether the current of the previous activation is used for the update.
+	if(!mUseCurrentActivations) {
+		usedActivation = mOwner->getLastActivation();
+	}
+	
+	mReceptorResult = getReceptorStrengthUpdate(usedActivation);
+	mTransmitterResult = getTransmitterStrengthUpdate(usedActivation);
+	updateXi(usedActivation);
+	updateEta(usedActivation);
+	updateTheta(usedActivation);
+	
+	mActivationT2 = owner->getLastActivation();
 
 	return activation;
 }
@@ -265,8 +305,14 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 	else if(mTransmitterMode->get() == 1) {
 		//h(a) = tau(a(t)) - (tau(a(t-1)))   //CHECK if brackets are correct!
 		TransferFunction *tf = mOwner->getTransferFunction();
-		return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
+		if(mUseCurrentActivations) {
+			return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
 					- tf->transferActivation(mOwner->getLastActivation(), mOwner)); 
+		}
+		else {
+			return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
+					- tf->transferActivation(mActivationT2, mOwner)); 
+		}
 	}
 	else if(mTransmitterMode->get() == 2) {
 		//h(a) = 1 + tf(a(t) - theta)
@@ -305,10 +351,19 @@ void SelfRegulatingNeuronActivationFunction::updateTheta(double activation) {
 		//theta(t+1) = theta(t) + alpha * (tf(a(t)) - tf(a(t-1)))
 		if(mOwner != 0) {
 			TransferFunction *tf = mOwner->getTransferFunction();
-			double newBias = mOwner->getBiasValue().get() 
+			double newBias = 0;
+			if(mUseCurrentActivations) {
+				newBias = mOwner->getBiasValue().get() 
 						+ mAlpha->get() 
 							* (tf->transferActivation(activation, mOwner)
 								- tf->transferActivation(mOwner->getLastActivation(), mOwner));
+			}
+			else {
+				newBias = mOwner->getBiasValue().get() 
+							+ mAlpha->get() 
+								* (tf->transferActivation(activation, mOwner)
+									- tf->transferActivation(mActivationT2, mOwner));
+			}
 			mOwner->getBiasValue().set(newBias);
 		}
 	}
@@ -325,7 +380,6 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 	//Calculate new activation of the neuron.
 	
 	double inputSum = 0.0;
-	bool adjustWeights = mAdjustWeights->get();
 
 	QList<Synapse*> synapses = mOwner->getSynapses();
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
@@ -351,7 +405,7 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 		
 		bool isLink = true;
 		
-		if(mRestrictToLinkSynapses->get()) {
+		if(mRestrictToLinks) {
 			//consider only weights that 
 			if(dynamic_cast<SimpleLinkSynapseFunction*>(synapse->getSynapseFunction()) == 0) {
 				isLink = false;
@@ -363,7 +417,7 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 		if(isLink) {
 			double sign = Math::sign(weight); //zero is treated as positive value.
 			
-			if(adjustWeights) {
+			if(mAdjustWeights) {
 				synapse->getStrengthValue().set(sign * eta * mXi->get());
 			}
 			act = sign * eta * sourceNeuron->getOutputActivationValue().get();

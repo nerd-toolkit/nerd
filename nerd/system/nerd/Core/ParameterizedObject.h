@@ -46,7 +46,7 @@
 #ifndef NERDPARAMETERIZEDOBJECT_H
 #define NERDPARAMETERIZEDOBJECT_H
 
-#include <QHash>
+#include <QMap>
 #include <QList>
 #include <QString>
 #include "Value/Value.h"
@@ -114,7 +114,8 @@ class ParameterizedObject : public virtual ValueChangedListener {
 		virtual bool equals(const ParameterizedObject *obj) const;
 
 	private:
-		QHash<QString, Value*> mParameters;
+		QList<Value*> mValues;
+		QList<QString> mNames;
 		QString mName;
 
 	protected:

@@ -46,6 +46,7 @@
 
 #include "Collision/CollisionObject.h"
 #include "Collision/CollisionRule.h"
+#include <QHash>
 
 namespace nerd {
 

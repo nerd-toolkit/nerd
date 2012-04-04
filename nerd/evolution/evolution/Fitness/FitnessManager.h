@@ -49,6 +49,7 @@
 #include "FitnessFunction.h"
 #include "Value/StringValue.h"
 #include "Value/IntValue.h"
+#include <QHash>
 
 namespace nerd {
 

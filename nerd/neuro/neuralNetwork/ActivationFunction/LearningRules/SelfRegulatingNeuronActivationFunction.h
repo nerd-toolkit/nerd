@@ -66,6 +66,8 @@ namespace nerd {
 		virtual ~SelfRegulatingNeuronActivationFunction();
 
 		virtual ActivationFunction* createCopy() const;
+		
+		virtual void valueChanged(Value *value);
 
 		virtual void reset(Neuron *owner);
 		virtual double calculateActivation(Neuron *owner);
@@ -95,8 +97,9 @@ namespace nerd {
 		DoubleValue *mGamma;
 		DoubleValue *mDelta;
 		DoubleValue *mAStar;
-		BoolValue *mAdjustWeights;
-		BoolValue *mRestrictToLinkSynapses;
+		//BoolValue *mAdjustWeights;
+		//BoolValue *mRestrictToLinkSynapses;
+		StringValue *mOptions;
 		
 		IntValue *mReceptorMode;
 		IntValue *mTransmitterMode;
@@ -105,6 +108,12 @@ namespace nerd {
 		Neuron *mOwner;
 		double mTransmitterResult;
 		double mReceptorResult;
+		
+		double mActivationT2;
+		bool mAdjustWeights;
+		bool mRestrictToLinks;
+		bool mUseDecayTerm;
+		bool mUseCurrentActivations;
 		
 	};
 

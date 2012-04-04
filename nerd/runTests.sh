@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo
-echo "ORCS TEST SUITE"
+echo "NERD TEST SUITE"
 echo "---------------"
 echo
 
