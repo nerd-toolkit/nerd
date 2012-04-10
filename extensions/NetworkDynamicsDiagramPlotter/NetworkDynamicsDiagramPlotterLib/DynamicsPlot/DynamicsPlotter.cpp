@@ -250,6 +250,7 @@ ModularNeuralNetwork* DynamicsPlotter::getCurrentNetwork() const {
 
 void DynamicsPlotter::storeCurrentNetworkActivities() {
 	mNetworkActivities.clear();
+	mNetworkOutputs.clear();
 
 	NeuralNetwork *network = getCurrentNetwork();
 
@@ -257,11 +258,11 @@ void DynamicsPlotter::storeCurrentNetworkActivities() {
 		return;
 	}
 
-	QList<Neuron*> neurons = network->getNeurons();
-	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
+	mCurrentNeurons = network->getNeurons();
+	for(QListIterator<Neuron*> i(mCurrentNeurons); i.hasNext();) {
 		Neuron *neuron = i.next();
-		mNetworkActivities.insert(neuron->getId(), neuron->getOutputActivationValue().get());
-		//TODO: chris: check if this should be activationvalue.
+		mNetworkActivities.append(neuron->getActivationValue().get());
+		mNetworkOutputs.append(neuron->getOutputActivationValue().get());
 	}
 }
 
@@ -269,22 +270,17 @@ void DynamicsPlotter::storeCurrentNetworkActivities() {
 void DynamicsPlotter::restoreCurrentNetworkActivites() {
 	NeuralNetwork *network = getCurrentNetwork();
 
-	if(network == 0) {
+	if(network == 0 
+			|| mCurrentNeurons.size() != mNetworkActivities.size() 
+			|| mCurrentNeurons.size() != mNetworkOutputs.size()) 
+	{
 		return;
 	}
 
-	QList<Neuron*> neurons = network->getNeurons();
-
-	for(QHashIterator<qulonglong, double> i(mNetworkActivities); i.hasNext();) {
-		i.next();
-		Neuron *neuron = NeuralNetwork::selectNeuronById(i.key(), neurons);
-		if(neuron != 0) {
-			neuron->getOutputActivationValue().set(i.value());
-		}
-		else {
-			Core::log("DynamicsPlotter::restoreCurrentNetworkActivities: Could not find neuron "
-						+ QString::number(i.key()), true);
-		}
+	for(int i = 0; i < mCurrentNeurons.size(); ++i) {
+		Neuron *neuron = mCurrentNeurons.at(i);
+		neuron->getActivationValue().set(mNetworkActivities.at(i));
+		neuron->getOutputActivationValue().set(mNetworkOutputs.at(i));
 	}
 }
 

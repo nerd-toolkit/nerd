@@ -117,7 +117,9 @@ namespace nerd {
 		BoolValue *mStasisValue;
 		BoolValue *mActiveValue;
 		IntValue *mExecutionTime;
-		QHash<qulonglong, double> mNetworkActivities;
+		QList<double> mNetworkActivities;
+		QList<double> mNetworkOutputs;
+		QList<Neuron*> mCurrentNeurons;
 		QHash<DoubleValue*, double> mNetworkConfigurationValues;
 		
 		//****Till****//

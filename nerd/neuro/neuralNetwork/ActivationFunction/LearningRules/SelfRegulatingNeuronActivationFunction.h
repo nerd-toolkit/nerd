@@ -114,6 +114,7 @@ namespace nerd {
 		bool mRestrictToLinks;
 		bool mUseDecayTerm;
 		bool mUseCurrentActivations;
+		double mEpsilon;
 		
 	};
 

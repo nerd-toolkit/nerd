@@ -65,7 +65,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 																			   bool showModes)
 	: ActivationFunction(name), mOwner(0), mTransmitterResult(0), mReceptorResult(0),
 		mActivationT2(0), mAdjustWeights(true), mRestrictToLinks(false), 
-		mUseDecayTerm(false), mUseCurrentActivations(false)
+		mUseDecayTerm(false), mUseCurrentActivations(false), mEpsilon(0.0)
 {
 	mXi = new DoubleValue(1);
 	mEta = new DoubleValue(1);
@@ -81,7 +81,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 							 "w : adapt weights\n"
 							 "rl : restrict weight adaptions to synapses with SimpleLink synapse function\n"
 							 "dt : use decay term in equation\n"
-							 "t+1 : use the new activation of t+1");
+							 "t+1 : use the new activation of t+1\n"
+							 "e : add an epsilon of 0.0001");
 	
 // 	mAdjustWeights = new BoolValue(true);
 // 	mAdjustWeights->setDescription("Enables an update of the synapse weights in the network.");
@@ -138,7 +139,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 						const SelfRegulatingNeuronActivationFunction &other) 
 	: ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0),
 		mAdjustWeights(other.mAdjustWeights), mRestrictToLinks(other.mRestrictToLinks), 
-		mUseDecayTerm(other.mUseDecayTerm), mUseCurrentActivations(other.mUseCurrentActivations)	
+		mUseDecayTerm(other.mUseDecayTerm), mUseCurrentActivations(other.mUseCurrentActivations),
+		mEpsilon(other.mEpsilon)
 {
 	mXi = dynamic_cast<DoubleValue*>(getParameter("Xi (Rec)"));
 	mEta = dynamic_cast<DoubleValue*>(getParameter("Eta (Tra)"));
@@ -180,6 +182,7 @@ void SelfRegulatingNeuronActivationFunction::valueChanged(Value *value) {
 		mRestrictToLinks = options.contains("rl");
 		mUseDecayTerm = options.contains("dt");
 		mUseCurrentActivations = options.contains("t+1");
+		mEpsilon = options.contains("e") ? 0.0001 : 0.0;
 	}
 	ActivationFunction::valueChanged(value);
 }
@@ -330,7 +333,7 @@ void SelfRegulatingNeuronActivationFunction::updateXi(double activation) {
 	//update learning parameter Xi
 	//xi_i(t+1) = xi_i(t) * (1 + (beta * g(a(t)))
 	mXi->set(Math::min(100.0, Math::max(-100.0,
-				mXi->get() * (1.0 + (mBeta->get() * mReceptorResult)))));
+				mEpsilon + mXi->get() * (1.0 + (mBeta->get() * mReceptorResult)))));
 }
 
 
@@ -338,7 +341,7 @@ void SelfRegulatingNeuronActivationFunction::updateEta(double activation) {
 	//update learning parameter Eta
 	//eta_i(t+1) = ((1 - gamma) * eta_i(t)) + (delta * h(a(t)))
 	mEta->set(Math::min(100.0, Math::max(-100.0,
-				((1.0 - mGamma->get()) * mEta->get()) 
+				mEpsilon + ((1.0 - mGamma->get()) * mEta->get()) 
 					+ (mDelta->get() * mTransmitterResult))));
 }
 
