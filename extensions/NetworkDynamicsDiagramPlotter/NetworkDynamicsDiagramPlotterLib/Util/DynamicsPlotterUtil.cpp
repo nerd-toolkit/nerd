@@ -44,10 +44,12 @@
 
 #include "DynamicsPlotterUtil.h"
 #include <Core/Core.h>
+#include <Math/Math.h>
+#include <ModularNeuralNetwork/ModularNeuralNetwork.h>
 #include <QStringList>
 
 namespace nerd {
-	
+
 DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<NeuralNetworkElement*> const &elemList) {
 	// string Syntax: ID[[:FUNC]:PARAM]
 	QStringList stringList = string.split(":", QString::SkipEmptyParts);
@@ -80,8 +82,6 @@ DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<
 		if(stringList.size() == 3) {
 			QString param = stringList.at(2);
 			if(stringList.at(1) == "tf") {
-				
-				///NOTE/// Check for 0 and get value via observable object
 				ObservableNetworkElement *tf = 
 						dynamic_cast<ObservableNetworkElement*>(neuron->getTransferFunction());
 				if(tf != 0) {
@@ -92,8 +92,6 @@ DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<
 				}
 			}
 			if(stringList.at(1) == "af") {
-				
-				///NOTE/// Check for 0 and get value via observable object
 				ObservableNetworkElement *af = 
 						dynamic_cast<ObservableNetworkElement*>(neuron->getActivationFunction());
 				if(af != 0) {
@@ -113,8 +111,6 @@ DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<
 			return &(synapse->getStrengthValue());
 		}
 		if(stringList.size() == 3 && stringList.at(2) == "sf") {
-			
-			///NOTE/// Check for 0 and get value via observable object
 			ObservableNetworkElement *sf = 
 					dynamic_cast<ObservableNetworkElement*>(synapse->getSynapseFunction());
 			if(sf != 0) {
@@ -140,8 +136,6 @@ QList< QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStr
 		
 		for(int j = 0; j < stringList.size(); ++j) {
 			DoubleValue *value = getElementValue(stringList.at(j), elemList);
-			
-			///NOTE/// Always check for 0 and return values that can be interpreted by caller
 			if(value == 0) {
 				//return empty list, so that the caller can react on the problem
 				Core::log("DynamicsPlotterUtil:getElementValues: Could not find "
@@ -158,17 +152,18 @@ QList< QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStr
 	
 QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &string) {
 	// Syntax: ID:FUNC:PARAM (eg I1:F1:P1,I2:F2:P2|I3:F3:P3)	
-	QList<QStringList> plots;
+	QList<QStringList> parts;
 	// Create list of plots
-	QStringList plotlist = string.split("|", QString::SkipEmptyParts);
-	for(int i = 0; i < plotlist.size(); ++i) {
-		QStringList elems = plotlist.at(i).split(",", QString::SkipEmptyParts);
-		plots.append(elems);
+	QStringList partlist = string.split("|", QString::SkipEmptyParts);
+	for(int i = 0; i < partlist.size(); ++i) {
+		QStringList elems = partlist.at(i).split(",", QString::SkipEmptyParts);
+		parts.append(elems);
 	}
-	return plots;
+	return parts;
 }
 
-QList< double > DynamicsPlotterUtil::getDoublesFromString(const QString &list, const QString &separator, const QString &replace) {
+QList<double> DynamicsPlotterUtil::getDoublesFromString(const QString &list,
+const QString &separator, const QString &replace) {
 	QString tmp(list);
 	if(!replace.isEmpty()) {
 		QStringList replist = replace.split(separator, QString::SkipEmptyParts);
@@ -184,14 +179,110 @@ QList< double > DynamicsPlotterUtil::getDoublesFromString(const QString &list, c
 		double d = doublelist.at(i).toDouble(&ok);
 		
 		if(!ok) {
-			Core::log("Conversion to double failed, check values please");
-			///NOTE/// This should not proceed. Better return an empty list
+			Core::log("Conversion to double failed, check values please", true);
 			return QList<double>();
 		}
 		
 		output.append(d);
 	}
 	return output;
+}
+
+QList<DoubleValue*> DynamicsPlotterUtil::getNetworkValues(const
+QList<NeuralNetworkElement*> networkElements) {
+	QList<DoubleValue*> list;
+	for(int i = 0; i < networkElements.size(); ++i) {
+		NeuralNetworkElement *e = networkElements.at(i);
+		
+		if(e == 0) {
+			Core::log("DynamicsPlotterUtil::getNetworkState : "
+						"NeuralNetworkElement is NULL!", true);
+			return QList<DoubleValue*>();
+		}
+		
+		Neuron *n = dynamic_cast<Neuron*>(e);
+		if(n != 0) {
+			DoubleValue *d = &(n->getActivationValue());
+			list.append(d);
+			DoubleValue *b = &(n->getBiasValue());
+			list.append(b);
+			
+			ObservableNetworkElement *tf =
+			dynamic_cast<ObservableNetworkElement*>(n->getTransferFunction());
+			if(tf != 0) {
+				QList<Value*> tfVals = tf->getObservableOutputs();
+				for(int j = 0; j < tfVals.size(); ++j) {
+					DoubleValue *v = dynamic_cast<DoubleValue*>(tfVals.at(j));
+					if(v != 0) {
+						list.append(v);
+					}
+				}
+			}
+			
+			ObservableNetworkElement *af =
+			dynamic_cast<ObservableNetworkElement*>(n->getActivationFunction());
+			if(af != 0) {
+				QList<Value*> afVals = af->getObservableOutputs();
+				for(int j = 0; j < afVals.size(); ++j) {
+					DoubleValue *v = dynamic_cast<DoubleValue*>(afVals.at(j));
+					if(v != 0) {
+						list.append(v);
+					}
+				}
+			}
+		}
+		
+		Synapse *s = dynamic_cast<Synapse*>(e);
+		if(s != 0) {
+			DoubleValue *d = &(s->getStrengthValue());
+			list.append(d);
+			
+			ObservableNetworkElement *sf =
+			dynamic_cast<ObservableNetworkElement*>(s->getSynapseFunction());
+			if(sf != 0) {
+				QList<Value*> sfVals = sf->getObservableOutputs();
+				for(int j = 0; j < sfVals.size(); ++j) {
+					DoubleValue *v = dynamic_cast<DoubleValue*>(sfVals.at(j));
+					if(v != 0) {
+						list.append(v);
+					}
+				}
+			}
+		}
+	}
+	return list;
+}
+
+QList<double> DynamicsPlotterUtil::getNetworkState(const QList<DoubleValue*>
+networkValues) {
+	if(networkValues.isEmpty()) {
+		return QList<double>();
+	}
+	
+	QList<double> networkState;
+	for(int i = 0; i < networkValues.size(); ++i) {
+		double tmp = networkValues.at(i)->get();
+		networkState.append(tmp);
+	}
+	
+	return networkState;
+}
+
+bool DynamicsPlotterUtil::compareNetworkStates(const QList<double>
+&state1, const QList<double> &state2, double accuracy) {
+	if(state1.size() != state2.size()) {
+		Core::log("DynamicsPlotterUtil: Cannot compare network states, they "
+					"appear to be from different networks", true);
+		return false;
+	}
+	
+	for(int i = 0; i < state1.size(); ++i) {
+		if( !Math::compareDoubles(state1.at(i), state2.at(i), accuracy) ) {
+			return false;
+		}
+	}
+	
+	return true;
 }
 
 }

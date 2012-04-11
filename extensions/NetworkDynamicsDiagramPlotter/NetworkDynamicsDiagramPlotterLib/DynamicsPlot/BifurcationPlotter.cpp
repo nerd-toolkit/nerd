@@ -144,8 +144,8 @@ void BifurcationPlotter::calculateData() {
 				DynamicsPlotterUtil::getDoublesFromString(mObservedRanges->get());
 	
 	if(observedRanges.isEmpty() || observedRanges.size() != 2*observedValuesList.size()) {
-		Core::log("BifurcationPlotter: Invalid number of ranges given, maybe mismatch to "
-				  "number of elements.", true);
+		Core::log("BifurcationPlotter: Invalid number of ranges given, maybe "
+					"mismatch to number of elements.", true);
 		return;
 	}
 
@@ -158,6 +158,11 @@ void BifurcationPlotter::calculateData() {
 	
 	DoubleValue *variedValue =
 		DynamicsPlotterUtil::getElementValue(variedElement, networkElements);
+		
+	if(variedValue == 0) {
+		Core::log("BifurcationPlotter: Element to vary does not exist.", true);
+		return;
+	}
 	
 	QList<double> variedRange =
 		DynamicsPlotterUtil::getDoublesFromString(mVariedRange->get());
@@ -169,18 +174,16 @@ void BifurcationPlotter::calculateData() {
 	
 	// save original value for clean-up
 	double variedValueOrig = variedValue->get();
+	bool resetNetworkActivation = mResetNetworkActivation->get();
 	storeCurrentNetworkActivities();
 	
-	///NOTE/// Added storing / restoring of network configurations.
 	//store network configuration (bias terms, synapse weights, observable parameters of TFs, AFs, SFs.
 	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
 	storeNetworkConfiguration();
 	
-	///NOTE/// Decouple all variable values from their value objects, because these may change during execution
 	int resolutionX = mVariedResolution->get();
 	int resolutionY = mObservedResolution->get();
 	
-	///NOTE/// Make sure there cannot be a division by zero
 	//avoid division by zero!
 	if(resolutionX < 2 || resolutionY < 2) {
 		return;
@@ -197,7 +200,7 @@ void BifurcationPlotter::calculateData() {
 	for(int i = 0; i < observedValuesList.size(); ++i) {
 		double oStart = observedRanges.at(i*2);
 		double oEnd = observedRanges.at(i*2+1);
-		double oStepSize = (oEnd - oStart) / (double) (resolutionY - 1); ///NOTE/// n buckets including min and max
+		double oStepSize = (oEnd - oStart) / (double) (resolutionY - 1);
 		
 		for(int y = 1; y <= resolutionY; ++y) {
 			mData->set(Math::round(oStart+(y-1)*oStepSize,5), 0, y, i);
@@ -208,38 +211,36 @@ void BifurcationPlotter::calculateData() {
 	}
 
 	// MAIN LOOP over parameter points
-	
-	
-	///NOTE/// Added switch for backwards movement
+
 	//check if the diagram also has to be drawn in backwards mode.
 	bool runBackwards = mRunBackwards->get();
 	int runSecondIteration = runBackwards ? 1 : 0;
 	
-	
-	///NOTE/// Moved this block before the for loop
 	double vStart = variedRange.first();
 	double vEnd = variedRange.last();
-	double vStepSize = (vEnd - vStart) / (double) (resolutionX - 1); ///NOTE/// n buckets including min and maximum
+	double vStepSize = (vEnd - vStart) / (double) (resolutionX - 1);
 		
+	int numberSteps = mNumberSteps->get();
+	int plottedSteps = mPlottedSteps->get();
 	
-	///NOTE/// Added switch for backwards movement
+	// two runs if backward calculation is on
 	for(int phase = 0; phase <= runSecondIteration; ++phase) {
 		
 		for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
 			
-			///NOTE/// Added restore network configuration (if option was true)
+			mProgressPercentage->set((double)(100*x/resolutionX));;
+			
 			if(restoreNetConfiguration) {
 				restoreNetworkConfiguration();
 			}
 			
-			if(mResetNetworkActivation->get()) {
+			if(resetNetworkActivation) {
 				restoreCurrentNetworkActivites();
 			}
 			
 			// change values of varied element
 			double vVal = vStart + (x-1) * vStepSize;
 			
-			///NOTE/// Added switch for backwards movement
 			//switch between forwards and backwards movement
 			if(phase == 0) { 	
 				// draw x axis values
@@ -257,44 +258,38 @@ void BifurcationPlotter::calculateData() {
 			notifyNetworkParametersChanged(network);
 
 			// INNER LOOP over steps
-			for(int j = 0; j < mNumberSteps->get() && mActiveValue->get(); ++j) {
+			for(int j = 0; j < numberSteps && mActiveValue->get(); ++j) {
 				// let the network run for 1 timestep
 				triggerNetworkStep();
 				
 				// plot values
-				if(j > mNumberSteps->get() - mPlottedSteps->get()) {  ///NOTE/// TODO mPlottedSteps should be decoupled from value object (to prevent changed at runtime)
+				if(j > numberSteps - plottedSteps) {
 					
 					// Calculate average neuron activation
 					for(int i = 0; i < observedValuesList.size(); ++i) {
 						
 						QList<DoubleValue*> observedValues =
-											observedValuesList.at(i);
+													observedValuesList.at(i);
+						int oSize = observedValues.size();
+						if(oSize == 0) {
+							//maybe report problem TODO
+							continue;
+						}
+						
 						double oStart = oParams.at(i).at(0);
 						double oEnd = oParams.at(i).at(1);
 						double oStepSize = oParams.at(i).at(2);
 						double act = 0;
 						
-						///NOTE/// Make sure there cannot be a division by zero
-						if(observedValues.empty()) {
-							//maybe report problem
-							continue;
-						}
-						
-						for(int k = 0; k < observedValues.size(); ++k) {
+						for(int k = 0; k < oSize; ++k) {
+							// NOTE check for null pointer? can it happen?
 							act += observedValues.at(k)->get();
 						}
-						act = act / observedValues.size();
+						act = act / oSize;
 						
-						int posX = x;
-						
-						///NOTE/// Added switch for backwards movement
-						//backwards movement (draw from right to left)
-						if(phase > 0) {
-							posX = mData->getMatrixWidth() - x;
-						}
+						int posX = (phase == 0) ? x : 
+									mData->getMatrixWidth() - x;
 
-						
-						///NOTE/// Added red (2) dots for values that are out of bound
 						if(oStart > act) {
 							//Indivate that a value is out of bound (mark with 2)
 							mData->set(2, posX, 1, i);

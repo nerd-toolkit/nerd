@@ -166,6 +166,7 @@ namespace nerd {
 			return;
 		}
 		else if(calculator == "Bifurcation" 
+				|| calculator == "BasinOfAttraction"
 				|| calculator == "Bifurcation_Calculator" 
 				|| calculator == "Transients_Calculator" 
 				|| calculator == "Isoperiod_Calculator" 

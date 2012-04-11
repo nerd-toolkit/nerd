@@ -74,4 +74,4 @@ private:
 };
 }
 
-#endif // BIFURCATION_H
+#endif // BIFURCATIONPLOTTER_H

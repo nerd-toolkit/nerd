@@ -1,9 +1,6 @@
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   tfaber@uni-osnabrueck.de
- *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -45,99 +42,37 @@
  ***************************************************************************/
 
 
+#ifndef BASINPLOTTER_H
+#define BASINPLOTTER_H
 
-#ifndef NERDDynamicsPlotter_H
-#define NERDDynamicsPlotter_H
-
-#include <QString>
-#include <QHash>
-#include "Core/SystemObject.h"
-#include "Core/ParameterizedObject.h"
-#include "Value/BoolValue.h"
-#include "Value/IntValue.h"
-#include "Value/MatrixValue.h"
-#include "Value/ULongLongValue.h"
-#include "Network/NeuralNetwork.h"
-#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
+#include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
+	class BasinPlotter : public DynamicsPlotter {
 
-	/**
-	 * DynamicsPlotter.
-	 *
-	 */
-	class DynamicsPlotter : public ParameterizedObject, public virtual SystemObject,
-							public EventListener
-	{
-	public:
-		DynamicsPlotter(const QString &name);
-		virtual ~DynamicsPlotter();
+public:
+	BasinPlotter();
+	virtual ~BasinPlotter();
+	
+	virtual void calculateData();
 
-		virtual QString getName() const;
+private:
 
-		virtual bool init();
-		virtual bool bind();
-		virtual bool cleanUp();
+	StringValue *mVariedX;
+	StringValue *mVariedY;
+	StringValue *mVariedRangeX;
+	StringValue *mVariedRangeY;
+	IntValue *mVariedResolutionX;
+	IntValue *mVariedResolutionY;
+	
+	DoubleValue *mAccuracy;
 
-		virtual void eventOccured(Event *event);
-
-		virtual void calculateData() = 0;
-
-		void execute();
-		
-		BoolValue* getActiveValue() const;
-		ModularNeuralNetwork* getCurrentNetwork() const;
-
-		
-		
-	protected:
-		void storeCurrentNetworkActivities();
-		void restoreCurrentNetworkActivites();
-		void storeNetworkConfiguration();
-		void restoreNetworkConfiguration();
-		void triggerNetworkStep();
-		void notifyNetworkParametersChanged(ModularNeuralNetwork *network);
-		
-		// DEPRECATED
-		NeuralNetworkElement* getVariedNetworkElement(qulonglong idOfVariedNetworkElement);
-		void setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value);
-		double getVariedNetworkElementValue(NeuralNetworkElement *variedElem);
-				
-		bool checkStringListsItemCount(const QString &idsString, 
-									   const QString &minsString, 
-									   const QString &maxsString);
-		QList<qulonglong> createListOfIds(const QString &idsString);
-		QList<double> createListOfDoubles(const QString &doubleString);
-		
-	protected:
-		Event *mNextStepEvent;
-		Event *mResetEvent;
-		Event *mEvaluateNetworkEvent;
-		Event *mClearAllEditorSelections;
-		BoolValue *mStasisValue;
-		BoolValue *mActiveValue;
-		IntValue *mExecutionTime;
-		QList<double> mNetworkActivities;
-		QList<double> mNetworkOutputs;
-		QList<Neuron*> mCurrentNeurons;
-		QHash<DoubleValue*, double> mNetworkConfigurationValues;
-		
-		//****Till****//
-		MatrixValue *mData;
-		StringValue *mOutputPath;
-		StringValue *mXAxisDescription;
-		StringValue *mYAxisDescription;
-		
-		Event *mStartEvent;
-		Event *mFinishEvent;
-		//***/Till****//
-
-	};
-
+	IntValue *mStepsToRun;
+	IntValue *mStepsToCheck;
+	
+	BoolValue *mResetNetworkActivation;
+	BoolValue *mRestoreNetworkConfiguration;
+};
 }
 
-#endif
-
-
-
-
+#endif // BASINPLOTTER_H

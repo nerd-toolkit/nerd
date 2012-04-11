@@ -80,6 +80,8 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 
 	mActiveValue = new BoolValue(false);
 	mExecutionTime = new IntValue(0);
+	mProgressPercentage = new DoubleValue(0);
+
 	//****Till****//
 	mData = new MatrixValue(); //data matrix
 	mOutputPath = new StringValue(); //string giving the path to the output file, if an external plotting program is used
@@ -94,6 +96,7 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	
 	addParameter("Config/Activate", mActiveValue, true);
 	addParameter("Performance/ExecutionTime", mExecutionTime, true);
+	addParameter("Performance/ProgressPercentage", mProgressPercentage, true);
 	
 	//****Till****c//
 	addParameter("Internal/Data", mData, true);
