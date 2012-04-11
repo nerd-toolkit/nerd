@@ -105,7 +105,6 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation,
 true);
-	addParameter("Config/RunBackwards", mRunBackwards, true);
 	addParameter("Config/RestoreNetworkConfiguration",
 mRestoreNetworkConfiguration, true);
 }
