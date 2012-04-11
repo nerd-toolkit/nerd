@@ -118,7 +118,6 @@ namespace nerd {
 		BoolValue *mActiveValue;
 		IntValue *mExecutionTime;
 		DoubleValue *mProgressPercentage;
-		QHash<qulonglong, double> mNetworkActivities;
 		QList<double> mNetworkActivities;
 		QList<double> mNetworkOutputs;
 		QList<Neuron*> mCurrentNeurons;
