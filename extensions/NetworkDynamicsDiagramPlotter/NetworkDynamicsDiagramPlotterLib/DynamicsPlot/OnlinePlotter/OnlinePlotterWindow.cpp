@@ -160,7 +160,7 @@ namespace nerd {
 		setWindowTitle("Diagram [" + QString::number(mIndex) + "]");
 		
 		
-		mLabel = new MouseMoveLabel(this);
+		mLabel = new MouseMoveLabel(mIndex, this);
 		mLabel->setFrameStyle(0);
 		mLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 		mTitleLabel = new QLabel( this);

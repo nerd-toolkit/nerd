@@ -45,13 +45,14 @@
  ***************************************************************************/
 
 
-
 #include "MouseMoveLabel.h"
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
 #include <QToolTip>
 #include <vector>
+#include "Math/Math.h"
+#include <cmath>
 
 using namespace std;
 
@@ -61,8 +62,9 @@ namespace nerd {
 /**
  * Constructs a new MouseMoveLabel. This class inherits QLabel and overwrites mouseMoveEvent(). This is used to display the coordinates of mouse. Must have mParent window. 
  */
-	MouseMoveLabel::MouseMoveLabel(QWidget *parent): QLabel(parent)
+MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mMatrix(0)
 	{
+		mIndex = index;
 		setMouseTracking(true);
 		if(parent == 0){
 			Core::log("MouseMoveLabel: Must have have a parent window!", true);
@@ -82,24 +84,43 @@ namespace nerd {
 	
 	
 /**
-	 * Prints coordinates (of cursor respective to label) to cursor position when mouse hovers over the label. 
+	 * Prints coordinates (of cursor respective to label) to cursor position when mouse hovers over the label.
  */
 	void MouseMoveLabel::mouseMoveEvent ( QMouseEvent * event ){
 		QPoint pos = event->pos(); 
 		QPoint absPos = pos + this->pos() + mPar->pos(); //add position of cursor to position of widget to position of mParent window
 
-		if(mMatrix == 0){
+		if(mMatrix == 0 || mMatrix->getMatrixDepth() <= mIndex) {
 			QToolTip::showText(absPos, QString("[" + QString::number(pos.x()) + ", " + QString::number(pos.y()) + "]"), this);
-		}else{
-			int matrixWidth = mMatrix->getMatrixWidth() - 1; //matrix width without axes descriptions
-			int matrixHeight = mMatrix->getMatrixHeight() - 1;
+			
+		} else {
+			// get some values
+			int matrixWidth = mMatrix->getMatrixWidth(); //matrix width without axes descriptions
+			int matrixHeight = mMatrix->getMatrixHeight();
 			int labelWidth = width();
 			int labelHeight = height();
-			double xFactor = static_cast<double>(labelWidth) / static_cast<double>(matrixWidth);
-			double yFactor = static_cast<double>(labelHeight) / static_cast<double>(matrixHeight);
-			double xValue = mMatrix->get(static_cast<int>((pos.x() + 1) / xFactor + 0.5), 0, 0);
-			double yValue = mMatrix->get(0, matrixHeight - static_cast<int>((pos.y()) / yFactor + 0.5 - 1), 0);
-			QToolTip::showText(absPos, QString("(" + QString::number(xValue) + ", " + QString::number(yValue) + ") -> " + QString::number(mMatrix->get(static_cast<int>((pos.x() + 1) / xFactor + 0.5), mMatrix->getMatrixHeight() - static_cast<int>((pos.y())/yFactor + 0.5) + 1, 0))), this);
+			
+			// calculate size of buckets
+			double xFactor = static_cast<double>(labelWidth) / (static_cast<double>(matrixWidth) - 1);
+			double yFactor = static_cast<double>(labelHeight) / (static_cast<double>(matrixHeight) - 1);
+			
+			// DO NOT CHANGE THIS! If you do, plots will be borken (probably)
+			double x = ceil((pos.x() + 1) / xFactor);
+			double y = matrixHeight - ceil((pos.y() + 1) / yFactor);
+			
+			// get values from matrix
+			double xValue = mMatrix->get(x, 0, mIndex);
+			double yValue = mMatrix->get(0, y, mIndex);
+			
+			// show ToolTip
+			QToolTip::showText(absPos, 
+				QString("[" + QString::number(xValue)
+							+ " (" + QString::number(x) + ") , "
+							+ QString::number(yValue) 
+							+ " (" + QString::number(y) + ")"
+							+ "] -> "
+							+ QString::number(mMatrix->get(x, y, mIndex))),
+				this);
 		}
 	}
 	

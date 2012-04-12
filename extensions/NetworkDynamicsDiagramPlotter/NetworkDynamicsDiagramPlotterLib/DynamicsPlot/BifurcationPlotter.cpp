@@ -226,6 +226,9 @@ void BifurcationPlotter::calculateData() {
 	// two runs if backward calculation is on
 	for(int phase = 0; phase <= runSecondIteration; ++phase) {
 		
+		restoreCurrentNetworkActivites();
+		restoreNetworkConfiguration();
+		
 		for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
 			
 			mProgressPercentage->set((double)(100*x/resolutionX));;
@@ -299,9 +302,9 @@ void BifurcationPlotter::calculateData() {
 							mData->set(2, posX, resolutionY, i);
 						}
 						else {
-							int y = Math::round(act/oStepSize - oStart/oStepSize);
+							int y = ceil(act/oStepSize - oStart/oStepSize);
 							
-							mData->set(1, posX, y + 1, i);
+							mData->set(1, posX, y, i);
 						}
 					}
 				}

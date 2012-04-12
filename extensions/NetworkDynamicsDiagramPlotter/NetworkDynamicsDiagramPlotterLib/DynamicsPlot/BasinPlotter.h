@@ -66,6 +66,7 @@ private:
 	IntValue *mVariedResolutionY;
 	
 	DoubleValue *mAccuracy;
+	IntValue *mRoundDigits;
 
 	IntValue *mStepsToRun;
 	IntValue *mStepsToCheck;

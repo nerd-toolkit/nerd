@@ -65,7 +65,7 @@ namespace nerd {
 	 */
 	class MouseMoveLabel : public QLabel{
 		public:
-			MouseMoveLabel(QWidget *parent = 0);
+			MouseMoveLabel(int index, QWidget *parent = 0);
 			virtual ~MouseMoveLabel();
 			void setMatrix(MatrixValue *matrix);
 		protected:
@@ -73,6 +73,7 @@ namespace nerd {
 		private:
 			QWidget *mPar;
 			MatrixValue *mMatrix;
+			int mIndex;
 	};
 
 }

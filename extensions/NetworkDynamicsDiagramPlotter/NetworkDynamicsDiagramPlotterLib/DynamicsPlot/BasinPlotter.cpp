@@ -61,24 +61,27 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	mVariedY = new StringValue("0");
 	mVariedY->setDescription("Network element to vary on Y axis of plot");
 	
-	mVariedRangeX = new StringValue("0,1");
+	mVariedRangeX = new StringValue("-1,1");
 	mVariedRangeX->setDescription("Min and Max for X axis parameter change");
-	mVariedRangeY = new StringValue("0,1");
+	mVariedRangeY = new StringValue("-1,1");
 	mVariedRangeY->setDescription("Min and Max for Y axis parameter change");
 	
-	mVariedResolutionX = new IntValue(600);
+	mVariedResolutionX = new IntValue(200);
 	mVariedResolutionX->setDescription("How many data points to generate for "
 										"X axis parameter");
-	mVariedResolutionY = new IntValue(600);
+	mVariedResolutionY = new IntValue(200);
 	mVariedResolutionY->setDescription("How many data points to generate for "
 										"Y axis parameter");
 	
 	mAccuracy = new DoubleValue(0.001);
 	mAccuracy->setDescription("Accuracy for network state comparison");
+	mRoundDigits = new IntValue(-1);
+	mRoundDigits->setDescription("Defines how many digits are preserved, "
+								"when rounding values, -1 preserves all");
 
-	mStepsToRun = new IntValue(1000);
+	mStepsToRun = new IntValue(300);
 	mStepsToRun->setDescription("Number of simulation steps that are computed");
-	mStepsToCheck = new IntValue(20);
+	mStepsToCheck = new IntValue(100);
 	mStepsToCheck->setDescription("Maximum period to check for attractors");
 	
 	mResetNetworkActivation = new BoolValue(true);
@@ -99,6 +102,7 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	addParameter("Config/VariedResolutionY", mVariedResolutionY, true);
 	
 	addParameter("Config/Accuracy", mAccuracy, true);
+	addParameter("Config/RoundDigits", mRoundDigits, true);
 	
 	addParameter("Config/StepsToRun", mStepsToRun, true);
 	addParameter("Config/StepsToCheck", mStepsToCheck, true);
@@ -183,14 +187,19 @@ void BasinPlotter::calculateData() {
 	double xStart = variedRangeX.first();
 	double xEnd = variedRangeX.last();
 	double xStepSize = (xEnd - xStart) / (double) (resolutionX - 1);
+	int roundDigits = mRoundDigits->get();
 	
 	double xVal;
 	QList<double> xValues;
 	for(int x = 1; x <= resolutionX; ++x) {
 		xVal = xStart+(x-1)*xStepSize;
-		xValues.append(xVal);
 		mData->set(Math::round(xVal,5), x, 0, 0);
 		mData->set(Math::round(xVal,5), x, 0, 1);
+		
+		if(roundDigits >= 0) {
+			xVal = Math::round(xVal, roundDigits);
+		}
+		xValues.append(xVal);
 	}
 	
 	double yStart = variedRangeY.first();
@@ -201,9 +210,13 @@ void BasinPlotter::calculateData() {
 	QList<double> yValues;
 	for(int y = 1; y <= resolutionY; ++y) {
 		yVal = yStart+(y-1)*yStepSize;
-		yValues.append(yVal);
 		mData->set(Math::round(yVal,5), 0, y, 0);
 		mData->set(Math::round(yVal,5), 0, y, 1);
+		
+		if(roundDigits >= 0) {
+			yVal = Math::round(yVal, roundDigits);
+		}
+		yValues.append(yVal);
 	}
 
 	// MAIN LOOP over x parameter points
@@ -285,7 +298,7 @@ void BasinPlotter::calculateData() {
 				}
 				
 				// write matrix
-				mData->set(++attrNo, x, y, 0);
+				mData->set(attrNo, x, y, 0);
 				mData->set(currPeriod, x, y, 1);
 				
 				if(!attrMatch) {
