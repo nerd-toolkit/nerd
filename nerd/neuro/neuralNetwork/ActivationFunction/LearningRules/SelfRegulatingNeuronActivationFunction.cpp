@@ -65,7 +65,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 																			   bool showModes)
 	: ActivationFunction(name), mOwner(0), mTransmitterResult(0), mReceptorResult(0),
 		mActivationT2(0), mAdjustWeights(true), mRestrictToLinks(false), 
-		mUseDecayTerm(false), mUseCurrentActivations(false), mEpsilon(0.0)
+		mUseCurrentActivations(false), mEpsilon(0.0)
 {
 	mXi = new DoubleValue(1);
 	mEta = new DoubleValue(1);
@@ -76,11 +76,10 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mDelta = new DoubleValue(0.02);
 	mAStar = new DoubleValue(0.658479);
 	
-	mOptions = new StringValue("w");
+	mOptions = new StringValue("w,t+1");
 	mOptions->setDescription("Selection of SRN options Syntax: [o1,o2,o3].\n"
 							 "w : adapt weights\n"
 							 "rl : restrict weight adaptions to synapses with SimpleLink synapse function\n"
-							 "dt : use decay term in equation\n"
 							 "t+1 : use the new activation of t+1\n"
 							 "e : add an epsilon of 0.0001");
 	
@@ -139,7 +138,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 						const SelfRegulatingNeuronActivationFunction &other) 
 	: ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0),
 		mAdjustWeights(other.mAdjustWeights), mRestrictToLinks(other.mRestrictToLinks), 
-		mUseDecayTerm(other.mUseDecayTerm), mUseCurrentActivations(other.mUseCurrentActivations),
+		mUseCurrentActivations(other.mUseCurrentActivations),
 		mEpsilon(other.mEpsilon)
 {
 	mXi = dynamic_cast<DoubleValue*>(getParameter("Xi (Rec)"));
@@ -180,7 +179,6 @@ void SelfRegulatingNeuronActivationFunction::valueChanged(Value *value) {
 		QStringList options = mOptions->get().split(",");
 		mAdjustWeights = options.contains("w");
 		mRestrictToLinks = options.contains("rl");
-		mUseDecayTerm = options.contains("dt");
 		mUseCurrentActivations = options.contains("t+1");
 		mEpsilon = options.contains("e") ? 0.0001 : 0.0;
 	}

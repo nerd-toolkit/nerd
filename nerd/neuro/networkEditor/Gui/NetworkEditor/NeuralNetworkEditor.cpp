@@ -89,6 +89,7 @@
 #include "Gui/NetworkEditor/LoadRecentNetworkAction.h"
 #include "NetworkEditorConstants.h"
 #include "Value/ColorValue.h"
+#include <PlugIns/CommandLineArgument.h>
 
 using namespace std;
 
@@ -1692,55 +1693,137 @@ void NeuralNetworkEditor::setupTools() {
 	setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+	
+	//allow position selection via command line argument.
+	CommandLineArgument *moveNeuronDetailWidgetToTheLeft 
+			= new CommandLineArgument("editorWidgetPositions", "ewp", "<widget1Pos1>,<widget2Pos2>...",
+									  "Starts the editor with custom default locations for the tool "
+									  "widgets.\n     Positions: lrtb (left, right, top, bottom)"
+									  "\n    Widgets: gncsmtpa (group, neuron, constraints, synapses, "
+									  "\n    modules, neTwork, properties, message Area"
+									  "\n    Example: nt,pb,ab,sr", 1, 0, true, false);
+	
+	QHash<QString, Qt::DockWidgetArea> availablePositions;
+	QHash<QString, Qt::DockWidgetArea> widgetPositions;
+	
+	availablePositions.insert("t", Qt::TopDockWidgetArea);
+	availablePositions.insert("b", Qt::BottomDockWidgetArea);
+	availablePositions.insert("l", Qt::LeftDockWidgetArea);
+	availablePositions.insert("r", Qt::RightDockWidgetArea);
+	
+	widgetPositions.insert("g", Qt::RightDockWidgetArea);
+	widgetPositions.insert("n", Qt::RightDockWidgetArea);
+	widgetPositions.insert("c", Qt::RightDockWidgetArea);
+	widgetPositions.insert("s", Qt::RightDockWidgetArea);
+	widgetPositions.insert("m", Qt::RightDockWidgetArea);
+	widgetPositions.insert("t", Qt::RightDockWidgetArea);
+	widgetPositions.insert("p", Qt::RightDockWidgetArea);
+	widgetPositions.insert("a", Qt::BottomDockWidgetArea);
+	
+	if(!moveNeuronDetailWidgetToTheLeft->getEntries().empty()) {
+		QString entry = moveNeuronDetailWidgetToTheLeft->getEntries().at(0);
+		QStringList posInfo = entry.split(",");
+
+		bool ok = true;
+		
+		for(int i = 0; i < posInfo.size(); ++i) {
+			QString pos = posInfo.at(i);
+			
+			if(pos.length() != 2) {
+				ok = false;
+			}
+			else {
+				if(!availablePositions.keys().contains(pos.mid(1, 1))
+					|| !widgetPositions.keys().contains(pos.mid(0, 1)))
+				{
+					ok = false;
+				}
+				else {
+					widgetPositions.insert(pos.mid(0, 1), availablePositions.value(pos.mid(1, 1)));
+				}
+			}
+		}
+		if(!ok) {
+			Core::log("Warning: Position entry [" + entry + "] for command line parameter -ewp "
+						"is not in the correct format!", true);
+		}
+	}
 
 	QDockWidget *groupDock = new QDockWidget("Groups", this);
 	groupDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	groupDock->setWidget(new GroupSelectionWidget(this));
-	addDockWidget(Qt::RightDockWidgetArea, groupDock);
+	//addDockWidget(Qt::RightDockWidgetArea, groupDock);
+	addDockWidget(widgetPositions.value("g"), groupDock);
 	mEditorToolWidgets.append(groupDock);
-
+	
 	QDockWidget *neuronDock = new QDockWidget("Neuron", this);
 	neuronDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	neuronDock->setWidget(new NeuronDetailWidget(this));
-	addDockWidget(Qt::RightDockWidgetArea, neuronDock);
+	addDockWidget(widgetPositions.value("n"), neuronDock);
 	mEditorToolWidgets.append(neuronDock);
 
 	QDockWidget *constraintDock = new QDockWidget("Constraints", this);
 	constraintDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	constraintDock->setWidget(new ConstraintDetailWidget(this));
-	addDockWidget(Qt::RightDockWidgetArea, constraintDock);
+	addDockWidget(widgetPositions.value("c"), constraintDock);
 	mEditorToolWidgets.append(constraintDock);
 
 	QDockWidget *synapseDock = new QDockWidget("Synapse", this);
 	synapseDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	synapseDock->setWidget(new SynapseDetailWidget(this));
-	addDockWidget(Qt::RightDockWidgetArea, synapseDock);
+	addDockWidget(widgetPositions.value("s"), synapseDock);
 	mEditorToolWidgets.append(synapseDock);
 
 	QDockWidget *moduleDock = new QDockWidget("Neuro-Modules", this);
 	moduleDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	moduleDock->setWidget(new ModuleManagementWidget(this));
-	addDockWidget(Qt::RightDockWidgetArea, moduleDock);
+	addDockWidget(widgetPositions.value("m"), moduleDock);
 	mEditorToolWidgets.append(moduleDock);
 
 	QDockWidget *networkDock = new QDockWidget("Network", this);
 	networkDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	networkDock->setWidget(new NetworkDetailWidget(this));
-	addDockWidget(Qt::RightDockWidgetArea, networkDock);
+	addDockWidget(widgetPositions.value("t"), networkDock);
 	mEditorToolWidgets.append(networkDock);
 
 	QDockWidget *propertiesDock = new QDockWidget("Properties", this);
 	propertiesDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	propertiesDock->setWidget(new PropertyDialog(this));
-	addDockWidget(Qt::RightDockWidgetArea, propertiesDock);
+	addDockWidget(widgetPositions.value("p"), propertiesDock);
 	mEditorToolWidgets.append(propertiesDock);
 
 
-	tabifyDockWidget(groupDock, moduleDock);
-	tabifyDockWidget(moduleDock, synapseDock);
-	tabifyDockWidget(propertiesDock, networkDock);
-	tabifyDockWidget(networkDock, constraintDock);
-	tabifyDockWidget(constraintDock, neuronDock);
+	if(widgetPositions.value("g") == widgetPositions.value("m")) {
+		tabifyDockWidget(groupDock, moduleDock);
+	}
+	if(widgetPositions.value("m") == widgetPositions.value("s")) {
+		tabifyDockWidget(moduleDock, synapseDock);
+	}
+	else if(widgetPositions.value("g") == widgetPositions.value("s")) {
+		tabifyDockWidget(groupDock, synapseDock);
+	}
+	
+	if(widgetPositions.value("p") == widgetPositions.value("t")) {
+		tabifyDockWidget(propertiesDock, networkDock);
+	}
+	if(widgetPositions.value("t") == widgetPositions.value("c")) {
+		tabifyDockWidget(networkDock, constraintDock);
+	}
+	else if(widgetPositions.value("p") == widgetPositions.value("c")) {
+		tabifyDockWidget(propertiesDock, constraintDock);
+	}
+	if(widgetPositions.value("c") == widgetPositions.value("n")) {
+		tabifyDockWidget(constraintDock, neuronDock);
+	}
+	else if(widgetPositions.value("t") == widgetPositions.value("n")) {
+		tabifyDockWidget(networkDock, neuronDock);
+	}
+	else if(widgetPositions.value("p") == widgetPositions.value("n")) {
+		tabifyDockWidget(propertiesDock, neuronDock);
+	}
+	else if(widgetPositions.value("n") == widgetPositions.value("s")) {
+		tabifyDockWidget(synapseDock, neuronDock);
+	}
 
 	
 // 	tabifyDockWidget(propertiesDock, synapseDock);
@@ -1749,7 +1832,7 @@ void NeuralNetworkEditor::setupTools() {
 	QDockWidget *messageDock = new QDockWidget("Messages", this);
 	messageDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	messageDock->setWidget(mMessageWidget);
-	addDockWidget(Qt::BottomDockWidgetArea, messageDock);
+	addDockWidget(widgetPositions.value("a"), messageDock);
 	messageDock->resize(100, 100);
 	mMessageWidget->resize(100, 100);
 	mEditorToolWidgets.append(messageDock);

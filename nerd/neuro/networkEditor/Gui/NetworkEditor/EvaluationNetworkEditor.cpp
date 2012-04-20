@@ -383,9 +383,9 @@ QMenu* EvaluationNetworkEditor::addFileMenu() {
 
 	QMenu *exportMenu = mFileMenu->addMenu("Export as");
 
-// 	QAction *exportByteCodeAction = exportMenu->addAction("A-Series Bytecode");
-// 	connect(exportByteCodeAction, SIGNAL(triggered()),
-// 					this, SLOT(exportByteCode()));
+	QAction *exportByteCodeAction = exportMenu->addAction("A-Series Bytecode");
+	connect(exportByteCodeAction, SIGNAL(triggered()),
+					this, SLOT(exportByteCode()));
 	
 	QAction *exportASeriesBDNAction = exportMenu->addAction("A-Series BDN");
 	connect(exportASeriesBDNAction, SIGNAL(triggered()),

@@ -200,7 +200,8 @@ NeuronDetailWidget::NeuronDetailWidget(NeuralNetworkEditor *owner)
 	connect(this, SIGNAL(setOutputText(const QString&)),
 			mOutputField, SLOT(setText(const QString&)));
 
-	resize(100, 100);
+	resize(100, 200);
+	setMinimumWidth(250);
 }
 
 

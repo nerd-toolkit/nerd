@@ -136,8 +136,6 @@ NetworkDetailWidget::NetworkDetailWidget(NeuralNetworkEditor *owner)
 			this, SLOT(defaultActivationFunctionSelectionChanged()));
 	connect(mSynapseFunctionSelector, SIGNAL(currentIndexChanged(int)),
 			this, SLOT(defaultSynapseFunctionSelectionChanged()));
-
-
 }
 
 /**

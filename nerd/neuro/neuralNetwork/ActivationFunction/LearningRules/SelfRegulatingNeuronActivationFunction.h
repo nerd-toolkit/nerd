@@ -112,7 +112,6 @@ namespace nerd {
 		double mActivationT2;
 		bool mAdjustWeights;
 		bool mRestrictToLinks;
-		bool mUseDecayTerm;
 		bool mUseCurrentActivations;
 		double mEpsilon;
 		
