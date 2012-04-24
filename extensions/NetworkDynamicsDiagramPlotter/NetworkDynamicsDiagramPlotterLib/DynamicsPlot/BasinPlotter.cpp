@@ -180,7 +180,7 @@ void BasinPlotter::calculateData() {
 	
 	// PREPARE data matrix
 	mData->clear();
-	mData->resize(resolutionX + 1, resolutionY + 1, 2);
+	mData->resize(resolutionX + 1, resolutionY + 1, 3);
 	mData->fill(0);
 	
 	// calculate values and draw axes
@@ -195,6 +195,7 @@ void BasinPlotter::calculateData() {
 		xVal = xStart+(x-1)*xStepSize;
 		mData->set(Math::round(xVal,5), x, 0, 0);
 		mData->set(Math::round(xVal,5), x, 0, 1);
+		mData->set(Math::round(xVal,5), x, 0, 2);
 		
 		if(roundDigits >= 0) {
 			xVal = Math::round(xVal, roundDigits);
@@ -212,6 +213,7 @@ void BasinPlotter::calculateData() {
 		yVal = yStart+(y-1)*yStepSize;
 		mData->set(Math::round(yVal,5), 0, y, 0);
 		mData->set(Math::round(yVal,5), 0, y, 1);
+		mData->set(Math::round(yVal,5), 0, y, 2);
 		
 		if(roundDigits >= 0) {
 			yVal = Math::round(yVal, roundDigits);
@@ -297,9 +299,17 @@ void BasinPlotter::calculateData() {
 					attrNo++;
 				}
 				
+				// calculate attractor position in activation space
+				double currValX = variedValX->get();
+				double currValY = variedValY->get();
+				
+				int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
+				int attrPosY = ceil((currValY - yStart) / yStepSize + 1);
+				
 				// write matrix
 				mData->set(attrNo, x, y, 0);
 				mData->set(currPeriod, x, y, 1);
+				mData->set(1, attrPosX, attrPosY, 2); // TODO does it work?
 				
 				if(!attrMatch) {
 					attractors.append(states.last());

@@ -100,11 +100,17 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 			int labelWidth = width();
 			int labelHeight = height();
 			
+			if(matrixWidth < 2 || matrixHeight < 2) {
+				Core::log("MouseMoveLabel: Division by zero detected and prevented. Thank me later!", true);
+				return;
+			}
+			
 			// calculate size of buckets
-			double xFactor = static_cast<double>(labelWidth) / (static_cast<double>(matrixWidth) - 1);
-			double yFactor = static_cast<double>(labelHeight) / (static_cast<double>(matrixHeight) - 1);
+			double xFactor = static_cast<double>(labelWidth) / (static_cast<double>(matrixWidth - 1));
+			double yFactor = static_cast<double>(labelHeight) / (static_cast<double>(matrixHeight - 1));
 			
 			// DO NOT CHANGE THIS! If you do, plots will be borken (probably)
+			// TODO why seem the two basin plots different from each other
 			double x = ceil((pos.x() + 1) / xFactor);
 			double y = matrixHeight - ceil((pos.y() + 1) / yFactor);
 			

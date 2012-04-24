@@ -73,9 +73,9 @@ DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<
 		if(stringList.size() == 1 || stringList.at(1) == "o") {
 			return &(neuron->getOutputActivationValue());
 		}
-		//if(stringList.at(1) == "a") {
-		//	return &(neuron->getActivationValue());
-		//}
+		if(stringList.at(1) == "a") {
+			return &(neuron->getActivationValue());
+		}
 		if(stringList.at(1) == "b") {
 			return &(neuron->getBiasValue());
 		}
