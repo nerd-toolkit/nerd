@@ -276,6 +276,7 @@ void BifurcationPlotter::calculateData() {
 						int oSize = observedValues.size();
 						if(oSize == 0) {
 							//maybe report problem TODO
+							Core::log("BifurcationPlotter: Observed Values Size was 0!", true);
 							continue;
 						}
 						

@@ -98,7 +98,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mTransmitterMode->setDescription("Switches h():\n"
 						"0: h = 1 + tf(a)\n"
 						"1: h = 1 + 0.5 * (tf(a(t)) - tf(a(t-1)))\n"
-						"2: h = 1 + tf(a(t) - theta)");
+						"2: h = 1 + tf(a(t) - theta)\n"
+						"3: h = |tf(a(t))|");
 	
 	mBiasMode = new IntValue(0);
 	mBiasMode->setDescription("Switches the bias update function:\n"
@@ -320,6 +321,12 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 		TransferFunction *tf = mOwner->getTransferFunction();
 		return 1 + (tf->transferActivation(activation, mOwner)
 					- mOwner->getBiasValue().get()); 
+	}
+	else if(mTransmitterMode->get() == 3) {
+		//h(a) = |tf(a(t))|
+		TransferFunction *tf = mOwner->getTransferFunction();
+		//cerr << "Got: " << (Math::abs(tf->transferActivation(activation, mOwner)))  << " with " << activation << endl;
+		return Math::abs(tf->transferActivation(activation, mOwner)); 
 	}
 	
 	return 0.0;
