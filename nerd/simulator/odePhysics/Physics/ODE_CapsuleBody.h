@@ -49,7 +49,6 @@
 #include <QString>
 #include <QHash>
 #include "Physics/CapsuleBody.h"
-#include <ode/ode.h>
 #include "Physics/ODE_Body.h"
 
 namespace nerd {

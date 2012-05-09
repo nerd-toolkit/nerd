@@ -45,6 +45,7 @@
 #ifndef NERDODE_SimulationAlgorithm_H
 #define NERDODE_SimulationAlgorithm_H
 
+#include "OdeConstants.h"
 #include <ode/ode.h>
 
 #include "Physics/PhysicalSimulationAlgorithm.h"

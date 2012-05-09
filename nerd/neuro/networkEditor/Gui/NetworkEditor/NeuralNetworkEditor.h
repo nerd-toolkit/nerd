@@ -63,6 +63,7 @@
 #include "Value/StringValue.h"
 #include "Event/EventListener.h"
 #include "Event/Event.h"
+#include <qvarlengtharray.h>
 
 
 namespace nerd {
@@ -114,6 +115,9 @@ namespace nerd {
 		QMenu* getViewModeMenu() const;
 		
 		virtual void clearAllSelections();
+		
+		virtual void storeWidgetGeometries();
+		virtual void restoreWidgetGeometries();
 
 	signals:
 		void tabSelectionChanged(int index);
@@ -149,6 +153,7 @@ namespace nerd {
 		void hiddenLayerStateChanged();
 		void selectAllItems();
 		void selectAllVisibleItems();
+		
 
 	protected:
 		virtual void setupMenuBar();

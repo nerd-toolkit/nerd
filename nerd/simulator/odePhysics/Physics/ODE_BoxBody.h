@@ -47,7 +47,6 @@
 
 #include "ODE_Body.h"
 #include "Physics/BoxBody.h"
-#include <ode/ode.h>
 
 namespace nerd {
 

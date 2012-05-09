@@ -49,6 +49,7 @@
 #include <QHash>
 #include <QWidget>
 #include "Core/SystemObject.h"
+#include <qsettings.h>
 
 namespace nerd {
 
@@ -75,10 +76,13 @@ namespace nerd {
 		virtual bool removeWidget(QWidget *widget);
 		virtual bool removeWidget(const QString &name);
 		virtual QWidget* getWidget(const QString &name) const;
+		
+		QSettings* getWidgetSettings() const;
 
 	private:
 		static GuiManager *mGlobalGuiManager;
 		QHash<QString, QWidget*> mWidgets;
+		QSettings *mWidgetSettings;
 	};
 
 }

@@ -30,6 +30,7 @@ set(nerd_odePhysics_SRCS
 	Physics/ODE_ForceHandle.cpp  
 	MotorModels/ODE_LinearSpringModel.cpp
 	MotorModels/ODE_PID_PassiveActuatorModel.cpp
+    OdeConstants.cpp
 )
 
 set(nerd_odePhysics_MOC_HDRS
@@ -54,7 +55,8 @@ QT4_WRAP_CPP(nerd_odePhysics_MOC_SRCS ${nerd_odePhysics_MOC_HDRS})
 QT4_ADD_RESOURCES(nerd_odePhysics_RC_SRCS ${nerd_odePhysics_RCS})
 QT4_WRAP_UI(nerd_odePhysics_UI_HDRS ${nerd_odePhysics_UIS})
 
-set(ODE_INCLUDE_PATH ../../../ode-0.9/include)
+set(ODE_INCLUDE_PATH ../../../ode-0.12/include)
+#set(ODE_INCLUDE_PATH ../../../ode-0.9/include)
 #set(ODE_LIBRARY_PATH ../../../ode-0.9/lib/libode.a)
 
 #Create library.

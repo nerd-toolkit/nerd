@@ -90,6 +90,7 @@
 #include "NetworkEditorConstants.h"
 #include "Value/ColorValue.h"
 #include <PlugIns/CommandLineArgument.h>
+#include <Gui/GuiManager.h>
 
 using namespace std;
 
@@ -158,6 +159,8 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 
 	renameCurrentNetwork("");
 
+	//restore the last window settings of this editor.
+	restoreWidgetGeometries();
 }
 
 
@@ -313,6 +316,7 @@ void NeuralNetworkEditor::eventOccured(Event *event) {
 	}
 	if(event == mShutDownEvent) {
 		saveRecentNetworkFileNames();
+		storeWidgetGeometries();
 	}
 	else if(event == mClearSelectionsEvent) {
 		clearAllSelections();
@@ -413,6 +417,30 @@ void NeuralNetworkEditor::clearAllSelections() {
 		}
 	}
 }
+
+
+void NeuralNetworkEditor::storeWidgetGeometries() {
+// 	QSettings *settings = GuiManager::getGlobalGuiManager()->getWidgetSettings();
+// 	if(settings != 0) {
+// 		settings->setValue("network-editor/geometry", saveGeometry());
+// 		settings->setValue("network-editor/pos", pos());
+// 		settings->setValue("network-editor/size", size());
+// 	}
+}
+
+
+void NeuralNetworkEditor::restoreWidgetGeometries() {
+// 	QSettings *settings = GuiManager::getGlobalGuiManager()->getWidgetSettings();
+// 	if(settings != 0) {
+// 		restoreGeometry(settings->value("network-editor/geometry").toByteArray());
+// 		QPoint pos = settings->value("network-editor/pos", QPoint(10, 10)).toPoint();
+// 		QSize size = settings->value("network-editor/size", QSize(400, 400)).toSize();
+// 		
+// 		move(pos);
+// 		resize(size);
+// 	}
+}
+
 
 void NeuralNetworkEditor::undoCommand() {
 	NetworkVisualization *visu = getCurrentNetworkVisualization();
@@ -1850,6 +1878,7 @@ void NeuralNetworkEditor::updateUndoRedoActions() {
 		mRedoAction->setWrappedAction(visu->getCommandExecutor()->getRedoAction());
 	}
 }
+
 
 
 void NeuralNetworkEditor::keyPressEvent(QKeyEvent *event) {

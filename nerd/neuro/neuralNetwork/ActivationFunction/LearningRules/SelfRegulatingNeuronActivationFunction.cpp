@@ -76,7 +76,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mDelta = new DoubleValue(0.02);
 	mAStar = new DoubleValue(0.658479);
 	
-	mOptions = new StringValue("w,t+1");
+	mOptions = new StringValue("w");
 	mOptions->setDescription("Selection of SRN options Syntax: [o1,o2,o3].\n"
 							 "w : adapt weights\n"
 							 "rl : restrict weight adaptions to synapses with SimpleLink synapse function\n"
@@ -426,7 +426,15 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 			double sign = Math::sign(weight); //zero is treated as positive value.
 			
 			if(mAdjustWeights) {
-				synapse->getStrengthValue().set(sign * eta * mXi->get());
+				double newWeight = sign * eta * mXi->get();
+				
+				
+				//make sure that numerical inaccuracies near zero do not change the sign.
+				if(Math::sign(newWeight) != sign) {
+					newWeight *= -1.0;
+				}
+				
+				synapse->getStrengthValue().set(newWeight);
 			}
 			act = sign * eta * sourceNeuron->getOutputActivationValue().get();
 		}

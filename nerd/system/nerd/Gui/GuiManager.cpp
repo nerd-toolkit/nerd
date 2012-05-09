@@ -48,7 +48,7 @@
 #include <QList>
 #include "Core/Core.h"
 #include "NerdConstants.h"
-
+#include <QCoreApplication>
 
 using namespace std;
 
@@ -61,7 +61,11 @@ GuiManager *GuiManager::mGlobalGuiManager = 0;
  * Constructs a new GuiManager.
  */
 GuiManager::GuiManager()
+	: mWidgetSettings(0)
 {
+	if(!Core::getInstance()->isUsingReducedFileWriting()) {
+		mWidgetSettings = new QSettings("NERD-Toolkit", QCoreApplication::instance()->applicationName());
+	}
 }
 
 
@@ -148,6 +152,16 @@ bool GuiManager::removeWidget(const QString &name) {
 
 QWidget* GuiManager::getWidget(const QString &name) const {
 	return mWidgets.value(name);
+}
+
+
+/**
+ * Returns the globale QSettings object of this application.
+ * If no GUI is used or if file access should be minimized (--disableLogging),
+ * then this method returns 0.
+ */
+QSettings* GuiManager::getWidgetSettings() const {
+	return mWidgetSettings;
 }
 
 

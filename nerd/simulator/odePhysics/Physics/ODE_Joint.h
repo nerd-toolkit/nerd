@@ -45,6 +45,7 @@
 #ifndef NERDODE_Joint_H
 #define NERDODE_Joint_H
 
+#include "OdeConstants.h"
 #include <ode/ode.h>
 #include "Value/DoubleValue.h"
 

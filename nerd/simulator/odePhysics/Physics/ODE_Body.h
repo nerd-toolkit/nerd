@@ -44,6 +44,7 @@
 #ifndef NERDODE_Body_H
 #define NERDODE_Body_H
 
+#include "OdeConstants.h"
 #include <ode/ode.h>
 #include <QList>
 #include <QHash>

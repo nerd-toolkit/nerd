@@ -46,6 +46,7 @@
 
 #include "Collision/CollisionHandler.h"
 #include "Value/DoubleValue.h"
+#include "OdeConstants.h"
 #include <ode/ode.h>
 #include <QHash>
 

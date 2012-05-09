@@ -48,6 +48,7 @@
 
 #include <QString>
 #include <QHash>
+#include "ODE_Body.h"
 #include "Value/StringValue.h"
 #include "Value/InterfaceValue.h"
 #include "Value/DoubleValue.h"
@@ -57,7 +58,7 @@
 #include "Physics/SimBody.h"
 #include "Physics/SimGeom.h"
 #include "Collision/CollisionObject.h"
-#include "ODE_Body.h"
+
 
 
 namespace nerd {
