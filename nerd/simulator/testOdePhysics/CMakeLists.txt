@@ -44,8 +44,10 @@ QT4_WRAP_UI(nerd_testOdePhysics_UI_HDRS ${nerd_testOdePhysics_UIS})
 
 
 
-set(ODE_INCLUDE_PATH ../../../ode-0.9/include)
-set(ODE_LIBRARY_PATH ../../../ode-0.9/ode/src/libode.a)
+set(ODE_INCLUDE_PATH ../../../ode-0.12/include)
+set(ODE_LIBRARY_PATH ../../../ode-0.12/ode/src/.libs/libode.a)
+#set(ODE_INCLUDE_PATH ../../../ode-0.9/include)
+#set(ODE_LIBRARY_PATH ../../../ode-0.9/ode/src/libode.a)
 
 #Create library.
 add_executable(testOdePhysics ${nerd_testOdePhysics_SRCS} ${nerd_testOdePhysics_MOC_SRCS} ${nerd_testOdePhysics_RC_SRCS} ${nerd_testOdePhysics_UI_HDRS})
