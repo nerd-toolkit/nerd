@@ -89,7 +89,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 // 	mRestrictToLinkSynapses = new BoolValue(false);
 // 	mRestrictToLinkSynapses->setDescription("Restricts weight changes to synapses with the SimpleLinkSynapseFunction.");
 	
-	mReceptorMode = new IntValue(0);
+	mReceptorMode = new IntValue(1);
 	mReceptorMode->setDescription("Switches g():\n"
 						"0: g = |tf(a*)| - |tf(a)|\n"
 						"1: g = tf(a*)^2-tf(a)^2\n"
