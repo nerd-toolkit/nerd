@@ -167,6 +167,7 @@ namespace nerd {
 		}
 		else if(calculator == "Bifurcation" 
 				|| calculator == "BasinOfAttraction"
+				|| calculator == "IsoPeriod"
 				|| calculator == "Transients_Calculator" 
 				|| calculator == "Isoperiod_Calculator"
 			    || calculator == "Dummy")
