@@ -5,6 +5,7 @@ set(nerd_dynamicsPlotLib_SRCS
 	Util/DynamicsPlotterUtil.cpp
 	DynamicsPlot/BifurcationPlotter.cpp
 	DynamicsPlot/BasinPlotter.cpp
+	DynamicsPlot/IsoperiodPlotter.cpp
 	Gui/DynamicsPlotterMainWindow.cpp  
 	Execution/PlotterExecutionLoop.cpp  
 	DynamicsPlot/DynamicsPlotManager.cpp  

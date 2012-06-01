@@ -82,24 +82,24 @@ DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<
 		if(stringList.size() == 3) {
 			QString param = stringList.at(2);
 			if(stringList.at(1) == "tf") {
-				ObservableNetworkElement *tf = 
-						dynamic_cast<ObservableNetworkElement*>(neuron->getTransferFunction());
+				TransferFunction *tf = neuron->getTransferFunction();
 				if(tf != 0) {
-					return dynamic_cast<DoubleValue*>(tf->getObservableOutput(param));
+					DoubleValue *tfo = dynamic_cast<DoubleValue*>(tf->getObservableOutput(param));
+					if(tfo != 0) {
+						return tfo;
+					}
 				}
-				else {
-					return 0;
-				}
+				return dynamic_cast<DoubleValue*>(tf->getParameter(param));
 			}
 			if(stringList.at(1) == "af") {
-				ObservableNetworkElement *af = 
-						dynamic_cast<ObservableNetworkElement*>(neuron->getActivationFunction());
+				ActivationFunction *af = neuron->getActivationFunction();
 				if(af != 0) {
-					return dynamic_cast<DoubleValue*>(af->getObservableOutput(param));
+					DoubleValue *afo = dynamic_cast<DoubleValue*>(af->getObservableOutput(param));
+					if(afo != 0) {
+						return afo;
+					}
 				}
-				else {
-					return 0;
-				}
+				return dynamic_cast<DoubleValue*>(af->getParameter(param));
 			}
 		}
 		return 0;
@@ -111,14 +111,15 @@ DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<
 			return &(synapse->getStrengthValue());
 		}
 		if(stringList.size() == 3 && stringList.at(2) == "sf") {
-			ObservableNetworkElement *sf = 
-					dynamic_cast<ObservableNetworkElement*>(synapse->getSynapseFunction());
+			QString param = stringList.at(2);
+			SynapseFunction *sf = synapse->getSynapseFunction();
 			if(sf != 0) {
-				return dynamic_cast<DoubleValue*>(sf->getObservableOutput(stringList.at(2)));
+				DoubleValue *sfo = dynamic_cast<DoubleValue*>(sf->getObservableOutput(param));
+				if(sfo != 0) {
+					return sfo;
+				}
 			}
-			else {
-				return 0;
-			}
+			return dynamic_cast<DoubleValue*>(sf->getParameter(param));
 		}
 		return 0;
 	}

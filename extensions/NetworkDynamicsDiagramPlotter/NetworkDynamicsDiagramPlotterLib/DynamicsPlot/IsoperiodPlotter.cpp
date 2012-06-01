@@ -53,7 +53,7 @@ using namespace std;
 
 namespace nerd {
 
-IsoperiodPlotter::IsoperiodPlotter() : DynamicsPlotter("IsoPeriod") {
+IsoperiodPlotter::IsoperiodPlotter() : DynamicsPlotter("Isoperiod") {
 	// initialising
 
 	mVariedX = new StringValue("0");

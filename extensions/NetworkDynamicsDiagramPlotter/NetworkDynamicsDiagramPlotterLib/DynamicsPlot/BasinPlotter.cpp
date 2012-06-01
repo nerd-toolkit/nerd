@@ -250,15 +250,16 @@ void BasinPlotter::calculateData() {
 			
 			notifyNetworkParametersChanged(network);
 
-			for(int j=0; j < stepsRun-stepsCheck && mActiveValue->get(); ++j) {
+			for(int j=1; j < stepsRun-stepsCheck && mActiveValue->get(); ++j) {
 				// let the network run for 1 timestep
 				triggerNetworkStep();
 			}
 			
 			QList< QList<double> > states;
+			QList< QPair<double,double> > positions;
 			bool foundMatch = false;
 			int currPeriod = 0;
-			for(int k = 0; k < stepsCheck && !foundMatch && mActiveValue->get();
+			for(int k = 0; k <= stepsCheck && !foundMatch && mActiveValue->get();
 				++k) {
 				triggerNetworkStep();
 				
@@ -282,6 +283,8 @@ void BasinPlotter::calculateData() {
 				
 				// save current state as last one
 				states.append(networkState);
+				positions.append(QPair<double,double>(variedValX->get(), variedValY->get()));
+					
 			}
 			
 			// at this point, either an attractor has been found
@@ -299,17 +302,21 @@ void BasinPlotter::calculateData() {
 					attrNo++;
 				}
 				
-				// calculate attractor position in activation space
-				double currValX = variedValX->get();
-				double currValY = variedValY->get();
-				
-				int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
-				int attrPosY = ceil((currValY - yStart) / yStepSize + 1);
-				
 				// write matrix
 				mData->set(attrNo, x, y, 0);
 				mData->set(currPeriod, x, y, 1);
-				mData->set(1, attrPosX, attrPosY, 2); // TODO does it work?
+
+				// calculate and plot attractor position(s)
+				int posC = positions.size();
+				for(int i = 1; i <= currPeriod; ++i) {
+					double currValX = positions.at(posC-i).first;
+					double currValY = positions.at(posC-i).second;
+				
+					int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
+					int attrPosY = ceil((currValY - yStart) / yStepSize + 1);
+				
+					mData->set(1, attrPosX, attrPosY, 2);
+				}
 				
 				if(!attrMatch) {
 					attractors.append(states.last());
