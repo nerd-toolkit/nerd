@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 2.6)
 set(CMAKE_BUILD_TYPE debug)
 
 add_subdirectory(NetworkDynamicsDiagramPlotterLib)
+add_subdirectory(testNetworkDynamicsDiagramPlotterLib)
 add_subdirectory(NetworkDynamicsDiagramPlotterApplication)
 
 add_dependencies(NetworkDynamicsDiagramPlotterApplication nerd evolution neuralNetwork networkEditor NetworkDynamicsDiagramPlotterLib)
 add_dependencies(NetworkDynamicsDiagramPlotterLib nerd evolution neuralNetwork networkEditor)
+add_dependencies(testNetworkDynamicsDiagramPlotterLib nerd evolution neuralNetwork networkEditor NetworkDynamicsDiagramPlotterLib)

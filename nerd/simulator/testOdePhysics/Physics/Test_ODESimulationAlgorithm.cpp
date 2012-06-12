@@ -74,7 +74,7 @@ void Test_ODESimulationAlgorithm::testResetPhysics() {
 	
 	QCOMPARE(dynamic_cast<DoubleValue*>(sAlgo->getParameter("ODE/ERP"))->get(), (double) dWorldGetERP(sAlgo->getODEWorldID()));
 	QCOMPARE(dynamic_cast<DoubleValue*>(sAlgo->getParameter("ODE/ContactSurfaceLayer"))->get(), (double) dWorldGetContactSurfaceLayer(sAlgo->getODEWorldID()));
-	QCOMPARE(dynamic_cast<DoubleValue*>(sAlgo->getParameter("ODE/ContactMaxCorrectingVelocity"))->get(), (double) dWorldGetContactMaxCorrectingVel(sAlgo->getODEWorldID()));
+	QVERIFY(dynamic_cast<DoubleValue*>(sAlgo->getParameter("ODE/ContactMaxCorrectingVelocity"))->get() == (double) dWorldGetContactMaxCorrectingVel(sAlgo->getODEWorldID()));
 	QCOMPARE(dynamic_cast<DoubleValue*>(sAlgo->getParameter("ODE/ConstraintForceMixing"))->get(), (double) dWorldGetCFM(sAlgo->getODEWorldID()));	
 
 	sAlgo->getParameter("ODE/ERP")->setValueFromString("0.123");

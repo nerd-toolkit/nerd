@@ -1,9 +1,6 @@
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   tfaber@uni-osnabrueck.de
- *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -46,98 +43,32 @@
 
 
 
-#ifndef NERDDynamicsPlotter_H
-#define NERDDynamicsPlotter_H
 
-#include <QString>
-#include <QHash>
-#include "Core/SystemObject.h"
-#include "Core/ParameterizedObject.h"
-#include "Value/BoolValue.h"
-#include "Value/IntValue.h"
-#include "Value/MatrixValue.h"
-#include "Value/ULongLongValue.h"
+#include "TestBifurcationPlotter.h"
+#include <iostream>
+#include "Core/Core.h"
 #include "Network/NeuralNetwork.h"
-#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
+#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
+#include "SynapseFunction/SimpleSynapseFunction.h"
+#include "TransferFunction/TransferFunctionRamp.h"
+#include "Adapters/TransferFunctionAdapter.h"
+#include <Util/NeuralNetworkUtil.h>
+#include <Util/DynamicsPlotterUtil.h>
 
-namespace nerd {
+using namespace std;
+using namespace nerd;
 
-	/**
-	 * DynamicsPlotter.
-	 *
-	 */
-	class DynamicsPlotter : public ParameterizedObject, public virtual SystemObject,
-							public EventListener
-	{
-	public:
-		DynamicsPlotter(const QString &name);
-		virtual ~DynamicsPlotter();
-
-		virtual QString getName() const;
-
-		virtual bool init();
-		virtual bool bind();
-		virtual bool cleanUp();
-
-		virtual void eventOccured(Event *event);
-
-		virtual void calculateData() = 0;
-
-		void execute();
-		
-		BoolValue* getActiveValue() const;
-		ModularNeuralNetwork* getCurrentNetwork() const;
-
-		
-		
-	protected:
-		virtual void storeCurrentNetworkActivities();
-		virtual void restoreCurrentNetworkActivites();
-		virtual void storeNetworkConfiguration();
-		virtual void restoreNetworkConfiguration();
-		virtual void triggerNetworkStep();
-		virtual void notifyNetworkParametersChanged(ModularNeuralNetwork *network);
-		
-		// DEPRECATED
-		NeuralNetworkElement* getVariedNetworkElement(qulonglong idOfVariedNetworkElement);
-		void setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value);
-		double getVariedNetworkElementValue(NeuralNetworkElement *variedElem);
-				
-		virtual bool checkStringListsItemCount(const QString &idsString, 
-									   const QString &minsString, 
-									   const QString &maxsString);
-		virtual QList<qulonglong> createListOfIds(const QString &idsString);
-		virtual QList<double> createListOfDoubles(const QString &doubleString);
-		
-	protected:
-		Event *mNextStepEvent;
-		Event *mResetEvent;
-		Event *mEvaluateNetworkEvent;
-		Event *mClearAllEditorSelections;
-		BoolValue *mStasisValue;
-		BoolValue *mActiveValue;
-		IntValue *mExecutionTime;
-		DoubleValue *mProgressPercentage;
-		QList<double> mNetworkActivities;
-		QList<double> mNetworkOutputs;
-		QList<Neuron*> mCurrentNeurons;
-		QHash<DoubleValue*, double> mNetworkConfigurationValues;
-		
-		//****Till****//
-		MatrixValue *mData;
-		StringValue *mOutputPath;
-		StringValue *mXAxisDescription;
-		StringValue *mYAxisDescription;
-		
-		Event *mStartEvent;
-		Event *mFinishEvent;
-		//***/Till****//
-
-	};
-
+void TestBifurcationPlotter::initTestCase() {
 }
 
-#endif
+void TestBifurcationPlotter::cleanUpTestCase() {
+}
+
+
+//Author
+void TestBifurcationPlotter::testConstructors() {
+	
+}
 
 
 

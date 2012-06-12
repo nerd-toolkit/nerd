@@ -107,10 +107,8 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	addParameter("Config/StepsToRun", mStepsToRun, true);
 	addParameter("Config/StepsToCheck", mStepsToCheck, true);
 	
-	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation,
-true);
-	addParameter("Config/RestoreNetworkConfiguration",
-mRestoreNetworkConfiguration, true);
+	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
+	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
 }
 
 BasinPlotter::~BasinPlotter() {}
@@ -230,7 +228,7 @@ void BasinPlotter::calculateData() {
 		
 	for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
 			
-		mProgressPercentage->set((double)(100*x/resolutionX));
+		mProgressPercentage->set((double)(100 * x / resolutionX));
 
 		// INNER LOOP over y parameter points
 		for(int y = 1; y <= resolutionY && mActiveValue->get(); ++y) {
@@ -244,13 +242,13 @@ void BasinPlotter::calculateData() {
 			}
 			
 			// set x parameter
-			variedValX->set(xValues.at(x-1));
+			variedValX->set(xValues.at(x - 1));
 			// set y parameter
-			variedValY->set(yValues.at(y-1));
+			variedValY->set(yValues.at(y - 1));
 			
 			notifyNetworkParametersChanged(network);
 
-			for(int j=1; j < stepsRun-stepsCheck && mActiveValue->get(); ++j) {
+			for(int j=1; j < stepsRun - stepsCheck && mActiveValue->get(); ++j) {
 				// let the network run for 1 timestep
 				triggerNetworkStep();
 			}
@@ -259,8 +257,7 @@ void BasinPlotter::calculateData() {
 			QList< QPair<double,double> > positions;
 			bool foundMatch = false;
 			int currPeriod = 0;
-			for(int k = 0; k <= stepsCheck && !foundMatch && mActiveValue->get();
-				++k) {
+			for(int k = 0; k <= stepsCheck && !foundMatch && mActiveValue->get();++k) {
 				triggerNetworkStep();
 				
 				// get current network state
@@ -276,8 +273,7 @@ void BasinPlotter::calculateData() {
 				
 				// compare states to find attractors
 				for(int i = 1; i <= k && !foundMatch; ++i) {
-					foundMatch = DynamicsPlotterUtil::
-						compareNetworkStates(states.at(k-i), networkState);
+					foundMatch = DynamicsPlotterUtil::compareNetworkStates(states.at(k-i), networkState);
 					currPeriod = i;
 				}
 				
@@ -295,9 +291,9 @@ void BasinPlotter::calculateData() {
 				int attrNo = 0;
 				while(attrNo < attractors.size() && !attrMatch) {
 					for(int j = 1; j <= currPeriod && !attrMatch; ++j) {
-						attrMatch = DynamicsPlotterUtil::
-							compareNetworkStates(attractors.at(attrNo),
-								states.at(states.size()-1-j));
+						attrMatch = DynamicsPlotterUtil::compareNetworkStates(
+											attractors.at(attrNo),
+											states.at(states.size() - 1 - j));
 					}
 					attrNo++;
 				}
@@ -309,8 +305,8 @@ void BasinPlotter::calculateData() {
 				// calculate and plot attractor position(s)
 				int posC = positions.size();
 				for(int i = 1; i <= currPeriod; ++i) {
-					double currValX = positions.at(posC-i).first;
-					double currValY = positions.at(posC-i).second;
+					double currValX = positions.at(posC - i).first;
+					double currValY = positions.at(posC - i).second;
 				
 					int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
 					int attrPosY = ceil((currValY - yStart) / yStepSize + 1);

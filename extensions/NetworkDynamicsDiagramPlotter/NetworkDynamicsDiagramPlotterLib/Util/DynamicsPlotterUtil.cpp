@@ -50,242 +50,263 @@
 
 namespace nerd {
 
-DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<NeuralNetworkElement*> const &elemList) {
-	// string Syntax: ID[[:FUNC]:PARAM]
-	QStringList stringList = string.split(":", QString::SkipEmptyParts);
-	if(stringList.isEmpty() || stringList.size() > 3) {
-		return 0;
-	}
-	
-	bool ok;
-	qulonglong id = stringList.first().toULongLong(&ok);
-	if(!ok) {
-		return 0;
-	}
-	
-	NeuralNetworkElement *elem = NeuralNetwork::selectNetworkElementById(id, elemList);
-	if(elem == 0) {
-		return 0;
-	}
-	
-	Neuron *neuron = dynamic_cast<Neuron*>(elem);
-	if(neuron != 0) {
-		if(stringList.size() == 1 || stringList.at(1) == "o") {
-			return &(neuron->getOutputActivationValue());
-		}
-		if(stringList.at(1) == "a") {
-			return &(neuron->getActivationValue());
-		}
-		if(stringList.at(1) == "b") {
-			return &(neuron->getBiasValue());
-		}
-		if(stringList.size() == 3) {
-			QString param = stringList.at(2);
-			if(stringList.at(1) == "tf") {
-				TransferFunction *tf = neuron->getTransferFunction();
-				if(tf != 0) {
-					DoubleValue *tfo = dynamic_cast<DoubleValue*>(tf->getObservableOutput(param));
-					if(tfo != 0) {
-						return tfo;
-					}
-				}
-				return dynamic_cast<DoubleValue*>(tf->getParameter(param));
-			}
-			if(stringList.at(1) == "af") {
-				ActivationFunction *af = neuron->getActivationFunction();
-				if(af != 0) {
-					DoubleValue *afo = dynamic_cast<DoubleValue*>(af->getObservableOutput(param));
-					if(afo != 0) {
-						return afo;
-					}
-				}
-				return dynamic_cast<DoubleValue*>(af->getParameter(param));
-			}
-		}
-		return 0;
-	}
-	
-	Synapse *synapse = dynamic_cast<Synapse*>(elem);
-	if(synapse != 0) {
-		if(stringList.size() == 1 || stringList.at(1) == "w") {
-			return &(synapse->getStrengthValue());
-		}
-		if(stringList.size() == 3 && stringList.at(2) == "sf") {
-			QString param = stringList.at(2);
-			SynapseFunction *sf = synapse->getSynapseFunction();
-			if(sf != 0) {
-				DoubleValue *sfo = dynamic_cast<DoubleValue*>(sf->getObservableOutput(param));
-				if(sfo != 0) {
-					return sfo;
-				}
-			}
-			return dynamic_cast<DoubleValue*>(sf->getParameter(param));
-		}
-		return 0;
-	}
-	return 0;
-}
-
-// Wrapper for above method to get values for multiple strings in a list of lists
-QList< QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStringList > const &listList, QList<NeuralNetworkElement*> const &elemList) {
-	
-	QList< QList< DoubleValue *> > outer;
-	
-	for(int i = 0; i < listList.size(); ++i) {
-		QList< DoubleValue *> inner;
-		QStringList stringList = listList.at(i);
+	DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<NeuralNetworkElement*> const &elemList) {
 		
-		for(int j = 0; j < stringList.size(); ++j) {
-			DoubleValue *value = getElementValue(stringList.at(j), elemList);
-			if(value == 0) {
-				//return empty list, so that the caller can react on the problem
-				Core::log("DynamicsPlotterUtil:getElementValues: Could not find "
-						  "an element for [ " + stringList.at(j) + "]", true);
-				return QList< QList< DoubleValue *> >();
+		// string Syntax: ID[[:FUNC]:PARAM]
+		QStringList stringList = string.split(":", QString::SkipEmptyParts);
+		if(stringList.isEmpty() || stringList.size() > 3) {
+			return 0;
+		}
+		
+		bool ok;
+		qulonglong id = stringList.first().toULongLong(&ok);
+		if(!ok) {
+			return 0;
+		}
+		
+		NeuralNetworkElement *elem = NeuralNetwork::selectNetworkElementById(id, elemList);
+		if(elem == 0) {
+			return 0;
+		}
+		
+		Neuron *neuron = dynamic_cast<Neuron*>(elem);
+		if(neuron != 0) {
+			if(stringList.size() == 1 || stringList.at(1) == "o") {
+				return &(neuron->getOutputActivationValue());
+			}
+			if(stringList.at(1) == "a") {
+				return &(neuron->getActivationValue());
+			}
+			if(stringList.at(1) == "b") {
+				return &(neuron->getBiasValue());
+			}
+			if(stringList.size() == 3) {
+				QString param = stringList.at(2);
+				if(stringList.at(1) == "tf") {
+					TransferFunction *tf = neuron->getTransferFunction();
+					if(tf != 0) {
+						DoubleValue *tfo = dynamic_cast<DoubleValue*>(tf->getObservableOutput(param));
+						if(tfo != 0) {
+							return tfo;
+						}
+					}
+					return dynamic_cast<DoubleValue*>(tf->getParameter(param));
+				}
+				if(stringList.at(1) == "af") {
+					ActivationFunction *af = neuron->getActivationFunction();
+					if(af != 0) {
+						DoubleValue *afo = dynamic_cast<DoubleValue*>(af->getObservableOutput(param));
+						if(afo != 0) {
+							return afo;
+						}
+					}
+					return dynamic_cast<DoubleValue*>(af->getParameter(param));
+				}
+			}
+			return 0;
+		}
+		
+		Synapse *synapse = dynamic_cast<Synapse*>(elem);
+		if(synapse != 0) {
+			if(stringList.size() == 1 || stringList.at(1) == "w") {
+				return &(synapse->getStrengthValue());
+			}
+			if(stringList.size() == 3 && stringList.at(2) == "sf") {
+				QString param = stringList.at(2);
+				SynapseFunction *sf = synapse->getSynapseFunction();
+				if(sf != 0) {
+					DoubleValue *sfo = dynamic_cast<DoubleValue*>(sf->getObservableOutput(param));
+					if(sfo != 0) {
+						return sfo;
+					}
+				}
+				return dynamic_cast<DoubleValue*>(sf->getParameter(param));
+			}
+			return 0;
+		}
+		return 0;
+	}
+
+	// Wrapper for above method to get values for multiple strings in a list of lists
+	QList< QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStringList > const &listList, QList<NeuralNetworkElement*> const &elemList) {
+		
+		QList< QList< DoubleValue *> > outer;
+		
+		for(int i = 0; i < listList.size(); ++i) {
+			QList< DoubleValue *> inner;
+			QStringList stringList = listList.at(i);
+			
+			for(int j = 0; j < stringList.size(); ++j) {
+				DoubleValue *value = getElementValue(stringList.at(j), elemList);
+				if(value == 0) {
+					//return empty list, so that the caller can react on the problem
+					Core::log("DynamicsPlotterUtil:getElementValues: Could not find "
+							"an element for [ " + stringList.at(j) + "]", true);
+					return QList< QList< DoubleValue *> >();
+				}
+				
+				inner.append(value);
+			}
+			outer.append(inner);
+		}
+		return outer;
+	}
+		
+	QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &string) {
+		// Syntax: ID:FUNC:PARAM (eg I1:F1:P1,I2:F2:P2|I3:F3:P3)	
+		QList<QStringList> parts;
+		// Create list of plots
+		QStringList partlist = string.split("|", QString::SkipEmptyParts);
+		for(int i = 0; i < partlist.size(); ++i) {
+			QStringList elems = partlist.at(i).split(",", QString::SkipEmptyParts);
+			parts.append(elems);
+		}
+		return parts;
+	}
+
+	QList<double> DynamicsPlotterUtil::getDoublesFromString(const QString &list,
+	const QString &separator, const QString &replace) {
+		QString tmp(list);
+		if(!replace.isEmpty()) {
+			QStringList replist = replace.split(separator, QString::SkipEmptyParts);
+			for(int i = 0; i < replist.size(); ++i) {
+				tmp.replace(replist.at(i), separator);
+			}
+		}
+		QStringList doublelist = tmp.split(separator, QString::SkipEmptyParts);
+		QList<double> output;
+		bool ok;
+		
+		for(int i = 0; i < doublelist.size(); ++i) {
+			double d = doublelist.at(i).toDouble(&ok);
+			
+			if(!ok) {
+				Core::log("Conversion to double failed, check values please", true);
+				return QList<double>();
 			}
 			
-			inner.append(value);
+			output.append(d);
 		}
-		outer.append(inner);
+		return output;
 	}
-	return outer;
-}
-	
-QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &string) {
-	// Syntax: ID:FUNC:PARAM (eg I1:F1:P1,I2:F2:P2|I3:F3:P3)	
-	QList<QStringList> parts;
-	// Create list of plots
-	QStringList partlist = string.split("|", QString::SkipEmptyParts);
-	for(int i = 0; i < partlist.size(); ++i) {
-		QStringList elems = partlist.at(i).split(",", QString::SkipEmptyParts);
-		parts.append(elems);
-	}
-	return parts;
-}
 
-QList<double> DynamicsPlotterUtil::getDoublesFromString(const QString &list,
-const QString &separator, const QString &replace) {
-	QString tmp(list);
-	if(!replace.isEmpty()) {
-		QStringList replist = replace.split(separator, QString::SkipEmptyParts);
-		for(int i = 0; i < replist.size(); ++i) {
-			tmp.replace(replist.at(i), separator);
+	// returns a list of references to relevant network element values
+	QList<DoubleValue*> DynamicsPlotterUtil::getNetworkValues(const
+	QList<NeuralNetworkElement*> networkElements) {
+		QList<DoubleValue*> list;
+		for(int i = 0; i < networkElements.size(); ++i) {
+			NeuralNetworkElement *e = networkElements.at(i);
+			
+			if(e == 0) {
+				Core::log("DynamicsPlotterUtil::getNetworkState : "
+							"NeuralNetworkElement is NULL!", true);
+				return QList<DoubleValue*>();
+			}
+			
+			Neuron *n = dynamic_cast<Neuron*>(e);
+			if(n != 0) {
+				DoubleValue *d = &(n->getActivationValue());
+				list.append(d);
+				DoubleValue *b = &(n->getBiasValue());
+				list.append(b);
+				
+				ObservableNetworkElement *tf =
+				dynamic_cast<ObservableNetworkElement*>(n->getTransferFunction());
+				if(tf != 0) {
+					QList<Value*> tfVals = tf->getObservableOutputs();
+					for(int j = 0; j < tfVals.size(); ++j) {
+						DoubleValue *v = dynamic_cast<DoubleValue*>(tfVals.at(j));
+						if(v != 0) {
+							list.append(v);
+						}
+					}
+				}
+				
+				ObservableNetworkElement *af =
+				dynamic_cast<ObservableNetworkElement*>(n->getActivationFunction());
+				if(af != 0) {
+					QList<Value*> afVals = af->getObservableOutputs();
+					for(int j = 0; j < afVals.size(); ++j) {
+						DoubleValue *v = dynamic_cast<DoubleValue*>(afVals.at(j));
+						if(v != 0) {
+							list.append(v);
+						}
+					}
+				}
+			}
+			
+			Synapse *s = dynamic_cast<Synapse*>(e);
+			if(s != 0) {
+				DoubleValue *d = &(s->getStrengthValue());
+				list.append(d);
+				
+				ObservableNetworkElement *sf =
+				dynamic_cast<ObservableNetworkElement*>(s->getSynapseFunction());
+				if(sf != 0) {
+					QList<Value*> sfVals = sf->getObservableOutputs();
+					for(int j = 0; j < sfVals.size(); ++j) {
+						DoubleValue *v = dynamic_cast<DoubleValue*>(sfVals.at(j));
+						if(v != 0) {
+							list.append(v);
+						}
+					}
+				}
+			}
 		}
+		return list;
 	}
-	QStringList doublelist = tmp.split(separator, QString::SkipEmptyParts);
-	QList<double> output;
-	bool ok;
-	
-	for(int i = 0; i < doublelist.size(); ++i) {
-		double d = doublelist.at(i).toDouble(&ok);
-		
-		if(!ok) {
-			Core::log("Conversion to double failed, check values please", true);
+
+	// uses the list generated by getNetworkValues to get current actual state
+	QList<double> DynamicsPlotterUtil::getNetworkState(const QList<DoubleValue*>
+	networkValues) {
+		if(networkValues.isEmpty()) {
 			return QList<double>();
 		}
 		
-		output.append(d);
-	}
-	return output;
-}
-
-// returns a list of references to relevant network element values
-QList<DoubleValue*> DynamicsPlotterUtil::getNetworkValues(const
-QList<NeuralNetworkElement*> networkElements) {
-	QList<DoubleValue*> list;
-	for(int i = 0; i < networkElements.size(); ++i) {
-		NeuralNetworkElement *e = networkElements.at(i);
-		
-		if(e == 0) {
-			Core::log("DynamicsPlotterUtil::getNetworkState : "
-						"NeuralNetworkElement is NULL!", true);
-			return QList<DoubleValue*>();
+		QList<double> networkState;
+		for(int i = 0; i < networkValues.size(); ++i) {
+			double tmp = networkValues.at(i)->get();
+			networkState.append(tmp);
 		}
 		
-		Neuron *n = dynamic_cast<Neuron*>(e);
-		if(n != 0) {
-			DoubleValue *d = &(n->getActivationValue());
-			list.append(d);
-			DoubleValue *b = &(n->getBiasValue());
-			list.append(b);
-			
-			ObservableNetworkElement *tf =
-			dynamic_cast<ObservableNetworkElement*>(n->getTransferFunction());
-			if(tf != 0) {
-				QList<Value*> tfVals = tf->getObservableOutputs();
-				for(int j = 0; j < tfVals.size(); ++j) {
-					DoubleValue *v = dynamic_cast<DoubleValue*>(tfVals.at(j));
-					if(v != 0) {
-						list.append(v);
-					}
-				}
-			}
-			
-			ObservableNetworkElement *af =
-			dynamic_cast<ObservableNetworkElement*>(n->getActivationFunction());
-			if(af != 0) {
-				QList<Value*> afVals = af->getObservableOutputs();
-				for(int j = 0; j < afVals.size(); ++j) {
-					DoubleValue *v = dynamic_cast<DoubleValue*>(afVals.at(j));
-					if(v != 0) {
-						list.append(v);
-					}
-				}
-			}
-		}
-		
-		Synapse *s = dynamic_cast<Synapse*>(e);
-		if(s != 0) {
-			DoubleValue *d = &(s->getStrengthValue());
-			list.append(d);
-			
-			ObservableNetworkElement *sf =
-			dynamic_cast<ObservableNetworkElement*>(s->getSynapseFunction());
-			if(sf != 0) {
-				QList<Value*> sfVals = sf->getObservableOutputs();
-				for(int j = 0; j < sfVals.size(); ++j) {
-					DoubleValue *v = dynamic_cast<DoubleValue*>(sfVals.at(j));
-					if(v != 0) {
-						list.append(v);
-					}
-				}
-			}
-		}
+		return networkState;
 	}
-	return list;
-}
 
-// uses the list generated by getNetworkValues to get current actual state
-QList<double> DynamicsPlotterUtil::getNetworkState(const QList<DoubleValue*>
-networkValues) {
-	if(networkValues.isEmpty()) {
-		return QList<double>();
-	}
-	
-	QList<double> networkState;
-	for(int i = 0; i < networkValues.size(); ++i) {
-		double tmp = networkValues.at(i)->get();
-		networkState.append(tmp);
-	}
-	
-	return networkState;
-}
-
-bool DynamicsPlotterUtil::compareNetworkStates(const QList<double>
-&state1, const QList<double> &state2, double accuracy) {
-	if(state1.size() != state2.size()) {
-		Core::log("DynamicsPlotterUtil: Cannot compare network states, they "
-					"appear to be from different networks", true);
-		return false;
-	}
-	
-	for(int i = 0; i < state1.size(); ++i) {
-		if( !Math::compareDoubles(state1.at(i), state2.at(i), accuracy) ) {
+	bool DynamicsPlotterUtil::compareNetworkStates(const QList<double>
+	&state1, const QList<double> &state2, double accuracy) {
+		if(state1.size() != state2.size()) {
+			Core::log("DynamicsPlotterUtil: Cannot compare network states, they "
+						"appear to be from different networks", true);
 			return false;
 		}
+		
+		for(int i = 0; i < state1.size(); ++i) {
+			if( !Math::compareDoubles(state1.at(i), state2.at(i), accuracy) ) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
-	
-	return true;
-}
+
+	void DynamicsPlotterUtil::transferNeuronActivationToOutput(NeuralNetwork *network) {
+			
+		if(network != 0) {
+			
+			//Set the output of every neuron to the transferred activation
+			DynamicsPlotterUtil::transferNeuronActivationToOutput(network->getNeurons());
+		}
+	}
+
+	void DynamicsPlotterUtil::transferNeuronActivationToOutput(const QList<Neuron*> neurons) {
+		
+		//Set the output of every neuron to the transferred activation
+		for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
+			Neuron *neuron = i.next();
+			neuron->getOutputActivationValue().set(
+				neuron->getTransferFunction()->transferActivation(
+					neuron->getActivationValue().get(), neuron));
+		}
+	}
 
 }

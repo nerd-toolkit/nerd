@@ -79,20 +79,15 @@ namespace nerd {
 		bool addDynamicsPlotter(DynamicsPlotter *plotter);
 		bool removeDynamicsPlotter(DynamicsPlotter *plotter);
 		const QList<DynamicsPlotter*>& getDynamicsPlotters() const;
-		
-		//**************Till**************//
-		StringValue *mPlotterProgram;
-		StringValue *mActivePlotter;
-		BoolValue *mInbuiltPlotterOnline;
-		//**************/Till**************//
-		
-	//**Till**//
+
 	protected:
 		ValueManager *mValueManager;
-	//**/Till**//
 		
 	private:
 		QList<DynamicsPlotter*> mDynamicsPlotters;
+		StringValue *mPlotterProgram;
+		StringValue *mActivePlotter;
+		BoolValue *mInbuiltPlotterOnline;
 	};
 
 }

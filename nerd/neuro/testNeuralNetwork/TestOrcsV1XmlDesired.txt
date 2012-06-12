@@ -33,14 +33,14 @@
             </synapseFunction>
             <synapse strength="50.5" source="2" id="9">
                 <properties>
-                    <prop value="2.14306e-15,-35,0" name="_LOCATION"/>
+                    <prop value="0,-35,0" name="_LOCATION"/>
                 </properties>
                 <synapseFunction name="SimpleUpdateFunction">
                     <param value="T" name="TestParam3"/>
                 </synapseFunction>
                 <synapse strength="10" source="3" id="10">
                     <properties>
-                        <prop value="1.07153e-15,-17.5,0" name="_LOCATION"/>
+                        <prop value="0,-17.5,0" name="_LOCATION"/>
                     </properties>
                     <synapseFunction name="SimpleUpdateFunction">
                         <param value="T" name="TestParam3"/>

@@ -357,7 +357,9 @@ void DynamicsPlotter::restoreNetworkConfiguration() {
 }
 
 
+
 void DynamicsPlotter::triggerNetworkStep() {
+
 	if(mEvaluateNetworkEvent != 0) {
 		mEvaluateNetworkEvent->trigger();
 	}

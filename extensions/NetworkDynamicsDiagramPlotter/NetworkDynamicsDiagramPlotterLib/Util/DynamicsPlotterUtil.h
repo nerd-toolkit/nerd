@@ -57,30 +57,26 @@ namespace nerd {
 class DynamicsPlotterUtil {
 
 public:	
-	static DoubleValue *
-	getElementValue(const QString &string,
-					const QList<nerd::NeuralNetworkElement*> &elemList);
+	static DoubleValue* getElementValue(const QString &string, 
+										const QList<nerd::NeuralNetworkElement*> &elemList);
 	
-	static QList< QList<DoubleValue*> >
-	getElementValues(const QList<QStringList> &listList, 
-					 const QList<nerd::NeuralNetworkElement*> &elemList);
+	static QList<QList<DoubleValue*> > getElementValues(const QList<QStringList> &listList, 
+														const QList<nerd::NeuralNetworkElement*> &elemList);
 
-	static QList<QStringList>
-	parseElementString(QString const &string);
+	static QList<QStringList> parseElementString(QString const &string);
 
-	static QList<double>
-	getDoublesFromString(const QString &list, const QString &separator = ",",
-						 const QString &replace = "|");
+	static QList<double> getDoublesFromString(const QString &list, const QString &separator = ",", 
+											  const QString &replace = "|");
 	
-	static QList<DoubleValue*>
-	getNetworkValues(const QList<NeuralNetworkElement*> networkElements);
+	static QList<DoubleValue*> getNetworkValues(const QList<NeuralNetworkElement*> networkElements);
 	
-	static QList<double>
-	getNetworkState(const QList<DoubleValue*> networkValues);
+	static QList<double> getNetworkState(const QList<DoubleValue*> networkValues);
 	
-	static bool
-	compareNetworkStates(const QList<double> &state1, 
-						 const QList<double> &state2, double accuracy = 0.001);
+	static bool compareNetworkStates(const QList<double> &state1, 
+									 const QList<double> &state2, double accuracy = 0.001);
+	
+	static void transferNeuronActivationToOutput(NeuralNetwork *network);
+	static void transferNeuronActivationToOutput(const QList<Neuron*> neurons);
 
 };
 

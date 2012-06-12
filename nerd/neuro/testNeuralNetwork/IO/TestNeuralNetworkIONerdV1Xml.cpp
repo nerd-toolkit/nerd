@@ -107,10 +107,13 @@ void TestNeuralNetworkIONerdV1Xml::testCreateXmlFromNetwork() {
 	Synapse *synapse1 = Synapse::createSynapse(neuron1, neuron2, 0.5, defaultSf);
 	synapse1->setProperty("SynapseProperty1", "Property");
 	synapse1->setProperty("ProtectStrength");
+
 	
 	Synapse *synapse2 = Synapse::createSynapse(neuron1, neuron1, 11.53456, defaultSf);
 	Synapse *synapse3 = Synapse::createSynapse(neuron1, synapse2, 50.5, defaultSf);
-	Synapse::createSynapse(neuron2, synapse3, 10.0, defaultSf);
+	synapse3->setPosition(Vector3D(0.0, -35.0, 0));
+	Synapse *synapse4 = Synapse::createSynapse(neuron2, synapse3, 10.0, defaultSf);
+	synapse4->setPosition(Vector3D(0, -17.5, 0));
 
 	NeuroModule *groupSubModule = new NeuroModule("GroupSubModule");
 
@@ -168,8 +171,8 @@ void TestNeuralNetworkIONerdV1Xml::testCreateXmlFromNetwork() {
 			xmlLine = xmlLines.at(i);
 		}
 
-		//cout << line.toStdString().c_str();
-		//cout << xmlLine.toStdString().c_str() << endl;;
+		cout << line.toStdString().c_str();
+		cout << xmlLine.toStdString().c_str() << endl;;
 
 		QVERIFY(line.trimmed() == xmlLine.trimmed());
 
