@@ -111,6 +111,7 @@ namespace nerd {
 		
 	protected:
 		Event *mNextStepEvent;
+		Event *mStepCompletedEvent;
 		Event *mResetEvent;
 		Event *mEvaluateNetworkEvent;
 		Event *mClearAllEditorSelections;

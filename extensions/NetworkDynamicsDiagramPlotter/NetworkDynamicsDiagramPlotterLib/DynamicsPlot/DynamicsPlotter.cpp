@@ -150,8 +150,9 @@ bool DynamicsPlotter::bind() {
 
 	EventManager *em = Core::getInstance()->getEventManager();
 
-	mNextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP);
-	mResetEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET);
+	mNextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, true);
+	mStepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, true);
+	mResetEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET, true);
 	mEvaluateNetworkEvent = em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_STARTED);
 
 	mStasisValue = Core::getInstance()->getValueManager()->getBoolValue(
@@ -364,8 +365,12 @@ void DynamicsPlotter::restoreNetworkConfiguration() {
 
 void DynamicsPlotter::triggerNetworkStep() {
 
-	if(mEvaluateNetworkEvent != 0) {
-		mEvaluateNetworkEvent->trigger();
+// 	if(mEvaluateNetworkEvent != 0) {
+// 		mEvaluateNetworkEvent->trigger();
+// 	}
+	if(mNextStepEvent != 0 && mStepCompletedEvent != 0) {
+		mNextStepEvent->trigger();
+		mStepCompletedEvent->trigger();
 	}
 }
 
@@ -374,6 +379,7 @@ void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
 	if(!mNeuronsWithActivationsToTransfer.empty()) {
 		DynamicsPlotterUtil::transferNeuronActivationToOutput(mNeuronsWithActivationsToTransfer);
 	}
+	
 	
 }
 
