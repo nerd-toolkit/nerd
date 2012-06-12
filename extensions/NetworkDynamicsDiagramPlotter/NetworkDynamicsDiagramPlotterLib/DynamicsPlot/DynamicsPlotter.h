@@ -122,6 +122,7 @@ namespace nerd {
 		QList<double> mNetworkOutputs;
 		QList<Neuron*> mCurrentNeurons;
 		QHash<DoubleValue*, double> mNetworkConfigurationValues;
+		QList<Neuron*> mNeuronsWithActivationsToTransfer;
 		
 		//****Till****//
 		MatrixValue *mData;

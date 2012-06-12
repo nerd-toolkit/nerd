@@ -50,7 +50,9 @@
 
 namespace nerd {
 
-	DoubleValue * DynamicsPlotterUtil::getElementValue(QString const &string, QList<NeuralNetworkElement*> const &elemList) {
+	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &string, 
+													  QList<NeuralNetworkElement*> const &elemList,
+													  QList<Neuron*> *neuronsWithActivationChange) {
 		
 		// string Syntax: ID[[:FUNC]:PARAM]
 		QStringList stringList = string.split(":", QString::SkipEmptyParts);
@@ -75,6 +77,9 @@ namespace nerd {
 				return &(neuron->getOutputActivationValue());
 			}
 			if(stringList.at(1) == "a") {
+				if(neuronsWithActivationChange != 0) {
+					neuronsWithActivationChange->append(neuron);
+				}
 				return &(neuron->getActivationValue());
 			}
 			if(stringList.at(1) == "b") {
@@ -127,8 +132,12 @@ namespace nerd {
 		return 0;
 	}
 
+
+
 	// Wrapper for above method to get values for multiple strings in a list of lists
-	QList< QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStringList > const &listList, QList<NeuralNetworkElement*> const &elemList) {
+	QList<QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStringList > const &listList, 
+																		QList<NeuralNetworkElement*> const &elemList, 
+																		QList<Neuron*> *neuronsWithActivationChange) {
 		
 		QList< QList< DoubleValue *> > outer;
 		
@@ -137,7 +146,7 @@ namespace nerd {
 			QStringList stringList = listList.at(i);
 			
 			for(int j = 0; j < stringList.size(); ++j) {
-				DoubleValue *value = getElementValue(stringList.at(j), elemList);
+				DoubleValue *value = getElementValue(stringList.at(j), elemList, neuronsWithActivationChange);
 				if(value == 0) {
 					//return empty list, so that the caller can react on the problem
 					Core::log("DynamicsPlotterUtil:getElementValues: Could not find "

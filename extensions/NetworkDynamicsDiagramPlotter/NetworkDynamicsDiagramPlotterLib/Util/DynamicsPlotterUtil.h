@@ -58,10 +58,12 @@ class DynamicsPlotterUtil {
 
 public:	
 	static DoubleValue* getElementValue(const QString &string, 
-										const QList<nerd::NeuralNetworkElement*> &elemList);
+										const QList<nerd::NeuralNetworkElement*> &elemList,
+										QList<Neuron*> *neuronsWithActivationChange = 0);
 	
 	static QList<QList<DoubleValue*> > getElementValues(const QList<QStringList> &listList, 
-														const QList<nerd::NeuralNetworkElement*> &elemList);
+														const QList<nerd::NeuralNetworkElement*> &elemList,
+														QList<Neuron*> *neuronsWithActivationChange = 0);
 
 	static QList<QStringList> parseElementString(QString const &string);
 

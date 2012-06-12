@@ -136,9 +136,9 @@ void IsoperiodPlotter::calculateData() {
 	}
 	
 	DoubleValue *variedValX = DynamicsPlotterUtil::getElementValue(
-			variedX, networkElements);
+					variedX, networkElements, &mNeuronsWithActivationsToTransfer);
 	DoubleValue *variedValY = DynamicsPlotterUtil::getElementValue(
-			variedY, networkElements);
+					variedY, networkElements, &mNeuronsWithActivationsToTransfer);
 	
 	if(variedValX == 0 || variedValY == 0) {
 		Core::log("IsoperiodPlotter: NULL pointer for varied element. "

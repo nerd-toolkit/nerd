@@ -62,6 +62,7 @@ namespace nerd {
 	public:
 		//Object names
 		static const QString OBJECT_DYNAMICS_PLOT_MANAGER;
+		static const QString OBJECT_PLOTTER_EXECUTION_LOOP;
 
 		//Values
 		static const QString VALUE_PLOTTER_EXECUTE;

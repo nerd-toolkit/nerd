@@ -63,6 +63,7 @@
 #include "DynamicsPlot/PlotterTemplate_3.h"
 #include "DynamicsPlot/PlotterTemplate_4.h"
 #include "DynamicsPlot/PlotterTemplate_5.h"
+#include "DynamicsPlot/DummyPlotter.h"
 
 using namespace std;
 
@@ -86,6 +87,7 @@ DynamicsPlotCollection::DynamicsPlotCollection()
 	new PlotterTemplate_3();
 	new PlotterTemplate_4();
 	new PlotterTemplate_5();
+	new DummyPlotter();
 }
 
 

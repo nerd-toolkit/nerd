@@ -53,6 +53,7 @@
 #include "DynamicsPlotConstants.h"
 #include "Value/IntValue.h"
 #include "DynamicsPlot/DynamicsPlotManager.h"
+#include <Math/Math.h>
 
 using namespace std;
 
@@ -65,7 +66,7 @@ namespace nerd {
 PlotterExecutionLoop::PlotterExecutionLoop()
 	: mDoShutDown(false)
 {
-	Core::getInstance()->addSystemObject(this);
+	Core::getInstance()->addGlobalObject(DynamicsPlotConstants::OBJECT_PLOTTER_EXECUTION_LOOP, this);
 
 	mExecutePlotters = new BoolValue(true); 
 	Core::getInstance()->getValueManager()->addValue(DynamicsPlotConstants::VALUE_PLOTTER_EXECUTE, mExecutePlotters);
@@ -126,6 +127,10 @@ QString PlotterExecutionLoop::getName() const {
 	return "PlotterExecutionLoop";
 }
 
+void PlotterExecutionLoop::performUSleep(int microseconds) {
+	usleep(Math::min(microseconds, 1000000));
+}
+
 void PlotterExecutionLoop::run() {
 
 	Core::getInstance()->setMainExecutionThread();	
@@ -148,6 +153,7 @@ void PlotterExecutionLoop::run() {
 					DynamicsPlotter *plotter = i.next();
 					if(plotter->getActiveValue()->get()) {
 						plotter->execute();
+						executedPlotter = true;
 					}
 				}
 

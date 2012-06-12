@@ -63,6 +63,7 @@
 #include <QStringList>
 #include "DynamicsPlotConstants.h"
 #include "NetworkEditorConstants.h"
+#include <Util/DynamicsPlotterUtil.h>
 
 using namespace std;
 
@@ -203,6 +204,9 @@ void DynamicsPlotter::execute() {
 		previousStasisSetting = mStasisValue->get();
 		mStasisValue->set(false);
 	}	
+	
+	//clear list of neurons with changing avtivation values.
+	mNeuronsWithActivationsToTransfer.clear();
 
 	calculateData();
 
@@ -366,6 +370,10 @@ void DynamicsPlotter::triggerNetworkStep() {
 }
 
 void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *network) {
+	
+	if(!mNeuronsWithActivationsToTransfer.empty()) {
+		DynamicsPlotterUtil::transferNeuronActivationToOutput(mNeuronsWithActivationsToTransfer);
+	}
 	
 }
 

@@ -45,63 +45,91 @@
 #include "DummyPlotter.h"
 #include "Core/Core.h"
 #include <iostream>
+#include "Math/Math.h"
+#include <QThread>
+#include <DynamicsPlotConstants.h>
+#include "Execution/PlotterExecutionLoop.h"
 
 using namespace std;
 
 namespace nerd {
 
-DummyPlotter::DummyPlotter() : DynamicsPlotter("Dummy") {
-	// initialising
+	DummyPlotter::DummyPlotter() : DynamicsPlotter("Dummy"), mExecutionLoop(0) {
+		// initialising
 
-	mNumberSteps = new IntValue(0);
-	mNumberSteps->setDescription("Number of simulation steps that are computed,"
-									" for unlimited runs use zero");
-	
-	mCurrentStep = new IntValue(0);
-	
-	addParameter("Config/NumberSteps", mNumberSteps, true);
-	addParameter("Data/CurrentStep", mCurrentStep, true);
-}
-
-DummyPlotter::~DummyPlotter() {}
-
-void DummyPlotter::calculateData() {
-	
-	// get program core
-	Core *core = Core::getInstance();
-	
-	// get network
-	ModularNeuralNetwork *network = getCurrentNetwork();
-	storeNetworkConfiguration();
-	storeCurrentNetworkActivities();
-	
-	// PREPARE data matrix
-	mData->clear();
-	mData->resize(0, 0, 0);
-	
-	int numberSteps = mNumberSteps->get();
-	int step = 0;
-
-	while(mActiveValue->get()) {
-		// let the network run for 1 timestep
-		triggerNetworkStep();
-		mCurrentStep->set(++step);
+		mNumberSteps = new IntValue(0);
+		mNumberSteps->setDescription("Number of simulation steps that are computed,"
+										" for unlimited runs use zero");
 		
-		if(numberSteps > 0 && step >= numberSteps) {
-			break;
-		}
+		mCurrentStep = new IntValue(0);
 		
-		// runtime maintencance
-		if(core->isShuttingDown()) {
-			return;
-		}
-		core->executePendingTasks();
+		mMicrosecondsToWait = new IntValue(10);
+		mMicrosecondsToWait->setDescription("Microseconds to wait between each network update.");
+		
+		addParameter("Config/NumberSteps", mNumberSteps, true);
+		addParameter("Data/CurrentStep", mCurrentStep, true);
+		addParameter("Config/MicrosecondsToWait", mMicrosecondsToWait, true);
 	}
-	
-	restoreNetworkConfiguration();
-	restoreCurrentNetworkActivites();
 
-}
+
+	DummyPlotter::~DummyPlotter() {
+		
+	}
+
+
+	void DummyPlotter::calculateData() {
+		
+		if(mExecutionLoop == 0) {
+			mExecutionLoop = dynamic_cast<PlotterExecutionLoop*>(Core::getInstance()->getGlobalObject(
+											DynamicsPlotConstants::OBJECT_PLOTTER_EXECUTION_LOOP));
+		}
+		
+		// get program core
+		Core *core = Core::getInstance();
+		
+		// get network
+		ModularNeuralNetwork *network = getCurrentNetwork();
+		storeNetworkConfiguration();
+		storeCurrentNetworkActivities();
+		
+		// PREPARE data matrix
+		mData->clear();
+		mData->resize(0, 0, 0);
+		
+		int numberSteps = mNumberSteps->get();
+		int step = 0;
+
+		while(mActiveValue->get()) {
+			// let the network run for 1 timestep
+			triggerNetworkStep();
+			mCurrentStep->set(++step);
+			
+			if(numberSteps > 0 && step >= numberSteps) {
+				break;
+			}
+			
+			int msToWait = mMicrosecondsToWait->get();
+			do {
+				// runtime maintencance
+				if(core->isShuttingDown()) {
+					return;
+				}
+				core->executePendingTasks();
+				
+				if(msToWait > 0 && mExecutionLoop != 0) {
+					mExecutionLoop->performUSleep(Math::min(100000, msToWait));
+				}
+				msToWait -= 100000;
+				
+				
+			} while(msToWait > 0);
+			
+		}
+		
+		restoreNetworkConfiguration();
+		restoreCurrentNetworkActivites();
+
+	}
 
 }
 

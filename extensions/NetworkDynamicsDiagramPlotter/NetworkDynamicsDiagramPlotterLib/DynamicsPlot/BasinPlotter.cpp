@@ -133,10 +133,11 @@ void BasinPlotter::calculateData() {
 		return;
 	}
 	
+
 	DoubleValue *variedValX = DynamicsPlotterUtil::getElementValue(
-			variedX, networkElements);
+		variedX, networkElements, &mNeuronsWithActivationsToTransfer);
 	DoubleValue *variedValY = DynamicsPlotterUtil::getElementValue(
-			variedY, networkElements);
+		variedY, networkElements, &mNeuronsWithActivationsToTransfer);
 	
 	if(variedValX == 0 || variedValY == 0) {
 		Core::log("BasinPlotter: NULL pointer for varied element. "

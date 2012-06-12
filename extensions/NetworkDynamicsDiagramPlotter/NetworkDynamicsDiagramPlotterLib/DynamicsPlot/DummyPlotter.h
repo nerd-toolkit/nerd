@@ -48,18 +48,23 @@
 #include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
-class DummyPlotter : public DynamicsPlotter {
-
-public:
-	DummyPlotter();
-	virtual ~DummyPlotter();
 	
-	virtual void calculateData();
+	class PlotterExecutionLoop;
+		
+	class DummyPlotter : public DynamicsPlotter {
 
-private:
-	IntValue *mNumberSteps;
-	IntValue *mCurrentStep;
-};
+		public:
+			DummyPlotter();
+			virtual ~DummyPlotter();
+			
+			virtual void calculateData();
+
+		private:
+			IntValue *mNumberSteps;
+			IntValue *mCurrentStep;
+			IntValue *mMicrosecondsToWait;
+			PlotterExecutionLoop *mExecutionLoop;
+	};
 }
 
 #endif // DUMMYPLOTTER_H

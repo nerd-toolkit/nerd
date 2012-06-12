@@ -77,6 +77,8 @@ namespace nerd {
 		virtual void valueChanged(Value *value);
 
 		virtual QString getName() const;
+		
+		virtual void performUSleep(int microseconds);
 
 	protected:
 		virtual void run();

@@ -58,6 +58,11 @@ namespace nerd {
 
 const QString DynamicsPlotConstants::OBJECT_DYNAMICS_PLOT_MANAGER
 		= "DynamicsPlotManager";
+		
+		const QString DynamicsPlotConstants::OBJECT_PLOTTER_EXECUTION_LOOP
+		= "PlotterExecutionLoop";
+		
+		
 
 const QString DynamicsPlotConstants::VALUE_PLOTTER_EXECUTE
 		= "/Plotter/Execute";

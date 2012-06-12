@@ -156,8 +156,8 @@ void BifurcationPlotter::calculateData() {
 		return;
 	}
 	
-	DoubleValue *variedValue =
-		DynamicsPlotterUtil::getElementValue(variedElement, networkElements);
+	DoubleValue *variedValue = DynamicsPlotterUtil::getElementValue(
+					variedElement, networkElements, &mNeuronsWithActivationsToTransfer);
 		
 	if(variedValue == 0) {
 		Core::log("BifurcationPlotter: Element to vary does not exist.", true);

@@ -67,7 +67,7 @@ namespace nerd {
  * Constructs a new PlotterTemplate_2.
  */
 PlotterTemplate_2::PlotterTemplate_2()
-	: DynamicsPlotter("DummyPlotter2")
+: DynamicsPlotter("TemplatePlotter2")
 {
 
 }
