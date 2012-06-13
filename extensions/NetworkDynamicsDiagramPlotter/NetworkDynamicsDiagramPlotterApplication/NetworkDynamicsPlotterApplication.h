@@ -81,6 +81,7 @@ namespace nerd {
 		OnlinePlotterWindow *opw;
 		Exporter *exporter;
 		QTimer *timer;
+		bool mEnableSimulator;
 	};
 
 }

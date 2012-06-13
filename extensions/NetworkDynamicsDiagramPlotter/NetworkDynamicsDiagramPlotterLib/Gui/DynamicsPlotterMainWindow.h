@@ -48,15 +48,18 @@
 #define NERD_DynamicsPlotterMainWindow_H_
 
 #include <QWidget>
-#include <QBoxLayout>
+#include <QGridLayout>
 #include <QMenuBar>
 #include "Gui/DebugLoggerPanel/DebugLoggerPanel.h"
 #include "Gui/Event/EventVisualizationWindow.h"
 #include "Gui/Event/EventDetailPanel.h"
 #include "Gui/Value/ValueDetailPanel.h"
 #include "Gui/Parameter/MultipleParameterWindowWidget.h"
+#include "Gui/Visualization/OpenGLVisualization.h"
 
 namespace nerd {
+
+class OpenGLVisualization;
 
 
 /**
@@ -68,13 +71,13 @@ class DynamicsPlotterMainWindow : public QWidget {
 	Q_OBJECT
 
 	public:
-		DynamicsPlotterMainWindow(bool enableDebugging=false);
+		DynamicsPlotterMainWindow(bool enableSimulator = false, bool enableDebugging = false);
 		virtual ~DynamicsPlotterMainWindow();
 
 		QMenu* getMenu(const QString &name);
 
 	private:
-		void setup(bool enableDebugging);
+		void setup(bool enableSimulation, bool enableDebugging);
 
 	protected:
 		virtual void timerEvent(QTimerEvent * event);
@@ -83,7 +86,7 @@ class DynamicsPlotterMainWindow : public QWidget {
 		void closeEvent(QCloseEvent *e);
 
 	private:
-		QBoxLayout *mWidgetLayout;
+		QGridLayout *mWidgetLayout;
 		QMenuBar *mMainMenuBar;
 
 		DebugLoggerPanel *mEvolutionLoggerPanel;
@@ -94,6 +97,7 @@ class DynamicsPlotterMainWindow : public QWidget {
 
 		ValueDetailPanel *mValueDetailPanel;
 		MultipleParameterWindowWidget *mParameterLists;
+		OpenGLVisualization *mVisualization;
 	
 		bool mShutDownTriggered;
 		QMap<QString, QMenu*> mMenuLookup;

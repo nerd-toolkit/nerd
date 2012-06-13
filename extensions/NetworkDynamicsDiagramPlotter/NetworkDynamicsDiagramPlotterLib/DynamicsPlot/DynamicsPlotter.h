@@ -96,6 +96,7 @@ namespace nerd {
 		virtual void storeNetworkConfiguration();
 		virtual void restoreNetworkConfiguration();
 		virtual void triggerNetworkStep();
+		virtual void triggerReset();
 		virtual void notifyNetworkParametersChanged(ModularNeuralNetwork *network);
 		
 		// DEPRECATED

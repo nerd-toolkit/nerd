@@ -93,6 +93,10 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 					"parameters like bias, weight, observable parameters are "
 					"reset to the initial state before each run");
 
+	mResetSimulator = new BoolValue(true);
+	mResetSimulator->setDescription("If a simulation is used, then this property "
+									"decides whether the simulation is reset before each run.");
+	
 	
 	addParameter("Config/VariedElementX", mVariedX, true);
 	addParameter("Config/VariedElementY", mVariedY, true);
@@ -109,6 +113,7 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
+	addParameter("Config/ResetSimulation", mResetSimulator, true);
 }
 
 BasinPlotter::~BasinPlotter() {}
@@ -177,6 +182,9 @@ void BasinPlotter::calculateData() {
 	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
 	storeNetworkConfiguration();
 	
+	bool resetSimulation = mResetSimulator->get();
+	triggerReset();
+	
 	// PREPARE data matrix
 	mData->clear();
 	mData->resize(resolutionX + 1, resolutionY + 1, 3);
@@ -233,6 +241,10 @@ void BasinPlotter::calculateData() {
 
 		// INNER LOOP over y parameter points
 		for(int y = 1; y <= resolutionY && mActiveValue->get(); ++y) {
+			
+			if(resetSimulation) {
+				triggerReset();
+			}
 			
 			if(restoreNetConfiguration) {
 				restoreNetworkConfiguration();
@@ -335,6 +347,7 @@ void BasinPlotter::calculateData() {
 	variedValY->set(variedValuesOrig.at(1));
 	notifyNetworkParametersChanged(network);
 
+	triggerReset();
 	restoreNetworkConfiguration();
 	restoreCurrentNetworkActivites();
 

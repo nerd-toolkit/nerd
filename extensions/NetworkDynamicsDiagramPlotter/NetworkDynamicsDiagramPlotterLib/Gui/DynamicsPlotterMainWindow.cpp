@@ -49,15 +49,17 @@
 #include "Gui/Control/BoolValueSwitcherAction.h"
 #include "Gui/InternalDiagramPlotter/AddInternalDiagramPlotterAction.h"
 #include <QDir>
-
+#include <PlugIns/CommandLineArgument.h>
+#include "Gui/Visualization/OpenGLVisualization.h"
+#include <QGridLayout>
 
 namespace nerd {
 
-DynamicsPlotterMainWindow::DynamicsPlotterMainWindow(bool enableDebugging) 
+DynamicsPlotterMainWindow::DynamicsPlotterMainWindow(bool enableSimulator, bool enableDebugging) 
 		: mWidgetLayout(0), mMainMenuBar(0), 
-		mDebugLoggerPanel(0), mShutDownTriggered(false) 
+		mDebugLoggerPanel(0), mVisualization(0), mShutDownTriggered(false) 
 {
-	setup(enableDebugging);
+	setup(enableSimulator, enableDebugging);
 }
 
 DynamicsPlotterMainWindow::~DynamicsPlotterMainWindow()  {
@@ -85,24 +87,36 @@ QMenu* DynamicsPlotterMainWindow::getMenu(const QString &name) {
 }
 
 
-void DynamicsPlotterMainWindow::setup(bool enableDebugging) {
+void DynamicsPlotterMainWindow::setup(bool enableSimulator, bool enableDebugging) {
 
 	setAttribute(Qt::WA_QuitOnClose, false);
 	setWindowTitle("Neural Network Dynamics Plotter");
-
-	resize(300, 50);
+	
+	if(enableSimulator) {
+		resize(400,400);
+	}
+	else {
+		resize(300, 50);
+	}
 
 	//Setup layout
-	mWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+	mWidgetLayout = new QGridLayout();
 	setLayout(mWidgetLayout);
-
+	
 	setAutoFillBackground(true);
 	mWidgetLayout->setSpacing(0);
 	mWidgetLayout->setAlignment(Qt::AlignLeft);
+	mWidgetLayout->setColumnStretch(0, 1);
 
 	//Create standard menu bar
 	mMainMenuBar = new QMenuBar();
-	mWidgetLayout->addWidget(mMainMenuBar);
+	mWidgetLayout->addWidget(mMainMenuBar, 0, 0);
+	
+	if(enableSimulator) {
+		mVisualization = new OpenGLVisualization(true, 0, "Main", true);
+		mWidgetLayout->addWidget(mVisualization, 1, 0);
+		mWidgetLayout->setRowStretch(1, 1);
+	}
 
 	QMenu *toolMenu = getMenu(tr("Tools"));
 
@@ -112,10 +126,12 @@ void DynamicsPlotterMainWindow::setup(bool enableDebugging) {
 	parameterListAction->setShortcut(tr("Ctrl+o"));
 	connect(parameterListAction, SIGNAL(triggered()), mParameterLists, SLOT(show()));
 	
-	AddInternalDiagramPlotterAction *addDiagramPlotterAction = 
-						new AddInternalDiagramPlotterAction("Diagram Plotter", "Diagram",
-									toolMenu);
-	toolMenu->addAction(addDiagramPlotterAction);
+// 	AddInternalDiagramPlotterAction *addDiagramPlotterAction = 
+// 						new AddInternalDiagramPlotterAction("Diagram Plotter", "Diagram",
+// 									toolMenu);
+// 	toolMenu->addAction(addDiagramPlotterAction);
+	
+	
 
 	if(enableDebugging) {
 		QMenu *debugMenu = getMenu(QString("Debug"));
@@ -143,11 +159,6 @@ void DynamicsPlotterMainWindow::setup(bool enableDebugging) {
 		connect(valueDetailAction, SIGNAL(triggered()), mValueDetailPanel, 
 			SLOT(showWindow()));
 	}
-
-// 	BoolValueSwitcherAction *runEvolutionButton = new BoolValueSwitcherAction("&Run Evolution",
-// 			EvolutionConstants::VALUE_EVO_RUN_EVOLUTION);
-// 	runEvolutionButton->setShortcut(tr("Ctrl+e"));
-// 	getMenu("Evolution")->addAction(runEvolutionButton);
 
 }
 

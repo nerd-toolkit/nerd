@@ -174,7 +174,8 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 								.append(GuiMainWindow::getIconName());
 	if(!jpgImage.load(name)) {
 		Core::log("Could not load Window-Icon");
-	}else{
+	} 
+	else {
 		image = QPixmap::fromImage(jpgImage);
 		QIcon orcsIcon(image);
 		setWindowIcon(orcsIcon);

@@ -98,6 +98,9 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	mRestoreNetworkConfiguration->setDescription("If true, then all network parameters like bias, "
 					"weight, observable parameters are reset to the initial state before each run");
 
+	mResetSimulator = new BoolValue(true);
+	mResetSimulator->setDescription("If a simulation is used, then this property "
+									"decides whether the simulation is reset before each run.");
 	
 	addParameter("Config/ObservedElements", mObservedElements, true);
 	addParameter("Config/ObservedRanges", mObservedRanges, true);
@@ -113,6 +116,7 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RunBackwards", mRunBackwards, true);
 	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
+	addParameter("Config/ResetSimulation", mResetSimulator, true);
 }
 
 BifurcationPlotter::~BifurcationPlotter() {}
@@ -181,6 +185,9 @@ void BifurcationPlotter::calculateData() {
 	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
 	storeNetworkConfiguration();
 	
+	bool resetSimulation = mResetSimulator->get();
+	triggerReset();
+	
 	int resolutionX = mVariedResolution->get();
 	int resolutionY = mObservedResolution->get();
 	
@@ -232,6 +239,10 @@ void BifurcationPlotter::calculateData() {
 		for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
 			
 			mProgressPercentage->set((double)(100*x/resolutionX));;
+			
+			if(resetSimulation) {
+				triggerReset();
+			}
 			
 			if(restoreNetConfiguration) {
 				restoreNetworkConfiguration();
@@ -323,7 +334,7 @@ void BifurcationPlotter::calculateData() {
 	variedValue->set(variedValueOrig);
 	notifyNetworkParametersChanged(network);
 
-	///NOTE/// Added restoreNetworkConfigurations (for ALL runs, also those with the restore option set to false).
+	triggerReset();
 	restoreNetworkConfiguration();
 	restoreCurrentNetworkActivites();
 

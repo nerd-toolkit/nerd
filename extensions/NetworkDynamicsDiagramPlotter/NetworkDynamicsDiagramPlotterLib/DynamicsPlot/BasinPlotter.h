@@ -48,32 +48,34 @@
 #include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
+	
 	class BasinPlotter : public DynamicsPlotter {
 
-public:
-	BasinPlotter();
-	virtual ~BasinPlotter();
-	
-	virtual void calculateData();
+	public:
+		BasinPlotter();
+		virtual ~BasinPlotter();
+		
+		virtual void calculateData();
 
-private:
+	private:
 
-	StringValue *mVariedX;
-	StringValue *mVariedY;
-	StringValue *mVariedRangeX;
-	StringValue *mVariedRangeY;
-	IntValue *mVariedResolutionX;
-	IntValue *mVariedResolutionY;
-	
-	DoubleValue *mAccuracy;
-	IntValue *mRoundDigits;
+		StringValue *mVariedX;
+		StringValue *mVariedY;
+		StringValue *mVariedRangeX;
+		StringValue *mVariedRangeY;
+		IntValue *mVariedResolutionX;
+		IntValue *mVariedResolutionY;
+		
+		DoubleValue *mAccuracy;
+		IntValue *mRoundDigits;
 
-	IntValue *mStepsToRun;
-	IntValue *mStepsToCheck;
-	
-	BoolValue *mResetNetworkActivation;
-	BoolValue *mRestoreNetworkConfiguration;
-};
+		IntValue *mStepsToRun;
+		IntValue *mStepsToCheck;
+		
+		BoolValue *mResetNetworkActivation;
+		BoolValue *mRestoreNetworkConfiguration;
+		BoolValue *mResetSimulator;
+	};
 }
 
 #endif // BASINPLOTTER_H

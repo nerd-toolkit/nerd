@@ -48,30 +48,31 @@
 #include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
-class BifurcationPlotter : public DynamicsPlotter {
+	class BifurcationPlotter : public DynamicsPlotter {
 
-public:
-	BifurcationPlotter();
-	virtual ~BifurcationPlotter();
-	
-	virtual void calculateData();
+	public:
+		BifurcationPlotter();
+		virtual ~BifurcationPlotter();
+		
+		virtual void calculateData();
 
-private:
-	StringValue *mObservedElements;
-	StringValue *mObservedRanges;
-	IntValue *mObservedResolution;
+	private:
+		StringValue *mObservedElements;
+		StringValue *mObservedRanges;
+		IntValue *mObservedResolution;
 
-	StringValue *mVariedElement;
-	StringValue *mVariedRange;
-	IntValue *mVariedResolution;
+		StringValue *mVariedElement;
+		StringValue *mVariedRange;
+		IntValue *mVariedResolution;
 
-	IntValue *mNumberSteps;
-	IntValue *mPlottedSteps;
-	
-	BoolValue *mResetNetworkActivation;
-	BoolValue *mRunBackwards;
-	BoolValue *mRestoreNetworkConfiguration;
-};
+		IntValue *mNumberSteps;
+		IntValue *mPlottedSteps;
+		
+		BoolValue *mResetNetworkActivation;
+		BoolValue *mRunBackwards;
+		BoolValue *mRestoreNetworkConfiguration;
+		BoolValue *mResetSimulator;
+	};
 }
 
 #endif // BIFURCATIONPLOTTER_H

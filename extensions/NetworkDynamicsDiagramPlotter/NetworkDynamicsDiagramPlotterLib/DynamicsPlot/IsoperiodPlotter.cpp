@@ -92,6 +92,10 @@ IsoperiodPlotter::IsoperiodPlotter() : DynamicsPlotter("Isoperiod") {
 	mRestoreNetworkConfiguration->setDescription("If true, then all network "
 					"parameters like bias, weight, observable parameters are "
 					"reset to the initial state before each run");
+	
+	mResetSimulator = new BoolValue(true);
+	mResetSimulator->setDescription("If a simulation is used, then this property "
+					"decides whether the simulation is reset before each run.");
 
 	
 	addParameter("Config/VariedElementX", mVariedX, true);
@@ -107,10 +111,9 @@ IsoperiodPlotter::IsoperiodPlotter() : DynamicsPlotter("Isoperiod") {
 	addParameter("Config/StepsToRun", mStepsToRun, true);
 	addParameter("Config/StepsToCheck", mStepsToCheck, true);
 	
-	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation,
-true);
-	addParameter("Config/RestoreNetworkConfiguration",
-mRestoreNetworkConfiguration, true);
+	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
+	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
+	addParameter("Config/ResetSimulation", mResetSimulator, true);
 }
 
 IsoperiodPlotter::~IsoperiodPlotter() {}
@@ -178,6 +181,9 @@ void IsoperiodPlotter::calculateData() {
 	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
 	storeNetworkConfiguration();
 	
+	bool resetSimulation = mResetSimulator->get();
+	triggerReset();
+	
 	// PREPARE data matrix
 	mData->clear();
 	mData->resize(resolutionX + 2, resolutionY + 2, 1);
@@ -228,6 +234,10 @@ void IsoperiodPlotter::calculateData() {
 
 		// INNER LOOP over y parameter points
 		for(int y = 1; y <= resolutionY && mActiveValue->get(); ++y) {
+			
+			if(resetSimulation) {
+				triggerReset();
+			}
 			
 			if(restoreNetConfiguration) {
 				restoreNetworkConfiguration();
@@ -299,6 +309,7 @@ void IsoperiodPlotter::calculateData() {
 	variedValY->set(variedValuesOrig.at(1));
 	notifyNetworkParametersChanged(network);
 
+	triggerReset();
 	restoreNetworkConfiguration();
 	restoreCurrentNetworkActivites();
 

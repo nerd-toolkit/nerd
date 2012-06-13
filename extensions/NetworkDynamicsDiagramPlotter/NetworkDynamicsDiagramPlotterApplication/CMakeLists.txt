@@ -43,6 +43,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/evolution/evolutio
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/neuralNetwork)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/networkEditor)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../NetworkDynamicsDiagramPlotterLib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/simulator/simulator)
 
 
 TARGET_LINK_LIBRARIES(NetworkDynamicsDiagramPlotterApplication
@@ -50,6 +51,7 @@ TARGET_LINK_LIBRARIES(NetworkDynamicsDiagramPlotterApplication
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/neuro/networkEditor/libnetworkEditor.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/neuro/neuralNetwork/libneuralNetwork.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/evolution/evolution/libevolution.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/simulator/simulator/libsimulator.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/system/nerd/libnerd.a
 	${QT_LIBRARIES}
 )

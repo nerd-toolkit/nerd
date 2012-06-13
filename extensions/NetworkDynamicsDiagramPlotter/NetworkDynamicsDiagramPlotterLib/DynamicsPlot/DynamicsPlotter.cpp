@@ -374,6 +374,12 @@ void DynamicsPlotter::triggerNetworkStep() {
 	}
 }
 
+void DynamicsPlotter::triggerReset() {
+	if(mResetEvent != 0) {
+		mResetEvent->trigger();
+	}
+}
+
 void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *network) {
 	
 	if(!mNeuronsWithActivationsToTransfer.empty()) {

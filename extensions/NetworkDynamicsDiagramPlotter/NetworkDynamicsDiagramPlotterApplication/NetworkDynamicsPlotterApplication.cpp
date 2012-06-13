@@ -81,7 +81,7 @@ namespace nerd {
  * Constructs a new NeuralNetworkEditorApplication.
  */
 NetworkDynamicsPlotterApplication::NetworkDynamicsPlotterApplication()
-	: mExecutionLoop(0)
+	: mExecutionLoop(0), mEnableSimulator(false)
 {
 	mName = "NeuralNetworkApplication";
 
@@ -91,6 +91,11 @@ NetworkDynamicsPlotterApplication::NetworkDynamicsPlotterApplication()
 	Core::getInstance()->getValueManager()->addValue(
 				EvolutionConstants::VALUE_EVO_STASIS_MODE, stasisModeValue);
 
+	CommandLineArgument *simArg = new CommandLineArgument("useSimulator", "sim", "", 
+														  "Enables the physical simulator.", 0, 0, true, true);
+	if(simArg->getNumberOfEntries() > 0) {
+		mEnableSimulator = true;
+	}
 }
 
 
@@ -108,8 +113,10 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 	//Have to  be present before the GUI is constructed.
 	StandardNeuralNetworkFunctions();
 	StandardConstraintCollection();
+	
+	
 
-	mMainWindow = new DynamicsPlotterMainWindow(true);
+	mMainWindow = new DynamicsPlotterMainWindow(mEnableSimulator, true);
 
 	if(mMainWindow != 0) {
 		new NetworkEditorCollection(mMainWindow->getMenu("Tools"), "Network &Editor", false);
