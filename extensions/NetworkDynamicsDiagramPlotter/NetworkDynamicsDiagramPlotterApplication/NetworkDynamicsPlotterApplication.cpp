@@ -69,6 +69,16 @@
 #include "Gui/Control/BoolValueSwitcherAction.h"
 #include "DynamicsPlotConstants.h"
 #include <QTimer>
+#include <PlugIns/SimObjectGroupPrinter.h>
+#include <Physics/Physics.h>
+#include <Collections/YarsCommunication.h>
+#include <Collections/Simple2D_Physics.h>
+#include <Collections/ODE_Physics.h>
+#include <PlugIns/SimpleObjectFileParser.h>
+#include <Collections/UniversalNeuroScriptLoader.h>
+#include <Collections/ScriptedModelLoader.h>
+#include <PlugIns/StepsPerSecondCounter.h>
+#include <Control/NetworkAgentControlParser.h>
 
 
 
@@ -163,6 +173,41 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 	NeuroModuleCollection();
 
 	DynamicsPlotCollection();
+	
+	if(mEnableSimulator) {
+		new SimObjectGroupPrinter();
+		
+		//Choose Physics Engine (or external Yars simulator)
+		CommandLineArgument *physicsArg = new CommandLineArgument("physics", "p", "<physicsLibrary>",
+		"Uses <physicsLibrary> as physics engine.\n"
+		"     Currently there are [ode, yars].", 1,0, true);
+		if(physicsArg->getNumberOfEntries() != 0 && !physicsArg->getEntryParameters(0).empty()
+			&& physicsArg->getEntryParameters(0).at(0).trimmed() == "yars")
+		{
+			YarsCommunication();
+		}
+		else if(physicsArg->getNumberOfEntries() != 0 && !physicsArg->getEntryParameters(0).empty()
+			&& physicsArg->getEntryParameters(0).at(0).trimmed() == "s2d")
+		{
+			Simple2D_Physics();
+		}
+		else {
+			//install ODE PhysicsLayer
+			ODE_Physics();
+		}
+		
+		//install file parser
+		new SimpleObjectFileParser();
+		
+		new StepsPerSecondCounter();
+		
+		
+		//Priovide the -net required to load a network for one or more agents.
+		new NetworkAgentControlParser();
+	}
+	
+	UniversalNeuroScriptLoader();
+	ScriptedModelLoader();
 
 
 	//load a network if given.
@@ -170,34 +215,38 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 								"Loads a NeuralNetwork to the NetworkEditor", 
 								1, 0, false, true);
 
-	if(netArg->getNumberOfEntries() > 0) {
-		QStringList files = netArg->getEntryParameters(0);
-		if(files.size() > 0) {
-			QString errorMessage;
-			QList<QString> warnings;
-			NeuralNetwork *net = NeuralNetworkIO::createNetworkFromFile(files.at(0), 
-							&errorMessage, &warnings);
+	//Only provide a -net to load a network (or create a default in case no -net is given) when 
+	//NOT using a physical simulation.
+	if(!mEnableSimulator) {
+		if(netArg->getNumberOfEntries() > 0) {
+			QStringList files = netArg->getEntryParameters(0);
+			if(files.size() > 0) {
+				QString errorMessage;
+				QList<QString> warnings;
+				NeuralNetwork *net = NeuralNetworkIO::createNetworkFromFile(files.at(0), 
+								&errorMessage, &warnings);
 
-			if(errorMessage != "") {
-				Core::log("Error while loading net: " + errorMessage, true);
-			}
-			if(!warnings.empty()) {
-				for(QListIterator<QString> j(warnings); j.hasNext();) {
-					Core::log("Warning: " + j.next(), true);
+				if(errorMessage != "") {
+					Core::log("Error while loading net: " + errorMessage, true);
 				}
-			}
+				if(!warnings.empty()) {
+					for(QListIterator<QString> j(warnings); j.hasNext();) {
+						Core::log("Warning: " + j.next(), true);
+					}
+				}
 
-			if(dynamic_cast<ModularNeuralNetwork*>(net) != 0) {
-				Neuro::getNeuralNetworkManager()->addNeuralNetwork(net);
+				if(dynamic_cast<ModularNeuralNetwork*>(net) != 0) {
+					Neuro::getNeuralNetworkManager()->addNeuralNetwork(net);
+				}
+				
 			}
-			
 		}
-	}
-	else {
-		Neuro::getNeuralNetworkManager()->addNeuralNetwork(new ModularNeuralNetwork(
-										AdditiveTimeDiscreteActivationFunction(),
-										TransferFunctionTanh(),
-										SimpleSynapseFunction())); 
+		else {
+			Neuro::getNeuralNetworkManager()->addNeuralNetwork(new ModularNeuralNetwork(
+											AdditiveTimeDiscreteActivationFunction(),
+											TransferFunctionTanh(),
+											SimpleSynapseFunction())); 
+		}
 	}
 
 	mExecutionLoop = new PlotterExecutionLoop();
@@ -211,6 +260,10 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 
 bool NetworkDynamicsPlotterApplication::runApplication() {
 	bool ok = true;
+	
+	if(mEnableSimulator) {
+		Physics::getSimulationEnvironmentManager()->createSnapshot();
+	}
 
 	mExecutionLoop->start();
 

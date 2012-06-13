@@ -165,13 +165,13 @@ namespace nerd {
 		if(calculator == 0) {
 			return;
 		}
-		else if(calculator == "Bifurcation" 
-				|| calculator == "BasinOfAttraction"
-				|| calculator == "IsoPeriod"
-				|| calculator == "Transients_Calculator" 
-				|| calculator == "Isoperiod_Calculator"
-			    || calculator == "Dummy")
-		{
+// 		else if(calculator == "Bifurcation" 
+// 				|| calculator == "BasinOfAttraction"
+// 				|| calculator == "IsoPeriod"
+// 				|| calculator == "Transients_Calculator" 
+// 				|| calculator == "Isoperiod_Calculator"
+// 			    || calculator == "Dummy")
+// 		{
  			MatrixValue *dataMatrixValue = dynamic_cast<MatrixValue*>(vM->getValue(QString(pathToValues + QString("Internal/Data"))));
 			StringValue *xDescV = mVM->getStringValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("Config/XAxisDescription"))); //Description for x-axis
 			StringValue *yDescV = mVM->getStringValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("Config/YAxisDescription")));		
@@ -182,10 +182,10 @@ namespace nerd {
 			else {
 				emit dataPrepared(pathToValues, dataMatrixValue, xDescV->get(), yDescV->get());//calls OnlinePlotterWindow::printData(...)
 			}
-		}
-		else{
-			Core::log("OnlinePlotter: Unknown calculator name: " + calculator, true);
-		}
+// 		}
+// 		else{
+// 			Core::log("OnlinePlotter: Unknown calculator name: " + calculator, true);
+// 		}
 
 	}//printData
 	

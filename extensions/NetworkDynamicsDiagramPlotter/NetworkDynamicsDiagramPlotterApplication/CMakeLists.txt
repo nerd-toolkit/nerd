@@ -36,22 +36,33 @@ QT4_WRAP_UI(nerd_networkDynamicsDiagramPlotter_UI_HDRS ${nerd_networkDynamicsDia
 #Create library.
 add_executable(NetworkDynamicsDiagramPlotterApplication ${nerd_networkDynamicsDiagramPlotter_SRCS} ${nerd_networkDynamicsDiagramPlotter_MOC_SRCS} ${nerd_networkDynamicsDiagramPlotter_RC_SRCS} ${nerd_networkDynamicsDiagramPlotter_UI_HDRS})
 
+set(ODE_INCLUDE_PATH ../../../ode-0.12/include)
+set(ODE_LIBRARY_PATH ../../../ode-0.12/ode/src/.libs/libode.a)
+
+
 add_definitions(-Wall)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/evolution/evolution)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/evolution/neuroAndSimEvaluation)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/neuralNetwork)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/networkEditor)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../NetworkDynamicsDiagramPlotterLib)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/simulator/simulator)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/simulator/odePhysics)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/simulator/simple2DPhysics)
 
 
 TARGET_LINK_LIBRARIES(NetworkDynamicsDiagramPlotterApplication
 	${CMAKE_CURRENT_BINARY_DIR}/../NetworkDynamicsDiagramPlotterLib/libNetworkDynamicsDiagramPlotterLib.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/evolution/neuroAndSimEvaluation/libneuroAndSimEvaluation.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/neuro/networkEditor/libnetworkEditor.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/neuro/neuralNetwork/libneuralNetwork.a
-	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/evolution/evolution/libevolution.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/simulator/odePhysics/libodePhysics.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/simulator/simple2DPhysics/libsimple2DPhysics.a
+	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/simulator/simulator/libsimulator.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/evolution/evolution/libevolution.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/system/nerd/libnerd.a
 	${QT_LIBRARIES}
 )

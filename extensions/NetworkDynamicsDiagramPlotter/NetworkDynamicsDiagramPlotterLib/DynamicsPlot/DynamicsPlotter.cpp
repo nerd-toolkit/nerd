@@ -153,6 +153,7 @@ bool DynamicsPlotter::bind() {
 	mNextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, true);
 	mStepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, true);
 	mResetEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET, true);
+	mResetFinalizedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET_COMPLETED, true);
 	mEvaluateNetworkEvent = em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_STARTED);
 
 	mStasisValue = Core::getInstance()->getValueManager()->getBoolValue(
@@ -375,8 +376,11 @@ void DynamicsPlotter::triggerNetworkStep() {
 }
 
 void DynamicsPlotter::triggerReset() {
-	if(mResetEvent != 0) {
+	if(mResetEvent != 0 && mResetFinalizedEvent != 0) {
+		
 		mResetEvent->trigger();
+		Core::getInstance()->executePendingTasks();
+		mResetFinalizedEvent->trigger();
 	}
 }
 

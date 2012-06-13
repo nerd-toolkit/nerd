@@ -114,6 +114,7 @@ namespace nerd {
 		Event *mNextStepEvent;
 		Event *mStepCompletedEvent;
 		Event *mResetEvent;
+		Event *mResetFinalizedEvent;
 		Event *mEvaluateNetworkEvent;
 		Event *mClearAllEditorSelections;
 		BoolValue *mStasisValue;
