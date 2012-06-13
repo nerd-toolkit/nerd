@@ -75,19 +75,21 @@ namespace nerd {
  */
 DynamicsPlotCollection::DynamicsPlotCollection()
 {
-	new Bifurcation_Calculator();
 	new BifurcationPlotter();
-	new Transients_Calculator();
-	new Isoperiod_Calculator();
 	new BasinOfAttraction_Calculator();
 	new BasinPlotter();
 	new IsoperiodPlotter();
-	new PlotterTemplate_1();
-	new PlotterTemplate_2();
-	new PlotterTemplate_3();
-	new PlotterTemplate_4();
-	new PlotterTemplate_5();
+	
 	new DummyPlotter();
+	
+// 	new Bifurcation_Calculator();
+// 	new Transients_Calculator();
+// 	new Isoperiod_Calculator();
+// 	new PlotterTemplate_1();
+// 	new PlotterTemplate_2();
+// 	new PlotterTemplate_3();
+// 	new PlotterTemplate_4();
+// 	new PlotterTemplate_5();
 }
 
 
