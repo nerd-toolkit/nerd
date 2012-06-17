@@ -45,6 +45,18 @@
 
 using namespace nerd;
 
+
+//**************************************************************************
+//Widget Names
+//**************************************************************************
+
+const QString NetworkEditorConstants::WIDGET_NETWORK_EDITOR
+		= "/NetworkEditor/EditorMainWindow";
+		
+const QString NetworkEditorConstants::WIDGET_MESSAGE_WINDOW
+		= "/NetworkEditor/MessageWindow";
+	
+
 //**************************************************************************
 //Value Names
 //**************************************************************************

@@ -134,7 +134,7 @@ void BifurcationPlotter::calculateData() {
 	// Get parameters for observed elements
 	QString observedElements = mObservedElements->get();
 	if(observedElements.isEmpty()) {
-		Core::log("BifurcationPlotter: No elements to observe. Aborting.", true);
+		reportProblem("BifurcationPlotter: No elements to observe. Aborting.");
 		return;
 	}
 
@@ -148,15 +148,15 @@ void BifurcationPlotter::calculateData() {
 				DynamicsPlotterUtil::getDoublesFromString(mObservedRanges->get());
 	
 	if(observedRanges.isEmpty() || observedRanges.size() != 2*observedValuesList.size()) {
-		Core::log("BifurcationPlotter: Invalid number of ranges given, maybe "
-					"mismatch to number of elements.", true);
+		reportProblem("BifurcationPlotter: Invalid number of ranges given, maybe "
+					"mismatch to number of elements.");
 		return;
 	}
 
 	// Get parameters for varied network element
 	QString variedElement = mVariedElement->get();
 	if(variedElement.isEmpty()) {
-		Core::log("BifurcationPlotter: No elements to vary. Aborting.", true); 
+		reportProblem("BifurcationPlotter: No elements to vary. Aborting."); 
 		return;
 	}
 	
@@ -164,7 +164,7 @@ void BifurcationPlotter::calculateData() {
 					variedElement, networkElements, &mNeuronsWithActivationsToTransfer);
 		
 	if(variedValue == 0) {
-		Core::log("BifurcationPlotter: Element to vary does not exist.", true);
+		reportProblem("BifurcationPlotter: Element to vary does not exist.");
 		return;
 	}
 	
@@ -172,7 +172,7 @@ void BifurcationPlotter::calculateData() {
 		DynamicsPlotterUtil::getDoublesFromString(mVariedRange->get());
 	
 	if(variedRange.size() != 2) {
-		Core::log("BifurcationPlotter: Invalid number of range parameters given. Aborting.", true);
+		reportProblem("BifurcationPlotter: Invalid number of range parameters given. Aborting.");
 		return;
 	}
 	
@@ -269,7 +269,9 @@ void BifurcationPlotter::calculateData() {
 			
 			variedValue->set(vVal); // set actual value
 			
-			notifyNetworkParametersChanged(network);
+			if(!notifyNetworkParametersChanged(network)) {
+				return;
+			}
 
 			// INNER LOOP over steps
 			for(int j = 0; j < numberSteps && mActiveValue->get(); ++j) {
@@ -287,7 +289,7 @@ void BifurcationPlotter::calculateData() {
 						int oSize = observedValues.size();
 						if(oSize == 0) {
 							//maybe report problem TODO
-							Core::log("BifurcationPlotter: Observed Values Size was 0!", true);
+							reportProblem("BifurcationPlotter: Observed Values Size was 0!");
 							continue;
 						}
 						

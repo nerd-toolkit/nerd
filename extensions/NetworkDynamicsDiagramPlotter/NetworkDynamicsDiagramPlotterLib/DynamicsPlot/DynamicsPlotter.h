@@ -59,6 +59,7 @@
 #include "Value/ULongLongValue.h"
 #include "Network/NeuralNetwork.h"
 #include "ModularNeuralNetwork/ModularNeuralNetwork.h"
+#include "Constraints/ConstraintManager.h"
 
 namespace nerd {
 
@@ -88,7 +89,8 @@ namespace nerd {
 		BoolValue* getActiveValue() const;
 		ModularNeuralNetwork* getCurrentNetwork() const;
 
-		
+		void reportProblem(const QString &errorMessage);
+		void reportProblems(const QStringList &errorMessages);
 		
 	protected:
 		virtual void storeCurrentNetworkActivities();
@@ -97,7 +99,7 @@ namespace nerd {
 		virtual void restoreNetworkConfiguration();
 		virtual void triggerNetworkStep();
 		virtual void triggerReset();
-		virtual void notifyNetworkParametersChanged(ModularNeuralNetwork *network);
+		virtual bool notifyNetworkParametersChanged(ModularNeuralNetwork *network);
 		
 		// DEPRECATED
 		NeuralNetworkElement* getVariedNetworkElement(qulonglong idOfVariedNetworkElement);
@@ -121,11 +123,14 @@ namespace nerd {
 		BoolValue *mActiveValue;
 		IntValue *mExecutionTime;
 		DoubleValue *mProgressPercentage;
+		BoolValue *mEnableConstraints;
+		bool mEnableConstraintsInCurrentRun;
 		QList<double> mNetworkActivities;
 		QList<double> mNetworkOutputs;
 		QList<Neuron*> mCurrentNeurons;
 		QHash<DoubleValue*, double> mNetworkConfigurationValues;
 		QList<Neuron*> mNeuronsWithActivationsToTransfer;
+		ConstraintManager *mConstraintManager;
 		
 		//****Till****//
 		MatrixValue *mData;

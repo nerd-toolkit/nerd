@@ -80,8 +80,17 @@ EditorMessageWidget::EditorMessageWidget(NeuralNetworkEditor *owner)
 		connect(mEditor, SIGNAL(tabSelectionChanged(int)),
 				this, SLOT(currentEditorTabChanged(int)));
 	}
+	
+	
+	//redirect message box manipulation via signals for thread safety...
+	connect(this, SIGNAL(clearDocumentSignal()),
+			this, SLOT(clearSlot()));
 
-
+	connect(this, SIGNAL(addMessageSignal(QString)),
+			this, SLOT(addMessageSlot(QString)));
+	
+	connect(this, SIGNAL(setMessageSignal(QString)),
+			this, SLOT(setMessageSlot(QString)));
 }
 
 
@@ -95,6 +104,21 @@ EditorMessageWidget::~EditorMessageWidget() {
 void EditorMessageWidget::modificationPolicyChanged() {
 }
 
+void EditorMessageWidget::clear() {
+	emit clearDocumentSignal();
+}
+
+
+void EditorMessageWidget::addMessage(const QString &message) {
+	emit addMessageSignal(message);
+}
+
+
+void EditorMessageWidget::setMessage(const QString &message) {
+	emit setMessageSignal(message);
+}
+
+
 
 void EditorMessageWidget::currentEditorTabChanged(int) {
 	if(mEditor == 0) {
@@ -103,19 +127,20 @@ void EditorMessageWidget::currentEditorTabChanged(int) {
 }
 
 
-void EditorMessageWidget::clear() {
-	mTextArea->document()->clear();
+void EditorMessageWidget::clearSlot() {
+	//mTextArea->document()->clear();
+	mTextArea->clear();
 }
 
 
-void EditorMessageWidget::addMessage(const QString &message) {
+void EditorMessageWidget::addMessageSlot(const QString &message) {
 	mTextArea->append(message);
 }
 
 
 
-void EditorMessageWidget::setMessage(const QString &message) {
-	mTextArea->document()->clear();
+void EditorMessageWidget::setMessageSlot(const QString &message) {
+	mTextArea->clear();
 	mTextArea->append(message);
 }
 

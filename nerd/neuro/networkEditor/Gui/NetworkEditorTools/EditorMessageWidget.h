@@ -64,12 +64,21 @@ namespace nerd {
 		virtual ~EditorMessageWidget();
 
 		virtual void modificationPolicyChanged();
+		
+		virtual void clear();
+		virtual void addMessage(const QString &message);
+		virtual void setMessage(const QString &message);
 
 	public slots:
 		void currentEditorTabChanged(int index);	
-		void clear();
-		void addMessage(const QString &message);
-		void setMessage(const QString &message);
+		void clearSlot();
+		void addMessageSlot(const QString &message);
+		void setMessageSlot(const QString &message);
+		
+	signals:
+		void clearDocumentSignal();
+		void addMessageSignal(const QString &message);
+		void setMessageSignal(const QString &message);
 
 	private:
 		QTextEdit *mTextArea;	

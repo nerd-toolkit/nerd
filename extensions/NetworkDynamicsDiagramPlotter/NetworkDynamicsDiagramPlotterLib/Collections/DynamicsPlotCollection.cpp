@@ -50,19 +50,10 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
-#include "DynamicsPlot/Bifurcation_Calculator.h"
 #include "DynamicsPlot/BifurcationPlotter.h"
-#include "DynamicsPlot/Transients_Calculator.h"
-#include "DynamicsPlot/Isoperiod_Calculator.h"
-#include "DynamicsPlot/BasinOfAttraction_Calculator.h"
 #include "DynamicsPlot/BasinPlotter.h"
 #include "DynamicsPlot/IsoperiodPlotter.h"
 #include "Event/EventManager.h"
-#include "DynamicsPlot/PlotterTemplate_1.h"
-#include "DynamicsPlot/PlotterTemplate_2.h"
-#include "DynamicsPlot/PlotterTemplate_3.h"
-#include "DynamicsPlot/PlotterTemplate_4.h"
-#include "DynamicsPlot/PlotterTemplate_5.h"
 #include "DynamicsPlot/DummyPlotter.h"
 
 using namespace std;
@@ -76,20 +67,11 @@ namespace nerd {
 DynamicsPlotCollection::DynamicsPlotCollection()
 {
 	new BifurcationPlotter();
-	new BasinOfAttraction_Calculator();
 	new BasinPlotter();
 	new IsoperiodPlotter();
 	
 	new DummyPlotter();
-	
-// 	new Bifurcation_Calculator();
-// 	new Transients_Calculator();
-// 	new Isoperiod_Calculator();
-// 	new PlotterTemplate_1();
-// 	new PlotterTemplate_2();
-// 	new PlotterTemplate_3();
-// 	new PlotterTemplate_4();
-// 	new PlotterTemplate_5();
+
 }
 
 

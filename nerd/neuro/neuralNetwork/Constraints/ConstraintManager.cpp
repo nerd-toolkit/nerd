@@ -98,6 +98,20 @@ bool ConstraintManager::registerAsGlobalObject() {
 
 }
 
+ConstraintManager* ConstraintManager::getInstance() {
+	ConstraintManager *cm = dynamic_cast<ConstraintManager*>(Core::getInstance()
+			->getGlobalObject(NeuralNetworkConstants::OBJECT_CONSTRAINT_MANAGER));
+	if(cm == 0) {
+		cm = new ConstraintManager();
+		if(!cm->registerAsGlobalObject()) {
+			delete cm;
+		}
+		cm = dynamic_cast<ConstraintManager*>(Core::getInstance()
+			->getGlobalObject(NeuralNetworkConstants::OBJECT_CONSTRAINT_MANAGER));
+	}
+	return cm;
+}
+
 
 bool ConstraintManager::init() {
 	bool ok = true;
@@ -209,7 +223,7 @@ QStringList ConstraintManager::verifyConstraints(NeuronGroup *group) {
 
 bool ConstraintManager::runConstraints(QList<NeuronGroup*> groups, int maxIterations,
 						CommandExecutor *executor, QList<NeuralNetworkElement*> &trashcan,
-						QStringList &errors)
+						QStringList &errors, bool collectOnlyErrorsOfLastResolverRun)
 {
 	ConstraintManager::mMarkConstrainedElements = true;
 	
@@ -285,6 +299,11 @@ bool ConstraintManager::runConstraints(QList<NeuronGroup*> groups, int maxIterat
 	//resolve constraints
 	for(int i = 0; i < maxIterations; ++i) {
 		bool allOk = true;
+		
+		if(collectOnlyErrorsOfLastResolverRun) {
+			errors.clear();
+		}
+		
 		errors.append(QString("-- Resolver Run ").append(QString::number(i)).append(" --"));
 
 		for(QListIterator<NeuronGroup*> g(groups); g.hasNext();) {
@@ -330,6 +349,7 @@ bool ConstraintManager::runGroupConstraints(NeuronGroup *group,
 		for(QListIterator<GroupConstraint*> c(constraints); c.hasNext();) {
 			GroupConstraint *constraint = c.next();
 
+			constraint->setErrorMessage("");
 			if(!constraint->applyConstraint(group, executor, trashcan)) {
 				errors << constraint->getErrorMessage();
 				allOk = false;

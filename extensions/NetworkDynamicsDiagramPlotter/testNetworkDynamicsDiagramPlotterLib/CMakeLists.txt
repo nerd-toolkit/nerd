@@ -34,6 +34,7 @@ set(nerd_testNetworkDynamicsDiagramPlotterLib_UI_HDRS
 
 #select QT extensions
 FIND_PACKAGE(Qt4)
+set(QT_USE_QTSVG TRUE)
 set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTXML TRUE)

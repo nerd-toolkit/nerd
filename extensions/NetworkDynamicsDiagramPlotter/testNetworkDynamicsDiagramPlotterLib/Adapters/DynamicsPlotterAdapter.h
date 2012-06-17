@@ -73,7 +73,7 @@ namespace nerd {
 		virtual void storeNetworkConfiguration();
 		virtual void restoreNetworkConfiguration();
 		virtual void triggerNetworkStep();
-		virtual void notifyNetworkParametersChanged(ModularNeuralNetwork *network);
+		virtual bool notifyNetworkParametersChanged(ModularNeuralNetwork *network);
 		
 	public:
 		int mCalculateDataCounter;

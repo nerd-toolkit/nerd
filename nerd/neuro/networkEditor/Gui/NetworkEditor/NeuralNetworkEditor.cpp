@@ -161,6 +161,8 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 
 	//restore the last window settings of this editor.
 	restoreWidgetGeometries();
+	
+	GuiManager::getGlobalGuiManager()->addWidget(NetworkEditorConstants::WIDGET_NETWORK_EDITOR, this);
 }
 
 
@@ -1864,6 +1866,10 @@ void NeuralNetworkEditor::setupTools() {
 	messageDock->resize(100, 100);
 	mMessageWidget->resize(100, 100);
 	mEditorToolWidgets.append(messageDock);
+	
+	//register all widget at GUI manager
+	GuiManager *guiManager = GuiManager::getGlobalGuiManager();
+	guiManager->addWidget(NetworkEditorConstants::WIDGET_MESSAGE_WINDOW, mMessageWidget);
 }
 
 

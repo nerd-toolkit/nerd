@@ -12,19 +12,10 @@ set(nerd_dynamicsPlotLib_SRCS
 	DynamicsPlotConstants.cpp  
 	DynamicsPlot/DynamicsPlotter.cpp  
 	Collections/DynamicsPlotCollection.cpp  
-	DynamicsPlot/Bifurcation_Calculator.cpp  
 	DynamicsPlot/Exporters/Exporter.cpp  
 	DynamicsPlot/OnlinePlotter/OnlinePlotter.cpp  
 	DynamicsPlot/OnlinePlotter/OnlinePlotterWindow.cpp  
 	DynamicsPlot/OnlinePlotter/MouseMoveLabel.cpp  
-	DynamicsPlot/Transients_Calculator.cpp  
-	DynamicsPlot/Isoperiod_Calculator.cpp
-	DynamicsPlot/BasinOfAttraction_Calculator.cpp
-	DynamicsPlot/PlotterTemplate_1.cpp
-	DynamicsPlot/PlotterTemplate_2.cpp
-	DynamicsPlot/PlotterTemplate_3.cpp
-	DynamicsPlot/PlotterTemplate_4.cpp
-	DynamicsPlot/PlotterTemplate_5.cpp
 	Gui/InternalDiagramPlotter/InternalDiagramPlotterWidget.cpp
 	Gui/InternalDiagramPlotter/InternalDiagramPlotterMainWidget.cpp
 	Gui/InternalDiagramPlotter/AddInternalDiagramPlotterAction.cpp

@@ -113,9 +113,9 @@ namespace nerd {
 	}
 	
 	
-	void DynamicsPlotterAdapter::notifyNetworkParametersChanged(ModularNeuralNetwork *network) {
+	bool DynamicsPlotterAdapter::notifyNetworkParametersChanged(ModularNeuralNetwork *network) {
 		mCountNotifyParameterChanged++;
-		DynamicsPlotter::notifyNetworkParametersChanged(network);
+		return DynamicsPlotter::notifyNetworkParametersChanged(network);
 	}
 	
 	

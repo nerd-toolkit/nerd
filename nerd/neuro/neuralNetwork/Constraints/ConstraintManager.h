@@ -69,6 +69,8 @@ namespace nerd {
 		virtual QString getName() const;
 
 		virtual bool registerAsGlobalObject();
+		static ConstraintManager* getInstance();
+		
 		virtual bool init();
 		virtual bool bind();
 		virtual bool cleanUp();
@@ -84,7 +86,7 @@ namespace nerd {
 		static QStringList verifyConstraints(NeuronGroup *group);
 		static bool runConstraints(QList<NeuronGroup*> groups, int maxIterations,
 					CommandExecutor *executor, QList<NeuralNetworkElement*> &trashcan,
-					QStringList &errors);
+					QStringList &errors, bool collectOnlyErrorsOfLastResolverRun = false);
 		static bool runGroupConstraints(NeuronGroup *group, int maxIterations,
 					CommandExecutor *executor, QList<NeuralNetworkElement*> &trashcan,
 					QStringList &errors);

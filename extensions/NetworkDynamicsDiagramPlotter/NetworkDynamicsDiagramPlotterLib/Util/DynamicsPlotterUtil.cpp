@@ -45,11 +45,19 @@
 #include "DynamicsPlotterUtil.h"
 #include <Core/Core.h>
 #include <Math/Math.h>
+#include <Gui/GuiManager.h>
 #include <ModularNeuralNetwork/ModularNeuralNetwork.h>
+#include <Gui/NetworkEditorTools/EditorMessageWidget.h>
+#include <NetworkEditorConstants.h>
 #include <QStringList>
+#include <QTime>
+
 
 namespace nerd {
 
+	
+	EditorMessageWidget* DynamicsPlotterUtil::sMessageWidget = 0;
+	
 	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &string, 
 													  QList<NeuralNetworkElement*> const &elemList,
 													  QList<Neuron*> *neuronsWithActivationChange) {
@@ -149,8 +157,8 @@ namespace nerd {
 				DoubleValue *value = getElementValue(stringList.at(j), elemList, neuronsWithActivationChange);
 				if(value == 0) {
 					//return empty list, so that the caller can react on the problem
-					Core::log("DynamicsPlotterUtil:getElementValues: Could not find "
-							"an element for [ " + stringList.at(j) + "]", true);
+					reportProblem("DynamicsPlotterUtil:getElementValues: Could not find "
+							"an element for [ " + stringList.at(j) + "]");
 					return QList< QList< DoubleValue *> >();
 				}
 				
@@ -190,7 +198,7 @@ namespace nerd {
 			double d = doublelist.at(i).toDouble(&ok);
 			
 			if(!ok) {
-				Core::log("Conversion to double failed, check values please", true);
+				reportProblem("Conversion to double failed, check values please");
 				return QList<double>();
 			}
 			
@@ -207,8 +215,8 @@ namespace nerd {
 			NeuralNetworkElement *e = networkElements.at(i);
 			
 			if(e == 0) {
-				Core::log("DynamicsPlotterUtil::getNetworkState : "
-							"NeuralNetworkElement is NULL!", true);
+				reportProblem("DynamicsPlotterUtil::getNetworkState : "
+							"NeuralNetworkElement is NULL!");
 				return QList<DoubleValue*>();
 			}
 			
@@ -284,8 +292,8 @@ namespace nerd {
 	bool DynamicsPlotterUtil::compareNetworkStates(const QList<double>
 	&state1, const QList<double> &state2, double accuracy) {
 		if(state1.size() != state2.size()) {
-			Core::log("DynamicsPlotterUtil: Cannot compare network states, they "
-						"appear to be from different networks", true);
+			reportProblem("DynamicsPlotterUtil: Cannot compare network states, they "
+						"appear to be from different networks");
 			return false;
 		}
 		
@@ -315,6 +323,32 @@ namespace nerd {
 			neuron->getOutputActivationValue().set(
 				neuron->getTransferFunction()->transferActivation(
 					neuron->getActivationValue().get(), neuron));
+		}
+	}
+	
+	void DynamicsPlotterUtil::reportProblem(const QString &errorMessage) {
+		
+		if(DynamicsPlotterUtil::sMessageWidget == 0) {
+			DynamicsPlotterUtil::sMessageWidget = dynamic_cast<EditorMessageWidget*>(
+					GuiManager::getGlobalGuiManager()->getWidget(NetworkEditorConstants::WIDGET_MESSAGE_WINDOW));
+		}
+		if(DynamicsPlotterUtil::sMessageWidget != 0) {
+			sMessageWidget->addMessage(QTime::currentTime().toString("hh:mm:ss") + ": " + errorMessage);
+			//Core::log(QTime::currentTime().toString("hh:mm:ss") + ": " + errorMessage, true);
+		}
+		else {
+			Core::log(QTime::currentTime().toString("hh:mm:ss") + ": " + errorMessage, true);
+		}
+	}
+	
+	void DynamicsPlotterUtil::clearProblemMessageArea() {
+		if(DynamicsPlotterUtil::sMessageWidget == 0) {
+			DynamicsPlotterUtil::sMessageWidget = dynamic_cast<EditorMessageWidget*>(
+					GuiManager::getGlobalGuiManager()->getWidget(NetworkEditorConstants::WIDGET_MESSAGE_WINDOW));
+		}
+		if(DynamicsPlotterUtil::sMessageWidget != 0) {
+			//sMessageWidget->clear();
+			sMessageWidget->clear();
 		}
 	}
 

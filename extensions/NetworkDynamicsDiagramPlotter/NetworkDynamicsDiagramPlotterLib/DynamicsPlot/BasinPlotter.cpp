@@ -134,7 +134,7 @@ void BasinPlotter::calculateData() {
 	QString variedX = mVariedX->get();
 	QString variedY = mVariedY->get();
 	if(variedX.isEmpty() || variedY.isEmpty()) {
-		Core::log("BasinPlotter: No elements to vary.", true);
+		reportProblem("BasinPlotter: No elements to vary.");
 		return;
 	}
 	
@@ -145,8 +145,7 @@ void BasinPlotter::calculateData() {
 		variedY, networkElements, &mNeuronsWithActivationsToTransfer);
 	
 	if(variedValX == 0 || variedValY == 0) {
-		Core::log("BasinPlotter: NULL pointer for varied element. "
-					"Aborting.", true);
+		reportProblem("BasinPlotter: NULL pointer for varied element. Aborting.");
 		return;
 	}
 	
@@ -156,7 +155,7 @@ void BasinPlotter::calculateData() {
 				DynamicsPlotterUtil::getDoublesFromString(mVariedRangeY->get());
 				
 	if(variedRangeX.size() != 2 || variedRangeY.size() != 2) {
-		Core::log("BasinPlotter: Not a valid range given.", true);
+		reportProblem("BasinPlotter: Not a valid range given.");
 		return;
 	}
 		
@@ -165,7 +164,7 @@ void BasinPlotter::calculateData() {
 	
 	//avoid division by zero!
 	if(resolutionX < 2 || resolutionY < 2) {
-		Core::log("BasinPlotter: Invalid resolution given.", true);
+		reportProblem("BasinPlotter: Invalid resolution given.");
 		return;
 	}
 	
@@ -259,7 +258,9 @@ void BasinPlotter::calculateData() {
 			// set y parameter
 			variedValY->set(yValues.at(y - 1));
 			
-			notifyNetworkParametersChanged(network);
+			if(!notifyNetworkParametersChanged(network)) {
+				return;
+			}
 
 			for(int j=1; j < stepsRun - stepsCheck && mActiveValue->get(); ++j) {
 				// let the network run for 1 timestep
@@ -279,8 +280,8 @@ void BasinPlotter::calculateData() {
 				
 				// abort on empty state
 				if(networkState.isEmpty()) {
-					Core::log("BasinPlotter: Encountered empty "
-								"network state. Something went wrong.", true);
+					reportProblem("BasinPlotter: Encountered empty "
+								"network state. Something went wrong.");
 					return;
 				}
 				

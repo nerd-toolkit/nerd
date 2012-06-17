@@ -134,7 +134,7 @@ void IsoperiodPlotter::calculateData() {
 	QString variedX = mVariedX->get();
 	QString variedY = mVariedY->get();
 	if(variedX.isEmpty() || variedY.isEmpty()) {
-		Core::log("IsoperiodPlotter: No elements to vary.", true);
+		reportProblem("IsoperiodPlotter: No elements to vary.");
 		return;
 	}
 	
@@ -144,8 +144,8 @@ void IsoperiodPlotter::calculateData() {
 					variedY, networkElements, &mNeuronsWithActivationsToTransfer);
 	
 	if(variedValX == 0 || variedValY == 0) {
-		Core::log("IsoperiodPlotter: NULL pointer for varied element. "
-					"Aborting.", true);
+		reportProblem("IsoperiodPlotter: NULL pointer for varied element. "
+					"Aborting.");
 		return;
 	}
 	
@@ -155,7 +155,7 @@ void IsoperiodPlotter::calculateData() {
 				DynamicsPlotterUtil::getDoublesFromString(mVariedRangeY->get());
 				
 	if(variedRangeX.size() != 2 || variedRangeY.size() != 2) {
-		Core::log("IsoperiodPlotter: Not a valid range given.", true);
+		reportProblem("IsoperiodPlotter: Not a valid range given.");
 		return;
 	}
 		
@@ -164,7 +164,7 @@ void IsoperiodPlotter::calculateData() {
 	
 	//avoid division by zero!
 	if(resolutionX < 2 || resolutionY < 2) {
-		Core::log("IsoperiodPlotter: Invalid resolution given.", true);
+		reportProblem("IsoperiodPlotter: Invalid resolution given.");
 		return;
 	}
 	
@@ -252,7 +252,9 @@ void IsoperiodPlotter::calculateData() {
 			// set y parameter
 			variedValY->set(yValues.at(y-1));
 			
-			notifyNetworkParametersChanged(network);
+			if(!notifyNetworkParametersChanged(network)) {
+				return;
+			}
 
 			for(int j=1; j < stepsRun-stepsCheck && mActiveValue->get(); ++j) {
 				// let the network run for 1 timestep
@@ -272,8 +274,8 @@ void IsoperiodPlotter::calculateData() {
 				
 				// abort on empty state
 				if(networkState.isEmpty()) {
-					Core::log("IsoperiodPlotter: Encountered empty "
-								"network state. Something went wrong.", true);
+					reportProblem("IsoperiodPlotter: Encountered empty "
+								"network state. Something went wrong.");
 					return;
 				}
 				

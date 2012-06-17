@@ -54,33 +54,39 @@
 
 namespace nerd {
 
-class DynamicsPlotterUtil {
+	class EditorMessageWidget;
+	class DynamicsPlotterUtil {
 
-public:	
-	static DoubleValue* getElementValue(const QString &string, 
-										const QList<nerd::NeuralNetworkElement*> &elemList,
-										QList<Neuron*> *neuronsWithActivationChange = 0);
-	
-	static QList<QList<DoubleValue*> > getElementValues(const QList<QStringList> &listList, 
-														const QList<nerd::NeuralNetworkElement*> &elemList,
-														QList<Neuron*> *neuronsWithActivationChange = 0);
+	public:	
+		static DoubleValue* getElementValue(const QString &string, 
+											const QList<nerd::NeuralNetworkElement*> &elemList,
+											QList<Neuron*> *neuronsWithActivationChange = 0);
+		
+		static QList<QList<DoubleValue*> > getElementValues(const QList<QStringList> &listList, 
+															const QList<nerd::NeuralNetworkElement*> &elemList,
+															QList<Neuron*> *neuronsWithActivationChange = 0);
 
-	static QList<QStringList> parseElementString(QString const &string);
+		static QList<QStringList> parseElementString(QString const &string);
 
-	static QList<double> getDoublesFromString(const QString &list, const QString &separator = ",", 
-											  const QString &replace = "|");
-	
-	static QList<DoubleValue*> getNetworkValues(const QList<NeuralNetworkElement*> networkElements);
-	
-	static QList<double> getNetworkState(const QList<DoubleValue*> networkValues);
-	
-	static bool compareNetworkStates(const QList<double> &state1, 
-									 const QList<double> &state2, double accuracy = 0.001);
-	
-	static void transferNeuronActivationToOutput(NeuralNetwork *network);
-	static void transferNeuronActivationToOutput(const QList<Neuron*> neurons);
+		static QList<double> getDoublesFromString(const QString &list, const QString &separator = ",", 
+												const QString &replace = "|");
+		
+		static QList<DoubleValue*> getNetworkValues(const QList<NeuralNetworkElement*> networkElements);
+		
+		static QList<double> getNetworkState(const QList<DoubleValue*> networkValues);
+		
+		static bool compareNetworkStates(const QList<double> &state1, 
+										const QList<double> &state2, double accuracy = 0.001);
+		
+		static void transferNeuronActivationToOutput(NeuralNetwork *network);
+		static void transferNeuronActivationToOutput(const QList<Neuron*> neurons);
+		
+		static void reportProblem(const QString &errorMessage);
+		static void clearProblemMessageArea();
 
-};
+	private:
+		static EditorMessageWidget *sMessageWidget;
+	};
 
 }
 

@@ -57,6 +57,7 @@
 #include "Value/ValueManager.h"
 #include "Value/IntValue.h"
 #include "Value/ULongLongValue.h"
+#include <Math/Math.h>
 #include <QTime>
 #include "Network/NeuralNetworkManager.h"
 #include "Network/Neuro.h"
@@ -74,7 +75,7 @@ namespace nerd {
  * Constructs a new DynamicsPlotter.
  */
 DynamicsPlotter::DynamicsPlotter(const QString &name)
-	: ParameterizedObject(name, "/DynamicsPlotters/" + name + "/")
+	: ParameterizedObject(name, "/DynamicsPlotters/" + name + "/"), mEnableConstraintsInCurrentRun(false)
 {
 	Core::getInstance()->addSystemObject(this);
 	DynamicsPlotManager::getInstance()->addDynamicsPlotter(this);
@@ -82,6 +83,7 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	mActiveValue = new BoolValue(false);
 	mExecutionTime = new IntValue(0);
 	mProgressPercentage = new DoubleValue(0);
+	mEnableConstraints = new BoolValue(false);
 
 	//****Till****//
 	mData = new MatrixValue(); //data matrix
@@ -98,6 +100,7 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	addParameter("Config/Activate", mActiveValue, true);
 	addParameter("Performance/ExecutionTime", mExecutionTime, true);
 	addParameter("Performance/ProgressPercentage", mProgressPercentage, true);
+	addParameter("Config/EnableConstraints", mEnableConstraints, true);
 	
 	//****Till****c//
 	addParameter("Internal/Data", mData, true);
@@ -105,6 +108,8 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	addParameter("Config/XAxisDescription", mXAxisDescription, true);
 	addParameter("Config/YAxisDescription", mYAxisDescription, true);
 	//***/Till****c//
+	
+	mConstraintManager = ConstraintManager::getInstance();
 }
 
 /**
@@ -184,6 +189,11 @@ void DynamicsPlotter::eventOccured(Event *event) {
 void DynamicsPlotter::execute() {
 	QTime currentTime;
 	currentTime.start();
+	
+	DynamicsPlotterUtil::clearProblemMessageArea();
+	DynamicsPlotterUtil::reportProblem("Running Diagram [" + getName() + "]\n");
+	
+	mEnableConstraintsInCurrentRun = mEnableConstraints->get();
 
 	//****Till***c//
 	mValueManager->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER)
@@ -234,6 +244,9 @@ void DynamicsPlotter::execute() {
 	
 	mExecutionTime->set(currentTime.elapsed());
 	
+	DynamicsPlotterUtil::reportProblem("Done.            Execution Time [" 
+			+ QString::number(Math::round((double) mExecutionTime->get() * 0.001, 2)) + " s]");
+	
 }
 
 BoolValue* DynamicsPlotter::getActiveValue() const {
@@ -256,6 +269,20 @@ ModularNeuralNetwork* DynamicsPlotter::getCurrentNetwork() const {
 	}
 	return network;
 }
+
+
+void DynamicsPlotter::reportProblem(const QString &errorMessage) {
+	DynamicsPlotterUtil::reportProblem(errorMessage);
+}
+
+
+void DynamicsPlotter::reportProblems(const QStringList &errorMessages) {
+	for(QListIterator<QString> i(errorMessages); i.hasNext();) {
+		reportProblem(i.next());
+	}
+}
+
+
 
 void DynamicsPlotter::storeCurrentNetworkActivities() {
 	mNetworkActivities.clear();
@@ -384,12 +411,36 @@ void DynamicsPlotter::triggerReset() {
 	}
 }
 
-void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *network) {
+bool DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *network) {
 	
+	if(network == 0) {
+		return false;
+	}
+	
+	if(mEnableConstraintsInCurrentRun && mConstraintManager != 0) {
+		QList<NeuralNetworkElement*> trash;
+		QStringList errors;
+		
+		bool ok = mConstraintManager->runConstraints(network->getNeuronGroups(), 15, 0, trash, errors, true);
+		
+		while(!trash.empty()) {
+			NeuralNetworkElement *elem = trash.first();
+			trash.removeAll(elem);
+			delete elem;
+		}
+		
+		if(!ok) {
+			errors.prepend("There have been problems during the constraint resolving phase!");
+			reportProblems(errors);
+			return false;
+		}
+		
+	}
 	if(!mNeuronsWithActivationsToTransfer.empty()) {
 		DynamicsPlotterUtil::transferNeuronActivationToOutput(mNeuronsWithActivationsToTransfer);
 	}
 	
+	return true;
 	
 }
 
@@ -417,7 +468,7 @@ void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
 		}
 
 		//if the object was neither a neuron, nor a synapse...
-		Core::log("DynamicsPlotter::getVariedNetworkElement: Could not find neuron or synapse from given ID", true);
+		reportProblem("DynamicsPlotter::getVariedNetworkElement: Could not find neuron or synapse from given ID");
 		return 0;
 	}
 
@@ -429,15 +480,18 @@ void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
  	 */
 	void DynamicsPlotter::setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value){
 		if(variedElem == 0) {
-			Core::log("DynamicsPlotter::setVariedNetworkElementValue: Could not find required neurons (varied / observed)!", true);
+			reportProblem("DynamicsPlotter::setVariedNetworkElementValue: Could not find required neurons (varied / observed)!");
 			return;
 		}
+		
 		if(dynamic_cast<Neuron*>(variedElem) != 0){
 			static_cast<Neuron*>(variedElem)->getBiasValue().set(value);
-		}else if(dynamic_cast<Synapse*>(variedElem) != 0){
+		}
+		else if(dynamic_cast<Synapse*>(variedElem) != 0){
 			static_cast<Synapse*>(variedElem)->getStrengthValue().set(value);
-		}else{
-			Core::log("DynamicsPlotter::setVariedNetworkElementValue: Could not find neuron or synapse.", true);
+		}
+		else{
+			reportProblem("DynamicsPlotter::setVariedNetworkElementValue: Could not find neuron or synapse.");
 			return;
 		}
 	}
@@ -450,15 +504,17 @@ void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
  	 */
 	double DynamicsPlotter::getVariedNetworkElementValue(NeuralNetworkElement *variedElem){
 		if(variedElem == 0) {
-			Core::log("DynamicsPlotter::getVariedNetworkElementValue: Could not find required neurons (varied / observed)!", true);
+			reportProblem("DynamicsPlotter::getVariedNetworkElementValue: Could not find required neurons (varied / observed)!");
 			return 0;
 		}
 		if(dynamic_cast<Neuron*>(variedElem) != 0){
 			return static_cast<Neuron*>(variedElem)->getBiasValue().get();
-		}else if(dynamic_cast<Synapse*>(variedElem) != 0){
+		}
+		else if(dynamic_cast<Synapse*>(variedElem) != 0){
 			return static_cast<Synapse*>(variedElem)->getStrengthValue().get();
-		}else{
-			Core::log("DynamicsPlotter::getVariedNetworkElementValue: Could not find neuron or synapse.", true);
+		}
+		else{
+			reportProblem("DynamicsPlotter::getVariedNetworkElementValue: Could not find neuron or synapse.");
 			return 0;
 		}
 	}
@@ -486,7 +542,7 @@ void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
 		QStringList maxsList1 = maxsString.split(",", QString::SkipEmptyParts);
 		
 		if(idsList1.removeDuplicates() > 0){
-			Core::log("DynamicsPlotter::checkStringListsItemCount: Please avoid double IDs.", true);
+			reportProblem("DynamicsPlotter::checkStringListsItemCount: Please avoid double IDs.");
 			return true;
 		}
 		
@@ -496,7 +552,7 @@ void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
 			QString str = idsList1[0];
 			str.toULongLong (&ok);//try to convert to qulonglong, *ok is set false if not successful
 			if(ok == false){
-				Core::log("DynamicsPlotter::checkStringlistsItemCount: Could not find separators! Use \",\" or \"|\" please.", true);
+				reportProblem("DynamicsPlotter::checkStringlistsItemCount: Could not find separators! Use \",\" or \"|\" please.");
 				return false;
 			}
 		}
@@ -535,8 +591,8 @@ void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
 				idsList.append(id);
 			}
 			else {
-				Core::log("DynamicsPlotter::createListOfIds: Could not convert string entry "
-						  "to uLongLong.", true);
+				reportProblem("DynamicsPlotter::createListOfIds: Could not convert string entry "
+						  "to uLongLong.");
 			}
 		}
 		
@@ -561,8 +617,8 @@ void DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
 				doublesList.append(value);
 			}
 			else {
-				Core::log("DynamicsPlotter::createListOfDoubles: Could not convert string "
-						  "entry to double.", true);
+				reportProblem("DynamicsPlotter::createListOfDoubles: Could not convert string "
+						  "entry to double.");
 			}
 		}
 		
