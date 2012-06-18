@@ -181,6 +181,7 @@ void BasinPlotter::calculateData() {
 	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
 	storeNetworkConfiguration();
 	
+	//This is important when the physical simulator is activated!
 	bool resetSimulation = mResetSimulator->get();
 	triggerReset();
 	

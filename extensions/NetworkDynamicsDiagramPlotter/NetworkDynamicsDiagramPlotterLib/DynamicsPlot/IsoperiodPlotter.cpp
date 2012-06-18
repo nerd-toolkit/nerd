@@ -181,12 +181,13 @@ void IsoperiodPlotter::calculateData() {
 	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
 	storeNetworkConfiguration();
 	
+	//This is important when the physical simulator is activated!
 	bool resetSimulation = mResetSimulator->get();
 	triggerReset();
 	
 	// PREPARE data matrix
 	mData->clear();
-	mData->resize(resolutionX + 2, resolutionY + 2, 1);
+	mData->resize(resolutionX + 1, resolutionY + 1, 1);
 	mData->fill(0);
 	
 	// calculate values and draw axes
