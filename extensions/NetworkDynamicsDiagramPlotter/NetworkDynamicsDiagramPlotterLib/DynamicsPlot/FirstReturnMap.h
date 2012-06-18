@@ -1,9 +1,6 @@
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   till.faber@uni-osnabrueck.de
- *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -45,50 +42,36 @@
  ***************************************************************************/
 
 
+#ifndef FIRSTRETURNMAP_H
+#define FIRSTRETURNMAP_H
 
-#include "DynamicsPlotCollection.h"
-#include <iostream>
-#include <QList>
-#include "Core/Core.h"
-#include "DynamicsPlot/BifurcationPlotter.h"
-#include "DynamicsPlot/BasinPlotter.h"
-#include "DynamicsPlot/IsoperiodPlotter.h"
-#include "DynamicsPlot/FirstReturnMap.h"
-#include "DynamicsPlot/DummyPlotter.h"
-#include "Event/EventManager.h"
-
-using namespace std;
+#include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
+	class FirstReturnMap : public DynamicsPlotter {
 
-
-/**
- * Constructs a new DynamicsPlotCollection.
- */
-DynamicsPlotCollection::DynamicsPlotCollection()
-{
-	new BifurcationPlotter();
-	new BasinPlotter();
-	new IsoperiodPlotter();
-	new FirstReturnMap();
+public:
+	FirstReturnMap();
+	virtual ~FirstReturnMap();
 	
-	new DummyPlotter();
+	virtual void calculateData();
+
+private:
+
+	StringValue *mObservedElems;
+	StringValue *mObservedRanges;
+	IntValue *mObservedResolution;
+	
+	DoubleValue *mAccuracy;
+	IntValue *mRoundDigits;
+
+	IntValue *mStepsToRun;
+	IntValue *mStepsToPlot;
+	
+	BoolValue *mResetNetworkActivation;
+	BoolValue *mRestoreNetworkConfiguration;
+};
 
 }
 
-
-
-/**
- * Destructor.
- */
-DynamicsPlotCollection::~DynamicsPlotCollection() {
-}
-
-
-
-
-}
-
-
-
-
+#endif // FIRSTRETURNMAP_H
