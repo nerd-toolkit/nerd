@@ -326,7 +326,7 @@ void BasinPlotter::calculateData() {
 					int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
 					int attrPosY = ceil((currValY - yStart) / yStepSize + 1);
 				
-					mData->set(1, attrPosX, attrPosY, 2);
+					mData->set(attrNo, attrPosX, attrPosY, 2);
 				}
 				
 				if(!attrMatch) {
