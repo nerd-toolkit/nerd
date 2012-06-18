@@ -83,6 +83,10 @@ void TestDynamicsPlotterUtil::testTransferActivationToOutput() {
 	Synapse *s1 = Synapse::createSynapse(n1, n2, 0.5, sf);
 	Synapse *s2 = Synapse::createSynapse(n3, n3, -1.5, sf);
 	
+	QVERIFY(network->getSynapses().contains(s1));
+	QVERIFY(network->getSynapses().contains(s2));
+	QVERIFY(network->getSynapses().size() == 2);
+	
 	
 	QCOMPARE(n1->getOutputActivationValue().get(), 0.0);
 	QCOMPARE(n1->getActivationValue().get(), 0.0);

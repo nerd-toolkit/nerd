@@ -88,7 +88,7 @@ namespace nerd {
 		Core *core = Core::getInstance();
 		
 		// get network
-		ModularNeuralNetwork *network = getCurrentNetwork();
+		//ModularNeuralNetwork *network = getCurrentNetwork();
 		storeNetworkConfiguration();
 		storeCurrentNetworkActivities();
 		

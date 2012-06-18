@@ -442,6 +442,8 @@ bool DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
 	
 	return true;
 	
+	
+	
 }
 
 
