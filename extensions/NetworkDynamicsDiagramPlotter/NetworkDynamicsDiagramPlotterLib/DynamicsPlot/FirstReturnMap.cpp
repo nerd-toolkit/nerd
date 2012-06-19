@@ -97,10 +97,8 @@ FirstReturnMap::FirstReturnMap() : DynamicsPlotter("FirstReturnMap") {
 	addParameter("Config/StepsToRun", mStepsToRun, true);
 	addParameter("Config/StepsToPlot", mStepsToPlot, true);
 	
-	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation,
-true);
-	addParameter("Config/RestoreNetworkConfiguration",
-mRestoreNetworkConfiguration, true);
+	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
+	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
 }
 
 FirstReturnMap::~FirstReturnMap() {}
@@ -155,6 +153,10 @@ void FirstReturnMap::calculateData() {
 	storeCurrentNetworkActivities();
 	storeNetworkConfiguration();
 	
+	//This is important when the physical simulator is activated!
+	triggerReset();
+	
+	
 	// PREPARE data matrix
 	mData->clear();
 	mData->resize(resolution + 1, resolution + 1, observedValues.size());
@@ -162,9 +164,9 @@ void FirstReturnMap::calculateData() {
 	
 	QList<double> rangeStart, rangeEnd, rangeStep;
 	// iterate through plots and write axes first
-	for(int i = 0; i < observedRanges.size(); ++i) {
-		rangeStart.append(observedRanges.at(2*i+1));
-		rangeEnd.append(observedRanges.at(2*i+2));
+	for(int i = 0; i * 2 + 1 < observedRanges.size(); ++i) {  ///NOTE/// index was allowed to be out of range
+		rangeStart.append(observedRanges.at(2*i));
+		rangeEnd.append(observedRanges.at(2*i+1)); ///NOTE/// index out of range
 		rangeStep.append((rangeEnd.at(i) - rangeStart.at(i)) / (double) (resolution - 1));
 		
 		for(int x = 1; x <= resolution; ++x) {
@@ -199,6 +201,8 @@ void FirstReturnMap::calculateData() {
 				act += currentValues.at(n)->get();
 			}
 			act = act / currentValues.size();
+			
+			///NOTE/// do some protection against divisions by zero!
 
 			if(k > 0) {
 				int x = (act - rangeStart.at(i)) / rangeStep.at(i) + 1;

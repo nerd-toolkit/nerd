@@ -65,6 +65,7 @@
 #include "QVBoxLayout"
 #include "QGridLayout"
 #include "Math/Math.h"
+#include <QTimer>
 
 // #include "vector"
 using namespace std;
@@ -83,6 +84,9 @@ namespace nerd {
 		mForceUpdate = false;
 		moveToThread(QCoreApplication::instance()->thread());	
 		setupGUI();		
+		mDots = 0;
+		mHeight = 1;
+		mWidth = 1;
 	}
 
 
@@ -120,31 +124,31 @@ namespace nerd {
 	 *
 	*/
 	void OnlinePlotterWindow::resizeEvent ( QResizeEvent * event ){
-		if(mIsSetUp){//only call has been created and process is finished
-			int oldHeight = event->oldSize().height();
-			int oldWidth = event->oldSize().width();
-			int currentHeight = event->size().height() - 2;
-			int currentWidth = event->size().width() - 2;
-			if((oldWidth * oldHeight) == 0){
-				Core::log("OnlinePlotterWindow::resizeEvent(): Something went wrong. oldWidth * oldHeight must not be equal to zero. ", true); 
-				return;
-			}
-			double xFactor = static_cast<double>(currentWidth)/static_cast<double>(oldWidth);
-			double yFactor = static_cast<double>(currentHeight)/static_cast<double>(oldHeight);
-			if(mPixmap.isNull()){
-				Core::log("OnlinePlotterWindow::resizeEvent(): Pixmap is null.", true); 
-				return;
-			}
-			mLabel->setFixedSize(static_cast<int>(static_cast<double>(mLabel->width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mLabel->height()) * yFactor + 0.5));
-			QPixmap tempPixmap = mPixmap.scaled(mLabel->width(), mLabel->height());
-
-			mLabel->clear();
-			mLabel->setPixmap(tempPixmap); //print QImage on label
-			mLabel->update();
-			mLabel->show();
-			
-			show();
-		}//if mIsSetUp
+// 		if(mIsSetUp){//only call has been created and process is finished
+// 			int oldHeight = event->oldSize().height();
+// 			int oldWidth = event->oldSize().width();
+// 			int currentHeight = event->size().height() - 2;
+// 			int currentWidth = event->size().width() - 2;
+// 			if((oldWidth * oldHeight) == 0){
+// 				Core::log("OnlinePlotterWindow::resizeEvent(): Something went wrong. oldWidth * oldHeight must not be equal to zero. ", true); 
+// 				return;
+// 			}
+// 			double xFactor = static_cast<double>(currentWidth)/static_cast<double>(oldWidth);
+// 			double yFactor = static_cast<double>(currentHeight)/static_cast<double>(oldHeight);
+// 			if(mPixmap.isNull()){
+// 				Core::log("OnlinePlotterWindow::resizeEvent(): Pixmap is null.", true); 
+// 				return;
+// 			}
+// 			mLabel->setFixedSize(static_cast<int>(static_cast<double>(mLabel->width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mLabel->height()) * yFactor + 0.5));
+// 			QPixmap tempPixmap = mPixmap.scaled(mLabel->width(), mLabel->height());
+// 
+// 			mLabel->clear();
+// 			mLabel->setPixmap(tempPixmap); //print QImage on label
+// 			mLabel->update();
+// 			mLabel->show();
+// 			
+// 			show();
+// 		}//if mIsSetUp
 
 	}
 	
@@ -163,7 +167,7 @@ namespace nerd {
 		mLabel = new MouseMoveLabel(mIndex, this);
 		mLabel->setFrameStyle(0);
 		mLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-		mTitleLabel = new QLabel( this);
+		//mTitleLabel = new QLabel( this);
 
 		//mYLabel = new QLabel("", this);
 		//mXLabel = new QLabel("", this);
@@ -181,7 +185,7 @@ namespace nerd {
 		mInnerLayout = new QGridLayout();
 		mMainLayout->setContentsMargins(0, 0, 0, 0);
 		
-		mTitleLabel->setAlignment(Qt::AlignHCenter);
+		//mTitleLabel->setAlignment(Qt::AlignHCenter);
 		mLabel->setAlignment(Qt::AlignTop);
 		//mYLabel->setAlignment(Qt::AlignRight);
 		//mYLabel->setAlignment(Qt::AlignVCenter);
@@ -216,7 +220,7 @@ namespace nerd {
 		mOuterLayout->setRowStretch(1, 0);
 		mOuterLayout->setRowStretch(0, 1);
 		
-		mMainLayout->addWidget(mTitleLabel);
+		//mMainLayout->addWidget(mTitleLabel);
 		mMainLayout->addLayout(mOuterLayout);
 		mMainLayout->addWidget(mMessageLabel);
 		mMainLayout->setStretch(0, 0);
@@ -224,7 +228,7 @@ namespace nerd {
 		mMainLayout->setStretch(2, 0);
 		setLayout(mMainLayout);
 		
-		int mDots = 3;//number of dots in "updating..."
+		mDots = 3;//number of dots in "updating..."
 	}
 
 	/**
@@ -254,12 +258,13 @@ namespace nerd {
 		mIsSetUp = false;
 		mWidth = mMatrix->getMatrixWidth();
 		mHeight = mMatrix->getMatrixHeight();
-		mTitleLabel->setText(QString("<b><big>") + name + QString("<\big><\b>"));
+		//mTitleLabel->setText(QString("<b><big>") + name + QString("<\big><\b>"));
 
 		//mYLabel->setText(yDescr);
 		//mXLabel->setText(xDescr);
-		resize(1,1);
-		show();
+		
+		updateGeometry();
+		QTimer::singleShot(0, this, SLOT(minimizeWidgetSize()));
 	}
 	
 	/**
@@ -300,13 +305,13 @@ namespace nerd {
 				mMessageLabel->setText("<font color='red'>Please wait! Calculating...</font>");
 				mDots = 0;
 			}
-			int mWidth = mMatrix->getMatrixWidth();
-			int mHeight = mMatrix->getMatrixHeight();
+			mWidth = mMatrix->getMatrixWidth();
+			mHeight = mMatrix->getMatrixHeight();
 			return;
 		}else{
 			mForceUpdate = false;
-			int mWidth = mMatrix->getMatrixWidth();
-			int mHeight = mMatrix->getMatrixHeight();
+			mWidth = mMatrix->getMatrixWidth();
+			mHeight = mMatrix->getMatrixHeight();
 	
 			if(mDots == 0){
 				mMessageLabel->setText("<font color='red'>Updating</font>");
@@ -367,8 +372,10 @@ namespace nerd {
 			mLabel->setFixedSize(mPixmap.width(), mPixmap.height());
 			mLabel->setPixmap(mPixmap); //print QImage on label
 			mLabel->show();
-			resize(1,1);
-			show();
+			
+			updateGeometry();
+			QTimer::singleShot(0, this, SLOT(minimizeWidgetSize()));
+
 
 		}//if
 	}//updateData()
@@ -427,10 +434,18 @@ namespace nerd {
 			return;
 		}
 		mIsSetUp = false;
-		mMessageLabel->setText("<font color='red'>Please wait! Calculating...</font>");
+		mMessageLabel->setText("<font color='red'>Working...</font>");
 		mMessageLabel->show();
 	
 	}
+	
+	void OnlinePlotterWindow::minimizeWidgetSize() {
+		updateGeometry();
+		resize(minimumSizeHint());
+		show();
+	}
+	
+	
 }
 
 

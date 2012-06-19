@@ -87,6 +87,10 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 
 	//****Till****//
 	mData = new MatrixValue(); //data matrix
+	mData->clear();
+	mData->resize(2, 2, 1);
+	mData->fill(0);
+	
 	mOutputPath = new StringValue(); //string giving the path to the output file, if an external plotting program is used
 	mXAxisDescription = new StringValue("X Parameters");
 	mYAxisDescription = new StringValue("Y Parameters");	

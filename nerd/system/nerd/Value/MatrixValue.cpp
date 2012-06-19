@@ -93,6 +93,7 @@ Value* MatrixValue::createCopy() {
 
 void MatrixValue::resize(int w, int h, int d) {
 	mValue.resize(w, h, d);
+	fill(0);
 }
 
 int MatrixValue::getMatrixWidth() const {

@@ -79,6 +79,7 @@ namespace nerd {
 			void updateData();
 			void finishedProcessing();
 			void processing();
+			void minimizeWidgetSize();
 			
 		signals:
 			void timerStart();
@@ -90,7 +91,7 @@ namespace nerd {
 			QPixmap mPixmap;
 			//QLabel *mYLabel;
 			//QLabel *mXLabel;
-			QLabel *mTitleLabel;
+			//QLabel *mTitleLabel;
 			QLabel *mBlankLabel;
 			QLabel *mInInUppTopLabel;
 			QLabel *mInInUppMidLabel;
