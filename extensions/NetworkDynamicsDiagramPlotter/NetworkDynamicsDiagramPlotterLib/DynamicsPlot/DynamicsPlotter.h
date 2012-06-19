@@ -101,17 +101,6 @@ namespace nerd {
 		virtual void triggerReset();
 		virtual bool notifyNetworkParametersChanged(ModularNeuralNetwork *network);
 		
-		// DEPRECATED
-		NeuralNetworkElement* getVariedNetworkElement(qulonglong idOfVariedNetworkElement);
-		void setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value);
-		double getVariedNetworkElementValue(NeuralNetworkElement *variedElem);
-				
-		virtual bool checkStringListsItemCount(const QString &idsString, 
-									   const QString &minsString, 
-									   const QString &maxsString);
-		virtual QList<qulonglong> createListOfIds(const QString &idsString);
-		virtual QList<double> createListOfDoubles(const QString &doubleString);
-		
 	protected:
 		Event *mNextStepEvent;
 		Event *mStepCompletedEvent;
