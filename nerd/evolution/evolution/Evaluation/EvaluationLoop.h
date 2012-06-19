@@ -109,6 +109,9 @@ class EvaluationLoop : public virtual SystemObject,
 		bool mIsEvolutionMode;
 		int mInitialNumberOfTries;
 		int mInitialNumberOfSteps;
+		
+		bool mVideoMode;
+		int mVideoModeNumberOfSteps;
 
 };
 }

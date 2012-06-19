@@ -111,8 +111,6 @@ bool SimpleFitnessLogger::bind() {
 		}
 	}
 
-	ValueManager *vm = Core::getInstance()->getValueManager();
-
 	EventManager *em = Core::getInstance()->getEventManager();
 
 	mResetEvent = em->registerForEvent(NerdConstants::EVENT_EXECUTION_RESET, this);

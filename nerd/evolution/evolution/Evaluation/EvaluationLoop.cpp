@@ -74,7 +74,7 @@ EvaluationLoop::EvaluationLoop(int numberOfSteps, int numberOfTries)
 		mCurrentStep(0), mPauseSimulation(0), mNumberOfTries(0), mNumberOfSteps(0), 
 		mDoShutDown(false), mTerminateTry(false), mSimulationState(false), mCurrentTry(0), mRunInRealTime(0),
 		mIsEvolutionMode(true), mInitialNumberOfTries(numberOfTries),
-		mInitialNumberOfSteps(numberOfSteps)
+		mInitialNumberOfSteps(numberOfSteps), mVideoMode(false), mVideoModeNumberOfSteps(6000)
 {
 	Core::getInstance()->addGlobalObject("EvaluationLoop", this);
 	mIsEvolutionModeArgument = new CommandLineArgument(
@@ -82,6 +82,18 @@ EvaluationLoop::EvaluationLoop(int numberOfSteps, int numberOfTries)
 		"Switches the mode of the EvaluationLoop to test mode. That means that setting" 
 		" tries and steps to -1 will result in infinit simulation.",
 		0, 0, true);
+	
+	
+	//check if the environment variable for VIDEO MODE is set
+	QByteArray videoMode = qgetenv(NerdConstants::ENV_VAR_VIDEO_MODE.toUtf8());
+	if(!videoMode.isNull()) {
+		mVideoMode = true;
+		bool ok = true;
+		int videoModeNumberOfSteps = QString(videoMode).toInt(&ok);
+		if(ok) {
+			mVideoModeNumberOfSteps = videoModeNumberOfSteps;
+		}
+	}
 }
 
 EvaluationLoop::~EvaluationLoop(){
@@ -218,8 +230,9 @@ bool EvaluationLoop::bind() {
 		mRunInRealTime->set(true);
 		
 		
+		
 		//TODO hack, undo later!
-		if(NerdConstants::HackMode) {
+		if(NerdConstants::HackMode || mVideoMode) {
 			mRunInRealTime->set(false);
 		}
 	}
@@ -267,8 +280,8 @@ void EvaluationLoop::eventOccured(Event *event){
 	else if(event == mResetEvent && mCurrentStep != 0) {
 		
 		//TODO hack, remove later!
-		if(NerdConstants::HackMode) {
-			mNumberOfStepsValue->set(6000);
+		if(NerdConstants::HackMode || mVideoMode) {
+			mNumberOfStepsValue->set(mVideoModeNumberOfSteps);
 		}
 		
 		mCurrentStep->set(0);

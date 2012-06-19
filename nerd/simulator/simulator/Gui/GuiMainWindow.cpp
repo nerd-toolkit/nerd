@@ -286,13 +286,10 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 		mToggleWindowValue->addValueChangedListener(this);
 	}
 	
-	//Hack to undo the toggle in cluster evolutions permanently. Check later for a better way to do that.
-	if(NerdConstants::HackMode) {
-		QFile noToggleFile(QDir::homePath() + "/.nerd/noToggle");
-		
-		if(noToggleFile.exists()) {
-			mToggleWindowArgument->deactivate();
-		}
+	//If environment variable VIDEO MODE is set, then prevent windows toggling
+	QByteArray videoMode = qgetenv(NerdConstants::ENV_VAR_VIDEO_MODE.toUtf8());
+	if(!videoMode.isNull()) {
+		mToggleWindowArgument->deactivate();
 	}
 }
 

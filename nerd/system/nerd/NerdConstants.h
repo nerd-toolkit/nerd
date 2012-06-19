@@ -126,6 +126,13 @@ namespace nerd {
 		
 		static const bool HackMode;
 		
+		
+		//**************************************************************************
+		//Environment Variable Names
+		//**************************************************************************
+		
+		static const QString ENV_VAR_VIDEO_MODE;
+		
 	};
 
 }

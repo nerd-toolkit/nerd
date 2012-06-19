@@ -188,3 +188,12 @@ const QString NerdConstants::EVENT_STEP_STATISTICS_CALCULATED
 
 const QString NerdConstants::EVENT_NNM_NETWORK_ITERATION_COMPLETED
 		= "/NeuralNetwork/NetworkIterationCompleted";
+		
+		
+//**************************************************************************
+//Environment Variable Names
+//**************************************************************************
+		
+		
+const QString NerdConstants::ENV_VAR_VIDEO_MODE
+		= "NERD_VIDEO_MODE";
