@@ -125,7 +125,9 @@ namespace nerd {
 	 * @param plotters String containing the names of the plotter programs that will be used.
 	 */
 	void Exporter::prepareExport(QString plotters){
-		MatrixValue *matrix = dynamic_cast<MatrixValue*>(vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Internal/Data"))));
+		MatrixValue *matrix = dynamic_cast<MatrixValue*>(
+					vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Internal/Data"))));
+		
 		if(matrix == 0) {
 			Core::log("Exporter: Could not find matrix value.", true);
 			return;
@@ -136,27 +138,52 @@ namespace nerd {
 	
 		if(plotters.contains("matlab", Qt::CaseInsensitive)){
 			QString delimiter = " ";//seperates the entries in the file
+			
 			QVector<QVector<QString> > outV(height * depth);// matrix is mirrored along the diagonal and all layers of third dimension are appended
+			
 			for(int j = 0; j < height; j++){
+				
 				outV[j].resize(width);
+				
 				for(int l = 0; l < depth; l++){
-					for(int k = 0; k < width; k++){
+					
+					outV[l * height + j].resize(width);
+					
+					for(int k = 0; k < width; k++) {
 						outV[l * height + j][k] = QString::number(matrix->get(k, j, l)) + delimiter;
 					}
 				}
 			}
+			
 			// for every layer in third dimension add { and }:
 			for(int l = 0; l < depth; l++){
 				outV[l * height + 1][1] = QString("{") + outV[l * height + 1][1];
 				outV[l * height + height - 1][width - 1] = outV[l * height + height -1][width - 1].simplified() + QString("}");
 			}
-			QString xDescr = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Config/XAxisDescription")))->getValueAsString(); //Description for x-axis
-			QString yDescr = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Config/YAxisDescription")))->getValueAsString();
-			outV[0][0] = "\"" + mRunningCalculator + " ;; " + xDescr + " ;; " + yDescr + "\" "; // add name of calculator; add quotation marks to keep text together
-			if(vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("OutputPath")))->getValueAsString() == ""){
+			
+			QString xDescr = vM->getValue(QString("/DynamicsPlotters/" 
+												  + mRunningCalculator + "/" 
+												  + QString("Config/XAxisDescription")))
+									->getValueAsString(); //Description for x-axis
+									
+			QString yDescr = vM->getValue(QString("/DynamicsPlotters/" 
+												  + mRunningCalculator + "/" 
+												  + QString("Config/YAxisDescription")))
+									->getValueAsString();
+									
+			outV[0][0] = "\"" + mRunningCalculator + " ;; " 
+							  + xDescr + " ;; " 
+							  + yDescr + "\" "; // add name of calculator; add quotation marks to keep text together
+			
+			
+			Value *mOutputPath = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("OutputPath")));
+			
+			if(mOutputPath == 0 || mOutputPath->getValueAsString() == "")
+			{
 				writeToFile(outV, "matlabExport");
-			}else{
-				writeToFile(outV, vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("OutputPath")))->getValueAsString());
+			}
+			else {
+				writeToFile(outV, mOutputPath->getValueAsString());
 			}
 		}
 		
@@ -166,18 +193,26 @@ namespace nerd {
 	 * @param outV 2-dim QString vector containing the calculated data.
 	 * @param fileName QString with the name of the output file.
 	 */
-	void Exporter::writeToFile(QVector<QVector<QString> > outV, QString fileName ){
+	void Exporter::writeToFile(QVector<QVector<QString> > outV, QString fileName ) {
+		
 		QFile file(fileName);
-		if (!file.open(QIODevice::WriteOnly)) {
-			Core::log("Exporter: Cannot write to file. Please check the file path and make sure you have writing permission for the specified directory.", true);
+		
+		if(!file.open(QIODevice::WriteOnly)) {
+			Core::log("Exporter: Cannot write to file. Please check the file path and make sure "
+					  "you have writing permission for the specified directory.", true);
 			return;
 		}
+		
 		QTextStream out(&file);
-		for(int j = 0; j < outV.size(); j++){
+		
+		for(int j = 0; j < outV.size(); j++) {
+			
 			QString strColumn;
+			
 			for(int k = 0; k < outV[j].size(); k++){
 				strColumn.append(outV[j][k]); //append all data from column
 			}
+			
 			if (!strColumn.isEmpty()){
 				out << strColumn << endl; // print next line
 			}

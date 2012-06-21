@@ -22,6 +22,7 @@ set(nerd_dynamicsPlotLib_SRCS
 	Gui/InternalDiagramPlotter/AddInternalDiagramPlotterAction.cpp
 	DynamicsPlot/OnlinePlotter/OnlinePlotterTabbedWindow.cpp
 	DynamicsPlot/DummyPlotter.cpp
+	Exporters/MatlabExporter.cpp
 )
 
 set(nerd_dynamicsPlotLib_MOC_HDRS

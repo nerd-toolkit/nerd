@@ -74,6 +74,7 @@ DynamicsPlotManager::DynamicsPlotManager()
 	mPlotterProgram->setDescription("Specifies the output program, for example the internal plotter or external ones like Matlab");
 	mPlotterProgram->getOptionList().append("Internal");
 	mPlotterProgram->getOptionList().append("Matlab");
+	mPlotterProgram->getOptionList().append("Matlab,Internal");
 	
 	mValueManager->addValue(DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT, mPlotterProgram);
 	mValueManager->addValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER, mActivePlotter);

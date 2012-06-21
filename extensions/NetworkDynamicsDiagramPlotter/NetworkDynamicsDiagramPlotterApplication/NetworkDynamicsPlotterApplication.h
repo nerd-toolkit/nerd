@@ -57,7 +57,9 @@
 #include "Execution/PlotterExecutionLoop.h"
 #include "DynamicsPlot/OnlinePlotter/OnlinePlotter.h"
 #include "DynamicsPlot/OnlinePlotter/OnlinePlotterWindow.h"
-#include "DynamicsPlot/Exporters/Exporter.h"
+
+
+
 namespace nerd {
 
 	/**
@@ -77,10 +79,7 @@ namespace nerd {
 	private:
 		DynamicsPlotterMainWindow *mMainWindow;
 		PlotterExecutionLoop *mExecutionLoop;
-		OnlinePlotter *op;
-		OnlinePlotterWindow *opw;
-		Exporter *exporter;
-		QTimer *timer;
+		QTimer *mTimer;
 		bool mEnableSimulator;
 	};
 

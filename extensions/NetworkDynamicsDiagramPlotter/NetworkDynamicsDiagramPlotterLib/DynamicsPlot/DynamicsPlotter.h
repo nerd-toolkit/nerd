@@ -124,8 +124,8 @@ namespace nerd {
 		//****Till****//
 		MatrixValue *mData;
 		StringValue *mOutputPath;
-		StringValue *mXAxisDescription;
-		StringValue *mYAxisDescription;
+		StringValue *mAxisNames;
+		StringValue *mTitleNames;
 		
 		Event *mStartEvent;
 		Event *mFinishEvent;

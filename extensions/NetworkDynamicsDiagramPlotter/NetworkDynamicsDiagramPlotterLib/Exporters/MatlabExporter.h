@@ -1,6 +1,9 @@
 /***************************************************************************
  *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
  *                                                                         *
+ *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
+ *   tfaber@uni-osnabrueck.de
+ *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -42,33 +45,56 @@
  ***************************************************************************/
 
 
-#ifndef TESTTestMatlabExporter_H_
-#define TESTTestMatlabExporter_H_
 
-#include <QtTest/QtTest>
+#ifndef NERDMatlabExporter_H
+#define NERDMatlabExporter_H
+
+#include "Value/MatrixValue.h"
+#include "Value/StringValue.h"
+#include "Core/SystemObject.h"
+#include <QVector>
+#include <QString>
+#include <qtextstream.h>
 
 namespace nerd {
 	
-	class TestMatlabExporter : public QObject {
+	/**
+	 * MatlabExporter for external plotting programs, such as Matlab. 
+	 */
+	class MatlabExporter : public virtual SystemObject, public EventListener {
+	public:
+		MatlabExporter();
+		virtual ~MatlabExporter();
 		
-		Q_OBJECT
+		virtual QString getName() const;
 		
-	private slots:
+		virtual bool init();
+		virtual bool bind();
+		virtual bool cleanUp();
 		
-		void cleanUpTestCase();
-		void initTestCase();
+		virtual void eventOccured(Event *event);
 		
-		void testConstructors();
-		void testMatlabExport();
+		
+		bool exportMatrix(const QString diagramPlotterName, const QString &fileName);
+		void addMatrixRow(QTextStream &out, MatrixValue *matrix, int layer, int row);
 		
 	private:
-		bool findTextInFile(const QString &fileName, const QString &text, bool entireLinesOnly);
+		ValueManager *mValueManager;
+		
+		Event *mStartEvent;
+		Event *mFinishEvent;
+		
+		StringValue *mExportFormatValue;
+		StringValue *mActiveCalculatorValue;
 		
 	};
 	
+	
+	
+	
 }
 
+#endif
 
-#endif 
 
 

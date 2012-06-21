@@ -85,20 +85,19 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	mProgressPercentage = new DoubleValue(0);
 	mEnableConstraints = new BoolValue(false);
 
-	//****Till****//
 	mData = new MatrixValue(); //data matrix
 	mData->clear();
 	mData->resize(2, 2, 1);
 	mData->fill(0);
 	
 	mOutputPath = new StringValue(); //string giving the path to the output file, if an external plotting program is used
-	mXAxisDescription = new StringValue("X Parameters");
-	mYAxisDescription = new StringValue("Y Parameters");	
+	mAxisNames = new StringValue("x, y");
+	mTitleNames = new StringValue(name);	
 	mData->setDescription("Matrix containing the output data, do not change.");
 	mOutputPath->setDescription("Path to the output file for exported data.");
-	mXAxisDescription->setDescription("Description of x-axis that appears in the plotters.");
-	mYAxisDescription->setDescription("Description of y-axis that appears in the plotters.");
-	//***/Till****//
+	mAxisNames->setDescription("Axis descriptions. Format: x1,y1|x2,y2|...");
+	mTitleNames->setDescription("(Optional) Titles of the diagrams. Requires" 
+						"one name per diagram: Format: title1|title2||title4");
 	
 	
 	addParameter("Config/Activate", mActiveValue, true);
@@ -106,12 +105,10 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	addParameter("Performance/ProgressPercentage", mProgressPercentage, true);
 	addParameter("Config/EnableConstraints", mEnableConstraints, true);
 	
-	//****Till****c//
 	addParameter("Internal/Data", mData, true);
-	addParameter("Config/OutputPath", mOutputPath, true);
-	addParameter("Config/XAxisDescription", mXAxisDescription, true);
-	addParameter("Config/YAxisDescription", mYAxisDescription, true);
-	//***/Till****c//
+	addParameter("Config/Diagram/OutputPath", mOutputPath, true);
+	addParameter("Config/Diagram/AxisNames", mAxisNames, true);
+	addParameter("Config/Diagram/TitleNames", mTitleNames, true);
 	
 	mConstraintManager = ConstraintManager::getInstance();
 }

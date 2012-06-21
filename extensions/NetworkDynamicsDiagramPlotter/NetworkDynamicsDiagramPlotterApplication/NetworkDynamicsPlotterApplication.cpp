@@ -79,7 +79,7 @@
 #include <Collections/ScriptedModelLoader.h>
 #include <PlugIns/StepsPerSecondCounter.h>
 #include <Control/NetworkAgentControlParser.h>
-
+#include "Exporters/MatlabExporter.h"
 
 
 using namespace std;
@@ -91,16 +91,18 @@ namespace nerd {
  * Constructs a new NeuralNetworkEditorApplication.
  */
 NetworkDynamicsPlotterApplication::NetworkDynamicsPlotterApplication()
-	: mExecutionLoop(0), mEnableSimulator(false)
+	: BaseApplication(), mExecutionLoop(0), mEnableSimulator(false)
 {
 	mName = "NeuralNetworkApplication";
 
 	//Add statis mode value to allow the plotters to prevent network modifications in the editor
 	//while the plots are calculated.
 	BoolValue *stasisModeValue = new BoolValue(true);
+	
 	Core::getInstance()->getValueManager()->addValue(
 				EvolutionConstants::VALUE_EVO_STASIS_MODE, stasisModeValue);
 
+	//Check if the physical simulator is enabled.
 	CommandLineArgument *simArg = new CommandLineArgument("useSimulator", "sim", "", 
 														  "Enables the physical simulator.", 0, 0, true, true);
 	if(simArg->getNumberOfEntries() > 0) {
@@ -140,24 +142,23 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 	connect(this, SIGNAL(showGui()), mMainWindow, SLOT(show()));
 
 	
-	timer = new QTimer();
-// 	timer->start(500);
-	timer->setInterval(2000);
+	mTimer = new QTimer();
+	mTimer->setInterval(2000);
 	
-	//****Till****//
-	op = new OnlinePlotter();
+	OnlinePlotter *op = new OnlinePlotter();
 	
 	for(int i = 0; i < 6; ++i) {
-		opw = new OnlinePlotterWindow(i);
+		
+		OnlinePlotterWindow *opw = new OnlinePlotterWindow(i);
+		
 		connect(op, SIGNAL(dataPrepared(QString, MatrixValue*, QString, QString)), opw, SLOT(printData(QString, MatrixValue*, QString, QString)));
-		connect(timer, SIGNAL(timeout()), opw, SLOT(updateData()));
-		connect(opw, SIGNAL(timerStart()), timer, SLOT(start()));
+		connect(mTimer, SIGNAL(timeout()), opw, SLOT(updateData()));
+		connect(opw, SIGNAL(timerStart()), mTimer, SLOT(start()));
 		connect(op, SIGNAL(startProcessing()), opw, SLOT(processing()));
 		connect(op, SIGNAL(finishedProcessing()), opw, SLOT(finishedProcessing()));
 	}
 
-	
-	connect(op, SIGNAL(finishedProcessing()), timer, SLOT(stop()));
+	connect(op, SIGNAL(finishedProcessing()), mTimer, SLOT(stop()));
 	
 	//***/Till****//
 	
@@ -179,8 +180,9 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 		
 		//Choose Physics Engine (or external Yars simulator)
 		CommandLineArgument *physicsArg = new CommandLineArgument("physics", "p", "<physicsLibrary>",
-		"Uses <physicsLibrary> as physics engine.\n"
-		"     Currently there are [ode, yars].", 1,0, true);
+											"Uses <physicsLibrary> as physics engine.\n"
+											"     Currently there are [ode, yars].", 1,0, true);
+		
 		if(physicsArg->getNumberOfEntries() != 0 && !physicsArg->getEntryParameters(0).empty()
 			&& physicsArg->getEntryParameters(0).at(0).trimmed() == "yars")
 		{
@@ -204,10 +206,11 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 		
 		//Priovide the -net required to load a network for one or more agents.
 		new NetworkAgentControlParser();
+		
+		ScriptedModelLoader();
 	}
 	
 	UniversalNeuroScriptLoader();
-	ScriptedModelLoader();
 
 
 	//load a network if given.
@@ -238,7 +241,6 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 				if(dynamic_cast<ModularNeuralNetwork*>(net) != 0) {
 					Neuro::getNeuralNetworkManager()->addNeuralNetwork(net);
 				}
-				
 			}
 		}
 		else {
@@ -251,9 +253,8 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 
 	mExecutionLoop = new PlotterExecutionLoop();
 
-	//****Till****//
-	exporter = new Exporter();
-	//***/Till****//
+	new MatlabExporter();
+
 	return ok;
 }
 
