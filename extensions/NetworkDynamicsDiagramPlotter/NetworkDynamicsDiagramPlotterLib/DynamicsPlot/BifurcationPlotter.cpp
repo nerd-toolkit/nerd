@@ -117,6 +117,8 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	addParameter("Config/RunBackwards", mRunBackwards, true);
 	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
 	addParameter("Config/ResetSimulation", mResetSimulator, true);
+	
+	mTitleNames->set("Bifurcation Plot|Bifurcation Plot|Bifurcation Plot|Bifurcation Plot|Bifurcation Plot|Bifurcation Plot");
 }
 
 BifurcationPlotter::~BifurcationPlotter() {}

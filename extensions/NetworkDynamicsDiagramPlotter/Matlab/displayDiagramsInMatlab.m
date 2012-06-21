@@ -8,7 +8,7 @@ clc;
 
 totalWidth = 800;	% constant figure width in px
 gap = 0.2;		% plot-to-plot distance factor
-axisRes = 15;		% number of visible axis values for a 1-plot figure
+axisRes = 15;		% number of visible axis values for a 1-plot full-window figure
 
 
 
@@ -50,13 +50,10 @@ while ~strcmp(s,'1') & ~strcmp(s,'2')
 	s = input('Choose a color map.    1 - gray    2 - color \n\n    ', 's');
 end
 if strcmp(s,'1')
-%	cMap = flipud(gray);
 	cFlag = 1;
 else
-%	cMap = [1 1 1; jet];
 	cFlag = 2;
 end
-%close;
 
 fprintf('\n');
 
@@ -110,20 +107,22 @@ fprintf('\n');
 %% plot
 
 nCols = ceil(nPlots/nRows);
-totalHeight = totalWidth * resY/resX * nRows/nCols;
+totalHeight = min(totalWidth/2, totalWidth*resY/resX*nRows/nCols);
 
 figure('Name', [fileName(1:find(fileName=='.')-1) '_' strrep(num2str(toPlot),'  ','')], ...
        'Position', [50 50 totalWidth totalHeight]);
 
-stepX = ceil(resX/axisRes*nCols);
-stepY = ceil(resY/axisRes*nCols);
+nTicks = round(axisRes/max(2,nCols));
+
+stepX = (resX-1)/(nTicks-1);
+stepY = (resY-1)/(nTicks-1);
 
 for i=1:nPlots
 	subplot(nRows,nCols,i);
 	imagesc(matrices{toPlot(i)}(1:end-1,2:end),[0 totalMax]);
 	set(gca, 'DataAspectRatio', [1 1 1]);
-	set(gca, 'XTick', 1:stepX:resX, 'XLim', [1 resX], 'XTickLabel', round(10*matrices{toPlot(i)}(end,2:stepX:end))./10);
-	set(gca, 'YTick', stepY:stepY:resY, 'YLim', [1 resY], 'YTickLabel', round(10*matrices{toPlot(i)}(stepY:stepY:end-1,1))./10);
+	set(gca, 'XTick', 1:stepX:resX, 'XLim', [1 resX], 'XTickLabel', round(10*matrices{toPlot(i)}(end,round(2:stepX:resX+1)))./10);
+	set(gca, 'YTick', 1:stepY:resY, 'YLim', [1 resY], 'YTickLabel', round(10*matrices{toPlot(i)}(round(1:stepY:resY),1))./10);
 	xlabel(names{toPlot(i)*2-1});
 	ylabel(names{toPlot(i)*2});
 	thisTitle = '';
@@ -133,16 +132,14 @@ for i=1:nPlots
 	if titleFlag
 		thisTitle = [thisTitle titles{toPlot(i)}];
 	end
-	title(thisTitle);
+	title(thisTitle, 'FontWeight', 'bold');
 end
-
-%colormap(cMap);
 
 if cFlag==1
 	colormap(flipud(gray(totalMax+1)));
 else
-	colormap([1 1 1; jet(totalMax)]);
+	colormap([1 1 1; hsv(totalMax)]);
 end
 
-colorbar('Position',[0.95 0.25 0.025 0.5],'YTick',totalMax/(2*(totalMax+1)):totalMax/(totalMax+1):totalMax,'YLim',[0 totalMax],'YTickLabel',0:totalMax);
+cb = colorbar('Position',[0.95 0.25 0.025 0.5],'YTick',totalMax/(2*(totalMax+1)):totalMax/(totalMax+1):totalMax,'YLim',[0 totalMax],'YTickLabel',0:totalMax);
 

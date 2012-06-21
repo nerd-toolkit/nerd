@@ -160,6 +160,7 @@ namespace nerd {
 	 */
 	void OnlinePlotterWindow::setupGUI()
 	{
+
 		setAttribute(Qt::WA_QuitOnClose, false);
 		setWindowTitle("Diagram [" + QString::number(mIndex) + "]");
 		
@@ -239,6 +240,7 @@ namespace nerd {
 	 * 
 	*/
 	void OnlinePlotterWindow::printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr){
+
 		if(dataMatrix == 0 || name == 0){
 			Core::log("OnlinePlotterWindow: Couldn't find data Matrix or Name");
 			return;
@@ -385,6 +387,7 @@ namespace nerd {
 	 * 
 	 */
 	void OnlinePlotterWindow::finishedProcessing(){
+		
 		if(mMatrix == 0) {
 			return;
 		}
@@ -419,6 +422,7 @@ namespace nerd {
 	 *
 	 */
 	void OnlinePlotterWindow::processing(){
+
 		if(mMatrix == 0) {
 			return;
 		}
@@ -440,6 +444,7 @@ namespace nerd {
 	}
 	
 	void OnlinePlotterWindow::minimizeWidgetSize() {
+
 		updateGeometry();
 		resize(minimumSizeHint());
 		show();

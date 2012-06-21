@@ -72,7 +72,7 @@ DynamicsPlotManager::DynamicsPlotManager()
 	
 	mInbuiltPlotterOnline->setDescription("If TRUE, the inbuilt diagram is updated during calculation.");
 	mPlotterProgram->setDescription("Specifies the output program, for example the internal plotter or external ones like Matlab");
-	mPlotterProgram->getOptionList().append("Internal");
+	mPlotterProgram->getOptionList().append("Internal,matlab");
 	mPlotterProgram->getOptionList().append("Matlab");
 	mPlotterProgram->getOptionList().append("Matlab,Internal");
 	

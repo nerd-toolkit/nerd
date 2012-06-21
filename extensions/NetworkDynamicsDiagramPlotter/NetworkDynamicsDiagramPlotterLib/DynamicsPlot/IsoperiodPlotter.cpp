@@ -114,6 +114,8 @@ IsoperiodPlotter::IsoperiodPlotter() : DynamicsPlotter("Isoperiod") {
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
 	addParameter("Config/ResetSimulation", mResetSimulator, true);
+	
+	mTitleNames->set("Isoperiodic Plot|Isoperiodic Plot|Isoperiodic Plot|Isoperiodic Plot|Isoperiodic Plot|Isoperiodic Plot");
 }
 
 IsoperiodPlotter::~IsoperiodPlotter() {}

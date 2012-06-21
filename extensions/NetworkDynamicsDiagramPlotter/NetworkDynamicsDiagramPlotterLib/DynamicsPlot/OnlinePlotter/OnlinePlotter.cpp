@@ -84,7 +84,7 @@ namespace nerd {
 
 	bool OnlinePlotter::bind() {
 		bool ok = true;
-		
+
 		EventManager *em = Core::getInstance()->getEventManager();
 		 
 		mStartEvent = em->registerForEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED, this);
@@ -123,6 +123,7 @@ namespace nerd {
 			return;
 		}
 		else if(event == mStartEvent) {
+
 			if(mPlotterProgramValue->get() == ""  
 				|| mPlotterProgramValue->get().contains("internal", Qt::CaseInsensitive))
 			{
@@ -136,16 +137,11 @@ namespace nerd {
 		}
 		else if(event == mFinishEvent){
 			//if the calculator stopped running:	
-			
+
 			if(mPlotterProgramValue->get() == "" 
 				|| mPlotterProgramValue->get().contains("internal", Qt::CaseInsensitive))
 			{ 
-				//TODO (chris) What the hell is this???
-				if(qPrintable(mRunningCalculator) != 0){
-// 					 prepareData(mRunningCalculator);
 					 emit finishedProcessing();
-				}
-				
 			}
 		}
 	}
@@ -159,33 +155,23 @@ namespace nerd {
 	 */	
 	void OnlinePlotter::prepareData(QString calculator)
 	{
+
 		ValueManager *vM = Core::getInstance()->getValueManager();
 		QString pathToValues = "/DynamicsPlotters/" + calculator + "/";
 		
-		if(calculator == 0) {
+		if(calculator == "") {
 			return;
 		}
-// 		else if(calculator == "Bifurcation" 
-// 				|| calculator == "BasinOfAttraction"
-// 				|| calculator == "IsoPeriod"
-// 				|| calculator == "Transients_Calculator" 
-// 				|| calculator == "Isoperiod_Calculator"
-// 			    || calculator == "Dummy")
-// 		{
- 			MatrixValue *dataMatrixValue = dynamic_cast<MatrixValue*>(vM->getValue(QString(pathToValues + QString("Internal/Data"))));
-			StringValue *xDescV = mVM->getStringValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("Config/XAxisDescription"))); //Description for x-axis
-			StringValue *yDescV = mVM->getStringValue(QString("/DynamicsPlotters/" + calculator + "/" + QString("Config/YAxisDescription")));		
-				
-			if(dataMatrixValue == 0 || xDescV == 0 || yDescV == 0){
-				Core::log("OnlinePlotter: Couldn't find data Matrix or x/y label values.");
-			}
-			else {
-				emit dataPrepared(pathToValues, dataMatrixValue, xDescV->get(), yDescV->get());//calls OnlinePlotterWindow::printData(...)
-			}
-// 		}
-// 		else{
-// 			Core::log("OnlinePlotter: Unknown calculator name: " + calculator, true);
-// 		}
+
+		MatrixValue *dataMatrixValue = dynamic_cast<MatrixValue*>(vM->getValue(QString(pathToValues + QString("Internal/Data"))));	
+			
+		if(dataMatrixValue == 0){
+			Core::log("OnlinePlotter: Couldn't find data Matrix or x/y label values.", true);
+		}
+		else {
+			emit dataPrepared(pathToValues, dataMatrixValue, "", "");//calls OnlinePlotterWindow::printData(...)
+		}
+
 
 	}//printData
 	

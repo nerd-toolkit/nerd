@@ -146,6 +146,7 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 	mTimer->setInterval(2000);
 	
 	OnlinePlotter *op = new OnlinePlotter();
+	//Core::getInstance()->addSystemObject(op);
 	
 	for(int i = 0; i < 6; ++i) {
 		

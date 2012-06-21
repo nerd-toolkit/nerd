@@ -90,11 +90,13 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	mData->resize(2, 2, 1);
 	mData->fill(0);
 	
-	mOutputPath = new StringValue(); //string giving the path to the output file, if an external plotting program is used
+	QString prefixName = name;
+	prefixName = prefixName.replace(" ", "-");
+	mFilePrefix = new StringValue(prefixName); //string giving the path to the output file, if an external plotting program is used
 	mAxisNames = new StringValue("x, y");
 	mTitleNames = new StringValue(name);	
 	mData->setDescription("Matrix containing the output data, do not change.");
-	mOutputPath->setDescription("Path to the output file for exported data.");
+	mFilePrefix->setDescription("The prefix for the export files.");
 	mAxisNames->setDescription("Axis descriptions. Format: x1,y1|x2,y2|...");
 	mTitleNames->setDescription("(Optional) Titles of the diagrams. Requires" 
 						"one name per diagram: Format: title1|title2||title4");
@@ -106,7 +108,7 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	addParameter("Config/EnableConstraints", mEnableConstraints, true);
 	
 	addParameter("Internal/Data", mData, true);
-	addParameter("Config/Diagram/OutputPath", mOutputPath, true);
+	addParameter("Config/Diagram/FilePrefix", mFilePrefix, true);
 	addParameter("Config/Diagram/AxisNames", mAxisNames, true);
 	addParameter("Config/Diagram/TitleNames", mTitleNames, true);
 	
@@ -447,4 +449,194 @@ bool DynamicsPlotter::notifyNetworkParametersChanged(ModularNeuralNetwork *netwo
 	
 }
 
+
+// //****Till****//
+// 	/**
+// 	 * Get varied element. Returns a pointer on either a synapse or neuron, depending what element is found with the ID. 
+// 	 * @param idOfVariedNetworkElement ID of the element, that is varied. 
+// 	 * @return Neuron or synapse which is varied.
+// 	 */
+// 	NeuralNetworkElement* DynamicsPlotter::getVariedNetworkElement(qulonglong idOfVariedNetworkElement) {
+// 		NeuralNetwork *network = getCurrentNetwork();
+// 		
+// 		//Get pointers to the relevant varied element:
+// 		Synapse *synapse = NeuralNetwork::selectSynapseById(idOfVariedNetworkElement, 
+// 															network->getSynapses());													
+// 		if(synapse != 0) { // element is synapse
+// 			return synapse;
+// 		}
+// 		
+// 		Neuron *neuron = NeuralNetwork::selectNeuronById(idOfVariedNetworkElement, 
+// 														 network->getNeurons());
+// 		if(neuron != 0){ // element is neuron
+// 			return neuron;
+// 		}
+// 
+// 		//if the object was neither a neuron, nor a synapse...
+// 		reportProblem("DynamicsPlotter::getVariedNetworkElement: Could not find neuron or synapse from given ID");
+// 		return 0;
+// 	}
+// 
+// 
+// 	/**
+// 	 * Set varied value of neuron bias or synapse strength
+// 	 * @param *variedElem Neuron or synapse which is varied
+// 	 * @param value New neuron bias or synapse strength
+//  	 */
+// 	void DynamicsPlotter::setVariedNetworkElementValue(NeuralNetworkElement *variedElem, double value){
+// 		if(variedElem == 0) {
+// 			reportProblem("DynamicsPlotter::setVariedNetworkElementValue: Could not find required neurons (varied / observed)!");
+// 			return;
+// 		}
+// 		
+// 		if(dynamic_cast<Neuron*>(variedElem) != 0){
+// 			static_cast<Neuron*>(variedElem)->getBiasValue().set(value);
+// 		}
+// 		else if(dynamic_cast<Synapse*>(variedElem) != 0){
+// 			static_cast<Synapse*>(variedElem)->getStrengthValue().set(value);
+// 		}
+// 		else{
+// 			reportProblem("DynamicsPlotter::setVariedNetworkElementValue: Could not find neuron or synapse.");
+// 			return;
+// 		}
+// 	}
+// 
+// 
+// 	/**
+// 	 * Get varied value of neuron bias or synapse strength. 
+// 	 * @param *variedElem Neuron or synapse which is varied
+// 	 * @return Bias value or synapse strength depending on parameter
+//  	 */
+// 	double DynamicsPlotter::getVariedNetworkElementValue(NeuralNetworkElement *variedElem){
+// 		if(variedElem == 0) {
+// 			reportProblem("DynamicsPlotter::getVariedNetworkElementValue: Could not find required neurons (varied / observed)!");
+// 			return 0;
+// 		}
+// 		if(dynamic_cast<Neuron*>(variedElem) != 0){
+// 			return static_cast<Neuron*>(variedElem)->getBiasValue().get();
+// 		}
+// 		else if(dynamic_cast<Synapse*>(variedElem) != 0){
+// 			return static_cast<Synapse*>(variedElem)->getStrengthValue().get();
+// 		}
+// 		else{
+// 			reportProblem("DynamicsPlotter::getVariedNetworkElementValue: Could not find neuron or synapse.");
+// 			return 0;
+// 		}
+// 	}
+// 
+// 	/**
+// 	 * Checks if all strings contain the same amount of elements
+// 	 * @param idsString QString containing the user input. 
+// 	 *                  This should be a list of network elements ids.
+// 	 * @param minsString QString containing the user input. 
+// 	 *                   This should be a list of the minima of the varied values.
+// 	 * @param maxsString QString containing the user input. 
+// 	 *                   This should be a list of the maxima of the varied values.
+// 	 * @return Return True the number of parts of the string after splitting at | or , are the same.
+// 	 */
+// 	bool DynamicsPlotter::checkStringListsItemCount(const QString &idsString, 
+// 													const QString &minsString, 
+// 													const QString &maxsString)
+// 	{	
+// 		// allow | and , as seperators
+// 		QString ids = idsString;
+// 		ids.replace("|", ","); 
+// 		
+// 		QStringList idsList1 = ids.split(",", QString::SkipEmptyParts);
+// 		QStringList minsList1 = minsString.split(",", QString::SkipEmptyParts);
+// 		QStringList maxsList1 = maxsString.split(",", QString::SkipEmptyParts);
+// 		
+// 		if(idsList1.removeDuplicates() > 0){
+// 			reportProblem("DynamicsPlotter::checkStringListsItemCount: Please avoid double IDs.");
+// 			return true;
+// 		}
+// 		
+// 		//TODO (chris): What the heck is this?? Can be removed?
+// 		if(idsList1.size() == 1){ //if no separator could be found
+// 			bool ok = false;
+// 			QString str = idsList1[0];
+// 			str.toULongLong (&ok);//try to convert to qulonglong, *ok is set false if not successful
+// 			if(ok == false){
+// 				reportProblem("DynamicsPlotter::checkStringlistsItemCount: Could not find separators! Use \",\" or \"|\" please.");
+// 				return false;
+// 			}
+// 		}
+// 		
+// 		
+// 		if(idsList1.size() == minsList1.size() && idsList1.size() == maxsList1.size()){
+// 			return true;
+// 		}
+// 		else {
+// 			return false;
+// 		}
+// 	}
+// 	
+// 	
+// 	
+// 	/**
+// 	 * Creates a QList of doubles from a string. Elements in string must be seperated by commas or '|'.
+// 	 * @param idsString StringValue containing a list of elements seperated by commas or '|'. 
+// 	 *                  All elements must be convertable to ULongLong. 
+// 	 * @return List of ULongLongValues. 
+// 	 */
+// 	QList<qulonglong> DynamicsPlotter::createListOfIds(const QString &idsString){
+// 		QList<qulonglong> idsList;
+// 		
+// 		//replace all | by , to have a comma-seperated list.
+// 		QString ids = idsString;
+// 		ids.replace("|", ","); 
+// 		
+// 		QStringList idsStringList = ids.split(",", QString::SkipEmptyParts);
+// 		
+// 		bool ok = false;
+// 		for(int j = 0; j < idsStringList.size(); j++){
+// 			qulonglong id = idsStringList[j].toULongLong(&ok);
+// 			
+// 			if(ok){
+// 				idsList.append(id);
+// 			}
+// 			else {
+// 				reportProblem("DynamicsPlotter::createListOfIds: Could not convert string entry "
+// 						  "to uLongLong.");
+// 			}
+// 		}
+// 		
+// 		return idsList;
+// 	}
+// 
+// 	/**
+// 	 * Creates a QList of doubles from a string. Elements in string must be seperated by commas. 
+// 	 * @param idsString String Value containing a list of elements seperated by commas. 
+// 	 * @return List of doubles. 
+// 	 */
+// 	QList<double>  DynamicsPlotter::createListOfDoubles(const QString &doublesString){
+// 		QList<double> doublesList;
+// 
+// 		QStringList doublesStringList = doublesString.split(",", QString::SkipEmptyParts);
+// 		
+// 		bool ok = false;
+// 		for(int j = 0; j < doublesStringList.size(); j++) {
+// 			double value = doublesStringList[j].toDouble(&ok);
+// 			
+// 			if(ok) {
+// 				doublesList.append(value);
+// 			}
+// 			else {
+// 				reportProblem("DynamicsPlotter::createListOfDoubles: Could not convert string "
+// 						  "entry to double.");
+// 			}
+// 		}
+// 		
+// 		return doublesList;
+// 	}
+// 
+// //***/Till****c//
+
+
+
+
 }
+
+
+
+

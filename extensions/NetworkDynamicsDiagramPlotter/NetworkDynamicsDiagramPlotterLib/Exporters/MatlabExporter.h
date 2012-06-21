@@ -61,7 +61,7 @@ namespace nerd {
 	/**
 	 * MatlabExporter for external plotting programs, such as Matlab. 
 	 */
-	class MatlabExporter : public virtual SystemObject, public EventListener {
+	class MatlabExporter : public virtual SystemObject, public virtual EventListener {
 	public:
 		MatlabExporter();
 		virtual ~MatlabExporter();
@@ -86,6 +86,8 @@ namespace nerd {
 		
 		StringValue *mExportFormatValue;
 		StringValue *mActiveCalculatorValue;
+		
+		QString mActiveCalculatorName;
 		
 	};
 	

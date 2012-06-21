@@ -99,6 +99,8 @@ FirstReturnMap::FirstReturnMap() : DynamicsPlotter("FirstReturnMap") {
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
+	
+	mTitleNames->set("First Return Map|First Return Map|First Return Map|First Return Map|First Return Map|First Return Map");
 }
 
 FirstReturnMap::~FirstReturnMap() {}

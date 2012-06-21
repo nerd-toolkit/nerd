@@ -92,14 +92,14 @@ void TestMatlabExporter::testMatlabExport() {
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	
 	QString diagramName = "MyDiagram";
-	QString fileName = "testMatlabOutput.txt";
+	QString fileName = "testMatlabOutput.m";
 	
 	QVERIFY(exporter->exportMatrix(diagramName, fileName) == false);
 	
 	MatrixValue *matrix = new MatrixValue(20, 30, 3);
 	StringValue *axisDescriptions = new StringValue();
 	StringValue *titleNames = new StringValue();
-	
+	StringValue *outputPath = new StringValue();
 	
 	
 	//************************************************************************************************************
@@ -109,6 +109,7 @@ void TestMatlabExporter::testMatlabExport() {
 	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Internal/Data", axisDescriptions));
 	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Config/Diagram/AxisNames", axisDescriptions));
 	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Config/Diagram/TitleNames", titleNames));
+	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Config/Diagram/OutputPath", outputPath));
 	
 	QVERIFY(exporter->exportMatrix(diagramName, fileName) == false);
 	
@@ -225,16 +226,7 @@ void TestMatlabExporter::testMatlabExport() {
 	}
 	
 	QVERIFY(exporter->exportMatrix(diagramName, fileName) == true);
-	QVERIFY(findTextInFile(fileName, "matrices = {[0; 1; 2; 3; 4; 5; 6; 7; 8; 9; "
-									 "400; 401; 402; 403; 404; 405; 406; 407; 408; 409; "
-									 "300; 301; 302; 303; 304; 305; 306; 307; 308; 309; "
-									 "200; 201; 202; 203; 204; 205; 206; 207; 208; 209; "
-									 "100; 101; 102; 103; 104; 105; 106; 107; 108; 109], "
-									 "[10000; 10001; 10002; 10003; 10004; 10005; 10006; 10007; 10008; 10009; "
-									 "10400; 10401; 10402; 10403; 10404; 10405; 10406; 10407; 10408; 10409; "
-									 "10300; 10301; 10302; 10303; 10304; 10305; 10306; 10307; 10308; 10309; "
-									 "10200; 10201; 10202; 10203; 10204; 10205; 10206; 10207; 10208; 10209; "
-									 "10100; 10101; 10102; 10103; 10104; 10105; 10106; 10107; 10108; 10109]};", true));
+	QVERIFY(findTextInFile(fileName, "matrices = {[400 401 402 403 404 405 406 407 408 409; 300 301 302 303 304 305 306 307 308 309; 200 201 202 203 204 205 206 207 208 209; 100 101 102 103 104 105 106 107 108 109; 0 1 2 3 4 5 6 7 8 9], [10400 10401 10402 10403 10404 10405 10406 10407 10408 10409; 10300 10301 10302 10303 10304 10305 10306 10307 10308 10309; 10200 10201 10202 10203 10204 10205 10206 10207 10208 10209; 10100 10101 10102 10103 10104 10105 10106 10107 10108 10109; 10000 10001 10002 10003 10004 10005 10006 10007 10008 10009]};", true));
 	QVERIFY(findTextInFile(fileName, "names = {'x' 'y' 'x' 'y' };", true));
 	QVERIFY(findTextInFile(fileName, "titles = {'Title 1' 'Title 2' };", true));
 	

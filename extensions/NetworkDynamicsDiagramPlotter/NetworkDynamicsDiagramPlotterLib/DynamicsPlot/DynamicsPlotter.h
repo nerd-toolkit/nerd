@@ -123,7 +123,7 @@ namespace nerd {
 		
 		//****Till****//
 		MatrixValue *mData;
-		StringValue *mOutputPath;
+		StringValue *mFilePrefix;
 		StringValue *mAxisNames;
 		StringValue *mTitleNames;
 		

@@ -53,6 +53,7 @@
 #include <QVector>
 #include "DynamicsPlotConstants.h"
 #include <QStringList>
+#include <QDate>
 
 using namespace std;
 
@@ -63,7 +64,7 @@ namespace nerd {
 	 * Constructs a new MatlabExporter.
 	 */
 	MatlabExporter::MatlabExporter()
-	: mExportFormatValue(0), mActiveCalculatorValue(0)
+	: SystemObject(), EventListener(), mExportFormatValue(0), mActiveCalculatorValue(0)
 	{
 		Core::getInstance()->addSystemObject(this);
 	}
@@ -107,7 +108,7 @@ namespace nerd {
 		mActiveCalculatorValue = mValueManager->getStringValue(
 									DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER);
 		mExportFormatValue = mValueManager->getStringValue(
-									DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT);		
+									DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT);
 		
 		if(mActiveCalculatorValue == 0) {
 			Core::log("MatlabExporter: Could not find requried value [" 
@@ -135,12 +136,12 @@ namespace nerd {
 		if(event == 0) {
 			return;
 		}
-		else if(event == mStartEvent) {
-// 			mRunningCalculator = dynamic_cast<StringValue*>(mActiveCalculatorValue)->get();
+		else if(event == mStartEvent && mActiveCalculatorValue != 0) {
+			mActiveCalculatorName =mActiveCalculatorValue->get();
 // 			mPlotters = dynamic_cast<StringValue*>(mPlotterProgramValue)->get();
 		}
 		else if(event == mFinishEvent && mActiveCalculatorValue != 0){
-			exportMatrix(mActiveCalculatorValue->get(), "matlab.m");
+			exportMatrix(mActiveCalculatorName, "");
 		}
 	}
 	
@@ -160,10 +161,28 @@ namespace nerd {
 													 + diagramPlotterName 
 													 + "/Config/Diagram/TitleNames");
 		
-		if(matrix == 0  || axisNames == 0 || titleNames == 0) {
+		StringValue *outputPath = vm->getStringValue("/DynamicsPlotters/" 
+													 + diagramPlotterName 
+													 + "/Config/Diagram/FilePrefix");
+		
+		if(matrix == 0  || axisNames == 0 || titleNames == 0 || outputPath == 0) {
 			Core::log("MatlabExporter: Could not find required values for diagram ["
 						+ diagramPlotterName + "]. Skipping matlab export...", true);
 			return false;
+		}
+		
+		//prepare filename
+		QString outputFileName = fileName;
+		if(outputFileName == "") {
+			if(outputPath->get() != "") {
+				outputFileName = "./matlab/" + outputPath->get();
+			}
+			else {
+				Core::getInstance()->enforceDirectoryPath("./matlab");
+				outputFileName = "./matlab/export";
+			}
+			outputFileName += QDate::currentDate().toString("_dd_MM_yyyy_")
+								.append(QTime::currentTime().toString("hh_mm_ss")).append(".m");
 		}
 		
 		
@@ -218,10 +237,10 @@ namespace nerd {
 		
 		
 		//prepare file
-		QFile file(fileName);
+		QFile file(outputFileName);
 		
 		if(!file.open(QIODevice::WriteOnly)) {
-			Core::log("MatlabExporter: Cannot write to file [" + fileName + "]. "
+			Core::log("MatlabExporter: Cannot write to file [" + outputFileName + "]. "
 						"Please check the file path and make sure "
 						"you have writing permission for the specified directory.", true);
 			return false;
@@ -234,21 +253,19 @@ namespace nerd {
 		out << "matrices = {";
 		
 		for(int i = 0; i < matrix->getMatrixDepth(); ++i) {
+			if(i != 0) {
+				out << ", ";
+			}
 			out << "[";
 			
-			//axis scaling
-			addMatrixRow(out, matrix, i, 0);
-			
 			//add matric content in reverse order
-			for(int j = matrix->getMatrixHeight() - 1; j > 0; --j) {
-				out << "; ";
-				
+			for(int j = matrix->getMatrixHeight() - 1; j >= 0; --j) {
+				if(j != matrix->getMatrixHeight() - 1) {
+					out << "; ";
+				}
 				addMatrixRow(out, matrix, i, j);
 			}
 			out << "]";
-			if(i < matrix->getMatrixDepth() - 1) {
-				out << ", ";
-			}
 		}
 		out << "};" << endl;
 		
@@ -287,7 +304,7 @@ namespace nerd {
 		for(int i = 0; i < matrix->getMatrixWidth(); ++i) {
 			out << matrix->get(i, row, layer);
 			if(i < matrix->getMatrixWidth() - 1) {
-				out << "; ";
+				out << " ";
 			}
 		}
 	}

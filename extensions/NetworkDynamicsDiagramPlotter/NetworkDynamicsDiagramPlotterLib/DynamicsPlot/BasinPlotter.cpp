@@ -114,6 +114,8 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
 	addParameter("Config/ResetSimulation", mResetSimulator, true);
+	
+	mTitleNames->set("Basins of Attraction|Periods|Attractor");
 }
 
 BasinPlotter::~BasinPlotter() {}
