@@ -58,6 +58,14 @@ namespace nerd {
 		void cleanUpTestCase();
 		void initTestCase();
 		
+		void testGetElementValue();
+		//void testGetElementValues();
+		//void testParseElementString();
+		//void testGetDoublesFromString();
+		//void testGetNetworkValues();
+		//void testGetNetworkState();
+		//void testCompareNetworkStates();
+
 		void testTransferActivationToOutput();	
 		
 	private:
