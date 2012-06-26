@@ -109,7 +109,7 @@ void TestMatlabExporter::testMatlabExport() {
 	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Internal/Data", axisDescriptions));
 	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Config/Diagram/AxisNames", axisDescriptions));
 	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Config/Diagram/TitleNames", titleNames));
-	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Config/Diagram/OutputPath", outputPath));
+	QVERIFY(vm->addValue("/DynamicsPlotters/" + diagramName + "/Config/Diagram/FilePrefix", outputPath));
 	
 	QVERIFY(exporter->exportMatrix(diagramName, fileName) == false);
 	

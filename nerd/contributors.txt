@@ -15,6 +15,7 @@ NeuralNetwork library
 NeuroAndSimEvolutionLibrary
 OdePhysics library
 IbdsPhysics library
+Dynamics Analyzer Core library
 
 
 Verena Thomas
@@ -36,7 +37,7 @@ M-Series V1 Model
 
 
 Chris Reinke
-8.2009 - now
+8.2009 - 11.2010
 ModelOptimizer
 Exporters for Braindesigner
 
@@ -47,16 +48,27 @@ Wavefront Support
 Khepera Model
 
 
-Stefan Klempnauer
+Stefan Klempnauer, Sebastian Schwarz
 4.2009
 Khepera Model
 Distance Sensor
 
 
-Sebastian Schwarz
-4.2009
-Khepera Model
-Distance Sensor
+Till Faber
+10.2010 - 02.2011
+Preliminary Version of NERD Dynamics Analyzer (now deprecated)
+
+
+Josef Behr
+03.2012 - now
+NERD Dynamics Analyzer (Helperfunctions, Diagramplotters: Bifurcation, Isoperiodic, First Return Map, Basin of Attraction)
+
+
+Florian Ziegler
+06.2012 - now
+NERD Dynamics Analyzer: Matlab Script to view and layout stored NERD dynamics diagrams.
+
+
 
 
 

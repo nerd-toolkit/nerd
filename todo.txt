@@ -1,0 +1,11 @@
+
+- CurrentFitness in FitnessEditor
+- Sort Properties in NetworkEditor
+- X/Y Diagram Plotter
+- Synchronized Multi-line Plotter
+- Analyzer: Store Session
+- Analyzer: Store Results via Menu
+- Analyzer: GUI
+- Analyzer: Orbits / Transients / Lapunov
+
+
