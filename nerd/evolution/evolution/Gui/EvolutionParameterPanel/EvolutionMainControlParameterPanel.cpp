@@ -169,6 +169,11 @@ EvolutionMainControlParameterPanel::EvolutionMainControlParameterPanel(const QSt
 	plotter->getPlotter()->setPlotterRange(500);
 	plotter->getPlotter()->setMinimumHeight(200);
 	plotter->bind();
+	if(plotter->getPlotter()->getValuePlotter() != 0 
+			&& plotter->getPlotter()->getValuePlotter()->getPlotterWidget() != 0) 
+	{
+		plotter->getPlotter()->getValuePlotter()->getPlotterWidget()->showValuesInLegend(true);
+	}
 
 	mainLayout->addWidget(statusFrame);
 	mainLayout->addWidget(plotter->getPlotter());

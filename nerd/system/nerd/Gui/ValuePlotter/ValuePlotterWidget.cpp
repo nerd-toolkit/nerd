@@ -348,7 +348,6 @@ ValuePlotterWidget::ValuePlotterWidget(const QString &name, int activeTab, QWidg
 
 	mControlArea->addTab(specialTab, "Special");
 
-
 	mControlArea->setCurrentIndex(activeTab);
 
 	connect(mHistorySizeField, SIGNAL(returnPressed()),

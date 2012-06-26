@@ -53,6 +53,8 @@
 #include "Value/ChangeValueTask.h"
 #include "Util/NerdFileSelector.h"
 #include <QKeyEvent>
+#include <Gui/ValuePlotter/ValuePlotterItem.h>
+#include <NerdConstants.h>
 
 
 using namespace std;
@@ -72,11 +74,21 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 
 	mTitleLabel = new QLabel(fitnessFunctionName);
 	layout->addWidget(mTitleLabel);
+	
+	QSplitter *splitter = new QSplitter(Qt::Vertical);
+	layout->addWidget(splitter);
+	
+	mFitnessPlotter = new ValuePlotterWidget("Current Fitness");
+	mFitnessPlotter->hideHandle(true);
+	splitter->addWidget(mFitnessPlotter);
 
 	mCodeArea = new QTextEdit();
 	mCodeArea->setTabStopWidth(20);
 	mCodeArea->setLineWrapMode(QTextEdit::NoWrap);
-	layout->addWidget(mCodeArea);
+	splitter->addWidget(mCodeArea);
+	
+	splitter->setStretchFactor(0, 1);
+	splitter->setStretchFactor(1, 100);
 
 	mErrorMessageField = new QTextEdit();
 	mErrorMessageField->setMaximumHeight(40);
@@ -166,6 +178,56 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 		updateFitnessCalculationMode();
 	}
 	
+	
+	mFitness =  vm->getDoubleValue(fitnessFunctionName + "/Fitness/Fitness");
+	mCurrentFitness =  vm->getDoubleValue(fitnessFunctionName + "/Fitness/CurrentFitness");
+	mMaxFitness =  vm->getDoubleValue(fitnessFunctionName + "/Fitness/MaxFitness");
+	mMinFitness =  vm->getDoubleValue(fitnessFunctionName + "/Fitness/MinFitness");
+	mFitnessVariance =  vm->getDoubleValue(fitnessFunctionName + "/Fitness/Variance");
+	
+	//Add fitness values to plotter
+	mFitnessPlotter->getValuePlotter()->addValue("Current", mCurrentFitness);
+	mFitnessPlotter->getValuePlotter()->addValue("All Tries", mFitness);
+	mFitnessPlotter->getValuePlotter()->addValue("Max", mMaxFitness);
+	mFitnessPlotter->getValuePlotter()->addValue("Min", mMinFitness);
+	mFitnessPlotter->getValuePlotter()->addValue("Variance", mFitnessVariance);
+	
+	//hide less common items
+	QList<Value*> hiddenFitnessValues;
+	hiddenFitnessValues.append(mMaxFitness);
+	hiddenFitnessValues.append(mMinFitness);
+	hiddenFitnessValues.append(mFitnessVariance);
+	
+	//Initialize and setup fitness plotter
+	mFitnessPlotter->getValuePlotter()->init();
+	mFitnessPlotter->getValuePlotter()->getPlotterWidget()->setUserScaleV(0.1);
+	mFitnessPlotter->getValuePlotter()->getPlotterWidget()->setUserOffsetV(0);
+	//mFitnessPlotter->setBaseSize(100, 200);
+	
+	if(mFitnessPlotter->getValuePlotter() != 0 
+			&& mFitnessPlotter->getValuePlotter()->getPlotterWidget() != 0) 
+	{
+		QList<PlotterItem*> items = mFitnessPlotter->getValuePlotter()
+										->getPlotterWidget()->getPlotterItems();
+		for(QListIterator<PlotterItem*> i(items); i.hasNext();) {
+			ValuePlotterItem *item = dynamic_cast<ValuePlotterItem*>(i.next());
+			if(item == 0) {
+				continue;
+			}
+			if(hiddenFitnessValues.contains(item->getValue())) {
+				item->setVisible(false);
+			}
+		}
+		
+		mFitnessPlotter->getValuePlotter()->getPlotterWidget()->showValuesInLegend(true);
+	}
+	
+// 	//set trigger event for fitness editor
+// 	Event *stepCompletedEvent = Core::getInstance()->getEventManager()->getEvent(
+// 										NerdConstants::EVENT_EXECUTION_STEP_COMPLETED);
+// 	if(stepCompletedEvent != 0) {
+// 		mFitnessPlotter->getValuePlotter()->setUpdateTriggerEvent(stepCompletedEvent);
+// 	}
 }
 
 

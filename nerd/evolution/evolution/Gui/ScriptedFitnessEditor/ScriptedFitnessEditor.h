@@ -57,6 +57,9 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QComboBox>
+#include "Gui/ValuePlotter/ValuePlotter.h"
+#include "Gui/ValuePlotter/ValuePlotterWidget.h"
+#include "Value/DoubleValue.h"
 
 namespace nerd {
 
@@ -102,6 +105,11 @@ namespace nerd {
 		StringValue *mErrorValue;
 		StringValue *mCurrentFileName;
 		IntValue *mCalculationModeValue;
+		DoubleValue *mCurrentFitness;
+		DoubleValue *mFitness;
+		DoubleValue *mMaxFitness;
+		DoubleValue *mMinFitness;
+		DoubleValue *mFitnessVariance;
 
 		QPushButton *mReloadFitnessCodeButton;
 		QPushButton *mLoadFitnessCodeButton;
@@ -112,6 +120,8 @@ namespace nerd {
 		QComboBox *mCalculationModeSelector;
 		QLabel *mTitleLabel;
 		bool mScriptModified;
+		
+		ValuePlotterWidget *mFitnessPlotter;
 	};
 
 }
