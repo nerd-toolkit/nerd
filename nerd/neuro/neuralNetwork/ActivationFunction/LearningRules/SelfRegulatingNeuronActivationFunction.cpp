@@ -93,7 +93,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mReceptorMode->setDescription("Switches g():\n"
 						"0: g = |tf(a*)| - |tf(a)|\n"
 						"1: g = tf(a*)^2-tf(a)^2\n"
-						"2: g = tf(theta) - tf(a(t))");
+						"2: g = tf(theta) - tf(a(t))\n"
+						"3: g = theta - tf(a(t))^2");
 	mTransmitterMode = new IntValue(0);
 	mTransmitterMode->setDescription("Switches h():\n"
 						"0: h = 1 + tf(a)\n"
@@ -104,7 +105,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 	mBiasMode = new IntValue(0);
 	mBiasMode->setDescription("Switches the bias update function:\n"
 						"0: none\n"
-						"1: theta(t+1) = theta(t) + alpha * (tf(a(t)) - tf(a(t-1)))\n");
+						"1: theta(t+1) = theta(t) + alpha * (tf(a(t)) - tf(a(t-1)))\n"
+						"2: theta(t+1) = theta(t) + alpha * (tf(a(t) - theta(t))^2)");
 	
 	addParameter("Xi (Rec)", mXi);
 	addParameter("Eta (Tra)", mEta);
@@ -288,6 +290,11 @@ double SelfRegulatingNeuronActivationFunction::getReceptorStrengthUpdate(double 
 		return tf->transferActivation(mOwner->getBiasValue().get(), mOwner) 
 					- tf->transferActivation(activation, mOwner); 
 	}
+	else if(mReceptorMode->get() == 3) {
+		//g(a) = theta - tf(a(t))^2
+		TransferFunction *tf = mOwner->getTransferFunction();
+		return mOwner->getBiasValue().get() -  pow(tf->transferActivation(activation, mOwner), 2);
+	}
 	
 	return 0.0;
 }
@@ -369,13 +376,32 @@ void SelfRegulatingNeuronActivationFunction::updateTheta(double activation) {
 			else {
 				newBias = mOwner->getBiasValue().get() 
 							+ mAlpha->get() 
-								* (tf->transferActivation(activation, mOwner)
+							* (tf->transferActivation(mOwner->getLastActivation(), mOwner)
 									- tf->transferActivation(mActivationT2, mOwner));
 			}
 			mOwner->getBiasValue().set(newBias);
 		}
 	}
-	
+	else if(mBiasMode->get() == 2) {
+		//theta(t+1) = theta(t) + alpha * (tf(a(t) - theta(t))^2)
+		if(mOwner != 0) {
+			TransferFunction *tf = mOwner->getTransferFunction();
+			double newBias = 0;
+			if(mUseCurrentActivations) {
+				newBias = mOwner->getBiasValue().get() 
+				+ mAlpha->get() 
+				* pow(tf->transferActivation(activation 
+				* 			- mOwner->getBiasValue().get(), mOwner), 2);
+			}
+			else {
+				newBias = mOwner->getBiasValue().get() 
+				+ mAlpha->get() 
+				* pow(tf->transferActivation(mOwner->getLastActivation() 
+				* 			- mOwner->getBiasValue().get(), mOwner), 2);
+			}
+			mOwner->getBiasValue().set(newBias);
+		}
+	}
 }
 
 
