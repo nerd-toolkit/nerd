@@ -54,6 +54,8 @@
 #include "DynamicsPlotConstants.h"
 #include <QStringList>
 #include <QDate>
+#include <qdir.h>
+#include <Util/DynamicsPlotterUtil.h>
 
 using namespace std;
 
@@ -150,6 +152,8 @@ namespace nerd {
 		
 		ValueManager *vm = Core::getInstance()->getValueManager();
 		
+		Core::getInstance()->enforceDirectoryPath(QDir::currentPath() + "/matlab");
+		
 		MatrixValue *matrix = dynamic_cast<MatrixValue*>(vm->getValue(
 			"/DynamicsPlotters/" + diagramPlotterName + "/Internal/Data"));
 		
@@ -166,8 +170,8 @@ namespace nerd {
 													 + "/Config/Diagram/FilePrefix");
 		
 		if(matrix == 0  || axisNames == 0 || titleNames == 0 || outputPath == 0) {
-			Core::log("MatlabExporter: Could not find required values for diagram ["
-						+ diagramPlotterName + "]. Skipping matlab export...", true);
+			DynamicsPlotterUtil::reportProblem("MatlabExporter: Could not find required values for diagram ["
+						+ diagramPlotterName + "]. Skipping matlab export...");
 			return false;
 		}
 		
@@ -178,7 +182,6 @@ namespace nerd {
 				outputFileName = "./matlab/" + outputPath->get();
 			}
 			else {
-				Core::getInstance()->enforceDirectoryPath("./matlab");
 				outputFileName = "./matlab/export";
 			}
 			outputFileName += QDate::currentDate().toString("_dd_MM_yyyy_")
@@ -196,8 +199,8 @@ namespace nerd {
 			}
 		}
 		if(axisDescParts.size() < matrix->getMatrixDepth()) {
-			Core::log("MatlabExporter: The number of axis descriptions does not fit the number of diagrams. "
-					  "Using default.", true);
+			DynamicsPlotterUtil::reportProblem("MatlabExporter: The number of axis descriptions does not fit the number of diagrams. "
+					  "Using default.");
 			axisDescParts.clear();
 			for(int i = 0; i < matrix->getMatrixDepth(); ++i) {
 				axisDescParts.append("x,y");
@@ -205,15 +208,15 @@ namespace nerd {
 		}
 		//shrink number of descriptions down to number of diagrams.
 		while(axisDescParts.size() > matrix->getMatrixDepth()) {
-			Core::log("MatlabExporter: Too many axis descriptions. [" + axisDescParts.last() + "]. "
-					  "Removing superfluous entry.", true);
+			DynamicsPlotterUtil::reportProblem("MatlabExporter: Too many axis descriptions. [" + axisDescParts.last() + "]. "
+					  "Removing superfluous entry.");
 			axisDescParts.removeLast();
 		}
 		for(int i = 0; i < axisDescParts.size(); ++i) {
 			QStringList axes = axisDescParts.at(i).split(",");
 			if(axes.size() != 2) { 
-				Core::log("MatlabExporter: One of the axis descriptions does not have the correct format 'x,y'. "
-						  "Using default.", true);
+				DynamicsPlotterUtil::reportProblem("MatlabExporter: One of the axis descriptions does not have the correct format 'x,y'. "
+						  "Using default.");
 				axes.clear();
 				axes << "x" << "y";
 			}
@@ -224,14 +227,14 @@ namespace nerd {
 		//prepare diagram titles
 		QStringList diagramTitles = titleNames->get().split("|");
 		if(diagramTitles.size() < matrix->getMatrixDepth()) {
-			Core::log("MatlabExporter: The number of titles does not match the number of diagrams. "
-					  "Skipping titles.", true);
+			DynamicsPlotterUtil::reportProblem("MatlabExporter: The number of titles does not match the number of diagrams. "
+					  "Skipping titles.");
 			diagramTitles.clear();
 		}
 		//shrink number of descriptions down to number of diagrams.
 		while(diagramTitles.size() > matrix->getMatrixDepth()) {
-			Core::log("MatlabExporter: Too many diagram titles. [" + diagramTitles.last() + "]. "
-					  "Removing superfluous entry.", true);
+			DynamicsPlotterUtil::reportProblem("MatlabExporter: Too many diagram titles. [" + diagramTitles.last() + "]. "
+					  "Removing superfluous entry.");
 			diagramTitles.removeLast();
 		}
 		
@@ -240,9 +243,9 @@ namespace nerd {
 		QFile file(outputFileName);
 		
 		if(!file.open(QIODevice::WriteOnly)) {
-			Core::log("MatlabExporter: Cannot write to file [" + outputFileName + "]. "
+			DynamicsPlotterUtil::reportProblem("MatlabExporter: Cannot write to file [" + outputFileName + "]. "
 						"Please check the file path and make sure "
-						"you have writing permission for the specified directory.", true);
+						"you have writing permission for the specified directory.");
 			return false;
 		}
 		
@@ -292,12 +295,14 @@ namespace nerd {
 		}
 		out << "};\n";
 		
+		DynamicsPlotterUtil::reportProblem("MatlabExporter: Stored diagram data in file [" + outputFileName + "]");
+		
 		return true;
 	}
 	
 	void MatlabExporter::addMatrixRow(QTextStream &out, MatrixValue *matrix, int layer, int row) {
 		if(layer >= matrix->getMatrixDepth() || row >= matrix->getMatrixHeight()) {
-			Core::log("MatlabExporter::addMatrixRow: Layer or row out of bound!", true);
+			DynamicsPlotterUtil::reportProblem("MatlabExporter::addMatrixRow: Layer or row out of bound!");
 			return;
 		}
 		
