@@ -85,6 +85,8 @@ set(nerd_neuralNetwork_SRCS
 	ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.cpp
 	ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.cpp
 	SynapseFunction/SimpleLinkSynapseFunction.cpp
+	SynapseFunction/Learning/HebbSynapseFunction.cpp
+	SynapseFunction/Learning/TesauroSynapseFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

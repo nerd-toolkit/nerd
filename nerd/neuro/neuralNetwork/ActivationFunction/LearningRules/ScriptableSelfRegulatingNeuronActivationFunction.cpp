@@ -233,6 +233,7 @@ double ScriptableSelfRegulatingNeuronActivationFunction::getReceptorStrengthUpda
  */
 double ScriptableSelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(double activation) {
 	
+	
 	if(mTransmitterEquation->get() != "") {
 		mEquationScript->evaluate("nerd.stringBuffer = " + mTransmitterEquation->get());
 		if(mEquationScript->hasUncaughtException()) {

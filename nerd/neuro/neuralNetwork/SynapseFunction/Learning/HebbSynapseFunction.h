@@ -40,53 +40,42 @@
  *   Publications based on work using the NERD kit have to state this      *
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
- 
- 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+
+
+#ifndef NERDHebbSynapseFunction_H
+#define NERDHebbSynapseFunction_H
+
+#include "SynapseFunction/SynapseFunction.h"
+#include "Value/RangeValue.h"
+
+namespace nerd {
+	
+	/**
+	 * HebbSynapseFunction.
+	 *
+	 * The HebbSynapseFunction simply returns the strength of the
+	 * owner Synapse. This strength is not modulated in any way.
+	 */
+	class HebbSynapseFunction : public SynapseFunction {
+	public:
+		HebbSynapseFunction();
+		HebbSynapseFunction(const HebbSynapseFunction &other);
+		virtual ~HebbSynapseFunction();
+		
+		virtual SynapseFunction* createCopy() const;
+		
+		virtual void reset(Synapse *owner);
+		virtual double calculate(Synapse *owner);
+		
+		bool equals(SynapseFunction *synapseFunction) const;
+		
+	private:
+		RangeValue *mInitialValue;
+		DoubleValue *mLearningRate;
+	};
+	
+}
+
 #endif
-
-#include "Util/UnitTestMacros.h"
-#include <iostream>
-
-using namespace std;
-
-#include "Value/TestValue.h"
-#include "Value/TestValueManager.h"
-#include "Event/TestEvent.h"
-#include "Event/TestEventManager.h"
-#include "Event/TestTriggerEventTask.h"
-#include "Core/TestParameterizedObject.h"
-#include "Core/TestCore.h"
-#include "Math/TestVector3D.h"
-#include "Math/TestQuaternion.h"
-#include "Value/TestInterfaceValue.h"
-#include "Value/TestNormalizedDoubleValue.h"
-#include "Math/TestMath.h"
-#include "Communication/TestUdpDatagram.h"
-#include "Util/TestColor.h"
-#include "Util/TestFileLocker.h"
-#include "Math/TestMatrix.h"
-
-TEST_START("TestNerd", 1, -1, 16); 
-
-// 	TEST(TestMath);
-	TEST(TestValue);
-// 	TEST(TestValueManager); //test save and load values
-// 	TEST(TestEvent);
-// 	TEST(TestEventManager);
-// 	TEST(TestTriggerEventTask);
-// 	TEST(TestParameterizedObject);
-// 	TEST(TestCore);
-// 	TEST(TestQuaternion);
-// 	TEST(TestVector3D);
-// 	TEST(TestInterfaceValue);
-// 	TEST(TestNormalizedDoubleValue);
-// 	TEST(TestUdpDatagram);
-// 	TEST(TestColor);
-// 	TEST(TestFileLocker);
-// 	TEST(TestMatrix);
-
-TEST_END;
 
 

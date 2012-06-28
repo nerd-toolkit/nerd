@@ -62,6 +62,8 @@
 #include "Value/ColorValue.h"
 #include <iostream>
 #include "Value/MatrixValue.h"
+#include "Value/RangeValue.h"
+
 
 using namespace std;
 
@@ -1066,7 +1068,7 @@ void TestValue::testColorValue() {
 
 }
 
-
+//chris
 void TestValue::testMatrixValue() {
 	Core::resetCore();
 	
@@ -1085,10 +1087,10 @@ void TestValue::testMatrixValue() {
 	QCOMPARE(m1.getMatrixHeight(), 4);
 	QCOMPARE(m1.getMatrixDepth(), 3);
 
-	//previous values are not changed
-	QCOMPARE(m1.get(0, 0, 0), 2.34);
+	//previous values are reset to zero
+	QCOMPARE(m1.get(0, 0, 0), 0.0);
 
-	//other values are set to zero
+	//other values are set to zero, too
 	{
 		Matrix mdata1 = m1.get();
 		for(int i = 0; i < 2; ++i) {
@@ -1117,7 +1119,7 @@ void TestValue::testMatrixValue() {
 		}
 	}
 
-	QString compare = "{{{2.34,1}{1,2}{2,3}{3,4}}{{1,2}{2,3}{3,4}{4,5}}{{2,3}{3,4}{4,5}{5,6}}}";
+	QString compare = "{{{0,1}{1,2}{2,3}{3,4}}{{1,2}{2,3}{3,4}{4,5}}{{2,3}{3,4}{4,5}{5,6}}}";
 	QVERIFY(m1.getValueAsString() == compare);
 	
 }
@@ -1402,4 +1404,133 @@ void TestValue::testValueEquality() {
 
 
 void TestValue::cleanUpTestCase(){
+}
+
+
+//Chris
+void TestValue::testRangeValue() {
+	
+	//constructors
+	{
+		RangeValue r1;
+		QCOMPARE(r1.getMin(), 0.0);
+		QCOMPARE(r1.getMax(), 1.0);
+		QVERIFY(r1.get().isValid());
+		
+		RangeValue r2(-100.0, 42.5);
+		QCOMPARE(r2.getMin(), -100.0);
+		QCOMPARE(r2.getMax(), 42.5);
+		QVERIFY(r2.get().isValid());
+		
+		//if min and max are exchanged, then this is corrected in constructor...
+		RangeValue r3(100.2, -42.3);
+		QCOMPARE(r3.getMin(), -42.3);
+		QCOMPARE(r3.getMax(), 100.2);
+		QVERIFY(r3.get().isValid());
+		
+		//Copy constructor
+		RangeValue r4(r2);
+		QCOMPARE(r4.getMin(), -100.0);
+		QCOMPARE(r4.getMax(), 42.5);
+		QVERIFY(r4.get().isValid());
+		
+		//equal min and max
+		RangeValue r5(55.5, 55.5);
+		QCOMPARE(r5.getMin(), 55.5);
+		QCOMPARE(r5.getMax(), 55.5);
+		QVERIFY(r5.get().isValid());
+	}
+	
+	//set and get 
+	{
+		RangeValue r1;
+		QCOMPARE(r1.getMin(), 0.0);
+		QCOMPARE(r1.getMax(), 1.0);
+		QVERIFY(r1.get().isValid());
+		
+		r1.set(100.5, 200.1);
+		QCOMPARE(r1.getMin(), 100.5);
+		QCOMPARE(r1.getMax(), 200.1);
+		QVERIFY(r1.get().isValid());
+		
+		//fails if min > max
+		r1.set(4.0, 2.1);
+		QCOMPARE(r1.getMin(), 100.5);
+		QCOMPARE(r1.getMax(), 200.1);
+		QVERIFY(r1.get().isValid());
+		
+		//get as string
+		QVERIFY(r1.getValueAsString() == "100.5,200.1");
+	}
+	
+	//set from string
+	{
+		RangeValue r1(-55.55, 11.111);
+		QCOMPARE(r1.getMin(), -55.55);
+		QCOMPARE(r1.getMax(), 11.111);
+		QVERIFY(r1.getValueAsString() == "-55.55,11.111");
+		QVERIFY(r1.get().isValid());
+		
+		//set valid string with min and max
+		QVERIFY(r1.setValueFromString("-1.5,60.1") == true);
+		QCOMPARE(r1.getMin(), -1.5);
+		QCOMPARE(r1.getMax(), 60.1);
+		QVERIFY(r1.getValueAsString() == "-1.5,60.1");
+		QVERIFY(r1.get().isValid());
+		
+		//set valid string with min and max with additional blanks
+		QVERIFY(r1.setValueFromString("  -1.2   , 60.2   ") == true);
+		QCOMPARE(r1.getMin(), -1.2);
+		QCOMPARE(r1.getMax(), 60.2);
+		QVERIFY(r1.getValueAsString() == "-1.2,60.2");
+		QVERIFY(r1.get().isValid());
+		
+		//set valid string with min and max, min == max
+		QVERIFY(r1.setValueFromString("66.6,66.6") == true);
+		QCOMPARE(r1.getMin(), 66.6);
+		QCOMPARE(r1.getMax(), 66.6);
+		QVERIFY(r1.getValueAsString() == "66.6");
+		QVERIFY(r1.get().isValid());
+		
+		//set valid string with a single value (min == max)
+		QVERIFY(r1.setValueFromString("123.456") == true);
+		QCOMPARE(r1.getMin(), 123.456);
+		QCOMPARE(r1.getMax(), 123.456);
+		QVERIFY(r1.getValueAsString() == "123.456");
+		QVERIFY(r1.get().isValid());
+		
+		//set to valid value
+		QVERIFY(r1.setValueFromString("-1.23,4.56") == true);
+		QCOMPARE(r1.getMin(), -1.23);
+		QCOMPARE(r1.getMax(), 4.56);
+		
+		//fails: min > max
+		QVERIFY(r1.setValueFromString("1000,-1000") == false);
+		QCOMPARE(r1.getMin(), -1.23);
+		QCOMPARE(r1.getMax(), 4.56);
+		QVERIFY(r1.get().isValid());
+		
+		//fails: non-numerical characters in string.
+		QVERIFY(r1.setValueFromString("[50.0,200.0]") == false);
+		QVERIFY(r1.setValueFromString("eins") == false);
+		QVERIFY(r1.setValueFromString("6.0-7.0") == false);
+		QVERIFY(r1.setValueFromString("!5.0,$1") == false);
+		QCOMPARE(r1.getMin(), -1.23);
+		QCOMPARE(r1.getMax(), 4.56);
+		QVERIFY(r1.get().isValid());
+		
+		//fails: too many items
+		QVERIFY(r1.setValueFromString("[123.456,200.0,300.0]") == false);
+		QCOMPARE(r1.getMin(), -1.23);
+		QCOMPARE(r1.getMax(), 4.56);
+		QVERIFY(r1.get().isValid());
+		
+		//fails: too few items
+		QVERIFY(r1.setValueFromString("") == false);
+		QCOMPARE(r1.getMin(), -1.23);
+		QCOMPARE(r1.getMax(), 4.56);
+		QVERIFY(r1.get().isValid());
+		
+	}
+	
 }

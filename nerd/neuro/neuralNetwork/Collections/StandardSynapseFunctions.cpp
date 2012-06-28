@@ -51,6 +51,8 @@
 #include "SynapseFunction/MSeriesSynapseFunction.h"
 #include "SynapseFunction/MSeriesAdjustableSynapseFunction.h"
 #include "SynapseFunction/SimpleLinkSynapseFunction.h"
+#include "SynapseFunction/Learning/HebbSynapseFunction.h"
+#include "SynapseFunction/Learning/TesauroSynapseFunction.h"
 
 namespace nerd {
 
@@ -84,6 +86,12 @@ StandardSynapseFunctions::StandardSynapseFunctions()
 	
 	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
 		SimpleLinkSynapseFunction());
+	
+	//Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
+	//	HebbSynapseFunction());
+	
+	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
+		TesauroSynapseFunction()); //Hebb Variants (Hebb, Tesauro, Barto & Sutton)
 }
 
 }

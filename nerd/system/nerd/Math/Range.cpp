@@ -40,53 +40,96 @@
  *   Publications based on work using the NERD kit have to state this      *
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
- 
- 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "Util/UnitTestMacros.h"
-#include <iostream>
-
-using namespace std;
-
-#include "Value/TestValue.h"
-#include "Value/TestValueManager.h"
-#include "Event/TestEvent.h"
-#include "Event/TestEventManager.h"
-#include "Event/TestTriggerEventTask.h"
-#include "Core/TestParameterizedObject.h"
-#include "Core/TestCore.h"
-#include "Math/TestVector3D.h"
-#include "Math/TestQuaternion.h"
-#include "Value/TestInterfaceValue.h"
-#include "Value/TestNormalizedDoubleValue.h"
-#include "Math/TestMath.h"
-#include "Communication/TestUdpDatagram.h"
-#include "Util/TestColor.h"
-#include "Util/TestFileLocker.h"
-#include "Math/TestMatrix.h"
-
-TEST_START("TestNerd", 1, -1, 16); 
-
-// 	TEST(TestMath);
-	TEST(TestValue);
-// 	TEST(TestValueManager); //test save and load values
-// 	TEST(TestEvent);
-// 	TEST(TestEventManager);
-// 	TEST(TestTriggerEventTask);
-// 	TEST(TestParameterizedObject);
-// 	TEST(TestCore);
-// 	TEST(TestQuaternion);
-// 	TEST(TestVector3D);
-// 	TEST(TestInterfaceValue);
-// 	TEST(TestNormalizedDoubleValue);
-// 	TEST(TestUdpDatagram);
-// 	TEST(TestColor);
-// 	TEST(TestFileLocker);
-// 	TEST(TestMatrix);
-
-TEST_END;
 
 
+#include "Range.h"
+#include <math.h>
+#include "Math/Math.h"
+
+namespace nerd{
+	
+	
+	Range::Range() {
+		mMin = 0.0;
+		mMax = 1.0;
+	}
+	
+	
+	Range::Range(double min, double max) {
+		mMin = min;
+		mMax = max;
+	}
+	
+	
+	Range::Range(const Range &range) {
+		mMin = range.mMin;
+		mMax = range.mMax;
+	}
+	
+	Range::~Range() {
+	}
+	
+	
+	void Range::setMin(double min) {
+		mMin = min;
+	}
+	
+	
+	void Range::setMax(double max) {
+		mMax = max;
+	}
+	
+	
+	void Range::set(double min, double max) {
+		mMin = min;
+		mMax = max;
+	}
+	
+	
+	void Range::set(const Range &other) {
+		mMin = other.mMin;
+		mMax = other.mMax;
+	}
+	
+	
+	
+	double Range::getMin() const {
+		return mMin;
+	}
+	
+	
+	double Range::getMax() const {
+		return mMax;
+	}
+	
+	
+	bool Range::isValid() const {
+		if(mMin <= mMax) {
+			return true;
+		}
+		return false;
+	}
+	
+	
+	bool Range::equals(const Range &range, int precision) const {
+		if(precision < 0) {
+			if(mMin == range.mMin && mMax == range.mMax)
+			{
+				return true;
+			}
+			return false;
+		}
+		else {
+			long min = (long) ((mMin * pow(10.0, precision)) + 0.5);
+			long min2 = (long) ((range.mMin * pow(10.0, precision)) + 0.5);
+			long max = (long) ((mMax * pow(10.0, precision)) + 0.5);
+			long max2 =  (long) ((range.mMax * pow(10.0, precision)) + 0.5);
+			
+			if(min == min2 && max == max2) {
+				return true;
+			}
+			return false;
+		}
+	}
+
+}

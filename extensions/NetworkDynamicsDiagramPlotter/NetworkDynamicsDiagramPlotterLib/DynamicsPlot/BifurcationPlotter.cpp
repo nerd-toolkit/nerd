@@ -151,7 +151,9 @@ void BifurcationPlotter::calculateData() {
 	
 	if(observedRanges.isEmpty() || observedRanges.size() != 2*observedValuesList.size()) {
 		reportProblem("BifurcationPlotter: Invalid number of ranges given, maybe "
-					"mismatch to number of elements.");
+					"mismatch to number of elements. Observed Ranges [" 
+					+ QString::number(observedRanges.size()) + "] Observed Values: ["
+					+ QString::number(observedValuesList.size()) + "]");
 		return;
 	}
 

@@ -90,6 +90,8 @@ set(nerd_nerd_SRCS
 	NerdConstants.cpp  
 	Util/NerdFileSelector.cpp
 	Gui/GuiManager.cpp
+	Math/Range.cpp
+	Value/RangeValue.cpp
 )
 
 set(nerd_nerd_MOC_HDRS

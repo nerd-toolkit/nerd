@@ -40,53 +40,113 @@
  *   Publications based on work using the NERD kit have to state this      *
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
- 
- 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
-#include "Util/UnitTestMacros.h"
+#include "HebbSynapseFunction.h"
 #include <iostream>
+#include <Math/Math.h>
+#include <Math/Random.h>
+#include "Network/Neuron.h"
+
 
 using namespace std;
 
-#include "Value/TestValue.h"
-#include "Value/TestValueManager.h"
-#include "Event/TestEvent.h"
-#include "Event/TestEventManager.h"
-#include "Event/TestTriggerEventTask.h"
-#include "Core/TestParameterizedObject.h"
-#include "Core/TestCore.h"
-#include "Math/TestVector3D.h"
-#include "Math/TestQuaternion.h"
-#include "Value/TestInterfaceValue.h"
-#include "Value/TestNormalizedDoubleValue.h"
-#include "Math/TestMath.h"
-#include "Communication/TestUdpDatagram.h"
-#include "Util/TestColor.h"
-#include "Util/TestFileLocker.h"
-#include "Math/TestMatrix.h"
+namespace nerd {
+	
+	
+	/**
+	 * Constructor.
+	 */
+	HebbSynapseFunction::HebbSynapseFunction()
+	: SynapseFunction("Hebb")
+	{
+		mInitialValue = new RangeValue(0.0, 0.1);
+		mLearningRate = new DoubleValue(0.01);
+		
+		addParameter("Init", mInitialValue);
+		addParameter("Rate", mLearningRate);
+	}
+	
+	
+	/**
+	 * Copy constructor.
+	 */
+	HebbSynapseFunction::HebbSynapseFunction(const HebbSynapseFunction &other)
+	: Object(), ValueChangedListener(), SynapseFunction(other)
+	{
+		mInitialValue = dynamic_cast<RangeValue*>(getParameter("Init"));
+		mLearningRate = dynamic_cast<DoubleValue*>(getParameter("Rate"));
+	}
+	
+	
+	/**
+	 * Destructor.
+	 */
+	HebbSynapseFunction::~HebbSynapseFunction() {
+	}
+	
+	SynapseFunction* HebbSynapseFunction::createCopy() const {
+		return new HebbSynapseFunction(*this);
+	}
+	
+	
+	/**
+	 * Does nothing in this implementation.
+	 */
+	void HebbSynapseFunction::reset(Synapse *synapse) {
+		//reset to default value... (randomly in the range given by mInitialValue
+		if(synapse != 0) {
+			synapse->getStrengthValue().set(
+					Random::nextDoubleBetween(mInitialValue->getMin(), 
+											  mInitialValue->getMax()));
+		}
+	}
+	
+	
+	/**
+	 * Returns the strength of the owner synapse.
+	 * 
+	 * @param owner the owner of this SynapseFunction.
+	 * @return the strength of the owner.
+	 */
+	double HebbSynapseFunction::calculate(Synapse *owner) {
+		if(owner == 0) {
+			return 0.0;
+		}
+		Neuron *preSynapticNeuron = owner->getSource();
+		Neuron *postSynapticNeuron = dynamic_cast<Neuron*>(owner->getTarget());
+		
+		if(preSynapticNeuron == 0 || postSynapticNeuron == 0) {
+			return 0.0;
+		}
+		double change = mLearningRate->get()
+				* preSynapticNeuron->getLastOutputActivation() 
+				* postSynapticNeuron->getLastOutputActivation();
 
-TEST_START("TestNerd", 1, -1, 16); 
-
-// 	TEST(TestMath);
-	TEST(TestValue);
-// 	TEST(TestValueManager); //test save and load values
-// 	TEST(TestEvent);
-// 	TEST(TestEventManager);
-// 	TEST(TestTriggerEventTask);
-// 	TEST(TestParameterizedObject);
-// 	TEST(TestCore);
-// 	TEST(TestQuaternion);
-// 	TEST(TestVector3D);
-// 	TEST(TestInterfaceValue);
-// 	TEST(TestNormalizedDoubleValue);
-// 	TEST(TestUdpDatagram);
-// 	TEST(TestColor);
-// 	TEST(TestFileLocker);
-// 	TEST(TestMatrix);
-
-TEST_END;
+		owner->getStrengthValue().set(owner->getStrengthValue().get() + change);
+		
+		return owner->getStrengthValue().get();
+	}
+	
+	bool HebbSynapseFunction::equals(SynapseFunction *synapseFunction) const {
+		if(SynapseFunction::equals(synapseFunction) == false) {
+			return false;
+		}
+		
+		HebbSynapseFunction *sf = dynamic_cast<HebbSynapseFunction*>(synapseFunction);
+		
+		if(sf == 0) {
+			return false;
+		}
+		if(!sf->mInitialValue->equals(mInitialValue)) {
+			return false;
+		}
+		if(!sf->mLearningRate->equals(mLearningRate)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+}
 
 

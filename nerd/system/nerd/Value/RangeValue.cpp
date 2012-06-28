@@ -40,53 +40,116 @@
  *   Publications based on work using the NERD kit have to state this      *
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
- 
- 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
-#include "Util/UnitTestMacros.h"
-#include <iostream>
+#include "RangeValue.h"
 
-using namespace std;
+#include <QStringList>
 
-#include "Value/TestValue.h"
-#include "Value/TestValueManager.h"
-#include "Event/TestEvent.h"
-#include "Event/TestEventManager.h"
-#include "Event/TestTriggerEventTask.h"
-#include "Core/TestParameterizedObject.h"
-#include "Core/TestCore.h"
-#include "Math/TestVector3D.h"
-#include "Math/TestQuaternion.h"
-#include "Value/TestInterfaceValue.h"
-#include "Value/TestNormalizedDoubleValue.h"
-#include "Math/TestMath.h"
-#include "Communication/TestUdpDatagram.h"
-#include "Util/TestColor.h"
-#include "Util/TestFileLocker.h"
-#include "Math/TestMatrix.h"
-
-TEST_START("TestNerd", 1, -1, 16); 
-
-// 	TEST(TestMath);
-	TEST(TestValue);
-// 	TEST(TestValueManager); //test save and load values
-// 	TEST(TestEvent);
-// 	TEST(TestEventManager);
-// 	TEST(TestTriggerEventTask);
-// 	TEST(TestParameterizedObject);
-// 	TEST(TestCore);
-// 	TEST(TestQuaternion);
-// 	TEST(TestVector3D);
-// 	TEST(TestInterfaceValue);
-// 	TEST(TestNormalizedDoubleValue);
-// 	TEST(TestUdpDatagram);
-// 	TEST(TestColor);
-// 	TEST(TestFileLocker);
-// 	TEST(TestMatrix);
-
-TEST_END;
+namespace nerd {
+	
+	RangeValue::RangeValue() : Value("Range", false) {
+	}
+	
+	RangeValue::RangeValue(double min, double max) : Value("Range", false) {
+		if(min > max) {
+			//make sure the range is valid.
+			mValue.set(max, min);
+		}
+		else {
+			mValue.set(min, max);
+		}
+	}
+	
+	
+	RangeValue::RangeValue(const RangeValue& other) : Object(), Value(other) {
+		mValue.set(other.getMin(), other.getMax());
+	}
+	
+	RangeValue::~RangeValue() {
+	}
+	
+	Value* RangeValue::createCopy() {
+		return new RangeValue(*this);
+	}
+	
+	void RangeValue::set(double min, double max) {
+		//do not change if min > max.
+		if(min > max) {
+			return;
+		}
+		if(mNotifyAllSetAttempts || mValue.getMin() != min || mValue.getMax() != max) {
+			mValue.set(min, max);
+			notifyValueChanged();
+		}
+	}
+	
+	
+	Range RangeValue::get() const {
+		return mValue;
+	}
+	
+	
+	double RangeValue::getMin() const {
+		return mValue.getMin();
+	}
+	
+	
+	double RangeValue::getMax() const {
+		return mValue.getMax();
+	}
+	
+	
+	QString RangeValue::getValueAsString() const {
+		//return "[" + QString::number(mValue.getMin()) + "," + QString::number(mValue.getMax()) + "]";
+		if(mValue.getMin() == mValue.getMax()) {
+			return QString::number(mValue.getMin());
+		}
+		else {
+			return QString::number(mValue.getMin()) + "," + QString::number(mValue.getMax());
+		}
+	}
+	
+	bool RangeValue::setValueFromString(const QString &value) {
+		QStringList components = value.split(",");
+		
+		if(components.size() < 1 || components.size() > 2) {
+			return false;
+		}
+		bool ok = true;
+		double min = components[0].toDouble(&ok);
+		if(!ok) {
+			return false;
+		}
+		if(components.size() == 1) {
+			mValue.set(min, min);
+			return true;
+		}
+		
+		double max = components[1].toDouble(&ok);
+		if(!ok) {
+			return false;
+		}
+		if(min > max) {
+			return false;
+		}
+		mValue.set(min, max);
+		return true;
+	}
+	
+	bool RangeValue::equals(const Value *value) const {
+		if(!Value::equals(value)) {
+			return false;
+		}
+		const RangeValue *rv = dynamic_cast<const RangeValue*>(value);
+		if(rv == 0) {
+			return false;
+		}
+		if(!mValue.equals(rv->mValue)) {
+			return false;
+		}
+		return true;
+	}
+	
+}
 
 

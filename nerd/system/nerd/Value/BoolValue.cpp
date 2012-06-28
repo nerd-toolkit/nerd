@@ -66,7 +66,7 @@ BoolValue::~BoolValue() {
 }
 
 Value* BoolValue::createCopy() {
-	return new BoolValue (*this);
+	return new BoolValue(*this);
 }
 
 void BoolValue::set(bool value) {

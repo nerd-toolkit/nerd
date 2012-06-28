@@ -68,6 +68,7 @@ private slots:
 	void cleanUpTestCase();
 	void initTestCase();
 	void testValueEquality();
+	void testRangeValue();
 
 };
 

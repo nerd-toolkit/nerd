@@ -40,53 +40,44 @@
  *   Publications based on work using the NERD kit have to state this      *
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
- 
- 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "Util/UnitTestMacros.h"
-#include <iostream>
-
-using namespace std;
-
-#include "Value/TestValue.h"
-#include "Value/TestValueManager.h"
-#include "Event/TestEvent.h"
-#include "Event/TestEventManager.h"
-#include "Event/TestTriggerEventTask.h"
-#include "Core/TestParameterizedObject.h"
-#include "Core/TestCore.h"
-#include "Math/TestVector3D.h"
-#include "Math/TestQuaternion.h"
-#include "Value/TestInterfaceValue.h"
-#include "Value/TestNormalizedDoubleValue.h"
-#include "Math/TestMath.h"
-#include "Communication/TestUdpDatagram.h"
-#include "Util/TestColor.h"
-#include "Util/TestFileLocker.h"
-#include "Math/TestMatrix.h"
-
-TEST_START("TestNerd", 1, -1, 16); 
-
-// 	TEST(TestMath);
-	TEST(TestValue);
-// 	TEST(TestValueManager); //test save and load values
-// 	TEST(TestEvent);
-// 	TEST(TestEventManager);
-// 	TEST(TestTriggerEventTask);
-// 	TEST(TestParameterizedObject);
-// 	TEST(TestCore);
-// 	TEST(TestQuaternion);
-// 	TEST(TestVector3D);
-// 	TEST(TestInterfaceValue);
-// 	TEST(TestNormalizedDoubleValue);
-// 	TEST(TestUdpDatagram);
-// 	TEST(TestColor);
-// 	TEST(TestFileLocker);
-// 	TEST(TestMatrix);
-
-TEST_END;
 
 
+
+#ifndef RANGEVALUE_H_
+#define RANGEVALUE_H_
+
+#include "Value.h"
+#include <QString>
+#include "Math/Range.h"
+
+namespace nerd {
+	
+	/**
+	 * RangeValue.
+	 */
+	class RangeValue : public Value {
+		
+	public:
+		RangeValue();
+		RangeValue(double min, double max);
+		RangeValue(const RangeValue& other);
+		virtual ~RangeValue();
+		
+		virtual Value* createCopy();
+		virtual void set(double min, double max);
+		
+		virtual Range get() const;
+		virtual double getMin() const;
+		virtual double getMax() const;
+		
+		virtual QString getValueAsString() const;
+		virtual bool setValueFromString(const QString &value);
+		
+		virtual bool equals(const Value *value) const;
+		
+	private:
+		Range mValue;
+		
+	};
+}
+#endif /*BOOLVALUE_H_*/
