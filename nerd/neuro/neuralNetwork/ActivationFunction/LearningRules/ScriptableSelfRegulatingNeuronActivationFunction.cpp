@@ -354,10 +354,24 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 	mEquationScript->evaluate(QString("gamma = " + mGamma->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("delta = " + mDelta->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("aStar = " + mAStar->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("a = " + QString::number(activation) + ";"));
+	
+	if(mUseCurrentActivations) {
+		mEquationScript->evaluate(QString("a = " + QString::number(activation) + ";"));
+	}
+	else {
+		mEquationScript->evaluate(QString("a = " + QString::number(mOwner->getLastActivation()) + ";"));
+	}
+	
 	mEquationScript->evaluate(QString("xi = " + mXi->getValueAsString() + ";"));
 	mEquationScript->evaluate(QString("eta = " + mEta->getValueAsString() + ";"));
-	mEquationScript->evaluate(QString("ap = " + QString::number(mOwner->getLastActivation()) + ";"));
+	
+	if(mUseCurrentActivations) {
+		mEquationScript->evaluate(QString("ap = " + QString::number(mOwner->getLastActivation()) + ";"));
+	}
+	else {
+		mEquationScript->evaluate(QString("ap = " + QString::number(mActivationT2) + ";"));
+	}
+	
 	mEquationScript->evaluate(QString("g = 0"));
 	mEquationScript->evaluate(QString("h = 0"));
 	if(mOwner != 0) {

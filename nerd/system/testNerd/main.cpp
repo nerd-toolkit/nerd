@@ -70,22 +70,22 @@ using namespace std;
 
 TEST_START("TestNerd", 1, -1, 16); 
 
-// 	TEST(TestMath);
+	TEST(TestMath);
 	TEST(TestValue);
-// 	TEST(TestValueManager); //test save and load values
-// 	TEST(TestEvent);
-// 	TEST(TestEventManager);
-// 	TEST(TestTriggerEventTask);
-// 	TEST(TestParameterizedObject);
-// 	TEST(TestCore);
-// 	TEST(TestQuaternion);
-// 	TEST(TestVector3D);
-// 	TEST(TestInterfaceValue);
-// 	TEST(TestNormalizedDoubleValue);
-// 	TEST(TestUdpDatagram);
-// 	TEST(TestColor);
-// 	TEST(TestFileLocker);
-// 	TEST(TestMatrix);
+	TEST(TestValueManager); //test save and load values
+	TEST(TestEvent);
+	TEST(TestEventManager);
+	TEST(TestTriggerEventTask);
+	TEST(TestParameterizedObject);
+	TEST(TestCore);
+	TEST(TestQuaternion);
+	TEST(TestVector3D);
+	TEST(TestInterfaceValue);
+	TEST(TestNormalizedDoubleValue);
+	TEST(TestUdpDatagram);
+	TEST(TestColor);
+	TEST(TestFileLocker);
+	TEST(TestMatrix);
 
 TEST_END;
 
