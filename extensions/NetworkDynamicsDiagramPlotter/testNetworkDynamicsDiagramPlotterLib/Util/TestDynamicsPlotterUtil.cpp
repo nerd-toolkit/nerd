@@ -67,8 +67,10 @@ void TestDynamicsPlotterUtil::initTestCase() {
 void TestDynamicsPlotterUtil::cleanUpTestCase() {
 }
 
+
 //josef
 void TestDynamicsPlotterUtil::testGetElementValue() {
+
 	AdditiveTimeDiscreteActivationFunction af;
 	SignalGeneratorActivationFunction saf;
 	TransferFunctionRamp ramp("ramp", -1, 1, false);
@@ -209,6 +211,142 @@ void TestDynamicsPlotterUtil::testGetElementValue() {
 	QVERIFY(testObservable3 == v10);
 
 }
+
+
+//josef
+void TestDynamicsPlotterUtil::testGetElementValues() {
+
+	AdditiveTimeDiscreteActivationFunction af;
+	SignalGeneratorActivationFunction saf;
+	TransferFunctionRamp ramp("ramp", -1, 1, false);
+	TransferFunctionParameterizedSigmoid pasig(0.3, 0.4);
+	SimpleSynapseFunction sf;
+	NeuralNetwork *network = new NeuralNetwork(af, ramp, sf);
+
+	Neuron *n1 = new Neuron("Neuron1", ramp, saf);
+	network->addNeuron(n1);
+	Neuron *n2 = new Neuron("Neuron2", ramp, af);
+	network->addNeuron(n2);
+	Neuron *n3 = new Neuron("Neuron3", pasig, saf);
+	network->addNeuron(n3);
+
+	Synapse *s1 = Synapse::createSynapse(n1, n2, 1, sf);
+	//Synapse *s2 = Synapse::createSynapse(n2, n2, 0.4, sf);
+	Synapse *s3 = Synapse::createSynapse(n2, n3, 0.6, sf);
+
+	QList<NeuralNetworkElement*> networkElements;
+	network->getNetworkElements(networkElements);
+	QVERIFY(!networkElements.isEmpty());
+	
+	qulonglong idn1 = n1->getId();
+	qulonglong idn2 = n2->getId();
+	qulonglong idn3 = n3->getId();
+	qulonglong ids1 = s1->getId();
+	//qulonglong ids2 = s2->getId();
+	qulonglong ids3 = s3->getId();
+
+	// positive tests
+	QString string1 = QString::number(idn1).append(":af:MaxActivation");
+	QString string2 = QString::number(idn2).append(":a");
+	QString string3 = QString::number(idn3).append(":tf:Steepness");
+	QStringList stringList1;
+	stringList1 << string1 << string2 << string3;
+
+	QString string4 = QString::number(idn1).append(":o");
+	QString string5 = QString::number(ids1).append(":w");
+	QStringList stringList2;
+	stringList2 << string4 << string5;
+
+	QList<QStringList> listList;
+	listList << stringList1 << stringList2;
+	
+	QList< QList<DoubleValue*> > valueListList;
+	valueListList = DynamicsPlotterUtil::getElementValues(listList, networkElements);
+
+	QVERIFY(valueListList.size() == 2);
+	QVERIFY(valueListList.at(0).size() == 3);
+	QVERIFY(valueListList.at(1).size() == 2);
+
+	QVERIFY(valueListList.at(0).at(0) == n1->getActivationFunction()->getParameter("MaxActivation"));
+	QVERIFY(valueListList.at(0).at(1) == &(n2->getActivationValue()));
+	QVERIFY(valueListList.at(0).at(2) == n3->getTransferFunction()->getParameter("Steepness"));
+
+	QVERIFY(valueListList.at(1).at(0) == &(n1->getOutputActivationValue()));
+	QVERIFY(valueListList.at(1).at(1) == &(s1->getStrengthValue()));
+
+	// negative tests
+	QString string6 = QString::number(ids3).append(":o");
+	QStringList stringList3;
+	stringList3 << string6;
+	listList << stringList3;
+
+	QList< QList<DoubleValue*> > valueListList2;
+	valueListList2 = DynamicsPlotterUtil::getElementValues(listList, networkElements);
+	QVERIFY(valueListList2.isEmpty());
+
+}
+
+
+//josef
+void TestDynamicsPlotterUtil::testParseElementString() {
+
+	// positive tests (negative tests unnecessary, since error handling is done elsewhere)
+	QString stringString = "15:a,16:b,24:sf:ObservableParameter|21:w|23:tf:Deepness,16:o";
+	QList<QStringList> listList;
+	listList = DynamicsPlotterUtil::parseElementString(stringString);
+	QVERIFY(listList.size() == 3);
+	QVERIFY(listList.at(0).size() == 3);
+	QVERIFY(listList.at(1).size() == 1);
+	QVERIFY(listList.at(2).size() == 2);
+	QVERIFY(listList.at(0).at(0) == "15:a");
+	QVERIFY(listList.at(0).at(1) == "16:b");
+	QVERIFY(listList.at(0).at(2) == "24:sf:ObservableParameter");
+	QVERIFY(listList.at(1).at(0) == "21:w");
+	QVERIFY(listList.at(2).at(0) == "23:tf:Deepness");
+	QVERIFY(listList.at(2).at(1) == "16:o");
+
+}
+
+
+//josef
+void TestDynamicsPlotterUtil::testGetDoublesFromString() {
+
+	// positive test 1 (default separator and replace)
+	QString doubleString1 = "2,4,5.7|1.337,1.414";
+	QList<double> doubleList1;
+	doubleList1 = DynamicsPlotterUtil::getDoublesFromString(doubleString1);
+
+	QVERIFY(doubleList1.size() == 5);
+	QVERIFY(doubleList1.at(0) == 2);
+	QVERIFY(doubleList1.at(1) == 4);
+	QVERIFY(doubleList1.at(2) == 5.7);
+	QVERIFY(doubleList1.at(3) == 1.337);
+	QVERIFY(doubleList1.at(4) == 1.414);
+
+	// positive test 2 (own separator, multiple replaces)
+	QString doubleString2 = "2.3;4.8;0.4_6.4|1.333;42.23-23.42";
+	QList<double> doubleList2;
+	QString sep = ";"; QString rep = "_;|;-";
+	doubleList2 = DynamicsPlotterUtil::getDoublesFromString(doubleString2, sep, rep);
+
+	QVERIFY(doubleList2.size() == 7);
+	QVERIFY(doubleList2.at(0) == 2.3);
+	QVERIFY(doubleList2.at(1) == 4.8);
+	QVERIFY(doubleList2.at(2) == 0.4);
+	QVERIFY(doubleList2.at(3) == 6.4);
+	QVERIFY(doubleList2.at(4) == 1.333);
+	QVERIFY(doubleList2.at(5) == 42.23);
+	QVERIFY(doubleList2.at(6) == 23.42);
+
+	// negative test 1 (not a double)
+	QString doubleString3 = "2.3,8.4|4.3,a";
+	QList<double> doubleList3;
+	doubleList3 = DynamicsPlotterUtil::getDoublesFromString(doubleString3);
+
+	QVERIFY(doubleList3.isEmpty());
+
+}
+
 
 //chris
 void TestDynamicsPlotterUtil::testTransferActivationToOutput() {

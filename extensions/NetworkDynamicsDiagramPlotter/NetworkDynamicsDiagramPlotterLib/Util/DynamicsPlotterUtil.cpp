@@ -180,8 +180,8 @@ namespace nerd {
 				DoubleValue *value = getElementValue(stringList.at(j), elemList, neuronsWithActivationChange);
 				if(value == 0) {
 					//return empty list, so that the caller can react on the problem
-					reportProblem("DynamicsPlotterUtil:getElementValues: Could not find "
-							"an element for [ " + stringList.at(j) + "]");
+					reportProblem("DynamicsPlotterUtil::getElementValues : Could not find "
+							"an element for specifier ["+stringList.at(j)+"]");
 					return QList< QList< DoubleValue *> >();
 				}
 				
@@ -204,6 +204,10 @@ namespace nerd {
 		return parts;
 	}
 
+
+	// separator is a string containing the symbol/character separating entries
+	// and replace contains a separator-separated list of characters to replace
+	// by the separator beforehand
 	QList<double> DynamicsPlotterUtil::getDoublesFromString(const QString &list,
 	const QString &separator, const QString &replace) {
 		QString tmp(list);
@@ -221,7 +225,8 @@ namespace nerd {
 			double d = doublelist.at(i).toDouble(&ok);
 			
 			if(!ok) {
-				reportProblem("Conversion to double failed, check values please");
+				reportProblem("DynamicsPlotterUtil::getDoublesFromString : "
+							  "Unable to convert ["+doublelist.at(i)+"] to double");
 				return QList<double>();
 			}
 			
@@ -229,6 +234,7 @@ namespace nerd {
 		}
 		return output;
 	}
+
 
 	// returns a list of references to relevant network element values
 	QList<DoubleValue*> DynamicsPlotterUtil::getNetworkValues(const

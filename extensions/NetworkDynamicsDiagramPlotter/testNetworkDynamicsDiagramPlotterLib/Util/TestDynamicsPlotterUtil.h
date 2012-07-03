@@ -59,9 +59,9 @@ namespace nerd {
 		void initTestCase();
 		
 		void testGetElementValue();
-		//void testGetElementValues();
-		//void testParseElementString();
-		//void testGetDoublesFromString();
+		void testGetElementValues();
+		void testParseElementString();
+		void testGetDoublesFromString();
 		//void testGetNetworkValues();
 		//void testGetNetworkState();
 		//void testCompareNetworkStates();
