@@ -81,6 +81,7 @@ GuiManager::GuiManager(const GuiManager &other) {
  * Destructor.
  */
 GuiManager::~GuiManager() {
+	mGlobalGuiManager = 0;
 }
 
 QString GuiManager::getName() const {

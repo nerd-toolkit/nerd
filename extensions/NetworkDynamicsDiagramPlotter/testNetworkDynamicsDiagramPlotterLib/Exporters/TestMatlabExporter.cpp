@@ -85,15 +85,18 @@ void TestMatlabExporter::testConstructors() {
 
 //Chris
 void TestMatlabExporter::testMatlabExport() { 
-	return;
-
+	
+	Core::resetCore();
+	
 	MatlabExporter *exporter = new MatlabExporter();
 	
 	QVERIFY(Core::getInstance()->init());
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	
+	
 	QString diagramName = "MyDiagram";
 	QString fileName = "testMatlabOutput.m";
+	
 	
 	QVERIFY(exporter->exportMatrix(diagramName, fileName) == false);
 	
@@ -101,7 +104,6 @@ void TestMatlabExporter::testMatlabExport() {
 	StringValue *axisDescriptions = new StringValue();
 	StringValue *titleNames = new StringValue();
 	StringValue *outputPath = new StringValue();
-	
 	
 	//************************************************************************************************************
 	//Test detection of required values in ValueManager.

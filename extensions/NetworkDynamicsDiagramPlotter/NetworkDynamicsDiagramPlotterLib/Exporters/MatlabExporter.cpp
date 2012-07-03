@@ -157,6 +157,8 @@ namespace nerd {
 		MatrixValue *matrix = dynamic_cast<MatrixValue*>(vm->getValue(
 			"/DynamicsPlotters/" + diagramPlotterName + "/Internal/Data"));
 		
+		
+		
 		StringValue *axisNames = vm->getStringValue("/DynamicsPlotters/" 
 													 + diagramPlotterName 
 													 + "/Config/Diagram/AxisNames");

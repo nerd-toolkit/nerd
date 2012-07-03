@@ -57,7 +57,7 @@ namespace nerd {
 
 	
 	EditorMessageWidget* DynamicsPlotterUtil::sMessageWidget = 0;
-	
+	Core* DynamicsPlotterUtil::sCore = 0;
 
 	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &string, 
 													  QList<NeuralNetworkElement*> const &elemList,
@@ -357,7 +357,10 @@ namespace nerd {
 	
 	void DynamicsPlotterUtil::reportProblem(const QString &errorMessage) {
 		
-		if(DynamicsPlotterUtil::sMessageWidget == 0) {
+		if(DynamicsPlotterUtil::sMessageWidget == 0 
+				|| DynamicsPlotterUtil::sCore != Core::getInstance()) 
+		{
+			DynamicsPlotterUtil::sCore = Core::getInstance();
 			DynamicsPlotterUtil::sMessageWidget = dynamic_cast<EditorMessageWidget*>(
 					GuiManager::getGlobalGuiManager()->getWidget(NetworkEditorConstants::WIDGET_MESSAGE_WINDOW));
 		}
@@ -371,7 +374,10 @@ namespace nerd {
 	}
 	
 	void DynamicsPlotterUtil::clearProblemMessageArea() {
-		if(DynamicsPlotterUtil::sMessageWidget == 0) {
+		if(DynamicsPlotterUtil::sMessageWidget == 0 
+				|| DynamicsPlotterUtil::sCore != Core::getInstance()) 
+		{
+			DynamicsPlotterUtil::sCore = Core::getInstance();
 			DynamicsPlotterUtil::sMessageWidget = dynamic_cast<EditorMessageWidget*>(
 					GuiManager::getGlobalGuiManager()->getWidget(NetworkEditorConstants::WIDGET_MESSAGE_WINDOW));
 		}

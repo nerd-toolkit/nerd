@@ -51,6 +51,7 @@
 #include <QList>
 #include "Network/NeuralNetwork.h"
 #include <QStringList>
+#include "Core/Core.h"
 
 namespace nerd {
 
@@ -74,7 +75,7 @@ namespace nerd {
 		static QList<DoubleValue*> getNetworkValues(const QList<NeuralNetworkElement*> networkElements);
 		
 		static QList<double> getNetworkState(const QList<DoubleValue*> networkValues);
-		
+				
 		static bool compareNetworkStates(const QList<double> &state1, 
 										const QList<double> &state2, double accuracy = 0.001);
 		
@@ -86,6 +87,7 @@ namespace nerd {
 
 	private:
 		static EditorMessageWidget *sMessageWidget;
+		static Core *sCore;
 	};
 
 }
