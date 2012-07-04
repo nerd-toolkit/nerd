@@ -62,9 +62,9 @@ namespace nerd {
 		void testGetElementValues();
 		void testParseElementString();
 		void testGetDoublesFromString();
-		//void testGetNetworkValues();
-		//void testGetNetworkState();
-		//void testCompareNetworkStates();
+		void testGetNetworkValues();
+		void testGetNetworkState();
+		void testCompareNetworkStates();
 
 		void testTransferActivationToOutput();	
 		

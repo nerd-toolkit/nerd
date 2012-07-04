@@ -348,6 +348,134 @@ void TestDynamicsPlotterUtil::testGetDoublesFromString() {
 }
 
 
+//josef
+void TestDynamicsPlotterUtil::testGetNetworkValues() {
+
+	AdditiveTimeDiscreteActivationFunction af;
+	TransferFunctionRamp ramp("ramp", -1, 1, false);
+	SimpleSynapseFunction sf;
+
+	NeuralNetwork *network = new NeuralNetwork(af, ramp, sf);
+	Neuron *n1 = new Neuron("Neuron1", ramp, af);
+	network->addNeuron(n1);
+	Neuron *n2 = new Neuron("Neuron2", ramp, af);
+	network->addNeuron(n2);
+	
+	Synapse *s1 = Synapse::createSynapse(n1, n2, -1, sf);
+
+	QList<NeuralNetworkElement*> networkElements;
+	network->getNetworkElements(networkElements);
+	QVERIFY(networkElements.size() == 3);
+
+	DoubleValue *observableOutput1 = new DoubleValue(1.423);
+	DoubleValue *observableOutput2 = new DoubleValue(2.324);
+	DoubleValue *observableOutput3 = new DoubleValue(3.243);
+
+	n1->getActivationFunction()->addObserableOutput("observableOutput1", observableOutput1);
+	n2->getTransferFunction()->addObserableOutput("observableOutput2", observableOutput2);
+	s1->getSynapseFunction()->addObserableOutput("observableOutput3", observableOutput3);
+
+	n1->getBiasValue().set(0.66);
+	n2->getBiasValue().set(0.55);
+
+	QList<DoubleValue*> networkValues;
+	networkValues = DynamicsPlotterUtil::getNetworkValues(networkElements); 
+	
+	QVERIFY(networkValues.size() == 8);
+	QVERIFY(networkValues.contains(observableOutput1));
+	QVERIFY(networkValues.contains(observableOutput2));
+	QVERIFY(networkValues.contains(observableOutput3));
+	QVERIFY(networkValues.contains(&(n1->getBiasValue())));
+	QVERIFY(networkValues.contains(&(n2->getBiasValue())));
+	QVERIFY(networkValues.contains(&(n1->getActivationValue())));
+	QVERIFY(networkValues.contains(&(n2->getActivationValue())));
+	QVERIFY(networkValues.contains(&(s1->getStrengthValue())));
+
+}
+
+
+//josef
+void TestDynamicsPlotterUtil::testGetNetworkState() {
+
+	AdditiveTimeDiscreteActivationFunction af;
+	TransferFunctionRamp ramp("ramp", -1, 1, false);
+	SimpleSynapseFunction sf;
+
+	NeuralNetwork *network = new NeuralNetwork(af, ramp, sf);
+	Neuron *n1 = new Neuron("Neuron1", ramp, af);
+	network->addNeuron(n1);
+	Neuron *n2 = new Neuron("Neuron2", ramp, af);
+	network->addNeuron(n2);
+	
+	Synapse *s1 = Synapse::createSynapse(n1, n2, -1, sf);
+
+	QList<NeuralNetworkElement*> networkElements;
+	network->getNetworkElements(networkElements);
+	QVERIFY(networkElements.size() == 3);
+
+	DoubleValue *observableOutput1 = new DoubleValue(1.423);
+	DoubleValue *observableOutput2 = new DoubleValue(2.324);
+	DoubleValue *observableOutput3 = new DoubleValue(3.243);
+
+	n1->getActivationFunction()->addObserableOutput("observableOutput1", observableOutput1);
+	n2->getTransferFunction()->addObserableOutput("observableOutput2", observableOutput2);
+	s1->getSynapseFunction()->addObserableOutput("observableOutput3", observableOutput3);
+
+	n1->getBiasValue().set(0.66);
+	n2->getBiasValue().set(0.55);
+
+	QList<DoubleValue*> networkValues;
+	networkValues = DynamicsPlotterUtil::getNetworkValues(networkElements); 
+
+	QList<double> networkState1, networkState2;
+	networkState1 = DynamicsPlotterUtil::getNetworkState(networkValues);
+
+	QVERIFY(networkState1.size() == 8);
+	QVERIFY(networkState1.contains(-1));
+	QVERIFY(networkState1.contains(1.423));
+	QVERIFY(networkState1.contains(2.324));
+	QVERIFY(networkState1.contains(3.243));
+	QVERIFY(networkState1.contains(0.66));
+	QVERIFY(networkState1.contains(0.55));
+	QVERIFY(networkState1.contains(0));
+	
+	network->executeStep();
+	networkState2 = DynamicsPlotterUtil::getNetworkState(networkValues);
+
+	QVERIFY(networkState2.size() == 8);
+	QVERIFY(networkState2.contains(-1));
+	QVERIFY(networkState2.contains(1.423));
+	QVERIFY(networkState2.contains(2.324));
+	QVERIFY(networkState2.contains(3.243));
+	QVERIFY(networkState2.contains(0.66));
+	QVERIFY(networkState2.contains(0.55));
+	QVERIFY(!networkState2.contains(0));
+
+}
+
+
+//josef
+void TestDynamicsPlotterUtil::testCompareNetworkStates() {
+	
+	QList<double> state1, state2;
+	double acc;
+	state1 << 1.123 << 2.423 << 3.333 << 4 << -5.66789;
+
+	state2 = state1;
+	acc = 0.00001;
+	QVERIFY(DynamicsPlotterUtil::compareNetworkStates(state1, state2, acc));
+
+	state2.replace(4, -5.66787);
+	QVERIFY(!DynamicsPlotterUtil::compareNetworkStates(state1, state2, acc));
+
+	acc = 0.001;
+	QVERIFY(DynamicsPlotterUtil::compareNetworkStates(state1, state2, acc));
+
+	state2.removeLast();
+	QVERIFY(!DynamicsPlotterUtil::compareNetworkStates(state1, state2, acc));
+}
+
+
 //chris
 void TestDynamicsPlotterUtil::testTransferActivationToOutput() {
 	
