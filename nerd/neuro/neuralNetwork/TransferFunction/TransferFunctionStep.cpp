@@ -41,43 +41,59 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardTransferFunctions.h"
-#include "Network/Neuro.h"
-#include "TransferFunction/TransferFunctionTanh.h"
-#include "TransferFunction/TransferFunctionRamp.h"
-#include "TransferFunction/TransferFunctionASeriesTanh.h"
-#include "TransferFunction/TransferFunctionParameterizedSigmoid.h"
-#include "TransferFunction/TransferFunctionSigmoid.h"
-#include "TransferFunction/TransferFunctionTanh01.h"
-#include "TransferFunction/TransferFunctionMSeriesTanh.h"
-#include "TransferFunction/TransferFunctionGauss.h"
-#include "TransferFunction/TransferFunctionStep.h"
+#include "TransferFunctionStep.h"
+#include <math.h>
+#include <iostream>
 
+using namespace std;
 
 namespace nerd {
-
-StandardTransferFunctions::StandardTransferFunctions()
-{
-	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
-	//Tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh());
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh01());
-	nnm->addTransferFunctionPrototype(TransferFunctionASeriesTanh());
-	nnm->addTransferFunctionPrototype(TransferFunctionMSeriesTanh());
-	//Ramp
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-1,1]", -1.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[0,1]", 0.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-u,u]", -1000000.0, 100000.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[n,m]", -1.0, 1.0, true));
-	//Sigmoids
-	nnm->addTransferFunctionPrototype(TransferFunctionSigmoid());
-	nnm->addTransferFunctionPrototype(TransferFunctionParameterizedSigmoid(5.0, 10.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionGauss());
-	//Step
-	nnm->addTransferFunctionPrototype(TransferFunctionStep());
 	
-}
-
+	TransferFunctionStep::TransferFunctionStep()
+	: TransferFunction("step", 0.0, 1.0)
+	{
+	}
+	
+	TransferFunctionStep::TransferFunctionStep(const TransferFunctionStep &other) 
+	: Object(), ValueChangedListener(), TransferFunction(other)
+	{
+	}
+	
+	TransferFunctionStep::~TransferFunctionStep() {
+	}
+	
+	
+	TransferFunction* TransferFunctionStep::createCopy() const {
+		return new TransferFunctionStep(*this);
+	}
+	
+	
+	void TransferFunctionStep::reset(Neuron*) {
+	}
+	
+	
+	double TransferFunctionStep::transferActivation(double activation, Neuron*) {
+		if(activation > 0.0) {
+			return 1.0;
+		}
+		return 0.0;
+	}
+	
+	bool TransferFunctionStep::equals(TransferFunction *transferFunction) const {
+		if(TransferFunction::equals(transferFunction) == false) {
+			return false;
+		}
+		
+		TransferFunctionStep *tf = 
+		dynamic_cast<TransferFunctionStep*>(transferFunction);
+		
+		if(tf == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 }
 
 

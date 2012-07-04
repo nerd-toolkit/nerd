@@ -8,4 +8,9 @@
 - Analyzer: GUI
 - Analyzer: Orbits / Transients / Lapunov
 
+- ClusterEvo: Feedback from SGE: number of successfully completed individuals, alive signal, auto-cancel if SGE not operative, message + GUI if SGE is inactive or has a problem, etc.
+- Multi-Core Evolution (as variant for clustere evolution). Simple exchange of SGE Caller script by a script / c++ / Java program that executes the evaluations sliently?
+
+
+
 

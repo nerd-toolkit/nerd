@@ -41,43 +41,37 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardTransferFunctions.h"
-#include "Network/Neuro.h"
-#include "TransferFunction/TransferFunctionTanh.h"
-#include "TransferFunction/TransferFunctionRamp.h"
-#include "TransferFunction/TransferFunctionASeriesTanh.h"
-#include "TransferFunction/TransferFunctionParameterizedSigmoid.h"
-#include "TransferFunction/TransferFunctionSigmoid.h"
-#include "TransferFunction/TransferFunctionTanh01.h"
-#include "TransferFunction/TransferFunctionMSeriesTanh.h"
-#include "TransferFunction/TransferFunctionGauss.h"
-#include "TransferFunction/TransferFunctionStep.h"
+
+#ifndef NERDTransferFunctionStep_H
+#define NERDTransferFunctionStep_H
+
+#include "TransferFunction/TransferFunction.h"
 
 
 namespace nerd {
-
-StandardTransferFunctions::StandardTransferFunctions()
-{
-	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
-	//Tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh());
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh01());
-	nnm->addTransferFunctionPrototype(TransferFunctionASeriesTanh());
-	nnm->addTransferFunctionPrototype(TransferFunctionMSeriesTanh());
-	//Ramp
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-1,1]", -1.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[0,1]", 0.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-u,u]", -1000000.0, 100000.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[n,m]", -1.0, 1.0, true));
-	//Sigmoids
-	nnm->addTransferFunctionPrototype(TransferFunctionSigmoid());
-	nnm->addTransferFunctionPrototype(TransferFunctionParameterizedSigmoid(5.0, 10.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionGauss());
-	//Step
-	nnm->addTransferFunctionPrototype(TransferFunctionStep());
+	
+	/**
+	 * TransferFunctionStep
+	 */
+	class TransferFunctionStep : public TransferFunction {
+	public:
+		TransferFunctionStep();
+		TransferFunctionStep(const TransferFunctionStep &other);
+		virtual ~TransferFunctionStep();
+		
+		virtual TransferFunction* createCopy() const;
+		
+		virtual void reset(Neuron *owner);
+		virtual double transferActivation(double activation, Neuron *owner);
+		
+		bool equals(TransferFunction *transferFunction) const;
+		
+	private:		
+	};
 	
 }
 
-}
+#endif
+
 
 
