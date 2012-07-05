@@ -120,6 +120,17 @@ Core::Core()
 	if(commandLineArguments.contains("-enableLogging")) {
 		mIsUsingReducedFileWriting = false;
 	}
+	
+	mConfigDirectoryName = QDir::currentPath().append("/").append(NerdConstants::NERD_CONFIG_DIRECTORY);
+	
+	for(int i = 0; i < commandLineArguments.size() - 1; ++i) {
+		if(commandLineArguments.at(i) == "-configDir") {
+			QString confDir = commandLineArguments.at(i + 1);
+			if(!confDir.startsWith("-")) {
+				mConfigDirectoryName = confDir;
+			}
+		}
+	}
 
 	mEnablePerformanceMeasures = new BoolValue(false);
 
@@ -526,6 +537,10 @@ bool Core::init() {
 					"Enables the log file", 0, 0, false, false);
 	new CommandLineArgument("disableLogging", "disableLogging", "",
 					"Disables the log file", 0, 0, false, false);
+	
+	//add command line arguments for -configDir (is handled in constructor)
+	new CommandLineArgument("configDir", "configDir", "<directory>",
+					"Switches the configuration directory to the given path.", 1, 0, false, false);
 
 	//check for application quit request
 	CommandLineArgument *quitArgument = new CommandLineArgument("quit", "q", "",
@@ -1093,7 +1108,7 @@ Properties& Core::getProperties() {
  * @return the absolute path name for the configuration directory.
  */
 QString Core::getConfigDirectoryPath() const {
-	return QDir::currentPath().append("/").append(NerdConstants::NERD_CONFIG_DIRECTORY);
+	return mConfigDirectoryName;
 }
 
 
