@@ -64,8 +64,8 @@ IndividualPreviewButton::IndividualPreviewButton(const QString &startScriptFullF
 	if(toggle) {
 		mArguments << "-toggle";
 	}
-	mArguments << QString("-setTitle Preview Gen: ").append(QString::number(generation))
-			.append(" Ind: ").append(QString::number(id));
+	mArguments << QString("-setTitle 'Preview Gen: ").append(QString::number(generation))
+			.append(" Ind: ").append(QString::number(id) + "'");
 
 	setToolTip("Preview Ind. " + QString::number(id));
 }
@@ -79,14 +79,15 @@ IndividualPreviewButton::~IndividualPreviewButton() {
 
 void IndividualPreviewButton::previewIndividual() {
 	QProcess p;
-	p.start("/bin/bash", mArguments);
+	p.startDetached("/usr/bin/zsh", mArguments);
 	p.waitForStarted(10000);
+	
 
 // 	QString command;
 // 	for(QListIterator<QString> i(mArguments); i.hasNext();) { command.append(" ").append(i.next()); }
 // 	Core::log("CMD: " + command, true);
 
-	p.waitForFinished(1000);
+	p.waitForFinished();
 	p.close();
 }
 

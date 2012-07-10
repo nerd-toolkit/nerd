@@ -45,7 +45,7 @@
 #include "Core.h" 
 #include "Event/EventManager.h"
 #include "Event/Event.h"
-#include "Value/ValueManager.h"
+#include "Value/ValueManager.h" 
 #include "Value/IntValue.h"
 #include "Value/BoolValue.h"
 #include "Value/StringValue.h"

@@ -45,4 +45,4 @@
  * Stable release winter 2011. Additional constraints and editor features.
  */
 
-#define NERD_VERSION "3.5"
+#define NERD_VERSION "3.6"

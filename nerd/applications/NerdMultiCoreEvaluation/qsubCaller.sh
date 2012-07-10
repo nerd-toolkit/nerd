@@ -1,6 +1,10 @@
 #!/bin/sh
 
 MULTICORE_EVALUATION_APPLICATION=./NerdMultiCoreEvaluation
+
+#Usually, nothing has to be changed below this line...
+#----------------------------------------------------------------------------------
+
 START_INDEX=$1;
 END_INDEX=$2;
 JOBFILE=$3;
