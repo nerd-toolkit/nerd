@@ -1,0 +1,300 @@
+#!/usr/bin/zsh
+#
+# NerdYarsStarter
+# Script to start up eval pair of Nerd and Yars
+# # assuming all configuration necessary is done via network communication
+#     between Orcs and Yars
+# # taking care that yars is killed when orcs exits (just in the case regular
+#     exits do not work)
+# # arguments:
+#     # "-eval" starts up Orcs in eval mode (default)
+#     # "-evo" starts up Orcs in local evolution mode
+#
+setopt hup
+setopt shwordsplit
+
+# parameters to be adjusted by user
+#############################################################################
+YARS_EXECUTABLE=~/local/bin/yars;
+YARS_DEFAULT_XML="/net/genome/work/crempis/evo/Walker/LocalOctavioTest/yars-xml/6legged-stickInsect-complex-hinge-servo-09-wo-muscle-rail-breakable-6x3jointkill-bumpable.xml";
+
+NERD_BASE_DIR="/work/chris/binaries/nerd/current-static";
+
+
+# static variables 
+#(don't change anything below this line except if you really know what you do)
+#############################################################################
+YARS_OPTIONS="--follow --drawPeriod 15 --norealtime ";
+
+NERD_EXECUTABLE_EVAL="NerdNeuroSim";   # default
+NERD_EXECUTABLE_EVO="NerdNeuroEvo";
+NERD_EXECUTABLE_EVAL_OPTIONS="-nogui $*";   # default
+NERD_EXECUTABLE_EVO_OPTIONS="-nogui -evo";
+
+#--noSimVis
+
+# set some Shell variables
+#############################################################################
+export PATH=$HOME/local/bin:$PATH
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$HOME/local/lib
+
+
+#check if the GUI is hidden
+#############################################################################
+GUI_HIDDEN=1
+for num
+do
+	if [ ${num} = "-gui" ];
+	then
+		GUI_HIDDEN=0
+	fi
+	if [ ${num} = "-nogui" ];
+	then
+		GUI_HIDDEN=1
+	fi
+done
+
+if [ $GUI_HIDDEN -eq 1 ];
+then
+	YARS_OPTIONS="${YARS_OPTIONS} --noSimVis ";
+	NERD_EXECUTABLE_EVAL_OPTIONS="${NERD_EXECUTABLE_EVAL_OPTIONS} -nogui "
+else
+	NERD_EXECUTABLE_EVAL_OPTIONS="${NERD_EXECUTABLE_EVAL_OPTIONS} -gui "
+fi
+
+echo YARS: ${YARS_OPTIONS}
+echo NERD: ${NERD_EXECUTABLE_EVAL_OPTIONS}
+
+#############################################################################
+# do not edit beyond this line
+#############################################################################
+YARS_XML_DESCRIPTION=${YARS_DEFAULT_XML};
+NERD_MODE="eval";
+VERBOSE_MODE="false";
+# generate unique name based on date/time
+BASE_FILE_DIR=/tmp/;
+BASE_FILE_NAME_DATE=`/bin/date +%Y%m%d%H%M-%N`;
+# 1st for temp file to hold yars server port
+PORT_BASE_FILE_NAME_PREFIX=yars-comport-;
+PORT_BASE_FILE_NAME=${BASE_FILE_DIR}${PORT_BASE_FILE_NAME_PREFIX}${BASE_FILE_NAME_DATE};
+#    We want the 1st server of the specified yars (1st robot)
+PORT_FIRST_SERVER_FILE_NAME=${PORT_BASE_FILE_NAME}-0;
+# 2nd for temp val file to store yars port for orcs (it cannot directly handle
+#   the yars output file
+NERD_VAL_PORT_FILE_NAME_PREFIX=orcs-val-port-;
+NERD_VAL_PORT_FILE_NAME=${BASE_FILE_DIR}${NERD_VAL_PORT_FILE_NAME_PREFIX}${BASE_FILE_NAME_DATE};
+
+# variable to avoid multiple cleanups
+CLEANUP_DONE=0;
+# pre define job id to an invalid one
+YARS_JOB_ID=-1;
+
+# NERD PARAMETERS 
+NERD_YARS_PORT=4500; # will be set from Yars Port file (see below)
+NERD_EXECUTABLE=${NERD_EXECUTABLE_EVAL};
+NERD_EXECUTABLE_OPTIONS=${NERD_EXECUTABLE_EVAL_OPTIONS};
+
+#############################
+# function definitions start
+#
+export printout_message()
+{
+  if [[ ${VERBOSE_MODE} == 'true' ]]; then
+    echo $1;
+  fi
+}
+export printout_params() 
+{
+  printout_message  "### orcsYarsStarter                                                    ###";
+  printout_message  "## config parameters                                                 ##";
+  printout_message  "# 1. general stuff";
+  printout_message  "     - PORT_BASE_FILE_NAME         = $PORT_BASE_FILE_NAME         ";
+  printout_message  "     - PORT_FIRST_SERVER_FILE_NAME = $PORT_FIRST_SERVER_FILE_NAME ";
+  printout_message  "# 2. yars stuff                                                       #";
+  printout_message  "     - YARS_EXECUTABLE             = $YARS_EXECUTABLE           ";
+  printout_message  "     - YARS_XML_DESCRIPTION        = $YARS_XML_DESCRIPTION      ";
+  printout_message  "# 3. orcs stuff                                                     #";
+  printout_message  "     - NERD_BASE_DIR               = $NERD_BASE_DIR             ";
+  printout_message  "     - NERD_EXECUTABLE             = $NERD_EXECUTABLE";
+  printout_message  "     - NERD_EXECUTABLE_OPTIONS     = $NERD_EXECUTABLE_OPTIONS";
+  printout_message  "## config parameters end                                             ##";
+}
+export eval_cleanup() 
+{
+  # only do cleanup if not already done by someone else
+  if [[ ${CLEANUP_DONE} -eq 0 ]] then
+    SIGNAL_RECEIVED=$1;
+    printout_message "";
+    printout_message "eval_cleanup()";
+    printout_message "SIGNAL received = $SIGNAL_RECEIVED";
+    printout_message "YARS_JOB_ID = $YARS_JOB_ID";
+
+    # check if background job is still active
+    jobs '${YARS_EXECUTABLE}'
+    if [[ $? -eq 0 ]] then 
+      ps aux | grep yars | grep $YARS_JOB_ID;
+      # check if yars pid still in process table
+      if [[ $? -eq 0 ]] then 
+        printout_message "bg job active + yars pid in process table --> killing it";
+        kill $YARS_JOB_ID;
+      else
+        printout_message "bg job active but yars pid not in process table --> do nothing";
+      fi
+    else 
+      printout_message "no bg job active --> do nothing"; 
+    fi
+    # delete temporary orcs val file that was used to pass yars comport
+    if [ -f ${NERD_VAL_PORT_FILE_NAME} ]; then
+      printout_message "deleting temporary file ${NERD_VAL_PORT_FILE_NAME}";
+      rm ${NERD_VAL_PORT_FILE_NAME};
+    else
+      printout_message "${NERD_VAL_PORT_FILE_NAME} does not exist - not deleting anything.";
+    fi
+    CLEANUP_DONE=1;
+  else
+    printout_message "cleanup already done by someone else";
+    return
+  fi
+  return;
+}
+#Trap signal to allow clean exit
+TRAPINT() 
+{
+  eval_cleanup "TRAPINT";
+  return $(( 128 + $1 ))
+}
+TRAPZERR() 
+{
+  eval_cleanup "TRAPZERR";
+  return $(( 128 + $1 ))
+}
+TRAPEXIT() 
+{
+  eval_cleanup "TRAPEXIT";
+  return $(( 128 + $1 ))
+}
+#main function that starts eval processes
+export eval_start() 
+{
+  ####################################################################
+  # start yars in background (also see TRAP + cleanup functions above)
+  #
+  # first print out command to use ...
+  echo ""
+  echo "yars command:"
+  echo ${YARS_EXECUTABLE} "-d" ${YARS_XML_DESCRIPTION} \
+    ${YARS_OPTIONS} \
+    "--printComPortsToFile" ${PORT_BASE_FILE_NAME} "&";
+  # ... then execute command ..
+  ${YARS_EXECUTABLE} -d ${YARS_XML_DESCRIPTION} \
+    ${YARS_OPTIONS} \
+    --printComPortsToFile ${PORT_BASE_FILE_NAME} &;
+  # ... get its job id for cleanup later on ...
+  YARS_JOB_ID=$!;
+  # ... and finally give yars time to startup and write comport to file
+  while ! [[ -a ${PORT_FIRST_SERVER_FILE_NAME} ]]; do 
+    echo "Waiting for Yars to startup ..."; 
+    sleep 1; 
+  done
+  sleep 1;
+
+  ####################################################################
+  # create val file for NERD, fill from PORT_FILE from Yars and delete it 
+  NERD_YARS_PORT=`cat ${PORT_FIRST_SERVER_FILE_NAME}`;
+  rm ${PORT_FIRST_SERVER_FILE_NAME};
+  touch ${NERD_VAL_PORT_FILE_NAME};
+  if [ -f ${NERD_VAL_PORT_FILE_NAME} ]; then
+    rm ${NERD_VAL_PORT_FILE_NAME};
+  else
+    echo "${NERD_VAL_PORT_FILE_NAME} not writable -- exiting -- please retry!";
+    exit 1;
+  fi
+  if [ -f ${NERD_VAL_PORT_FILE_NAME} ]; then
+    echo "${NERD_VAL_PORT_FILE_NAME} not writable -- exiting -- please retry!";
+    exit 1;
+  fi
+  
+  echo "";
+  echo "#NERD Values" > ${NERD_VAL_PORT_FILE_NAME};
+  echo "#created by orcsYarsStarter.sh Skript" >> ${NERD_VAL_PORT_FILE_NAME};
+  echo "/Simulation/Yars/ConnectToYars=T" >> ${NERD_VAL_PORT_FILE_NAME};
+  echo "/Simulation/Yars/Port=${NERD_YARS_PORT}" >> ${NERD_VAL_PORT_FILE_NAME};
+  echo "/Simulation/RunAtRealtime=T" >> ${NERD_VAL_PORT_FILE_NAME};
+  echo "/Simulation/Yars/TerminateTryAtAbort=F" >> ${NERD_VAL_PORT_FILE_NAME};
+  echo "";
+
+  ####################################################################
+  # start nerd in foreground
+  #
+  # printout command to execute ...
+  echo "orcs command:"
+  echo ${NERD_BASE_DIR}/${NERD_EXECUTABLE} \
+    ${NERD_EXECUTABLE_OPTIONS} \
+    " -p yars " \
+    "-val " ${NERD_VAL_PORT_FILE_NAME}
+  # ... then execute command
+  ${NERD_BASE_DIR}/${NERD_EXECUTABLE} \
+    ${NERD_EXECUTABLE_OPTIONS} \
+    -p yars \
+    -val ${NERD_VAL_PORT_FILE_NAME};
+
+  ###########################
+  # trigger cleanup function
+  #
+  eval_cleanup "regularExit";
+}
+
+export parse_options()
+{
+  o_mode=(-m eval)
+  o_xml=(-d ${YARS_DEFAULT_XML})
+  o_verbose=()
+
+  zparseopts -K -- m:=o_mode d:=o_xml h=o_help v=o_verbose
+  if [[ $? != 0 || "$o_help" != "" ]]; then
+    echo Usage: $(basename "$0") "[-m mode (eval|evo)] [-d XML-Description] [-v]"
+    exit 1
+  fi
+
+  NERD_MODE=$o_mode[2];
+  YARS_XML_DESCRIPTION=$o_xml[2];
+
+  if [[ ${YARS_XML_DESCRIPTION} == "" ]]; then
+    echo "no xml description option (-d) specified --> using default xml ${YARS_DEFAULT_XML}";
+    YARS_XML_DESCRIPTION=${YARS_DEFAULT_XML};
+  fi
+
+  if [[ ${NERD_MODE} == 'evo' ]]; then
+    NERD_EXECUTABLE=${NERD_EXECUTABLE_EVO};
+    NERD_EXECUTABLE_OPTIONS=${NERD_EXECUTABLE_EVO_OPTIONS};
+  elif [[ ${NERD_MODE} == 'eval' ]]; then
+    NERD_EXECUTABLE=${NERD_EXECUTABLE_EVAL};
+    NERD_EXECUTABLE_OPTIONS=${NERD_EXECUTABLE_EVAL_OPTIONS};
+  elif [[ ${NERD_MODE} == "" ]]; then
+    echo "no mode option (-m) specified --> using default evaluation mode";
+    NERD_EXECUTABLE=${NERD_EXECUTABLE_EVAL};
+    NERD_EXECUTABLE_OPTIONS=${NERD_EXECUTABLE_EVAL_OPTIONS};
+  else
+    echo mode option \(-m\) either allows "evo" or "eval" as parameter;
+    exit 1
+  fi
+
+  if [[ $o_verbose[1] != "" ]]; then
+    VERBOSE_MODE="true";
+  fi
+}
+#
+# function definitions end
+#########################
+
+
+#
+# Main Script
+#
+# 1st process+printout cmdline arguments
+parse_options $*;
+printout_params;
+# 2nd startup eval
+eval_start; 
+
+exit 0
