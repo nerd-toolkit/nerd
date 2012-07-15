@@ -227,8 +227,10 @@ bool ConstraintManager::runConstraints(QList<NeuronGroup*> groups, int maxIterat
 {
 	ConstraintManager::mMarkConstrainedElements = true;
 	
+	ModularNeuralNetwork *net = 0;
+	
 	if(!groups.empty() && groups.at(0) != 0) {
-		ModularNeuralNetwork *net = groups.at(0)->getOwnerNetwork();
+		net = groups.at(0)->getOwnerNetwork();
 		if(net != 0) {
 			{
 				QList<Neuron*> elements = net->getNeurons();
@@ -295,6 +297,8 @@ bool ConstraintManager::runConstraints(QList<NeuronGroup*> groups, int maxIterat
 	}
 
 	errors.clear();
+	
+	bool resolverSuccess = false;
 
 	//resolve constraints
 	for(int i = 0; i < maxIterations; ++i) {
@@ -310,49 +314,78 @@ bool ConstraintManager::runConstraints(QList<NeuronGroup*> groups, int maxIterat
 			NeuronGroup *group = g.next();
 
 			QStringList resolverErrors;
-			if(!ConstraintManager::runGroupConstraints(group, 1, executor, trashcan, resolverErrors)) {
+			QStringList resolverWarnings;
+			if(!ConstraintManager::runGroupConstraints(group, 1, executor, trashcan, 
+													resolverErrors, resolverWarnings)) 
+			{
 				allOk = false;
 			}
 
 			if(!resolverErrors.empty()) {
 				errors.append(QString("> ") + group->getName() + " (" + QString::number(group->getId()) 
-								+ ") :");
+								+ ") Errors:");
 				errors << resolverErrors;
+			}
+			if(!resolverWarnings.empty()) {
+				errors.append(QString("> ") + group->getName() + " (" + QString::number(group->getId()) 
+								+ ") Warnings:");
+				errors << resolverWarnings;
 			}
 		}
 
 		if(allOk) {
-			ConstraintManager::mMarkConstrainedElements = false;
-			if(sConstraintManager != 0) {
-				sConstraintManager->notifyConstraintsUpdated();
-			}
-			return true;
+// 			ConstraintManager::mMarkConstrainedElements = false;
+// 			if(sConstraintManager != 0) {
+// 				sConstraintManager->notifyConstraintsUpdated();
+// 			}
+// 			return true;
+			resolverSuccess = true;
+			break;
 		}
 	}
 	ConstraintManager::mMarkConstrainedElements = false;
 	if(sConstraintManager != 0) {
 		sConstraintManager->notifyConstraintsUpdated();
 	}
-	return false;
+	
+	//remove resolver working tags (starting with  _##_)
+	if(net != 0) {
+		QList<NeuralNetworkElement*> allElements;
+		net->getNetworkElements(allElements);
+		
+		for(QListIterator<NeuralNetworkElement*> i(allElements); i.hasNext();) {
+			NeuralNetworkElement *elem = i.next();
+			
+			elem->removePropertyByPattern(NeuralNetworkConstants::PROP_PREFIX_CONSTRAINT_TEMP + ".*");
+		}
+	}
+	
+	return resolverSuccess;
 }
 
 
 bool ConstraintManager::runGroupConstraints(NeuronGroup *group, 
 					int maxIterations, CommandExecutor *executor, 
 					QList<NeuralNetworkElement*> &trashcan,
-					QStringList &errors) 
+					QStringList &errors, QStringList &warnings) 
 {
 	QList<GroupConstraint*> constraints = group->getConstraints();
 
 	for(int i = 0; i < maxIterations; ++i) {
 		bool allOk = true;
+		
+		warnings.clear();
+		
 		for(QListIterator<GroupConstraint*> c(constraints); c.hasNext();) {
 			GroupConstraint *constraint = c.next();
 
 			constraint->setErrorMessage("");
 			if(!constraint->applyConstraint(group, executor, trashcan)) {
-				errors << constraint->getErrorMessage();
+				errors << constraint->getName() + ": " + constraint->getErrorMessage();
 				allOk = false;
+			}
+			if(constraint->getWarningMessage() != "") {
+				warnings << constraint->getName() + ": " + constraint->getWarningMessage();
 			}
 		}
 		if(allOk) {

@@ -83,6 +83,7 @@ namespace nerd {
 	//**************************************************************************
 
 		static const QString PROP_ELEMENT_MODIFIED;
+		static const QString PROP_PREFIX_CONSTRAINT_TEMP;
 
 	//**************************************************************************
 	//Value Names
@@ -91,6 +92,7 @@ namespace nerd {
 		static const QString VALUE_EVO_STASIS_MODE;
 		static const QString VALUE_NNM_BYPASS_NETWORKS;
 		static const QString VALUE_EVO_CURRENT_GENERATION_NUMBER;
+		static const QString VALUE_ANALYZER_RUN_COUNTER;
 
 	//**************************************************************************
 	//Tag Names

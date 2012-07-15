@@ -82,8 +82,9 @@ namespace nerd {
 		static double nextSign();
 		
 	private:
-		static bool mInitialized;
-		MTRand *flapperJack;
+		MTRand *mFlapperJack;
+		
+		static bool sInitialized;
 	};
 
 }

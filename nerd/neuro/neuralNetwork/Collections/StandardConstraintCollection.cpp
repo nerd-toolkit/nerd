@@ -54,6 +54,7 @@
 #include "Constraints/BackpropagationConstraint.h"
 #include "Constraints/RestrictWeightAndBiasRangeConstraint.h"
 #include "Constraints/SynchronizeTagsConstraint.h"
+#include "Constraints/RandomizationConstraint.h"
 
 namespace nerd {
 
@@ -73,6 +74,7 @@ StandardConstraintCollection::StandardConstraintCollection()
 	cm->addConstraintPrototype(new BackpropagationConstraint());
 	cm->addConstraintPrototype(new RestrictWeightAndBiasRangeConstraint());
 	cm->addConstraintPrototype(new SynchronizeTagsConstraint());
+	cm->addConstraintPrototype(new RandomizationConstraint());
 }
 
 StandardConstraintCollection::~StandardConstraintCollection() {

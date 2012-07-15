@@ -82,7 +82,6 @@ DynamicsPlotManager::DynamicsPlotManager()
 	
 	//**************/Till**************c//
 	
-	
 }
 
 

@@ -73,6 +73,9 @@ const QString DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER
 const QString DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT
 		= "/Plotter/OutputFormat";
 		
+const QString DynamicsPlotConstants::VALUE_ANALYZER_RUN_COUNTER
+		= "/Plotter/AnalyzerRunCounter";
+		
 const QString DynamicsPlotConstants::EVENT_CALCULATION_STARTED
 		= "/Plotter/CalculationStarted";
 		

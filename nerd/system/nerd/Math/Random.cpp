@@ -49,31 +49,33 @@
 namespace nerd {
 
 
-bool Random::mInitialized = false;
+bool Random::sInitialized = false;
 
-Random::Random(): flapperJack(0) {
-  flapperJack = new MTRand();
+Random::Random(): mFlapperJack(0) {
+	mFlapperJack = new MTRand();
 }
 
 Random::~Random() {
-  delete flapperJack;
+	delete mFlapperJack;
 }
 
 
 void Random::mSetSeed(int seed) {
-  flapperJack->seed(seed);
+	mFlapperJack->seed(seed);
 }
+
+
 
 /**
  * Get next integer in [0,max]
  **/
 int Random::mNextInt(int max){
-  return flapperJack->randInt(max);
+	return mFlapperJack->randInt(max);
 }
 
 
 int Random::mNextInt(){
-  return flapperJack->randInt();
+	return mFlapperJack->randInt();
 }
 
 
@@ -81,7 +83,7 @@ int Random::mNextInt(){
  * Get next double in [0,1]
  **/
 double Random::mNextDouble(){
- return flapperJack->rand(); 
+	return mFlapperJack->rand(); 
 }
 
 
@@ -89,29 +91,29 @@ double Random::mNextDouble(){
  * Get next double in [min,max]
  **/
 double Random::mNextDoubleBetween(double min, double max) {
-  return min + flapperJack->randDblExc(max-min);
+	return min + mFlapperJack->randDblExc(max - min);
 }
 
 
 double Random::mNextSign() {
- if(flapperJack->randDblExc(2) >= 1) {
-   return 1.0; 
- }
- else { 
-   return -1.0;
- }
+	if(mFlapperJack->randDblExc(2) >= 1) {
+		return 1.0; 
+	}
+	else { 
+		return -1.0;
+	}
 }
 
 
 double Random::mNextGaussian(double mean, double stdDev) {
-  return flapperJack->randNorm(mean,stdDev);
+	return mFlapperJack->randNorm(mean, stdDev);
 }
 
 
 
 void Random::init() {
 	srand(QTime::currentTime().msec());
-	mInitialized = true;
+	sInitialized = true;
 }
 
 
@@ -121,14 +123,14 @@ void Random::setSeed(int seed) {
 
 
 int Random::nextInt() {
-	if(!mInitialized) {
+	if(!sInitialized) {
 		init();
 	}
 	return rand();
 }
 
 int Random::nextInt(int max) {
-	if(!mInitialized) {
+	if(!sInitialized) {
 		init();
 	}
 	if(max <= 0) {
@@ -139,7 +141,7 @@ int Random::nextInt(int max) {
 
 
 double Random::nextDouble() {
-	if(!mInitialized) {
+	if(!sInitialized) {
 		init();
 	}
 	return ((double) rand()) / ((double) RAND_MAX);

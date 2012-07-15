@@ -41,66 +41,50 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#ifndef NERDGroupConstraint_H
-#define NERDGroupConstraint_H
 
-#include <QString>
-#include <QList>
-#include "Core/Object.h"
-#include "Network/Neuron.h"
-#include "ModularNeuralNetwork/NeuronGroup.h"
-#include "Network/NeuralNetworkElement.h"
-#include "Core/ParameterizedObject.h"
-#include "Command/CommandExecutor.h"
+#ifndef NERDRandomizationConstraint_H
+#define NERDRandomizationConstraint_H
+
+
+#include "Constraints/GroupConstraint.h"
+#include "Value/IntValue.h"
+#include "Value/StringValue.h"
+#include "Value/RangeValue.h"
+#include "Value/BoolValue.h"
 
 
 namespace nerd {
-
-	class ModularNeuralNetwork;
-	class NeuronGroup;
+	
 
 	/**
-	 * GroupConstraint.
+	 * RandomizationConstraint.
 	 */
-	class GroupConstraint : public ParameterizedObject {
+	class RandomizationConstraint : public GroupConstraint {
 	public:
-		GroupConstraint(const QString &name, qulonglong id = 0);
-		GroupConstraint(const GroupConstraint &other);
-		virtual ~GroupConstraint();
-		
-		virtual GroupConstraint* createCopy() const = 0;
+		RandomizationConstraint(int minNumberOfNeurons = 0, int maxNumberOfNeurons = 10000);
+		RandomizationConstraint(const RandomizationConstraint &other);
+		virtual ~RandomizationConstraint();
 
-		void setId(qulonglong id);
-		qulonglong getId() const;
+		virtual GroupConstraint* createCopy() const;
 
-		virtual bool attachToGroup(NeuronGroup *group);
-		virtual bool detachFromGroup(NeuronGroup *group);
-
-		virtual void networkElementIdChanged(NeuronGroup *owner, qulonglong oldId, qulonglong newId);
-		
-		virtual void reset();
-
-		virtual bool isValid(NeuronGroup *owner) = 0;
+		virtual bool isValid(NeuronGroup *owner);
 		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor,
-									 QList<NeuralNetworkElement*> &trashcan) = 0;
-
-		virtual bool groupIdsChanged(QHash<qulonglong, qulonglong> changedIds);
-
-		QString getErrorMessage() const;
-		void setErrorMessage(const QString &message);
-		
-		QString getWarningMessage() const;
-		void setWarningMessage(const QString &message);
-
-		NeuronGroup* getOwnerGroup() const;
+									 QList<NeuralNetworkElement*> &trashcan);
 		
 		virtual bool equals(GroupConstraint *constraint);
 
-	protected:	
-		qulonglong mId;
-		QString mErrorMessage;
-		QString mWarningMessage;
-		NeuronGroup *mOwnerGroup;
+	private:
+		RangeValue *mGlobalBiasRange;
+		RangeValue *mGlobalOutputRange;
+		RangeValue *mGlobalActivationRange;
+		RangeValue *mGlobalWeightRange;
+		StringValue *mIndividualRanges;
+		BoolValue *mStoreRandomizedValuesInNetwork;
+		BoolValue *mApplyStoredValuesFromNetwork;
+		
+		BoolValue *mOneShotRandomization;
+		IntValue *mAnalyzerRunCounter;
+		int mLastOneShotCount;
 	};
 
 }

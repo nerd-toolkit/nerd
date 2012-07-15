@@ -89,7 +89,7 @@ namespace nerd {
 					QStringList &errors, bool collectOnlyErrorsOfLastResolverRun = false);
 		static bool runGroupConstraints(NeuronGroup *group, int maxIterations,
 					CommandExecutor *executor, QList<NeuralNetworkElement*> &trashcan,
-					QStringList &errors);
+					QStringList &errors, QStringList &warnings);
 		
 		static void markElementAsConstrained(NeuralNetworkElement *elem, const QString &dof);
 		

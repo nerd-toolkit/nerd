@@ -73,6 +73,12 @@ PlotterExecutionLoop::PlotterExecutionLoop()
 
 	mDelayValue = new IntValue(100);
 	Core::getInstance()->getValueManager()->addValue("/Execution/Delay", mDelayValue);
+	
+	
+	//this counter just counts the number of analyzer runs.
+	mAnalyzerRunCounter = new IntValue(0);
+	Core::getInstance()->getValueManager()->addValue(
+				DynamicsPlotConstants::VALUE_ANALYZER_RUN_COUNTER, mAnalyzerRunCounter);
 }
 
 
@@ -152,6 +158,9 @@ void PlotterExecutionLoop::run() {
 				for(QListIterator<DynamicsPlotter*> i(plotters); i.hasNext();) {
 					DynamicsPlotter *plotter = i.next();
 					if(plotter->getActiveValue()->get()) {
+						
+						mAnalyzerRunCounter->set(mAnalyzerRunCounter->get() + 1);
+						
 						plotter->execute();
 						executedPlotter = true;
 					}

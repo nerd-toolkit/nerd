@@ -108,6 +108,7 @@ void GroupConstraint::networkElementIdChanged(NeuronGroup *owner, qulonglong old
  */
 void GroupConstraint::reset() {
 	mErrorMessage = "";
+	mWarningMessage = "";
 }
 
 /**
@@ -128,7 +129,7 @@ bool GroupConstraint::groupIdsChanged(QHash<qulonglong, qulonglong>) {
  * @return the error message of this Constraint.
  */
 QString GroupConstraint::getErrorMessage() const {
-	return getName() + ": " + mErrorMessage;
+	return  mErrorMessage;
 }
 
 /**
@@ -143,6 +144,18 @@ void GroupConstraint::setErrorMessage(const QString &message) {
 NeuronGroup* GroupConstraint::getOwnerGroup() const {
 	return mOwnerGroup;
 }
+
+
+QString GroupConstraint::getWarningMessage() const {
+	return mWarningMessage;
+}
+
+
+void GroupConstraint::setWarningMessage(const QString &message) {
+	mWarningMessage = message;
+}
+
+
 
 bool GroupConstraint::equals(GroupConstraint *constraint) {
 	if(constraint == 0) {

@@ -92,6 +92,7 @@ namespace nerd {
 		Event *mShutDownEvent;
 		IntValue *mDelayValue;
 		BoolValue *mExecutePlotters;
+		IntValue *mAnalyzerRunCounter;
 	};
 
 }

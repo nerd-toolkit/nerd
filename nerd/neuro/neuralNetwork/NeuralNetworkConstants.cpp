@@ -96,6 +96,9 @@ const QString NeuralNetworkConstants::EVENT_CONSTRAINTS_UPDATED
 
 const QString NeuralNetworkConstants::PROP_ELEMENT_MODIFIED
 		= "Modified";
+		
+const QString NeuralNetworkConstants::PROP_PREFIX_CONSTRAINT_TEMP
+		= "_##_";
 
 //**************************************************************************
 //Value Names
@@ -109,6 +112,10 @@ const QString NeuralNetworkConstants::VALUE_NNM_BYPASS_NETWORKS
 
 const QString NeuralNetworkConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER
 		= "/Evolution/CurrentGeneration";
+		
+//used to enable one-shot constraints in the networks analyzer extension
+const QString NeuralNetworkConstants::VALUE_ANALYZER_RUN_COUNTER
+		= "/Plotter/AnalyzerRunCounter";
 
 //**************************************************************************
 //Tag Names

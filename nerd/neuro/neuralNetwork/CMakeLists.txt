@@ -88,6 +88,7 @@ set(nerd_neuralNetwork_SRCS
 	SynapseFunction/Learning/HebbSynapseFunction.cpp
 	SynapseFunction/Learning/TesauroSynapseFunction.cpp
 	TransferFunction/TransferFunctionStep.cpp
+	Constraints/RandomizationConstraint.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
