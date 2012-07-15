@@ -64,7 +64,7 @@ RandomizationConstraint::RandomizationConstraint(int minNumberOfNeurons, int max
 	: GroupConstraint("Randomization"), mGlobalBiasRange(0), mGlobalOutputRange(0),
 		mGlobalActivationRange(0), mGlobalWeightRange(0), mIndividualRanges(0),
 		mStoreRandomizedValuesInNetwork(0), mApplyStoredValuesFromNetwork(0),
-		mOneShotRandomization(0), mLastOneShotCount(-1)
+		mOneShotRandomization(0), mLastOneShotCount(-1), mLastSeed(0)
 {
 	mGlobalBiasRange = new RangeValue(-0.1, 0.1);
 	mGlobalOutputRange = new RangeValue(-1, 1);
@@ -100,7 +100,7 @@ RandomizationConstraint::RandomizationConstraint(const RandomizationConstraint &
 	: Object(), ValueChangedListener(), GroupConstraint(other), mGlobalBiasRange(0), 
 		mGlobalOutputRange(0), 		mGlobalActivationRange(0), mGlobalWeightRange(0), 
 		mIndividualRanges(0), mStoreRandomizedValuesInNetwork(0), mApplyStoredValuesFromNetwork(0),
-		mOneShotRandomization(0), mLastOneShotCount(-1)
+		mOneShotRandomization(0), mLastOneShotCount(-1), mLastSeed(other.mLastSeed)
 {
 	mGlobalBiasRange = dynamic_cast<RangeValue*>(getParameter("GlobalBiasRange"));
 	mGlobalOutputRange = dynamic_cast<RangeValue*>(getParameter("GlobalOutputRange"));
@@ -145,6 +145,9 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 		return false;
 	}
 	
+	//make sure that the randomization constraint is run only once per resolver run
+	//to allow other constraints to resolve potentially induced conflicts.
+	
 	QString executionMarker = NeuralNetworkConstants::PROP_PREFIX_CONSTRAINT_TEMP
 								+ "RandRun";
 	
@@ -154,6 +157,14 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 	}
 	owner->setProperty(executionMarker);
 	
+	
+	//check if this is a single-shot randomization
+	//that is executed only once per analyzer run (NetworkDynamicsAnalyzerApplication).
+	//This is a special case that only works in the analyzer (or anywhere where a 
+	//counter for runs is given.
+	
+	bool keepPreviousRandomization = false;
+	
 	if(mAnalyzerRunCounter != 0 
 		&& mOneShotRandomization != 0 
 		&& mOneShotRandomization->get()) 
@@ -161,8 +172,7 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 		//check if the randomizer has already been executed.
 		if(mAnalyzerRunCounter->get() == mLastOneShotCount) {
 			
-			//do nothing.
-			return true;
+			keepPreviousRandomization = true;
 		}
 		
 		//update run counter
@@ -172,9 +182,24 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 
 	ModularNeuralNetwork *net = owner->getOwnerNetwork();
 	
+	
+	//Set the randomization seed:
+	//1) if single shot and this is not the first run, then stick to the previous seed.
+	//2) else if a previously stored seed should be used, then try to get that from the network
+	//3) else use a random seed
+	
 	Random random;
 	int seed = Random::nextInt();  //take seed from global randomization pool
-	if(mApplyStoredValuesFromNetwork->get()) {
+	
+	
+	if(keepPreviousRandomization) {
+		//at single shot randomization, use the seed of the first run for all other runs.
+		seed = mLastSeed;
+	}
+	else if(mApplyStoredValuesFromNetwork->get()) {
+		
+		//try to restore a randomization that was stored as seed in the owner group.
+		
 		if(!owner->hasProperty("RANDOMIZATION_SEED")) {
 			//do not change anything!
 			mWarningMessage = QString("Could not find a stored randomization seed in neuron group [")
@@ -192,12 +217,17 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 		}
 		seed = newSeed;
 	}
+	mLastSeed = seed;
 	random.mSetSeed(seed);
 	
 	if(mStoreRandomizedValuesInNetwork->get()) {
 		owner->setProperty("RANDOMIZATION_SEED", QString::number(seed));
 	}
 	
+	
+	
+	//Collect all neurons
+	//In modules, this includes all neurons of all submodules.
 	
 	QList<Neuron*> neurons = owner->getNeurons();
 	
@@ -206,6 +236,9 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 		neurons = ownerModule->getAllEnclosedNeurons();
 	}
 
+	
+	//Randomize all parameters of the neurons and synapses.
+	
 
 	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 		Neuron *neuron = i.next();
@@ -231,6 +264,8 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 				random.mNextDoubleBetween(mGlobalBiasRange->getMin(), 
 										    mGlobalBiasRange->getMax()));
 		}
+		
+		//TODO here allow to choose which synapses to randomize (in, out, mutual)
 		if(mGlobalWeightRange->getMin() != 0.0 
 			&& mGlobalWeightRange->getMax() != 0.0) 
 		{
@@ -245,65 +280,6 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 			}
 		}
 	}
-	
-	/*
-	if(neurons.size() > max) {
-		if(autoAdapt) {
-			while(neurons.size() > max && max >= 0) {
-				Neuron *newestNeuron = 0;
-				int newestDate = -1;
-				for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
-					Neuron *neuron = i.next();
-					if(newestNeuron == 0) {
-						newestNeuron = neuron;
-					}
-					QString dateString = 
-							neuron->getProperty(NeuralNetworkConstants::TAG_CREATION_DATE);
-					if(dateString != "") {
-						int date = dateString.toInt();
-						if(date < newestDate) {
-							continue;
-						}
-						newestDate = date;
-						newestNeuron = neuron;
-					}
-					else if(newestDate == -1) {
-						newestNeuron = neuron;
-					}
-				}
-				if(newestNeuron == 0) {
-					return false;
-				}
-				trashcan << net->savelyRemoveNetworkElement(newestNeuron);
-				neurons.removeAll(newestNeuron);
-			}
-			return false;
-		}
-		else {
-			mErrorMessage = "Too many neurons found in this group.";
-			return false;
-		}
-	}
-
-	if(neurons.size() < min) {
-		if(autoAdapt) {
-
-			ActivationFunction *af = net->getDefaultActivationFunction();
-			TransferFunction *tf = net->getDefaultTransferFunction();
-
-			while(neurons.size() < min) {
-				Neuron *neuron = new Neuron("", *tf, *af);
-				net->addNeuron(neuron);
-				owner->addNeuron(neuron);
-				neurons.append(neuron);
-			}
-			return true;
-		}
-		else {
-			mErrorMessage = "Too few neurons found in this group.";
-			return false;
-		}
-	}*/
 
 	return true;
 }

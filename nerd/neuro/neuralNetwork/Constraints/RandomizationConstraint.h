@@ -58,6 +58,28 @@ namespace nerd {
 
 	/**
 	 * RandomizationConstraint.
+	 * 
+	 * This constraint allows to randomize parameters of the module members, such as
+	 * neuron bias, activation, output, synapse weight, etc.
+	 * 
+	 * The constraint is only executed once per constraint resolver run to allow other
+	 * constraints to resolve inconsistencies introduced by the randomization.
+	 * 
+	 * The constraint can store the used seed in the module as property. With this stored 
+	 * property, the randomized settings can be replicated. For this, the constraint can be 
+	 * configured to use such stored seeds instead of generating a new random seed.
+	 * 
+	 * Special case: the randomize constraint is often used with the NetworkAnalyzer tool.
+	 * When the constraint detects a value called /Plotter/AnalyzerRunCounter then a new
+	 * property appears, that allows to enable its sigle-shot mode. In that mode, the 
+	 * constraint uses a new random seed for the first execution and then that same seed
+	 * for all other executions throughout the same analyer run. If the counter of the 
+	 * value changes, then a new analyzer run is assumed and a new seed is generated
+	 * during the next constraint run.
+	 * 
+	 * TODO: the constraint should allow more control over the parameter settings and
+	 * should also include attributes of TransferFuncitons, ActivationFunctions and
+	 * SynapseFunctions.
 	 */
 	class RandomizationConstraint : public GroupConstraint {
 	public:
@@ -85,6 +107,7 @@ namespace nerd {
 		BoolValue *mOneShotRandomization;
 		IntValue *mAnalyzerRunCounter;
 		int mLastOneShotCount;
+		int mLastSeed;
 	};
 
 }

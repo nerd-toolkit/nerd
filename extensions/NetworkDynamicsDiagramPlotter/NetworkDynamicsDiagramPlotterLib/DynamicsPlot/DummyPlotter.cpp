@@ -98,6 +98,9 @@ namespace nerd {
 		
 		int numberSteps = mNumberSteps->get();
 		int step = 0;
+		
+		notifyNetworkParametersChanged(getCurrentNetwork());
+		triggerReset();
 
 		while(mActiveValue->get()) {
 			// let the network run for 1 timestep
