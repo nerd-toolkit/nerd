@@ -59,10 +59,11 @@ namespace nerd {
 	EditorMessageWidget* DynamicsPlotterUtil::sMessageWidget = 0;
 	Core* DynamicsPlotterUtil::sCore = 0;
 
+
 	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &string, 
 													  QList<NeuralNetworkElement*> const &elemList,
 													  QList<Neuron*> *neuronsWithActivationChange) {
-		// string Syntax: ID[:FUNC]:PARAM
+
 		QStringList stringList = string.split(":", QString::SkipEmptyParts);
 		if(stringList.isEmpty() || stringList.size() == 1 || stringList.size() > 3) {
 			reportProblem("DynamicsPlotterUtil::getElementValue : Invalid or empty identifier "
@@ -193,9 +194,7 @@ namespace nerd {
 	}
 		
 	QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &string) {
-		// Syntax: ID:FUNC:PARAM (eg I1:F1:P1,I2:F2:P2|I3:F3:P3)	
 		QList<QStringList> parts;
-		// Create list of plots
 		QStringList partlist = string.split("|", QString::SkipEmptyParts);
 		for(int i = 0; i < partlist.size(); ++i) {
 			QStringList elems = partlist.at(i).split(",", QString::SkipEmptyParts);

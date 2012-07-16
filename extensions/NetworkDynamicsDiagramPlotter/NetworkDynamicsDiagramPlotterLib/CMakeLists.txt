@@ -7,6 +7,7 @@ set(nerd_dynamicsPlotLib_SRCS
 	DynamicsPlot/BasinPlotter.cpp
 	DynamicsPlot/IsoperiodPlotter.cpp
 	DynamicsPlot/FirstReturnMap.cpp
+	DynamicsPlot/TransientenPlotter.cpp
 	Gui/DynamicsPlotterMainWindow.cpp  
 	Execution/PlotterExecutionLoop.cpp  
 	DynamicsPlot/DynamicsPlotManager.cpp  
