@@ -76,9 +76,11 @@ ValueDetailVisualization::ValueDetailVisualization(Value *value, ValueManager *v
 	}
 	name.append("]");
 	mNameLabel = new QLabel(name);
+	mNameLabel->setFocusPolicy(Qt::NoFocus);
 
 	mCloseEvent = new QPushButton("x");
 	mCloseEvent->setFixedWidth(20);
+	mCloseEvent->setFocusPolicy(Qt::NoFocus);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	QHBoxLayout *subLayout = new QHBoxLayout;
@@ -163,6 +165,10 @@ void ValueDetailVisualization::fillContents() {
 
 Value* ValueDetailVisualization::getValue() {
 	return mValue;
+}
+
+QTextEdit* ValueDetailVisualization::getTextEdit() const {
+	return mTextEdit;
 }
 
 }

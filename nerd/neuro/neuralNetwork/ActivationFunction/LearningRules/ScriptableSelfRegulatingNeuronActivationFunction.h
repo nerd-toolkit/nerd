@@ -101,6 +101,8 @@ namespace nerd {
 		StringValue *mEtaEquation;
 		StringValue *mXiEquation;
 		StringValue *mThetaEquation;
+		StringValue *mEquationTester;
+		DoubleValue *mEquationTestOutput;
 		
 		QScriptEngine *mEquationScript;
 		QString mVariableBuffer;

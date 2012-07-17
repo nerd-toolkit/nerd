@@ -68,12 +68,17 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 	mEtaEquation = new StringValue("default");
 	mXiEquation = new StringValue("default");
 	mThetaEquation = new StringValue("");
+	mEquationTester = new StringValue("");
+	mEquationTestOutput = new DoubleValue();
 	
 	addParameter("Trans-Eq (eta,h)", mTransmitterEquation);
 	addParameter("Recept-Eq (xi,g)", mReceptorEquation);
 	addParameter("Eta-Eq", mEtaEquation);
 	addParameter("Xi-Eq", mXiEquation);
 	addParameter("Theta-Eq", mThetaEquation);
+	addParameter("Tester", mEquationTester);
+	
+	addObserableOutput("TestOutput", mEquationTestOutput);
 	
 	mTransmitterEquation->setDescription("2. Equation"
 										 "\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z"
@@ -94,6 +99,12 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 	mThetaEquation->setDescription("An optional equation to update the neuron bias."
 										"\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z, g, h"
 										 "\nFunctions: tf()");
+	
+	mEquationTester->setDescription("Allows to test variables and equations on-the-fly. The result of this equation is passed "
+									"to the observable 'TestOutput\n"
+								    "The testequation is calculated AFTER all other equations.\n"
+									"\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z, g, h"
+									"\nFunctions: tf()");
 }
 
 
@@ -111,6 +122,10 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 	mEtaEquation = dynamic_cast<StringValue*>(getParameter("Eta-Eq"));
 	mXiEquation = dynamic_cast<StringValue*>(getParameter("Xi-Eq"));
 	mThetaEquation = dynamic_cast<StringValue*>(getParameter("Theta-Eq"));
+	mEquationTester = dynamic_cast<StringValue*>(getParameter("Tester"));
+	
+	mEquationTestOutput = new DoubleValue();
+	addObserableOutput("TestOutput", mEquationTestOutput);
 }
 
 /**
@@ -146,7 +161,22 @@ double ScriptableSelfRegulatingNeuronActivationFunction::calculateActivation(Neu
 		mReceptorEquation->set("Math.abs(tf(aStar)) - Math.abs(tf(a))");
 	}
 	
-	return SelfRegulatingNeuronActivationFunction::calculateActivation(owner);
+	double result = SelfRegulatingNeuronActivationFunction::calculateActivation(owner);
+	
+	
+	//Execute equation tester
+	if(mEquationTester->get().trimmed() != "") {
+		mEquationScript->evaluate("nerd.stringBuffer = " + mEquationTester->get());
+		if(mEquationScript->hasUncaughtException()) {
+			Core::log("ScriptableSRNActivationFunction: Could not evaluate test equation ["
+					+ mEquationTester->get() + ")", true);
+		}
+		else {
+			mEquationTestOutput->set(mVariableBuffer.toDouble());
+		}
+	}
+	
+	return result;
 }
 
 
@@ -345,6 +375,8 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 		mEquationScript->evaluate("var h = 0;");
 		mEquationScript->evaluate("var x = 0; var y = 0; var z = 0;");
 		mEquationScript->evaluate("var theta = 0;");
+		
+		mEquationScript->evaluate("function sign(value) { if(value > 0.0) { return 1.0; } else if(value < 0.0) { return -1.0; } else { return 0.0; } }");
 	}
 	
 	

@@ -52,6 +52,9 @@
 #include <QDebug>
 #include <QEvent>
 #include <QMessageBox>
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
@@ -175,6 +178,8 @@ void ValueDetailPanel::showMatchingValues() {
 			mListLayout->addWidget(newVis, 0, Qt::AlignTop);
 		}
 	}
+	
+	updateTabOrder();
 }
 
 /**
@@ -247,6 +252,23 @@ bool ValueDetailPanel::eventFilter(QObject *object, QEvent *event) {
 		}
 	}
 	return false;	// send event to the target object itself
+}
+
+
+void ValueDetailPanel::updateTabOrder() {
+	QTextEdit *previous = 0;
+	
+	cerr << "update " << endl;
+	
+	QMap<Value*, ValueDetailVisualization*>::iterator it;
+	for(it = mValueDetailVisualizations.begin(); it != mValueDetailVisualizations.end(); it++) {
+		QTextEdit *current = it.value()->getTextEdit();
+		if(previous != 0) {
+			setTabOrder(previous, current);
+			cerr << "got: " << previous << " and " << current << endl;
+		}
+		previous = current;
+	}
 }
 
 /**

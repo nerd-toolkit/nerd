@@ -99,6 +99,7 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mValueName = name;
 
 	mNameLabel = new QLabel(mValueName);
+	mNameLabel->setFocusPolicy(Qt::NoFocus);
 	mValueBox = new QComboBox(this);
 	mValueBox->setEditable(true);
 
@@ -121,11 +122,14 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mValueField = mValueBox->lineEdit();
 	mCloseButton = new QPushButton("x");
 	mCloseButton->setWhatsThis("Remove this property from the list");
+	mCloseButton->setFocusPolicy(Qt::NoFocus);
 
 	mMoveUpButton = new QPushButton();
 	mMoveUpButton->setWhatsThis("Moves this property up in the list");
+	mMoveUpButton->setFocusPolicy(Qt::NoFocus);
 	mMoveDownButton = new QPushButton();
 	mMoveDownButton->setWhatsThis("Moves this property down in the list");
+	mMoveDownButton->setFocusPolicy(Qt::NoFocus);
 
 	if(mValue != 0) {
         //mNameLabel->setWhatsThis(mValue->getDescription());
@@ -135,9 +139,11 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 
 	mUpdateSnapshotButton = new QPushButton("Set Init");
 	mUpdateSnapshotButton->setWhatsThis("Use the current setting after a reset");
+	mUpdateSnapshotButton->setFocusPolicy(Qt::NoFocus);
 
 	mUpdateValue = new QCheckBox();
 	mUpdateValue->setWhatsThis("Update content after each change");
+	mUpdateValue->setFocusPolicy(Qt::NoFocus);
 
 	connect(mValueField, SIGNAL(returnPressed()),
 			this, SLOT(changeValue()));

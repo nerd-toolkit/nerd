@@ -65,6 +65,8 @@ class ValueDetailVisualization : public QFrame {
 	public:
 		ValueDetailVisualization(Value *value, ValueManager *valueManager);
 		Value *getValue();
+		
+		QTextEdit* getTextEdit() const;
 
 	public slots:
 		void fillContents();

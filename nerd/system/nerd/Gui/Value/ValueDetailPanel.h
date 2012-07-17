@@ -87,6 +87,8 @@ namespace nerd {
 		void createListView();
 		void createControlButtonView();
 		bool eventFilter(QObject *object, QEvent *event);
+		
+		void updateTabOrder();
 
 	private:
 		int mXPos;
