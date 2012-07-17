@@ -89,8 +89,6 @@ namespace nerd {
 		
 		// get network
 		//ModularNeuralNetwork *network = getCurrentNetwork();
-		storeNetworkConfiguration();
-		storeCurrentNetworkActivities();
 		
 		// PREPARE data matrix
 		mData->clear();
@@ -99,8 +97,19 @@ namespace nerd {
 		int numberSteps = mNumberSteps->get();
 		int step = 0;
 		
-		notifyNetworkParametersChanged(getCurrentNetwork());
+		
+		//make sure that the constraint resolver is run also after the activations have been restored
+		//so that an optional randomization constraint can alter the activations if required.
+		//notifyNetworkParametersChanged(getCurrentNetwork());
+		storeNetworkConfiguration();
+		storeCurrentNetworkActivities();
+
 		triggerReset();
+		
+		restoreNetworkConfiguration();
+		restoreCurrentNetworkActivites();
+		notifyNetworkParametersChanged(getCurrentNetwork());
+		
 
 		while(mActiveValue->get()) {
 			// let the network run for 1 timestep
