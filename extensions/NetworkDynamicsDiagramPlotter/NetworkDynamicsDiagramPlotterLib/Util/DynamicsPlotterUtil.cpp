@@ -266,7 +266,7 @@ namespace nerd {
 					
 					//ALL
 					QStringList parts = stringList.at(j).split(":", QString::SkipEmptyParts);
-					if(stringList.isEmpty() || stringList.size() == 1 || stringList.size() > 3) {
+					if(parts.isEmpty() || parts.size() == 1 || parts.size() > 3) {
 						reportProblem("DynamicsPlotterUtil::getElementValue : Invalid or empty identifier "
 									  "[" + stringList.at(j) + "]");
 						continue;
