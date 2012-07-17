@@ -80,6 +80,9 @@ void TestMatlabExporter::testConstructors() {
 	
 	//TODO test value connections when implemented.
 	
+	
+	
+	Core::resetCore();
 }
 
 
@@ -233,7 +236,7 @@ void TestMatlabExporter::testMatlabExport() {
 	QVERIFY(findTextInFile(fileName, "names = {'x' 'y' 'x' 'y' };", true));
 	QVERIFY(findTextInFile(fileName, "titles = {'Title 1' 'Title 2' };", true));
 	
-	
+	Core::resetCore();
 }
 
 

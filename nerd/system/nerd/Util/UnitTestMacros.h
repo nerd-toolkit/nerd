@@ -107,7 +107,7 @@ void runShuffledTests(int loops, long seed) {
 		delete mTestObjects.at(i);
 	}
 	mTestObjects.clear();
-	delete Core::getInstance();
+	Core::resetCore();
 }
 
 

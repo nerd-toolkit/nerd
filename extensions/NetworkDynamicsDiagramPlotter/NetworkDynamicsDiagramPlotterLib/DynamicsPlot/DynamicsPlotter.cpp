@@ -75,7 +75,10 @@ namespace nerd {
  * Constructs a new DynamicsPlotter.
  */
 DynamicsPlotter::DynamicsPlotter(const QString &name)
-	: ParameterizedObject(name, "/DynamicsPlotters/" + name + "/"), mEnableConstraintsInCurrentRun(false)
+: ParameterizedObject(name, "/DynamicsPlotters/" + name + "/"), mNextStepEvent(0), 
+	mStepCompletedEvent(0), mResetEvent(0), mResetFinalizedEvent(0), mEvaluateNetworkEvent(0), 
+	mClearAllEditorSelections(0), mStasisValue(0), mEnableConstraintsInCurrentRun(false), mStartEvent(0),
+	mFinishEvent(0)
 {
 	Core::getInstance()->addSystemObject(this);
 	DynamicsPlotManager::getInstance()->addDynamicsPlotter(this);
@@ -135,7 +138,6 @@ bool DynamicsPlotter::init() {
 	//If not available, create them (only once).
 	mStartEvent = em->getEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED);
 	mFinishEvent = em->getEvent(DynamicsPlotConstants::EVENT_CALCULATION_COMPLETED);
-	mClearAllEditorSelections = em->getEvent(NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS);
 	
 	if(mStartEvent == 0){
 		mStartEvent = em->createEvent(DynamicsPlotConstants::EVENT_CALCULATION_STARTED, 
@@ -158,6 +160,7 @@ bool DynamicsPlotter::bind() {
 
 	EventManager *em = Core::getInstance()->getEventManager();
 
+	mClearAllEditorSelections = em->getEvent(NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS);
 	mNextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, true);
 	mStepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, true);
 	mResetEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET, true);
@@ -199,10 +202,14 @@ void DynamicsPlotter::execute() {
 	mEnableConstraintsInCurrentRun = mEnableConstraints->get();
 
 	//****Till***c//
-	mValueManager->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER)
-						->setValueFromString(getName());
+	Value *activeValue = mValueManager->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER);
+	if(activeValue != 0) {
+		activeValue->setValueFromString(getName());
+	}
 	Core::getInstance()->executePendingTasks();
-	mStartEvent->trigger();
+	if(mStartEvent != 0) {
+		mStartEvent->trigger();
+	}
 	//***/Till***c//
 	
 	if(!Core::getInstance()->isMainExecutionThread()) {
@@ -236,11 +243,15 @@ void DynamicsPlotter::execute() {
 	//mValueManager->getValue(path)->setValueFromString("F"); 
 	getActiveValue()->set(false);
 	
-	mValueManager->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER)->setValueFromString("");
+	if(activeValue != 0) {
+		activeValue->setValueFromString("");
+	}
 	
 	Core::getInstance()->executePendingTasks();
 	
-	mFinishEvent->trigger();
+	if(mFinishEvent != 0) {
+		mFinishEvent->trigger();
+	}
 	
 	
 	//***/Till***c//

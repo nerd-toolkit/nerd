@@ -54,6 +54,13 @@
 #include "Adapters/TransferFunctionAdapter.h"
 #include <Util/NeuralNetworkUtil.h>
 #include <Util/DynamicsPlotterUtil.h>
+#include <DynamicsPlot/BasinPlotter.h>
+#include "DynamicsPlotConstants.h"
+#include "NetworkEditorConstants.h"
+#include "NerdConstants.h"
+#include "NeuralNetworkConstants.h"
+#include "Network/NeuralNetworkManager.h"
+#include "Network/Neuro.h"
 
 using namespace std;
 using namespace nerd;
@@ -68,6 +75,206 @@ void TestBasinPlotter::cleanUpTestCase() {
 //Author
 void TestBasinPlotter::testConstructors() {
 	
+}
+
+
+void TestBasinPlotter::testParameterSettings() {
+	
+	Core::resetCore();
+	
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	EventManager *em = Core::getInstance()->getEventManager();
+	
+	Neuro::getNeuralNetworkManager();
+	
+	//create required values and events
+	//***************************************************************************************
+	
+	Event *e_ClearAllEditorSelections = em->getEvent(NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS, true);
+	Event *e_NextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, true);
+	Event *e_StepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, true);
+	Event *e_ResetEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET, true);
+	Event *e_ResetFinalizedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET_COMPLETED, true);
+	Event *e_EvaluateNetworkEvent = em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_STARTED, true);
+	
+	BoolValue *v_StasisValue = new BoolValue(false);
+	vm->addValue(NeuralNetworkConstants::VALUE_EVO_STASIS_MODE, v_StasisValue);
+	
+	
+
+	//create basin plotter
+	//***************************************************************************************
+	BasinPlotter *basinPlotter = new BasinPlotter();
+	
+
+	//collect parameters and config of DynamicsPlotter
+	//***************************************************************************************
+	BoolValue *v_ActiveValue = dynamic_cast<BoolValue*>(basinPlotter->getParameter("Config/Activate"));
+	IntValue *v_ExecutionTime = dynamic_cast<IntValue*>(basinPlotter->getParameter("Performance/ExecutionTime"));
+	DoubleValue *v_ProgressPercentage = dynamic_cast<DoubleValue*>(basinPlotter->getParameter("Performance/ProgressPercentage"));
+	BoolValue *v_EnableConstraints = dynamic_cast<BoolValue*>(basinPlotter->getParameter("Config/EnableConstraints"));
+	
+	MatrixValue *v_Data = dynamic_cast<MatrixValue*>(basinPlotter->getParameter("Internal/Data"));
+	StringValue *v_FilePrefix = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/Diagram/FilePrefix"));
+	StringValue *v_AxisNames = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/Diagram/AxisNames"));
+	StringValue *v_TitleNames = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/Diagram/TitleNames"));
+	
+	QVERIFY(v_ActiveValue != 0);
+	QVERIFY(v_ExecutionTime != 0);
+	QVERIFY(v_ProgressPercentage != 0);
+	QVERIFY(v_EnableConstraints != 0);
+	
+	QVERIFY(v_Data != 0);
+	QVERIFY(v_FilePrefix != 0);
+	QVERIFY(v_AxisNames != 0);
+	QVERIFY(v_TitleNames != 0);
+	
+	
+	//collect parameter and config values of BasinPlotter
+	//***************************************************************************************
+	StringValue *v_VariedX = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/VariedElementX"));
+	StringValue *v_VariedY = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/VariedElementY"));
+	StringValue *v_VariedRangeX = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/VariedRangeX"));
+	StringValue *v_VariedRangeY = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/VariedRangeY"));
+	IntValue *v_VariedResolutionX = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/VariedResolutionX"));
+	IntValue *v_VariedResolutionY = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/VariedResolutionY"));
+	
+	DoubleValue *v_Accuracy = dynamic_cast<DoubleValue*>(basinPlotter->getParameter("Config/Accuracy"));
+	IntValue *v_RoundDigits = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/RoundDigits"));
+	
+	IntValue *v_StepsToRun = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/StepsToRun"));
+	IntValue *v_StepsToCheck = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/StepsToCheck"));
+	
+	BoolValue *v_ResetNetworkActivation = dynamic_cast<BoolValue*>(basinPlotter->getParameter("Config/ResetNetworkActivation"));
+	BoolValue *v_RestoreNetworkConfiguration = dynamic_cast<BoolValue*>(basinPlotter->getParameter("Config/RestoreNetworkConfiguration"));
+	BoolValue *v_ResetSimulator = dynamic_cast<BoolValue*>(basinPlotter->getParameter("Config/ResetSimulation"));
+	
+	QVERIFY(v_VariedX != 0);
+	QVERIFY(v_VariedY != 0);
+	QVERIFY(v_VariedRangeX != 0);
+	QVERIFY(v_VariedRangeY != 0);
+	QVERIFY(v_VariedResolutionX != 0);
+	QVERIFY(v_VariedResolutionY != 0);
+	QVERIFY(v_Accuracy != 0);
+	QVERIFY(v_RoundDigits != 0);
+	QVERIFY(v_StepsToRun != 0);
+	QVERIFY(v_StepsToCheck != 0);
+	QVERIFY(v_ResetNetworkActivation != 0);
+	QVERIFY(v_RestoreNetworkConfiguration != 0);
+	QVERIFY(v_ResetSimulator != 0);
+	
+	
+	//create network
+	//***************************************************************************************
+	
+	AdditiveTimeDiscreteActivationFunction *af = new AdditiveTimeDiscreteActivationFunction();
+	TransferFunctionRamp *ramp = new TransferFunctionRamp("ramp", -1, 1, false);
+	SimpleSynapseFunction *sf = new SimpleSynapseFunction();
+	
+	ModularNeuralNetwork *network = new ModularNeuralNetwork(*af, *ramp, *sf);
+	
+	Neuron *n1 = new Neuron("Neuron1", *ramp, *af);
+	network->addNeuron(n1);
+	Neuron *n2 = new Neuron("Neuron2", *ramp, *af);
+	network->addNeuron(n2);
+	Neuron *n3 = new Neuron("Neuron3", *ramp, *af);
+	network->addNeuron(n3);
+	
+	Synapse *s1 = Synapse::createSynapse(n1, n2, 0.5, *sf);
+	Synapse *s2 = Synapse::createSynapse(n3, n3, -1.5, *sf);
+	
+	
+
+	//add to neural network manager
+	QVERIFY(Neuro::getNeuralNetworkManager()->addNeuralNetwork(network));
+	
+	//Initialize NERD
+	//***************************************************************************************
+	QVERIFY(Core::getInstance()->init());
+	
+	
+	
+	
+	
+	//***************************************************************************************
+	//***************************************************************************************
+	//***************************************************************************************
+	// from here on do tests!!
+	//***************************************************************************************
+	//***************************************************************************************
+	//***************************************************************************************
+	
+	//check default values
+	QVERIFY(v_EnableConstraints->get() == false);
+	QVERIFY(v_FilePrefix->get() == "BasinOfAttraction");
+	QVERIFY(v_AxisNames->get() == "x, y");
+	QVERIFY(v_TitleNames->get() == "Basins of Attraction|Periods|Attractor");
+	QCOMPARE(v_Accuracy->get(), 0.001);
+	QCOMPARE(v_RoundDigits->get(), -1);
+	QCOMPARE(v_StepsToRun->get(), 2000);
+	QCOMPARE(v_StepsToCheck->get(), 100);
+	QVERIFY(v_ResetNetworkActivation->get() == true);
+	QVERIFY(v_RestoreNetworkConfiguration->get() == true);
+	QVERIFY(v_ResetSimulator->get() == true);
+	
+	//... (seems to be all that are necessary, the others are unimportant.
+	
+	
+	
+	
+	
+	
+	
+
+	//Configure the main parameters
+	//***************************************************************************************
+	v_VariedX->set(QString::number(n1->getId()) + ":o");
+	v_VariedY->set(QString::number(n2->getId()) + ":a");
+	v_VariedRangeX->set("-1,1");
+	v_VariedRangeY->set("-1,1");
+	v_VariedResolutionX->set(200);
+	v_VariedResolutionY->set(300);
+	
+	//... continue testing
+	
+	//default matrix size (after initialization)
+	QCOMPARE(v_Data->getMatrixWidth(), 2);
+	QCOMPARE(v_Data->getMatrixHeight(), 2);
+	QCOMPARE(v_Data->getMatrixDepth(), 1);
+	
+	basinPlotter->execute();
+
+	//matrix size after analyzer run.
+	QCOMPARE(v_Data->getMatrixWidth(), 201);  //resolution 200 + 1 for coordinate system
+	QCOMPARE(v_Data->getMatrixHeight(), 301); //resolution 200 + 1 for coordinate system
+	QCOMPARE(v_Data->getMatrixDepth(), 3); //always 3 (basin, periods, attractors)
+	
+	//... continue testing
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//***************************************************************************************
+	//***************************************************************************************
+	//***************************************************************************************
+	//cleanup
+	//***************************************************************************************
+	//***************************************************************************************
+	//***************************************************************************************
+	Neuro::reset();
+	Core::resetCore();
 }
 
 

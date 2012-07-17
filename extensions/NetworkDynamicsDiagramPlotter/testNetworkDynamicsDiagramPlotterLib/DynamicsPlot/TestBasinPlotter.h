@@ -60,6 +60,8 @@ namespace nerd {
 		
 		void testConstructors();	
 		
+		void testParameterSettings();
+		
 	private:
 		
 		

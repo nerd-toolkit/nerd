@@ -70,6 +70,8 @@ void TestDynamicsPlotManager::cleanUpTestCase() {
 
 //Chris
 void TestDynamicsPlotManager::testConstructorsAndGlobalRegistration() {
+	Core::resetCore();
+	
 	DynamicsPlotManager *dpm = new DynamicsPlotManager();
 	
 	QVERIFY(dpm->getDynamicsPlotters().empty());
@@ -114,6 +116,8 @@ void TestDynamicsPlotManager::testConstructorsAndGlobalRegistration() {
 	QVERIFY(dpm2 != 0);
 	QVERIFY(Core::getInstance()->getGlobalObject(DynamicsPlotConstants::OBJECT_DYNAMICS_PLOT_MANAGER) == dpm2);
 	QVERIFY(dpm2->registerAsGlobalObject() == true);
+	
+	Core::resetCore();
 }
 
 

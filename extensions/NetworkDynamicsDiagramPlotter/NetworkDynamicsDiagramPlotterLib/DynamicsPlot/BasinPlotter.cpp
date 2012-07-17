@@ -79,7 +79,7 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	mRoundDigits->setDescription("Defines how many digits are preserved, "
 								"when rounding values, -1 preserves all");
 
-	mStepsToRun = new IntValue(300);
+	mStepsToRun = new IntValue(2000);
 	mStepsToRun->setDescription("Number of simulation steps that are computed");
 	mStepsToCheck = new IntValue(100);
 	mStepsToCheck->setDescription("Maximum period to check for attractors");
@@ -127,6 +127,11 @@ void BasinPlotter::calculateData() {
 	
 	// get network
 	ModularNeuralNetwork *network = getCurrentNetwork();
+	if(network == 0) {
+		Core::log("BasinPlotter: Could not find a neural network to work with! Aborting.", true);
+		return;
+	}
+	
 	QList<NeuralNetworkElement*> networkElements;
 	network->getNetworkElements(networkElements);
 	QList<DoubleValue*> networkValues =
