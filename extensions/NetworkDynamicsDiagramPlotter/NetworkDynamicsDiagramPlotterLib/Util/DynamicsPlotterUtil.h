@@ -59,6 +59,11 @@ namespace nerd {
 	class DynamicsPlotterUtil {
 
 	public:	
+		
+		static QList<DoubleValue*> collectElementValues(const QStringList &typeDescription,
+												   const QList<nerd::NeuralNetworkElement*> &elemList,
+												   QList<Neuron*> *neuronsWithActivationChange = 0);
+		
 		static DoubleValue* getElementValue(const QString &string, 
 											const QList<nerd::NeuralNetworkElement*> &elemList,
 											QList<Neuron*> *neuronsWithActivationChange = 0);
