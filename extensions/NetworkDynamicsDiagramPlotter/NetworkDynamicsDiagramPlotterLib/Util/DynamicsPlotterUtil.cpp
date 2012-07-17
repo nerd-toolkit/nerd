@@ -60,6 +60,23 @@ namespace nerd {
 	Core* DynamicsPlotterUtil::sCore = 0;
 
 
+	/**
+	 * 
+	 * The neuronsWithActivationChange parameter can be used to collect all DoubelValues that correspond
+	 * to activation values of neurons. These neurons have to be collected in each DymnamcisPlotter in
+	 * variable DynamcisPlotter::mNeuronsWithActivationsToTransfer to be handled correctly, if the 
+	 * activation of a neuron should be varied during an analyzer run. Otherwise the varied activations
+	 * are immediately overwritten by the newly calculated activations at the first network update. 
+	 * 
+	 * If this method is used to collect elements that will NOT be changed during analyzer runs,
+	 * then the last parameter MUST be empty. Othewise activations of neurons collected in this way
+	 * will be treated differently compared to the other neurons in the network. This may lead to 
+	 * unexpected and erroneous behavior.
+	 * 
+	 * @param string the specification of the desired DoubleValue object.
+	 * @param elemList the list of objects that are considered to find the specified DoubleValue object.
+	 * @param neuronsWithActivationChange (optional) list to collect all activation values that are going to be changed during a run.
+	 */
 	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &string, 
 													  QList<NeuralNetworkElement*> const &elemList,
 													  QList<Neuron*> *neuronsWithActivationChange) {
@@ -168,6 +185,23 @@ namespace nerd {
 
 
 	// Wrapper for above method to get values for multiple strings in a list of lists
+	/**
+	 * 
+	 * The neuronsWithActivationChange parameter can be used to collect all DoubelValues that correspond
+	 * to activation values of neurons. These neurons have to be collected in each DymnamcisPlotter in
+	 * variable DynamcisPlotter::mNeuronsWithActivationsToTransfer to be handled correctly, if the 
+	 * activation of a neuron should be varied during an analyzer run. Otherwise the varied activations
+	 * are immediately overwritten by the newly calculated activations at the first network update. 
+	 * 
+	 * If this method is used to collect elements that will NOT be changed during analyzer runs,
+	 * then the last parameter MUST be empty. Othewise activations of neurons collected in this way
+	 * will be treated differently compared to the other neurons in the network. This may lead to 
+	 * unexpected and erroneous behavior.
+	 * 
+	 * @param listList a list of stringlists, containing the single specifications of DoubleValues.
+	 * @param elemList the list of objects that are considered to find the specified DoubleValue object.
+	 * @param neuronsWithActivationChange (optional) list to collect all activation values that are going to be changed during a run.
+	 */
 	QList<QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStringList > const &listList, 
 																		QList<NeuralNetworkElement*> const &elemList, 
 																		QList<Neuron*> *neuronsWithActivationChange) {
