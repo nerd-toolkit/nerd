@@ -85,15 +85,19 @@ namespace nerd {
 						foundValues.append(&(neuron->getOutputActivationValue()));
 						continue;
 					}
-					if(stringList.at(0) == "a") {
+					else if(stringList.at(0) == "a") {
 						if(neuronsWithActivationChange != 0) {
 							neuronsWithActivationChange->append(neuron);
 						}
 						foundValues.append(&(neuron->getActivationValue()));
 						continue;
 					}
-					if(stringList.at(0) == "b") {
+					else if(stringList.at(0) == "b") {
 						foundValues.append(&(neuron->getBiasValue()));
+						continue;
+					}
+					else if(stringList.at(0) == "w") {
+						//is ok because it applies only to synapses.
 						continue;
 					}
 				}
@@ -109,12 +113,21 @@ namespace nerd {
 								continue;
 							}
 							else {
-								foundValues.append(dynamic_cast<DoubleValue*>(tf->getParameter(param)));
+								DoubleValue *val = dynamic_cast<DoubleValue*>(tf->getParameter(param));
+								if(val != 0) {
+									foundValues.append(val);
+								}
+								else {
+									reportProblem("DynamicsPlotterUtil::collectElementValues : Found neuron ["
+												  + QString::number(neuron->getId()) +"] "
+												"but not the required transfer function parameter (or observable) "
+												"["+ stringList.at(0) + "] [" + param + "]");
+								}
 								continue;
 							}
 						}
 					}
-					if(stringList.at(0) == "af") {
+					else if(stringList.at(0) == "af") {
 						ActivationFunction *af = neuron->getActivationFunction();
 						if(af != 0) {
 							DoubleValue *afo = dynamic_cast<DoubleValue*>(af->getObservableOutput(param));
@@ -123,48 +136,82 @@ namespace nerd {
 								continue;
 							}
 							else {
-								foundValues.append(dynamic_cast<DoubleValue*>(af->getParameter(param)));
+								DoubleValue *val = dynamic_cast<DoubleValue*>(af->getParameter(param));
+								if(val != 0) {
+									foundValues.append(val);
+								}
+								else {
+									reportProblem("DynamicsPlotterUtil::collectElementValues : Found neuron ["
+												  + QString::number(neuron->getId()) +"] "
+												"but not the required activation function parameter (or observable) "
+												"["+ stringList.at(0) + "] [" + param + "]");
+								}
 								continue;
 							}
 						}
 					}
+					else if(stringList.at(0) == "sf") {
+						//is ok because it only applied to synapses
+						continue;
+					}
 				}
-// 				reportProblem("DynamicsPlotterUtil::collectElementValues : Found neuron ["+ QString::number(neuron->getId()) +"] "
-// 							"but not the value specified by "
-// 							"["+stringList.at(0) + (!param.isEmpty() ? ":" : "") + param+"]");
+				reportProblem("DynamicsPlotterUtil::collectElementValues : Found neuron ["+ QString::number(neuron->getId()) +"] "
+							"but not the value specified by "
+							"["+stringList.at(0) + (!param.isEmpty() ? ":" : "") + param+"]");
 				continue;
 			}
 			
 			Synapse *synapse = dynamic_cast<Synapse*>(elem);
 			if(synapse != 0) {
-				if(stringList.size() == 1 && stringList.at(0) == "w") {
-					foundValues.append(&(synapse->getStrengthValue()));
-					continue;
-				}
-				if(stringList.size() == 2 && stringList.at(0) == "sf") {
-					param = stringList.at(1);
-					SynapseFunction *sf = synapse->getSynapseFunction();
-					if(sf != 0) {
-						DoubleValue *sfo = dynamic_cast<DoubleValue*>(sf->getObservableOutput(param));
-						if(sfo != 0) {
-							foundValues.append(sfo);
-							continue;
-						}
-						else {
-							foundValues.append(dynamic_cast<DoubleValue*>(sf->getParameter(param)));
-							continue;
-						}
+				if(stringList.size() == 1) {
+					if(stringList.at(0) == "w") {
+						foundValues.append(&(synapse->getStrengthValue()));
+						continue;
+					}
+					else if(stringList.at(0) == "o" 
+							|| stringList.at(0) == "a"
+							|| stringList.at(0) == "b")
+					{
+						//is ok, because it only applies to synapses
+						continue;
 					}
 				}
-// 				reportProblem("DynamicsPlotterUtil::collectElementValues : Found synapse ["+ QString::number(synapse->getId()) +"] "
-// 										"but not the value specified by "
-// 										"["+stringList.at(0) + (!param.isEmpty() ? ":" : "") + param+"]");
+				if(stringList.size() == 2) {
+					if(stringList.at(0) == "sf") {
+						param = stringList.at(1);
+						SynapseFunction *sf = synapse->getSynapseFunction();
+						if(sf != 0) {
+							DoubleValue *sfo = dynamic_cast<DoubleValue*>(sf->getObservableOutput(param));
+							if(sfo != 0) {
+								foundValues.append(sfo);
+								continue;
+							}
+							else {
+								DoubleValue *val = dynamic_cast<DoubleValue*>(sf->getParameter(param));
+								if(val != 0) {
+									foundValues.append(val);
+								}
+								else {
+									reportProblem("DynamicsPlotterUtil::collectElementValues : Found synapse ["
+												+ QString::number(synapse->getId()) +"] "
+												"but not the required synapse function parameter (or observable) "
+												"["+ stringList.at(0) + "] [" + param + "]");
+								}
+								continue;
+							}
+						}
+					}
+					else if(stringList.at(0) == "tf" || stringList.at(0) == "af") {
+						//os ok, because these only apply to neurons.
+						continue;
+					}
+				}
+				reportProblem("DynamicsPlotterUtil::collectElementValues : Found synapse ["+ QString::number(synapse->getId()) +"] "
+							"but not the value specified by "
+							"["+stringList.at(0) + (!param.isEmpty() ? ":" : "") + param+"]");
 				continue;
 			}
 		}
-		
-// 		reportProblem("DynamicsPlotterUtil::getElementValue : Something went wrong! "
-// 					  "Invalid value identifier ["+string+"] given");
 		
 		return foundValues;
 		
