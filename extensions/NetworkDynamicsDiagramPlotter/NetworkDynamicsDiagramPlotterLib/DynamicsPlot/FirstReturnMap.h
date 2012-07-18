@@ -70,6 +70,8 @@ private:
 	
 	BoolValue *mResetNetworkActivation;
 	BoolValue *mRestoreNetworkConfiguration;
+	BoolValue *mKeepPreviousData;
+	int mCurrentMarker;
 };
 
 }

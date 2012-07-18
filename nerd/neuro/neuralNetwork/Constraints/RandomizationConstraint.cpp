@@ -64,6 +64,7 @@ RandomizationConstraint::RandomizationConstraint(int minNumberOfNeurons, int max
 	: GroupConstraint("Randomization"), mGlobalBiasRange(0), mGlobalOutputRange(0),
 		mGlobalActivationRange(0), mGlobalWeightRange(0), mIndividualRanges(0),
 		mStoreRandomizedValuesInNetwork(0), mApplyStoredValuesFromNetwork(0),
+		mRandomizationHistorySize(0),
 		mOneShotRandomization(0), mLastOneShotCount(-1), mLastSeed(0)
 {
 	mGlobalBiasRange = new RangeValue(-0.1, 0.1);
@@ -71,8 +72,18 @@ RandomizationConstraint::RandomizationConstraint(int minNumberOfNeurons, int max
 	mGlobalActivationRange = new RangeValue(0, 0);
 	mGlobalWeightRange = new RangeValue(-0.1, 0.1);
 	//mIndividualRanges = new StringValue();
+	
 	mStoreRandomizedValuesInNetwork = new BoolValue(true);
+	mStoreRandomizedValuesInNetwork->setDescription("If true, then the seed for the randomization is stored "
+						"in the neuron-group to allow a replication of the randomization. ");
 	mApplyStoredValuesFromNetwork = new BoolValue(false);
+	mApplyStoredValuesFromNetwork->setDescription("If true, then no real randomization takes place. "
+						"Instead, the last stored randomization seed is used to set the randomized "
+						"values. ");
+	mRandomizationHistorySize = new IntValue(10);
+	mRandomizationHistorySize->setDescription("The number of past randomization seeds to store when "
+						"seed storing is enabled. ");
+	
 	
 	addParameter("GlobalBiasRange", mGlobalBiasRange);
 	addParameter("GlobalOutputRange", mGlobalOutputRange);
@@ -81,6 +92,7 @@ RandomizationConstraint::RandomizationConstraint(int minNumberOfNeurons, int max
 	//addParameter("IndividualRanges", mIndividualRanges);
 	addParameter("StoreValuesInNetwork", mStoreRandomizedValuesInNetwork);
 	addParameter("RestoreValuesFromNetwork", mApplyStoredValuesFromNetwork);
+	addParameter("HistorySize", mRandomizationHistorySize);
 	
 	//only if an analyzer counter variable was found!
 	mAnalyzerRunCounter = Core::getInstance()->getValueManager()->getIntValue(
@@ -110,6 +122,7 @@ RandomizationConstraint::RandomizationConstraint(const RandomizationConstraint &
 	mStoreRandomizedValuesInNetwork = dynamic_cast<BoolValue*>(getParameter("StoreValuesInNetwork"));
 	mApplyStoredValuesFromNetwork = dynamic_cast<BoolValue*>(getParameter("RestoreValuesFromNetwork"));
 	mOneShotRandomization = dynamic_cast<BoolValue*>(getParameter("SingleShot"));
+	mRandomizationHistorySize = dynamic_cast<IntValue*>(getParameter("HistorySize"));
 	
 	//only if an analyzer counter variable was found!
 	mAnalyzerRunCounter = Core::getInstance()->getValueManager()->getIntValue(
@@ -180,7 +193,7 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 	}
 	
 
-	ModularNeuralNetwork *net = owner->getOwnerNetwork();
+	//ModularNeuralNetwork *net = owner->getOwnerNetwork();
 	
 	
 	//Set the randomization seed:
@@ -191,6 +204,7 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 	Random random;
 	int seed = Random::nextInt();  //take seed from global randomization pool
 	
+	bool restoredSeed = false;
 	
 	if(keepPreviousRandomization) {
 		//at single shot randomization, use the seed of the first run for all other runs.
@@ -206,9 +220,16 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 								+ QString::number(owner->getId()) + "]. Skipping Randomization.";
 			return true;
 		}
-		QString seedString = owner->getProperty("RANDOMIZATION_SEED");
+		QString seedRawString = owner->getProperty("RANDOMIZATION_SEED");
+		QStringList seedRawList = seedRawString.split(",", QString::SkipEmptyParts);
+		
+		if(seedRawList.empty()) {
+			mWarningMessage = QString("Could not parse stored randomization seed in neuron group [")
+				+ QString::number(owner->getId()) + "]. Skipping Randomization.";
+			return true;
+		}
 		bool ok = true;
-		int newSeed = seedString.toInt(&ok);
+		int newSeed = seedRawList.at(0).toInt(&ok);
 		if(!ok) {
 			//do not change anything!
 			mWarningMessage = QString("Could not parse stored randomization seed in neuron group [")
@@ -216,12 +237,25 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 			return true;
 		}
 		seed = newSeed;
+		restoredSeed = true;
 	}
 	mLastSeed = seed;
 	random.mSetSeed(seed);
 	
-	if(mStoreRandomizedValuesInNetwork->get()) {
-		owner->setProperty("RANDOMIZATION_SEED", QString::number(seed));
+	if(!restoredSeed && mStoreRandomizedValuesInNetwork->get()) {
+		
+		//store seed and keep older seeds up to history size.
+		
+		QString seedString = owner->getProperty("RANDOMIZATION_SEED");
+		QStringList separateSeeds = seedString.split(",", QString::SkipEmptyParts);
+		
+		QString newSeedString = QString::number(seed);
+		
+		for(int i = 0; i < separateSeeds.size() && i < mRandomizationHistorySize->get() - 1; ++i) {
+			newSeedString = newSeedString + "," + separateSeeds.at(i);
+		}
+		
+		owner->setProperty("RANDOMIZATION_SEED", newSeedString);
 	}
 	
 	

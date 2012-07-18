@@ -103,6 +103,7 @@ namespace nerd {
 		StringValue *mIndividualRanges;
 		BoolValue *mStoreRandomizedValuesInNetwork;
 		BoolValue *mApplyStoredValuesFromNetwork;
+		IntValue *mRandomizationHistorySize;
 		
 		BoolValue *mOneShotRandomization;
 		IntValue *mAnalyzerRunCounter;

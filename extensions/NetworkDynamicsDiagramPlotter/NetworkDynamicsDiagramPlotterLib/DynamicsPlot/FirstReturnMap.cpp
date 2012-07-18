@@ -53,7 +53,9 @@ using namespace std;
 
 namespace nerd {
 
-FirstReturnMap::FirstReturnMap() : DynamicsPlotter("FirstReturnMap") {
+FirstReturnMap::FirstReturnMap() 
+	: DynamicsPlotter("FirstReturnMap"), mCurrentMarker(1)
+{
 	// initialising
 
 	mObservedElems = new StringValue("0");
@@ -86,6 +88,13 @@ FirstReturnMap::FirstReturnMap() : DynamicsPlotter("FirstReturnMap") {
 	mRestoreNetworkConfiguration->setDescription("If true, then all network "
 					"parameters like bias, weight, observable parameters are "
 					"reset to the initial state before each run");
+	
+	mKeepPreviousData = new BoolValue(false);
+	mKeepPreviousData->setDescription("If true, then the plot will be drawn on top of the previous data, i.e. "
+									  "the data matrix will not be deleted before use. However, if the size of "
+									  "the matrix changes, then its content will still be deleted. \n"
+									  "To make it easier to identify different analyzer runs in the plot "
+									  "each run uses a different color.");
 
 	
 	addParameter("Config/ObservedElems", mObservedElems, true);
@@ -99,6 +108,8 @@ FirstReturnMap::FirstReturnMap() : DynamicsPlotter("FirstReturnMap") {
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
+	
+	addParameter("Config/KeepPreviousData", mKeepPreviousData, true);
 	
 	mTitleNames->set("First Return Map|First Return Map|First Return Map|First Return Map|First Return Map|First Return Map");
 }
@@ -158,11 +169,26 @@ void FirstReturnMap::calculateData() {
 	//This is important when the physical simulator is activated!
 	triggerReset();
 	
+	bool keepPreviousData = mKeepPreviousData->get();
+	if(keepPreviousData
+		&& (mData->getMatrixWidth() == (resolution + 1))
+		&& (mData->getMatrixHeight() == (resolution + 1))
+		&& (mData->getMatrixDepth() == observedValues.size()))
+	{
+		mCurrentMarker++;
+	}
+	else {
+		//reset the marker color to 0
+		keepPreviousData = false;
+		mCurrentMarker = 1;
+	}
 	
-	// PREPARE data matrix
-	mData->clear();
-	mData->resize(resolution + 1, resolution + 1, observedValues.size());
-	mData->fill(0);
+	if(!keepPreviousData) {
+		// PREPARE data matrix
+		mData->clear();
+		mData->resize(resolution + 1, resolution + 1, observedValues.size());
+		mData->fill(0);
+	}
 	
 	QList<double> rangeStart, rangeEnd, rangeStep;
 	// iterate through plots and write axes first
@@ -180,6 +206,9 @@ void FirstReturnMap::calculateData() {
 
 	int stepsRun = mStepsToRun->get();
 	int stepsPlot = mStepsToPlot->get();
+	
+	//important to support randomization and constraints!
+	notifyNetworkParametersChanged(network);
 	
 	// run network	
 	for(int j=1; j < stepsRun-stepsPlot && mActiveValue->get(); ++j) {
@@ -207,9 +236,11 @@ void FirstReturnMap::calculateData() {
 			///NOTE/// do some protection against divisions by zero!
 
 			if(k > 0) {
-				int x = (act - rangeStart.at(i)) / rangeStep.at(i) + 1;
-				int y = (oldActs.at(i) - rangeStart.at(i)) / rangeStep.at(i) + 1;
-				mData->set(1, x, y, i);
+				//x-axis: t-1
+				//y-axis: t
+				int x = (oldActs.at(i) - rangeStart.at(i)) / rangeStep.at(i) + 1;
+				int y = (act - rangeStart.at(i)) / rangeStep.at(i) + 1;
+				mData->set(mCurrentMarker, x, y, i);
 				oldActs.replace(i, act);
 			} else {
 				oldActs.append(act);
