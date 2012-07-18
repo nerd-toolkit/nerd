@@ -67,6 +67,8 @@ namespace nerd {
 		
 		IntValue *mStepsToRun;
 		IntValue *mStepsToPlot;
+		BoolValue *mKeepPreviousData;
+		int mCurrentMarker;
 	};
 }
 

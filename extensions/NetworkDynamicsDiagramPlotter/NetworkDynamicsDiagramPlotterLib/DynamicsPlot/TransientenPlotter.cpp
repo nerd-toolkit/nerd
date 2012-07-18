@@ -53,7 +53,7 @@ using namespace std;
 
 namespace nerd {
 
-TransientenPlotter::TransientenPlotter() : DynamicsPlotter("Transienten") {
+	TransientenPlotter::TransientenPlotter() : DynamicsPlotter("Transienten"), mCurrentMarker(1) {
 	// initialising
 
 	mObservedElementsX = new StringValue("0");
@@ -83,6 +83,13 @@ TransientenPlotter::TransientenPlotter() : DynamicsPlotter("Transienten") {
 	mStepsToPlot = new IntValue(100);
 	mStepsToPlot->setDescription("Number of simulation steps that are plotted");
 	
+	mKeepPreviousData = new BoolValue(false);
+	mKeepPreviousData->setDescription("If true, then the plot will be drawn on top of the previous data, i.e. "
+									  "the data matrix will not be deleted before use. However, if the size of "
+									  "the matrix changes, then its content will still be deleted. \n"
+									  "To make it easier to identify different analyzer runs in the plot "
+									  "each run uses a different color.");
+	
 
 	addParameter("Config/ObservedElementsX", mObservedElementsX, true);
 	addParameter("Config/ObservedElementsY", mObservedElementsY, true);
@@ -93,6 +100,8 @@ TransientenPlotter::TransientenPlotter() : DynamicsPlotter("Transienten") {
 	
 	addParameter("Config/StepsToRun", mStepsToRun, true);
 	addParameter("Config/StepsToPlot", mStepsToPlot, true);
+	
+	addParameter("Config/KeepPreviousData", mKeepPreviousData, true);
 	
 	mTitleNames->set("Transienten");
 }
@@ -168,10 +177,27 @@ void TransientenPlotter::calculateData() {
 
 	int nrPlots = observedValuesX.size();
 	
-	// PREPARE data matrix
-	mData->clear();
-	mData->resize(resolutionX + 1, resolutionY + 1, nrPlots);
-	mData->fill(0);
+	
+	bool keepPreviousData = mKeepPreviousData->get();
+	if(keepPreviousData
+		&& (mData->getMatrixWidth() == (resolutionX + 1))
+		&& (mData->getMatrixHeight() == (resolutionY + 1))
+		&& (mData->getMatrixDepth() == nrPlots))
+	{
+		mCurrentMarker++;
+	}
+	else {
+		//reset the marker color to 0
+		keepPreviousData = false;
+		mCurrentMarker = 1;
+	}
+	
+	if(!keepPreviousData) {
+		// PREPARE data matrix
+		mData->clear();
+		mData->resize(resolutionX + 1, resolutionY + 1, nrPlots);
+		mData->fill(0);
+	}
 
 	
 	// calculate values and draw axes
@@ -237,10 +263,13 @@ void TransientenPlotter::calculateData() {
 			vY = vY / elemsY.size();
 
 
-			int color = 1;
+			int color = mCurrentMarker;
 			if(vX > mX["end"] || vX < mX["start"] ||
-				vY > mY["end"] || vY < mY["start"]) {
-				color = 2;
+				vY > mY["end"] || vY < mY["start"]) 
+			{
+				if(!keepPreviousData) {
+					color = 2;
+				}
 				vX = max(mX["start"], min(mX["end"], vX));
 				vY = max(mY["start"], min(mX["end"], vY));
 			}
