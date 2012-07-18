@@ -133,9 +133,9 @@ void TransientenPlotter::calculateData() {
 
 	QList< QList<DoubleValue*> > observedValuesX, observedValuesY;
 	observedValuesX = DynamicsPlotterUtil::getElementValues(
-		observedElementsX, networkElements, &mNeuronsWithActivationsToTransfer);
+		observedElementsX, networkElements);
 	observedValuesY = DynamicsPlotterUtil::getElementValues(
-		observedElementsY, networkElements, &mNeuronsWithActivationsToTransfer);
+		observedElementsY, networkElements);
 	
 	if(observedValuesX.isEmpty() ||
 		observedValuesX.size() != observedValuesY.size()) {
@@ -167,9 +167,9 @@ void TransientenPlotter::calculateData() {
 	}
 
 	
-	// TODO: ADD TO OTHER PLOTTERS!
-	storeCurrentNetworkActivities();
+	// Let costraint resolver run properly (order matters!)
 	storeNetworkConfiguration();
+	storeCurrentNetworkActivities();
 	triggerReset();
 	restoreCurrentNetworkActivites();
 	restoreNetworkConfiguration();

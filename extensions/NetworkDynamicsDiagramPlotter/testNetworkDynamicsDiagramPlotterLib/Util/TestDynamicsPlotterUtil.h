@@ -58,6 +58,7 @@ namespace nerd {
 		void cleanUpTestCase();
 		void initTestCase();
 		
+		void testCollectElementValues();
 		void testGetElementValue();
 		void testGetElementValues();
 		void testParseElementString();

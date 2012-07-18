@@ -315,7 +315,7 @@ void BasinPlotter::calculateData() {
 					for(int j = 1; j <= currPeriod && !attrMatch; ++j) {
 						attrMatch = DynamicsPlotterUtil::compareNetworkStates(
 											attractors.at(attrNo),
-											states.at(states.size() - 1 - j));
+											states.at(states.size()-1-j));
 					}
 					attrNo++;
 				}

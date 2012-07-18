@@ -93,6 +93,7 @@ namespace nerd {
 		void reportProblems(const QStringList &errorMessages);
 		
 	protected:
+		// TODO: correctly rename restoreCurrentNetworkActivit_e_s
 		virtual void storeCurrentNetworkActivities();
 		virtual void restoreCurrentNetworkActivites();
 		virtual void storeNetworkConfiguration();

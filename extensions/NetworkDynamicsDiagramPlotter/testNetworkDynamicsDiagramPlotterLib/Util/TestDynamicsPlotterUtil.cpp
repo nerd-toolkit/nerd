@@ -67,6 +67,39 @@ void TestDynamicsPlotterUtil::initTestCase() {
 void TestDynamicsPlotterUtil::cleanUpTestCase() {
 }
 
+//josef
+void TestDynamicsPlotterUtil::testCollectElementValues() {
+	
+	AdditiveTimeDiscreteActivationFunction af;
+	TransferFunctionRamp ramp("ramp", -1, 1, false);
+	SimpleSynapseFunction sf;
+	NeuralNetwork *network = new NeuralNetwork(af, ramp, sf);
+
+	Neuron *n1 = new Neuron("Neuron1", ramp, af);
+	network->addNeuron(n1);
+	Neuron *n2 = new Neuron("Neuron2", ramp, af);
+	network->addNeuron(n2);
+	Neuron *n3 = new Neuron("Neuron3", ramp, af);
+	network->addNeuron(n3);
+
+	Synapse *s1 = Synapse::createSynapse(n1, n2, -1, sf);
+	Synapse *s2 = Synapse::createSynapse(n2, n2, 0.6, sf);
+	Synapse *s3 = Synapse::createSynapse(n2, n3, 0.2, sf);
+
+	QList<NeuralNetworkElement*> networkElements;
+	network->getNetworkElements(networkElements);
+	QVERIFY(!networkElements.isEmpty());
+	
+	qulonglong idn1 = n1->getId();
+	qulonglong idn2 = n2->getId();
+	qulonglong idn3 = n3->getId();
+	qulonglong ids1 = s1->getId();
+	qulonglong ids2 = s2->getId();
+	qulonglong ids3 = s3->getId();
+
+	
+
+}
 
 //josef
 void TestDynamicsPlotterUtil::testGetElementValue() {
@@ -100,9 +133,18 @@ void TestDynamicsPlotterUtil::testGetElementValue() {
 	qulonglong ids2 = s2->getId();
 	qulonglong ids3 = s3->getId();
 
-	// Bullshit should always return 0
-	QString elem0Str = "lsfnvaleunvnu";
+	//new tests
+	QString elem0Str = "all:o";
 	DoubleValue *v0 = DynamicsPlotterUtil::getElementValue(elem0Str, networkElements);
+	QVERIFY(v0 == 0);
+
+	elem0Str = QString::number(idn1).append(":o,").append(QString::number(idn1).append(":o"));
+	v0 = DynamicsPlotterUtil::getElementValue(elem0Str, networkElements);
+	QVERIFY(v0 == 0);
+	
+	// Bullshit should always return 0
+	elem0Str = "lsfnvaleunvnu";
+	v0 = DynamicsPlotterUtil::getElementValue(elem0Str, networkElements);
 	QVERIFY(v0 == 0);
 
 	elem0Str = QString::number(idn1).append(":ucamli");
