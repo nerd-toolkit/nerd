@@ -176,6 +176,9 @@ void FirstReturnMap::calculateData() {
 		&& (mData->getMatrixDepth() == observedValues.size()))
 	{
 		mCurrentMarker++;
+		if(mCurrentMarker > 10) {
+			mCurrentMarker = 1;
+		}
 	}
 	else {
 		//reset the marker color to 0

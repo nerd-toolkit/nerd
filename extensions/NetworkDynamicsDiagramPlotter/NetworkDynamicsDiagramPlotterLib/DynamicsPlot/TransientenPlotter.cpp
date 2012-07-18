@@ -185,6 +185,9 @@ void TransientenPlotter::calculateData() {
 		&& (mData->getMatrixDepth() == nrPlots))
 	{
 		mCurrentMarker++;
+		if(mCurrentMarker > 10) {
+			mCurrentMarker = 1;
+		}
 	}
 	else {
 		//reset the marker color to 0

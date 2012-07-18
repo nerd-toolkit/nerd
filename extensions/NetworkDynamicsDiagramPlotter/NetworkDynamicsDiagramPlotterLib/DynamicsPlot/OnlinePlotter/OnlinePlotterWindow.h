@@ -57,6 +57,10 @@
 #include "Value/MatrixValue.h"
 #include <QVBoxLayout>
 #include <QGridLayout>
+#include <QColor>
+#include <QList>
+#include "Value/IntValue.h"
+
 
 namespace nerd {
 
@@ -86,6 +90,8 @@ namespace nerd {
 			
 		protected:
 			void resizeEvent(QResizeEvent * event);
+		
+			
 		private:
 			MouseMoveLabel *mLabel;
 			QPixmap mPixmap;
@@ -122,6 +128,10 @@ namespace nerd {
 			void setupGUI();
 			ValueManager *mVM;
 			int mIndex;
+			
+			QList<QRgb> mColors;
+			
+			IntValue *mPixelSize;
 			
 	};
 
