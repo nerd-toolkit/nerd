@@ -179,7 +179,14 @@ void SelfRegulatingNeuronActivationFunction::valueChanged(Value *value) {
 		return;
 	}
 	else if(value == mOptions) {
-		QStringList options = mOptions->get().split(",");
+		QStringList rawOptions = mOptions->get().split(",");
+		QStringList options;
+		
+		//allow also white spaces and tabs in option list.
+		for(QListIterator<QString> i(rawOptions); i.hasNext();) {
+			options.append(i.next().trimmed());
+		}
+		
 		mAdjustWeights = options.contains("w");
 		mRestrictToLinks = options.contains("rl");
 		mUseCurrentActivations = options.contains("t+1");
