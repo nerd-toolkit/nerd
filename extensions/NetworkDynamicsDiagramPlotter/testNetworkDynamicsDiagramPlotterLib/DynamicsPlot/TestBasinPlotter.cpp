@@ -142,7 +142,7 @@ void TestBasinPlotter::testParameterSettings() {
 	DoubleValue *v_Accuracy = dynamic_cast<DoubleValue*>(basinPlotter->getParameter("Config/Accuracy"));
 	IntValue *v_RoundDigits = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/RoundDigits"));
 	
-	IntValue *v_StepsToRun = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/StepsToRun"));
+	IntValue *v_StepsToRun = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/StepsToRunPreCheck"));
 	IntValue *v_StepsToCheck = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/StepsToCheck"));
 	
 	BoolValue *v_ResetNetworkActivation = dynamic_cast<BoolValue*>(basinPlotter->getParameter("Config/ResetNetworkActivation"));

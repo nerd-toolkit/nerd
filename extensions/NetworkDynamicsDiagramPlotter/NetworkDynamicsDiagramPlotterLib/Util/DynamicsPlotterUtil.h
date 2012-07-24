@@ -60,16 +60,16 @@ namespace nerd {
 
 	public:	
 		
-		static QList<DoubleValue*> collectElementValues(const QStringList &typeDescription,
-												   const QList<nerd::NeuralNetworkElement*> &elemList,
-												   QList<Neuron*> *neuronsWithActivationChange = 0);
-		
-		static DoubleValue* getElementValue(const QString &string, 
-											const QList<nerd::NeuralNetworkElement*> &elemList,
+		static DoubleValue* getElementValue(const QString &parameter,
+											NeuralNetworkElement* networkElement,
+											QList<Neuron*> *neuronsWithActivationChange = 0);
+
+		static DoubleValue* getElementValue(const QString &specifier, 
+											const QList<NeuralNetworkElement*> &networkElements,
 											QList<Neuron*> *neuronsWithActivationChange = 0);
 		
-		static QList<QList<DoubleValue*> > getElementValues(const QList<QStringList> &listList, 
-															const QList<nerd::NeuralNetworkElement*> &elemList,
+		static QList<QList<DoubleValue*> > getElementValues(const QList<QStringList> &specifiers, 
+															const QList<NeuralNetworkElement*> &networkElements,
 															QList<Neuron*> *neuronsWithActivationChange = 0);
 
 		static QList<QStringList> parseElementString(QString const &string);

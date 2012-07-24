@@ -60,162 +60,136 @@ namespace nerd {
 	Core* DynamicsPlotterUtil::sCore = 0;
 
 	
-	QList<DoubleValue*> DynamicsPlotterUtil::collectElementValues(const QStringList &stringList,
-										QList<NeuralNetworkElement*> const &elemList,
-										QList<Neuron*> *neuronsWithActivationChange) 
+	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &specifier,
+													  NeuralNetworkElement* networkElement,
+													  QList<Neuron*> *neuronsWithActivationChange)
 	{
-		QList<DoubleValue*> foundValues;
-		
-		if(stringList.isEmpty() || stringList.size() > 2) {
-			reportProblem("DynamicsPlotterUtil::getElementValue : Invalid or empty identifier ");
-			return foundValues;
+		QString parameter, variable;
+		QStringList nParams, sParams;
+		nParams << "o" << "a" << "b" << "tf" << "af";
+		sParams << "w" << "sf";
+
+		if(specifier.isEmpty()) {
+			reportProblem("DynamicsPlotterUtil::getElementValue(1) : Empty parameter specification");
+			return 0;
+		}
+
+		if(specifier.contains(":")) {
+			QStringList paramParts = specifier.split(":");
+			if(paramParts.size() > 2) {
+				reportProblem("DynamicsPlotterUtil::getElementValue(1) : Invalid parameter specification");
+				return 0;
+			}
+			parameter = paramParts.first();
+			variable = paramParts.last();
+		} else {
+			parameter = specifier;
 		}
 		
-		for(QListIterator<NeuralNetworkElement*> i(elemList); i.hasNext();) {
-		
-			NeuralNetworkElement *elem = i.next();
-			
-			QString param = QString("");
-			
-			Neuron *neuron = dynamic_cast<Neuron*>(elem);
+		// requested parameter is neuron-specific
+		if(nParams.contains(parameter)) {
+			Neuron *neuron = dynamic_cast<Neuron*>(networkElement);
+
 			if(neuron != 0) {
-				
-				if(stringList.size() == 1) {
-					if(stringList.at(0) == "o") {
-						foundValues.append(&(neuron->getOutputActivationValue()));
-						continue;
+				if(parameter == specifier) { // no variable requested
+
+					if(parameter == nParams.at(0)) { // output "o"
+						return &(neuron->getOutputActivationValue());
 					}
-					else if(stringList.at(0) == "a") {
+
+					if(parameter == nParams.at(1)) { // activation "a"
 						if(neuronsWithActivationChange != 0) {
 							neuronsWithActivationChange->append(neuron);
 						}
-						foundValues.append(&(neuron->getActivationValue()));
-						continue;
+						return &(neuron->getActivationValue());
 					}
-					else if(stringList.at(0) == "b") {
-						foundValues.append(&(neuron->getBiasValue()));
-						continue;
+
+					if(parameter == nParams.at(2)) { // bias "b"
+						return &(neuron->getBiasValue());
 					}
-					else if(stringList.at(0) == "w") {
-						//is ok because it applies only to synapses.
-						continue;
+
+				} else { // variable requested
+
+					if(parameter == nParams.at(3)) { // TransferFunction "tf"
+						TransferFunction *tf = neuron->getTransferFunction();
+						if(tf != 0) {
+							DoubleValue *tfo = dynamic_cast<DoubleValue*>(tf->getObservableOutput(variable));
+							if(tfo != 0) {
+								return tfo;
+							}
+							DoubleValue *tfp = dynamic_cast<DoubleValue*>(tf->getParameter(variable));
+							if(tfp != 0) {
+								return tfp;
+							}
+						}
+					}
+
+					if(parameter == nParams.at(4)) { // ActivationFunction "af"
+						ActivationFunction *af = neuron->getActivationFunction();
+						if(af != 0) {
+							DoubleValue *afo = dynamic_cast<DoubleValue*>(af->getObservableOutput(variable));
+							if(afo != 0) {
+								return afo;
+							}
+							DoubleValue *afp = dynamic_cast<DoubleValue*>(af->getParameter(variable));
+							if(afp != 0) {
+								return afp;
+							}
+						}
 					}
 				}
 				
-				if(stringList.size() == 2) {
-					param = stringList.at(1);
-					if(stringList.at(0) == "tf") {
-						TransferFunction *tf = neuron->getTransferFunction();
-						if(tf != 0) {
-							DoubleValue *tfo = dynamic_cast<DoubleValue*>(tf->getObservableOutput(param));
-							if(tfo != 0) {
-								foundValues.append(tfo);
-								continue;
-							}
-							else {
-								DoubleValue *val = dynamic_cast<DoubleValue*>(tf->getParameter(param));
-								if(val != 0) {
-									foundValues.append(val);
-								}
-								else {
-									reportProblem("DynamicsPlotterUtil::collectElementValues : Found neuron ["
-												  + QString::number(neuron->getId()) +"] "
-												"but not the required transfer function parameter (or observable) "
-												"["+ stringList.at(0) + "] [" + param + "]");
-								}
-								continue;
-							}
-						}
-					}
-					else if(stringList.at(0) == "af") {
-						ActivationFunction *af = neuron->getActivationFunction();
-						if(af != 0) {
-							DoubleValue *afo = dynamic_cast<DoubleValue*>(af->getObservableOutput(param));
-							if(afo != 0) {
-								foundValues.append(afo);
-								continue;
-							}
-							else {
-								DoubleValue *val = dynamic_cast<DoubleValue*>(af->getParameter(param));
-								if(val != 0) {
-									foundValues.append(val);
-								}
-								else {
-									reportProblem("DynamicsPlotterUtil::collectElementValues : Found neuron ["
-												  + QString::number(neuron->getId()) +"] "
-												"but not the required activation function parameter (or observable) "
-												"["+ stringList.at(0) + "] [" + param + "]");
-								}
-								continue;
-							}
-						}
-					}
-					else if(stringList.at(0) == "sf") {
-						//is ok because it only applied to synapses
-						continue;
-					}
-				}
-				reportProblem("DynamicsPlotterUtil::collectElementValues : Found neuron ["+ QString::number(neuron->getId()) +"] "
-							"but not the value specified by "
-							"["+stringList.at(0) + (!param.isEmpty() ? ":" : "") + param+"]");
-				continue;
+				// requested parameter has not been found, report
+				reportProblem("DynamicsPlotterUtil::getElementValue(1) : "
+							  "Found neuron ["+QString::number(neuron->getId())+"] "
+							  "but not the specified observable or function parameter "
+							  "["+specifier+"]");
 			}
-			
-			Synapse *synapse = dynamic_cast<Synapse*>(elem);
+		}
+
+		// requested parameter is synapse-specific
+		if(sParams.contains(parameter)) {
+			Synapse *synapse = dynamic_cast<Synapse*>(networkElement);
+
 			if(synapse != 0) {
-				if(stringList.size() == 1) {
-					if(stringList.at(0) == "w") {
-						foundValues.append(&(synapse->getStrengthValue()));
-						continue;
+				if(parameter == specifier) { // no variable requested
+
+					if(parameter == sParams.at(0)) { // weight w
+						return &(synapse->getStrengthValue());
 					}
-					else if(stringList.at(0) == "o" 
-							|| stringList.at(0) == "a"
-							|| stringList.at(0) == "b")
-					{
-						//is ok, because it only applies to synapses
-						continue;
-					}
-				}
-				if(stringList.size() == 2) {
-					if(stringList.at(0) == "sf") {
-						param = stringList.at(1);
+
+				} else { // variable requested
+
+					if(parameter == sParams.at(1)) {
 						SynapseFunction *sf = synapse->getSynapseFunction();
 						if(sf != 0) {
-							DoubleValue *sfo = dynamic_cast<DoubleValue*>(sf->getObservableOutput(param));
+							DoubleValue *sfo = dynamic_cast<DoubleValue*>(sf->getObservableOutput(variable));
 							if(sfo != 0) {
-								foundValues.append(sfo);
-								continue;
+								return sfo;
 							}
-							else {
-								DoubleValue *val = dynamic_cast<DoubleValue*>(sf->getParameter(param));
-								if(val != 0) {
-									foundValues.append(val);
-								}
-								else {
-									reportProblem("DynamicsPlotterUtil::collectElementValues : Found synapse ["
-												+ QString::number(synapse->getId()) +"] "
-												"but not the required synapse function parameter (or observable) "
-												"["+ stringList.at(0) + "] [" + param + "]");
-								}
-								continue;
+							DoubleValue *sfp = dynamic_cast<DoubleValue*>(sf->getParameter(variable));
+							if(sfp != 0) {
+								return sfp;
 							}
 						}
 					}
-					else if(stringList.at(0) == "tf" || stringList.at(0) == "af") {
-						//os ok, because these only apply to neurons.
-						continue;
-					}
 				}
-				reportProblem("DynamicsPlotterUtil::collectElementValues : Found synapse ["+ QString::number(synapse->getId()) +"] "
-							"but not the value specified by "
-							"["+stringList.at(0) + (!param.isEmpty() ? ":" : "") + param+"]");
-				continue;
+
+				// requested parameter has not been found, report
+				reportProblem("DynamicsPlotterUtil::getElementValue(1) : "
+							  "Found synapse ["+QString::number(synapse->getId())+"] "
+							  "but not the specified observable or function parameter "
+							  "["+specifier+"]");
 			}
 		}
 		
-		return foundValues;
-		
+		// neuron/synapse or specified parameter not found
+		// do not report here, since getElementValues
+		// correctly calls this function with non-matching
+		// specifier-element pairs
+		return 0;
 	}
+
 
 	/**
 	 * 
@@ -230,58 +204,59 @@ namespace nerd {
 	 * will be treated differently compared to the other neurons in the network. This may lead to 
 	 * unexpected and erroneous behavior.
 	 * 
-	 * @param string the specification of the desired DoubleValue object.
-	 * @param elemList the list of objects that are considered to find the specified DoubleValue object.
+	 * @param specifier the specification of the desired DoubleValue object.
+	 * @param networkElements the list of objects that are considered to find the specified DoubleValue object.
 	 * @param neuronsWithActivationChange (optional) list to collect all activation values that are going to be changed during a run.
 	 */
-	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &string, 
-													  QList<NeuralNetworkElement*> const &elemList,
-													  QList<Neuron*> *neuronsWithActivationChange) 
+	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &specifier,
+													  QList<NeuralNetworkElement*> const &networkElements,
+													  QList<Neuron*> *neuronsWithActivationChange)
 	{
+		if(specifier.isEmpty()) {
+			reportProblem("DynamicsPlotterUtil::getElementValue(2) : "
+						  "Empty specifier!");
+			return 0;
+		}
 
-		QStringList stringList = string.split(":", QString::SkipEmptyParts);
-		if(stringList.isEmpty() || stringList.size() == 1 || stringList.size() > 3) {
-			reportProblem("DynamicsPlotterUtil::getElementValue : Invalid or empty identifier "
-							"["+string+"]");
+		QStringList specifierParts = specifier.split(":");
+		if(specifierParts.size() < 2 || specifierParts.size() > 3) {
+			reportProblem("DynamicsPlotterUtil::getElementValue(2) : "
+						  "Invalid specifier ["+specifier+"]!");
 			return 0;
 		}
-		
-		bool ok;
-		QString idStr = stringList.first();
-		qulonglong id = idStr.toULongLong(&ok);
-		if(!ok) {
-			reportProblem("DynamicsPlotterUtil::getElementValue : Invalid id ["+idStr+"] "
-							"couldn't convert to long internally.");
-			return 0;
-		}
-		
-		NeuralNetworkElement *elem = NeuralNetwork::selectNetworkElementById(id, elemList);
-		if(elem == 0) {
-			reportProblem("DynamicsPlotterUtil::getElementValue : Invalid id ["+idStr+"] "
-							"could not find corresponding element in the network.");
-			return 0;
-		}
-		
-		stringList.removeFirst();
-		
-		QList<NeuralNetworkElement*> element;
-		element.append(elem);
-		
-		QList<DoubleValue*> values = collectElementValues(stringList, element, neuronsWithActivationChange);
 
-		if(values.size() != 1) {
-			reportProblem("DynamicsPlotterUtil::getElementValue with id ["+idStr+"]: "
-								"could not find corresponding DoubleValue!");
-			
+		bool idValid;
+		QString idString = specifierParts.first();
+		QString parameter = specifier;
+		parameter = parameter.remove(0, idString.size()+1);
+		qulonglong id = idString.toULongLong(&idValid);
+		if(!idValid) {
+			reportProblem("DynamicsPlotterUtil::getElementValue(2) : "
+						  "Invalid ID ["+idString+"]!");
 			return 0;
 		}
-		
-		return values.first();
+
+		NeuralNetworkElement* networkElement;
+		networkElement = NeuralNetwork::selectNetworkElementById(id, networkElements);
+		if(networkElement == 0) {
+			reportProblem("DynamicsPlotterUtil::getElementValue(2) : "
+						  "No element with ID ["+idString+"] "
+						  "found in given list!");
+			return 0;
+		}
+
+		DoubleValue* elementValue;
+		elementValue = getElementValue(parameter, networkElement, neuronsWithActivationChange);
+		if(elementValue == 0) {
+			reportProblem("DynamicsPlotterUtil::getElementValue(2) : "
+						  "Could not find specified parameter value at element!");
+			return 0;
+		}
+
+		return elementValue;
 	}
 
 
-
-	// Wrapper for above method to get values for multiple strings in a list of lists
 	/**
 	 * 
 	 * The neuronsWithActivationChange parameter can be used to collect all DoubelValues that correspond
@@ -295,50 +270,73 @@ namespace nerd {
 	 * will be treated differently compared to the other neurons in the network. This may lead to 
 	 * unexpected and erroneous behavior.
 	 * 
-	 * @param listList a list of stringlists, containing the single specifications of DoubleValues.
-	 * @param elemList the list of objects that are considered to find the specified DoubleValue object.
+	 * @param specifierLists a list of stringlists, containing the single specifications of DoubleValues.
+	 * @param networkElements the list of objects that are considered to find the specified DoubleValue object.
 	 * @param neuronsWithActivationChange (optional) list to collect all activation values that are going to be changed during a run.
 	 */
-	QList<QList< DoubleValue *> > DynamicsPlotterUtil::getElementValues(QList< QStringList > const &listList, 
-																		QList<NeuralNetworkElement*> const &elemList, 
-																		QList<Neuron*> *neuronsWithActivationChange) {
-		QList< QList< DoubleValue *> > outer;
+	QList< QList<DoubleValue*> > DynamicsPlotterUtil::getElementValues(QList<QStringList> const &specifierLists, 
+																	   QList<NeuralNetworkElement*> const &networkElements, 
+																	   QList<Neuron*> *neuronsWithActivationChange)
+	{
+		QList< QList<DoubleValue*> > plotElements, emptyList;
+		emptyList = QList< QList<DoubleValue*> >();
 		
-		for(int i = 0; i < listList.size(); ++i) {
-			QList< DoubleValue *> inner;
-			QStringList stringList = listList.at(i);
+		for(int listNr = 0; listNr < specifierLists.size(); ++listNr) {
+			QList<DoubleValue*> elementValues;
 			
-			for(int j = 0; j < stringList.size(); ++j) {
-				if(stringList.at(j).startsWith("all:")) {
-					
-					//ALL
-					QStringList parts = stringList.at(j).split(":", QString::SkipEmptyParts);
-					if(parts.isEmpty() || parts.size() == 1 || parts.size() > 3) {
-						reportProblem("DynamicsPlotterUtil::getElementValue : Invalid or empty identifier "
-									  "[" + stringList.at(j) + "]");
-						continue;
-					}
-					parts.removeFirst();
-					inner << collectElementValues(parts, elemList, neuronsWithActivationChange);
-					
+			QStringList specifierList = specifierLists.at(listNr);
+			for(int specifierNr = 0; specifierNr < specifierList.size(); ++specifierNr) {
+
+				QString specifier = specifierList.at(specifierNr);
+				if(specifier.isEmpty()) {
+					reportProblem("DynamicsPlotterUtil::getElementValues : Empty specifier!");
+					return emptyList;
 				}
-				else {
-					DoubleValue *value = getElementValue(stringList.at(j), elemList, neuronsWithActivationChange);
-					if(value == 0) {
-						//return empty list, so that the caller can react on the problem
-						reportProblem("DynamicsPlotterUtil::getElementValues : Could not find "
-								"an element for specifier ["+stringList.at(j)+"]");
-						return QList< QList< DoubleValue *> >();
+
+				QStringList parameters = specifier.split(":");
+				if(parameters.size() < 2 || parameters.size() > 3) {
+					reportProblem("DynamicsPlotterUtil::getElementValues : Invalid specifier ["+specifier+"]!");
+					return emptyList;
+				}
+
+				if(parameters.first() == "all") {
+					QList<DoubleValue*> netValues;
+					DoubleValue* elementValue;
+					QString parameter = specifier.remove("all:");
+
+					for(int elemNr = 0; elemNr < networkElements.size(); ++elemNr) {
+						NeuralNetworkElement* networkElement = networkElements.at(elemNr);
+						elementValue = getElementValue(parameter, networkElement, neuronsWithActivationChange);
+
+						if(elementValue != 0) {
+							netValues.append(elementValue);
+						}
+					}
+
+					elementValues.append(netValues);
+
+				} else {
+					DoubleValue* elementValue;
+					elementValue = getElementValue(specifier, networkElements, neuronsWithActivationChange);
+
+					if(elementValue == 0) {
+						reportProblem("DynamicsPlotterUtil::getElementValues : Could not find a value "
+									  "for element specifier ["+specifier+"]!");
+						return emptyList;
 					}
 					
-					inner.append(value);
+					elementValues.append(elementValue);
+
 				}
 			}
-			outer.append(inner);
+
+			plotElements.append(elementValues);
 		}
-		return outer;
+
+		return plotElements;
 	}
-		
+
+
 	QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &string) {
 		QList<QStringList> parts;
 		QStringList partlist = string.split("|", QString::SkipEmptyParts);

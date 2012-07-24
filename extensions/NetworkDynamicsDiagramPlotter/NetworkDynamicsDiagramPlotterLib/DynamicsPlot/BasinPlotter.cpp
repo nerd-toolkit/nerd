@@ -80,7 +80,8 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 								"when rounding values, -1 preserves all");
 
 	mStepsToRun = new IntValue(2000);
-	mStepsToRun->setDescription("Number of simulation steps that are computed");
+	mStepsToRun->setDescription("Number of simulation steps that are computed "
+								"before checking for attractors");
 	mStepsToCheck = new IntValue(100);
 	mStepsToCheck->setDescription("Maximum period to check for attractors");
 	
@@ -108,7 +109,7 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	addParameter("Config/Accuracy", mAccuracy, true);
 	addParameter("Config/RoundDigits", mRoundDigits, true);
 	
-	addParameter("Config/StepsToRun", mStepsToRun, true);
+	addParameter("Config/StepsToRunPreCheck", mStepsToRun, true);
 	addParameter("Config/StepsToCheck", mStepsToCheck, true);
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
@@ -270,7 +271,7 @@ void BasinPlotter::calculateData() {
 				return;
 			}
 
-			for(int j=1; j < stepsRun - stepsCheck && mActiveValue->get(); ++j) {
+			for(int runStep = 0; runStep < stepsRun && mActiveValue->get(); ++runStep) {
 				// let the network run for 1 timestep
 				triggerNetworkStep();
 			}
@@ -279,7 +280,8 @@ void BasinPlotter::calculateData() {
 			QList< QPair<double,double> > positions;
 			bool foundMatch = false;
 			int currPeriod = 0;
-			for(int k = 0; k <= stepsCheck && !foundMatch && mActiveValue->get();++k) {
+
+			for(int checkStep = 0; checkStep <= stepsCheck && !foundMatch && mActiveValue->get(); ++checkStep) {
 				triggerNetworkStep();
 				
 				// get current network state
@@ -294,9 +296,9 @@ void BasinPlotter::calculateData() {
 				}
 				
 				// compare states to find attractors
-				for(int i = 1; i <= k && !foundMatch; ++i) {
-					foundMatch = DynamicsPlotterUtil::compareNetworkStates(states.at(k-i), networkState);
-					currPeriod = i;
+				for(int period = 1; period <= checkStep && !foundMatch; ++period) {
+					foundMatch = DynamicsPlotterUtil::compareNetworkStates(states.at(checkStep-period), networkState);
+					currPeriod = period;
 				}
 				
 				// save current state as last one

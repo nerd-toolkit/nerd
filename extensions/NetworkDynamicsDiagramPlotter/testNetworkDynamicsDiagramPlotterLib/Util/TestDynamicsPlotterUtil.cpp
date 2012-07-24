@@ -68,7 +68,7 @@ void TestDynamicsPlotterUtil::cleanUpTestCase() {
 }
 
 //josef
-void TestDynamicsPlotterUtil::testCollectElementValues() {
+void TestDynamicsPlotterUtil::testGetElementValue1() {
 	
 	AdditiveTimeDiscreteActivationFunction af;
 	TransferFunctionRamp ramp("ramp", -1, 1, false);
@@ -89,20 +89,14 @@ void TestDynamicsPlotterUtil::testCollectElementValues() {
 	QList<NeuralNetworkElement*> networkElements;
 	network->getNetworkElements(networkElements);
 	QVERIFY(!networkElements.isEmpty());
-	
-	qulonglong idn1 = n1->getId();
-	qulonglong idn2 = n2->getId();
-	qulonglong idn3 = n3->getId();
-	qulonglong ids1 = s1->getId();
-	qulonglong ids2 = s2->getId();
-	qulonglong ids3 = s3->getId();
 
-	
+	DoubleValue* testVal = DynamicsPlotterUtil::getElementValue("o", n1);
+	QVERIFY(testVal == &(n1->getOutputActivationValue()));
 
 }
 
 //josef
-void TestDynamicsPlotterUtil::testGetElementValue() {
+void TestDynamicsPlotterUtil::testGetElementValue2() {
 
 	AdditiveTimeDiscreteActivationFunction af;
 	SignalGeneratorActivationFunction saf;
@@ -315,6 +309,19 @@ void TestDynamicsPlotterUtil::testGetElementValues() {
 
 	QVERIFY(valueListList.at(1).at(0) == &(n1->getOutputActivationValue()));
 	QVERIFY(valueListList.at(1).at(1) == &(s1->getStrengthValue()));
+
+	// test all:o
+	QList<QStringList> listList2;
+	QStringList stringList4;
+	stringList4 << "all:o";
+	listList2 << stringList4;
+
+	valueListList = DynamicsPlotterUtil::getElementValues(listList2, networkElements);
+	QVERIFY(!valueListList.isEmpty());
+	QVERIFY(valueListList.at(0).size() == 3);
+	QVERIFY(valueListList.at(0).contains(&(n1->getOutputActivationValue())));
+	QVERIFY(valueListList.at(0).contains(&(n2->getOutputActivationValue())));
+	QVERIFY(valueListList.at(0).contains(&(n3->getOutputActivationValue())));
 
 	// negative tests
 	QString string6 = QString::number(ids3).append(":o");
