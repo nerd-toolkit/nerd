@@ -113,8 +113,8 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	addParameter("Config/VariedElementY", mVariedY, true);
 	addParameter("Config/VariedRangeX", mVariedRangeX, true);
 	addParameter("Config/VariedRangeY", mVariedRangeY, true);
-	addParameter("Config/VariedResolutionX", mVariedResolutionX, true);
-	addParameter("Config/VariedResolutionY", mVariedResolutionY, true);
+	addParameter("Config/ResolutionX", mResolutionX, true);
+	addParameter("Config/ResolutionY", mResolutionY, true);
 	
 	addParameter("Config/Accuracy", mAccuracy, true);
 	addParameter("Config/RoundDigits", mRoundDigits, true);
@@ -148,7 +148,7 @@ void BasinPlotter::calculateData() {
 	QList<DoubleValue*> networkValues =
 						DynamicsPlotterUtil::getNetworkValues(networkElements);
 
-	// Get parameters for observed elements
+	// Get parameters for varied elements
 	QString variedX = mVariedX->get();
 	QString variedY = mVariedY->get();
 	if(variedX.isEmpty() || variedY.isEmpty()) {
@@ -177,14 +177,28 @@ void BasinPlotter::calculateData() {
 		return;
 	}
 		
-	int resolutionX = mVariedResolutionX->get();
-	int resolutionY = mVariedResolutionY->get();
+	int resolutionX = mResolutionX->get();
+	int resolutionY = mResolutionY->get();
 	
 	//avoid division by zero!
 	if(resolutionX < 2 || resolutionY < 2) {
 		reportProblem("BasinPlotter: Invalid resolution given.");
 		return;
 	}
+
+	// projected elements
+	QString projectionX = mProjectionX->get();
+	QString projectionY = mProjectionX->get();
+
+	QList<QStringList> projectionListX = 
+			DynamicsPlotterUtil::parseElementString(projectionX);
+	QList<QStringList> projectionListY =
+			DynamicsPlotterUtil::parseElementString(projectionY);
+
+	QList< QList<DoubleValue*> > projectionValX =
+			DynamicsPlotterUtil::getElementValues(projectionListX, networkElements);
+	QList< QList<DoubleValue*> > projectionValY =
+			DynamicsPlotterUtil::getElementValues(projectionListY, networkElements);
 	
 	// save original values for clean-up
 	QList<double> variedValuesOrig;

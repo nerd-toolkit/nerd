@@ -110,7 +110,7 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	addParameter("Config/VariedRange", mVariedRange, true);
 	addParameter("Config/VariedResolution", mVariedResolution, true);
 	
-	addParameter("Config/StepsToRun", mStepsToTun, true);
+	addParameter("Config/StepsToRun", mStepsToRun, true);
 	addParameter("Config/StepsToPlot", mStepsToPlot, true);
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);

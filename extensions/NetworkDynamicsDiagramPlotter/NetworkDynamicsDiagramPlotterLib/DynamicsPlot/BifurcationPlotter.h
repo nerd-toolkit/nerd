@@ -65,8 +65,8 @@ namespace nerd {
 		StringValue *mVariedRange;
 		IntValue *mVariedResolution;
 
-		IntValue *mNumberSteps;
-		IntValue *mPlottedSteps;
+		IntValue *mStepsToRun;
+		IntValue *mStepsToPlot;
 		
 		BoolValue *mResetNetworkActivation;
 		BoolValue *mRunBackwards;

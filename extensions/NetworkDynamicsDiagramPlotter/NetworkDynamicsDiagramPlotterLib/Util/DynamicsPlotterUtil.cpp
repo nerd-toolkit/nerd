@@ -337,12 +337,15 @@ namespace nerd {
 	}
 
 
-	QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &string) {
+	QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &elementString) {
+		if(elementString.isEmpty()) {
+			return QList<QStringList>();
+		}
 		QList<QStringList> parts;
-		QStringList partlist = string.split("|", QString::SkipEmptyParts);
-		for(int i = 0; i < partlist.size(); ++i) {
-			QStringList elems = partlist.at(i).split(",", QString::SkipEmptyParts);
-			parts.append(elems);
+		QStringList partList = elementString.split("|", QString::SkipEmptyParts);
+		for(int i = 0; i < partList.size(); ++i) {
+			QStringList elements = partList.at(i).split(",", QString::SkipEmptyParts);
+			parts.append(elements);
 		}
 		return parts;
 	}
