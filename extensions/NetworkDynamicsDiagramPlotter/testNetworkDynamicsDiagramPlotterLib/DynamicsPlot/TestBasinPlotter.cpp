@@ -136,13 +136,13 @@ void TestBasinPlotter::testParameterSettings() {
 	StringValue *v_VariedY = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/VariedElementY"));
 	StringValue *v_VariedRangeX = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/VariedRangeX"));
 	StringValue *v_VariedRangeY = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/VariedRangeY"));
-	IntValue *v_VariedResolutionX = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/VariedResolutionX"));
-	IntValue *v_VariedResolutionY = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/VariedResolutionY"));
+	IntValue *v_ResolutionX = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/ResolutionX"));
+	IntValue *v_ResolutionY = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/ResolutionY"));
 	
 	DoubleValue *v_Accuracy = dynamic_cast<DoubleValue*>(basinPlotter->getParameter("Config/Accuracy"));
 	IntValue *v_RoundDigits = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/RoundDigits"));
 	
-	IntValue *v_StepsToRun = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/StepsToRunPreCheck"));
+	IntValue *v_StepsToRunPreCheck = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/StepsToRunPreCheck"));
 	IntValue *v_StepsToCheck = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/StepsToCheck"));
 	
 	BoolValue *v_ResetNetworkActivation = dynamic_cast<BoolValue*>(basinPlotter->getParameter("Config/ResetNetworkActivation"));
@@ -153,11 +153,11 @@ void TestBasinPlotter::testParameterSettings() {
 	QVERIFY(v_VariedY != 0);
 	QVERIFY(v_VariedRangeX != 0);
 	QVERIFY(v_VariedRangeY != 0);
-	QVERIFY(v_VariedResolutionX != 0);
-	QVERIFY(v_VariedResolutionY != 0);
+	QVERIFY(v_ResolutionX != 0);
+	QVERIFY(v_ResolutionY != 0);
 	QVERIFY(v_Accuracy != 0);
 	QVERIFY(v_RoundDigits != 0);
-	QVERIFY(v_StepsToRun != 0);
+	QVERIFY(v_StepsToRunPreCheck != 0);
 	QVERIFY(v_StepsToCheck != 0);
 	QVERIFY(v_ResetNetworkActivation != 0);
 	QVERIFY(v_RestoreNetworkConfiguration != 0);
@@ -211,7 +211,7 @@ void TestBasinPlotter::testParameterSettings() {
 	QVERIFY(v_TitleNames->get() == "Basins of Attraction|Periods|Attractor");
 	QCOMPARE(v_Accuracy->get(), 0.001);
 	QCOMPARE(v_RoundDigits->get(), -1);
-	QCOMPARE(v_StepsToRun->get(), 2000);
+	QCOMPARE(v_StepsToRunPreCheck->get(), 2000);
 	QCOMPARE(v_StepsToCheck->get(), 100);
 	QVERIFY(v_ResetNetworkActivation->get() == true);
 	QVERIFY(v_RestoreNetworkConfiguration->get() == true);
@@ -232,8 +232,8 @@ void TestBasinPlotter::testParameterSettings() {
 	v_VariedY->set(QString::number(n2->getId()) + ":a");
 	v_VariedRangeX->set("-1,1");
 	v_VariedRangeY->set("-1,1");
-	v_VariedResolutionX->set(200);
-	v_VariedResolutionY->set(300);
+	v_ResolutionX->set(200);
+	v_ResolutionY->set(300);
 	
 	//... continue testing
 	
