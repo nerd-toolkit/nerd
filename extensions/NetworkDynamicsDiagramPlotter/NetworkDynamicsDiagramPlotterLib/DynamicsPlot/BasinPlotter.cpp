@@ -66,12 +66,22 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	mVariedRangeY = new StringValue("-1,1");
 	mVariedRangeY->setDescription("Min and Max for Y axis parameter change");
 	
-	mVariedResolutionX = new IntValue(200);
-	mVariedResolutionX->setDescription("How many data points to generate for "
-										"X axis parameter");
-	mVariedResolutionY = new IntValue(200);
-	mVariedResolutionY->setDescription("How many data points to generate for "
-										"Y axis parameter");
+	mResolutionX = new IntValue(200);
+	mResolutionX->setDescription("How many data points to generate for "
+								 "X axis parameter(s)");
+	mResolutionY = new IntValue(200);
+	mResolutionY->setDescription("How many data points to generate for "
+								 "Y axis parameter(s)");
+
+	mProjectionX = new StringValue("0");
+	mProjectionX->setDescription("Parameters onto which to project on the X axis (optional)");
+	mProjectionY = new StringValue("0");
+	mProjectionY->setDescription("Parameters onto which to project on the Y axis (optional)");
+
+	mProjectionRangeX = new StringValue("0");
+	mProjectionRangeX->setDescription("Range(s) for X axis projection");
+	mProjectionRangeY = new StringValue("0");
+	mProjectionRangeY->setDescription("Range(s) for Y axis projection");
 	
 	mAccuracy = new DoubleValue(0.001);
 	mAccuracy->setDescription("Accuracy for network state comparison");

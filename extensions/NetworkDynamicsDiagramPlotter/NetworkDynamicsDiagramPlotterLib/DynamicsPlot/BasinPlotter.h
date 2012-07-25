@@ -63,8 +63,13 @@ namespace nerd {
 		StringValue *mVariedY;
 		StringValue *mVariedRangeX;
 		StringValue *mVariedRangeY;
-		IntValue *mVariedResolutionX;
-		IntValue *mVariedResolutionY;
+		IntValue *mResolutionX;
+		IntValue *mResolutionY;
+
+		StringValue *mProjectionX;
+		StringValue *mProjectionY;
+		StringValue *mProjectionRangeX;
+		StringValue *mProjectionRangeY;
 		
 		DoubleValue *mAccuracy;
 		IntValue *mRoundDigits;

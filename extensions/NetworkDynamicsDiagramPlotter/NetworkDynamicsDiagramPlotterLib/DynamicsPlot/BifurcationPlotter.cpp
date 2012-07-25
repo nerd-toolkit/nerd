@@ -82,10 +82,10 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	mVariedResolution->setDescription("Defines how many points inside the given range for an "
 									  "element parameter are being generated");
 
-	mNumberSteps = new IntValue(1000);
-	mNumberSteps->setDescription("Number of simulation steps that are computed");
-	mPlottedSteps = new IntValue(10);
-	mPlottedSteps->setDescription("Number of simulation steps to actually plot in the end");
+	mStepsToRun = new IntValue(1000);
+	mStepsToRun->setDescription("Number of simulation steps that are computed");
+	mStepsToPlot = new IntValue(10);
+	mStepsToPlot->setDescription("Number of simulation steps to actually plot in the end");
 	
 	mResetNetworkActivation = new BoolValue(true);
 	mResetNetworkActivation->setDescription("Whether or not to reset the network's activation "
@@ -110,8 +110,8 @@ BifurcationPlotter::BifurcationPlotter() : DynamicsPlotter("Bifurcation") {
 	addParameter("Config/VariedRange", mVariedRange, true);
 	addParameter("Config/VariedResolution", mVariedResolution, true);
 	
-	addParameter("Config/NumberSteps", mNumberSteps, true);
-	addParameter("Config/PlottedSteps", mPlottedSteps, true);
+	addParameter("Config/StepsToRun", mStepsToTun, true);
+	addParameter("Config/StepsToPlot", mStepsToPlot, true);
 	
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RunBackwards", mRunBackwards, true);
@@ -231,8 +231,8 @@ void BifurcationPlotter::calculateData() {
 	double vEnd = variedRange.last();
 	double vStepSize = (vEnd - vStart) / (double) (resolutionX - 1);
 		
-	int numberSteps = mNumberSteps->get();
-	int plottedSteps = mPlottedSteps->get();
+	int numberSteps = mStepsToRun->get();
+	int plottedSteps = mStepsToPlot->get();
 	
 	// two runs if backward calculation is on
 	for(int phase = 0; phase <= runSecondIteration; ++phase) {
