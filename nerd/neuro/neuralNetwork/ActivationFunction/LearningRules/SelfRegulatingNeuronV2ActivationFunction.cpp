@@ -64,8 +64,7 @@ namespace nerd {
 SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFunction(const QString &name, 
 																			   bool showModes)
 	: ActivationFunction(name), mOwner(0), mTransmitterResult(0), mReceptorResult(0),
-		mActivationT2(0), mAdjustWeights(true), mRestrictToLinks(false), 
-		mUseCurrentActivations(false), mEpsilon(0.0), mUpdatingTargetString(false)
+		mActivationT2(0), mRestrictToLinks(false)
 {
 	mXi = new DoubleValue(1);
 	mEta = new DoubleValue(1);
@@ -75,8 +74,7 @@ SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFuncti
 	mGamma = new DoubleValue(0.01);
 	mDelta = new DoubleValue(0.02);
 	mTargetValues = new StringValue("-0.658479, 0.658479");
-	mTargets.append(-0.658479);
-	mTargets.append(0.658479);
+	valueChanged(mTargetValues);
 	
 	mOptions = new StringValue("w");
 	mOptions->setDescription("Selection of SRN options Syntax: [o1,o2,o3].\n"
@@ -116,6 +114,9 @@ SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFuncti
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
 	
+	mCurrentTarget = new DoubleValue(0);
+	addObserableOutput("Target", mCurrentTarget);
+	
 	if(showModes) {
 		addParameter("ReceptorMode", mReceptorMode);
 		addParameter("TransmitterMode", mTransmitterMode);
@@ -132,9 +133,7 @@ SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFuncti
 SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFunction(
 						const SelfRegulatingNeuronV2ActivationFunction &other) 
 	: ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0),
-		mAdjustWeights(other.mAdjustWeights), mRestrictToLinks(other.mRestrictToLinks), 
-		mUseCurrentActivations(other.mUseCurrentActivations),
-		mEpsilon(other.mEpsilon), mUpdatingTargetString(false)
+		mRestrictToLinks(other.mRestrictToLinks)
 {
 	mXi = dynamic_cast<DoubleValue*>(getParameter("Xi (Rec)"));
 	mEta = dynamic_cast<DoubleValue*>(getParameter("Eta (Tra)"));
@@ -143,8 +142,6 @@ SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFuncti
 	mGamma = dynamic_cast<DoubleValue*>(getParameter("Gamma"));
 	mDelta = dynamic_cast<DoubleValue*>(getParameter("Delta"));
 	mTargetValues = dynamic_cast<StringValue*>(getParameter("Targets"));
-// 	mAdjustWeights = dynamic_cast<BoolValue*>(getParameter("AdjustWeights"));
-// 	mRestrictToLinkSynapses = dynamic_cast<BoolValue*>(getParameter("RestrictToLinks"));
 	mOptions = dynamic_cast<StringValue*>(getParameter("Options"));
 	mReceptorMode = dynamic_cast<IntValue*>(getParameter("ReceptorMode"));
 	mTransmitterMode = dynamic_cast<IntValue*>(getParameter("TransmitterMode"));
@@ -152,6 +149,12 @@ SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFuncti
 	
 	addObserableOutput("Xi", mXi);
 	addObserableOutput("Eta", mEta);
+	
+	mCurrentTarget = new DoubleValue(0);
+	addObserableOutput("Target", mCurrentTarget);
+	
+	valueChanged(mTargetValues);
+	
 }
 
 /**
@@ -178,13 +181,11 @@ void SelfRegulatingNeuronV2ActivationFunction::valueChanged(Value *value) {
 		for(QListIterator<QString> i(rawOptions); i.hasNext();) {
 			options.append(i.next().trimmed());
 		}
-		
-		mAdjustWeights = options.contains("w");
 		mRestrictToLinks = options.contains("rl");
-		mUseCurrentActivations = options.contains("t+1");
-		mEpsilon = options.contains("e") ? 0.0001 : 0.0;
+		//TODO allow sign switching
+		
 	}
-	else if(value == mTargetValues && !mUpdatingTargetString) {
+	else if(value == mTargetValues) {
 		
 		//parse targets and update target string.
 		QStringList entries = mTargetValues->get().split(",");
@@ -201,6 +202,7 @@ void SelfRegulatingNeuronV2ActivationFunction::valueChanged(Value *value) {
 					if(mTargets.at(j) > value) {
 						mTargets.insert(j, value);
 						added = true;
+						break;
 					}
 				}
 				if(!added) {
@@ -216,9 +218,9 @@ void SelfRegulatingNeuronV2ActivationFunction::valueChanged(Value *value) {
 				targetString.append(",");
 			}
 		}
-		mUpdatingTargetString = true;
-		mTargetValues->set(targetString);
-		mUpdatingTargetString = false;
+		if(mTargetValues->get() != targetString) {
+			mTargetValues->set(targetString);
+		}
 	}
 	ActivationFunction::valueChanged(value);
 }
@@ -236,18 +238,11 @@ double SelfRegulatingNeuronV2ActivationFunction::calculateActivation(Neuron *own
 	
 	double activation = updateActivity();
 	
-	double usedActivation = activation;
-	
-	//switch wether the current of the previous activation is used for the update.
-	if(!mUseCurrentActivations) {
-		usedActivation = mOwner->getLastActivation();
-	}
-	
-	mReceptorResult = getReceptorStrengthUpdate(usedActivation);
-	mTransmitterResult = getTransmitterStrengthUpdate(usedActivation);
-	updateXi(usedActivation);
-	updateEta(usedActivation);
-	updateTheta(usedActivation);
+	updateCurrentTarget(activation);
+
+	updateXi(activation);
+	updateEta(activation);
+	updateTheta(activation);
 	
 	mActivationT2 = owner->getLastActivation();
 
@@ -278,78 +273,78 @@ bool SelfRegulatingNeuronV2ActivationFunction::equals(ActivationFunction *activa
 	return true;
 }
 
-double SelfRegulatingNeuronV2ActivationFunction::getReceptorStrengthUpdate(double activation) {
-	
-	if(mOwner == 0 || mOwner->getTransferFunction() == 0) {
-		return 0.0;
-	}
-	
-// 	if(mReceptorMode == 0 || mReceptorMode->get() == 0) {
-// 		//g(a) = |tau(a*)| - |tau(a)|
-// 		TransferFunction *tf = mOwner->getTransferFunction();
-// 		return Math::abs(tf->transferActivation(mAStar->get(), mOwner)) 
-// 					- Math::abs(tf->transferActivation(activation, mOwner)); 
+// double SelfRegulatingNeuronV2ActivationFunction::getReceptorStrengthUpdate(double activation) {
+// 	
+// 	if(mOwner == 0 || mOwner->getTransferFunction() == 0) {
+// 		return 0.0;
 // 	}
-// 	else if(mReceptorMode->get() == 1) {
-// 		//g(a) = tau²(a*) - tau²(a)
-// 		TransferFunction *tf = mOwner->getTransferFunction();
-// 		return pow(tf->transferActivation(mAStar->get(), mOwner), 2) 
-// 					- pow(tf->transferActivation(activation, mOwner), 2); 
+// 	
+// // 	if(mReceptorMode == 0 || mReceptorMode->get() == 0) {
+// // 		//g(a) = |tau(a*)| - |tau(a)|
+// // 		TransferFunction *tf = mOwner->getTransferFunction();
+// // 		return Math::abs(tf->transferActivation(mAStar->get(), mOwner)) 
+// // 					- Math::abs(tf->transferActivation(activation, mOwner)); 
+// // 	}
+// // 	else if(mReceptorMode->get() == 1) {
+// // 		//g(a) = tau²(a*) - tau²(a)
+// // 		TransferFunction *tf = mOwner->getTransferFunction();
+// // 		return pow(tf->transferActivation(mAStar->get(), mOwner), 2) 
+// // 					- pow(tf->transferActivation(activation, mOwner), 2); 
+// // 	}
+// // 	else if(mReceptorMode->get() == 2) {
+// // 		//g(a) = tf(theta) - tf(a(t))
+// // 		TransferFunction *tf = mOwner->getTransferFunction();
+// // 		return tf->transferActivation(mOwner->getBiasValue().get(), mOwner) 
+// // 					- tf->transferActivation(activation, mOwner); 
+// // 	}
+// // 	else if(mReceptorMode->get() == 3) {
+// // 		//g(a) = theta - tf(a(t))^2
+// // 		TransferFunction *tf = mOwner->getTransferFunction();
+// // 		return mOwner->getBiasValue().get() -  pow(tf->transferActivation(activation, mOwner), 2);
+// // 	}
+// 	
+// 	return 0.0;
+// }
+// 
+// 
+// double SelfRegulatingNeuronV2ActivationFunction::getTransmitterStrengthUpdate(double activation) {
+// 	
+// 	if(mOwner == 0 || mOwner->getTransferFunction() == 0) {
+// 		return 0.0;
 // 	}
-// 	else if(mReceptorMode->get() == 2) {
-// 		//g(a) = tf(theta) - tf(a(t))
-// 		TransferFunction *tf = mOwner->getTransferFunction();
-// 		return tf->transferActivation(mOwner->getBiasValue().get(), mOwner) 
-// 					- tf->transferActivation(activation, mOwner); 
-// 	}
-// 	else if(mReceptorMode->get() == 3) {
-// 		//g(a) = theta - tf(a(t))^2
-// 		TransferFunction *tf = mOwner->getTransferFunction();
-// 		return mOwner->getBiasValue().get() -  pow(tf->transferActivation(activation, mOwner), 2);
-// 	}
-	
-	return 0.0;
-}
-
-
-double SelfRegulatingNeuronV2ActivationFunction::getTransmitterStrengthUpdate(double activation) {
-	
-	if(mOwner == 0 || mOwner->getTransferFunction() == 0) {
-		return 0.0;
-	}
-	
-// 	if(mTransmitterMode == 0 || mTransmitterMode->get() == 0) {
-// 		//h(a) = 1 + tau(a)
-// 		TransferFunction *tf = mOwner->getTransferFunction();
-// 		return 1 + tf->transferActivation(activation, mOwner); 
-// 	}
-// 	else if(mTransmitterMode->get() == 1) {
-// 		//h(a) = tau(a(t)) - (tau(a(t-1)))   //CHECK if brackets are correct!
-// 		TransferFunction *tf = mOwner->getTransferFunction();
-// 		if(mUseCurrentActivations) {
-// 			return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
-// 					- tf->transferActivation(mOwner->getLastActivation(), mOwner)); 
-// 		}
-// 		else {
-// 			return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
-// 					- tf->transferActivation(mActivationT2, mOwner)); 
-// 		}
-// 	}
-// 	else if(mTransmitterMode->get() == 2) {
-// 		//h(a) = 1 + tf(a(t) - theta)
-// 		TransferFunction *tf = mOwner->getTransferFunction();
-// 		return 1 + (tf->transferActivation(activation, mOwner)
-// 					- mOwner->getBiasValue().get()); 
-// 	}
-// 	else if(mTransmitterMode->get() == 3) {
-// 		//h(a) = |tf(a(t))|
-// 		TransferFunction *tf = mOwner->getTransferFunction();
-// 		//cerr << "Got: " << (Math::abs(tf->transferActivation(activation, mOwner)))  << " with " << activation << endl;
-// 		return Math::abs(tf->transferActivation(activation, mOwner)); 
-// 	}
-	
-	return 0.0;
-}
+// 	
+// // 	if(mTransmitterMode == 0 || mTransmitterMode->get() == 0) {
+// // 		//h(a) = 1 + tau(a)
+// // 		TransferFunction *tf = mOwner->getTransferFunction();
+// // 		return 1 + tf->transferActivation(activation, mOwner); 
+// // 	}
+// // 	else if(mTransmitterMode->get() == 1) {
+// // 		//h(a) = tau(a(t)) - (tau(a(t-1)))   //CHECK if brackets are correct!
+// // 		TransferFunction *tf = mOwner->getTransferFunction();
+// // 		if(mUseCurrentActivations) {
+// // 			return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
+// // 					- tf->transferActivation(mOwner->getLastActivation(), mOwner)); 
+// // 		}
+// // 		else {
+// // 			return 1 + 0.5 * (tf->transferActivation(activation, mOwner)
+// // 					- tf->transferActivation(mActivationT2, mOwner)); 
+// // 		}
+// // 	}
+// // 	else if(mTransmitterMode->get() == 2) {
+// // 		//h(a) = 1 + tf(a(t) - theta)
+// // 		TransferFunction *tf = mOwner->getTransferFunction();
+// // 		return 1 + (tf->transferActivation(activation, mOwner)
+// // 					- mOwner->getBiasValue().get()); 
+// // 	}
+// // 	else if(mTransmitterMode->get() == 3) {
+// // 		//h(a) = |tf(a(t))|
+// // 		TransferFunction *tf = mOwner->getTransferFunction();
+// // 		//cerr << "Got: " << (Math::abs(tf->transferActivation(activation, mOwner)))  << " with " << activation << endl;
+// // 		return Math::abs(tf->transferActivation(activation, mOwner)); 
+// // 	}
+// 	
+// 	return 0.0;
+// }
 
 
 
@@ -358,6 +353,30 @@ void SelfRegulatingNeuronV2ActivationFunction::updateXi(double activation) {
 	//xi_i(t+1) = xi_i(t) * (1 + (beta * g(a(t)))
 // 	mXi->set(Math::min(100.0, Math::max(-100.0,
 // 				mEpsilon + mXi->get() * (1.0 + (mBeta->get() * mReceptorResult)))));
+
+	if(mOwner == 0) {
+		return;
+	}
+
+	//Xi(t+1) = Xi(t) + (delta_c * alpha * min(limit, sum(a->ij)))	
+	double currentTarget = mCurrentTarget->get();
+	
+	double sumOfPreSynapticActivations = 0.0;
+	QList<Synapse*> incomingSynapses = mOwner->getSynapses();
+	for(QListIterator<Synapse*> i(incomingSynapses); i.hasNext();) {
+		Synapse *synapse = i.next();
+		if(synapse->getSource() == 0 || !synapse->getEnabledValue().get()) {
+			continue;
+		}
+		sumOfPreSynapticActivations += (synapse->getSource()->getLastActivation());
+	}
+	
+	double change = (currentTarget - activation) * Math::max(-1.0, Math::min(1.0, sumOfPreSynapticActivations));
+	
+	mXiT1 = mXi->get();
+	mXi->set(Math::max(0.0, mXi->get() + mAlpha->get() * change));
+	
+	cerr << "Got: target-act: " << ((double) currentTarget - activation) << " sum: " << sumOfPreSynapticActivations << " change " << change << " xi " << mXi->get() << endl;
 }
 
 
@@ -370,10 +389,10 @@ void SelfRegulatingNeuronV2ActivationFunction::updateEta(double activation) {
 }
 
 void SelfRegulatingNeuronV2ActivationFunction::updateTheta(double activation) {
-	if(mBiasMode->get() == 0) {
-		//do nothing
-		return;
-	}
+// 	if(mBiasMode->get() == 0) {
+// 		//do nothing
+// 		return;
+// 	}
 // 	else if(mBiasMode->get() == 1) {
 // 		//theta(t+1) = theta(t) + alpha * (tf(a(t)) - tf(a(t-1)))
 // 		if(mOwner != 0) {
@@ -414,6 +433,21 @@ void SelfRegulatingNeuronV2ActivationFunction::updateTheta(double activation) {
 // 			mOwner->getBiasValue().set(newBias);
 // 		}
 // 	}
+
+	//Theta(t+1) = Theta(t) + alpha * ((1 - abs(max(-1, min(1, Xi(t+1) - Xi(t)))) * min(limit, delta_c)))
+	if(mOwner == 0) {
+		return;
+	}
+	double limit = 0.2;
+	double plasticity = 1.0 - Math::abs(Math::max(-1.0, Math::min(1.0, (mXi->get() - mXiT1) * 5)));
+	double change = Math::max(-mGamma->get(), Math::min(mGamma->get(), 
+						plasticity * Math::min(limit, Math::max(-limit, mCurrentTarget->get() - activation))));
+	
+	double newBias = mOwner->getBiasValue().get() + change;
+	
+	mOwner->getBiasValue().set(newBias - (Math::sign(newBias) * plasticity * 0.01));
+	
+	cerr << "bias: plast: " << plasticity << " change " << change << " bias " << mOwner->getBiasValue().get() << endl;
 }
 
 
@@ -463,17 +497,16 @@ double SelfRegulatingNeuronV2ActivationFunction::updateActivity() {
 		if(isLink) {
 			double sign = Math::sign(weight); //zero is treated as positive value.
 			
-			if(mAdjustWeights) {
-				double newWeight = sign * eta * mXi->get();
+			double newWeight = sign * eta * mXi->get();
 				
 				
-				//make sure that numerical inaccuracies near zero do not change the sign.
-				if(Math::sign(newWeight) != sign) {
-					newWeight *= -1.0;
-				}
-				
-				synapse->getStrengthValue().set(newWeight);
+			//make sure that numerical inaccuracies near zero do not change the sign.
+			if(Math::sign(newWeight) != sign) {
+				newWeight *= -1.0;
 			}
+			
+			synapse->getStrengthValue().set(newWeight);
+
 			act = sign * eta * sourceNeuron->getOutputActivationValue().get();
 		}
 		else {
@@ -488,6 +521,23 @@ double SelfRegulatingNeuronV2ActivationFunction::updateActivity() {
 	//a_i(t+1) = theta_i + xi_i(t) * I_i(t)
 	double activation = mOwner->getBiasValue().get() + mXi->get() * inputSum;
 	return activation;
+}
+
+
+
+double SelfRegulatingNeuronV2ActivationFunction::updateCurrentTarget(double currentActivation) {
+	if(mTargets.empty()) {
+		return 0.0;
+	}
+	double target = mTargets.first();
+	for(int i = 1; i < mTargets.size(); ++i) {
+		double candidate = mTargets.at(i);
+		if(Math::abs(currentActivation - candidate) < Math::abs(currentActivation - target)) {
+			target = candidate;
+		}
+	}
+	mCurrentTarget->set(target);
+	return target;
 }
 
 

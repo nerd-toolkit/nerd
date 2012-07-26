@@ -61,7 +61,7 @@ namespace nerd {
 	 */
 	class SelfRegulatingNeuronV2ActivationFunction : public ActivationFunction {
 	public:
-		SelfRegulatingNeuronV2ActivationFunction(const QString &name = "SRN_V1", bool showModes = true);
+		SelfRegulatingNeuronV2ActivationFunction(const QString &name = "SRN_V2", bool showModes = true);
 		SelfRegulatingNeuronV2ActivationFunction(const SelfRegulatingNeuronV2ActivationFunction &other);
 		virtual ~SelfRegulatingNeuronV2ActivationFunction();
 
@@ -75,13 +75,12 @@ namespace nerd {
 		bool equals(ActivationFunction *activationFunction) const;
 		
 	protected:
-		virtual double getReceptorStrengthUpdate(double activation);
-		virtual double getTransmitterStrengthUpdate(double activation);
 		virtual void updateXi(double activation);
 		virtual void updateEta(double activation);
 		virtual void updateTheta(double activation);
 		
 		virtual double updateActivity();
+		virtual double updateCurrentTarget(double currentActivation);
 
 	protected:
 		DoubleValue *mXi;
@@ -102,13 +101,11 @@ namespace nerd {
 		double mReceptorResult;
 		
 		double mActivationT2;
-		bool mAdjustWeights;
+		double mXiT1;
 		bool mRestrictToLinks;
-		bool mUseCurrentActivations;
-		double mEpsilon;
 		
+		DoubleValue *mCurrentTarget;
 		QList<double> mTargets;
-		bool mUpdatingTargetString;
 		
 	};
 
