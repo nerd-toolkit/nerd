@@ -41,53 +41,81 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
+
+#ifndef NERDSelfRegulatingNeuronV2ActivationFunction_H
+#define NERDSelfRegulatingNeuronV2ActivationFunction_H
+
+#include <QString>
+#include <QHash>
+#include "ActivationFunction/ActivationFunction.h"
+#include "Value/DoubleValue.h"
+#include "Value/StringValue.h"
+#include "Value/BoolValue.h"
+#include "Value/IntValue.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	/**
+	 * SelfRegulatingNeuronV2ActivationFunction.
+	 *
+	 */
+	class SelfRegulatingNeuronV2ActivationFunction : public ActivationFunction {
+	public:
+		SelfRegulatingNeuronV2ActivationFunction(const QString &name = "SRN_V1", bool showModes = true);
+		SelfRegulatingNeuronV2ActivationFunction(const SelfRegulatingNeuronV2ActivationFunction &other);
+		virtual ~SelfRegulatingNeuronV2ActivationFunction();
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+		virtual ActivationFunction* createCopy() const;
 		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
+		virtual void valueChanged(Value *value);
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+		bool equals(ActivationFunction *activationFunction) const;
+		
+	protected:
+		virtual double getReceptorStrengthUpdate(double activation);
+		virtual double getTransmitterStrengthUpdate(double activation);
+		virtual void updateXi(double activation);
+		virtual void updateEta(double activation);
+		virtual void updateTheta(double activation);
+		
+		virtual double updateActivity();
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronV2ActivationFunction());
+	protected:
+		DoubleValue *mXi;
+		DoubleValue *mEta;
+		DoubleValue *mAlpha;
+		DoubleValue *mBeta;
+		DoubleValue *mGamma;
+		DoubleValue *mDelta;
+		StringValue *mTargetValues;
+		StringValue *mOptions;
+		
+		IntValue *mReceptorMode;
+		IntValue *mTransmitterMode;
+		IntValue *mBiasMode;
+		
+		Neuron *mOwner;
+		double mTransmitterResult;
+		double mReceptorResult;
+		
+		double mActivationT2;
+		bool mAdjustWeights;
+		bool mRestrictToLinks;
+		bool mUseCurrentActivations;
+		double mEpsilon;
+		
+		QList<double> mTargets;
+		bool mUpdatingTargetString;
+		
+	};
 
 }
 
-}
+#endif
+
+
 
 

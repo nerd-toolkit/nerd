@@ -89,6 +89,7 @@ set(nerd_neuralNetwork_SRCS
 	SynapseFunction/Learning/TesauroSynapseFunction.cpp
 	TransferFunction/TransferFunctionStep.cpp
 	Constraints/RandomizationConstraint.cpp
+	ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
