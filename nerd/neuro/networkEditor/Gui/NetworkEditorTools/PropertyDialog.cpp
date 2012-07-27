@@ -448,6 +448,10 @@ void PropertyDialog::propertyRowChanged(int row) {
 			mPropertySelectionField->lineEdit()->setText(line.mid(0, index).trimmed());
 			mValueEditField->setText(line.mid(index + 3).trimmed());
 		}
+		else {
+			mPropertySelectionField->lineEdit()->setText(line.trimmed());
+			mValueEditField->setText("");
+		}
 	}
 }
 
@@ -618,7 +622,11 @@ void PropertyDialog::updatePropertyList() {
 				//all properties starting with _ will not be shown.
 				continue;
 			}
-			QString line = name + " = " + mCurrentProperties->getProperty(name);
+			QString propertyValue = mCurrentProperties->getProperty(name);
+			QString line = name;
+			if(propertyValue != "") {
+				line = line + " = " + propertyValue;
+			}
 			new QListWidgetItem(line, mPropertyList);
 		}
 
