@@ -135,6 +135,11 @@ MSeriesV2Model::MSeriesV2Model(const QString &groupName, const QString &bodyPart
 
 	//Create body part value
 	mBodyPartSelectorValue = new StringValue(bodyPartList);
+	
+	mBodyPartSelectorValue->setDescription("Selects the body parts from set "
+								"{Head,LeftArm,RightArm,Body,Hip,LeftLeg,RightLeg,LeftHand,RightHand,LeftArm2b,RightArm2b}."
+								"<blank> uses all standard body parts without hands.");
+	
 	addParameter("BodyParts", mBodyPartSelectorValue);
 
 	// Create the free model Parameters

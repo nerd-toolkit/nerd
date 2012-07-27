@@ -105,7 +105,13 @@ bool PrototypeOverviewPrinter::bind() {
 				Value *value = obj->getParameter(paramName);
 				if(value != 0) {
 					cout << "   " << paramName.toStdString().c_str() << " : "
-						 << value->getValueAsString().toStdString().c_str() << endl;
+						 << value->getValueAsString().toStdString().c_str();
+						 
+					QString desc = value->getDescription();
+					if(desc != "") {
+						cout << endl << "      [" << desc.toStdString().c_str() << "]";
+					}
+					cout << endl;
 				}
 			}
 		}
