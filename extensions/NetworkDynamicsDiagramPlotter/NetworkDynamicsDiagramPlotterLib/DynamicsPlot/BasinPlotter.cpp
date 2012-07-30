@@ -73,15 +73,15 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	mResolutionY->setDescription("How many data points to generate for "
 								 "Y axis parameter(s)");
 
-	mProjectionX = new StringValue("0");
-	mProjectionX->setDescription("Parameters onto which to project on the X axis (optional)");
-	mProjectionY = new StringValue("0");
-	mProjectionY->setDescription("Parameters onto which to project on the Y axis (optional)");
+	mProjectionsX = new StringValue("0");
+	mProjectionsX->setDescription("Additional parameters onto which to project on the X axis");
+	mProjectionsY = new StringValue("0");
+	mProjectionsY->setDescription("Additional parameters onto which to project on the Y axis");
 
-	mProjectionRangeX = new StringValue("0");
-	mProjectionRangeX->setDescription("Range(s) for X axis projection");
-	mProjectionRangeY = new StringValue("0");
-	mProjectionRangeY->setDescription("Range(s) for Y axis projection");
+	mProjectionRangesX = new StringValue("0");
+	mProjectionRangesX->setDescription("Ranges for additional X axis projections");
+	mProjectionRangesY = new StringValue("0");
+	mProjectionRangesY->setDescription("Ranges for additional Y axis projections");
 	
 	mAccuracy = new DoubleValue(0.001);
 	mAccuracy->setDescription("Accuracy for network state comparison");
@@ -115,6 +115,11 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	addParameter("Config/VariedRangeY", mVariedRangeY, true);
 	addParameter("Config/ResolutionX", mResolutionX, true);
 	addParameter("Config/ResolutionY", mResolutionY, true);
+
+	addParameter("Config/ProjectionsX", mProjectionsX, true);
+	addParameter("Config/ProjectionsY", mProjectionsY, true);
+	addParameter("Config/ProjectionRangesX", mProjectionRangesX, true);
+	addParameter("Config/ProjectionRangesY", mProjectionRangesY, true);
 	
 	addParameter("Config/Accuracy", mAccuracy, true);
 	addParameter("Config/RoundDigits", mRoundDigits, true);
@@ -177,6 +182,7 @@ void BasinPlotter::calculateData() {
 		return;
 	}
 		
+
 	int resolutionX = mResolutionX->get();
 	int resolutionY = mResolutionY->get();
 	
@@ -186,20 +192,54 @@ void BasinPlotter::calculateData() {
 		return;
 	}
 
+
 	// projected elements
-	QString projectionX = mProjectionX->get();
-	QString projectionY = mProjectionX->get();
+	int nrProjections = 0;
+	QString projectionsX = mProjectionsX->get();
+	QString projectionsY = mProjectionsX->get();
+	QList< QList<DoubleValue*> > projectionValuesX;
+	QList< QList<DoubleValue*> > projectionValuesY;
+	QList<double> projectionRangesX;
+	QList<double> projectionRangesY;
 
-	QList<QStringList> projectionListX = 
-			DynamicsPlotterUtil::parseElementString(projectionX);
-	QList<QStringList> projectionListY =
-			DynamicsPlotterUtil::parseElementString(projectionY);
+	if(projectionsX != "0" && projectionsY != "0") {
 
-	QList< QList<DoubleValue*> > projectionValX =
-			DynamicsPlotterUtil::getElementValues(projectionListX, networkElements);
-	QList< QList<DoubleValue*> > projectionValY =
-			DynamicsPlotterUtil::getElementValues(projectionListY, networkElements);
+		QList<QStringList> projectionListX = 
+				DynamicsPlotterUtil::parseElementString(projectionsX);
+		QList<QStringList> projectionListY =
+				DynamicsPlotterUtil::parseElementString(projectionsY);
+
+		projectionValuesX =
+				DynamicsPlotterUtil::getElementValues(projectionListX, networkElements);
+		projectionValuesY =
+				DynamicsPlotterUtil::getElementValues(projectionListY, networkElements);
+
+		if(projectionValuesX.isEmpty() || projectionValuesY.isEmpty()) {
+			reportProblem("BasinPlotter: Could not find specified elements to project onto.");
+			return;
+		}
+
+		if(projectionValuesX.size() != projectionValuesY.size()) {
+			reportProblem("BasinPlotter: Mismatching number of projected elements for the two axes.");
+			return;
+		}
+
+		projectionRangesX =
+				DynamicsPlotterUtil::getDoublesFromString(mProjectionRangesX->get());
+		projectionRangesY =
+				DynamicsPlotterUtil::getDoublesFromString(mProjectionRangesY->get());
+
+		if(projectionRangesX.size() != 2*projectionValuesX.size() ||
+		   projectionRangesY.size() != 2*projectionValuesY.size()) {
+			reportProblem("BasinPlotter: Given ranges for projection don't match number of elements.");
+			return;
+		}
+
+		nrProjections = projectionValuesX.size();
+
+	}
 	
+
 	// save original values for clean-up
 	QList<double> variedValuesOrig;
 	variedValuesOrig.append(QList<double>() << variedValX->get()
@@ -217,11 +257,13 @@ void BasinPlotter::calculateData() {
 	bool resetSimulation = mResetSimulator->get();
 	triggerReset();
 	
+
 	// PREPARE data matrix
 	mData->clear();
-	mData->resize(resolutionX + 1, resolutionY + 1, 3);
+	mData->resize(resolutionX + 1, resolutionY + 1, 3 + nrProjections);
 	mData->fill(0);
 	
+
 	// calculate values and draw axes
 	double xStart = variedRangeX.first();
 	double xEnd = variedRangeX.last();
@@ -260,6 +302,22 @@ void BasinPlotter::calculateData() {
 		yValues.append(yVal);
 	}
 
+	// same for additional projections
+	for(int currProj = 0; currProj < nrProjections; ++currProj) {
+		double pStartX = projectionRangesX.at(currProj*2);
+		double pEndX = projectionRangesY.at(currProj*2 + 1);
+		double pStepX = (pEndX - pStartX) / (double) (resolutionX - 1);
+		for(int x = 1; x <= resolutionX; ++x) {
+			mData->set(Math::round((pStartX+(x-1)*pStepX),5), x, 0, 3+currProj);
+		}
+		double pStartY = projectionRangesY.at(currProj*2);
+		double pEndY = projectionRangesY.at(currProj*2 + 1);
+		double pStepY = (pEndY - pStartY) / (double) (resolutionY - 1);
+		for(int y = 1; y <= resolutionY; ++y) {
+			mData->set(Math::round((pStartY+(y-1)*pStepY),5), 0, y, 3+currProj);
+		}
+	}
+
 	// MAIN LOOP over x parameter points
 		
 	int stepsRun = mStepsToRun->get();
@@ -287,9 +345,9 @@ void BasinPlotter::calculateData() {
 			}
 			
 			// set x parameter
-			variedValX->set(xValues.at(x - 1));
+			variedValX->set(xValues.at(x-1));
 			// set y parameter
-			variedValY->set(yValues.at(y - 1));
+			variedValY->set(yValues.at(y-1));
 			
 			if(!notifyNetworkParametersChanged(network)) {
 				return;
@@ -300,35 +358,44 @@ void BasinPlotter::calculateData() {
 				triggerNetworkStep();
 			}
 			
-			QList< QList<double> > states;
-			QList< QPair<double,double> > positions;
+			QList< QList<double> > networkStates;
+			QList<double> networkState;
+			QList< QPair<double,double> > variedPositions;
+
+			QList< QPair< QList<double>, QList<double> > > projectionPositions;
+
 			bool foundMatch = false;
-			int currPeriod = 0;
+			int attrPeriod = 0;
 
 			for(int checkStep = 0; checkStep <= stepsCheck && !foundMatch && mActiveValue->get(); ++checkStep) {
 				triggerNetworkStep();
 				
 				// get current network state
-				QList<double> networkState = 
-						DynamicsPlotterUtil::getNetworkState(networkValues);
+				networkState = DynamicsPlotterUtil::getNetworkState(networkValues);
 				
 				// abort on empty state
 				if(networkState.isEmpty()) {
-					reportProblem("BasinPlotter: Encountered empty "
-								"network state. Something went wrong.");
+					reportProblem("BasinPlotter: Encountered empty network state.");
 					return;
 				}
 				
 				// compare states to find attractors
 				for(int period = 1; period <= checkStep && !foundMatch; ++period) {
-					foundMatch = DynamicsPlotterUtil::compareNetworkStates(states.at(checkStep-period), networkState);
-					currPeriod = period;
+					foundMatch = DynamicsPlotterUtil::compareNetworkStates(
+									networkStates.at(checkStep-period), networkState);
+					attrPeriod = period;
 				}
 				
 				// save current state as last one
-				states.append(networkState);
-				positions.append(QPair<double,double>(variedValX->get(), variedValY->get()));
-					
+				networkStates.append(networkState);
+
+				variedPositions.append(QPair<double,double>(variedValX->get(), variedValY->get()));
+
+				QPair< QList<double>, QList<double> > currentPositions;
+				currentPositions.first = DynamicsPlotterUtil::getMeanValues(projectionValuesX);
+				currentPositions.second = DynamicsPlotterUtil::getMeanValues(projectionValuesY);
+				projectionPositions.append(currentPositions);
+
 			}
 			
 			// at this point, either an attractor has been found
@@ -338,32 +405,36 @@ void BasinPlotter::calculateData() {
 				bool attrMatch = false;
 				int attrNo = 0;
 				while(attrNo < attractors.size() && !attrMatch) {
-					for(int j = 1; j <= currPeriod && !attrMatch; ++j) {
+					for(int state = 1; state <= attrPeriod && !attrMatch; ++state) {
 						attrMatch = DynamicsPlotterUtil::compareNetworkStates(
 											attractors.at(attrNo),
-											states.at(states.size()-1-j));
+											networkStates.at(networkStates.size()-1-state));
 					}
 					attrNo++;
 				}
 				
 				// write matrix
 				mData->set(attrNo, x, y, 0);
-				mData->set(currPeriod, x, y, 1);
+				mData->set(attrPeriod, x, y, 1);
 
 				// calculate and plot attractor position(s)
-				int posC = positions.size();
-				for(int i = 1; i <= currPeriod; ++i) {
-					double currValX = positions.at(posC - i).first;
-					double currValY = positions.at(posC - i).second;
+				int nrPositions = variedPositions.size();
+				for(int periodPos = 1; periodPos <= attrPeriod; ++periodPos) {
+					double currValX = variedPositions.at(nrPositions - periodPos).first;
+					double currValY = variedPositions.at(nrPositions - periodPos).second;
 				
 					int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
 					int attrPosY = ceil((currValY - yStart) / yStepSize + 1);
 				
 					mData->set(attrNo, attrPosX, attrPosY, 2);
+
+					for(int currProj = 0; currProj < nrProjections; ++currProj) {
+						// TODO
+					}
 				}
 				
 				if(!attrMatch) {
-					attractors.append(states.last());
+					attractors.append(networkStates.last());
 				}
 			}
 			

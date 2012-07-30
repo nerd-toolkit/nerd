@@ -66,10 +66,10 @@ namespace nerd {
 		IntValue *mResolutionX;
 		IntValue *mResolutionY;
 
-		StringValue *mProjectionX;
-		StringValue *mProjectionY;
-		StringValue *mProjectionRangeX;
-		StringValue *mProjectionRangeY;
+		StringValue *mProjectionsX;
+		StringValue *mProjectionsY;
+		StringValue *mProjectionRangesX;
+		StringValue *mProjectionRangesY;
 		
 		DoubleValue *mAccuracy;
 		IntValue *mRoundDigits;

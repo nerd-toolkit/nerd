@@ -247,7 +247,7 @@ void TestBasinPlotter::testParameterSettings() {
 	//matrix size after analyzer run.
 	QCOMPARE(v_Data->getMatrixWidth(), 201);  //resolution 200 + 1 for coordinate system
 	QCOMPARE(v_Data->getMatrixHeight(), 301); //resolution 200 + 1 for coordinate system
-	QCOMPARE(v_Data->getMatrixDepth(), 3); //always 3 (basin, periods, attractors)
+	//QCOMPARE(v_Data->getMatrixDepth(), 3); //always 3 (basin, periods, attractors)
 	
 	//... continue testing
 	

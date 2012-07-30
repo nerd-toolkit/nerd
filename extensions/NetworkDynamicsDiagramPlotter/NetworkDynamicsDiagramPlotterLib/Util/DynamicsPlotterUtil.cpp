@@ -351,6 +351,47 @@ namespace nerd {
 	}
 
 
+	double DynamicsPlotterUtil::getMeanValue(const QList<DoubleValue*> &valuesList) {
+		if(valuesList.isEmpty()) {
+			reportProblem("DynamicsPlotterUtil::getMeanValue : Empty list. Nothing to do.");
+			return 0;
+		}
+
+		int nrValues = valuesList.size();
+		double meanValue = 0;
+
+		for(int currVal = 0; currVal < nrValues; ++currVal) {
+			DoubleValue* dVal = valuesList.at(currVal);
+
+			if(dVal == 0) {
+				reportProblem("DynamicsPlotterUtil::getMeanValue : Encountered NULL element.");
+				return 0;
+			}
+
+			meanValue += dVal->get();
+		}
+
+		return meanValue / nrValues;
+	}
+
+
+	QList<double> DynamicsPlotterUtil::getMeanValues(const QList< QList<DoubleValue*> > &valuesListList) {
+		QList<double> meanValues, emptyList;
+		emptyList = QList<double>();
+
+		if(valuesListList.isEmpty()) {
+			reportProblem("DynamicsPlotterUtil::getMeanValues : Empty list. Nothing to do.");
+			return emptyList;
+		}
+		
+		for(int currList = 0; currList < valuesListList.size(); ++currList) {
+			meanValues.append(getMeanValue(valuesListList.at(currList)));
+		}
+
+		return meanValues;
+	}		 
+
+
 	// separator is a string containing the symbol/character separating entries
 	// and replace contains a separator-separated list of characters to replace
 	// by the separator beforehand
