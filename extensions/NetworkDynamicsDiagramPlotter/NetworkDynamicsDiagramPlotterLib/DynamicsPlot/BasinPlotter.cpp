@@ -196,7 +196,7 @@ void BasinPlotter::calculateData() {
 	// projected elements
 	int nrProjections = 0;
 	QString projectionsX = mProjectionsX->get();
-	QString projectionsY = mProjectionsX->get();
+	QString projectionsY = mProjectionsY->get();
 	QList< QList<DoubleValue*> > projectionValuesX;
 	QList< QList<DoubleValue*> > projectionValuesY;
 	QList<double> projectionRangesX;
@@ -305,7 +305,7 @@ void BasinPlotter::calculateData() {
 	// same for additional projections
 	for(int currProj = 0; currProj < nrProjections; ++currProj) {
 		double pStartX = projectionRangesX.at(currProj*2);
-		double pEndX = projectionRangesY.at(currProj*2 + 1);
+		double pEndX = projectionRangesX.at(currProj*2 + 1);
 		double pStepX = (pEndX - pStartX) / (double) (resolutionX - 1);
 		for(int x = 1; x <= resolutionX; ++x) {
 			mData->set(Math::round((pStartX+(x-1)*pStepX),5), x, 0, 3+currProj);
@@ -391,10 +391,12 @@ void BasinPlotter::calculateData() {
 
 				variedPositions.append(QPair<double,double>(variedValX->get(), variedValY->get()));
 
-				QPair< QList<double>, QList<double> > currentPositions;
-				currentPositions.first = DynamicsPlotterUtil::getMeanValues(projectionValuesX);
-				currentPositions.second = DynamicsPlotterUtil::getMeanValues(projectionValuesY);
-				projectionPositions.append(currentPositions);
+				if(nrProjections > 0) {
+					QPair< QList<double>, QList<double> > currentPositions;
+					currentPositions.first = DynamicsPlotterUtil::getMeanValues(projectionValuesX);
+					currentPositions.second = DynamicsPlotterUtil::getMeanValues(projectionValuesY);
+					projectionPositions.append(currentPositions);
+				}
 
 			}
 			
@@ -420,8 +422,10 @@ void BasinPlotter::calculateData() {
 				// calculate and plot attractor position(s)
 				int nrPositions = variedPositions.size();
 				for(int periodPos = 1; periodPos <= attrPeriod; ++periodPos) {
-					double currValX = variedPositions.at(nrPositions - periodPos).first;
-					double currValY = variedPositions.at(nrPositions - periodPos).second;
+					int currPosition = nrPositions - periodPos;
+
+					double currValX = variedPositions.at(currPosition).first;
+					double currValY = variedPositions.at(currPosition).second;
 				
 					int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
 					int attrPosY = ceil((currValY - yStart) / yStepSize + 1);
@@ -429,7 +433,20 @@ void BasinPlotter::calculateData() {
 					mData->set(attrNo, attrPosX, attrPosY, 2);
 
 					for(int currProj = 0; currProj < nrProjections; ++currProj) {
-						// TODO
+						double xVal = projectionPositions.at(currPosition).first.at(currProj);
+						double yVal = projectionPositions.at(currPosition).second.at(currProj);
+
+						double pStartX = projectionRangesX.at(currProj*2);
+						double pEndX = projectionRangesX.at(currProj*2 + 1);
+						double pStepX = (pEndX - pStartX) / (double) (resolutionX - 1);
+						double pStartY = projectionRangesY.at(currProj*2);
+						double pEndY = projectionRangesY.at(currProj*2 + 1);
+						double pStepY = (pEndY - pStartY) / (double) (resolutionY - 1);
+						
+						int xPos = ceil((xVal - pStartX) / pStepX + 1);
+						int yPos = ceil((yVal - pStartY) / pStepY + 1);
+
+						mData->set(attrNo, xPos, yPos, 3+currProj);
 					}
 				}
 				
