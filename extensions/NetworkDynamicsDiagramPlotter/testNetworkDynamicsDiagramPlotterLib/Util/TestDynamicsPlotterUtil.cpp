@@ -93,6 +93,9 @@ void TestDynamicsPlotterUtil::testGetElementValue1() {
 	DoubleValue* testVal = DynamicsPlotterUtil::getElementValue("o", n1);
 	QVERIFY(testVal == &(n1->getOutputActivationValue()));
 
+	// everything else is already tested by the below tests of wrapper functions
+	// TODO distribute tests equally ;)
+
 }
 
 //josef
@@ -353,6 +356,70 @@ void TestDynamicsPlotterUtil::testParseElementString() {
 	QVERIFY(listList.at(1).at(0) == "21:w");
 	QVERIFY(listList.at(2).at(0) == "23:tf:Deepness");
 	QVERIFY(listList.at(2).at(1) == "16:o");
+
+}
+
+
+//josef
+void TestDynamicsPlotterUtil::testGetMeanValue() {
+
+	double meanVal;
+	QList<DoubleValue*> inputList, emptyList;
+	emptyList = QList<DoubleValue*>();
+
+	DoubleValue *v1 = new DoubleValue(0.2);
+	DoubleValue *v2 = new DoubleValue(0.8);
+	inputList << v1 << v2;
+
+	meanVal = DynamicsPlotterUtil::getMeanValue(inputList);
+	QVERIFY(meanVal != 0);
+	QVERIFY(meanVal == 0.5);
+
+	DoubleValue *v3 = new DoubleValue(0.5);
+	inputList << v3;
+
+	meanVal = DynamicsPlotterUtil::getMeanValue(inputList);
+	QVERIFY(meanVal != 0);
+	QVERIFY(meanVal == 0.5);
+
+	inputList << 0;
+	meanVal = DynamicsPlotterUtil::getMeanValue(inputList);
+	QVERIFY(meanVal == 0);
+
+	meanVal = DynamicsPlotterUtil::getMeanValue(emptyList);
+	QVERIFY(meanVal == 0);
+
+}
+
+
+// josef
+void TestDynamicsPlotterUtil::testGetMeanValues() {
+
+	QList<double> meanValues;
+	QList< QList<DoubleValue*> > inputLists, emptyList;
+	QList<DoubleValue*> inputList1;
+	QList<DoubleValue*> inputList2;
+
+	DoubleValue *v11 = new DoubleValue(0.4);
+	DoubleValue *v12 = new DoubleValue(0.6);
+
+	DoubleValue *v21 = new DoubleValue(0.2);
+	DoubleValue *v22 = new DoubleValue(0.3);
+	DoubleValue *v23 = new DoubleValue(0.5);
+	DoubleValue *v24 = new DoubleValue(1.0);
+
+	inputList1 << v11 << v12;
+	inputList2 << v21 << v22 << v23 << v24;
+
+	inputLists << inputList1 << inputList2;
+
+	meanValues = DynamicsPlotterUtil::getMeanValues(emptyList);
+	QVERIFY(meanValues.isEmpty());
+
+	meanValues = DynamicsPlotterUtil::getMeanValues(inputLists);
+	QVERIFY(meanValues.size() == 2);
+	QVERIFY(meanValues.at(0) == 0.5);
+	QVERIFY(meanValues.at(1) == 0.5);
 
 }
 

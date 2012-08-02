@@ -195,9 +195,9 @@ void FirstReturnMap::calculateData() {
 	
 	QList<double> rangeStart, rangeEnd, rangeStep;
 	// iterate through plots and write axes first
-	for(int i = 0; i * 2 + 1 < observedRanges.size(); ++i) {  ///NOTE/// index was allowed to be out of range
+	for(int i = 0; i * 2 + 1 < observedRanges.size(); ++i) {
 		rangeStart.append(observedRanges.at(2*i));
-		rangeEnd.append(observedRanges.at(2*i+1)); ///NOTE/// index out of range
+		rangeEnd.append(observedRanges.at(2*i+1));
 		rangeStep.append((rangeEnd.at(i) - rangeStart.at(i)) / (double) (resolution - 1));
 		
 		for(int x = 1; x <= resolution; ++x) {
@@ -230,13 +230,7 @@ void FirstReturnMap::calculateData() {
 				continue;
 			}
 
-			double act = 0.0;
-			for(int n = 0; n < currentValues.size(); ++n) {
-				act += currentValues.at(n)->get();
-			}
-			act = act / currentValues.size();
-			
-			///NOTE/// do some protection against divisions by zero!
+			double act = DynamicsPlotterUtil::getMeanValue(currentValues);
 
 			if(k > 0) {
 				//x-axis: t-1

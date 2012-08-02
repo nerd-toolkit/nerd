@@ -62,6 +62,8 @@ namespace nerd {
 		void testGetElementValue2();
 		void testGetElementValues();
 		void testParseElementString();
+		void testGetMeanValue();
+		void testGetMeanValues();
 		void testGetDoublesFromString();
 		void testGetNetworkValues();
 		void testGetNetworkState();

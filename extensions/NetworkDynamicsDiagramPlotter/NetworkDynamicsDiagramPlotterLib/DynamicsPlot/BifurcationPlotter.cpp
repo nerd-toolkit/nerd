@@ -292,21 +292,13 @@ void BifurcationPlotter::calculateData() {
 													observedValuesList.at(i);
 						int oSize = observedValues.size();
 						if(oSize == 0) {
-							//maybe report problem TODO
 							reportProblem("BifurcationPlotter: Observed Values Size was 0!");
 							continue;
 						}
 						
 						double oStart = oParams.at(i).at(0);
 						double oEnd = oParams.at(i).at(1);
-						double oStepSize = oParams.at(i).at(2);
-						double act = 0;
-						
-						for(int k = 0; k < oSize; ++k) {
-							// NOTE check for null pointer? can it happen?
-							act += observedValues.at(k)->get();
-						}
-						act = act / oSize;
+						double act = DynamicsPlotterUtil::getMeanValue(observedValues);
 						
 						int posX = (phase == 0) ? x : 
 									mData->getMatrixWidth() - x;
@@ -320,6 +312,7 @@ void BifurcationPlotter::calculateData() {
 							mData->set(2, posX, resolutionY, i);
 						}
 						else {
+							double oStepSize = oParams.at(i).at(2);
 							int y = ceil(act/oStepSize - oStart/oStepSize);
 							
 							mData->set(1, posX, y, i);

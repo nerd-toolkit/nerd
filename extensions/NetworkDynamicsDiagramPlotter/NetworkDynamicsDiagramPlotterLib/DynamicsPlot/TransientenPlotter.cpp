@@ -252,19 +252,8 @@ void TransientenPlotter::calculateData() {
 			QHash<QString, double> mX = memX.at(i);
 			QHash<QString, double> mY = memY.at(i);
 
-			
-			double vX = 0;
-			for(int x = 0; x < elemsX.size(); ++x) {
-				vX += elemsX.at(x)->get();
-			}
-			vX = vX / elemsX.size();
-
-			double vY = 0;
-			for(int y = 0; y < elemsY.size(); ++y) {
-				vY += elemsY.at(y)->get();
-			}
-			vY = vY / elemsY.size();
-
+			double vX = DynamicsPlotterUtil::getMeanValue(elemsX);
+			double vY = DynamicsPlotterUtil::getMeanValue(elemsY);
 
 			int color = mCurrentMarker;
 			if(vX > mX["end"] || vX < mX["start"] ||
