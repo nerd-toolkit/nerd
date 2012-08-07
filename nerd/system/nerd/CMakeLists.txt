@@ -94,6 +94,7 @@ set(nerd_nerd_SRCS
 	Value/RangeValue.cpp
 	Value/CodeValue.cpp
 	Value/FileNameValue.cpp
+	Gui/ScriptEditor/ScriptEditor.cpp
 )
 
 set(nerd_nerd_MOC_HDRS
@@ -130,6 +131,7 @@ set(nerd_nerd_MOC_HDRS
 	Command/CommandExecutor.h   
 	Core/ShutDownGuard.h
 	Script/ScriptingContext.h
+	Gui/ScriptEditor/ScriptEditor.h
 )
 
 set(nerd_nerd_RCS

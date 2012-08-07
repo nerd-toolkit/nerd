@@ -42,96 +42,73 @@
  ***************************************************************************/
 
 
-#ifndef NERDParameterVisualization_H_
-#define NERDParameterVisualization_H_
+#include "FileNameValue.h"
 
-#include <QObject>
-#include "Value/Value.h"
-#include "Value/ValueChangedListener.h"
-#include <QWidget>
-#include <QLineEdit>
-#include <QLabel>
-#include <QString>
-#include <QComboBox>
-#include <QPushButton>
-#include <QCheckBox>
-#include "Core/Task.h"
-#include "Gui/Parameter/SetInitValueTask.h"
-#include "Gui/ScriptEditor/ScriptEditor.h"
+namespace nerd {
 
+FileNameValue::FileNameValue() 
+	: StringValue ()
+{
+	setTypeName("FileName");
+	mValue = "";
+}
 
-namespace nerd{
+FileNameValue::FileNameValue(const QString &value) 
+	: StringValue(value)
+{
+	setTypeName("FileName");
+}
 
-class ParameterVisualizationWindow;
-
-/**
- * ParameterVisualization.
- */
-class ParameterVisualization : public QFrame, public virtual ValueChangedListener{
-
-	Q_OBJECT
-
-	public:
-		ParameterVisualization(ParameterVisualizationWindow *list, Value *value, QString name,
-								SetInitValueTask *setInitValueTaskPrototype = 0);
-		virtual ~ParameterVisualization();
-
-		virtual void valueChanged(Value *value);
-		QString getName() const;
-
-		QString getValueName() const;
-		void reset();
-		Value* getValue();
-		bool isValueUpdateActive() const;
-
-		void setValueObjectByName(const QString &name);
-
-		void setCurrentValue(const QString &currentValue);
-		QString getCurrentValue() const;
-
-        void addOption(const QString &optionText);
-        QList<QString> getOptions() const;
+FileNameValue::FileNameValue(const FileNameValue& rhs) 
+	: Object(), StringValue(rhs)
+{
+	setTypeName("FileName");
+}
 
 
-	public slots:
-        void itemSelected(const QString &item);
-		void changeValue();
-		void setDoUpdateValue(int doUpdate);
-		void updateValueInEnvironmentManager();
-		void moveWidgetUp();
-		void moveWidgetDown();
-		void editButtonPressed();
-
-	signals:
-		void lineEditTextChanged(QString newText);
-		void destroyThis(QString valueName);
-		void move(ParameterVisualization *visu, bool up);
-
-	private slots:
-		void destroy();
-		void markAsValueEdited();
-		void markAsValueUpdated();
-
-
-	private:
-		QLineEdit *mValueField;
-		QComboBox *mValueBox;
-		Value *mValue;
-		QString mValueName;
-		ParameterVisualizationWindow *mValueList;
-		QLabel *mNameLabel;
-		QPushButton *mCloseButton;
-		QPushButton *mUpdateSnapshotButton;
-		QPushButton *mMoveUpButton;
-		QPushButton *mMoveDownButton;
-		QPushButton *mEditCodeButton;
-		QCheckBox *mUpdateValue;
-		bool mDoUpdateValue;
-		bool mValueModified;
-		SetInitValueTask *mSetInitValueTaskPrototype;
-		ScriptEditor *mScriptEditor;
-};
+FileNameValue::~FileNameValue() {
 
 }
 
-#endif
+void FileNameValue::set(const QString &value) {
+	//TODO do some checks for validity?
+	if(mNotifyAllSetAttempts || value != mValue) {
+		mValue = value;
+		notifyValueChanged();
+	}
+}
+
+QString FileNameValue::get() const {
+	return mValue;
+}
+
+QString FileNameValue::getValueAsString() const {
+	return mValue;
+}
+
+bool FileNameValue::setValueFromString(const QString &value) {
+	//TODO do some checks for validity?
+	set(value);
+	return true;
+}
+
+Value* FileNameValue::createCopy() {
+	return new FileNameValue(*this);
+}
+
+bool FileNameValue::equals(const Value *value) const {
+	if(!Value::equals(value)) {
+		return false;
+	}
+	const FileNameValue *other = dynamic_cast<const FileNameValue*>(value);
+	if(other == 0) {
+		return false;
+	}
+	if(mValue != other->mValue) {
+		return false;
+	}
+	return true;
+}
+
+}
+

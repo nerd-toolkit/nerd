@@ -56,6 +56,8 @@
 #include "Value/FileNameValue.h"
 #include "Util/NerdFileSelector.h"
 #include "NerdConstants.h"
+#include "Value/CodeValue.h"
+#include "Gui/ScriptEditor/ScriptEditor.h"
 
 using namespace std;
 
@@ -89,7 +91,8 @@ class ChangeValue : public Task {
 ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *list,
 				Value *value, QString name, SetInitValueTask *setInitValueTaskPrototype)
 	: QFrame(), mValueField(0), mValueBox(0),
-	  mUpdateSnapshotButton(0), mSetInitValueTaskPrototype(setInitValueTaskPrototype)
+	  mUpdateSnapshotButton(0), mSetInitValueTaskPrototype(setInitValueTaskPrototype),
+	  mScriptEditor(0)
 {
 	setAttribute(Qt::WA_QuitOnClose, false);
 	setAttribute(Qt::WA_DeleteOnClose, false);
@@ -140,6 +143,10 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mUpdateSnapshotButton = new QPushButton("Set Init");
 	mUpdateSnapshotButton->setWhatsThis("Use the current setting after a reset");
 	mUpdateSnapshotButton->setFocusPolicy(Qt::NoFocus);
+	
+	mEditCodeButton = new QPushButton("Edit");
+	mEditCodeButton->setWhatsThis("If the value is a code snippet, then this button opens an editor.");
+	mEditCodeButton->setFocusPolicy(Qt::NoFocus);
 
 	mUpdateValue = new QCheckBox();
 	mUpdateValue->setWhatsThis("Update content after each change");
@@ -165,6 +172,8 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 			this, SLOT(moveWidgetUp()));
 	connect(mMoveDownButton, SIGNAL(pressed()),
 			this, SLOT(moveWidgetDown()));
+	connect(mEditCodeButton, SIGNAL(clicked(bool)),
+			this, SLOT(editButtonPressed()));
 
 	//lineEditTextChanged(mValue->getValueAsString());
 	mUpdateValue->setCheckState(Qt::Checked);
@@ -191,11 +200,15 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	if(mSetInitValueTaskPrototype != 0 && name.startsWith("/Sim/")) {
 		mFrameLayout->addWidget(mUpdateSnapshotButton);
 	}
+	if(dynamic_cast<CodeValue*>(mValue) != 0) {
+		mFrameLayout->addWidget(mEditCodeButton);
+	}
 	mFrameLayout->addStretch(1000);
 	mFrameLayout->addLayout(moveLayout);
 	mFrameLayout->addWidget(mCloseButton);
 
 	mUpdateSnapshotButton->setFixedWidth(60);
+	mEditCodeButton->setFixedWidth(60);
 	mCloseButton->setFixedWidth(20);
 	mMoveUpButton->setFixedSize(15,13);
 	mMoveDownButton->setFixedSize(15,13);
@@ -213,6 +226,11 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
  */
 ParameterVisualization::~ParameterVisualization() {
 	reset();
+	
+	if(mScriptEditor != 0) {
+		mScriptEditor->hide();
+		delete mScriptEditor;
+	}
 }
 
 
@@ -266,6 +284,16 @@ void ParameterVisualization::moveWidgetUp() {
 
 void ParameterVisualization::moveWidgetDown() {
 	emit move(this, false);
+}
+
+void ParameterVisualization::editButtonPressed() {
+	
+	if(mScriptEditor == 0) {
+		mScriptEditor = new ScriptEditor(mValueName);
+	}
+	
+	mScriptEditor->attachToCodeBase(dynamic_cast<CodeValue*>(mValue));
+	mScriptEditor->show();
 }
 
 
@@ -448,6 +476,9 @@ void ParameterVisualization::reset() {
 		mValue->removeValueChangedListener(this);
 	}
 	mValue = 0;
+	if(mScriptEditor != 0) {
+		mScriptEditor->attachToCodeBase(0);
+	}
 }
 
 

@@ -42,96 +42,75 @@
  ***************************************************************************/
 
 
-#ifndef NERDParameterVisualization_H_
-#define NERDParameterVisualization_H_
+#include "CodeValue.h"
 
-#include <QObject>
-#include "Value/Value.h"
-#include "Value/ValueChangedListener.h"
-#include <QWidget>
-#include <QLineEdit>
-#include <QLabel>
-#include <QString>
-#include <QComboBox>
-#include <QPushButton>
-#include <QCheckBox>
-#include "Core/Task.h"
-#include "Gui/Parameter/SetInitValueTask.h"
-#include "Gui/ScriptEditor/ScriptEditor.h"
+namespace nerd {
 
+CodeValue::CodeValue() 
+	: StringValue ()
+{
+	setTypeName("Code");
+	mValue = "";
+}
 
-namespace nerd{
+CodeValue::CodeValue(const QString &value) 
+	: StringValue(value)
+{
+	setTypeName("Code");
+}
 
-class ParameterVisualizationWindow;
-
-/**
- * ParameterVisualization.
- */
-class ParameterVisualization : public QFrame, public virtual ValueChangedListener{
-
-	Q_OBJECT
-
-	public:
-		ParameterVisualization(ParameterVisualizationWindow *list, Value *value, QString name,
-								SetInitValueTask *setInitValueTaskPrototype = 0);
-		virtual ~ParameterVisualization();
-
-		virtual void valueChanged(Value *value);
-		QString getName() const;
-
-		QString getValueName() const;
-		void reset();
-		Value* getValue();
-		bool isValueUpdateActive() const;
-
-		void setValueObjectByName(const QString &name);
-
-		void setCurrentValue(const QString &currentValue);
-		QString getCurrentValue() const;
-
-        void addOption(const QString &optionText);
-        QList<QString> getOptions() const;
+CodeValue::CodeValue(const CodeValue& rhs) 
+	: Object(), StringValue(rhs)
+{
+	setTypeName("Code");
+}
 
 
-	public slots:
-        void itemSelected(const QString &item);
-		void changeValue();
-		void setDoUpdateValue(int doUpdate);
-		void updateValueInEnvironmentManager();
-		void moveWidgetUp();
-		void moveWidgetDown();
-		void editButtonPressed();
-
-	signals:
-		void lineEditTextChanged(QString newText);
-		void destroyThis(QString valueName);
-		void move(ParameterVisualization *visu, bool up);
-
-	private slots:
-		void destroy();
-		void markAsValueEdited();
-		void markAsValueUpdated();
-
-
-	private:
-		QLineEdit *mValueField;
-		QComboBox *mValueBox;
-		Value *mValue;
-		QString mValueName;
-		ParameterVisualizationWindow *mValueList;
-		QLabel *mNameLabel;
-		QPushButton *mCloseButton;
-		QPushButton *mUpdateSnapshotButton;
-		QPushButton *mMoveUpButton;
-		QPushButton *mMoveDownButton;
-		QPushButton *mEditCodeButton;
-		QCheckBox *mUpdateValue;
-		bool mDoUpdateValue;
-		bool mValueModified;
-		SetInitValueTask *mSetInitValueTaskPrototype;
-		ScriptEditor *mScriptEditor;
-};
+CodeValue::~CodeValue() {
 
 }
 
-#endif
+void CodeValue::set(const QString &value) {
+	if(mNotifyAllSetAttempts || value != mValue) {
+		mValue = value;
+		notifyValueChanged();
+	}
+}
+
+QString CodeValue::get() const {
+	return mValue;
+}
+
+QString CodeValue::getValueAsString() const {
+	QString singleLine = mValue;
+	singleLine = singleLine.replace("\n", "/**/");
+	return singleLine;
+}
+
+bool CodeValue::setValueFromString(const QString &value) {
+	QString multiLine = value;
+	multiLine = multiLine.replace("/**/", "\n");
+	set(multiLine);
+	return true;
+}
+
+Value* CodeValue::createCopy() {
+	return new CodeValue(*this);
+}
+
+bool CodeValue::equals(const Value *value) const {
+	if(!Value::equals(value)) {
+		return false;
+	}
+	const CodeValue *other = dynamic_cast<const CodeValue*>(value);
+	if(other == 0) {
+		return false;
+	}
+	if(mValue != other->mValue) {
+		return false;
+	}
+	return true;
+}
+
+}
+

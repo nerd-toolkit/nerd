@@ -41,97 +41,38 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
+#ifndef NERDFileNameValue_H_
+#define NERDFileNameValue_H_
 
-#ifndef NERDParameterVisualization_H_
-#define NERDParameterVisualization_H_
-
-#include <QObject>
-#include "Value/Value.h"
-#include "Value/ValueChangedListener.h"
-#include <QWidget>
-#include <QLineEdit>
-#include <QLabel>
+#include "Value/StringValue.h"
 #include <QString>
-#include <QComboBox>
-#include <QPushButton>
-#include <QCheckBox>
-#include "Core/Task.h"
-#include "Gui/Parameter/SetInitValueTask.h"
-#include "Gui/ScriptEditor/ScriptEditor.h"
 
-
-namespace nerd{
-
-class ParameterVisualizationWindow;
+namespace nerd {
 
 /**
- * ParameterVisualization.
+ * FileNameValue.
  */
-class ParameterVisualization : public QFrame, public virtual ValueChangedListener{
-
-	Q_OBJECT
+class FileNameValue : public StringValue {
 
 	public:
-		ParameterVisualization(ParameterVisualizationWindow *list, Value *value, QString name,
-								SetInitValueTask *setInitValueTaskPrototype = 0);
-		virtual ~ParameterVisualization();
+		FileNameValue();
+		FileNameValue(const FileNameValue& rhs);
+		FileNameValue(const QString &value);
+		virtual ~FileNameValue();
 
-		virtual void valueChanged(Value *value);
-		QString getName() const;
+		virtual Value* createCopy();
+		virtual void set(const QString &value);
+		virtual QString get() const;
 
-		QString getValueName() const;
-		void reset();
-		Value* getValue();
-		bool isValueUpdateActive() const;
+		virtual QString getValueAsString() const;
+		virtual bool setValueFromString(const QString &value);
 
-		void setValueObjectByName(const QString &name);
-
-		void setCurrentValue(const QString &currentValue);
-		QString getCurrentValue() const;
-
-        void addOption(const QString &optionText);
-        QList<QString> getOptions() const;
-
-
-	public slots:
-        void itemSelected(const QString &item);
-		void changeValue();
-		void setDoUpdateValue(int doUpdate);
-		void updateValueInEnvironmentManager();
-		void moveWidgetUp();
-		void moveWidgetDown();
-		void editButtonPressed();
-
-	signals:
-		void lineEditTextChanged(QString newText);
-		void destroyThis(QString valueName);
-		void move(ParameterVisualization *visu, bool up);
-
-	private slots:
-		void destroy();
-		void markAsValueEdited();
-		void markAsValueUpdated();
-
+		virtual bool equals(const Value *value) const;
 
 	private:
-		QLineEdit *mValueField;
-		QComboBox *mValueBox;
-		Value *mValue;
-		QString mValueName;
-		ParameterVisualizationWindow *mValueList;
-		QLabel *mNameLabel;
-		QPushButton *mCloseButton;
-		QPushButton *mUpdateSnapshotButton;
-		QPushButton *mMoveUpButton;
-		QPushButton *mMoveDownButton;
-		QPushButton *mEditCodeButton;
-		QCheckBox *mUpdateValue;
-		bool mDoUpdateValue;
-		bool mValueModified;
-		SetInitValueTask *mSetInitValueTaskPrototype;
-		ScriptEditor *mScriptEditor;
+		QString mValue;
+
 };
 
 }
-
-#endif
+#endif /*STRINGVALUE_H_*/
