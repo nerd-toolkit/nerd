@@ -50,6 +50,7 @@
 #include "NerdConstants.h"
 #include "Value/StringValue.h"
 #include "Value/ValueChangedListener.h"
+#include "Value/FileNameValue.h"
 
 namespace nerd {
 
@@ -64,7 +65,7 @@ namespace nerd {
 	{
 	public:
 		StatisticsLogger(const QString &loggerPath);
-		StatisticsLogger(StringValue *loggerPathValue);
+		StatisticsLogger(FileNameValue *loggerPathValue);
 
 		StatisticsLogger(const QString &loggerPath,
 						const QString &fileName,
@@ -92,7 +93,7 @@ namespace nerd {
 
 	private:
 		QString mLoggerPath;
-		StringValue *mLoggerPathValue;
+		FileNameValue *mLoggerPathValue;
 		QString mFileName;
 		QString mLogEventName;
 		Event *mLogEvent;

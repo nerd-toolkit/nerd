@@ -92,6 +92,8 @@ set(nerd_nerd_SRCS
 	Gui/GuiManager.cpp
 	Math/Range.cpp
 	Value/RangeValue.cpp
+	Value/CodeValue.cpp
+	Value/FileNameValue.cpp
 )
 
 set(nerd_nerd_MOC_HDRS
@@ -164,4 +166,3 @@ add_library(nerd STATIC ${nerd_nerd_SRCS} ${nerd_nerd_MOC_SRCS} ${nerd_nerd_RC_S
 
 add_definitions(-Wall)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-

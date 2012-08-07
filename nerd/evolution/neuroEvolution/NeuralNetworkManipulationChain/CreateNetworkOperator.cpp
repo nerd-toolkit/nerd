@@ -75,8 +75,8 @@ CreateNetworkOperator::CreateNetworkOperator(const QString &name)
 	mTransferFunctionName = new StringValue("ASeriesTanh");
 	mActivationFunctionName = new StringValue("ASeries");
 	mSynapseFunctionName = new StringValue("ASeries");
-	mInitialNetworkXML = new StringValue("");
-	mInitialNetworkXML->useAsFileName(true);
+	mInitialNetworkXML = new FileNameValue("");
+	//mInitialNetworkXML->useAsFileName(true);
 	mPreserveInitialNetworks = new BoolValue(true);
 
 	addParameter("InputNeurons", mNumberOfInputNeurons);
@@ -126,7 +126,7 @@ CreateNetworkOperator::CreateNetworkOperator(const CreateNetworkOperator &other)
 			getParameter("ActivationFunction"));
 	mSynapseFunctionName = dynamic_cast<StringValue*>(
 			getParameter("SynapseFunction"));
-	mInitialNetworkXML = dynamic_cast<StringValue*>(
+	mInitialNetworkXML = dynamic_cast<FileNameValue*>(
 			getParameter("InitialNetworkXML"));
 	mPreserveInitialNetworks = dynamic_cast<BoolValue*>(
 			getParameter("PreserveInitialNetworks"));

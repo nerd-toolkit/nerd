@@ -60,6 +60,10 @@
 #include "Gui/ValuePlotter/ValuePlotter.h"
 #include "Gui/ValuePlotter/ValuePlotterWidget.h"
 #include "Value/DoubleValue.h"
+#include "Value/FileNameValue.h"
+#include "Value/CodeValue.h"
+
+
 
 namespace nerd {
 
@@ -101,9 +105,9 @@ namespace nerd {
 		void setCodeFromValue();
 
 	private:
-		StringValue *mFitnessCode;
+		CodeValue *mFitnessCode;
 		StringValue *mErrorValue;
-		StringValue *mCurrentFileName;
+		FileNameValue *mCurrentFileName;
 		IntValue *mCalculationModeValue;
 		DoubleValue *mCurrentFitness;
 		DoubleValue *mFitness;

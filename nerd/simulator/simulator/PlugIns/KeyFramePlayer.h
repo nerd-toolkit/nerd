@@ -55,6 +55,8 @@
 #include "Event/EventListener.h"
 #include "Value/DoubleValue.h"
 #include "Value/StringValue.h"
+#include "Value/FileNameValue.h"
+
 
 namespace nerd {
 
@@ -85,7 +87,7 @@ namespace nerd {
 		Event *mResetEvent;
 		Event *mNextStepEvent;
 		DoubleValue *mStepSize;
-		StringValue *mKeyFrameFileToLoad;
+		FileNameValue *mKeyFrameFileToLoad;
 
 		QString mGroupName;	
 		SimObjectGroup *mControlledGroup;

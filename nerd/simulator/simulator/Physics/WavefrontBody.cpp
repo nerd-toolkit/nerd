@@ -61,8 +61,8 @@ WavefrontBody::WavefrontBody(const QString &name, const QString& filename, doubl
 	: SimBody(name), mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0)
 {
 	mScale = new DoubleValue(scale);
-	mFilename = new StringValue(filename);
-	mFilename->useAsFileName(true);
+	mFilename = new FileNameValue(filename);
+	//mFilename->useAsFileName(true);
 	mReferenceObjectName = new StringValue("");
 	mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
 	mLocalOrientation = new Vector3DValue(0.0, 0.0, 0.0);
@@ -94,7 +94,7 @@ WavefrontBody::WavefrontBody(const WavefrontBody &body)
 	  mLocalPosition(0), mReferenceObject(0)
 {
 	mScale = dynamic_cast<DoubleValue*>(getParameter("Scale"));
-	mFilename = dynamic_cast<StringValue*>(getParameter("FileName"));
+	mFilename = dynamic_cast<FileNameValue*>(getParameter("FileName"));
 	mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
 	mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
 	mLocalOrientation = dynamic_cast<Vector3DValue*>(getParameter("LocalOrientation"));

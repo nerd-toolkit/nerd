@@ -66,7 +66,7 @@ namespace nerd {
 SimpleScriptedConstraint::SimpleScriptedConstraint()
 	: GroupConstraint("MaxNumberOfNeurons"), mScriptCode(0)
 {
-	mScriptCode = new StringValue("");
+	mScriptCode = new CodeValue("");
 	
 	addParameter("Script", mScriptCode);
 }
@@ -80,7 +80,7 @@ SimpleScriptedConstraint::SimpleScriptedConstraint()
 SimpleScriptedConstraint::SimpleScriptedConstraint(const SimpleScriptedConstraint &other)
 	: Object(), ValueChangedListener(), GroupConstraint(other), mScriptCode(0)
 {
-	mScriptCode = dynamic_cast<StringValue*>(getParameter("Script"));
+	mScriptCode = dynamic_cast<CodeValue*>(getParameter("Script"));
 }
 
 /**

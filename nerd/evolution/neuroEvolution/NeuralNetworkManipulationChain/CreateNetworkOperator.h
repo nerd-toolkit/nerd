@@ -47,6 +47,7 @@
 #include "NeuralNetworkManipulationChain/NeuralNetworkManipulationOperator.h"
 #include "Value/IntValue.h"
 #include "Value/StringValue.h"
+#include "Value/FileNameValue.h"
 #include "Network/NeuralNetwork.h"
 #include "Value/BoolValue.h"
 #include "Event/Event.h"
@@ -80,7 +81,7 @@ namespace nerd {
 		StringValue *mTransferFunctionName;
 		StringValue *mActivationFunctionName;
 		StringValue *mSynapseFunctionName;
-		StringValue *mInitialNetworkXML;
+		FileNameValue *mInitialNetworkXML;
 		BoolValue *mPreserveInitialNetworks;
 		QList<NeuralNetwork*> mInitialNetworks;
 		int mNetworkIndex;

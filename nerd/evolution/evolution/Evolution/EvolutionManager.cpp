@@ -81,11 +81,11 @@ EvolutionManager::EvolutionManager()
 	mCurrentGenerationNumberValue = new IntValue(0);
 	mRestartGenerationValue = new BoolValue(false);
 	mRestartGenerationValue->addValueChangedListener(this);
-	mEvolutionWorkingDirectory = new StringValue(
+	mEvolutionWorkingDirectory = new FileNameValue(
 		QDir::currentPath().append("/")
 			.append(QDate::currentDate().toString("yyMMdd")).append("_")
 			.append(QTime::currentTime().toString("hhmmss")).append("/"));
-	mEvolutionWorkingDirectory->useAsFileName(true);
+	//mEvolutionWorkingDirectory->useAsFileName(true);
 	mEvoIndividualsCompletedCounter = new IntValue(0);
 	mEvalIndividualsCompletedCounter = new IntValue(0);
 
@@ -852,7 +852,7 @@ QString EvolutionManager::getEvolutionWorkingDirectory() const {
 	return mEvolutionWorkingDirectory->get();
 }
 
-StringValue* EvolutionManager::getEvolutionWorkingDirectoryValue() const {
+FileNameValue* EvolutionManager::getEvolutionWorkingDirectoryValue() const {
 	return mEvolutionWorkingDirectory;
 }
 

@@ -77,7 +77,7 @@ SimpleObjectFileParser::SimpleObjectFileParser()
 		"loadEnvironment", "env", "<environmentFileName>",
 		"Loads an environment XML file.", 1, 0, true);
 
-	mXMLFileName = new StringValue("");
+	mXMLFileName = new FileNameValue("");
 	
 	QStringList fileNames = mEnvironmentCommandLineArgument->getEntries();
 	if(!fileNames.empty()) {
@@ -87,7 +87,7 @@ SimpleObjectFileParser::SimpleObjectFileParser()
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/Physics/XmlEnvironmentFileToLoad", mXMLFileName);
 	mXMLFileName->addValueChangedListener(this);
-	mXMLFileName->useAsFileName(true);
+	//mXMLFileName->useAsFileName(true);
 	
 }
 

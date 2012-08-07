@@ -56,6 +56,8 @@
 #include <QHash>
 #include "Value/IntValue.h"
 #include "Value/DoubleValue.h"
+#include "Value/FileNameValue.h"
+
 
 
 namespace nerd {
@@ -94,7 +96,7 @@ namespace nerd {
 		QList<QString> mValuesToStore;
 		Event *mEvolutionCompletedEvent;
 		IntValue *mCurrentGeneration;
-		StringValue *mWorkingDirectory;
+		FileNameValue *mWorkingDirectory;
 		bool mIncrementalLogFileEnabled;
 		bool mStaticLogFileEnabled;
 		StringValue *mCommentValue;

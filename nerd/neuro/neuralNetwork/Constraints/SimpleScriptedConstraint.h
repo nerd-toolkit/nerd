@@ -52,6 +52,7 @@
 #include "Value/IntValue.h"
 #include "Value/StringValue.h"
 #include <QScriptEngine>
+#include "Value/CodeValue.h"
 
 namespace nerd {
 
@@ -74,7 +75,7 @@ namespace nerd {
 		virtual bool equals(GroupConstraint *constraint);
 
 	private:
-		StringValue *mScriptCode;
+		CodeValue *mScriptCode;
 		QScriptEngine *mScript;
 	};
 

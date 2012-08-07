@@ -53,7 +53,7 @@
 #include <iostream>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include "Value/StringValue.h"
+#include "Value/FileNameValue.h"
 #include "Util/NerdFileSelector.h"
 #include "NerdConstants.h"
 
@@ -107,8 +107,8 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 
 		QString value = mValue->getValueAsString();
 
-		StringValue *stringValue = dynamic_cast<StringValue*>(mValue);
-		if(stringValue != 0 && stringValue->isUsedAsFileName()) {
+		FileNameValue *fileValue = dynamic_cast<FileNameValue*>(mValue);
+		if(fileValue != 0) {
 			mValueBox->addItem(NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE);
 		}
         QList<QString> options = mValue->getOptionList();

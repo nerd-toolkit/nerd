@@ -57,6 +57,7 @@
 #include "Value/IntValue.h"
 #include <QList>
 #include "Core/Properties.h"
+#include "Value/FileNameValue.h"
 
 namespace nerd {
 
@@ -83,7 +84,7 @@ namespace nerd {
 
 	private:
 		BoolValue *mEnableRotation;
-		StringValue *mParameterDirectory;
+		FileNameValue *mParameterDirectory;
 		StringValue *mCurrentSet;
 		BoolValue *mReloadParameterSets;
 		QList<Properties*> mParameterSets;

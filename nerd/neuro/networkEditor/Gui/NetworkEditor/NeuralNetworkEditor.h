@@ -64,6 +64,7 @@
 #include "Event/EventListener.h"
 #include "Event/Event.h"
 #include <qvarlengtharray.h>
+#include "Value/FileNameValue.h"
 
 
 namespace nerd {
@@ -186,7 +187,7 @@ namespace nerd {
 		QTimer mAutoSaveTimer;
 		NetworkSearchDialog *mSearchDialog;
 		IntValue *mAutoSaveNetworkTimerSeconds;
-		StringValue *mAutoSaveNetworkDirectory;
+		FileNameValue *mAutoSaveNetworkDirectory;
 		QMenu *mRecentNetworksMenu;
 		QMenu *mViewModeMenu;
 		Event *mShutDownEvent;

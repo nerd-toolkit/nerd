@@ -115,7 +115,10 @@
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
+#include "Value/FileNameValue.h"
 
+
+//TODO move to CPP
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 
@@ -176,7 +179,7 @@ class YarsComSimulationAlgorithm : public PhysicalSimulationAlgorithm,
 		BoolValue *mConnectToYars;
 		IntValue *mPort;
 		int mClientPort;
-		StringValue *mEnvironmentXML;
+		FileNameValue *mEnvironmentXML;
 		bool mConnected;
 		bool mShutDown;
 		bool mParallelMode;

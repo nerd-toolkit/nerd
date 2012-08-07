@@ -826,7 +826,11 @@ void OpenGLVisualization::drawPlane(PlaneBody *plane) {
 
 	if(axis != 0 && distance != 0 && color != 0 && material != 0) {
 		const float gsize = PLANE_SIZE;
-		Vector3D newVector = distance->get() * axis->get();
+		
+		//TODO What was this line for? @verena
+		//Vector3D newVector = distance->get() * axis->get();
+		
+		
 		glColor4f(color->get().red() / 255.0, color->get().green() / 255.0,
 			color->get().blue() / 255.0, color->get().alpha() / 255.0);
 
@@ -1206,6 +1210,8 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 	Vector3D eighth = points.at(7);
 	Vector3D firstCross;
 	Vector3D secondCross;
+	
+	//TODO Could there be an error: fourth is never used! @verena?
 
 	if(hasATexture) {
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
@@ -1964,11 +1970,13 @@ void OpenGLVisualization::keyPressEvent(QKeyEvent *e) {
 		else if(e->key() == Qt::Key_G && (e->modifiers() & Qt::ControlModifier)) {
 			mShowCoordinateSystemLines->set(!mShowCoordinateSystemLines->get());
 		}
-		double moveOffset = mMaxMoveStepSize->get();
-		double sideOffset = mMaxSideStepSize->get();
+		
+		//TODO moveOffset and sideOffset seem to be relicts from previous refactorings. Check and remove!
+// 		double moveOffset = mMaxMoveStepSize->get();
+// 		double sideOffset = mMaxSideStepSize->get();
 		if(mShiftHold == true) {
-			moveOffset = mMinMoveStepSize->get();
-			sideOffset = mMinSideStepSize->get();
+// 			moveOffset = mMinMoveStepSize->get();
+// 			sideOffset = mMinSideStepSize->get();
 		}
 		else if(e->key() == Qt::Key_F
 				&& (e->modifiers() & Qt::ControlModifier)

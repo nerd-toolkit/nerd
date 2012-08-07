@@ -96,9 +96,9 @@ bool SettingsLogger::bind() {
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 
-	mWorkingDirectory = vm->getStringValue(
-				EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY);
-	mWorkingDirectory->useAsFileName(true);
+	mWorkingDirectory = dynamic_cast<FileNameValue*>(vm->getValue(
+				EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY));
+	//mWorkingDirectory->useAsFileName(true);
 	mCurrentGeneration = vm->getIntValue(
 				EvolutionConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
 

@@ -96,9 +96,9 @@ YarsComSimulationAlgorithm::YarsComSimulationAlgorithm()
 	mRecBuffer = new UdpDatagram();
 	mAddress = new QHostAddress(_STANDARD_IP_SERVER);
 	mSocket = 0;
-	mEnvironmentXML = new StringValue("");
+	mEnvironmentXML = new FileNameValue("");
 	mEnvironmentXML->setNotifyAllSetAttempts(true);
-	mEnvironmentXML->useAsFileName(true);
+	//mEnvironmentXML->useAsFileName(true);
 	mRobotStates = _STANDARD_ROBOT_STATE_ABORT;
 
 	addParameter("Yars/ConnectToYars", mConnectToYars);

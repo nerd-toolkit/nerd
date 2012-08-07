@@ -79,13 +79,13 @@ ScriptingContext::ScriptingContext(const QString &name, const QString &mainConte
 	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false),
 	  mMaxNumberOfTriesToResolveDefinitions(5), mFileIdCounter(0)
 {
-	mScriptCode = new StringValue();
+	mScriptCode = new CodeValue();
 	mScriptCode->addValueChangedListener(this);
 
-	mScriptFileName = new StringValue("");
+	mScriptFileName = new FileNameValue("");
 	mScriptFileName->addValueChangedListener(this);
 	mScriptFileName->setNotifyAllSetAttempts(true);
-	mScriptFileName->useAsFileName(true);
+	//mScriptFileName->useAsFileName(true);
 }
 
 
@@ -101,13 +101,13 @@ ScriptingContext::ScriptingContext(const ScriptingContext &other)
 	  mMaxNumberOfTriesToResolveDefinitions(other.mMaxNumberOfTriesToResolveDefinitions),
 	  mFileIdCounter(0)
 {
-	mScriptCode = new StringValue(other.mScriptCode->get());
+	mScriptCode = new CodeValue(other.mScriptCode->get());
 	mScriptCode->addValueChangedListener(this);
 
-	mScriptFileName = new StringValue(other.mScriptFileName->get());
+	mScriptFileName = new FileNameValue(other.mScriptFileName->get());
 	mScriptFileName->addValueChangedListener(this);
 	mScriptFileName->setNotifyAllSetAttempts(true);
-	mScriptFileName->useAsFileName(true);
+	//mScriptFileName->useAsFileName(true);
 
 	//copy persitent variables
 	for(QHashIterator<QString, QString> i(other.mPersistentParameters); i.hasNext();) {

@@ -50,6 +50,7 @@
 #include <QList>
 #include <QStringList>
 #include "Value/BoolValue.h"
+#include "Value/FileNameValue.h"
 
 namespace nerd {
 
@@ -104,15 +105,15 @@ class ClusterEvaluationMethod : public EvaluationMethod {
 		QString mEvalCurrentDirectory;
 		QString mJobScriptLocation;
 		IntValue *mQsubPriority;
-		StringValue *mJobScriptName;
-		StringValue *mConfigFileName;
-		StringValue *mQSubScriptName;
+		FileNameValue *mJobScriptName;
+		FileNameValue *mConfigFileName;
+		FileNameValue *mQSubScriptName;
 		IntValue *mCurrentGenerationID;
 		IntValue *mNumberOfRetries;
 		BoolValue *mLogGridEngineCalls;
 
 		StringValue *mStatusMessageValue;
-		StringValue *mWorkingDir;
+		FileNameValue *mWorkingDir;
 
 		Event *mNextTry;
 		Event *mTryCompleted;

@@ -141,10 +141,10 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 	//Collect all required values.
 	ValueManager *vm = Core::getInstance()->getValueManager();
 
-	mFitnessCode = vm->getStringValue(fitnessFunctionName + "/Code");
+	mFitnessCode = dynamic_cast<CodeValue*>(vm->getValue(fitnessFunctionName + "/Code"));
 	mErrorValue = vm->getStringValue(fitnessFunctionName + "/Config/ErrorState");
-	mCurrentFileName = vm->getStringValue(fitnessFunctionName + "/FileName");
-	mCurrentFileName->useAsFileName(true);
+	mCurrentFileName = dynamic_cast<FileNameValue*>(vm->getValue(fitnessFunctionName + "/FileName"));
+	//mCurrentFileName->useAsFileName(true);
 	mCalculationModeValue = vm->getIntValue(fitnessFunctionName + "/Fitness/CalculationMode");
 
 	if(mFitnessCode == 0) {
@@ -265,7 +265,7 @@ void ScriptedFitnessEditor::valueChanged(Value *value) {
 
 void ScriptedFitnessEditor::applyButtonPressed() {
 	QString code = mCodeArea->document()->toPlainText();
-	code = code.replace("\n", "/**/");
+	//code = code.replace("\n", "/**/");
 	if(mFitnessCode != 0) {
 		Core::getInstance()->scheduleTask(new ChangeValueTask(mFitnessCode, code));
 	}
@@ -428,7 +428,7 @@ void ScriptedFitnessEditor::setCodeFromValue() {
 		return;
 	}
 	QString code = mFitnessCode->get();
-	code = code.replace("/**/", "\n");
+	//code = code.replace("/**/", "\n");
 	QString oldCode = mCodeArea->toPlainText();
 	if(oldCode != code) {
 		mCodeArea->document()->setPlainText(code);

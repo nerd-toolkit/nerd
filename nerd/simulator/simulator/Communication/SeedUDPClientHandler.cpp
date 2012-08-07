@@ -248,8 +248,10 @@ void SeedUDPClientHandler::datagramReceived() {
 		QByteArray data(mUdpSocket->pendingDatagramSize(), 0);
 		int readBytes = mUdpSocket->readDatagram(data.data(), data.size());
 
-		//TODO readBytes where only used for debugging purposes. Disabeling warning:
-		readBytes = 0;
+		//TODO readBytes were only used for debugging purposes. The following code is only to disable compiler warning:
+		if(readBytes != 0) {
+			readBytes = 0;
+		}
 
 		mDatagrams.append(data);
 	}

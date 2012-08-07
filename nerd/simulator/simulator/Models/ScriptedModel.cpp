@@ -676,6 +676,7 @@ bool ScriptedModel::allowCollisionsRegExp(const QString &bodyName1, const QStrin
 			cm->disableCollisions(body->getCollisionObjects(), body2->getCollisionObjects(), allow);
 		}
 	}
+	return true;
 }
 
 
@@ -740,7 +741,7 @@ bool ScriptedModel::setMorphologyProperty(int bodyId, const QString &propertyNam
 				QList<SimObject*> left;
 				QList<SimObject*> right;
 				for(QListIterator<SimObject*> k(chain); k.hasNext();) {
-					SimObject *obj = k.next();
+					//SimObject *obj = k.next();
 					//TODO
 				}
 				Physics::translateSimObjects(chain, pos->get() * -1);
@@ -760,14 +761,15 @@ bool ScriptedModel::setMorphologyProperty(int bodyId, const QString &propertyNam
 		}
 	}
 	else if(dynamic_cast<CapsuleBody*>(obj) != 0) {
-		CapsuleBody *body = dynamic_cast<CapsuleBody*>(obj);
-		if(propertyName == "Radius") {
-
-		}
-		else if(propertyName == "Length") {
-
-		}
+// 		CapsuleBody *body = dynamic_cast<CapsuleBody*>(obj);
+// 		if(propertyName == "Radius") {
+// 
+// 		}
+// 		else if(propertyName == "Length") {
+// 
+// 		}
 	}
+	return true;
 }
 
 
@@ -780,9 +782,11 @@ bool ScriptedModel::rotateObjects(QScriptValue objectIds, QScriptValue origin, Q
 	int modArrayLength = vector3DAngles.property("length").toInteger();
 	int objectArrayLength = objectIds.property("length").toInteger();
 	int originLength = origin.property("length").toInteger();
+	
 	if(modArrayLength != 3 || objectArrayLength <= 0 || originLength != 3 || mScript == 0) {
 		return false;
 	}
+	
 	QScriptValue minusOrigin = mScript->newArray(3);
 	minusOrigin.setProperty(0, origin.property(0).toNumber() * -1.0);
 	minusOrigin.setProperty(1, origin.property(1).toNumber() * -1.0);
@@ -791,6 +795,8 @@ bool ScriptedModel::rotateObjects(QScriptValue objectIds, QScriptValue origin, Q
 	rotateOrTranslateObjects(objectIds, minusOrigin, true);
 	rotateOrTranslateObjects(objectIds, vector3DAngles, false);
 	rotateOrTranslateObjects(objectIds, origin, true);
+	
+	return ok;
 }
 
 

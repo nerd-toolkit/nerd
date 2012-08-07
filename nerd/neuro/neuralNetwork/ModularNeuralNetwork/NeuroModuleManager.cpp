@@ -86,8 +86,8 @@ NeuroModuleManager::NeuroModuleManager()
 		core->enforceDirectoryPath(path);	
 	}
 
-	mOptionalModuleDirectory = new StringValue(globalModuleDirectory + "," + path);
-	mOptionalModuleDirectory->useAsFileName(true);
+	mOptionalModuleDirectory = new FileNameValue(globalModuleDirectory + "," + path);
+	//mOptionalModuleDirectory->useAsFileName(true);
 
 	core->getValueManager()->addValue(
 			"/NeuroModules/OptionalModuleDirectory", mOptionalModuleDirectory);

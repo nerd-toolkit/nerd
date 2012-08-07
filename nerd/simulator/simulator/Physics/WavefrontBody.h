@@ -50,6 +50,7 @@
 #include "TriangleGeom.h"
 #include "WavefrontGeom.h"
 #include "Collision/CollisionObject.h"
+#include "Value/FileNameValue.h"
 
 namespace nerd {
 
@@ -76,7 +77,7 @@ class WavefrontBody : public SimBody {
 		
 	protected:
 		DoubleValue *mScale;
-		StringValue *mFilename;
+		FileNameValue *mFilename;
 		StringValue *mReferenceObjectName;
 		Vector3DValue *mLocalPosition;
 		Vector3DValue *mLocalOrientation;

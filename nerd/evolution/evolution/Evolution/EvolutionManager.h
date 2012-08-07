@@ -53,6 +53,7 @@
 #include "Value/ValueChangedListener.h"
 #include "Value/StringValue.h"
 #include "Evaluation/EvaluationMethod.h"
+#include "Value/FileNameValue.h"
 
 
 namespace nerd {
@@ -92,7 +93,7 @@ namespace nerd {
 
 		IntValue* getCurrentGenerationValue() const;
 		QString getEvolutionWorkingDirectory() const;
-		StringValue* getEvolutionWorkingDirectoryValue() const;
+		FileNameValue* getEvolutionWorkingDirectoryValue() const;
 		BoolValue* getRestartGenerationValue() const;
 
 		void setCurrentNumberOfCompletedIndividualsDuringEvolution(int count);
@@ -124,7 +125,7 @@ namespace nerd {
 		IntValue *mEvaluationDuration;
 		BoolValue *mRestartGenerationValue;
 		bool mRestartGeneration;
-		StringValue *mEvolutionWorkingDirectory;
+		FileNameValue *mEvolutionWorkingDirectory;
 
 		EvaluationMethod *mDefaultEvaluationMethod;
 		IntValue *mEvoIndividualsCompletedCounter;

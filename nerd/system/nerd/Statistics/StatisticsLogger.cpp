@@ -72,7 +72,7 @@ StatisticsLogger::StatisticsLogger(const QString &loggerPath)
 	Core::getInstance()->addSystemObject(this);
 } 
 
-StatisticsLogger::StatisticsLogger(StringValue *loggerPathValue)	
+StatisticsLogger::StatisticsLogger(FileNameValue *loggerPathValue)	
 	: mLoggerPath(""),
 		mLoggerPathValue(loggerPathValue),
 		mFileName("Statistics.log"),
@@ -85,7 +85,7 @@ StatisticsLogger::StatisticsLogger(StringValue *loggerPathValue)
 	if(mLoggerPathValue != 0) {
 		setLoggerPath(loggerPathValue->get());
 		mLoggerPathValue->addValueChangedListener(this);
-		mLoggerPathValue->useAsFileName(true);
+		//mLoggerPathValue->useAsFileName(true);
 	}
 
 	Core::getInstance()->addSystemObject(this);

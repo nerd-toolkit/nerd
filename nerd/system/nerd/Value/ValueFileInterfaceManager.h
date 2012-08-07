@@ -52,6 +52,7 @@
 #include "Core/ParameterizedObject.h"
 #include "Event/EventListener.h"
 #include "Value/BoolValue.h"
+#include "Value/FileNameValue.h"
 
 namespace nerd {
 
@@ -75,7 +76,7 @@ namespace nerd {
 
 		virtual void eventOccured(Event *event);
 
-		StringValue& getTypeFileNameValue() const;
+		FileNameValue& getTypeFileNameValue() const;
 
 	private:
 		void storeValueTypeInformation();
@@ -84,11 +85,11 @@ namespace nerd {
 		Event *mLoadFileTriggerEvent;
 		Event *mStoreToFileTriggerEvent;
 		Event *mRepositoryChangedEvent;
-		StringValue *mAutoLoadValueFile;
-		StringValue *mAutoStoreValueFile;
+		FileNameValue *mAutoLoadValueFile;
+		FileNameValue *mAutoStoreValueFile;
 		StringValue *mAutoStoreValuePattern;
 		BoolValue *mEnableManager;
-		StringValue *mValueTypeFileName;
+		FileNameValue *mValueTypeFileName;
 		QString mLoadTriggerEventName;
 		QString mStoreTriggerEventName;
 		

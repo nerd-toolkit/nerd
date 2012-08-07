@@ -630,11 +630,11 @@ bool SimbaUDPCommunication::waitForNextDatagram() {
 	mSocketMutex.lock();
 
 	//mDatagramMutex.lock();
-	bool receivedData = true;
+	//bool receivedData = true;
 
 	if(mDatagrams.isEmpty()) {
 		mData.clear();
-		receivedData = false;
+		//receivedData = false;
 	}
 	else {
 		mData = mDatagrams.first();

@@ -65,13 +65,13 @@ ValueFileInterfaceManager::ValueFileInterfaceManager(const QString &name,
 	  mValueTypeFileName(0), mLoadTriggerEventName(loadTriggerEventName), 
 	  mStoreTriggerEventName(storeTriggerEventName)
 {
-	mAutoLoadValueFile = new StringValue(loadFileName);
-	mAutoLoadValueFile->useAsFileName(true);
-	mAutoStoreValueFile = new StringValue(storeFileName);
-	mAutoStoreValueFile->useAsFileName(true);
+	mAutoLoadValueFile = new FileNameValue(loadFileName);
+	//mAutoLoadValueFile->useAsFileName(true);
+	mAutoStoreValueFile = new FileNameValue(storeFileName);
+	//mAutoStoreValueFile->useAsFileName(true);
 	mAutoStoreValuePattern = new StringValue(storePattern);
-	mValueTypeFileName = new StringValue();
-	mValueTypeFileName->useAsFileName(true);
+	mValueTypeFileName = new FileNameValue();
+	//mValueTypeFileName->useAsFileName(true);
 	mEnableManager = new BoolValue(false);
 
 	addParameter("FileToLoad", mAutoLoadValueFile, true);
@@ -193,7 +193,7 @@ void ValueFileInterfaceManager::eventOccured(Event *event) {
 	}
 }
 
-StringValue& ValueFileInterfaceManager::getTypeFileNameValue() const {
+FileNameValue& ValueFileInterfaceManager::getTypeFileNameValue() const {
 	return *mValueTypeFileName;
 }
 

@@ -129,9 +129,9 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 				mDefaultPaintInterval);
 	mDefaultPaintInterval->addValueChangedListener(this);
 
-	mAutoSaveNetworkDirectory = new StringValue(
+	mAutoSaveNetworkDirectory = new FileNameValue(
 			Core::getInstance()->getConfigDirectoryPath() + "/autoSave");
-	mAutoSaveNetworkDirectory->useAsFileName(true);
+	//mAutoSaveNetworkDirectory->useAsFileName(true);
 	vm->addValue("/NetworkEditor/AutoSaveNetwork/Directory", mAutoSaveNetworkDirectory);
 
 	mAutoSaveNetworkTimerSeconds = new IntValue(30);

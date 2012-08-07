@@ -54,6 +54,10 @@
 #include "Value/ValueChangedListener.h"
 #include "Event/EventListener.h"
 #include <QFile>
+#include "Value/FileNameValue.h"
+#include "Value/CodeValue.h"
+
+
 
 namespace nerd {
 
@@ -138,8 +142,8 @@ namespace nerd {
 		QHash<Event*, QString> mEventNames;
 		QHash<QString, bool> mEventOccurences;
 		QHash<QString, QString> mPersistentParameters;
-		StringValue *mScriptCode;
-		StringValue *mScriptFileName;
+		CodeValue *mScriptCode;
+		FileNameValue *mScriptFileName;
 		QString mMainContextName;
 		bool mHasUnresolvedValueDefinitions;
 		bool mHasUnresolvedEventDefinitions;

@@ -94,14 +94,14 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 	}
 	vm->addValue(EvolutionConstants::VALUE_EXECUTION_CURRENT_TRY, mCurrentTry);
 
-	mWorkingDir = vm->getStringValue(EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY);
+	mWorkingDir = dynamic_cast<FileNameValue*>(vm->getValue(EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY));
 	if(mWorkingDir == 0) {
 		Core::log(QString("ClusterEvaluationMethod: Required value [")
 			.append(EvolutionConstants::VALUE_EVO_WORKING_DIRECTORY)
 			.append("] could not be found."));
 	}
 	else {
-		mWorkingDir->useAsFileName(true);
+		//mWorkingDir->useAsFileName(true);
 	}
 
 	mNextTry = mCore->getEventManager()->createEvent(NerdConstants::
@@ -151,17 +151,17 @@ ClusterEvaluationMethod::ClusterEvaluationMethod(const QString &name)
 	}
 
 	mQsubPriority = new IntValue(0);
-	mJobScriptName = new StringValue("evalJob");
-	mJobScriptName->useAsFileName(true);
-	mQSubScriptName = new StringValue(qsubDirName + "qsubCaller.sh");
-	mQSubScriptName->useAsFileName(true);
-	mConfigFileName = new StringValue("config.val");
-	mConfigFileName->useAsFileName(true);
+	mJobScriptName = new FileNameValue("evalJob");
+	//mJobScriptName->useAsFileName(true);
+	mQSubScriptName = new FileNameValue(qsubDirName + "qsubCaller.sh");
+	//mQSubScriptName->useAsFileName(true);
+	mConfigFileName = new FileNameValue("config.val");
+	//mConfigFileName->useAsFileName(true);
 	mNumberOfRetries = new IntValue(5);
 	mStatusMessageValue = new StringValue("");
 	mZipGenerations = new BoolValue(false);
-	mCurrentGenerationDirectory = new StringValue("");
-	mCurrentStartScriptFullFileName = new StringValue("");
+	mCurrentGenerationDirectory = new StringValue(""); //TODO FileNameValue?
+	mCurrentStartScriptFullFileName = new StringValue(""); //TODO FileNameValue?
 	mLogGridEngineCalls = new BoolValue(false);
 
 	setPrefix(getName() + "/");

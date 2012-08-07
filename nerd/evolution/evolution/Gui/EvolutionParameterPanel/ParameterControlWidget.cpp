@@ -52,7 +52,7 @@
 #include "Value/ChangeValueTask.h"
 #include "NerdConstants.h"
 #include "Util/NerdFileSelector.h"
-#include "Value/StringValue.h"
+#include "Value/FileNameValue.h"
 
 using namespace std;
 
@@ -88,8 +88,8 @@ ParameterControlWidget::ParameterControlWidget(const QString &name, Value *value
 
 		QString value = mValue->getValueAsString();
 
-		StringValue *stringValue = dynamic_cast<StringValue*>(mValue);
-		if(stringValue != 0 && stringValue->isUsedAsFileName()) {
+		FileNameValue *fileValue = dynamic_cast<FileNameValue*>(mValue);
+		if(fileValue != 0) {
 			mValueBox->addItem(NerdConstants::GUI_SELECT_FILE_FOR_STRING_VALUE);
 		}
 

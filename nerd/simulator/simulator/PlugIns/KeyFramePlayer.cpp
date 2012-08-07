@@ -65,13 +65,13 @@ KeyFramePlayer::KeyFramePlayer(const QString &groupName)
 {
 	Core::getInstance()->addSystemObject(this);
 
-	mKeyFrameFileToLoad = new StringValue();
+	mKeyFrameFileToLoad = new FileNameValue();
 	Core::getInstance()->getValueManager()->addValue(
 			QString("/Control/KeyFramePlayer/").append(groupName).append("/KeyFrameFile"),
 			mKeyFrameFileToLoad);
 
 	mKeyFrameFileToLoad->addValueChangedListener(this);
-	mKeyFrameFileToLoad->useAsFileName(true);
+	//mKeyFrameFileToLoad->useAsFileName(true);
 }
 
 KeyFramePlayer::~KeyFramePlayer() {

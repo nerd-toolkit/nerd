@@ -95,7 +95,7 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const QString &name)
 	}
 
 	//script code is initialized with a simple but valid fitness script, just counting the steps.
-	mScriptCode->set(QString("") 
+	mScriptCode->setValueFromString(QString("") 
 					+ "function reset() {/**/};/**//**/function calc()"
 					+ " {/**/  return fitness + 1;/**/};");
 
@@ -118,10 +118,10 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const ScriptedFitnessFunction &
 	delete mScriptCode;
 	delete mScriptFileName;
 
-	mScriptCode = dynamic_cast<StringValue*>(getParameter("Code"));
+	mScriptCode = dynamic_cast<CodeValue*>(getParameter("Code"));
 	mScriptCode->addValueChangedListener(this);
-	mScriptFileName = dynamic_cast<StringValue*>(getParameter("FileName"));
-	mScriptFileName->useAsFileName(true);
+	mScriptFileName = dynamic_cast<FileNameValue*>(getParameter("FileName"));
+	//mScriptFileName->useAsFileName(true);
 
 	mBindPhaseEvent = Core::getInstance()->getEventManager()->registerForEvent(
 						NerdConstants::EVENT_NERD_SYSTEM_BIND, this);

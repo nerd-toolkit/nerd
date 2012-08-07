@@ -208,6 +208,7 @@ void ODE_ForceSensor::updateSensorValues() {
 		return;
 	}
 
+	//TODO check if it is ok that this variable is never used @chris
 	Quaternion bodyOrientationInverse = 
 		hostSimBody->getQuaternionOrientationValue()->get().getInverse();
 

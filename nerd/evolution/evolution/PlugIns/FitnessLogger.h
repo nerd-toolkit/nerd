@@ -46,7 +46,7 @@
 
 #include "Core/SystemObject.h"
 #include "Core/ParameterizedObject.h"
-#include "Value/StringValue.h"
+#include "Value/FileNameValue.h"
 #include "Value/BoolValue.h"
 #include "PlugIns/CommandLineArgument.h"
 
@@ -76,7 +76,7 @@ class FitnessLogger : public virtual SystemObject, public virtual EventListener,
 		void saveFitnessResults();
 		
 	private:
-		StringValue *mFileName;
+		FileNameValue *mFileName;
 		Event *mIndividualCompletedEvent;
 		CommandLineArgument *mLoggerArgumentDescription;
 		BoolValue *mIsLogging;		

@@ -57,6 +57,8 @@
 #include "Event/Event.h"
 #include "Event/EventListener.h"
 #include "Value/ValueChangedListener.h"
+#include "Value/FileNameValue.h"
+
 
 /**
 * SimpleObjectFileParser. This plugin reacts on a specific commandline parameter to load simple environment objects from a user choosen file. 
@@ -107,7 +109,7 @@ class SimpleObjectFileParser : public virtual SystemObject, public virtual Event
 		QVector<SimObject*> mObjectsToAdd;
 		QVector<ModelInterface*> mAgentsToAdd;
 		QList<ModelInterface*> mNewAgents;
-		StringValue *mXMLFileName;
+		FileNameValue *mXMLFileName;
 		QString mLastXMLFileName;
 		Event *mLoadEnvironmentXMLEvent;
 		QList<SimObject*> mSimObjectTrash;

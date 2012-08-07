@@ -56,6 +56,7 @@
 #include "Value/StringValue.h"
 #include <QObject>
 #include <QRect>
+#include "Value/FileNameValue.h"
 
 namespace nerd {
 
@@ -97,9 +98,9 @@ namespace nerd {
 		IntValue *mFramePerSecond;
 		BoolValue *mRunCreator;
 		StringValue *mFileNamePrefix;
-		StringValue *mTargetDirectory;
+		FileNameValue *mTargetDirectory;
 		StringValue *mTriggerEventName;
-		StringValue *mOutputFileName;
+		FileNameValue *mOutputFileName;
 		StringValue *mVideoCreationCommand;
 		StringValue *mRecordingRectangle;
 		BoolValue *mTryVideoCreation;

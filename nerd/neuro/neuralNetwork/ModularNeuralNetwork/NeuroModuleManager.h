@@ -51,6 +51,7 @@
 #include "Core/SystemObject.h"
 #include "Value/StringValue.h"
 #include "ModularNeuralNetwork/ModularNeuralNetwork.h"
+#include "Value/FileNameValue.h"
 
 namespace nerd {
 
@@ -98,7 +99,7 @@ namespace nerd {
 
 	private:
 		QList<NeuroModulePrototype*> mNeuroModulePrototypes;
-		StringValue *mOptionalModuleDirectory;
+		FileNameValue *mOptionalModuleDirectory;
 	};
 
 }
