@@ -52,6 +52,8 @@
 #include "Value/StringValue.h"
 #include <QScriptEngine>
 #include <QObject>
+#include "Value/CodeValue.h"
+
 
 namespace nerd {
 

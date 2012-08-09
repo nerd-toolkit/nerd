@@ -69,8 +69,6 @@ class FileNameValue : public StringValue {
 
 		virtual bool equals(const Value *value) const;
 
-	private:
-		QString mValue;
 
 };
 

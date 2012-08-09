@@ -265,7 +265,7 @@ void ScriptedFitnessEditor::valueChanged(Value *value) {
 
 void ScriptedFitnessEditor::applyButtonPressed() {
 	QString code = mCodeArea->document()->toPlainText();
-	//code = code.replace("\n", "/**/");
+	code = code.replace("\n", "/**/");
 	if(mFitnessCode != 0) {
 		Core::getInstance()->scheduleTask(new ChangeValueTask(mFitnessCode, code));
 	}

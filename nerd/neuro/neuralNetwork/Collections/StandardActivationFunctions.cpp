@@ -52,6 +52,7 @@
 #include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
 #include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
 #include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
+#include "ActivationFunction/ScriptableActivationFunction.h"
 
 namespace nerd {
 
@@ -85,6 +86,9 @@ StandardActivationFunctions::StandardActivationFunctions()
 	
 	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
 		SelfRegulatingNeuronV2ActivationFunction());
+	
+	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
+		ScriptableActivationFunction());
 
 }
 

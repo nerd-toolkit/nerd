@@ -90,11 +90,13 @@ set(nerd_neuralNetwork_SRCS
 	TransferFunction/TransferFunctionStep.cpp
 	Constraints/RandomizationConstraint.cpp
 	ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.cpp
+	ActivationFunction/ScriptableActivationFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
 	Script/ScriptedNetworkManipulator.h 
 	ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h
+	ActivationFunction/ScriptableActivationFunction.h
 )
 
 set(nerd_neuralNetwork_RCS

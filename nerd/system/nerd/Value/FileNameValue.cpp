@@ -50,7 +50,6 @@ FileNameValue::FileNameValue()
 	: StringValue ()
 {
 	setTypeName("FileName");
-	mValue = "";
 }
 
 FileNameValue::FileNameValue(const QString &value) 
@@ -71,19 +70,16 @@ FileNameValue::~FileNameValue() {
 }
 
 void FileNameValue::set(const QString &value) {
+	StringValue::set(value);
 	//TODO do some checks for validity?
-	if(mNotifyAllSetAttempts || value != mValue) {
-		mValue = value;
-		notifyValueChanged();
-	}
 }
 
 QString FileNameValue::get() const {
-	return mValue;
+	return StringValue::get();
 }
 
 QString FileNameValue::getValueAsString() const {
-	return mValue;
+	return StringValue::getValueAsString();
 }
 
 bool FileNameValue::setValueFromString(const QString &value) {

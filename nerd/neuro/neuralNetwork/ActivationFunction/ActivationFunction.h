@@ -66,7 +66,7 @@ namespace nerd {
 		virtual void reset(Neuron *owner) = 0;
 		virtual double calculateActivation(Neuron *owner) = 0;
 		
-		bool equals(ActivationFunction *activationFunction) const;
+		virtual bool equals(ActivationFunction *activationFunction) const;
 
 	};
 

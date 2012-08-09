@@ -50,7 +50,7 @@
 #include <QHash>
 #include "Script/ScriptedNetworkManipulator.h"
 #include "FitnessFunctions/ScriptedFitnessFunction.h"
-#include "Script/ScriptedNetworkManipulator.h"
+
 
 namespace nerd {
 

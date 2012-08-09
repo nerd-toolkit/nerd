@@ -60,7 +60,8 @@ namespace nerd {
 ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
 							   QString name, Value *parameter)
 	: QObject(parent), mRegisteredAsListener(false), mTargetLayout(targetLayout),
-	 mParameterName(name), mParameter(parameter), mInvalid(false)
+	 mParameterName(name), mParameter(parameter), mInvalid(false), mEditScriptButton(0), 
+	 mScriptEditor(0)
 {
 
 	mParameterContent = new QLineEdit();
@@ -72,10 +73,22 @@ ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
 		mRegisteredAsListener = true;
 		mNameLabel->setToolTip(mParameter->getDescription());
 	}
+	
+	if(dynamic_cast<CodeValue*>(parameter) != 0) {
+		mEditScriptButton = new QPushButton("Edit");
+		mEditScriptButton->setFixedWidth(50);
+		mEditScriptButton->setWhatsThis("Open content in a script editor.");
+	}
+	
+	mContentLayout = new QHBoxLayout();
+	mContentLayout->addWidget(mParameterContent);
+	if(mEditScriptButton != 0) {
+		mContentLayout->addWidget(mEditScriptButton);
+	}
 
 	int row = targetLayout->rowCount();
 	targetLayout->addWidget(mNameLabel, row, 0);
-	targetLayout->addWidget(mParameterContent, row, 1);
+	targetLayout->addLayout(mContentLayout, row, 1);
 
 	connect(mParameterContent, SIGNAL(returnPressed()),
 			this, SLOT(parameterContentChanged()));
@@ -83,6 +96,10 @@ ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
 			this, SLOT(markAsValueEdited()));
 	connect(this, SIGNAL(setParameterText(QString)),
 			mParameterContent, SLOT(setText(QString)));
+	if(mEditScriptButton != 0) {
+		connect(mEditScriptButton, SIGNAL(clicked(bool)),
+				this, SLOT(editScriptButtonPressed()));
+	}
 }
 
 
@@ -91,16 +108,36 @@ ParameterPanel::ParameterPanel(QObject *parent, QGridLayout *targetLayout,
  * Destructor.
  */
 ParameterPanel::~ParameterPanel() {
+	
+	//clear script editor and enable saving if there are unsaved changes.
+	if(mScriptEditor != 0) {
+		mScriptEditor->attachToCodeBase(0);
+	}
+	
+	//remove listener registrations
 	if(mParameter != 0 && mRegisteredAsListener) {
 		mParameter->removeValueChangedListener(this);
 	}
 	if(mTargetLayout != 0) {
 		mTargetLayout->removeWidget(mParameterContent);
 	}
+	
+	//delete objects
 	delete mParameterContent;
 	delete mNameLabel;
+	if(mEditScriptButton != 0) {
+		delete mEditScriptButton;
+	}
+	delete mContentLayout;
+	if(mScriptEditor != 0) {
+		delete mScriptEditor;
+	}
 }
 
+
+/**
+ * Called when the parameter value changed (e.g. by external modifications).
+ */
 void ParameterPanel::valueChanged(Value *value)  {
 	if(value == 0 || mInvalid) {
 		return;
@@ -112,6 +149,12 @@ void ParameterPanel::valueChanged(Value *value)  {
 	}
 }
 
+
+
+/**
+ * Releases the observation registration for the managed parameter and all
+ * other observed values.
+ */
 void ParameterPanel::forceListenerDeregistration(Value *value) {
 	ValueChangedListener::forceListenerDeregistration(value);
 
@@ -121,9 +164,13 @@ void ParameterPanel::forceListenerDeregistration(Value *value) {
 }
 
 
+/**
+ * Removes the added widgets and layouts form the master layout.
+ * Here, all objects added in the constructor have to be removed from the layout.
+ */
 void ParameterPanel::removeFromLayout(QGridLayout *layout) {
 	layout->removeWidget(mNameLabel);
-	layout->removeWidget(mParameterContent);
+	layout->removeItem(mContentLayout);
 }
 
 
@@ -149,6 +196,9 @@ void ParameterPanel::invalidateListeners() {
 }
 
 
+/**
+ * Called when the return key was pressed in the line edit.
+ */
 void ParameterPanel::parameterContentChanged() {
 	if(mParameter == 0 || mInvalid) {
 		return;
@@ -163,6 +213,23 @@ void ParameterPanel::parameterContentChanged() {
 	emit parameterChanged(mParameter, mParameterName, newContent);
 }
 
+
+/**
+ * Called when the edit script button is pressed.
+ */
+void ParameterPanel::editScriptButtonPressed() {
+	
+	//create script editor on the fly if not already available
+	if(mScriptEditor == 0) {
+		mScriptEditor = new ScriptEditor(mParameterName, false);
+		
+		connect(mScriptEditor, SIGNAL(handleChangedContent(QString)),
+				this, SLOT(handleChangedContent(QString)));
+	}
+	
+	mScriptEditor->attachToCodeBase(dynamic_cast<CodeValue*>(mParameter));
+	mScriptEditor->show();
+}
 
 // void ParameterPanel::parameterContentUpdated() {
 // 	if(mParameter == 0 || mInvalid) {
@@ -194,6 +261,28 @@ void ParameterPanel::markAsValueUpdated() {
 	QPalette p = mParameterContent->palette();
 	p.setColor(QPalette::Base, Qt::white);
 	mParameterContent->setPalette(p);
+}
+
+
+/**
+ * Called when the (optional) script editor tries to store a value.
+ * 
+ * @param newContent the new code (with linebreaks)
+ */
+void ParameterPanel::handleChangedContent(const QString &newContent) {
+	CodeValue *code = dynamic_cast<CodeValue*>(mParameter);
+	
+	if(code == 0 || mInvalid) {
+		return;
+	}
+	emit setParameterText(newContent);
+	
+	if(code->get() == newContent) {
+		return;
+	}
+
+	emit markAsValueUpdated();
+	emit parameterChanged(mParameter, mParameterName, newContent);
 }
 
 

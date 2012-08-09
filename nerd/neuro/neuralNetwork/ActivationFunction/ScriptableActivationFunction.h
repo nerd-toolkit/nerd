@@ -42,87 +42,66 @@
  ***************************************************************************/
 
 
+#ifndef NERDScriptableActivationFunction_H
+#define NERDScriptableActivationFunction_H
 
-#ifndef NERDPARAMETERIZEDOBJECT_H
-#define NERDPARAMETERIZEDOBJECT_H
-
-#include <QMap>
-#include <QList>
-#include <QString>
-#include "Value/Value.h"
-#include "Value/ValueChangedListener.h"
-
+#include "ActivationFunction/ActivationFunction.h"
+#include <QObject>
+#include <QScriptEngine>
+#include "Value/StringValue.h"
+#include "Value/CodeValue.h"
+#include "Script/ScriptedNetworkManipulator.h"
+#include "Script/ScriptingContext.h"
+#include "Value/DoubleValue.h"
 
 
 namespace nerd {
 
-/**
- * ParameterizedObject
- *
- * A ParameterizedObject provides methods to add Value objects as named
- * parameters. Other objects can access all parameters through the
- * get parameter methods.
- *
- * ParameterizedObjects can choose to publish their parameters while adding.
- * In this case the parameter is published at the ValueManager on a
- * value path that is created from a prefix and the parameter name.
- * Each ParameterizedObject can set its own prefix and therefore  get its
- * own parameter space at the ValueManager.
- *
- * Note: It is recommended to add parameters only before the bind() phase
- * of the Core. If a ParameterizedObject is created later it still can publish
- * its parameters at the Core, but dependent objects might not be able to
- * bind() to these parameters if they do not explicitely after the paramters
- * have been added.
- * It is also recommendet NOT to remove parameters from the ValueManager.
- * This happens if a ParameterizedObjects is destroyed. Objects, that are
- * planned to be destroyed at runtime should not publish their values until
- * a rebinding method is implemented to ensure, that binding objects are notified
- * when parameters are removed to avoid working with destroyed parameters.
- *
- * TODO Take care that the removeParameters() method is called for
- * all ParameterizedObjects BEFORE the ValueManager is destroyed.
- * Otherwise the parameter Values will not be destroyed savely.
- */
-class ParameterizedObject : public virtual ValueChangedListener {
-
+	/**
+	 * ScriptableActivationFunction
+	 */
+	class ScriptableActivationFunction : public virtual ScriptingContext, public ActivationFunction {
+		Q_OBJECT
+		
+		//Q_PROPERTY(QString stringBuffer WRITE setStringBuffer READ getStringBuffer);
+		
 	public:
-		ParameterizedObject(const QString &name);
-		ParameterizedObject(const QString &name, const QString &valuePrefix);
-		ParameterizedObject(const ParameterizedObject &object);
-		virtual ~ParameterizedObject();
-	
-		virtual bool addParameter(const QString &name, Value *value);
-		virtual bool addParameter(const QString &name, Value *value, bool publish);
-		virtual Value* getParameter(const QString &name) const;
+		ScriptableActivationFunction();
+		ScriptableActivationFunction(const ScriptableActivationFunction &other);
+		virtual ~ScriptableActivationFunction();
 
-		virtual bool publishParameter(Value *value, bool publish);
-
-		virtual void removeParameters();
-		virtual QList<Value*> getParameters() const;
-		virtual QList<QString> getParameterNames() const;
-		virtual void publishAllParameters();
-		virtual void unpublishAllParameters();
-	
-		virtual void valueChanged(Value *value);
-	
+		virtual ActivationFunction* createCopy() const;
 		virtual QString getName() const;
-		virtual void setName(const QString &name);
-		virtual QString getPrefix() const;
-		virtual void setPrefix(const QString &prefix);
+		virtual void valueChanged(Value *value);
 
-		virtual bool equals(const ParameterizedObject *obj) const;
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
 
-	private:
-		QList<Value*> mValues;
-		QList<QString> mNames;
-		QString mName;
-
+		virtual bool equals(ActivationFunction *activationFunction) const;
+		
 	protected:
-		QString mValuePrefix;
-		ValueManager *mValueManager;
-};
+		virtual void addCustomScriptContextStructures();
+		virtual void importVariables();
+		virtual void exportVariables();
+		
+	private:
+		//QString mVariableBuffer;
+		ScriptedNetworkManipulator *mNetworkManipulator;
+		Neuron *mOwner;
+		
+		DoubleValue *mVar1;
+		DoubleValue *mVar2;
+		DoubleValue *mVar3;
+		DoubleValue *mVar4;
+		
+		DoubleValue mActivation;
+		
+		bool mFirstExecution;
+		
+	};
 
 }
 
 #endif
+
+

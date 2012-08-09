@@ -49,20 +49,19 @@ namespace nerd {
 CodeValue::CodeValue() 
 	: StringValue ()
 {
-	setTypeName("Code");
-	mValue = "";
+	setTypeName("SourceCode");
 }
 
 CodeValue::CodeValue(const QString &value) 
 	: StringValue(value)
 {
-	setTypeName("Code");
+	setTypeName("SourceCode");
 }
 
 CodeValue::CodeValue(const CodeValue& rhs) 
 	: Object(), StringValue(rhs)
 {
-	setTypeName("Code");
+	setTypeName("SourceCode");
 }
 
 
@@ -71,14 +70,11 @@ CodeValue::~CodeValue() {
 }
 
 void CodeValue::set(const QString &value) {
-	if(mNotifyAllSetAttempts || value != mValue) {
-		mValue = value;
-		notifyValueChanged();
-	}
+	StringValue::set(value);
 }
 
 QString CodeValue::get() const {
-	return mValue;
+	return StringValue::get();
 }
 
 QString CodeValue::getValueAsString() const {
@@ -99,17 +95,7 @@ Value* CodeValue::createCopy() {
 }
 
 bool CodeValue::equals(const Value *value) const {
-	if(!Value::equals(value)) {
-		return false;
-	}
-	const CodeValue *other = dynamic_cast<const CodeValue*>(value);
-	if(other == 0) {
-		return false;
-	}
-	if(mValue != other->mValue) {
-		return false;
-	}
-	return true;
+	return StringValue::equals(value);
 }
 
 }

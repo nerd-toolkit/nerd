@@ -150,6 +150,7 @@ namespace nerd {
 		int mMaxNumberOfTriesToResolveDefinitions;
 		int mFileIdCounter;
 		QHash<int, QFile*> mOpenFiles;
+		bool mRestrictToMainExecutionThread;
 	};
 
 }

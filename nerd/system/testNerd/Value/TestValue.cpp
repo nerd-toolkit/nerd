@@ -63,6 +63,8 @@
 #include <iostream>
 #include "Value/MatrixValue.h"
 #include "Value/RangeValue.h"
+#include <Value/CodeValue.h>
+#include <Value/FileNameValue.h>
 
 
 using namespace std;
@@ -712,7 +714,7 @@ void TestValue::testMatrix3x3Value() {
 }
 
 
-//verena
+//verena & chris
 void TestValue::testStringValue(){
 	Core::resetCore();
 	StringValue *value = new StringValue();
@@ -724,6 +726,14 @@ void TestValue::testStringValue(){
 	QVERIFY(value->setValueFromString("TestValue"));
 	StringValue *copy = dynamic_cast<StringValue*>(value->createCopy());
 	QCOMPARE(copy->get(), QString("TestValue"));
+	
+	StringValue v2("Another Test");
+	QVERIFY(v2.get() == "Another Test");
+	QVERIFY(v2.getValueAsString() == "Another Test");
+	
+	StringValue v3(v2);
+	QVERIFY(v2.get() == "Another Test");
+	QVERIFY(v2.getValueAsString() == "Another Test");
 	
 	delete value;
 	delete copy;
@@ -1532,5 +1542,61 @@ void TestValue::testRangeValue() {
 		QVERIFY(r1.get().isValid());
 		
 	}
-	
 }
+	
+	
+void TestValue::testCodeValue() {
+	CodeValue v1;
+	
+	//set and get (and handling of newline characters)
+	QVERIFY(v1.get() == "");
+	v1.set("Hallo Welt\nThis is a\nmulti-line string");
+	QVERIFY(v1.get() == "Hallo Welt\nThis is a\nmulti-line string");
+	QVERIFY(v1.getValueAsString() == "Hallo Welt/**/This is a/**/multi-line string");
+	
+	QVERIFY(v1.setValueFromString("Here/**/Another Twoliner") == true);
+	QVERIFY(v1.getValueAsString() == "Here/**/Another Twoliner");
+	QVERIFY(v1.get() == "Here\nAnother Twoliner");
+	
+	//constructor with string initializer
+	CodeValue v2("This is a code fragment\nWith newline characters!");
+	QVERIFY(v2.get() == "This is a code fragment\nWith newline characters!");
+	QVERIFY(v2.getValueAsString() == "This is a code fragment/**/With newline characters!");
+	
+	
+	//copy constructor
+	CodeValue v3(v1);
+	QVERIFY(v3.getValueAsString() == "Here/**/Another Twoliner");
+	QVERIFY(v3.get() == "Here\nAnother Twoliner");
+}
+
+
+void TestValue::testFileNameValue() {
+	
+	FileNameValue v1;
+	
+	QVERIFY(v1.get() == "");
+	v1.set("/home/test/hallo.txt");
+	QVERIFY(v1.get() == "/home/test/hallo.txt");
+	QVERIFY(v1.getValueAsString() == "/home/test/hallo.txt");
+	
+	QVERIFY(v1.setValueFromString("/file.net") == true);
+	QVERIFY(v1.getValueAsString() == "/file.net");
+	QVERIFY(v1.get() == "/file.net");
+	
+	//constructor with string initializer
+	FileNameValue v2("C:\\data.txt");
+	Core::log("Got: " + v2.getValueAsString(), true);
+	Core::log("Got: " + v2.get(), true);
+	QVERIFY(v2.get() == "C:\\data.txt");
+	QVERIFY(v2.getValueAsString() == "C:\\data.txt");
+	
+	
+	//copy constructor
+	FileNameValue v3(v1);
+	QVERIFY(v3.getValueAsString() == "/file.net");
+	QVERIFY(v3.get() == "/file.net");
+}
+	
+	
+	

@@ -54,7 +54,7 @@ namespace nerd {
 
 
 Value::Value() : Object() {
-	createValue("", false );
+	createValue("", false);
 }
 
 Value::Value(const QString &typeName, bool notifyAllSetAttempts) : Object() {

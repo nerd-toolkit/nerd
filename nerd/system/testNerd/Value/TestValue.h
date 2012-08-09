@@ -69,6 +69,8 @@ private slots:
 	void initTestCase();
 	void testValueEquality();
 	void testRangeValue();
+	void testCodeValue();
+	void testFileNameValue();
 
 };
 

@@ -74,7 +74,7 @@ namespace nerd {
 	class ScriptEditor : public QWidget, public virtual ValueChangedListener {
 	Q_OBJECT
 	public:
-		ScriptEditor(const QString &scriptName);
+		ScriptEditor(const QString &scriptName, bool autoHandleChanges = true);
 		virtual ~ScriptEditor();
 
 		virtual QString getName() const;
@@ -86,6 +86,8 @@ namespace nerd {
 		void changeScriptCodeArea();
 		void changeErrorMessageArea();
 		void markAsUnmodified();
+		
+		void handleChangedContent(const QString &newContent);
 
 	public slots:
 		void applyButtonPressed();
@@ -118,6 +120,7 @@ namespace nerd {
 		QTextEdit *mErrorMessageField;
 		QLabel *mTitleLabel;
 		bool mScriptModified;
+		bool mAutoHandleChanges;
 	};
 
 }

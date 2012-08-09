@@ -54,6 +54,7 @@
 #include <QKeyEvent>
 #include <Gui/ValuePlotter/ValuePlotterItem.h>
 #include <NerdConstants.h>
+#include <QMessageBox>
 
 
 using namespace std;
@@ -64,8 +65,8 @@ namespace nerd {
 /**
  * Constructs a new ScriptEditor.
  */
-ScriptEditor::ScriptEditor(const QString &scriptName)
-	: mScriptModified(false)
+ScriptEditor::ScriptEditor(const QString &scriptName, bool autoHandleChanges)
+	: mScriptModified(false), mAutoHandleChanges(autoHandleChanges)
 {
 	
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -175,6 +176,26 @@ void ScriptEditor::valueChanged(Value *value) {
 
 bool ScriptEditor::attachToCodeBase(CodeValue *code) {
 	
+	if(mScriptCode != 0) {
+		if(mScriptModified) {
+			 int ret = QMessageBox::warning(
+						this, 
+						mTitleLabel->text(),
+						tr("The document has been modified.\n"
+						"Do you want to save your changes?"),
+						//QMessageBox::Apply | QMessageBox::Save | QMessageBox::Discard,
+						QMessageBox::Save | QMessageBox::Discard,
+						QMessageBox::Save);
+			 
+			 if(ret == QMessageBox::Apply) {
+				applyButtonPressed();
+			 }
+			 else if(ret == QMessageBox::Save) {
+				saveButtonPressed();
+			 }
+		}
+	}
+	
 	if(code == 0) {
 		mScriptCode = 0;
 		mErrorValue = 0;
@@ -205,9 +226,10 @@ bool ScriptEditor::attachToCodeBase(CodeValue *code) {
 
 void ScriptEditor::applyButtonPressed() {
 	QString code = mCodeArea->document()->toPlainText();
-	if(mScriptCode != 0) {
+	if(mScriptCode != 0 && mAutoHandleChanges) {
 		Core::getInstance()->scheduleTask(new ChangeValueTask(mScriptCode, code));
 	}
+	emit handleChangedContent(code);
 	emit markAsUnmodified();
 }
 
@@ -250,11 +272,15 @@ bool ScriptEditor::loadScriptCode(const QString &fileName, bool replaceExistingC
 	QTextStream fileStream(&file);
 	
 	QString multiLineCode = fileStream.readAll();
-	mCodeArea->setText(multiLineCode);
-	
-	Core::getInstance()->scheduleTask(new ChangeValueTask(mScriptCode, multiLineCode));
 	
 	file.close();
+	
+	mCodeArea->setText(multiLineCode);
+	
+	if(mAutoHandleChanges) {
+		Core::getInstance()->scheduleTask(new ChangeValueTask(mScriptCode, multiLineCode));
+	}
+	emit handleChangedContent(multiLineCode);
 
 	Core::log(QString("ScriptEditor: Loaded script code from file [")
 			  + fileName + "].");
@@ -334,6 +360,9 @@ void ScriptEditor::markTitleAsUnmodified() {
 	if(title.endsWith("*")) {
 		mTitleLabel->setText(title.mid(0, title.size() - 1));
 	}
+	QPalette p = mErrorMessageField->palette();
+	p.setColor(QPalette::Base, Qt::white);
+	mErrorMessageField->setPalette(p);
 }
 
 void ScriptEditor::markAsModified() {
@@ -343,6 +372,9 @@ void ScriptEditor::markAsModified() {
 		if(!title.endsWith("*")) {
 			mTitleLabel->setText(title.append("*"));
 		}
+		QPalette p = mErrorMessageField->palette();
+		p.setColor(QPalette::Base, QColor(255,120,120));
+		mErrorMessageField->setPalette(p);
 	}
 }
 

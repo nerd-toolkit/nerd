@@ -53,6 +53,10 @@
 #include <QLineEdit>
 #include <QGridLayout>
 #include <QLabel>
+#include <QPushButton>
+#include "Gui/ScriptEditor/ScriptEditor.h"
+
+
 
 namespace nerd {
 
@@ -79,10 +83,13 @@ namespace nerd {
 
 	public slots:
 		void parameterContentChanged();
+		void editScriptButtonPressed();
 
     private slots:
         void markAsValueEdited();
 		void markAsValueUpdated();
+		
+		void handleChangedContent(const QString &newContent);
 
 	signals:
 		void parameterChanged(Value *parameter, const QString &name, const QString &content);
@@ -96,6 +103,10 @@ namespace nerd {
 		QLabel *mNameLabel;
 		Value *mParameter;
 		bool mInvalid;
+		QPushButton *mEditScriptButton;
+		QHBoxLayout *mContentLayout;
+		
+		ScriptEditor *mScriptEditor;
 
 	};
 

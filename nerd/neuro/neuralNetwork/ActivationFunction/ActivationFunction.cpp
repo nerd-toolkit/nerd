@@ -46,12 +46,12 @@
 namespace nerd {
 
 ActivationFunction::ActivationFunction(const QString &name)
-	: ObservableNetworkElement(), ParameterizedObject(name)
+	: ParameterizedObject(name), ObservableNetworkElement()
 {
 }
 
 ActivationFunction::ActivationFunction(const ActivationFunction &other)
-	: Object(), ValueChangedListener(), ObservableNetworkElement(), ParameterizedObject(other)
+	: Object(), ValueChangedListener(), ParameterizedObject(other), ObservableNetworkElement()
 {
 }
 

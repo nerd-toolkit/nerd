@@ -56,8 +56,8 @@ class StringValue : public Value {
 
 	public:
 		StringValue();
-		StringValue(const StringValue& rhs);
 		StringValue(const QString &value);
+		StringValue(const StringValue& rhs);
 		virtual ~StringValue();
 
 		virtual Value* createCopy();
@@ -72,7 +72,7 @@ class StringValue : public Value {
 
 		virtual bool equals(const Value *value) const;
 
-	private:
+	protected:
 		QString mValue;
 // 		bool mUseAsFileName;
 

@@ -77,7 +77,7 @@ namespace nerd {
 ScriptingContext::ScriptingContext(const QString &name, const QString &mainContextName)
 	: mName(name), mScript(0), mScriptCode(0), mScriptFileName(0), mMainContextName(mainContextName),
 	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false),
-	  mMaxNumberOfTriesToResolveDefinitions(5), mFileIdCounter(0)
+	  mMaxNumberOfTriesToResolveDefinitions(5), mFileIdCounter(0), mRestrictToMainExecutionThread(true)
 {
 	mScriptCode = new CodeValue();
 	mScriptCode->addValueChangedListener(this);
@@ -99,9 +99,9 @@ ScriptingContext::ScriptingContext(const ScriptingContext &other)
 	  mMainContextName(other.mMainContextName),
 	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false),
 	  mMaxNumberOfTriesToResolveDefinitions(other.mMaxNumberOfTriesToResolveDefinitions),
-	  mFileIdCounter(0)
+	  mFileIdCounter(0), mRestrictToMainExecutionThread(other.mRestrictToMainExecutionThread)
 {
-	mScriptCode = new CodeValue(other.mScriptCode->get());
+	mScriptCode = new CodeValue(other.mScriptCode->getValueAsString());
 	mScriptCode->addValueChangedListener(this);
 
 	mScriptFileName = new FileNameValue(other.mScriptFileName->get());
@@ -166,7 +166,8 @@ void ScriptingContext::eventOccured(Event *event) {
  * The scripting context can only be executed from the mainExecutionThread!
  */
 void ScriptingContext::resetScriptContext() {
-	if(!Core::getInstance()->isMainExecutionThread()) {
+
+	if(!Core::getInstance()->isMainExecutionThread() && mRestrictToMainExecutionThread) {
 		return;
 	}
 	mMaxNumberOfTriesToResolveDefinitions = 5;
@@ -329,7 +330,10 @@ void ScriptingContext::resetScriptContext() {
  * The scripting context can only be executed from the mainExecutionThread!
  */
 void ScriptingContext::executeScriptFunction(const QString &functionName) {
-	if(mScript == 0 || !Core::getInstance()->isMainExecutionThread()) {
+
+	if(mScript == 0 
+		|| (!Core::getInstance()->isMainExecutionThread() && mRestrictToMainExecutionThread)) 
+	{
 		return;
 	}
 	if((mMaxNumberOfTriesToResolveDefinitions > 0) && (mHasUnresolvedValueDefinitions || mHasUnresolvedEventDefinitions)) {
@@ -353,7 +357,7 @@ void ScriptingContext::reloadEventAndValueDefinitions() {
 	mHasUnresolvedEventDefinitions = false;
 	mHasUnresolvedValueDefinitions = false;
 
-	QString code = mScriptCode->get();
+	QString code = mScriptCode->getValueAsString();
 	QStringList linesOfCode = code.split("/**/");
 	
 	for(int i = 0; i < linesOfCode.size(); ++i) {
@@ -386,7 +390,7 @@ void ScriptingContext::reloadEventAndValueDefinitions() {
  */
 bool ScriptingContext::setScriptCode(const QString &code) {
 	QString singleLineCode = code;
-	singleLineCode.replace("\n", "/**/");
+	//singleLineCode.replace("\n", "/**/");
 	mScriptCode->set(singleLineCode);
 	return true;
 }
@@ -400,7 +404,7 @@ bool ScriptingContext::setScriptCode(const QString &code) {
  */
 QString ScriptingContext::getScriptCode() const {
 	QString code = mScriptCode->get();
-	code.replace("/**/", "\n");
+	//code.replace("/**/", "\n");
 	return code;
 }
 

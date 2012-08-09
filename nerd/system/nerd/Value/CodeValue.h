@@ -56,8 +56,8 @@ class CodeValue : public StringValue {
 
 	public:
 		CodeValue();
-		CodeValue(const CodeValue& rhs);
 		CodeValue(const QString &value);
+		CodeValue(const CodeValue& rhs);
 		virtual ~CodeValue();
 
 		virtual Value* createCopy();
@@ -69,10 +69,7 @@ class CodeValue : public StringValue {
 
 		virtual bool equals(const Value *value) const;
 
-	private:
-		QString mValue;
-
 };
 
 }
-#endif /*STRINGVALUE_H_*/
+#endif /*NERDCodeValue_H_*/
