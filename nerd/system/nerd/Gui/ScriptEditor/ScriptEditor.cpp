@@ -135,7 +135,20 @@ ScriptEditor::ScriptEditor(const QString &scriptName, bool autoHandleChanges)
 			this, SLOT(markTitleAsUnmodified()));
 
 	
-	resize(400,500);
+	Properties &props = Core::getInstance()->getProperties();
+	QStringList sizeAndPositionString = props.getProperty("ScriptEditor/" + getName()).split(",");
+	if(sizeAndPositionString.size() != 4) {
+		resize(400,500);
+	}
+	else {
+		double posX = sizeAndPositionString.at(0).toDouble();
+		double posY = sizeAndPositionString.at(1).toDouble();
+		double width = sizeAndPositionString.at(2).toDouble();
+		double height = sizeAndPositionString.at(3).toDouble();
+		
+		resize(width, height);
+		move(posX, posY);
+	}
 	
 // 	//set trigger event for fitness editor
 // 	Event *stepCompletedEvent = Core::getInstance()->getEventManager()->getEvent(
@@ -156,6 +169,14 @@ ScriptEditor::~ScriptEditor() {
 	}
 	mScriptCode = 0;
 	mErrorValue = 0;
+	
+	QSize currentSize = this->size();
+	QPoint currentPos = this->pos();
+	QString posAndSize = QString::number(currentPos.x()) + "," + QString::number(currentPos.y()) + ","
+						+ QString::number(currentSize.width()) + "," + QString::number(currentSize.height());
+	
+	Properties &props = Core::getInstance()->getProperties();
+	props.setProperty("ScriptEditor/" + getName(), posAndSize);
 }
 
 
