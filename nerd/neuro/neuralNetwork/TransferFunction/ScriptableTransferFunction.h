@@ -41,47 +41,70 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardTransferFunctions.h"
-#include "Network/Neuro.h"
-#include "TransferFunction/TransferFunctionTanh.h"
-#include "TransferFunction/TransferFunctionRamp.h"
-#include "TransferFunction/TransferFunctionASeriesTanh.h"
-#include "TransferFunction/TransferFunctionParameterizedSigmoid.h"
-#include "TransferFunction/TransferFunctionSigmoid.h"
-#include "TransferFunction/TransferFunctionTanh01.h"
-#include "TransferFunction/TransferFunctionMSeriesTanh.h"
-#include "TransferFunction/TransferFunctionGauss.h"
-#include "TransferFunction/TransferFunctionStep.h"
-#include "TransferFunction/ScriptableTransferFunction.h"
 
+#ifndef NERDScriptableTransferFunction_H
+#define NERDScriptableTransferFunction_H
+
+#include "TransferFunction/TransferFunction.h"
+#include <QObject>
+#include <QScriptEngine>
+#include "Value/StringValue.h"
+#include "Value/CodeValue.h"
+#include "Script/ScriptedNetworkManipulator.h"
+#include "Script/ScriptingContext.h"
+#include "Value/DoubleValue.h"
+#include "Value/RangeValue.h"
 
 
 namespace nerd {
 
-StandardTransferFunctions::StandardTransferFunctions()
-{
-	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
-	//Tanh
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh());
-	nnm->addTransferFunctionPrototype(TransferFunctionTanh01());
-	nnm->addTransferFunctionPrototype(TransferFunctionASeriesTanh());
-	nnm->addTransferFunctionPrototype(TransferFunctionMSeriesTanh());
-	//Ramp
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-1,1]", -1.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[0,1]", 0.0, 1.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[-u,u]", -1000000.0, 100000.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionRamp("ramp[n,m]", -1.0, 1.0, true));
-	//Sigmoids
-	nnm->addTransferFunctionPrototype(TransferFunctionSigmoid());
-	nnm->addTransferFunctionPrototype(TransferFunctionParameterizedSigmoid(5.0, 10.0));
-	nnm->addTransferFunctionPrototype(TransferFunctionGauss());
-	//Step
-	nnm->addTransferFunctionPrototype(TransferFunctionStep());
-	//scriptable
-	nnm->addTransferFunctionPrototype(ScriptableTransferFunction());
-	
-}
+class RangeValue;
+
+	/**
+	 * ScriptableTransferFunction
+	 */
+	class ScriptableTransferFunction : public virtual ScriptingContext, public TransferFunction {
+		Q_OBJECT
+
+	public:
+		ScriptableTransferFunction();
+		ScriptableTransferFunction(const ScriptableTransferFunction &other);
+		virtual ~ScriptableTransferFunction();
+
+		virtual TransferFunction* createCopy() const;
+		virtual QString getName() const;
+		virtual void valueChanged(Value *value);
+		
+		virtual void resetScriptContext();
+
+		virtual void reset(Neuron *owner);
+		virtual double transferActivation(double activation, Neuron *owner);
+
+		virtual bool equals(TransferFunction *transferFunction) const;
+		
+	protected:
+		virtual void reportError(const QString &message);
+		virtual void addCustomScriptContextStructures();
+		virtual void importVariables();
+		virtual void exportVariables();
+		
+	private:
+		//QString mVariableBuffer;
+		ScriptedNetworkManipulator *mNetworkManipulator;
+		StringValue *mErrorState;
+		Neuron *mOwner;
+		
+		DoubleValue *mVar1;
+		
+		DoubleValue mOutput;
+		RangeValue *mRange;
+		
+		bool mFirstExecution;
+		
+	};
 
 }
+
+#endif
 
 

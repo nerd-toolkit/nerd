@@ -225,7 +225,7 @@ bool ScriptableSynapseFunction::equals(SynapseFunction *synapseFunction) const {
 void ScriptableSynapseFunction::reportError(const QString &message) {
 	QString msg = message;
 	mErrorState->set(msg.replace("\n", " | "));
-	Core::log(QString("ScriptFitness [") + getName() + "]: " + message);
+	Core::log(QString("ScriptableSynapseFunction [") + getName() + "]: " + message);
 }
 
 

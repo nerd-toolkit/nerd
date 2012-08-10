@@ -62,9 +62,7 @@ namespace nerd {
 	 */
 	class ScriptableSynapseFunction : public virtual ScriptingContext, public SynapseFunction {
 		Q_OBJECT
-		
-		//Q_PROPERTY(QString stringBuffer WRITE setStringBuffer READ getStringBuffer);
-		
+
 	public:
 		ScriptableSynapseFunction();
 		ScriptableSynapseFunction(const ScriptableSynapseFunction &other);

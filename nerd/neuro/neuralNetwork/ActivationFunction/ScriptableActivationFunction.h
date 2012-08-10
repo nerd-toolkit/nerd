@@ -62,9 +62,7 @@ namespace nerd {
 	 */
 	class ScriptableActivationFunction : public virtual ScriptingContext, public ActivationFunction {
 		Q_OBJECT
-		
-		//Q_PROPERTY(QString stringBuffer WRITE setStringBuffer READ getStringBuffer);
-		
+
 	public:
 		ScriptableActivationFunction();
 		ScriptableActivationFunction(const ScriptableActivationFunction &other);

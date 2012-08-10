@@ -41,7 +41,7 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "ScriptableActivationFunction.h"
+#include "ScriptableTransferFunction.h"
 #include <QListIterator>
 #include "Network/Synapse.h"
 #include "Network/Neuron.h"
@@ -53,8 +53,8 @@ using namespace std;
 
 namespace nerd {
 
-ScriptableActivationFunction::ScriptableActivationFunction()
-	: ScriptingContext("Scripted"), ActivationFunction("Scripted"), mErrorState(0), mOwner(0),
+ScriptableTransferFunction::ScriptableTransferFunction()
+	: ScriptingContext("Scripted"), TransferFunction("Scripted", 0.0, 1.0), mErrorState(0), mOwner(0),
 	  mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
@@ -62,40 +62,33 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 	mErrorState = new StringValue();
 	
 	mVar1 = new DoubleValue();
-	mVar2 = new DoubleValue();
-	mVar3 = new DoubleValue();
-	mVar4 = new DoubleValue();
 	
 	addObserableOutput("Eta", mVar1);
-	addObserableOutput("Kappa", mVar2);
-	addObserableOutput("Lambda", mVar3);
-	addObserableOutput("Xi", mVar4);
-	
 	
 	mScriptFileName->removeValueChangedListener(this);
 	
 	//set default code (make sure that the change is NOT notified, otherwise script may be executed
 	//before this object is fully constructed!
 	mScriptCode->removeValueChangedListener(this);
-	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc() {/**/  return 1.0;/**/}");
+	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc(activation) {/**/  return activation;/**/}");
 	mScriptCode->addValueChangedListener(this);
 	mScriptCode->setNotifyAllSetAttempts(true);
 	
 	mScriptCode->setErrorValue(mErrorState);
 	
+	mRange = new RangeValue(0.0, 1.0);
+	
 	addParameter("Code", mScriptCode);
+	addParameter("Bounds", mRange);
 	addParameter("Eta", mVar1);
-	addParameter("Kappa", mVar2);
-	addParameter("Lambda", mVar3);
-	addParameter("Xi", mVar4);
 	
 	//allow script executions and reset also in the GUI thread (to react on changes immediately)
 	mRestrictToMainExecutionThread = false;
 }
 
-ScriptableActivationFunction::ScriptableActivationFunction(
-			const ScriptableActivationFunction &other)
-	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), ActivationFunction(other),
+ScriptableTransferFunction::ScriptableTransferFunction(
+			const ScriptableTransferFunction &other)
+	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), TransferFunction(other),
 	  mErrorState(0), mOwner(0), mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
@@ -103,14 +96,9 @@ ScriptableActivationFunction::ScriptableActivationFunction(
 	mErrorState = new StringValue();
 	
 	mVar1 = dynamic_cast<DoubleValue*>(getParameter("Eta"));
-	mVar2 = dynamic_cast<DoubleValue*>(getParameter("Kappa"));
-	mVar3 = dynamic_cast<DoubleValue*>(getParameter("Lambda"));
-	mVar4 = dynamic_cast<DoubleValue*>(getParameter("Xi"));
+	mRange = dynamic_cast<RangeValue*>(getParameter("Bounds"));
 	
 	addObserableOutput("Eta", mVar1);
-	addObserableOutput("Kappa", mVar2);
-	addObserableOutput("Lambda", mVar3);
-	addObserableOutput("Xi", mVar4);
 	
 	mScriptFileName->removeValueChangedListener(this);
 	
@@ -126,40 +114,44 @@ ScriptableActivationFunction::ScriptableActivationFunction(
 	mRestrictToMainExecutionThread = false;
 }
 
-ScriptableActivationFunction::~ScriptableActivationFunction() {
+ScriptableTransferFunction::~ScriptableTransferFunction() {
 	mScriptCode = 0;
 	if(mNetworkManipulator != 0) {
 		delete mNetworkManipulator;
 	}
 }
 
-ActivationFunction* ScriptableActivationFunction::createCopy() const {
-	return new ScriptableActivationFunction(*this);
+TransferFunction* ScriptableTransferFunction::createCopy() const {
+	return new ScriptableTransferFunction(*this);
 }
 
-QString ScriptableActivationFunction::getName() const {
-	return ActivationFunction::getName();
+QString ScriptableTransferFunction::getName() const {
+	return TransferFunction::getName();
 }
 
-void ScriptableActivationFunction::valueChanged(Value *value) {
+void ScriptableTransferFunction::valueChanged(Value *value) {
 	ScriptingContext::valueChanged(value);
-	ActivationFunction::valueChanged(value);
+	TransferFunction::valueChanged(value);
 	
 	if(value == mScriptCode) {
 		//additionally call the reset function in the script 
 		//(a resetScriptContext has already been triggered by the ScriptingContext)
 		executeScriptFunction("reset();");
 	}
+	else if(value == mRange) {
+		mLowerBound = mRange->getMin();
+		mUpperBound = mRange->getMax();
+	}
 }
 
 
-void ScriptableActivationFunction::resetScriptContext() {
+void ScriptableTransferFunction::resetScriptContext() {
 	mErrorState->set("");
 	ScriptingContext::resetScriptContext();
 }
 
 
-void ScriptableActivationFunction::reset(Neuron *neuron) {
+void ScriptableTransferFunction::reset(Neuron *neuron) {
 	mOwner = neuron;
 	ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(neuron->getOwnerNetwork());
 	if(mNetworkManipulator != 0) {
@@ -171,7 +163,7 @@ void ScriptableActivationFunction::reset(Neuron *neuron) {
 }
 
 
-double ScriptableActivationFunction::calculateActivation(Neuron *owner) {
+double ScriptableTransferFunction::transferActivation(double activation, Neuron *owner) {
 	if(owner == 0) {
 		return 0.0;
 	}
@@ -181,17 +173,17 @@ double ScriptableActivationFunction::calculateActivation(Neuron *owner) {
 		mFirstExecution = false;
 	}
 
-	executeScriptFunction("call_calc();");
+	executeScriptFunction("call_calc(" + QString::number(activation) + ");");
 
-	return mActivation.get();;
+	return mOutput.get();;
 }
 
-bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction) const {
-	if(ActivationFunction::equals(activationFunction) == false) {
+bool ScriptableTransferFunction::equals(TransferFunction *transferFunction) const {
+	if(TransferFunction::equals(transferFunction) == false) {
 		return false;
 	}
-	ScriptableActivationFunction *af =
- 			dynamic_cast<ScriptableActivationFunction*>(activationFunction);
+	ScriptableTransferFunction *af =
+ 			dynamic_cast<ScriptableTransferFunction*>(transferFunction);
 
 	if(af == 0) {
 		return false;
@@ -202,29 +194,20 @@ bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction
 	if(!mVar1->equals(af->mVar1)) {
 		return false;
 	}
-	if(!mVar2->equals(af->mVar2)) {
-		return false;
-	}
-	if(!mVar3->equals(af->mVar3)) {
-		return false;
-	}
-	if(!mVar4->equals(af->mVar4)) {
-		return false;
-	}
 	
 	return true;
 }
 
 
 
-void ScriptableActivationFunction::reportError(const QString &message) {
+void ScriptableTransferFunction::reportError(const QString &message) {
 	QString msg = message;
 	mErrorState->set(msg.replace("\n", " | "));
-	Core::log(QString("ScriptableActivationFunction [") + getName() + "]: " + message);
+	Core::log(QString("ScriptableTransferFunction [") + getName() + "]: " + message);
 }
 
 
-void ScriptableActivationFunction::addCustomScriptContextStructures() {
+void ScriptableTransferFunction::addCustomScriptContextStructures() {
 
 	ScriptingContext::addCustomScriptContextStructures();
 	
@@ -241,7 +224,7 @@ void ScriptableActivationFunction::addCustomScriptContextStructures() {
 	mScript->globalObject().setProperty("net", networkManip);
 
 	QScriptValue error = mScript->evaluate("var __returnValue__ = 0;");
-	error = mScript->evaluate("function call_calc() {  __returnValue__ = this.calc(); };");
+	error = mScript->evaluate("function call_calc(__act__) {  __returnValue__ = this.calc(__act__); };");
 	if(mScript->hasUncaughtException()) {
 		reportError(QString("Could not add call_calc() function. ") 
 						+ error.toString());
@@ -258,11 +241,6 @@ void ScriptableActivationFunction::addCustomScriptContextStructures() {
 		reportError(QString("Could not add variable activity: " + error.toString()));
 		//ignore error and go on.
 	}
-	error = mScript->evaluate(QString("var output = 0;"));
-	if(mScript->hasUncaughtException()) {
-		reportError(QString("Could not add variable output: " + error.toString()));
-		//ignore error and go on.
-	}
 	error = mScript->evaluate(QString("var neuron = " + QString::number(ownerId) + ";"));
 	if(mScript->hasUncaughtException()) {
 		reportError(QString("Could not add variable neuron: " + error.toString()));
@@ -271,30 +249,6 @@ void ScriptableActivationFunction::addCustomScriptContextStructures() {
 	
 	
 	defineVariable("eta", mVar1);
-	defineVariable("kappa", mVar2);
-	defineVariable("lambda", mVar3);
-	defineVariable("xi", mVar4);
-	
-// 	error = mScript->evaluate(QString("var alpha = " + QString::number(mVar1->get()) + ";"));
-// 	if(mScript->hasUncaughtException()) {
-// 		reportError(QString("Could not add variable eta: " + error.toString()));
-// 		//ignore error and go on.
-// 	}
-// 	error = mScript->evaluate(QString("var beta = " + QString::number(mVar2->get()) + ";"));
-// 	if(mScript->hasUncaughtException()) {
-// 		reportError(QString("Could not add variable kappa: " + error.toString()));
-// 		//ignore error and go on.
-// 	}
-// 	error = mScript->evaluate(QString("var gamma = " + QString::number(mVar3->get()) + ";"));
-// 	if(mScript->hasUncaughtException()) {
-// 		reportError(QString("Could not add variable lambda: " + error.toString()));
-// 		//ignore error and go on.
-// 	}
-// 	error = mScript->evaluate(QString("var delta = " + QString::number(mVar4->get()) + ";"));
-// 	if(mScript->hasUncaughtException()) {
-// 		reportError(QString("Could not add variable xi: " + error.toString()));
-// 		//ignore error and go on.
-// 	}
 }
 
 /**
@@ -303,7 +257,7 @@ void ScriptableActivationFunction::addCustomScriptContextStructures() {
  * BoolValues will be translated to real bools (true / false).
  * All other Value types will be set as Strings with enclosing parantheses.
  */
-void ScriptableActivationFunction::importVariables() {
+void ScriptableTransferFunction::importVariables() {
 	ScriptingContext::importVariables();
 	
 	if(mScript == 0) {
@@ -313,25 +267,19 @@ void ScriptableActivationFunction::importVariables() {
 	if(mOwner != 0) {
 	
 		mScript->evaluate("activity = " + QString::number(mOwner->getLastActivation()) + ";");
-		mScript->evaluate("output = " + QString::number(mOwner->getLastOutputActivation()) + ";");
 		mScript->evaluate("neuron = " + QString::number(mOwner->getId()) + ";");
 	}
-	
-// 	mScript->evaluate("eta = " + QString::number(mVar1->get()) + ";");
-// 	mScript->evaluate("kappa = " + QString::number(mVar2->get()) + ";");
-// 	mScript->evaluate("lambda = " + QString::number(mVar3->get()) + ";");
-// 	mScript->evaluate("xi = " + QString::number(mVar4->get()) + ";");
 }
 
 
 
-void ScriptableActivationFunction::exportVariables() {
+void ScriptableTransferFunction::exportVariables() {
 	ScriptingContext::exportVariables();
 	
 	if(mScript != 0) {
 		
 		mScript->evaluate(mMainContextName + ".stringBuffer = __returnValue__.toString();");
-		mActivation.setValueFromString(mVariableBuffer);
+		mOutput.setValueFromString(mVariableBuffer);
 
 	}
 }

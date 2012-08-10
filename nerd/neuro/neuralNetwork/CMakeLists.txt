@@ -92,6 +92,7 @@ set(nerd_neuralNetwork_SRCS
 	ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.cpp
 	ActivationFunction/ScriptableActivationFunction.cpp
 	SynapseFunction/ScriptableSynapseFunction.cpp
+	TransferFunction/ScriptableTransferFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
@@ -99,6 +100,7 @@ set(nerd_neuralNetwork_MOC_HDRS
 	ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h
 	ActivationFunction/ScriptableActivationFunction.h
 	SynapseFunction/ScriptableSynapseFunction.h
+	TransferFunction/ScriptableTransferFunction.h
 )
 
 set(nerd_neuralNetwork_RCS
