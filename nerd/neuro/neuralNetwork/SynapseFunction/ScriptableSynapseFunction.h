@@ -41,64 +41,71 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardSynapseFunctions.h"
-#include "Network/Neuro.h"
-#include "SynapseFunction/SimpleSynapseFunction.h"
-#include "SynapseFunction/ASeriesSynapseFunction.h"
-#include "SynapseFunction/AbsoluteValueSynapseFunction.h"
-#include "SynapseFunction/MultiplicativeSynapseFunction.h"
-#include "SynapseFunction/ASeriesMultiSynapseFunction.h"
-#include "SynapseFunction/MSeriesSynapseFunction.h"
-#include "SynapseFunction/MSeriesAdjustableSynapseFunction.h"
-#include "SynapseFunction/SimpleLinkSynapseFunction.h"
-#include "SynapseFunction/Learning/HebbSynapseFunction.h"
-#include "SynapseFunction/Learning/TesauroSynapseFunction.h"
-#include "SynapseFunction/ScriptableSynapseFunction.h"
+
+#ifndef NERDScriptableSynapseFunction_H
+#define NERDScriptableSynapseFunction_H
+
+#include "SynapseFunction/SynapseFunction.h"
+#include <QObject>
+#include <QScriptEngine>
+#include "Value/StringValue.h"
+#include "Value/CodeValue.h"
+#include "Script/ScriptedNetworkManipulator.h"
+#include "Script/ScriptingContext.h"
+#include "Value/DoubleValue.h"
+
 
 namespace nerd {
 
-StandardSynapseFunctions::StandardSynapseFunctions()
-{
-	//Simple synapse function (plain unmodulated synapse strength)
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		SimpleSynapseFunction());
-
-	//ASeries synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ASeriesSynapseFunction());
-
-	//ASeries multipart synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ASeriesMultiSynapseFunction());
+	/**
+	 * ScriptableSynapseFunction
+	 */
+	class ScriptableSynapseFunction : public virtual ScriptingContext, public SynapseFunction {
+		Q_OBJECT
 		
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MSeriesSynapseFunction());
-
-	//Absolute Value synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		AbsoluteValueSynapseFunction());
-
-	//Multiplicative Synapse Function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MultiplicativeSynapseFunction());
-	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MSeriesAdjustableSynapseFunction());
-	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		SimpleLinkSynapseFunction());
-	
-	//Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-	//	HebbSynapseFunction());
-	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		TesauroSynapseFunction()); //Hebb Variants (Hebb, Tesauro, Barto & Sutton)
+		//Q_PROPERTY(QString stringBuffer WRITE setStringBuffer READ getStringBuffer);
 		
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ScriptableSynapseFunction());
-	
+	public:
+		ScriptableSynapseFunction();
+		ScriptableSynapseFunction(const ScriptableSynapseFunction &other);
+		virtual ~ScriptableSynapseFunction();
+
+		virtual SynapseFunction* createCopy() const;
+		virtual QString getName() const;
+		virtual void valueChanged(Value *value);
+		
+		virtual void resetScriptContext();
+
+		virtual void reset(Synapse *owner);
+		virtual double calculate(Synapse *owner);
+
+		virtual bool equals(SynapseFunction *synapseFunction) const;
+		
+	protected:
+		virtual void reportError(const QString &message);
+		virtual void addCustomScriptContextStructures();
+		virtual void importVariables();
+		virtual void exportVariables();
+		
+	private:
+		//QString mVariableBuffer;
+		ScriptedNetworkManipulator *mNetworkManipulator;
+		StringValue *mErrorState;
+		Synapse *mOwner;
+		
+		DoubleValue *mVar1;
+		DoubleValue *mVar2;
+		DoubleValue *mVar3;
+		DoubleValue *mVar4;
+		
+		DoubleValue mOutput;
+		
+		bool mFirstExecution;
+		
+	};
+
 }
 
-}
+#endif
 
 

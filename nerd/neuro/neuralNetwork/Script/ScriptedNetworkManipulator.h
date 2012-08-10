@@ -82,7 +82,7 @@ namespace nerd {
 		QVariantList getSubModules(qlonglong groupId);
 		qlonglong getParentModule(qlonglong elementId);
 
-		QVariantList getInSynapses(qlonglong neuronId, bool excludeDisabledSynapses = false);
+		QVariantList getInSynapses(qlonglong targetId, bool excludeDisabledSynapses = false);
 		QVariantList getOutSynapses(qlonglong neuronId, bool excludeDisabledSynapses = false);
 		qlonglong getSource(qlonglong synapseId);
 		qlonglong getTarget(qlonglong synapseId);

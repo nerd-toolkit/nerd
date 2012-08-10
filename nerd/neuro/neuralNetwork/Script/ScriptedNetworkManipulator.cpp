@@ -306,19 +306,22 @@ qlonglong ScriptedNetworkManipulator::getParentModule(qlonglong elementId) {
  * Returns a list with the ids of all synapses going into the neuron specified by its neuronId.
  * Will return an empty list in case of failure.
  */
-QVariantList ScriptedNetworkManipulator::getInSynapses(qlonglong neuronId, bool excludeDisabledSynapses) {
+QVariantList ScriptedNetworkManipulator::getInSynapses(qlonglong targetId, bool excludeDisabledSynapses) {
 	QVariantList synapseIds;
 
 	if(mNetwork == 0) {
 		return synapseIds;
 	}
 
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
-	if(neuron == 0) {
-		return synapseIds;
+	SynapseTarget *target = NeuralNetwork::selectNeuronById(targetId, mNetwork->getNeurons());
+	if(target == 0) {
+		target = NeuralNetwork::selectSynapseById(targetId, mNetwork->getSynapses());
+		if(target == 0) {
+			return synapseIds;
+		}
 	}
 
-	QList<Synapse*> synapses = neuron->getSynapses();
+	QList<Synapse*> synapses = target->getSynapses();
 	for(int i = 0; i < synapses.size(); i++) {
 		Synapse *synapse = synapses.at(i);
 		if(!excludeDisabledSynapses || synapse->getEnabledValue().get()) {

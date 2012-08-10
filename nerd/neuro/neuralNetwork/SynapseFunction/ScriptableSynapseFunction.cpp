@@ -41,7 +41,7 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "ScriptableActivationFunction.h"
+#include "ScriptableSynapseFunction.h"
 #include <QListIterator>
 #include "Network/Synapse.h"
 #include "Network/Neuron.h"
@@ -53,8 +53,8 @@ using namespace std;
 
 namespace nerd {
 
-ScriptableActivationFunction::ScriptableActivationFunction()
-	: ScriptingContext("Scripted"), ActivationFunction("Scripted"), mErrorState(0), mOwner(0),
+ScriptableSynapseFunction::ScriptableSynapseFunction()
+	: ScriptingContext("Scripted"), SynapseFunction("Scripted"), mErrorState(0), mOwner(0),
 	  mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
@@ -77,7 +77,7 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 	//set default code (make sure that the change is NOT notified, otherwise script may be executed
 	//before this object is fully constructed!
 	mScriptCode->removeValueChangedListener(this);
-	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc() {/**/  return 1.0;/**/}");
+	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc() {/**/  return 0.5;/**/}");
 	mScriptCode->addValueChangedListener(this);
 	mScriptCode->setNotifyAllSetAttempts(true);
 	
@@ -93,9 +93,9 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 	mRestrictToMainExecutionThread = false;
 }
 
-ScriptableActivationFunction::ScriptableActivationFunction(
-			const ScriptableActivationFunction &other)
-	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), ActivationFunction(other),
+ScriptableSynapseFunction::ScriptableSynapseFunction(
+			const ScriptableSynapseFunction &other)
+	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), SynapseFunction(other),
 	  mErrorState(0), mOwner(0), mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
@@ -126,24 +126,24 @@ ScriptableActivationFunction::ScriptableActivationFunction(
 	mRestrictToMainExecutionThread = false;
 }
 
-ScriptableActivationFunction::~ScriptableActivationFunction() {
+ScriptableSynapseFunction::~ScriptableSynapseFunction() {
 	mScriptCode = 0;
 	if(mNetworkManipulator != 0) {
 		delete mNetworkManipulator;
 	}
 }
 
-ActivationFunction* ScriptableActivationFunction::createCopy() const {
-	return new ScriptableActivationFunction(*this);
+SynapseFunction* ScriptableSynapseFunction::createCopy() const {
+	return new ScriptableSynapseFunction(*this);
 }
 
-QString ScriptableActivationFunction::getName() const {
-	return ActivationFunction::getName();
+QString ScriptableSynapseFunction::getName() const {
+	return SynapseFunction::getName();
 }
 
-void ScriptableActivationFunction::valueChanged(Value *value) {
+void ScriptableSynapseFunction::valueChanged(Value *value) {
 	ScriptingContext::valueChanged(value);
-	ActivationFunction::valueChanged(value);
+	SynapseFunction::valueChanged(value);
 	
 	if(value == mScriptCode) {
 		//additionally call the reset function in the script 
@@ -153,15 +153,19 @@ void ScriptableActivationFunction::valueChanged(Value *value) {
 }
 
 
-void ScriptableActivationFunction::resetScriptContext() {
+void ScriptableSynapseFunction::resetScriptContext() {
 	mErrorState->set("");
 	ScriptingContext::resetScriptContext();
 }
 
 
-void ScriptableActivationFunction::reset(Neuron *neuron) {
-	mOwner = neuron;
-	ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(neuron->getOwnerNetwork());
+void ScriptableSynapseFunction::reset(Synapse *owner) {
+	mOwner = owner;
+	
+	ModularNeuralNetwork *network = 0;
+	if(owner != 0 && owner->getSource() != 0) {
+		network = dynamic_cast<ModularNeuralNetwork*>(owner->getSource()->getOwnerNetwork());
+	}
 	if(mNetworkManipulator != 0) {
 		mNetworkManipulator->setNeuralNetwork(network);
 	}
@@ -171,7 +175,7 @@ void ScriptableActivationFunction::reset(Neuron *neuron) {
 }
 
 
-double ScriptableActivationFunction::calculateActivation(Neuron *owner) {
+double ScriptableSynapseFunction::calculate(Synapse *owner) {
 	if(owner == 0) {
 		return 0.0;
 	}
@@ -183,19 +187,20 @@ double ScriptableActivationFunction::calculateActivation(Neuron *owner) {
 
 	executeScriptFunction("call_calc();");
 
-	return mActivation.get();;
+	return mOutput.get();;
 }
 
-bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction) const {
-	if(ActivationFunction::equals(activationFunction) == false) {
+bool ScriptableSynapseFunction::equals(SynapseFunction *synapseFunction) const {
+	if(SynapseFunction::equals(synapseFunction) == false) {
 		return false;
 	}
-	ScriptableActivationFunction *af =
- 			dynamic_cast<ScriptableActivationFunction*>(activationFunction);
+	ScriptableSynapseFunction *af =
+ 			dynamic_cast<ScriptableSynapseFunction*>(synapseFunction);
 
 	if(af == 0) {
 		return false;
 	}
+	
 	if(!mScriptCode->equals(af->mScriptCode)) {
 		return false;
 	}
@@ -217,14 +222,14 @@ bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction
 
 
 
-void ScriptableActivationFunction::reportError(const QString &message) {
+void ScriptableSynapseFunction::reportError(const QString &message) {
 	QString msg = message;
 	mErrorState->set(msg.replace("\n", " | "));
 	Core::log(QString("ScriptFitness [") + getName() + "]: " + message);
 }
 
 
-void ScriptableActivationFunction::addCustomScriptContextStructures() {
+void ScriptableSynapseFunction::addCustomScriptContextStructures() {
 
 	ScriptingContext::addCustomScriptContextStructures();
 	
@@ -252,20 +257,33 @@ void ScriptableActivationFunction::addCustomScriptContextStructures() {
 	if(mOwner != 0) {
 		ownerId = mOwner->getId();
 	}
+	qulonglong sourceId = 0;
+	if(mOwner != 0 && mOwner->getSource() != 0) {
+		sourceId = mOwner->getSource()->getId();
+	}
+	qulonglong targetId = 0;
+	if(mOwner != 0 && mOwner->getTarget() != 0) {
+		targetId = mOwner->getTarget()->getId();
+	}
 	
-	error = mScript->evaluate(QString("var activity = 0;"));
+	error = mScript->evaluate(QString("var weight = 0;"));
 	if(mScript->hasUncaughtException()) {
-		reportError(QString("Could not add variable activity: " + error.toString()));
+		reportError(QString("Could not add variable weight: " + error.toString()));
 		//ignore error and go on.
 	}
-	error = mScript->evaluate(QString("var output = 0;"));
+	error = mScript->evaluate(QString("var synapse = " + QString::number(ownerId) + ";"));
 	if(mScript->hasUncaughtException()) {
-		reportError(QString("Could not add variable output: " + error.toString()));
+		reportError(QString("Could not add variable synapse: " + error.toString()));
 		//ignore error and go on.
 	}
-	error = mScript->evaluate(QString("var neuron = " + QString::number(ownerId) + ";"));
+	error = mScript->evaluate(QString("var source = " + QString::number(sourceId) + ";"));
 	if(mScript->hasUncaughtException()) {
-		reportError(QString("Could not add variable neuron: " + error.toString()));
+		reportError(QString("Could not add variable source: " + error.toString()));
+		//ignore error and go on.
+	}
+	error = mScript->evaluate(QString("var target = " + QString::number(targetId) + ";"));
+	if(mScript->hasUncaughtException()) {
+		reportError(QString("Could not add variable target: " + error.toString()));
 		//ignore error and go on.
 	}
 	
@@ -303,7 +321,7 @@ void ScriptableActivationFunction::addCustomScriptContextStructures() {
  * BoolValues will be translated to real bools (true / false).
  * All other Value types will be set as Strings with enclosing parantheses.
  */
-void ScriptableActivationFunction::importVariables() {
+void ScriptableSynapseFunction::importVariables() {
 	ScriptingContext::importVariables();
 	
 	if(mScript == 0) {
@@ -311,10 +329,21 @@ void ScriptableActivationFunction::importVariables() {
 	}
 	
 	if(mOwner != 0) {
+		
+		qulonglong ownerId = mOwner->getId();
+		qulonglong sourceId = 0;
+		if(mOwner->getSource() != 0) {
+			sourceId = mOwner->getSource()->getId();
+		}
+		qulonglong targetId = 0;
+		if(mOwner->getTarget() != 0) {
+			targetId = mOwner->getTarget()->getId();
+		}
 	
-		mScript->evaluate("activity = " + QString::number(mOwner->getLastActivation()) + ";");
-		mScript->evaluate("output = " + QString::number(mOwner->getLastOutputActivation()) + ";");
-		mScript->evaluate("neuron = " + QString::number(mOwner->getId()) + ";");
+		mScript->evaluate("weight = " + mOwner->getStrengthValue().getValueAsString() + ";");
+		mScript->evaluate("synapse = " + QString::number(ownerId) + ";");
+		mScript->evaluate("source = " + QString::number(sourceId) + ";");
+		mScript->evaluate("target = " + QString::number(targetId) + ";");
 	}
 	
 // 	mScript->evaluate("eta = " + QString::number(mVar1->get()) + ";");
@@ -325,13 +354,13 @@ void ScriptableActivationFunction::importVariables() {
 
 
 
-void ScriptableActivationFunction::exportVariables() {
+void ScriptableSynapseFunction::exportVariables() {
 	ScriptingContext::exportVariables();
 	
 	if(mScript != 0) {
 		
 		mScript->evaluate(mMainContextName + ".stringBuffer = __returnValue__.toString();");
-		mActivation.setValueFromString(mVariableBuffer);
+		mOutput.setValueFromString(mVariableBuffer);
 
 	}
 }
