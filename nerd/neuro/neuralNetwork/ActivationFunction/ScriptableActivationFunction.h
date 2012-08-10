@@ -73,6 +73,8 @@ namespace nerd {
 		virtual ActivationFunction* createCopy() const;
 		virtual QString getName() const;
 		virtual void valueChanged(Value *value);
+		
+		virtual void resetScriptContext();
 
 		virtual void reset(Neuron *owner);
 		virtual double calculateActivation(Neuron *owner);
@@ -80,6 +82,7 @@ namespace nerd {
 		virtual bool equals(ActivationFunction *activationFunction) const;
 		
 	protected:
+		virtual void reportError(const QString &message);
 		virtual void addCustomScriptContextStructures();
 		virtual void importVariables();
 		virtual void exportVariables();
@@ -87,6 +90,7 @@ namespace nerd {
 	private:
 		//QString mVariableBuffer;
 		ScriptedNetworkManipulator *mNetworkManipulator;
+		StringValue *mErrorState;
 		Neuron *mOwner;
 		
 		DoubleValue *mVar1;

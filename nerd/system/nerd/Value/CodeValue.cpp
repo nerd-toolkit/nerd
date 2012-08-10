@@ -47,26 +47,27 @@
 namespace nerd {
 
 CodeValue::CodeValue() 
-	: StringValue ()
+	: StringValue(), mErrorValue(0)
 {
 	setTypeName("SourceCode");
 }
 
 CodeValue::CodeValue(const QString &value) 
-	: StringValue(value)
+	: StringValue(value), mErrorValue(0)
 {
 	setTypeName("SourceCode");
 }
 
 CodeValue::CodeValue(const CodeValue& rhs) 
-	: Object(), StringValue(rhs)
+	: Object(), StringValue(rhs), mErrorValue(0)
 {
+	//Do NOT copy mErrorValue object
 	setTypeName("SourceCode");
 }
 
 
 CodeValue::~CodeValue() {
-
+	//ignore mErrorValue because that value is usually managed elsewhere...
 }
 
 void CodeValue::set(const QString &value) {
@@ -96,6 +97,18 @@ Value* CodeValue::createCopy() {
 
 bool CodeValue::equals(const Value *value) const {
 	return StringValue::equals(value);
+}
+
+/**
+ * Allows to add an optional StringValue that contains the error stream of an 
+ * executed code (e.g. a script in the QScriptEngine)
+ */
+void CodeValue::setErrorValue(StringValue *errorValue) {
+	mErrorValue = errorValue;
+}
+
+StringValue* CodeValue::getErrorValue() const {
+	return mErrorValue;
 }
 
 }

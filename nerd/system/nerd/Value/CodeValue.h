@@ -66,8 +66,14 @@ class CodeValue : public StringValue {
 
 		virtual QString getValueAsString() const;
 		virtual bool setValueFromString(const QString &value);
+		
+		virtual void setErrorValue(StringValue *errorValue);
+		virtual StringValue* getErrorValue() const;
 
 		virtual bool equals(const Value *value) const;
+		
+	private:
+		StringValue *mErrorValue;
 
 };
 

@@ -151,6 +151,9 @@ ScriptEditor::ScriptEditor(const QString &scriptName, bool autoHandleChanges)
  * Destructor.
  */
 ScriptEditor::~ScriptEditor() {
+	if(mErrorValue != 0) {
+		mErrorValue->removeValueChangedListener(this);
+	}
 	mScriptCode = 0;
 	mErrorValue = 0;
 }
@@ -198,6 +201,9 @@ bool ScriptEditor::attachToCodeBase(CodeValue *code) {
 	
 	if(code == 0) {
 		mScriptCode = 0;
+		if(mErrorValue != 0) {
+			mErrorValue->removeValueChangedListener(this);
+		}
 		mErrorValue = 0;
 		mCodeArea->setText("");
 		mCodeArea->setEnabled(false);
@@ -208,7 +214,11 @@ bool ScriptEditor::attachToCodeBase(CodeValue *code) {
 	}
 	else {
 		mScriptCode = code;
+		mErrorValue = mScriptCode->getErrorValue();
 		
+		if(mErrorValue != 0) {
+			mErrorValue->addValueChangedListener(this);
+		}
 		
 		mCodeArea->setText(mScriptCode->get());
 		mCodeArea->setEnabled(true);

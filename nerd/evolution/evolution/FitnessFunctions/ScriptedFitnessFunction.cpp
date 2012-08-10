@@ -98,6 +98,8 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const QString &name)
 	mScriptCode->setValueFromString(QString("") 
 					+ "function reset() {/**/};/**//**/function calc()"
 					+ " {/**/  return fitness + 1;/**/};");
+	
+	mScriptCode->setErrorValue(mErrorState);
 
 	addParameter("Code", mScriptCode);
 	addParameter("FileName", mScriptFileName);
@@ -122,6 +124,8 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const ScriptedFitnessFunction &
 	mScriptCode->addValueChangedListener(this);
 	mScriptFileName = dynamic_cast<FileNameValue*>(getParameter("FileName"));
 	//mScriptFileName->useAsFileName(true);
+	
+	mScriptCode->setErrorValue(mErrorState);
 
 	mBindPhaseEvent = Core::getInstance()->getEventManager()->registerForEvent(
 						NerdConstants::EVENT_NERD_SYSTEM_BIND, this);

@@ -98,7 +98,9 @@ namespace nerd {
 		QString getStringBuffer() const;
 
 		void defineVariable(const QString &name, const QString &valueName, bool reportMissingValues = true);
+		void defineVariable(const QString &name, Value *value);
 		void defineReadOnlyVariable(const QString &name, const QString &valueName, bool reportMissingValues = true);
+		void defineReadOnlyVariable(const QString &name, Value *value);
 		void defineEvent(const QString &name, const QString &eventName, bool reportMissingEvents = true);
 		void definePersistentParameter(const QString &name, const QString &initialValue);
 
@@ -120,12 +122,15 @@ namespace nerd {
 		
 		double random();
 		int randomInt(int max);
+		double sign(double value);
 
 		QString toVector3DString(double x, double y, double z);
 		QString toColorString(double r, double g, double b, double t);
 		double getVectorElement(const QString &vector3DString, int index);
 
 		bool loadValues(const QString &fileName);
+		
+		void error(const QString &message);
 
 	protected:
 		virtual void reportError(const QString &message);

@@ -47,26 +47,29 @@
 #include "Network/Neuron.h"
 #include <iostream>
 #include "Value/CodeValue.h"
+#include "Core/Core.h"
 
 using namespace std;
 
 namespace nerd {
 
 ScriptableActivationFunction::ScriptableActivationFunction()
-	: ScriptingContext("Scripted"), ActivationFunction("Scripted"), mOwner(0),
+	: ScriptingContext("Scripted"), ActivationFunction("Scripted"), mErrorState(0), mOwner(0),
 	  mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
+	
+	mErrorState = new StringValue();
 	
 	mVar1 = new DoubleValue();
 	mVar2 = new DoubleValue();
 	mVar3 = new DoubleValue();
 	mVar4 = new DoubleValue();
 	
-	addObserableOutput("Alpha", mVar1);
-	addObserableOutput("Beta", mVar2);
-	addObserableOutput("Gamma", mVar3);
-	addObserableOutput("Delta", mVar4);
+	addObserableOutput("Eta", mVar1);
+	addObserableOutput("Kappa", mVar2);
+	addObserableOutput("Lambda", mVar3);
+	addObserableOutput("Xi", mVar4);
 	
 	
 	mScriptFileName->removeValueChangedListener(this);
@@ -78,11 +81,13 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 	mScriptCode->addValueChangedListener(this);
 	mScriptCode->setNotifyAllSetAttempts(true);
 	
+	mScriptCode->setErrorValue(mErrorState);
+	
 	addParameter("Code", mScriptCode);
-	addParameter("Alpha", mVar1);
-	addParameter("Beta", mVar2);
-	addParameter("Gamma", mVar3);
-	addParameter("Delta", mVar4);
+	addParameter("Eta", mVar1);
+	addParameter("Kappa", mVar2);
+	addParameter("Lambda", mVar3);
+	addParameter("Xi", mVar4);
 	
 	//allow script executions and reset also in the GUI thread (to react on changes immediately)
 	mRestrictToMainExecutionThread = false;
@@ -91,19 +96,21 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 ScriptableActivationFunction::ScriptableActivationFunction(
 			const ScriptableActivationFunction &other)
 	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), ActivationFunction(other),
-	  mOwner(0), mFirstExecution(true)
+	  mErrorState(0), mOwner(0), mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
-	mVar1 = dynamic_cast<DoubleValue*>(getParameter("Alpha"));
-	mVar2 = dynamic_cast<DoubleValue*>(getParameter("Beta"));
-	mVar3 = dynamic_cast<DoubleValue*>(getParameter("Gamma"));
-	mVar4 = dynamic_cast<DoubleValue*>(getParameter("Delta"));
+	mErrorState = new StringValue();
 	
-	addObserableOutput("Alpha", mVar1);
-	addObserableOutput("Beta", mVar2);
-	addObserableOutput("Gamma", mVar3);
-	addObserableOutput("Delta", mVar4);
+	mVar1 = dynamic_cast<DoubleValue*>(getParameter("Eta"));
+	mVar2 = dynamic_cast<DoubleValue*>(getParameter("Kappa"));
+	mVar3 = dynamic_cast<DoubleValue*>(getParameter("Lambda"));
+	mVar4 = dynamic_cast<DoubleValue*>(getParameter("Xi"));
+	
+	addObserableOutput("Eta", mVar1);
+	addObserableOutput("Kappa", mVar2);
+	addObserableOutput("Lambda", mVar3);
+	addObserableOutput("Xi", mVar4);
 	
 	mScriptFileName->removeValueChangedListener(this);
 	
@@ -112,6 +119,8 @@ ScriptableActivationFunction::ScriptableActivationFunction(
 	delete mScriptCode;
 	mScriptCode = dynamic_cast<CodeValue*>(getParameter("Code"));
 	mScriptCode->setNotifyAllSetAttempts(true);
+	
+	mScriptCode->setErrorValue(mErrorState);
 	
 	//allow script executions and reset also in the GUI thread (to react on changes immediately)
 	mRestrictToMainExecutionThread = false;
@@ -142,6 +151,13 @@ void ScriptableActivationFunction::valueChanged(Value *value) {
 		executeScriptFunction("reset();");
 	}
 }
+
+
+void ScriptableActivationFunction::resetScriptContext() {
+	mErrorState->set("");
+	ScriptingContext::resetScriptContext();
+}
+
 
 void ScriptableActivationFunction::reset(Neuron *neuron) {
 	mOwner = neuron;
@@ -181,6 +197,14 @@ bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction
 		return false;
 	}
 	return true;
+}
+
+
+
+void ScriptableActivationFunction::reportError(const QString &message) {
+	QString msg = message;
+	mErrorState->set(msg.replace("\n", " | "));
+	Core::log(QString("ScriptFitness [") + getName() + "]: " + message);
 }
 
 
@@ -229,26 +253,32 @@ void ScriptableActivationFunction::addCustomScriptContextStructures() {
 		//ignore error and go on.
 	}
 	
-	error = mScript->evaluate(QString("var alpha = " + QString::number(mVar1->get()) + ";"));
-	if(mScript->hasUncaughtException()) {
-		reportError(QString("Could not add variable alpha: " + error.toString()));
-		//ignore error and go on.
-	}
-	error = mScript->evaluate(QString("var beta = " + QString::number(mVar2->get()) + ";"));
-	if(mScript->hasUncaughtException()) {
-		reportError(QString("Could not add variable beta: " + error.toString()));
-		//ignore error and go on.
-	}
-	error = mScript->evaluate(QString("var gamma = " + QString::number(mVar3->get()) + ";"));
-	if(mScript->hasUncaughtException()) {
-		reportError(QString("Could not add variable gamma: " + error.toString()));
-		//ignore error and go on.
-	}
-	error = mScript->evaluate(QString("var delta = " + QString::number(mVar4->get()) + ";"));
-	if(mScript->hasUncaughtException()) {
-		reportError(QString("Could not add variable delta: " + error.toString()));
-		//ignore error and go on.
-	}
+	
+	defineVariable("eta", mVar1);
+	defineVariable("kappa", mVar2);
+	defineVariable("lambda", mVar3);
+	defineVariable("xi", mVar4);
+	
+// 	error = mScript->evaluate(QString("var alpha = " + QString::number(mVar1->get()) + ";"));
+// 	if(mScript->hasUncaughtException()) {
+// 		reportError(QString("Could not add variable eta: " + error.toString()));
+// 		//ignore error and go on.
+// 	}
+// 	error = mScript->evaluate(QString("var beta = " + QString::number(mVar2->get()) + ";"));
+// 	if(mScript->hasUncaughtException()) {
+// 		reportError(QString("Could not add variable kappa: " + error.toString()));
+// 		//ignore error and go on.
+// 	}
+// 	error = mScript->evaluate(QString("var gamma = " + QString::number(mVar3->get()) + ";"));
+// 	if(mScript->hasUncaughtException()) {
+// 		reportError(QString("Could not add variable lambda: " + error.toString()));
+// 		//ignore error and go on.
+// 	}
+// 	error = mScript->evaluate(QString("var delta = " + QString::number(mVar4->get()) + ";"));
+// 	if(mScript->hasUncaughtException()) {
+// 		reportError(QString("Could not add variable xi: " + error.toString()));
+// 		//ignore error and go on.
+// 	}
 }
 
 /**
@@ -271,10 +301,10 @@ void ScriptableActivationFunction::importVariables() {
 		mScript->evaluate("neuron = " + QString::number(mOwner->getId()) + ";");
 	}
 	
-	mScript->evaluate("alpha = " + QString::number(mVar1->get()) + ";");
-	mScript->evaluate("beta = " + QString::number(mVar2->get()) + ";");
-	mScript->evaluate("gamma = " + QString::number(mVar3->get()) + ";");
-	mScript->evaluate("delta = " + QString::number(mVar4->get()) + ";");
+// 	mScript->evaluate("eta = " + QString::number(mVar1->get()) + ";");
+// 	mScript->evaluate("kappa = " + QString::number(mVar2->get()) + ";");
+// 	mScript->evaluate("lambda = " + QString::number(mVar3->get()) + ";");
+// 	mScript->evaluate("xi = " + QString::number(mVar4->get()) + ";");
 }
 
 

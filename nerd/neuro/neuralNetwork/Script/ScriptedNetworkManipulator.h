@@ -82,15 +82,18 @@ namespace nerd {
 		QVariantList getSubModules(qlonglong groupId);
 		qlonglong getParentModule(qlonglong elementId);
 
-		QVariantList getInSynapses(qlonglong neuronId);
-		QVariantList getOutSynapses(qlonglong neuronId);
+		QVariantList getInSynapses(qlonglong neuronId, bool excludeDisabledSynapses = false);
+		QVariantList getOutSynapses(qlonglong neuronId, bool excludeDisabledSynapses = false);
 		qlonglong getSource(qlonglong synapseId);
 		qlonglong getTarget(qlonglong synapseId);
 
 		double getBias(qlonglong neuronId);
 		double getWeight(qlonglong synapseId);
+		double getSynapseOutput(qlonglong synapseId);
 		double getActivation(qlonglong neuronId);
+		double getLastActivation(qlonglong neuronId);
 		double getOutput(qlonglong neuronId);
+		double getLastOutput(qlonglong neuronId);
 		QVariantList getPosition(qlonglong objectId);
 		QVariantList getProperties(qlonglong objectId);
 		QString getProperty(qlonglong objectId, const QString &name);
@@ -114,6 +117,23 @@ namespace nerd {
 		bool removeNeuron(qlonglong neuronId);
 		bool removeSynapse(qlonglong synapseId);
 		bool removeNeuronGroup(qlonglong groupId);
+		
+		bool setTransferFunction(qlonglong neuronId, const QString &transferFunctionName);
+		QString getTransferFunctionName(qlonglong neuronId);
+		bool setActivationFunction(qlonglong neuronId, const QString &activationFunctionName);
+		QString getActivationFunctionName(qlonglong neuronId);
+		bool setSynapseFunction(qlonglong synapseId, const QString &synapseFunctionName);
+		QString getSynapseFunctionName(qlonglong synapseId);
+		
+		bool setTransferFunctionParameter(qlonglong neuronId, const QString &parameterName, const QString &value);
+		QString getTransferFunctionParameter(qlonglong neuronId, const QString &parameterName);
+		bool setActivationFunctionParameter(qlonglong neuronId, const QString &parameterName, const QString &value);
+		QString getActivationFunctionParameter(qlonglong neuronId, const QString &parameterName);
+		bool setSynapseFunctionParameter(qlonglong synapseId, const QString &parameterName, const QString &value);
+		QString getSynapseFunctionParameter(qlonglong synapseId, const QString &parameterName);
+		
+		double applyTransferFunction(qlonglong neuronId, double activity);
+		double tf(qlonglong neuronId, double activity);
 		
 		//TODO
 		//set and get TF, AF, SF

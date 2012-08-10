@@ -306,7 +306,7 @@ qlonglong ScriptedNetworkManipulator::getParentModule(qlonglong elementId) {
  * Returns a list with the ids of all synapses going into the neuron specified by its neuronId.
  * Will return an empty list in case of failure.
  */
-QVariantList ScriptedNetworkManipulator::getInSynapses(qlonglong neuronId) {
+QVariantList ScriptedNetworkManipulator::getInSynapses(qlonglong neuronId, bool excludeDisabledSynapses) {
 	QVariantList synapseIds;
 
 	if(mNetwork == 0) {
@@ -320,7 +320,10 @@ QVariantList ScriptedNetworkManipulator::getInSynapses(qlonglong neuronId) {
 
 	QList<Synapse*> synapses = neuron->getSynapses();
 	for(int i = 0; i < synapses.size(); i++) {
-		synapseIds.append(synapses.at(i)->getId());
+		Synapse *synapse = synapses.at(i);
+		if(!excludeDisabledSynapses || synapse->getEnabledValue().get()) {
+			synapseIds.append(synapses.at(i)->getId());
+		}
 	}
 	return synapseIds;
 }
@@ -329,7 +332,7 @@ QVariantList ScriptedNetworkManipulator::getInSynapses(qlonglong neuronId) {
  * Returns a list with the ids of all synapses going out of the neuron specified by its neuronId.
  * Will return an empty list in case of failure.
  */
-QVariantList ScriptedNetworkManipulator::getOutSynapses(qlonglong neuronId) {
+QVariantList ScriptedNetworkManipulator::getOutSynapses(qlonglong neuronId, bool excludeDisabledSynapses) {
 	QVariantList synapseIds;
 
 	if(mNetwork == 0) {
@@ -343,7 +346,10 @@ QVariantList ScriptedNetworkManipulator::getOutSynapses(qlonglong neuronId) {
 
 	QList<Synapse*> synapses = neuron->getOutgoingSynapses();
 	for(int i = 0; i < synapses.size(); i++) {
-		synapseIds.append(synapses.at(i)->getId());
+		Synapse *synapse = synapses.at(i);
+		if(!excludeDisabledSynapses || synapse->getEnabledValue().get()) {
+			synapseIds.append(synapses.at(i)->getId());
+		}
 	}
 	return synapseIds;
 }
@@ -416,6 +422,22 @@ double ScriptedNetworkManipulator::getWeight(qlonglong synapseId) {
 	return synapse->getStrengthValue().get();
 }
 
+
+/**
+ * Executes the calculateActivation() funciton of a synapses and returns its result.
+ * Will return 0 in case of a failure...
+ */
+double ScriptedNetworkManipulator::getSynapseOutput(qlonglong synapseId) {
+	if(mNetwork == 0) {
+		return 0;
+	}
+	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	if(synapse == 0) {
+		return 0;
+	}
+	return synapse->calculateActivation();
+}
+
 /**
  * Returns the current activation of a neuron.
  * Will return 0 in case of failure.
@@ -431,6 +453,24 @@ double ScriptedNetworkManipulator::getActivation(qlonglong neuronId) {
 	return neuron->getActivationValue().get();
 }
 
+
+/**
+ * Returns the last stored activation of a neuron.
+ * Will return 0 in case of failure.
+ */
+double ScriptedNetworkManipulator::getLastActivation(qlonglong neuronId) {
+	if(mNetwork == 0) {
+		return 0;
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0) {
+		return 0;
+	}
+	return neuron->getLastActivation();
+}
+
+
+
 /**
  * Returns the current output of a neuron.
  * Will return 0 in case of failure.
@@ -445,6 +485,23 @@ double ScriptedNetworkManipulator::getOutput(qlonglong neuronId) {
 	}
 	return neuron->getOutputActivationValue().get();
 }
+
+
+/**
+ * Returns the last stored output of a neuron.
+ * Will return 0 in case of failure.
+ */
+double ScriptedNetworkManipulator::getLastOutput(qlonglong neuronId) {
+	if(mNetwork == 0) {
+		return 0;
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0) {
+		return 0;
+	}
+	return neuron->getLastOutputActivation();
+}
+
 
 /**
  * Returns a 3-dimensional list with the x,y,z coordinates of the network object with the given objectId.
@@ -896,6 +953,230 @@ bool ScriptedNetworkManipulator::removeNeuronGroup(qlonglong groupId) {
 		//delete group;
 	}
 	return ok;
+}
+
+
+
+bool ScriptedNetworkManipulator::setTransferFunction(qlonglong neuronId, const QString &transferFunctionName) {
+	if(mNetwork == 0) {
+		return false;
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0) {
+		return false;
+	}
+	QList<TransferFunction*> transferFunctions = 
+				Neuro::getNeuralNetworkManager()->getTransferFunctionPrototypes();
+	for(QListIterator<TransferFunction*> i(transferFunctions); i.hasNext();) {
+		TransferFunction *tf = i.next();
+		if(tf->getName() == transferFunctionName) {
+			neuron->setTransferFunction(*tf);
+			return true;
+		}
+	}
+	return false;
+}
+
+
+QString ScriptedNetworkManipulator::getTransferFunctionName(qlonglong neuronId) {
+	if(mNetwork == 0) {
+		return "";
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0 || neuron->getTransferFunction() == 0) {
+		return "";
+	}
+	return neuron->getTransferFunction()->getName();
+}
+
+
+bool ScriptedNetworkManipulator::setActivationFunction(qlonglong neuronId, const QString &activationFunctionName) {
+	if(mNetwork == 0) {
+		return false;
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0) {
+		return false;
+	}
+	QList<ActivationFunction*> activationFunctions = 
+				Neuro::getNeuralNetworkManager()->getActivationFunctionPrototypes();
+	for(QListIterator<ActivationFunction*> i(activationFunctions); i.hasNext();) {
+		ActivationFunction *af = i.next();
+		if(af->getName() == activationFunctionName) {
+			neuron->setActivationFunction(*af);
+			return true;
+		}
+	}
+	return false;
+}
+
+
+QString ScriptedNetworkManipulator::getActivationFunctionName(qlonglong neuronId) {
+	if(mNetwork == 0) {
+		return "";
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0 || neuron->getActivationFunction() == 0) {
+		return "";
+	}
+	return neuron->getActivationFunction()->getName();
+}
+
+
+bool ScriptedNetworkManipulator::setSynapseFunction(qlonglong synapseId, const QString &synapseFunctionName) {
+	if(mNetwork == 0) {
+		return false;
+	}
+	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	if(synapse == 0) {
+		return false;
+	}
+	//check if there is a prototype with the matching name
+	QList<SynapseFunction*> synapseFunctions = 
+				Neuro::getNeuralNetworkManager()->getSynapseFunctionPrototypes();
+	for(QListIterator<SynapseFunction*> i(synapseFunctions); i.hasNext();) {
+		SynapseFunction *sf = i.next();
+		if(sf->getName() == synapseFunctionName) {
+			synapse->setSynapseFunction(*sf);
+			return true;
+		}
+	}
+	return false;
+}
+
+
+QString ScriptedNetworkManipulator::getSynapseFunctionName(qlonglong synapseId) {
+	if(mNetwork == 0) {
+		return "";
+	}
+	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	if(synapse == 0 || synapse->getSynapseFunction() == 0) {
+		return "";
+	}
+	return synapse->getSynapseFunction()->getName();
+}
+
+
+bool ScriptedNetworkManipulator::setTransferFunctionParameter(
+				qlonglong neuronId, const QString &parameterName, const QString &value)
+{
+	if(mNetwork == 0) {
+		return "";
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0 || neuron->getTransferFunction() == 0) {
+		return "";
+	}
+	Value *param = neuron->getTransferFunction()->getParameter(parameterName);
+	if(param == 0) {
+		return "";
+	}
+	return param->setValueFromString(value);
+}
+
+
+QString ScriptedNetworkManipulator::getTransferFunctionParameter(
+				qlonglong neuronId, const QString &parameterName)
+{
+	if(mNetwork == 0) {
+		return "";
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0 || neuron->getTransferFunction() == 0) {
+		return "";
+	}
+	Value *param = neuron->getTransferFunction()->getParameter(parameterName);
+	if(param == 0) {
+		return "";
+	}
+	return param->getValueAsString();
+}
+
+
+bool ScriptedNetworkManipulator::setActivationFunctionParameter(
+				qlonglong neuronId, const QString &parameterName, const QString &value)
+{
+	if(mNetwork == 0) {
+		return false;
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0 || neuron->getActivationFunction() == 0) {
+		return false;
+	}
+	Value *param = neuron->getActivationFunction()->getParameter(parameterName);
+	if(param == 0) {
+		return false;
+	}
+	return param->setValueFromString(value);
+}
+
+
+QString ScriptedNetworkManipulator::getActivationFunctionParameter(
+				qlonglong neuronId, const QString &parameterName)
+{
+	if(mNetwork == 0) {
+		return "";
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0 || neuron->getActivationFunction() == 0) {
+		return "";
+	}
+	Value *param = neuron->getActivationFunction()->getParameter(parameterName);
+	if(param == 0) {
+		return "";
+	}
+	return param->getValueAsString();
+}
+
+
+bool ScriptedNetworkManipulator::setSynapseFunctionParameter(
+				qlonglong synapseId, const QString &parameterName, const QString &value)
+{
+	if(mNetwork == 0) {
+		return "";
+	}
+	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	if(synapse == 0 || synapse->getSynapseFunction() == 0) {
+		return "";
+	}
+	Value *param = synapse->getSynapseFunction()->getParameter(parameterName);
+	if(param == 0) {
+		return false;
+	}
+	return param->setValueFromString(value);
+}
+
+
+QString ScriptedNetworkManipulator::getSynapseFunctionParameter(
+				qlonglong synapseId, const QString &parameterName)
+{
+	if(mNetwork == 0) {
+		return "";
+	}
+	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	if(synapse == 0 || synapse->getSynapseFunction() == 0) {
+		return "";
+	}
+	Value *param = synapse->getSynapseFunction()->getParameter(parameterName);
+	if(param == 0) {
+		return "";
+	}
+	return param->getValueAsString();
+}
+
+double ScriptedNetworkManipulator::applyTransferFunction(qlonglong neuronId, double activity) {
+	if(mNetwork == 0) {
+		return 0.0;
+	}
+	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	if(neuron == 0 || neuron->getTransferFunction() == 0) {
+		return 0.0;
+	}
+	return neuron->getTransferFunction()->transferActivation(activity, neuron);
+}
+
+double ScriptedNetworkManipulator::tf(qlonglong neuronId, double activity) {
+	return applyTransferFunction(neuronId, activity);
 }
 
 

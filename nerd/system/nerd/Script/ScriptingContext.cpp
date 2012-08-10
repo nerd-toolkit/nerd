@@ -62,6 +62,7 @@
 #include <QDir>
 #include <QTextStream>
 #include "Math/Random.h"
+#include <Math/Math.h>
 #include <iostream>
 #include <QDate>
 #include <QTime>
@@ -507,6 +508,13 @@ void ScriptingContext::defineVariable(const QString &name, const QString &valueN
 	mReadVariables.insert(name, value);
 }
 
+void ScriptingContext::defineVariable(const QString &name, Value *value) {
+	if(value != 0) {
+		mWrittenVariables.insert(name, value);
+		mReadVariables.insert(name, value);
+	}
+}
+
 void ScriptingContext::defineReadOnlyVariable(const QString &name, const QString &valueName, 
 						bool reportMissingValues)
 {
@@ -524,6 +532,12 @@ void ScriptingContext::defineReadOnlyVariable(const QString &name, const QString
 
 	//Add only as read variables (do not write changed variables back
 	mReadVariables.insert(name, value);
+}
+
+void ScriptingContext::defineReadOnlyVariable(const QString &name, Value *value) {
+	if(value != 0) {
+		mReadVariables.insert(name, value);
+	}
 }
 
 /**
@@ -790,6 +804,11 @@ int ScriptingContext::randomInt(int max) {
 }
 
 
+double ScriptingContext::sign(double value) {
+	return Math::sign(value);
+}
+
+
 QString ScriptingContext::toVector3DString(double x, double y, double z) {
 	return QString("(") + QString::number(x) + "," + QString::number(y) + "," + QString::number(z) + ")";
 }
@@ -817,6 +836,15 @@ double ScriptingContext::getVectorElement(const QString &vector3DString, int ind
 
 bool ScriptingContext::loadValues(const QString &fileName) {
 	return Core::getInstance()->getValueManager()->loadValues(fileName);
+}
+
+
+/**
+ * Slot version of the reportError method.
+ * This function is avialable in the scripts via nerd.error("text");
+ */
+void ScriptingContext::error(const QString &message) {
+	reportError(message);
 }
 
 /**

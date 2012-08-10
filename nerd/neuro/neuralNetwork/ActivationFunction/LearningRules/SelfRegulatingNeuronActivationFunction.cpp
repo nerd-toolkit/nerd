@@ -439,7 +439,7 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 		
 		//if source neuron is NOT a self-regulating neuron with a valid eta,
 		//then treat it like a neuron with eta=1
-		double eta = 1;		
+		double eta = 1.0;		
 		if(af != 0) {
 			eta = af->mEta->get();
 		}
@@ -469,7 +469,8 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 				
 				synapse->getStrengthValue().set(newWeight);
 			}
-			act = sign * eta * sourceNeuron->getOutputActivationValue().get();
+			//act = sign * eta * sourceNeuron->getOutputActivationValue().get();
+			act = sign * eta * sourceNeuron->getLastOutputActivation();
 		}
 		else {
 			act = synapse->calculateActivation();

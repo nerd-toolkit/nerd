@@ -89,6 +89,7 @@ bool StringValue::setValueFromString(const QString &value) {
 	return true;
 }
 
+
 // void StringValue::useAsFileName(bool useAsFilename) {
 // 	mUseAsFileName = useAsFilename;
 // }
