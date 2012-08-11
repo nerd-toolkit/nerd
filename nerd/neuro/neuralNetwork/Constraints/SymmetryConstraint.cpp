@@ -784,7 +784,7 @@ bool SymmetryConstraint::groupIdsChanged(QHash<qulonglong, qulonglong> changedId
 	return true;
 }
 
-bool SymmetryConstraint::equals(GroupConstraint *constraint) {
+bool SymmetryConstraint::equals(GroupConstraint *constraint) const {
 	//TODO
 	constraint = constraint; //Just to get rid of the compile warning until this method is implemented.
 

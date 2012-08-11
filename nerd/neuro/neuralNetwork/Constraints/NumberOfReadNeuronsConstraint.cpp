@@ -133,7 +133,7 @@ bool NumberOfReadNeuronsConstraint::applyConstraint(NeuronGroup *owner, CommandE
 	return true;
 }
 
-bool NumberOfReadNeuronsConstraint::equals(GroupConstraint *constraint) {
+bool NumberOfReadNeuronsConstraint::equals(GroupConstraint *constraint) const {
 	if(GroupConstraint::equals(constraint) == false) {
 		return false;
 	}

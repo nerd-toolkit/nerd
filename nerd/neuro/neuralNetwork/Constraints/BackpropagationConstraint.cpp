@@ -216,7 +216,7 @@ bool BackpropagationConstraint::applyConstraint(NeuronGroup *owner, CommandExecu
 }
 
 		
-bool BackpropagationConstraint::equals(GroupConstraint *constraint) {
+bool BackpropagationConstraint::equals(GroupConstraint *constraint) const {
 	if(!GroupConstraint::equals(constraint)) {
 		return false;
 	}

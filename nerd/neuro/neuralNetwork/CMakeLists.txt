@@ -93,6 +93,7 @@ set(nerd_neuralNetwork_SRCS
 	ActivationFunction/ScriptableActivationFunction.cpp
 	SynapseFunction/ScriptableSynapseFunction.cpp
 	TransferFunction/ScriptableTransferFunction.cpp
+	Constraints/ScriptableConstraint.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
@@ -101,6 +102,7 @@ set(nerd_neuralNetwork_MOC_HDRS
 	ActivationFunction/ScriptableActivationFunction.h
 	SynapseFunction/ScriptableSynapseFunction.h
 	TransferFunction/ScriptableTransferFunction.h
+	Constraints/ScriptableConstraint.h
 )
 
 set(nerd_neuralNetwork_RCS

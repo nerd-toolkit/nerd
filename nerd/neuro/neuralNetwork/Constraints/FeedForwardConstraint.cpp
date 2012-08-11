@@ -155,7 +155,7 @@ bool FeedForwardConstraint::applyConstraint(NeuronGroup *owner,
 	return !networkChanged;
 }
 		
-bool FeedForwardConstraint::equals(GroupConstraint *constraint) {
+bool FeedForwardConstraint::equals(GroupConstraint *constraint) const {
 	if(!GroupConstraint::equals(constraint)) {
 		return false;
 	}

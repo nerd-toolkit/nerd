@@ -251,7 +251,7 @@ bool SynchronizeTagsConstraint::applyConstraint(NeuronGroup *owner,
 	return !networkChanged;
 }
 		
-bool SynchronizeTagsConstraint::equals(GroupConstraint *constraint) {
+bool SynchronizeTagsConstraint::equals(GroupConstraint *constraint) const {
 	if(!GroupConstraint::equals(constraint)) {
 		return false;
 	}

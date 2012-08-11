@@ -319,7 +319,7 @@ bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecuto
 }
 
 
-bool RandomizationConstraint::equals(GroupConstraint *constraint) {
+bool RandomizationConstraint::equals(GroupConstraint *constraint) const {
 	if(GroupConstraint::equals(constraint) == false) {
 		return false;
 	}

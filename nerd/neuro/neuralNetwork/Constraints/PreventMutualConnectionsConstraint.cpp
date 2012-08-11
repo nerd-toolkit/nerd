@@ -123,7 +123,7 @@ bool PreventMutualConnectionsConstraint::applyConstraint(NeuronGroup *owner,
 	return !networkChanged;
 }
 		
-bool PreventMutualConnectionsConstraint::equals(GroupConstraint *constraint) {
+bool PreventMutualConnectionsConstraint::equals(GroupConstraint *constraint) const {
 	if(!GroupConstraint::equals(constraint)) {
 		return false;
 	}

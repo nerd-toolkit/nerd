@@ -590,7 +590,7 @@ bool ConnectionSymmetryConstraint::groupIdsChanged(QHash<qulonglong, qulonglong>
 }
 
 		
-bool ConnectionSymmetryConstraint::equals(GroupConstraint *constraint) {
+bool ConnectionSymmetryConstraint::equals(GroupConstraint *constraint) const {
 	constraint = constraint; //just to get rid of the compiler warning.
 	//TODO
 	return false;

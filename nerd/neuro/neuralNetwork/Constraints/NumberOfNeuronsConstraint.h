@@ -67,7 +67,7 @@ namespace nerd {
 		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor,
 									 QList<NeuralNetworkElement*> &trashcan);
 		
-		virtual bool equals(GroupConstraint *constraint);
+		virtual bool equals(GroupConstraint *constraint) const;
 
 	private:
 		IntValue *mMinNumberOfNeurons;

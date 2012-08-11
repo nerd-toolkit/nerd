@@ -92,7 +92,7 @@ namespace nerd {
 
 		virtual bool groupIdsChanged(QHash<qulonglong, qulonglong> changedIds);
 		
-		virtual bool equals(GroupConstraint *constraint);
+		virtual bool equals(GroupConstraint *constraint) const;
 
 		Neuron* getMatchingOwnerNeuron(Neuron *neuron);
 		Neuron* getMatchingReferenceNeuron(Neuron *neuron);

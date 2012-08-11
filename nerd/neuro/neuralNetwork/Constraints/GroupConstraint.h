@@ -86,15 +86,15 @@ namespace nerd {
 
 		virtual bool groupIdsChanged(QHash<qulonglong, qulonglong> changedIds);
 
-		QString getErrorMessage() const;
-		void setErrorMessage(const QString &message);
+		virtual QString getErrorMessage() const;
+		virtual void setErrorMessage(const QString &message);
 		
-		QString getWarningMessage() const;
-		void setWarningMessage(const QString &message);
+		virtual QString getWarningMessage() const;
+		virtual void setWarningMessage(const QString &message);
 
 		NeuronGroup* getOwnerGroup() const;
 		
-		virtual bool equals(GroupConstraint *constraint);
+		virtual bool equals(GroupConstraint *constraint) const;
 
 	protected:	
 		qulonglong mId;

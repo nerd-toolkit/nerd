@@ -157,7 +157,7 @@ void GroupConstraint::setWarningMessage(const QString &message) {
 
 
 
-bool GroupConstraint::equals(GroupConstraint *constraint) {
+bool GroupConstraint::equals(GroupConstraint *constraint) const {
 	if(constraint == 0) {
 		return false;
 	}

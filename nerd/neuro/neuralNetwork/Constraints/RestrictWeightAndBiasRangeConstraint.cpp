@@ -240,7 +240,7 @@ bool RestrictWeightAndBiasRangeConstraint::applyConstraint(NeuronGroup *owner,
 	return !networkChanged;
 }
 		
-bool RestrictWeightAndBiasRangeConstraint::equals(GroupConstraint *constraint) {
+bool RestrictWeightAndBiasRangeConstraint::equals(GroupConstraint *constraint) const {
 	if(!GroupConstraint::equals(constraint)) {
 		return false;
 	}

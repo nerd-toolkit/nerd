@@ -42,111 +42,81 @@
  ***************************************************************************/
 
 
+#ifndef NERDScriptableConstraint_H
+#define NERDScriptableConstraint_H
 
-#include "SimpleScriptedConstraint.h"
-#include <iostream>
-#include <QList>
-#include "Core/Core.h"
-#include "Math/Random.h"
-#include "Network/Neuron.h"
-#include "Network/Synapse.h"
-#include "ActivationFunction/ActivationFunction.h"
-#include "TransferFunction/TransferFunction.h"
-#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
+#include "Constraints/GroupConstraint.h"
+#include <QObject>
+#include <QScriptEngine>
+#include "Value/StringValue.h"
+#include "Value/CodeValue.h"
+#include "Script/ScriptedNetworkManipulator.h"
+#include "Script/ScriptingContext.h"
+#include "Value/DoubleValue.h"
 
-
-using namespace std;
 
 namespace nerd {
 
+	/**
+	 * ScriptableConstraint
+	 */
+	class ScriptableConstraint : public virtual ScriptingContext, public GroupConstraint {
+		Q_OBJECT
 
-/**
- * Constructs a new SimpleScriptedConstraint.
- */
-SimpleScriptedConstraint::SimpleScriptedConstraint()
-	: GroupConstraint("MaxNumberOfNeurons"), mScriptCode(0)
-{
-	mScriptCode = new CodeValue("");
-	
-	addParameter("Script", mScriptCode);
-}
+	public:
+		ScriptableConstraint();
+		ScriptableConstraint(const ScriptableConstraint &other);
+		virtual ~ScriptableConstraint();
 
+		virtual GroupConstraint* createCopy() const;
+		virtual QString getName() const;
+		virtual void valueChanged(Value *value);
+		
+		virtual void reset();
+		virtual void resetScriptContext();
 
-/**
- * Copy constructor. 
- * 
- * @param other the SimpleScriptedConstraint object to copy.
- */
-SimpleScriptedConstraint::SimpleScriptedConstraint(const SimpleScriptedConstraint &other)
-	: Object(), ValueChangedListener(), GroupConstraint(other), mScriptCode(0)
-{
-	mScriptCode = dynamic_cast<CodeValue*>(getParameter("Script"));
-}
+		virtual bool isValid(NeuronGroup *owner);
+		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor, 
+									 QList<NeuralNetworkElement*> &trashcan);
+		
+		virtual bool applyConstraint();
+		
+// 		virtual void reset(Neuron *owner);
+// 		virtual double calculateActivation(Neuron *owner);
 
-/**
- * Destructor.
- */
-SimpleScriptedConstraint::~SimpleScriptedConstraint() {
-}
-
-GroupConstraint* SimpleScriptedConstraint::createCopy() const {
-	return new SimpleScriptedConstraint(*this);
-}
-
-bool SimpleScriptedConstraint::isValid(NeuronGroup*) {
-	return true;
-}
-
-
-bool SimpleScriptedConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
-												QList<NeuralNetworkElement*>&) 
-{
-
-	if(owner == 0 || owner->getOwnerNetwork() == 0) {
-		mErrorMessage = "Owner ModularNeuralNetwork or owner NeuronGroup has been NULL";
-		return false;
-	}
-
-	//ModularNeuralNetwork *net = owner->getOwnerNetwork();
-
-	NeuroModule *ownerModule = dynamic_cast<NeuroModule*>(owner);
-
-	QList<Neuron*> neurons = owner->getNeurons();
-	if(ownerModule != 0) {
-		neurons = ownerModule->getAllEnclosedNeurons();
-	}
-
-	mScript = new QScriptEngine();
-	QString scriptCode = mScriptCode->get();
-	
-	
-
-	return true;
-}
-
-
-bool SimpleScriptedConstraint::equals(GroupConstraint *constraint) const {
-	if(GroupConstraint::equals(constraint) == false) {
-		return false;
-	}
-	SimpleScriptedConstraint *c = dynamic_cast<SimpleScriptedConstraint*>(constraint);
-	if(c == 0) {
-		return false;
-	}
-	if(!mScriptCode->equals(c->mScriptCode)) {
-		return false;
-	}
-	return true;
-}
-
-
-
-
-
-
-
+		virtual bool equals(GroupConstraint *constraint) const;
+		
+		virtual void setErrorMessage(const QString &message);
+		virtual void setWarningMessage(const QString &message);
+		
+	protected:
+		virtual void reportError(const QString &message);
+		virtual void addCustomScriptContextStructures();
+		virtual void importVariables();
+		virtual void exportVariables();
+		
+	private:
+		ScriptedNetworkManipulator *mNetworkManipulator;
+		StringValue *mErrorState;
+		NeuronGroup *mOwner;
+		
+		DoubleValue *mVar1;
+		DoubleValue *mVar2;
+		StringValue *mVar3;
+		StringValue *mVar4;
+		
+		BoolValue mReturnValue;
+		
+		bool mFirstExecution;
+		
+		BoolValue *mActiveConstraint;
+		StringValue *mNameValue;
+		
+		
+	};
 
 }
 
+#endif
 
 

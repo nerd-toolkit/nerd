@@ -264,7 +264,7 @@ QString WeightAndBiasCalculatorConstraint::normalizeAccuracy(double value) {
 	return QString::number(value, 'f', 6);
 }
 		
-bool WeightAndBiasCalculatorConstraint::equals(GroupConstraint *constraint) {
+bool WeightAndBiasCalculatorConstraint::equals(GroupConstraint *constraint) const {
 	if(!GroupConstraint::equals(constraint)) {
 		return false;
 	}

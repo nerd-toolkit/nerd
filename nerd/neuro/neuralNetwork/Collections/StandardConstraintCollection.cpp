@@ -55,6 +55,7 @@
 #include "Constraints/RestrictWeightAndBiasRangeConstraint.h"
 #include "Constraints/SynchronizeTagsConstraint.h"
 #include "Constraints/RandomizationConstraint.h"
+#include "Constraints/ScriptableConstraint.h"
 
 namespace nerd {
 
@@ -75,6 +76,7 @@ StandardConstraintCollection::StandardConstraintCollection()
 	cm->addConstraintPrototype(new RestrictWeightAndBiasRangeConstraint());
 	cm->addConstraintPrototype(new SynchronizeTagsConstraint());
 	cm->addConstraintPrototype(new RandomizationConstraint());
+	cm->addConstraintPrototype(new ScriptableConstraint());
 }
 
 StandardConstraintCollection::~StandardConstraintCollection() {

@@ -183,7 +183,7 @@ bool NumberOfNeuronsConstraint::applyConstraint(NeuronGroup *owner, CommandExecu
 }
 
 
-bool NumberOfNeuronsConstraint::equals(GroupConstraint *constraint) {
+bool NumberOfNeuronsConstraint::equals(GroupConstraint *constraint) const {
 	if(GroupConstraint::equals(constraint) == false) {
 		return false;
 	}

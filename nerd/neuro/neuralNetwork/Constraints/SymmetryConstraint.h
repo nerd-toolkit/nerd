@@ -90,7 +90,7 @@ namespace nerd {
 
 		virtual bool groupIdsChanged(QHash<qulonglong, qulonglong> changedIds);
 		
-		virtual bool equals(GroupConstraint *constraint);
+		virtual bool equals(GroupConstraint *constraint) const;
 
 		bool getGroupOrigins(Vector3D &origin1, Vector3D &origin2);
 		bool setElementPosition(NeuralNetworkElement *element, const Vector3D &origin, const Vector3D &pos);
