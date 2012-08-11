@@ -48,6 +48,7 @@
 #include <iostream>
 #include "Value/CodeValue.h"
 #include "Core/Core.h"
+#include <NerdConstants.h>
 
 using namespace std;
 
@@ -55,7 +56,7 @@ namespace nerd {
 
 ScriptableConstraint::ScriptableConstraint()
 	: ScriptingContext("Scripted"), GroupConstraint("Scripted"), mErrorState(0), mOwner(0),
-	  mFirstExecution(true)
+	  mFirstExecution(true), mNextStepEvent(0)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
@@ -93,10 +94,9 @@ ScriptableConstraint::ScriptableConstraint()
 	mRestrictToMainExecutionThread = false;
 }
 
-ScriptableConstraint::ScriptableConstraint(
-			const ScriptableConstraint &other)
+ScriptableConstraint::ScriptableConstraint(const ScriptableConstraint &other)
 	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), GroupConstraint(other),
-	  mErrorState(0), mOwner(0), mFirstExecution(true)
+	  mErrorState(0), mOwner(0), mFirstExecution(true), mNextStepEvent(0)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
@@ -122,6 +122,8 @@ ScriptableConstraint::ScriptableConstraint(
 	
 	//allow script executions and reset also in the GUI thread (to react on changes immediately)
 	mRestrictToMainExecutionThread = false;
+	
+	valueChanged(mActiveConstraint);
 }
 
 ScriptableConstraint::~ScriptableConstraint() {
@@ -147,6 +149,26 @@ void ScriptableConstraint::valueChanged(Value *value) {
 		//additionally call the reset function in the script 
 		//(a resetScriptContext has already been triggered by the ScriptingContext)
 		executeScriptFunction("reset();");
+	}
+	else if(value == mActiveConstraint) {
+		if(mActiveConstraint->get()) {
+			mNextStepEvent = Core::getInstance()->getEventManager()
+					->registerForEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, this);
+		}
+		else if(mNextStepEvent != 0) {
+			mNextStepEvent->removeEventListener(this);
+		}
+	}
+}
+
+void ScriptableConstraint::eventOccured(Event *event) {
+	if(event == 0) {
+		return;
+	}
+	ScriptingContext::eventOccured(event);
+	
+	if(event == mNextStepEvent) {
+		applyConstraint();
 	}
 }
 
@@ -213,6 +235,10 @@ bool ScriptableConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor *
 	
 	//TODO figure out a way how to move objects removed via script to the trashcan!
 
+	if(mActiveConstraint->get()) {
+		//active constraints are only executed 
+		return true;
+	}
 	return applyConstraint();
 }
 

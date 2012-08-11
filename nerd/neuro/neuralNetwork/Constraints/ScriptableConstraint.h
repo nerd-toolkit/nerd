@@ -70,7 +70,9 @@ namespace nerd {
 
 		virtual GroupConstraint* createCopy() const;
 		virtual QString getName() const;
+		
 		virtual void valueChanged(Value *value);
+		virtual void eventOccured(Event *event);
 		
 		virtual void reset();
 		virtual void resetScriptContext();
@@ -112,7 +114,7 @@ namespace nerd {
 		BoolValue *mActiveConstraint;
 		StringValue *mNameValue;
 		
-		
+		Event *mNextStepEvent;
 	};
 
 }
