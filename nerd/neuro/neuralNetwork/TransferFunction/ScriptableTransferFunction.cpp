@@ -70,7 +70,7 @@ ScriptableTransferFunction::ScriptableTransferFunction()
 	//set default code (make sure that the change is NOT notified, otherwise script may be executed
 	//before this object is fully constructed!
 	mScriptCode->removeValueChangedListener(this);
-	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc(activation) {/**/  return activation;/**/}");
+	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc(activation) {/**/\treturn activation;/**/}");
 	mScriptCode->addValueChangedListener(this);
 	mScriptCode->setNotifyAllSetAttempts(true);
 	

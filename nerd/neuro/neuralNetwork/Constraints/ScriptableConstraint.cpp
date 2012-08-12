@@ -76,7 +76,7 @@ ScriptableConstraint::ScriptableConstraint()
 	//set default code (make sure that the change is NOT notified, otherwise script may be executed
 	//before this object is fully constructed!
 	mScriptCode->removeValueChangedListener(this);
-	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function apply() {/**/  return true;/**/}");
+	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function apply() {/**/\treturn true;/**/}");
 	mScriptCode->addValueChangedListener(this);
 	mScriptCode->setNotifyAllSetAttempts(true);
 	

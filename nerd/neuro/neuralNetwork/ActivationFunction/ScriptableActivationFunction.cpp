@@ -77,7 +77,7 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 	//set default code (make sure that the change is NOT notified, otherwise script may be executed
 	//before this object is fully constructed!
 	mScriptCode->removeValueChangedListener(this);
-	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc() {/**/  return 1.0;/**/}");
+	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc() {/**/\treturn 1.0;/**/}");
 	mScriptCode->addValueChangedListener(this);
 	mScriptCode->setNotifyAllSetAttempts(true);
 	

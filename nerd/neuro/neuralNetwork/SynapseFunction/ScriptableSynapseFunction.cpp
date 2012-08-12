@@ -77,7 +77,7 @@ ScriptableSynapseFunction::ScriptableSynapseFunction()
 	//set default code (make sure that the change is NOT notified, otherwise script may be executed
 	//before this object is fully constructed!
 	mScriptCode->removeValueChangedListener(this);
-	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc() {/**/  return 0.5;/**/}");
+	mScriptCode->setValueFromString("function reset() {/**/}/**//**/function calc() {/**/\treturn 0.5;/**/}");
 	mScriptCode->addValueChangedListener(this);
 	mScriptCode->setNotifyAllSetAttempts(true);
 	

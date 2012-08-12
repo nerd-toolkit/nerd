@@ -357,6 +357,165 @@ QVariantList ScriptedNetworkManipulator::getOutSynapses(qlonglong neuronId, bool
 	return synapseIds;
 }
 
+
+QVariantList ScriptedNetworkManipulator::getSynapses(QVariantList targetIds, bool includeFromExternals, 
+								 bool includeToExternals, bool excludeDisabledSynapses)
+{
+	QVariantList synapseIds;
+
+	if(mNetwork == 0) {
+		return synapseIds;
+	}
+	
+	QList<Synapse*> allSynapses = mNetwork->getSynapses();
+	
+	QList<SynapseTarget*> targets;
+	
+	bool ok = false;
+	for(QListIterator<QVariant> i(targetIds); i.hasNext();) {
+		
+		qlonglong id = i.next().toLongLong(&ok);
+		if(!ok) {
+			//TODO warning?
+			continue;
+		}
+		SynapseTarget *target = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
+		if(target == 0) {
+			target = NeuralNetwork::selectSynapseById(id, allSynapses);
+			if(target == 0) {
+				continue;
+			}
+		}
+		
+		if(!targets.contains(target)) {
+			targets.append(target);
+		}
+	}
+	
+	for(QListIterator<SynapseTarget*> i(targets); i.hasNext();) {
+		SynapseTarget *target = i.next();
+		
+		QList<Synapse*> synapses = target->getSynapses();
+		for(int j = 0; j < synapses.size(); j++) {
+			Synapse *synapse = synapses.at(j);
+			if(synapse != 0 && (!excludeDisabledSynapses || synapse->getEnabledValue().get())) {
+				if(includeFromExternals || targets.contains(synapse->getSource())) {
+					if(!synapseIds.contains(synapse->getId())) {
+						synapseIds.append(synapse->getId());
+					}
+				}
+			}
+		}
+		Neuron *neuron = dynamic_cast<Neuron*>(target);
+		if(neuron != 0) {
+			QList<Synapse*> synapses = neuron->getOutgoingSynapses();
+			for(int j = 0; j < synapses.size(); j++) {
+				Synapse *synapse = synapses.at(j);
+				if(synapse != 0 && (!excludeDisabledSynapses || synapse->getEnabledValue().get())) {
+					if(includeToExternals || targets.contains(synapse->getTarget())) {
+						if(!synapseIds.contains(synapse->getId())) {
+							synapseIds.append(synapse->getId());
+						}
+					}
+				}
+			}
+		}
+	}
+	return synapseIds;
+}
+
+QVariantList ScriptedNetworkManipulator::getInSynapses(QVariantList targetIds, 
+				bool includeFromExternals, bool excludeDisabledSynapses)
+{
+	QVariantList synapseIds;
+
+	if(mNetwork == 0) {
+		return synapseIds;
+	}
+	
+	QList<Synapse*> allSynapses = mNetwork->getSynapses();
+	
+	QList<SynapseTarget*> targets;
+	
+	bool ok = false;
+	for(QListIterator<QVariant> i(targetIds); i.hasNext();) {
+		
+		qlonglong id = i.next().toLongLong(&ok);
+		if(!ok) {
+			//TODO warning?
+			continue;
+		}
+		SynapseTarget *target = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
+		if(target != 0) {
+			targets.append(target);
+			continue;
+		}
+		target = NeuralNetwork::selectSynapseById(id, allSynapses);
+		if(target != 0) {
+			targets.append(target);
+		}
+	}
+	
+	for(QListIterator<SynapseTarget*> i(targets); i.hasNext();) {
+		SynapseTarget *target = i.next();
+		
+		QList<Synapse*> synapses = target->getSynapses();
+		for(int j = 0; j < synapses.size(); j++) {
+			Synapse *synapse = synapses.at(j);
+			if(synapse != 0 && (!excludeDisabledSynapses || synapse->getEnabledValue().get())) {
+				if(includeFromExternals || targets.contains(synapse->getSource())) {
+					synapseIds.append(synapse->getId());
+				}
+			}
+		}
+	}
+	return synapseIds;
+}
+
+
+QVariantList ScriptedNetworkManipulator::getOutSynapses(QVariantList neuronIds, 
+				bool includeToExternals, bool excludeDisabledSynapses)
+{
+	QVariantList synapseIds;
+
+	if(mNetwork == 0) {
+		return synapseIds;
+	}
+	
+	QList<Synapse*> allSynapses = mNetwork->getSynapses();
+	
+	QList<Neuron*> neurons;
+	
+	bool ok = false;
+	for(QListIterator<QVariant> i(neuronIds); i.hasNext();) {
+		
+		qlonglong id = i.next().toLongLong(&ok);
+		if(!ok) {
+			//TODO warning?
+			continue;
+		}
+		Neuron *source = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
+		if(source != 0) {
+			neurons.append(source);
+		}
+	}
+	
+	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
+		Neuron *neuron = i.next();
+		
+		QList<Synapse*> synapses = neuron->getOutgoingSynapses();
+		for(int j = 0; j < synapses.size(); j++) {
+			Synapse *synapse = synapses.at(j);
+			if(synapse != 0 && (!excludeDisabledSynapses || synapse->getEnabledValue().get())) {
+				if(includeToExternals || neurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))) {
+					synapseIds.append(synapse->getId());
+				}
+			}
+		}
+	}
+	return synapseIds;
+}
+
 /**
  * Returns the id of the source neuron of the synapse specified by its synapseId.
  * Will return 0 in case of failure.
