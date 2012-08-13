@@ -63,13 +63,11 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 	
 	mVar1 = new DoubleValue();
 	mVar2 = new DoubleValue();
-	mVar3 = new DoubleValue();
-	mVar4 = new DoubleValue();
+	mVar3 = new StringValue();
+	mVar4 = new StringValue();
 	
 	addObserableOutput("Eta", mVar1);
-	addObserableOutput("Kappa", mVar2);
-	addObserableOutput("Lambda", mVar3);
-	addObserableOutput("Xi", mVar4);
+	addObserableOutput("Xi", mVar2);
 	
 	
 	mScriptFileName->removeValueChangedListener(this);
@@ -85,9 +83,10 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 	
 	addParameter("Code", mScriptCode);
 	addParameter("Eta", mVar1);
-	addParameter("Kappa", mVar2);
-	addParameter("Lambda", mVar3);
-	addParameter("Xi", mVar4);
+	addParameter("Xi", mVar2);
+	addParameter("Kappa", mVar3);
+	addParameter("Lambda", mVar4);
+	
 	
 	//allow script executions and reset also in the GUI thread (to react on changes immediately)
 	mRestrictToMainExecutionThread = false;
@@ -103,14 +102,13 @@ ScriptableActivationFunction::ScriptableActivationFunction(
 	mErrorState = new StringValue();
 	
 	mVar1 = dynamic_cast<DoubleValue*>(getParameter("Eta"));
-	mVar2 = dynamic_cast<DoubleValue*>(getParameter("Kappa"));
-	mVar3 = dynamic_cast<DoubleValue*>(getParameter("Lambda"));
-	mVar4 = dynamic_cast<DoubleValue*>(getParameter("Xi"));
+	mVar2 = dynamic_cast<DoubleValue*>(getParameter("Xi"));
+	mVar3 = dynamic_cast<StringValue*>(getParameter("Kappa"));
+	mVar4 = dynamic_cast<StringValue*>(getParameter("Lambda"));
+	
 	
 	addObserableOutput("Eta", mVar1);
-	addObserableOutput("Kappa", mVar2);
-	addObserableOutput("Lambda", mVar3);
-	addObserableOutput("Xi", mVar4);
+	addObserableOutput("Xi", mVar2);
 	
 	mScriptFileName->removeValueChangedListener(this);
 	
@@ -268,33 +266,19 @@ void ScriptableActivationFunction::addCustomScriptContextStructures() {
 		reportError(QString("Could not add variable neuron: " + error.toString()));
 		//ignore error and go on.
 	}
+	error = mScript->evaluate(QString("var bias = 0;"));
+	if(mScript->hasUncaughtException()) {
+		reportError(QString("Could not add variable bias: " + error.toString()));
+		//ignore error and go on.
+	}
 	
 	
 	defineVariable("eta", mVar1);
-	defineVariable("kappa", mVar2);
-	defineVariable("lambda", mVar3);
-	defineVariable("xi", mVar4);
+	defineVariable("xi", mVar2);
+	defineVariable("kappa", mVar3);
+	defineVariable("lambda", mVar4);
+
 	
-// 	error = mScript->evaluate(QString("var alpha = " + QString::number(mVar1->get()) + ";"));
-// 	if(mScript->hasUncaughtException()) {
-// 		reportError(QString("Could not add variable eta: " + error.toString()));
-// 		//ignore error and go on.
-// 	}
-// 	error = mScript->evaluate(QString("var beta = " + QString::number(mVar2->get()) + ";"));
-// 	if(mScript->hasUncaughtException()) {
-// 		reportError(QString("Could not add variable kappa: " + error.toString()));
-// 		//ignore error and go on.
-// 	}
-// 	error = mScript->evaluate(QString("var gamma = " + QString::number(mVar3->get()) + ";"));
-// 	if(mScript->hasUncaughtException()) {
-// 		reportError(QString("Could not add variable lambda: " + error.toString()));
-// 		//ignore error and go on.
-// 	}
-// 	error = mScript->evaluate(QString("var delta = " + QString::number(mVar4->get()) + ";"));
-// 	if(mScript->hasUncaughtException()) {
-// 		reportError(QString("Could not add variable xi: " + error.toString()));
-// 		//ignore error and go on.
-// 	}
 }
 
 /**
@@ -315,12 +299,8 @@ void ScriptableActivationFunction::importVariables() {
 		mScript->evaluate("activity = " + QString::number(mOwner->getLastActivation()) + ";");
 		mScript->evaluate("output = " + QString::number(mOwner->getLastOutputActivation()) + ";");
 		mScript->evaluate("neuron = " + QString::number(mOwner->getId()) + ";");
+		mScript->evaluate("bias = " + mOwner->getBiasValue().getValueAsString() + ";");
 	}
-	
-// 	mScript->evaluate("eta = " + QString::number(mVar1->get()) + ";");
-// 	mScript->evaluate("kappa = " + QString::number(mVar2->get()) + ";");
-// 	mScript->evaluate("lambda = " + QString::number(mVar3->get()) + ";");
-// 	mScript->evaluate("xi = " + QString::number(mVar4->get()) + ";");
 }
 
 

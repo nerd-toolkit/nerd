@@ -93,8 +93,8 @@ namespace nerd {
 		
 		DoubleValue *mVar1;
 		DoubleValue *mVar2;
-		DoubleValue *mVar3;
-		DoubleValue *mVar4;
+		StringValue *mVar3;
+		StringValue *mVar4;
 		
 		DoubleValue mActivation;
 		
