@@ -88,6 +88,9 @@ const QString NeuralNetworkConstants::EVENT_NETWORK_CLEAR_MODIFICATION_STACKS
 		
 const QString NeuralNetworkConstants::EVENT_CONSTRAINTS_UPDATED
 		= "/NeuralNetwork/ConstraintsUpdated";
+		
+const QString NeuralNetworkConstants::EVENT_NNM_RESET_NETWORKS
+		= "/NeuralNetwork/ResetNetworks";
 
 //**************************************************************************
 //Property Names

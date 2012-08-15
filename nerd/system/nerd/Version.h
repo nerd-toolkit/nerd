@@ -42,7 +42,7 @@
  ***************************************************************************/
 
 /*
- * Stable release winter 2011. Additional constraints and editor features.
+ * Major change: Scripting mechanisms for neuron models and constraints are ready to use. (Summer 2012)
  */
 
-#define NERD_VERSION "3.7"
+#define NERD_VERSION "4.0"

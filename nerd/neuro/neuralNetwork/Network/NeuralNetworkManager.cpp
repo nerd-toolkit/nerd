@@ -66,7 +66,7 @@ using namespace std;
 namespace nerd {
 
 NeuralNetworkManager::NeuralNetworkManager()
-	: mStepStartedEvent(0), mStepCompletedEvent(0), mResetEvent(0),
+	: mStepStartedEvent(0), mStepCompletedEvent(0), mResetEvent(0), mResetNetworksEvent(0),
  	  mCurrentNetworksReplacedEvent(0), mNetworkEvaluationStarted(0), 
 	  mNetworkEvaluationCompleted(0), mNetworkStructuresChanged(0), 
 	  mNetworkIterationCompleted(0),
@@ -97,6 +97,11 @@ NeuralNetworkManager::NeuralNetworkManager()
 				NeuralNetworkConstants::EVENT_NNM_NETWORK_ITERATION_COMPLETED,
 				"This Event is triggered after each single network iteration, which can occure "
 				"multiple times during a network update.");
+	
+	mResetNetworksEvent = em->createEvent(
+				NeuralNetworkConstants::EVENT_NNM_RESET_NETWORKS,
+				"When this event is triggered, then the networks are reset "
+				"(independently of a simulation or system reset)");
 	
 
 	//this value can be switched to disable the neural network control.
@@ -216,6 +221,15 @@ bool NeuralNetworkManager::init() {
 				.append("]! [TERMINATING]"));
 		ok = false;
 	}
+	if(mResetNetworksEvent == 0) {
+		Core::log(QString("NeuralNetworkManager: Could not create Event [")
+				.append(NeuralNetworkConstants::EVENT_NNM_RESET_NETWORKS)
+				.append("]! [TERMINATING]"));
+		ok = false;
+	}
+	else {
+		mResetNetworksEvent->addEventListener(this);
+	}
 	if(Core::getInstance()->getGlobalObject(
 			NeuralNetworkConstants::OBJECT_NEURAL_NETWORK_MANAGER) != this) 
 	{
@@ -277,7 +291,7 @@ void NeuralNetworkManager::eventOccured(Event *event) {
 	else if(event == mNetworkEvaluationStarted) {
 		executeNeuralNetworks();
 	}
-	else if(event == mResetEvent) {
+	else if(event == mResetEvent || event == mResetNetworksEvent) {
 		resetNeuralNetworks();
 	}
 }
@@ -448,6 +462,21 @@ BoolValue* NeuralNetworkManager::getBypassNetworksValue() const {
 QMutex* NeuralNetworkManager::getNetworkExecutionMutex() {
 	return &mNetworkExecutionMutex;
 }
+
+Event* NeuralNetworkManager::getResetEvent() const {
+	return mResetEvent;
+}
+
+
+Event* NeuralNetworkManager::getResetNetworksEvent() const {
+	return mResetNetworksEvent;
+}
+
+
+Event* NeuralNetworkManager::getIterationCompletedEvent() const {
+	return mNetworkIterationCompleted;
+}
+
 
 void NeuralNetworkManager::executeNeuralNetworks() {
 	TRACE("NeuralNetworkManager::executeNeuralNetworks");

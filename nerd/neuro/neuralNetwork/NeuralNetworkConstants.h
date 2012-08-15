@@ -77,6 +77,7 @@ namespace nerd {
 		static const QString EVENT_NNM_NETWORK_ITERATION_COMPLETED;
 		static const QString EVENT_NETWORK_CLEAR_MODIFICATION_STACKS;
 		static const QString EVENT_CONSTRAINTS_UPDATED;
+		static const QString EVENT_NNM_RESET_NETWORKS;
 
 	//**************************************************************************
 	//Property Names

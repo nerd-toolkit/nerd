@@ -549,7 +549,7 @@ QList<Neuron*> InsertSynapseModularOperator::getValidSourceNeurons(Neuron *targe
 
 	//crawl down into parent modules as deep as the interface level allows.
 	NeuroModule *parentModule = net->getOwnerModule(target);
-	NeuroModule *previousModule = parentModule;
+	//NeuroModule *previousModule = parentModule;
 	int k = 0;
 	for(; k <= interfaceLevel; ++k) {
 
@@ -560,7 +560,7 @@ QList<Neuron*> InsertSynapseModularOperator::getValidSourceNeurons(Neuron *targe
 				Util::addWithoutDuplicates(allOutputModuleNeurons, j.next()->getOutputNeurons());
 			}
 			if(isInterface) {
-				previousModule = parentModule;
+				//previousModule = parentModule;
 				parentModule = parentModule->getParentModule();
 			}
 			else {
@@ -594,7 +594,7 @@ QList<Neuron*> InsertSynapseModularOperator::getValidTargetNeurons(Neuron *sourc
 
 	//crawl down into parent modules as deep as the interface level allows.
 	NeuroModule *parentModule = net->getOwnerModule(source);
-	NeuroModule *previousModule = parentModule;
+	//NeuroModule *previousModule = parentModule;
 	int k = 0;
 	for(; k <= interfaceLevel; ++k) {
 
@@ -605,7 +605,7 @@ QList<Neuron*> InsertSynapseModularOperator::getValidTargetNeurons(Neuron *sourc
 				Util::addWithoutDuplicates(allInputModuleNeurons, j.next()->getInputNeurons());
 			}
 			if(isInterface) {
-				previousModule = parentModule;
+				//previousModule = parentModule;
 				parentModule = parentModule->getParentModule();
 			}
 			else {

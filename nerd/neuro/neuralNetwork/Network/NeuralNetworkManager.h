@@ -97,6 +97,10 @@ namespace nerd {
 
 		QMutex* getNetworkExecutionMutex();
 		
+		Event* getResetEvent() const;
+		Event* getResetNetworksEvent() const;
+		Event* getIterationCompletedEvent() const;
+		
 	protected:
 		virtual void executeNeuralNetworks();
 		virtual void resetNeuralNetworks();
@@ -105,6 +109,7 @@ namespace nerd {
 		Event *mStepStartedEvent;
 		Event *mStepCompletedEvent;
 		Event *mResetEvent;
+		Event *mResetNetworksEvent;
 	
 		Event *mCurrentNetworksReplacedEvent;
 		Event *mNetworkEvaluationStarted;

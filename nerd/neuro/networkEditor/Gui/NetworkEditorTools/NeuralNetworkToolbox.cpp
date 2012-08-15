@@ -55,6 +55,7 @@
 #include "Gui/NetworkEditorCommands/AlignSynapseCommand.h"
 #include "Gui/NetworkEditor/SynapseItem.h"
 #include "Network/Synapse.h"
+#include <Network/Neuro.h>
 #include "Gui/NetworkEditorCommands/SetLocationPropertiesCommand.h"
 #include "Gui/NetworkEditor/NeuronItem.h"
 #include "Gui/NetworkEditor/SynapseItem.h"
@@ -63,6 +64,7 @@
 #include "Gui/NetworkEditor/NetworkVisualizationHandler.h"
 #include "Util/NetworkEditorUtil.h"
 #include "Util/Util.h"
+#include <Event/TriggerEventTask.h>
 #include "NeuralNetworkConstants.h"
 #include "Gui/NetworkEditorCommands/AlignNeuronsCommand.h"
 #include "Gui/NetworkEditorCommands/AlignModuleSizeCommand.h"
@@ -153,14 +155,8 @@ void NeuralNetworkToolbox::resetCurrentNetwork() {
 	if(mOwner == 0) {
 		return;
 	}
-	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
-	if(visu == 0) {
-		return;
-	}
-	ModularNeuralNetwork *network = visu->getNeuralNetwork();
-	if(network != 0) {
-		network->reset();
-	}
+	//trigger a network reset in the main execution thread!
+	TriggerEventTask::scheduleEvent(Neuro::getNeuralNetworkManager()->getResetNetworksEvent());
 }
 
 void NeuralNetworkToolbox::enableModifications(bool enable) {
