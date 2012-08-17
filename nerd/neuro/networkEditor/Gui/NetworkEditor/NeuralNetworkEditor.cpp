@@ -103,7 +103,7 @@ namespace nerd {
 NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	: QMainWindow(parent), mMainPane(0),
 	  mUndoAction(0), mRedoAction(0), mWindowToggleState(true), mViewModeMenu(0),
-	  mToggleWindowArgument(0)
+	  mToggleWindowArgument(0), mFirstShowing(true)
 {	
 
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -158,9 +158,6 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	mSearchDialog = new NetworkSearchDialog(this);
 
 	renameCurrentNetwork("");
-
-	//restore the last window settings of this editor.
-	restoreWidgetGeometries();
 	
 	GuiManager::getGlobalGuiManager()->addWidget(NetworkEditorConstants::WIDGET_NETWORK_EDITOR, this);
 }
@@ -422,6 +419,15 @@ void NeuralNetworkEditor::clearAllSelections() {
 
 
 void NeuralNetworkEditor::storeWidgetGeometries() {
+
+	QSize currentSize = this->size();
+	QPoint currentPos = this->pos();
+	QString posAndSize = QString::number(currentPos.x()) + "," + QString::number(currentPos.y()) + ","
+						+ QString::number(currentSize.width()) + "," + QString::number(currentSize.height());
+	
+	Properties &props = Core::getInstance()->getProperties();
+	props.setProperty("NetworkEditor/Geometry/", posAndSize);
+	
 // 	QSettings *settings = GuiManager::getGlobalGuiManager()->getWidgetSettings();
 // 	if(settings != 0) {
 // 		settings->setValue("network-editor/geometry", saveGeometry());
@@ -432,6 +438,23 @@ void NeuralNetworkEditor::storeWidgetGeometries() {
 
 
 void NeuralNetworkEditor::restoreWidgetGeometries() {
+
+	Properties &props = Core::getInstance()->getProperties();
+	QString sizeProp = props.getProperty("NetworkEditor/Geometry/");
+	QStringList sizeAndPositionString = sizeProp.split(",");
+
+	if(sizeAndPositionString.size() != 4) {
+		resize(400,500);
+	}
+	else {
+		double posX = sizeAndPositionString.at(0).toDouble();
+		double posY = sizeAndPositionString.at(1).toDouble();
+		double width = sizeAndPositionString.at(2).toDouble();
+		double height = sizeAndPositionString.at(3).toDouble();
+		
+		resize(width, height);
+		move(posX, posY);
+	}
 // 	QSettings *settings = GuiManager::getGlobalGuiManager()->getWidgetSettings();
 // 	if(settings != 0) {
 // 		restoreGeometry(settings->value("network-editor/geometry").toByteArray());
@@ -1606,6 +1629,14 @@ void NeuralNetworkEditor::selectAllVisibleItems() {
 	NetworkVisualization *visu = getCurrentNetworkVisualization();
 	if(visu != 0) {
 		visu->selectAllItems(true);
+	}
+}
+
+void NeuralNetworkEditor::setVisible(bool visible) {
+	QWidget::setVisible(visible);
+	if(mFirstShowing) {
+		mFirstShowing = false;
+		restoreWidgetGeometries();
 	}
 }
 

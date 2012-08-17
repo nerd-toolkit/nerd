@@ -136,7 +136,7 @@ ScriptEditor::ScriptEditor(const QString &scriptName, bool autoHandleChanges)
 
 	
 	Properties &props = Core::getInstance()->getProperties();
-	QStringList sizeAndPositionString = props.getProperty("ScriptEditor/" + getName()).split(",");
+	QStringList sizeAndPositionString = props.getProperty("ScriptEditor/Geometry/" + getName()).split(",");
 	if(sizeAndPositionString.size() != 4) {
 		resize(400,500);
 	}
@@ -163,7 +163,7 @@ ScriptEditor::ScriptEditor(const QString &scriptName, bool autoHandleChanges)
 /**
  * Destructor.
  */
-ScriptEditor::~ScriptEditor() {
+ScriptEditor::~ScriptEditor() { 
 	if(mErrorValue != 0) {
 		mErrorValue->removeValueChangedListener(this);
 	}
@@ -176,7 +176,7 @@ ScriptEditor::~ScriptEditor() {
 						+ QString::number(currentSize.width()) + "," + QString::number(currentSize.height());
 	
 	Properties &props = Core::getInstance()->getProperties();
-	props.setProperty("ScriptEditor/" + getName(), posAndSize);
+	props.setProperty("ScriptEditor/Geometry/" + getName(), posAndSize);
 }
 
 

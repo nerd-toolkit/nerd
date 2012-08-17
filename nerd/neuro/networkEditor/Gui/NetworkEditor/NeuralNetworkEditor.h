@@ -155,6 +155,8 @@ namespace nerd {
 		void selectAllItems();
 		void selectAllVisibleItems();
 		
+		virtual void setVisible(bool visible);
+		
 
 	protected:
 		virtual void setupMenuBar();
@@ -194,6 +196,7 @@ namespace nerd {
 		QAction *mEnableHiddenLayersCheckbox;
 		StringValue *mToggleWindowArgument;
 		Event *mClearSelectionsEvent;
+		bool mFirstShowing;
 	};
 
 }
