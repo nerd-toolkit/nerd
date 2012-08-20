@@ -281,10 +281,10 @@ void ScriptingContext::resetScriptContext() {
 	if(result.state() != QScriptSyntaxCheckResult::Valid) {
 		Core::log(QString("~ScriptingContext [") + getName() + 
 					"]: Script contains syntax errors.");
-		Core::log(QString("Error: ") + result.errorMessage() 
-							+ " [L " + QString::number(result.errorLineNumber()) 
-							+ ", C " + QString::number(result.errorColumnNumber()) + "]");
-		reportError("Syntax error detected in script!");
+		reportError(QString("Syntax error detected in script!\n")
+					+ "Error: " + result.errorMessage() 
+					+ " [L " + QString::number(result.errorLineNumber()) 
+					+ ", C " + QString::number(result.errorColumnNumber()) + "]");
 		return;
 	}
 
