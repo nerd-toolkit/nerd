@@ -102,7 +102,7 @@ ScriptingContext::ScriptingContext(const ScriptingContext &other)
 	  mMaxNumberOfTriesToResolveDefinitions(other.mMaxNumberOfTriesToResolveDefinitions),
 	  mFileIdCounter(0), mRestrictToMainExecutionThread(other.mRestrictToMainExecutionThread)
 {
-	mScriptCode = new CodeValue(other.mScriptCode->getValueAsString());
+	mScriptCode = new CodeValue(other.mScriptCode->get());
 	mScriptCode->addValueChangedListener(this);
 
 	mScriptFileName = new FileNameValue(other.mScriptFileName->get());
@@ -269,10 +269,21 @@ void ScriptingContext::resetScriptContext() {
 	//allow subclasses to add custom structures to the scripting context.
 	addCustomScriptContextStructures();
 
+// 	QString programCode = getScriptCode();
+// 	if(!mScript->canEvaluate(programCode)) {
+// 		Core::log(QString("~ScriptingContext [") + getName() + 
+// 					"]: Script contains syntax errors.");
+// 		reportError("Syntax error detected in script!");
+// 		return;
+// 	}
 	QString programCode = getScriptCode();
-	if(!mScript->canEvaluate(programCode)) {
+	QScriptSyntaxCheckResult result = mScript->checkSyntax(programCode);
+	if(result.state() != QScriptSyntaxCheckResult::Valid) {
 		Core::log(QString("~ScriptingContext [") + getName() + 
 					"]: Script contains syntax errors.");
+		Core::log(QString("Error: ") + result.errorMessage() 
+							+ " [L " + QString::number(result.errorLineNumber()) 
+							+ ", C " + QString::number(result.errorColumnNumber()) + "]");
 		reportError("Syntax error detected in script!");
 		return;
 	}
