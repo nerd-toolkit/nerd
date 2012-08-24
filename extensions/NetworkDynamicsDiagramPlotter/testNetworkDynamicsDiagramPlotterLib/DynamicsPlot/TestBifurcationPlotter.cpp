@@ -54,6 +54,13 @@
 #include "Adapters/TransferFunctionAdapter.h"
 #include <Util/NeuralNetworkUtil.h>
 #include <Util/DynamicsPlotterUtil.h>
+#include <DynamicsPlot/BifurcationPlotter.h>
+#include "DynamicsPlotConstants.h"
+#include "NetworkEditorConstants.h"
+#include "NerdConstants.h"
+#include "NeuralNetworkConstants.h"
+#include "Network/NeuralNetworkManager.h"
+#include "Network/Neuro.h"
 
 using namespace std;
 using namespace nerd;
@@ -71,5 +78,88 @@ void TestBifurcationPlotter::testConstructors() {
 }
 
 
+//josef
+void TestBifurcationPlotter::testParameterSettings() {
+
+	Core::resetCore();
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	EventManager *em = Core::getInstance()->getEventManager();
+
+	Neuro::getNeuralNetworkManager();
+
+	Event *e_ClearAllEditorSelections = em->getEvent(NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS, true);
+	Event *e_NextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, true);
+	Event *e_StepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, true);
+	Event *e_ResetEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET, true);
+	Event *e_ResetFinalizedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET_COMPLETED, true);
+	Event *e_EvaluateNetworkEvent = em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_STARTED, true);
+	
+	BoolValue *v_StasisValue = new BoolValue(false);
+	vm->addValue(NeuralNetworkConstants::VALUE_EVO_STASIS_MODE, v_StasisValue);
+
+	BifurcationPlotter *plotter = new BifurcationPlotter();
+
+	BoolValue *v_ActiveValue = dynamic_cast<BoolValue*>(plotter->getParameter("Config/Activate"));
+	IntValue *v_ExecutionTime = dynamic_cast<IntValue*>(plotter->getParameter("Performance/ExecutionTime"));
+	DoubleValue *v_ProgressPercentage = dynamic_cast<DoubleValue*>(plotter->getParameter("Performance/ProgressPercentage"));
+	BoolValue *v_EnableConstraints = dynamic_cast<BoolValue*>(plotter->getParameter("Config/EnableConstraints"));
+	
+	MatrixValue *v_Data = dynamic_cast<MatrixValue*>(plotter->getParameter("Internal/Data"));
+	StringValue *v_FilePrefix = dynamic_cast<StringValue*>(plotter->getParameter("Config/Diagram/FilePrefix"));
+	StringValue *v_AxisNames = dynamic_cast<StringValue*>(plotter->getParameter("Config/Diagram/AxisNames"));
+	StringValue *v_TitleNames = dynamic_cast<StringValue*>(plotter->getParameter("Config/Diagram/TitleNames"));
+	
+	QVERIFY(v_ActiveValue != 0);
+	QVERIFY(v_ExecutionTime != 0);
+	QVERIFY(v_ProgressPercentage != 0);
+	QVERIFY(v_EnableConstraints != 0);
+	
+	QVERIFY(v_Data != 0);
+	QVERIFY(v_FilePrefix != 0);
+	QVERIFY(v_AxisNames != 0);
+	QVERIFY(v_TitleNames != 0);
+	
+
+	StringValue *v_ObservedElements = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedElements"));
+	StringValue *v_ObservedRanges = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedRanges"));
+	StringValue *v_VariedElement = dynamic_cast<StringValue*>(plotter->getParameter("Config/VariedElement"));
+	StringValue *v_VariedRange = dynamic_cast<StringValue*>(plotter->getParameter("Config/VariedRange"));
+	IntValue *v_ObservedResolution = dynamic_cast<IntValue*>(plotter->getParameter("Config/ObservedResolution"));
+	IntValue *v_VariedResolution = dynamic_cast<IntValue*>(plotter->getParameter("Config/VariedResolution"));
+
+	IntValue *v_StepsToRun = dynamic_cast<IntValue*>(plotter->getParameter("Config/StepsToRun"));
+	IntValue *v_StepsToPlot = dynamic_cast<IntValue*>(plotter->getParameter("Config/StepsToPlot"));
+	
+	BoolValue *v_ResetNetworkActivation = dynamic_cast<BoolValue*>(plotter->getParameter("Config/ResetNetworkActivation"));
+	BoolValue *v_RunBackwards = dynamic_cast<BoolValue*>(plotter->getParameter("Config/RunBackwards"));
+	BoolValue *v_RestoreNetworkConfiguration = dynamic_cast<BoolValue*>(plotter->getParameter("Config/RestoreNetworkConfiguration"));
+	BoolValue *v_ResetSimulator = dynamic_cast<BoolValue*>(plotter->getParameter("Config/ResetSimulation"));
+	
+	QVERIFY(v_ObservedElements != 0);
+	QVERIFY(v_ObservedRanges != 0);
+	QVERIFY(v_VariedElement != 0);
+	QVERIFY(v_VariedRange != 0);
+	QVERIFY(v_ObservedResolution != 0);
+	QVERIFY(v_VariedResolution != 0);
+	QVERIFY(v_StepsToRun != 0);
+	QVERIFY(v_StepsToPlot != 0);
+	QVERIFY(v_ResetNetworkActivation != 0);
+	QVERIFY(v_RunBackwards != 0);
+	QVERIFY(v_RestoreNetworkConfiguration != 0);
+	QVERIFY(v_ResetSimulator != 0);
 
 
+	AdditiveTimeDiscreteActivationFunction *af = new AdditiveTimeDiscreteActivationFunction();
+	TransferFunctionRamp *ramp = new TransferFunctionRamp("ramp", -1, 1, false);
+	SimpleSynapseFunction *sf = new SimpleSynapseFunction();
+	
+	ModularNeuralNetwork *network = new ModularNeuralNetwork(*af, *ramp, *sf);
+
+	Neuron *n1 = new Neuron("Neuron1", *ramp, *af);
+	network->addNeuron(n1);
+	Synapse *s1 = Synapse::createSynapse(n1, n1, 1.02, *sf);
+
+	QVERIFY(Neuro::getNeuralNetworkManager()->addNeuralNetwork(network));
+	QVERIFY(Core::getInstance()->init());
+	
+}

@@ -139,6 +139,11 @@ void TestBasinPlotter::testParameterSettings() {
 	IntValue *v_ResolutionX = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/ResolutionX"));
 	IntValue *v_ResolutionY = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/ResolutionY"));
 	
+	StringValue *v_ProjectionsX = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/ProjectionsX"));
+	StringValue *v_ProjectionsY = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/ProjectionsY"));
+	StringValue *v_ProjectionRangesX = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/ProjectionRangesX"));
+	StringValue *v_ProjectionRangesY = dynamic_cast<StringValue*>(basinPlotter->getParameter("Config/ProjectionRangesY"));
+	
 	DoubleValue *v_Accuracy = dynamic_cast<DoubleValue*>(basinPlotter->getParameter("Config/Accuracy"));
 	IntValue *v_RoundDigits = dynamic_cast<IntValue*>(basinPlotter->getParameter("Config/RoundDigits"));
 	
@@ -155,6 +160,10 @@ void TestBasinPlotter::testParameterSettings() {
 	QVERIFY(v_VariedRangeY != 0);
 	QVERIFY(v_ResolutionX != 0);
 	QVERIFY(v_ResolutionY != 0);
+	QVERIFY(v_ProjectionsX != 0);
+	QVERIFY(v_ProjectionsY != 0);
+	QVERIFY(v_ProjectionRangesX != 0);
+	QVERIFY(v_ProjectionRangesY != 0);
 	QVERIFY(v_Accuracy != 0);
 	QVERIFY(v_RoundDigits != 0);
 	QVERIFY(v_StepsToRunPreCheck != 0);
@@ -175,13 +184,13 @@ void TestBasinPlotter::testParameterSettings() {
 	
 	Neuron *n1 = new Neuron("Neuron1", *ramp, *af);
 	network->addNeuron(n1);
-	Neuron *n2 = new Neuron("Neuron2", *ramp, *af);
-	network->addNeuron(n2);
-	Neuron *n3 = new Neuron("Neuron3", *ramp, *af);
-	network->addNeuron(n3);
+	//Neuron *n2 = new Neuron("Neuron2", *ramp, *af);
+	//network->addNeuron(n2);
+	//Neuron *n3 = new Neuron("Neuron3", *ramp, *af);
+	//network->addNeuron(n3);
 	
-	Synapse *s1 = Synapse::createSynapse(n1, n2, 0.5, *sf);
-	Synapse *s2 = Synapse::createSynapse(n3, n3, -1.5, *sf);
+	Synapse *s1 = Synapse::createSynapse(n1, n1, 1.02, *sf);
+	//Synapse *s2 = Synapse::createSynapse(n3, n3, -1.5, *sf);
 	
 	
 
@@ -229,7 +238,7 @@ void TestBasinPlotter::testParameterSettings() {
 	//Configure the main parameters
 	//***************************************************************************************
 	v_VariedX->set(QString::number(n1->getId()) + ":o");
-	v_VariedY->set(QString::number(n2->getId()) + ":a");
+	v_VariedY->set(QString::number(n1->getId()) + ":o");
 	v_VariedRangeX->set("-1,1");
 	v_VariedRangeY->set("-1,1");
 	v_ResolutionX->set(200);
@@ -247,23 +256,37 @@ void TestBasinPlotter::testParameterSettings() {
 	//matrix size after analyzer run.
 	QCOMPARE(v_Data->getMatrixWidth(), 201);  //resolution 200 + 1 for coordinate system
 	QCOMPARE(v_Data->getMatrixHeight(), 301); //resolution 200 + 1 for coordinate system
-	//QCOMPARE(v_Data->getMatrixDepth(), 3); //always 3 (basin, periods, attractors)
+	QCOMPARE(v_Data->getMatrixDepth(), 3);
 	
-	//... continue testing
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	QString matrixString = v_Data->getValueAsString();
+	//save matrix
+
+	// TODO how to find relative path?
+	QFile file("/tmp/matrix.txt");
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		Core::log("TestBasinPlotter: Could not open file to save matrix to.", true);
+		return;
+	}
+    QTextStream out(&file);
+    out << matrixString;
+	file.close();
+
+
+	//load saved matrix
+	QFile file2("/tmp/matrix.txt");
+	if(!file2.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		Core::log("TestBasinPlotter: Could not open file to read matrix from.", true);
+		return;
+	}
+	QTextStream in(&file2);
+	QString oldMatrixString;
+    while(!in.atEnd()) {
+    	oldMatrixString += in.readLine();
+    }
+	file2.close();
+
+	//compare matrices
+	QVERIFY(matrixString == oldMatrixString);
 	
 	
 	//***************************************************************************************
@@ -276,7 +299,3 @@ void TestBasinPlotter::testParameterSettings() {
 	Neuro::reset();
 	Core::resetCore();
 }
-
-
-
-

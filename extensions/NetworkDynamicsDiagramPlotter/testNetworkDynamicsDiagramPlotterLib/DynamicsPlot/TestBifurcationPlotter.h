@@ -59,6 +59,7 @@ namespace nerd {
 		void initTestCase();
 		
 		void testConstructors();	
+		void testParameterSettings();
 		
 	private:
 		
