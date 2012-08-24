@@ -81,6 +81,7 @@ void TestBifurcationPlotter::testConstructors() {
 //josef
 void TestBifurcationPlotter::testParameterSettings() {
 
+	// initialize NERD
 	Core::resetCore();
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	EventManager *em = Core::getInstance()->getEventManager();
@@ -97,8 +98,12 @@ void TestBifurcationPlotter::testParameterSettings() {
 	BoolValue *v_StasisValue = new BoolValue(false);
 	vm->addValue(NeuralNetworkConstants::VALUE_EVO_STASIS_MODE, v_StasisValue);
 
+
+	// create plotter object
 	BifurcationPlotter *plotter = new BifurcationPlotter();
 
+
+	// get general parameters and check them
 	BoolValue *v_ActiveValue = dynamic_cast<BoolValue*>(plotter->getParameter("Config/Activate"));
 	IntValue *v_ExecutionTime = dynamic_cast<IntValue*>(plotter->getParameter("Performance/ExecutionTime"));
 	DoubleValue *v_ProgressPercentage = dynamic_cast<DoubleValue*>(plotter->getParameter("Performance/ProgressPercentage"));
@@ -118,8 +123,9 @@ void TestBifurcationPlotter::testParameterSettings() {
 	QVERIFY(v_FilePrefix != 0);
 	QVERIFY(v_AxisNames != 0);
 	QVERIFY(v_TitleNames != 0);
-	
 
+	
+	// get specific parameters and do simple non-null checks
 	StringValue *v_ObservedElements = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedElements"));
 	StringValue *v_ObservedRanges = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedRanges"));
 	StringValue *v_VariedElement = dynamic_cast<StringValue*>(plotter->getParameter("Config/VariedElement"));
@@ -149,6 +155,7 @@ void TestBifurcationPlotter::testParameterSettings() {
 	QVERIFY(v_ResetSimulator != 0);
 
 
+	// create network to run
 	AdditiveTimeDiscreteActivationFunction *af = new AdditiveTimeDiscreteActivationFunction();
 	TransferFunctionRamp *ramp = new TransferFunctionRamp("ramp", -1, 1, false);
 	SimpleSynapseFunction *sf = new SimpleSynapseFunction();
@@ -162,4 +169,21 @@ void TestBifurcationPlotter::testParameterSettings() {
 	QVERIFY(Neuro::getNeuralNetworkManager()->addNeuralNetwork(network));
 	QVERIFY(Core::getInstance()->init());
 	
+
+	// check default parameter settings
+	QVERIFY(v_ObservedElements->get() == false);
+	QVERIFY(v_ObservedRanges->get() == "-1,1");
+	QVERIFY(v_VariedElement->get() == false);
+	QVERIFY(v_VariedRange->get() == "-1,1");
+	QVERIFY(v_ObservedResolution->get() == 600);
+	QVERIFY(v_VariedResolution->get() == 600);
+	QVERIFY(v_StepsToRun->get() == 1000);
+	QVERIFY(v_StepsToPlot->get() == 10);
+	QVERIFY(v_ResetNetworkActivation->get() == true);
+	QVERIFY(v_RestoreNetworkConfiguration->get() == true);
+	QVERIFY(v_RunBackwars->get() == true);
+	QVERIFY(v_ResetSimulator->get() == true);
+
+
+	// configure them for the test case
 }

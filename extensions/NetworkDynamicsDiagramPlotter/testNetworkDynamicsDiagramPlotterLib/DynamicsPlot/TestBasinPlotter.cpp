@@ -261,8 +261,8 @@ void TestBasinPlotter::testParameterSettings() {
 	QString matrixString = v_Data->getValueAsString();
 	//save matrix
 
-	// TODO how to find relative path?
-	QFile file("/tmp/matrix.txt");
+	/**/
+	QFile file("testData_BasinOfAttraction.txt");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		Core::log("TestBasinPlotter: Could not open file to save matrix to.", true);
 		return;
@@ -270,10 +270,10 @@ void TestBasinPlotter::testParameterSettings() {
     QTextStream out(&file);
     out << matrixString;
 	file.close();
-
+	/**/
 
 	//load saved matrix
-	QFile file2("/tmp/matrix.txt");
+	QFile file2("testData_BasinOfAttraction.txt");
 	if(!file2.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		Core::log("TestBasinPlotter: Could not open file to read matrix from.", true);
 		return;
