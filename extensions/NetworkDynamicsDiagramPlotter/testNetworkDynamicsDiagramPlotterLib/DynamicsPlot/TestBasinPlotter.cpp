@@ -259,31 +259,33 @@ void TestBasinPlotter::testParameterSettings() {
 	QCOMPARE(v_Data->getMatrixDepth(), 3);
 	
 	QString matrixString = v_Data->getValueAsString();
+	QString fileName = "testData/BasinPlotterTest.txt";
 	//save matrix
 
-	/**/
-	QFile file("testData_BasinOfAttraction.txt");
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+	/**
+	QFile out_file(fileName);
+    if(!out_file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		Core::log("TestBasinPlotter: Could not open file to save matrix to.", true);
 		return;
 	}
-    QTextStream out(&file);
-    out << matrixString;
-	file.close();
-	/**/
+    QTextStream out_stream(&out_file);
+    out_stream << matrixString;
+	out_file.close();
+	Core::log("TestBasinPlotter: Created file containing test data for comparison.", true);
+	**/
 
 	//load saved matrix
-	QFile file2("testData_BasinOfAttraction.txt");
-	if(!file2.open(QIODevice::ReadOnly | QIODevice::Text)) {
+	QFile in_file(fileName);
+	if(!in_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		Core::log("TestBasinPlotter: Could not open file to read matrix from.", true);
 		return;
 	}
-	QTextStream in(&file2);
+	QTextStream in_stream(&in_file);
 	QString oldMatrixString;
-    while(!in.atEnd()) {
-    	oldMatrixString += in.readLine();
+    while(!in_stream.atEnd()) {
+    	oldMatrixString += in_stream.readLine();
     }
-	file2.close();
+	in_file.close();
 
 	//compare matrices
 	QVERIFY(matrixString == oldMatrixString);

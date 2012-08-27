@@ -164,26 +164,89 @@ void TestBifurcationPlotter::testParameterSettings() {
 
 	Neuron *n1 = new Neuron("Neuron1", *ramp, *af);
 	network->addNeuron(n1);
+	Neuron *n2 = new Neuron("Neuron2", *ramp, *af);
+	network->addNeuron(n2);
 	Synapse *s1 = Synapse::createSynapse(n1, n1, 1.02, *sf);
+	Synapse *s2 = Synapse::createSynapse(n1, n2, -1.1, *sf);
+	Synapse *s3 = Synapse::createSynapse(n2, n1, 1.1, *sf);
 
 	QVERIFY(Neuro::getNeuralNetworkManager()->addNeuralNetwork(network));
 	QVERIFY(Core::getInstance()->init());
 	
 
 	// check default parameter settings
-	QVERIFY(v_ObservedElements->get() == false);
+	//QVERIFY(v_ObservedElements->get() == false);
 	QVERIFY(v_ObservedRanges->get() == "-1,1");
-	QVERIFY(v_VariedElement->get() == false);
-	QVERIFY(v_VariedRange->get() == "-1,1");
+	//QVERIFY(v_VariedElement->get() == false);
+	QVERIFY(v_VariedRange->get() == "0,1");
 	QVERIFY(v_ObservedResolution->get() == 600);
 	QVERIFY(v_VariedResolution->get() == 600);
 	QVERIFY(v_StepsToRun->get() == 1000);
 	QVERIFY(v_StepsToPlot->get() == 10);
 	QVERIFY(v_ResetNetworkActivation->get() == true);
 	QVERIFY(v_RestoreNetworkConfiguration->get() == true);
-	QVERIFY(v_RunBackwars->get() == true);
+	QVERIFY(v_RunBackwards->get() == true);
 	QVERIFY(v_ResetSimulator->get() == true);
+
+	// and matrix size
+	QVERIFY(v_Data->getMatrixWidth() == 2);
+	QVERIFY(v_Data->getMatrixHeight() == 2);
+	QVERIFY(v_Data->getMatrixDepth() == 1);
 
 
 	// configure them for the test case
+	v_ObservedElements->set(QString::number(n1->getId()) + ":o");
+	v_ObservedRanges->set("-1,1");
+	v_VariedElement->set(QString::number(n2->getId()) + ":o");
+	v_VariedRange->set("-1,1");
+	v_ObservedResolution->set(1000);
+	v_VariedResolution->set(1000);
+
+
+	// run plotter
+	plotter->execute();
+
+
+	// check matrix dimensions
+	QVERIFY(v_Data->getMatrixWidth() == 1001);
+	QVERIFY(v_Data->getMatrixHeight() == 1001);
+	QVERIFY(v_Data->getMatrixDepth() == 1);
+
+
+	// compare saved to newly generated test data
+	QString testDataNew = v_Data->getValueAsString();
+	QString fileName = "testData/BifurcationPlotterTest.txt";
+
+	/**
+	QFile out_file(fileName);
+	if(!out_file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		Core::log("TestBifurcationPlotter: Could not open file to save matrix to.", true);
+		return;
+	}
+	QTextStream out_stream(&out_file);
+    out_stream << testDataNew;
+	out_file.close();
+	Core::log("TestBifurcationPlotter: Created file containing test data for comparison.", true);
+	**/
+
+	QFile in_file(fileName);
+	if(!in_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		Core::log("TestBifurcationPlotter: Could not open file to read matrix from.", true);
+		return;
+	}
+	QTextStream in_stream(&in_file);
+	QString testDataOld;
+    while(!in_stream.atEnd()) {
+    	testDataOld += in_stream.readLine();
+    }
+	in_file.close();
+
+	//compare matrices
+	QVERIFY(testDataNew == testDataOld);
+	
+	
+	// clean-up
+	Neuro::reset();
+	Core::resetCore();
+
 }
