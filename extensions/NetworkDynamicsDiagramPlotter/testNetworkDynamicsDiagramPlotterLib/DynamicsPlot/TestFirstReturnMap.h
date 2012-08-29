@@ -42,34 +42,32 @@
  ***************************************************************************/
 
 
+#ifndef TESTTestFirstReturnMap_H_
+#define TESTTestFirstReturnMap_H_
 
+#include <QtTest/QtTest>
 
-#include "TestIsoperiodPlotter.h"
-#include <iostream>
-#include "Core/Core.h"
-#include "Network/NeuralNetwork.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "SynapseFunction/SimpleSynapseFunction.h"
-#include "TransferFunction/TransferFunctionRamp.h"
-#include "Adapters/TransferFunctionAdapter.h"
-#include <Util/NeuralNetworkUtil.h>
-#include <Util/DynamicsPlotterUtil.h>
-
-using namespace std;
-using namespace nerd;
-
-void TestIsoperiodPlotter::initTestCase() {
-}
-
-void TestIsoperiodPlotter::cleanUpTestCase() {
-}
-
-
-//Author
-void TestIsoperiodPlotter::testConstructors() {
+namespace nerd {
+	
+	class TestFirstReturnMap : public QObject {
+		
+		Q_OBJECT
+		
+	private slots:
+		
+		void cleanUpTestCase();
+		void initTestCase();
+		
+		void testConstructors();	
+		void testParameterSettings();
+		
+	private:
+		
+		
+	};
 	
 }
 
-
+#endif
 
 
