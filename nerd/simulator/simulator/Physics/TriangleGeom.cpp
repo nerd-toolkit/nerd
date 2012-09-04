@@ -195,10 +195,10 @@ void TriangleGeom::setLocalOrientation(const Quaternion &localOrientation) {
 	Vector3D newPoint;
 	Quaternion back(mLocalOrientation);
 	back.setW(-back.getW());
-	Quaternion inv =back.getInverse();
+	Quaternion inv = back.getInverse();
 	Quaternion old(0, 0, 0, 0);
 	for(int i = 0; i < mPoints.size(); i++) {
-		old.set(0,mPoints.at(i).getX(), mPoints.at(i).getY(), mPoints.at(i).getZ());
+		old.set(0, mPoints.at(i).getX(), mPoints.at(i).getY(), mPoints.at(i).getZ());
 		Quaternion newPointQ = back * old *inv;
 		newPoint.set(newPointQ.getX(), newPointQ.getY(), newPointQ.getZ());
 		mPoints.replace(i, newPoint);

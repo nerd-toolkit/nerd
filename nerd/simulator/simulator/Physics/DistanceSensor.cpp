@@ -69,6 +69,9 @@ DistanceSensor::DistanceSensor(const QString &name)
 	mMinRange = new DoubleValue(0.0);
 	mSensorNoise = new DoubleValue(0.0);
 	mMinIntersectionPoint = new Vector3DValue();
+	
+	mLocalOrientationEuler = new Vector3DValue();
+	mUseEulerAngle = new BoolValue(false);
 
 	mDistance = new InterfaceValue("", "Distance",
 			mMaxRange->get() - mMinRange->get(), 0.0,
@@ -91,6 +94,8 @@ DistanceSensor::DistanceSensor(const QString &name)
 	addParameter("Noise", mSensorNoise);
 	addParameter("NumberOfRays", mNumberOfRays);
 	addParameter("MinIntersectionPoint", mMinIntersectionPoint);
+	addParameter("LocalOrientationEuler", mLocalOrientationEuler);
+	addParameter("UseEulerAngles", mUseEulerAngle);
 }
 
 DistanceSensor::DistanceSensor(const DistanceSensor &other)
@@ -112,6 +117,9 @@ DistanceSensor::DistanceSensor(const DistanceSensor &other)
 	mSensorNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
 	mNumberOfRays = dynamic_cast<IntValue*>(getParameter("NumberOfRays"));
 	mMinIntersectionPoint = dynamic_cast<Vector3DValue*>(getParameter("MinIntersectionPoint"));
+	
+	mLocalOrientationEuler = dynamic_cast<Vector3DValue*>(getParameter("LocalOrientationEuler"));
+	mUseEulerAngle = dynamic_cast<BoolValue*>(getParameter("UseEulerAngles"));
 
 	if(mDistance != 0) {
 		mOutputValues.append(mDistance);
@@ -214,8 +222,14 @@ void DistanceSensor::setup() {
 	if(mHostBody == 0) {
 		Core::log(QString("DistanceSensor [").append(getName())
 				.append("]::setup: Could not find host body [")
-				.append(mHostBodyName->get()).append("]!"));
+				.append(mHostBodyName->get()).append("]!"), true);
 		return;
+	}
+	
+	if(mUseEulerAngle->get()) {
+		mLocalOrientation->setFromAngles(mLocalOrientationEuler->getX(), 
+										 mLocalOrientationEuler->getY(), 
+										 mLocalOrientationEuler->getZ());
 	}
 
 	//set target objects
@@ -287,25 +301,103 @@ void DistanceSensor::clear() {
 }
 
 QList<Quaternion> DistanceSensor::calcOrientations() const {
+	
 	QList<Quaternion> l;
-	Quaternion peripheral(1.0, 0.0, 0.0, 0.0);
-	Quaternion rotation(1.0, 0.0, 0.0, 0.0);
-	Quaternion local = mLocalOrientation->get();
 	double angle = mAngle->get();
 	int n = mNumberOfRays->get() - 1;
-
+	
+	double startAngle = angle / -2.0;
+	double angleIncrement = 0.0;
+	
 	if (n > 0) {
-		peripheral.setFromAngles(0.0, 0.0, angle / -2.0);
-		rotation.setFromAngles(0.0, 0.0, angle / n);
+		angleIncrement = angle / ((double) n);
 	}
-	if (n >= 0) {
-		peripheral = peripheral * local * peripheral.getInverse();
-		l.append(peripheral);
+	
+	Quaternion angleQuat(1.0, 0.0, 0.0, 0.0);
+	
+	if(n <= 0) {
+		l.append(angleQuat);
 	}
-	for (int i = 0; i < n; i++) {
-		peripheral = rotation * peripheral * rotation.getInverse();
-		l.append(peripheral);
+	else {
+		for(int i = 0; i < n + 1; ++i) {
+			angleQuat.setFromAngles(0.0, startAngle + (i * angleIncrement), 0.0);
+			l.append(angleQuat);
+		}
 	}
+	
+// 	QList<Quaternion> l;
+// 	Quaternion peripheral(1.0, 0.0, 0.0, 0.0);
+// 	Quaternion rotation(1.0, 0.0, 0.0, 0.0);
+// 	Quaternion local = mLocalOrientation->get();
+// 	double angle = mAngle->get();
+// 	int n = mNumberOfRays->get() - 1;
+// 
+// 	if (n > 0) {
+// 		peripheral.setFromAngles(0.0, 0.0, angle / -2.0);
+// 		rotation.setFromAngles(0.0, 0.0, angle / ((double) n));
+// 	}
+// 	peripheral.normalize();
+// 	rotation.normalize();
+// 	if (n >= 0) {
+// 		//peripheral = peripheral * local * peripheral.getInverse();
+// 		l.append(peripheral);
+// 	} 
+// 	peripheral.normalize();
+// 	
+// 	cerr << "Peri: " << peripheral.getX() << " " << peripheral.getY() << " " << peripheral.getZ() << " " << peripheral.getW() << endl;
+// 	cerr << "Rot : " << rotation.getX() << " " << rotation.getY() << " " << rotation.getZ() << " " << rotation.getW() << endl;
+// 	
+// 	for (int i = 0; i < n; i++) {
+// 		peripheral = rotation * peripheral * rotation.getInverse();
+// 		peripheral.normalize();
+// 		l.append(peripheral);
+// 	}
+
+
+// 	QList<Quaternion> l;
+// 	Quaternion peripheral(1.0, 0.0, 0.0, 0.0);
+// 	Quaternion rotation(1.0, 0.0, 0.0, 0.0);
+// 	Quaternion local = mLocalOrientation->get();
+// 	double angle = mAngle->get();
+// 	int n = mNumberOfRays->get() - 1;
+// 
+// 	if (n > 0) {
+// 		peripheral.setFromAngles(0.0, 0.0, angle / -2.0);
+// 		rotation.setFromAngles(0.0, 0.0, angle / ((double) n));
+// 	}
+// 	peripheral.normalize();
+// 	rotation.normalize();
+// 	if (n >= 0) {
+// 		Quaternion newRotation = local * peripheral;
+// 		newRotation.normalize();
+// 		l.append(newRotation);
+// 	}
+// 	peripheral.normalize();
+// 	for (int i = 0; i < n; i++) {
+// 		peripheral = rotation * peripheral;
+// 		peripheral.normalize();
+// 		Quaternion newRotation = local * peripheral;
+// 		newRotation.normalize();
+// 		l.append(newRotation);
+// 	}
+
+	
+	
+	/*
+	 m SensorGeometry->setLocalOrientatio*n(mLocalOrientation->get());
+	 mSensorBody->getGeometry()->setLocalPosition(mLocalPosition->get());
+	 Quaternion localPos(0, 
+			mLocalPosition->getX(), 
+			mLocalPosition->getY(), 
+			mLocalPosition->getZ());
+	 Quaternion bodyOrientationInverse = mHostBody->getQuaternionOrientationValue()->get().getInverse();
+	 Quaternion rotatedLocalPosQuat = mHostBody->getQuaternionOrientationValue()->get() 
+	 * localPos * bodyOrientationInverse;
+	 V ector3D rotatedLocalPos(rotatedLoc*alPosQuat.getX(), 
+	 rotatedLocalPosQuat.getY(), 
+	 rotatedLocalPosQuat.getZ());
+	*/
+	
 	return l;
 }
 

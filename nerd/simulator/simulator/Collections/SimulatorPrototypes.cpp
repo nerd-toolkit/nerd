@@ -47,6 +47,7 @@
 #include "SimulationConstants.h"
 #include "Models/PlaneGround.h"
 #include "Physics/DistanceSensor.h"
+#include "Physics/ActiveDistanceSensor.h"
 #include "Physics/LightSource.h"
 #include "Physics/LightSensor.h"
 #include "Physics/BoxBody.h"
@@ -84,6 +85,9 @@ namespace nerd{
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_DISTANCE_SENSOR,
         new DistanceSensor(SimulationConstants::PROTOTYPE_DISTANCE_SENSOR));
+	
+	pm->addPrototype(SimulationConstants::PROTOTYPE_ACTIVE_DISTANCE_SENSOR,
+		new ActiveDistanceSensor(SimulationConstants::PROTOTYPE_ACTIVE_DISTANCE_SENSOR));
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_LIGHT_SOURCE,
         new LightSource(SimulationConstants::PROTOTYPE_LIGHT_SOURCE, 0.8, 0.5, 0));

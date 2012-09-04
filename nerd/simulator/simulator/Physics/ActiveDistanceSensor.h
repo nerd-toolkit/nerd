@@ -41,56 +41,50 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#ifndef DistanceSensor_H_
-#define DistanceSensor_H_
+#ifndef ActiveDistanceSensor_H_
+#define ActiveDistanceSensor_H_
 
 #include "DistanceRay.h"
-#include "Physics/SimBody.h"
-#include "Physics/SimSensor.h"
-#include "Collision/DistanceSensorRule.h"
+#include "Physics/DistanceSensor.h"
 #include "Value/InterfaceValue.h"
 
 namespace nerd {
-
-class DistanceSensor : public SimObject, public SimSensor {
+	
+	class ActiveDistanceSensor : public DistanceSensor {
 	public:
-		DistanceSensor(const QString &name);
-		DistanceSensor(const DistanceSensor &other);
-		virtual ~DistanceSensor();
+		ActiveDistanceSensor(const QString &name);
+		ActiveDistanceSensor(const ActiveDistanceSensor &other);
+		virtual ~ActiveDistanceSensor();
+		
 		virtual SimObject* createCopy() const;
-
+		
 		virtual void setup();
 		virtual void clear();
 		virtual void updateSensorValues();
-
+		
 		virtual void valueChanged(Value *value);
-		virtual QList<Quaternion> calcOrientations() const;
-		SimBody* getHostBody() const;
-
-		virtual double getAvgSensorValue();
-		virtual double getMinSensorValue();
+		
+		void updateExternalValues();
 		
 	protected:
-		BoolValue *mCalcMinDistance;
-		DistanceSensorRule *mRule;
-		DoubleValue *mAngle;
-		DoubleValue *mMaxRange;
-		DoubleValue *mMinRange;
-		DoubleValue *mSensorNoise;
-		Vector3DValue *mMinIntersectionPoint;
-		IntValue *mNumberOfRays;
-		InterfaceValue *mDistance;
-		QList<DistanceRay*> mRays;
-		QuaternionValue *mLocalOrientation;
-		Vector3DValue *mLocalOrientationEuler;
-		BoolValue *mUseEulerAngle;
-		SimBody *mHostBody;
-		StringValue *mHostBodyName;
-		Vector3DValue *mLocalPosition;
-		ColorValue *mActiveColor;
-		ColorValue *mInactiveColor;
-};
-
+		DoubleValue *mEnergyCostPerScan;
+		DoubleValue *mTemperatureIncreasePerScan;
+		StringValue *mNameOfExternalEnergyValue;
+		StringValue *mNameOfExternalTemperatureValue;
+		IntValue *mActuatorMode;
+		IntValue *mRequiredNumberOfStepsWithSimilarActivation;
+		
+		
+		DoubleValue *mExternalEnergyValue;
+		DoubleValue *mExternalTemperatureValue;
+		InterfaceValue *mScanTrigger;
+		
+		
+		double mPreviousActuatorActivation;
+		int mNumberOfStepsWithSimilarActivation;
+		
+	};
+	
 }
 
 #endif

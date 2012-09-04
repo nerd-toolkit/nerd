@@ -125,6 +125,7 @@ const QString SimulationConstants::PROTOTYPE_DYNAMIXEL = "Prototypes/Dynamixel";
 const QString SimulationConstants::PROTOTYPE_DYNAMIXEL_NO_TORQUE = "Prototypes/DynamixelNoTorque";
 const QString SimulationConstants::PROTOTYPE_A_SERIES = "Prototypes/ASeries";
 const QString SimulationConstants::PROTOTYPE_DISTANCE_SENSOR = "Prototypes/DistanceSensor";
+const QString SimulationConstants::PROTOTYPE_ACTIVE_DISTANCE_SENSOR = "Prototypes/ActiveDistanceSensor";
 const QString SimulationConstants::PROTOTYPE_KHEPERA = "Prototypes/Khepera";
 const QString SimulationConstants::PROTOTYPE_SLIDER_MOTOR = "Prototypes/SliderMotor";
 const QString SimulationConstants::PROTOTYPE_SHAKER_BOARD = "Prototypes/ShakerBoard";

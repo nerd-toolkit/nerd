@@ -108,6 +108,7 @@ namespace nerd {
 		static const QString PROTOTYPE_DYNAMIXEL_NO_TORQUE;
 		static const QString PROTOTYPE_A_SERIES;
 		static const QString PROTOTYPE_DISTANCE_SENSOR;
+		static const QString PROTOTYPE_ACTIVE_DISTANCE_SENSOR;
 		static const QString PROTOTYPE_KHEPERA;
 		static const QString PROTOTYPE_SLIDER_MOTOR;
 		static const QString PROTOTYPE_SLIDER_JOINT;

@@ -139,6 +139,7 @@ set(nerd_simulator_SRCS
 	MotorModels/PassiveActuatorAdapter.cpp
 	MotorModels/PID_PassiveActuatorModel.cpp
 	Util/PID_Controller.cpp
+	Physics/ActiveDistanceSensor.cpp
 )
 
 set(nerd_simulator_MOC_HDRS

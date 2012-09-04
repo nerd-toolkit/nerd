@@ -2244,7 +2244,7 @@ void OpenGLVisualization::drawCylinder(CollisionObject *currentCollisionObject, 
 
 
 void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
-
+/*
 	RayGeom *ray = dynamic_cast<RayGeom*>(currentCollisionObject->getGeometry());
 	if(ray == 0) {
 		return;
@@ -2253,35 +2253,124 @@ void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
 	Vector3D startPoint = ray->getLocalPosition();
 	Vector3D endPoint = startPoint;
 	endPoint.setZ(endPoint.getZ() + length);
-
+	
 	Vector3D pos = ray->getLocalPosition();
+	
+	Quaternion localRayOrientation = ray->getLocalOrientation();
+	
+	Vector3D newPoint;
+	Quaternion back(localRayOrientation);
+	back.setW(-back.getW());
+	Quaternion inv = back.getInverse();
+	Quaternion old(0, 0, 0, 0);
+	
+	Quaternion inverse = localRayOrientation.getInverse();
+	
+	old.set(0, startPoint.getX(), startPoint.getY(), startPoint.getZ());
+	Quaternion newPointQ = localRayOrientation * old * inverse;
+	startPoint.set(newPointQ.getX(), newPointQ.getY(), newPointQ.getZ());
+	
+	old.set(0, endPoint.getX(), endPoint.getY(), endPoint.getZ());
+	newPointQ = localRayOrientation * old * inverse;
+	endPoint.set(newPointQ.getX(), newPointQ.getY(), newPointQ.getZ());
 
-	Quaternion quaternion = ray->getLocalOrientation();
-	double angle = 2 * acos(quaternion.getW());
-	double scale = sqrt(quaternion.getX() * quaternion.getX() + quaternion.getY()
-		* quaternion.getY() + quaternion.getZ() * quaternion.getZ());
-	double x  = 0.0;
-	double y = 0.0;
-	double z = 0.0;
-
-	if(scale != 0.0) {
-		x = quaternion.getX() / scale;
-		y = quaternion.getY() / scale;
-		z = quaternion.getZ() / scale;
-	}
-	angle = angle * 180.0 / Math::PI;
-
+	
 	glPushMatrix();
 	glShadeModel(GL_FLAT);
 	glTranslated(pos.getX(), pos.getY(), pos.getZ());
-	glRotated(angle, x, y, z);
-
+	//glRotated(angle, x, y, z);
+	
+	
 	glLineWidth(1);
 	glBegin(GL_LINES);
-		glVertex3d(startPoint.getX(), startPoint.getY(), startPoint.getZ());
-		glVertex3d(endPoint.getX(), endPoint.getY(), endPoint.getZ());
+	glVertex3d(startPoint.getX(), startPoint.getY(), startPoint.getZ());
+	glVertex3d(endPoint.getX(), endPoint.getY(), endPoint.getZ());
 	glEnd();
 	glPopMatrix();
+*/	
+	
+	 //TODO the above changes are only testwise!
+	 
+	 RayGeom *ray = dynamic_cast<RayGeom*>(currentCollisionObject->getGeometry());
+	 if(ray == 0) {
+		 return;
+	 }
+	 double length = ray->getVisibleLength();
+	 Vector3D startPoint = ray->getLocalPosition();
+	 Vector3D endPoint = startPoint;
+	 endPoint.setZ(endPoint.getZ() + length);
+	 
+	 Vector3D pos = ray->getLocalPosition();
+	 
+	 Quaternion quaternion = ray->getLocalOrientation();
+	 double angle = 2 * acos(quaternion.getW());
+	 double scale = sqrt(quaternion.getX() * quaternion.getX() + quaternion.getY()
+						* quaternion.getY() + quaternion.getZ() * quaternion.getZ());
+	 double x = 0.0;
+	 double y = 0.0;
+	 double z = 0.0;
+	 
+	 if(scale != 0.0) {
+		 x = quaternion.getX() / scale;
+		 y = quaternion.getY() / scale;
+		 z = quaternion.getZ() / scale;
+	 }
+	 angle = angle * 180.0 / Math::PI;
+	 
+	 glPushMatrix();
+	 glShadeModel(GL_FLAT);
+	 glTranslated(pos.getX(), pos.getY(), pos.getZ());
+	 glRotated(angle, x, y, z);
+	 
+	 
+	 
+	 glLineWidth(1);
+	 glBegin(GL_LINES);
+	 glVertex3d(startPoint.getX(), startPoint.getY(), startPoint.getZ());
+	 glVertex3d(endPoint.getX(), endPoint.getY(), endPoint.getZ());
+	 glEnd();
+	 glPopMatrix();
+	 
+// 	RayGeom *ray = dynamic_cast<RayGeom*>(currentCollisionObject->getGeometry());
+// 	if(ray == 0) {
+// 		return;
+// 	}
+// 	double length = ray->getVisibleLength();
+// 	Vector3D startPoint = ray->getLocalPosition();
+// 	Vector3D endPoint = startPoint;
+// 	endPoint.setZ(endPoint.getZ() + length);
+// 
+// 	Vector3D pos = ray->getLocalPosition();
+// 
+// 	Quaternion quaternion = ray->getLocalOrientation();
+// 	double angle = 2 * acos(quaternion.getW());
+// 	double scale = sqrt(quaternion.getX() * quaternion.getX() + quaternion.getY()
+// 		* quaternion.getY() + quaternion.getZ() * quaternion.getZ());
+// 	double x = 0.0;
+// 	double y = 0.0;
+// 	double z = 0.0;
+// 
+// 	if(scale != 0.0) {
+// 		x = quaternion.getX() / scale;
+// 		y = quaternion.getY() / scale;
+// 		z = quaternion.getZ() / scale;
+// 	}
+// 	angle = angle * 180.0 / Math::PI;
+// 
+// 	glPushMatrix();
+// 	glShadeModel(GL_FLAT);
+// 	glTranslated(pos.getX(), pos.getY(), pos.getZ());
+// 	glRotated(angle, x, y, z);
+// 	
+// 
+// 	glLineWidth(1);
+// 	glBegin(GL_LINES);
+// 		glVertex3d(startPoint.getX(), startPoint.getY(), startPoint.getZ());
+// 		glVertex3d(endPoint.getX(), endPoint.getY(), endPoint.getZ());
+// 	glEnd();
+// 	glPopMatrix();
+	
+	
 }
 
 
