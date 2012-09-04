@@ -156,14 +156,13 @@ namespace nerd {
 		if(mExternalEnergyValue != 0) {
 			if(mExternalEnergyValue->get() < mEnergyCostPerScan->get()) {
 				//there is not enough energy to do the scan.
-				mDistance->set(mDistance->getMax());
+				resetSensor();
 				return;
 			}
 		}
 		
 		switch(mActuatorMode->get()) {
 			case 0:
-				
 				DistanceSensor::updateSensorValues();
 				updateExternalValues();
 				
@@ -176,7 +175,7 @@ namespace nerd {
 					updateExternalValues();
 				}
 				else {
-					mDistance->set(mDistance->getMax());
+					resetSensor();
 				}
 				mPreviousActuatorActivation = mScanTrigger->get();
 				
@@ -191,7 +190,7 @@ namespace nerd {
 					updateExternalValues();
 				}
 				else {
-					mDistance->set(mDistance->getMax());
+					resetSensor();
 				}
 				
 				break;
@@ -207,23 +206,27 @@ namespace nerd {
 				}
 				mPreviousActuatorActivation = mScanTrigger->get();
 				
-				if(mNumberOfStepsWithSimilarActivation >= mRequiredNumberOfStepsWithSimilarActivation->get())
+				if(mNumberOfStepsWithSimilarActivation == mRequiredNumberOfStepsWithSimilarActivation->get())
 				{
-					mNumberOfStepsWithSimilarActivation = 0;
 					DistanceSensor::updateSensorValues();
 					updateExternalValues();
 				}
 				else {
-					mDistance->set(mDistance->getMax());
+					resetSensor();
+				}
+				//make sure the step counter is not running away.
+				if(mNumberOfStepsWithSimilarActivation > 
+							mRequiredNumberOfStepsWithSimilarActivation->get() + 2) 
+				{
+					mNumberOfStepsWithSimilarActivation = 
+							mRequiredNumberOfStepsWithSimilarActivation->get() + 2;
 				}
 				
 				break;
 			default:
 				//no distance measurement
-				mDistance->set(mDistance->getMax());
+				resetSensor();
 		}
-		
-		DistanceSensor::updateSensorValues();
 	}
 	
 	void ActiveDistanceSensor::valueChanged(Value *value) {

@@ -443,8 +443,9 @@ void NeuralNetworkEditor::restoreWidgetGeometries() {
 	QString sizeProp = props.getProperty("NetworkEditor/Geometry/");
 	QStringList sizeAndPositionString = sizeProp.split(",");
 
+	
 	if(sizeAndPositionString.size() != 4) {
-		resize(400,500);
+		resize(1200,500);
 	}
 	else {
 		double posX = sizeAndPositionString.at(0).toDouble();

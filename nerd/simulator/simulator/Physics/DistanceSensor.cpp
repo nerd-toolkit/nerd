@@ -190,6 +190,15 @@ double DistanceSensor::getAvgSensorValue() {
 	return (0 < n ? distance / n : mMaxRange->get()) - mMinRange->get();
 }
 
+void DistanceSensor::resetSensor() {
+	mDistance->set(mDistance->getMax());
+	for(int i = 0; i < mRays.size(); ++i) {
+		DistanceRay *ray = mRays.at(i);
+		RayGeom *rayGeom = ray->getRayCollisionObject();
+		ray->updateRay(rayGeom->getLength());
+	}
+}
+
 void DistanceSensor::valueChanged(Value *value) {
 	SimObject::valueChanged(value);
 	if(value == 0) {

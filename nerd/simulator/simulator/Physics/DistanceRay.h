@@ -69,6 +69,8 @@ class DistanceRay {
 		virtual QString getName() const;
 
 		virtual CollisionObject* getCollisionObject() const;
+		virtual RayGeom* getRayCollisionObject() const;
+		
 		virtual double getDistance();
 		Vector3D getClosestKnownCollisionPoint() const;
 

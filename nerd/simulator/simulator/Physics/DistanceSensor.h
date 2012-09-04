@@ -70,6 +70,8 @@ class DistanceSensor : public SimObject, public SimSensor {
 		virtual double getAvgSensorValue();
 		virtual double getMinSensorValue();
 		
+		virtual void resetSensor();
+		
 	protected:
 		BoolValue *mCalcMinDistance;
 		DistanceSensorRule *mRule;

@@ -101,6 +101,10 @@ CollisionObject* DistanceRay::getCollisionObject() const {
 	return mRayCollisionObject;
 }
 
+RayGeom* DistanceRay::getRayCollisionObject() const {
+	return mRay;
+}
+
 double DistanceRay::getDistance() {
 	Vector3D localpos = mRay->getLocalPosition();
 	Vector3D simpos
