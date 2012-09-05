@@ -65,6 +65,7 @@
 #include "Physics/SinkBox.h"
 #include "Physics/Gyroscope.h"
 #include "MotorModels/PassiveActuatorAdapter.h"
+#include "Physics/ControlParameter.h"
 
 
 using namespace std;
@@ -116,6 +117,9 @@ namespace nerd{
 	pm->addPrototype(SimulationConstants::PROTOTYPE_UNIVERSAL_JOINT_MSERIES_MOTOR_ADAPTER,
 		new UniversalJointMotorAdapter(
 				SimulationConstants::PROTOTYPE_UNIVERSAL_JOINT_MSERIES_MOTOR_ADAPTER));
+	
+	pm->addPrototype("Prototypes/VirtualSensorValue",
+		new ControlParameter("Prototypes/VirtualSensorValue"));
 
 	//Torque motors
 

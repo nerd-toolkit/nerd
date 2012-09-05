@@ -105,6 +105,8 @@ ODE_Physics::ODE_Physics()
 		new ODE_Dynamixel(SimulationConstants::PROTOTYPE_DYNAMIXEL));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_SERVO_MOTOR,
 		new ODE_ServoMotor(SimulationConstants::PROTOTYPE_SERVO_MOTOR));
+	pm->addPrototype(SimulationConstants::PROTOTYPE_SERVO_MOTOR_WITH_TEMPERATURE,
+		new ODE_ServoMotor(SimulationConstants::PROTOTYPE_SERVO_MOTOR_WITH_TEMPERATURE, true));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_HINGE_JOINT,
 		new ODE_HingeJoint(SimulationConstants::PROTOTYPE_HINGE_JOINT));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_SLIDER_MOTOR,

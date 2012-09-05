@@ -60,8 +60,8 @@ namespace nerd {
 /**
  * Constructs a new ODE_ServoMotor.
  */
-ODE_ServoMotor::ODE_ServoMotor(const QString &name) 
-	: SimSensor(), SimActuator(), ServoMotor(name), ODE_Joint()
+ODE_ServoMotor::ODE_ServoMotor(const QString &name, bool enableTemperature) 
+	: SimSensor(), SimActuator(), ServoMotor(name, enableTemperature), ODE_Joint()
 {
 }
 
@@ -198,7 +198,8 @@ void ODE_ServoMotor::updateActuators() {
 			} 
 			else {	
 				// by modifying the parameter "MaxTorque" the speed of the motor is changed.
-				dJointSetHingeParam(mJoint, dParamVel,  mMaxTorque->get() * mDesiredMotorSetting->get());	
+				//dJointSetHingeParam(mJoint, dParamVel,  mMaxTorque->get() * mDesiredMotorSetting->get());	
+				dJointSetHingeParam(mJoint, dParamVel,  mMaxTorque->get() * calculatedTorque(mVelocity, mCurrentMotorAngle));	
 			}
 	}
 }

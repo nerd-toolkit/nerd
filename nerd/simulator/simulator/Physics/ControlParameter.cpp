@@ -50,9 +50,11 @@ ControlParameter::ControlParameter(const QString &name)
 {
 	mControlParameter = new InterfaceValue(getName(), "Control", 0.0, 0.0, 1.0);
 	mAutoControl = new BoolValue(true);
+	mInitialValue = new DoubleValue(0.0);
 
 	addParameter("ControlParameter", mControlParameter);
 	addParameter("AutoControl", mAutoControl);
+	addParameter("InitialValue", mInitialValue);
 
 	mOutputValues.append(mControlParameter);
 }
@@ -60,10 +62,9 @@ ControlParameter::ControlParameter(const QString &name)
 ControlParameter::ControlParameter(const ControlParameter &other)
 	: Object(), ValueChangedListener(), SimSensor(), SimObject(other)
 {
-	mControlParameter = dynamic_cast<InterfaceValue*>(
-			getParameter("ControlParameter"));
-	mAutoControl = dynamic_cast<BoolValue*>(
-			getParameter("AutoControl"));
+	mControlParameter = dynamic_cast<InterfaceValue*>(getParameter("ControlParameter"));
+	mAutoControl = dynamic_cast<BoolValue*>(getParameter("AutoControl"));
+	mInitialValue = dynamic_cast<DoubleValue*>(getParameter("InitialValue"));
 
 	mOutputValues.append(mControlParameter);
 }
@@ -85,11 +86,24 @@ void ControlParameter::synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm*
 
 void ControlParameter::setup() {
 	SimObject::setup();
+	if(mAutoControl->get()) {
+		mControlParameter->set(mInitialValue->get());
+	}
 }
 
 
 void ControlParameter::clear() {
 	SimObject::clear();
+}
+
+void ControlParameter::valueChanged(Value *value) {
+	SimObject::valueChanged(value);
+	if(value == 0) {
+		return;
+	}
+	else if(value == mNameValue) {
+		mControlParameter->setInterfaceName(mNameValue->get());
+	}
 }
 
 void ControlParameter::updateSensorValues() {

@@ -66,7 +66,7 @@ class ServoMotor : public HingeJoint, public virtual EventListener,
 				   public virtual SimSensor, public virtual SimActuator 
 {
 	public:
-		ServoMotor(const QString &name);
+		ServoMotor(const QString &name, bool enableTemperature = false);
 		ServoMotor(const ServoMotor &joint);
 		virtual ~ServoMotor();
 		
@@ -96,15 +96,22 @@ class ServoMotor : public HingeJoint, public virtual EventListener,
 		DoubleValue *mMaxAngleValue;
 		DoubleValue *mMaxTorque;
 		BoolValue *mControlMotorAngle;
+		DoubleValue *mTemperatureGainFactor;
+		DoubleValue *mTemperatureCoolingRate;
+		DoubleValue *mEnergyConsumptionFactor;
+		DoubleValue *mTemperatureThresholdForFailure;
+		StringValue *mExternalEnergyValueName;
 
 		bool mIsInitialized;
 
 		InterfaceValue *mDesiredMotorSetting;
 		InterfaceValue *mMotorAngleSensor;
+		InterfaceValue *mMotorTemperature;
 
 		DoubleValue *mTimeStepSize;
 		DoubleValue *mSensorNoiseValue;
 		DoubleValue *mOffsetValue;
+		DoubleValue *mExternalEnergyValue;
 
 		IntValue *mHistorySizeValue;
 		DoubleValue *mFMaxValue;
@@ -124,6 +131,7 @@ class ServoMotor : public HingeJoint, public virtual EventListener,
 		double mLastError;
 		int mHistorySize;
 		QVector<double> mErrorHistory;
+		bool mEnableTemperature;
 		
 	};
 

@@ -73,6 +73,7 @@ namespace nerd {
 		virtual void synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm *psa);
 		virtual void setup();
 		virtual void clear();
+		virtual void valueChanged(Value *value);
 
 		virtual void updateSensorValues();
 		
@@ -81,6 +82,7 @@ namespace nerd {
 	protected:
 		InterfaceValue *mControlParameter;
 		BoolValue *mAutoControl;
+		DoubleValue *mInitialValue;
 	};
 
 }

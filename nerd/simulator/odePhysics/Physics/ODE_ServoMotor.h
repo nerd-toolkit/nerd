@@ -60,7 +60,7 @@ namespace nerd {
 class ODE_ServoMotor : public ServoMotor, public ODE_Joint {
 
 	public:
-		ODE_ServoMotor(const QString &name);
+		ODE_ServoMotor(const QString &name, bool enableTemperature = false);
 		ODE_ServoMotor(const ODE_ServoMotor &joint);
 		virtual ~ODE_ServoMotor();
 		

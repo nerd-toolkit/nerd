@@ -114,6 +114,7 @@ namespace nerd {
 		static const QString PROTOTYPE_SLIDER_JOINT;
 		static const QString PROTOTYPE_SHAKER_BOARD;
 		static const QString PROTOTYPE_SERVO_MOTOR;
+		static const QString PROTOTYPE_SERVO_MOTOR_WITH_TEMPERATURE;
 		static const QString PROTOTYPE_LIGHT_SOURCE;
 		static const QString PROTOTYPE_LIGHT_SENSOR;
 		static const QString PROTOTYPE_FORCE_SENSOR;

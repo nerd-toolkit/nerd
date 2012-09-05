@@ -53,8 +53,11 @@ using namespace std;
 
 namespace nerd {
 
-ServoMotor::ServoMotor(const QString &name) : EventListener(), 
-		SimSensor(), SimActuator(), HingeJoint(name), mIsInitialized(false), mResetEvent(0)
+ServoMotor::ServoMotor(const QString &name, bool enableTemperature) : EventListener(), 
+		SimSensor(), SimActuator(), HingeJoint(name),
+		mTemperatureGainFactor(0), mTemperatureCoolingRate(0), mEnergyConsumptionFactor(0),
+		mTemperatureThresholdForFailure(0), mExternalEnergyValueName(0), mIsInitialized(false), 
+		mMotorTemperature(0),	mExternalEnergyValue(0), mResetEvent(0), mEnableTemperature(enableTemperature)
 {
 	mPID_Proportional = new DoubleValue(1.0);
 	mPID_Integral = new DoubleValue(0.0);
@@ -72,9 +75,18 @@ ServoMotor::ServoMotor(const QString &name) : EventListener(),
 	mMotorAngleSensor->setNormalizedMax(1.0);
 	mHistorySizeValue = new IntValue(10);
 	mFMaxValue = new DoubleValue(1.0);
+	mTemperatureGainFactor = new DoubleValue(0.001);
+	mTemperatureCoolingRate = new DoubleValue(0.0001);
+	mEnergyConsumptionFactor = new DoubleValue(0.001);
+	mTemperatureThresholdForFailure = new DoubleValue(0.9);
+	mExternalEnergyValueName = new StringValue();
+	mMotorTemperature = new InterfaceValue(getName(), "Temperature", 0.0, 0.0, 1.0);
 	
 	mInputValues.append(mDesiredMotorSetting);
 	mOutputValues.append(mMotorAngleSensor);
+	if(enableTemperature) {
+		mOutputValues.append(mMotorTemperature);
+	}
 
 	mOffsetValue = new DoubleValue(0.0);
 	mOffset = mOffsetValue->get();
@@ -94,6 +106,15 @@ ServoMotor::ServoMotor(const QString &name) : EventListener(),
 	addParameter("SensorNoise", mSensorNoiseValue);	
 	addParameter("HistorySize", mHistorySizeValue);
 	addParameter("MaxForce", mFMaxValue);
+	if(enableTemperature) {
+		addParameter("HeatingRate", mTemperatureGainFactor);
+		addParameter("CoolingRate", mTemperatureCoolingRate);
+		addParameter("FailureTemperature", mTemperatureThresholdForFailure);
+		addParameter("MotorTemperature", mMotorTemperature);
+	}
+	addParameter("EnergyConsumptionFactor", mEnergyConsumptionFactor);
+	addParameter("ExternalEnergyValueName", mExternalEnergyValueName);
+	
 	
 	mHistorySize = mHistorySizeValue->get();
 
@@ -108,7 +129,11 @@ ServoMotor::ServoMotor(const QString &name) : EventListener(),
 
 
 ServoMotor::ServoMotor(const ServoMotor &joint) : Object(), ValueChangedListener(),
-	 EventListener(), SimSensor(), SimActuator(), HingeJoint(joint), mResetEvent(0)
+	 EventListener(), SimSensor(), SimActuator(), HingeJoint(joint), 
+	 mTemperatureGainFactor(0), mTemperatureCoolingRate(0), mEnergyConsumptionFactor(0),
+	 mTemperatureThresholdForFailure(0), mExternalEnergyValueName(0),  mIsInitialized(false), 
+	 mMotorTemperature(0),	 mExternalEnergyValue(0), mResetEvent(0), 
+	 mEnableTemperature(joint.mEnableTemperature)
 {
 	mPID_Proportional = dynamic_cast<DoubleValue*>(getParameter("PID_P"));
 	mPID_Integral = dynamic_cast<DoubleValue*>(getParameter("PID_I"));
@@ -124,8 +149,19 @@ ServoMotor::ServoMotor(const ServoMotor &joint) : Object(), ValueChangedListener
 	mHistorySizeValue = dynamic_cast<IntValue*>(getParameter("HistorySize"));
 	mFMaxValue = dynamic_cast<DoubleValue*>(getParameter("MaxForce"));
 	
+	mTemperatureGainFactor = dynamic_cast<DoubleValue*>(getParameter("HeatingRate"));
+	mTemperatureCoolingRate = dynamic_cast<DoubleValue*>(getParameter("CoolingRate"));
+	mEnergyConsumptionFactor = dynamic_cast<DoubleValue*>(getParameter("EnergyConsumptionFactor"));
+	mTemperatureThresholdForFailure = dynamic_cast<DoubleValue*>(getParameter("FailureTemperature"));
+	mExternalEnergyValueName = dynamic_cast<StringValue*>(getParameter("ExternalEnergyValueName"));
+	mMotorTemperature = dynamic_cast<InterfaceValue*>(getParameter("MotorTemperature"));
+	
+	
 	mInputValues.append(mDesiredMotorSetting);
 	mOutputValues.append(mMotorAngleSensor);
+	if(mMotorTemperature != 0) {
+		mOutputValues.append(mMotorTemperature);
+	}
 
 	mTimeStepSize = dynamic_cast<DoubleValue*>(
 		Core::getInstance()->getValueManager()->getValue(SimulationConstants::VALUE_TIME_STEP_SIZE));
@@ -166,6 +202,15 @@ void ServoMotor::setup() {
 	SimJoint::setup();
 	if(!mIsInitialized) {
 		initialize();
+	}
+	if(mExternalEnergyValueName->get() != "") {
+		ValueManager *vm = Core::getInstance()->getValueManager();
+		mExternalEnergyValue = vm->getDoubleValue(mExternalEnergyValueName->get());
+		
+		if(mExternalEnergyValue == 0) {
+			Core::log("ServoMotor Warning: Could not find external energy value ["
+						+ mExternalEnergyValueName->get() + "]. Ignoring energy consumption.", true);
+		}
 	}
 }
 
@@ -251,6 +296,38 @@ double ServoMotor::calculatedTorque(double, double currentPosition) {
 				/ mTimeStepSize->get() * errorDistance);
 		mLastError = error;
 	}
+	else {
+		torque = mDesiredMotorSetting->get();
+	}
+	
+	//depending on the torque, process the energy consumption
+	if(mExternalEnergyValue != 0 && mEnergyConsumptionFactor != 0) {
+		double energyConsumption = Math::abs(torque) * mEnergyConsumptionFactor->get();
+		if(mExternalEnergyValue->get() < energyConsumption) {
+			//failure if there is no battery power left.
+			return 0.0;
+		}
+		mExternalEnergyValue->set(mExternalEnergyValue->get() - energyConsumption);
+	}
+	
+	//depending on the torque, process the  temperature
+	if(mEnableTemperature 
+		&& mTemperatureGainFactor != 0 
+		&& mTemperatureCoolingRate != 0 
+		&& mTemperatureThresholdForFailure != 0) 
+	{
+		double temperatureIncrease = (Math::abs(torque) * mTemperatureGainFactor->get()) - mTemperatureCoolingRate->get();
+		
+		if((mMotorTemperature->get() + temperatureIncrease) > mTemperatureThresholdForFailure->get()) {
+			
+			//failuer, but cool down a bit.
+			mMotorTemperature->set(mMotorTemperature->get() - mTemperatureCoolingRate->get());
+			return 0.0;
+		}
+		
+		mMotorTemperature->set(mMotorTemperature->get() + temperatureIncrease);
+	}
+	
 	return torque;
 	
 }
