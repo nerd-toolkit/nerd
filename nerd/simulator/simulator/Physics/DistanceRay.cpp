@@ -141,6 +141,12 @@ void DistanceRay::updateRay(double length, bool disableRay) {
 	if(disableRay) {
 		mRay->setColor(mDisabledColor);
 		mRay->setVisibleLength(mRay->getLength());
+		
+		//erase the stored collision data.
+		if(mRule != 0) {
+			QList<Vector3D> *points = mRule->getCollisionPoints(mRayCollisionObject);
+			points->clear();
+		}
 	}
 	else {
 		if(length < mRay->getLength()) {

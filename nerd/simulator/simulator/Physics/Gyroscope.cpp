@@ -69,6 +69,7 @@ Gyroscope::Gyroscope(const QString &name)
 	mHostBodyName = new StringValue();
 	mMaxSensorOutput = new DoubleValue(30.0);
 	mRandomizeInitialOffsets = new BoolValue(false);
+	mEliminateSignChange = new BoolValue(false);
 
 	addParameter("Axis1", mRotation1stAxis);
 	addParameter("Axis2", mRotation2ndAxis);
@@ -78,6 +79,7 @@ Gyroscope::Gyroscope(const QString &name)
 	addParameter("HostBody", mHostBodyName);
 	addParameter("MaxSensorOutput", mMaxSensorOutput);
 	addParameter("RandomizeInitOffsets", mRandomizeInitialOffsets);
+	addParameter("EliminateSignChanges", mEliminateSignChange);
 
 	mOutputValues.append(mRotation1stAxis);
 	mOutputValues.append(mRotation2ndAxis);
@@ -102,6 +104,7 @@ Gyroscope::Gyroscope(const Gyroscope &other)
 	mHostBodyName = dynamic_cast<StringValue*>(getParameter("HostBody"));
 	mMaxSensorOutput = dynamic_cast<DoubleValue*>(getParameter("MaxSensorOutput"));
 	mRandomizeInitialOffsets = dynamic_cast<BoolValue*>(getParameter("RandomizeInitOffsets"));
+	mEliminateSignChange = dynamic_cast<BoolValue*>(getParameter("EliminateSignChanges"));
 
 	mOutputValues.append(mRotation1stAxis);
 	mOutputValues.append(mRotation2ndAxis);
@@ -150,6 +153,21 @@ void Gyroscope::clear() {
 	mHostBody = 0;
 }
 
+void Gyroscope::valueChanged(Value *value) {
+	SimObject::valueChanged(value);
+	if(value == 0) {
+		return;
+	}
+	else if(value == mMaxSensorOutput) {
+		mRotation1stAxis->setMax(mMaxSensorOutput->get());
+		mRotation2ndAxis->setMax(mMaxSensorOutput->get());
+		mRotation3rdAxis->setMax(mMaxSensorOutput->get());
+		mRotation1stAxis->setMin(-mMaxSensorOutput->get());
+		mRotation2ndAxis->setMin(-mMaxSensorOutput->get());
+		mRotation3rdAxis->setMin(-mMaxSensorOutput->get());
+	}
+}
+
 void Gyroscope::updateSensorValues() {
 	
 	if(mHostBody == 0 || mHostBodyOrientation == 0) {
@@ -157,36 +175,79 @@ void Gyroscope::updateSensorValues() {
 	}
 	Vector3D currentHostBodyOrientation = mHostBodyOrientation->get();
 	//Core::log("Ori: " + QString::number(currentHostBodyOrientation.getX()), true);
-
-	Vector3D difference = currentHostBodyOrientation - mPreviousBodyAngles;
-	while(difference.getX() <= -180.0) {
-		difference.setX(difference.getX() + 360.0);
-	}
-	while(difference.getY() <= -180.0) {
-		difference.setY(difference.getY() + 360.0);
-	}
-	while(difference.getZ() <= -180.0) {
-		difference.setZ(difference.getZ() + 360.0);
-	}
-	while(difference.getX() > 180.0) {
-		difference.setX(difference.getX() - 360.0);
-	}
-	while(difference.getY() > 180.0) {
-		difference.setY(difference.getY() - 360.0);
-	}
-	while(difference.getZ() > 180.0) {
-		difference.setZ(difference.getZ() - 360.0);
-	}
 	
-	if(mOutputRateOfChange->get()) {
-		mRotation1stAxis->set(difference.getX());
-		mRotation2ndAxis->set(difference.getY());
-		mRotation3rdAxis->set(difference.getZ());
-	}
-	else {
+	if(!mOutputRateOfChange->get()) {
+		
+		while(currentHostBodyOrientation.getX() <= -180.0) {
+			currentHostBodyOrientation.setX(currentHostBodyOrientation.getX() + 360.0);
+		}
+		while(currentHostBodyOrientation.getY() <= -180.0) {
+			currentHostBodyOrientation.setY(currentHostBodyOrientation.getY() + 360.0);
+		}
+		while(currentHostBodyOrientation.getZ() <= -180.0) {
+			currentHostBodyOrientation.setZ(currentHostBodyOrientation.getZ() + 360.0);
+		}
+		while(currentHostBodyOrientation.getX() > 180.0) {
+			currentHostBodyOrientation.setX(currentHostBodyOrientation.getX() - 360.0);
+		}
+		while(currentHostBodyOrientation.getY() > 180.0) {
+			currentHostBodyOrientation.setY(currentHostBodyOrientation.getY() - 360.0);
+		}
+		while(currentHostBodyOrientation.getZ() > 180.0) {
+			currentHostBodyOrientation.setZ(currentHostBodyOrientation.getZ() - 360.0);
+		}
+		
+		if(mEliminateSignChange->get()) {
+			if(currentHostBodyOrientation.getX() > 90.0) {
+				currentHostBodyOrientation.setX(180.0 - currentHostBodyOrientation.getX());
+			}
+			if(currentHostBodyOrientation.getX() < -90.0) {
+				currentHostBodyOrientation.setX(-180.0 - currentHostBodyOrientation.getX());
+			}
+			if(currentHostBodyOrientation.getY() > 90.0) {
+				currentHostBodyOrientation.setY(180.0 - currentHostBodyOrientation.getY());
+			}
+			if(currentHostBodyOrientation.getY() < -90.0) {
+				currentHostBodyOrientation.setY(-180.0 - currentHostBodyOrientation.getY());
+			}
+			if(currentHostBodyOrientation.getZ() > 90.0) {
+				currentHostBodyOrientation.setZ(180.0 - currentHostBodyOrientation.getZ());
+			}
+			if(currentHostBodyOrientation.getZ() < -90.0) {
+				currentHostBodyOrientation.setZ(-180.0 - currentHostBodyOrientation.getZ());
+			}
+		}
+		
 		mRotation1stAxis->set(currentHostBodyOrientation.getX());
 		mRotation2ndAxis->set(currentHostBodyOrientation.getY());
 		mRotation3rdAxis->set(currentHostBodyOrientation.getZ());
+	}
+	else {
+		
+		Vector3D difference = currentHostBodyOrientation - mPreviousBodyAngles;
+		while(difference.getX() <= -180.0) {
+			difference.setX(difference.getX() + 360.0);
+		}
+		while(difference.getY() <= -180.0) {
+			difference.setY(difference.getY() + 360.0);
+		}
+		while(difference.getZ() <= -180.0) {
+			difference.setZ(difference.getZ() + 360.0);
+		}
+		while(difference.getX() > 180.0) {
+			difference.setX(difference.getX() - 360.0);
+		}
+		while(difference.getY() > 180.0) {
+			difference.setY(difference.getY() - 360.0);
+		}
+		while(difference.getZ() > 180.0) {
+			difference.setZ(difference.getZ() - 360.0);
+		}
+
+		mRotation1stAxis->set(difference.getX());
+		mRotation2ndAxis->set(difference.getY());
+		mRotation3rdAxis->set(difference.getZ());
+		
 	}
 
 	mPreviousBodyAngles = currentHostBodyOrientation;

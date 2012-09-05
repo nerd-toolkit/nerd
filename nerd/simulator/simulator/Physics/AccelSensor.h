@@ -106,6 +106,7 @@ class AccelSensor : public virtual SimSensor, public SimObject {
 		CollisionObject *mSensorBody;
 		Vector3DValue *mLocalPosition;
 		QuaternionValue *mLocalOrientation;
+		BoolValue *mDisableBodyCollisions;
 		Vector3DValue *mSensorAxisOneValue;
 		Vector3DValue *mSensorAxisTwoValue;
 		Vector3DValue *mSensorAxisThreeValue;

@@ -72,6 +72,8 @@ namespace nerd {
 
 		virtual void setup();
 		virtual void clear();
+		
+		virtual void valueChanged(Value *value);
 
 		virtual void updateSensorValues();
 
@@ -86,6 +88,7 @@ namespace nerd {
 		StringValue *mHostBodyName;
 		DoubleValue *mMaxSensorOutput;
 		BoolValue *mRandomizeInitialOffsets;
+		BoolValue *mEliminateSignChange;
 		Vector3D mPreviousBodyAngles;
 		Vector3D mPreviousSensorAngles;
 		Vector3D mCurrentOffsets;

@@ -79,6 +79,8 @@ AccelSensor::AccelSensor(const QString &name, int numberOfAxes, double scalingFa
 
 	mLocalOrientation = new QuaternionValue();
 	mLocalPosition = new Vector3DValue();
+	
+	mDisableBodyCollisions = new BoolValue(false);
 
 	if(numberOfAxes == 3) {
 		mSensorSizeValue = new Vector3DValue(0.045, 0.008, 0.051);
@@ -114,6 +116,7 @@ AccelSensor::AccelSensor(const QString &name, int numberOfAxes, double scalingFa
 
 	addParameter("LocalPosition", mLocalPosition);
 	addParameter("LocalOrientation", mLocalOrientation);
+	addParameter("DisableBodyCollisions", mDisableBodyCollisions);
 	addParameter("Axis1", mSensorAxisOneValue);
 	addParameter("Axis2", mSensorAxisTwoValue);
 	addParameter("Axis3", mSensorAxisThreeValue);
@@ -180,6 +183,7 @@ AccelSensor::AccelSensor(const AccelSensor &sensor) : SimSensor(sensor), Object(
 	mMaxSensorValue = sensor.mMaxSensorValue;
 	mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
 	mLocalOrientation = dynamic_cast<QuaternionValue*>(getParameter("LocalOrientation"));
+	mDisableBodyCollisions = dynamic_cast<BoolValue*>(getParameter("DisableBodyCollisions"));
 	mSensorAxisOneValue = dynamic_cast<Vector3DValue*>(getParameter("Axis1"));
 	mSensorAxisTwoValue = dynamic_cast<Vector3DValue*>(getParameter("Axis2"));
 	mSensorAxisThreeValue = dynamic_cast<Vector3DValue*>(getParameter("Axis3"));
@@ -365,6 +369,11 @@ bool AccelSensor::createSensor() {
 
 	mSensorBody = new CollisionObject(BoxGeom(this, mSensorSizeValue->getX(),
 		mSensorSizeValue->getY(), mSensorSizeValue->getZ()), this);
+	
+	if(mDisableBodyCollisions->get()) {
+		mSensorBody->disableCollisions(true);
+	}
+	
 	mSensorGeometry = dynamic_cast<BoxGeom*>(mSensorBody->getGeometry());
 	mSensorGeometry->setAutomaticColor(false);
 	if(mSensorGeometry == 0) {

@@ -679,6 +679,30 @@ bool ScriptedModel::allowCollisionsRegExp(const QString &bodyName1, const QStrin
 	return true;
 }
 
+bool ScriptedModel::disableCollisions(int objectId) {
+	SimBody *obj = 0;
+	
+	if(mEnvironmentMode) {
+		obj = dynamic_cast<SimBody*>(mEnvironmentObjectLookup.value(objectId));
+	}
+	else {
+		obj = dynamic_cast<SimBody*>(mSimObjectsLookup.value(objectId));
+	}
+	
+	
+	if(obj == 0) {
+		reportError("Could not find required body ["
+					+ QString::number(objectId) + "]");
+		return false;
+	}
+	
+	QList<CollisionObject*> collObjects = obj->getCollisionObjects();
+	for(QListIterator<CollisionObject*> i(collObjects); i.hasNext();) {
+		i.next()->disableCollisions(true);
+	}
+	return true;
+}
+
 
 bool ScriptedModel::hasEnvironmentSection() {
 	if(mScript != 0) {
