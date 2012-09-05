@@ -59,7 +59,7 @@ class DistanceRay {
 		DistanceRay(const QString &name, const Vector3D &position,
 				const Quaternion &orientation, double length,
 				DistanceSensorRule *rule, const Color &active,
-				const Color &inactive);
+				const Color &inactive, const Color &disableColor);
 		virtual ~DistanceRay();
 
 		void setOwner(DistanceSensor *sensor);
@@ -71,10 +71,10 @@ class DistanceRay {
 		virtual CollisionObject* getCollisionObject() const;
 		virtual RayGeom* getRayCollisionObject() const;
 		
-		virtual double getDistance();
+		virtual double getDistance(double minRange);
 		Vector3D getClosestKnownCollisionPoint() const;
 
-		virtual void updateRay(double length);
+		virtual void updateRay(double length, bool disable = false);
 
 	private:
 		QString mName;
@@ -84,6 +84,7 @@ class DistanceRay {
 		DistanceSensor *mOwner;
 		Color mActiveColor;
 		Color mInactiveColor;
+		Color mDisabledColor;
 		Vector3D mClosestKnownCollisionPoint;
 
 };

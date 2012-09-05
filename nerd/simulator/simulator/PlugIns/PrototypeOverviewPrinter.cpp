@@ -62,8 +62,10 @@ namespace nerd {
 PrototypeOverviewPrinter::PrototypeOverviewPrinter()
 	: mOverviewArg(0)
 {
-	mOverviewArg = new CommandLineArgument("print-prototypes", "pp", "", 
-					"Prints all known physics prototypes to the screen.", 0, 0, true);
+	mOverviewArg = new CommandLineArgument("print-prototypes", "pp", "[script]", 
+					"Prints all known physics prototypes to the screen.\n"
+					"If this option is followed by a 'script', then the parameters are formatted\n"
+					"to be directly used in model scripts.", 0, 1, true);
 
 	Core::getInstance()->addSystemObject(this);
 }
@@ -90,28 +92,62 @@ bool PrototypeOverviewPrinter::bind() {
 		//print overview
 		cout << "\nPhysics Prototype Overview:" << endl;
 		cout << "\n---------------------------" << endl;
-
-		QList<QString> prototypeNames = Physics::getPhysicsManager()->getPrototypeNames();
-		for(QListIterator<QString> i(prototypeNames); i.hasNext();) {
-			QString name = i.next();
-			SimObject *obj = Physics::getPhysicsManager()->getPrototype(name);
-			if(obj == 0) {
-				continue;
-			}
-			cout << " " << name.toStdString().c_str() << endl;
-			QList<QString> paramNames = obj->getParameterNames();
-			for(QListIterator<QString> j(paramNames); j.hasNext();) {
-				QString paramName = j.next();
-				Value *value = obj->getParameter(paramName);
-				if(value != 0) {
-					cout << "   " << paramName.toStdString().c_str() << " : "
-						 << value->getValueAsString().toStdString().c_str();
-						 
-					QString desc = value->getDescription();
-					if(desc != "") {
-						cout << endl << "      [" << desc.toStdString().c_str() << "]";
+		
+		QStringList entryParams = mOverviewArg->getEntryParameters(0);
+		if(entryParams.size() > 0 && entryParams.at(0) == "script") {
+			QList<QString> prototypeNames = Physics::getPhysicsManager()->getPrototypeNames();
+			for(QListIterator<QString> i(prototypeNames); i.hasNext();) {
+				QString name = i.next();
+				SimObject *obj = Physics::getPhysicsManager()->getPrototype(name);
+				if(obj == 0) {
+					continue;
+				}
+				cout << endl << endl << name.toStdString().c_str() << endl << "------------" << endl;
+				//TODO add description of object?
+				
+				//use name without the leading "Prototypes/"
+				if(name.startsWith("Prototypes/")) {
+					name = name.mid(11);
+				}
+				cout << "var object = model.createObject(\"" << name.toStdString().c_str() << "\", \"\");" << endl;
+				
+				QList<QString> paramNames = obj->getParameterNames();
+				for(QListIterator<QString> j(paramNames); j.hasNext();) {
+					QString paramName = j.next();
+					Value *value = obj->getParameter(paramName);
+					if(value != 0) {
+						cout << "set(\"" << paramName.toStdString().c_str() << "\", \""
+							 << value->getValueAsString().toStdString().c_str() << "\");" << endl;
 					}
-					cout << endl;
+				}
+			}
+		}
+		else {
+			//use standard output.
+			QList<QString> prototypeNames = Physics::getPhysicsManager()->getPrototypeNames();
+			for(QListIterator<QString> i(prototypeNames); i.hasNext();) {
+				QString name = i.next();
+				SimObject *obj = Physics::getPhysicsManager()->getPrototype(name);
+				if(obj == 0) {
+					continue;
+				}
+				cout << " " << name.toStdString().c_str() << endl;
+				//TODO add description of object.
+				
+				QList<QString> paramNames = obj->getParameterNames();
+				for(QListIterator<QString> j(paramNames); j.hasNext();) {
+					QString paramName = j.next();
+					Value *value = obj->getParameter(paramName);
+					if(value != 0) {
+						cout << "   " << paramName.toStdString().c_str() << " : "
+							<< value->getValueAsString().toStdString().c_str();
+							
+						QString desc = value->getDescription();
+						if(desc != "") {
+							cout << endl << "      [" << desc.toStdString().c_str() << "]";
+						}
+						cout << endl;
+					}
 				}
 			}
 		}

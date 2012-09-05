@@ -84,13 +84,12 @@ class DistanceSensor : public SimObject, public SimSensor {
 		InterfaceValue *mDistance;
 		QList<DistanceRay*> mRays;
 		QuaternionValue *mLocalOrientation;
-		Vector3DValue *mLocalOrientationEuler;
-		BoolValue *mUseEulerAngle;
 		SimBody *mHostBody;
 		StringValue *mHostBodyName;
 		Vector3DValue *mLocalPosition;
 		ColorValue *mActiveColor;
 		ColorValue *mInactiveColor;
+		ColorValue *mDisabledColor;
 };
 
 }

@@ -80,7 +80,7 @@ namespace nerd {
 		
 		mActuatorMode = new IntValue(1);
 		mActuatorMode->setDescription("Sets the actuator behavior of the distance scanner:\n"
-									  "0: Scanner is always on. The actuator neuron is ignored.\n"
+									  "0: Scanner is always on if the actuator neuron is activated more than half.\n"
 									  "1: A single scan is performed, when the actuator neuron exceeds half of its "
 									  "maximal activation following an activation below this threshold.\n"
 									  "2: A single scan is performed whenever the activation of the actuator neuron "
@@ -163,8 +163,14 @@ namespace nerd {
 		
 		switch(mActuatorMode->get()) {
 			case 0:
-				DistanceSensor::updateSensorValues();
-				updateExternalValues();
+				if(mScanTrigger->get() > 0.5) {
+					DistanceSensor::updateSensorValues();
+					updateExternalValues();
+				}
+				else {
+					resetSensor();
+				}
+				mPreviousActuatorActivation = mScanTrigger->get();
 				
 				break;
 			case 1:

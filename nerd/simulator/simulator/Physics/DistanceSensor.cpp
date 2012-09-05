@@ -49,6 +49,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/SimSensor.h"
 #include <iostream>
+#include <QStringList>
 
 using namespace std;
 
@@ -62,6 +63,7 @@ DistanceSensor::DistanceSensor(const QString &name)
 	mCalcMinDistance = new BoolValue(true);
 	mHostBodyName = new StringValue("");
 	mInactiveColor = new ColorValue(Color(255, 255, 255));
+	mDisabledColor = new ColorValue(Color(255, 255, 255, 50));
 	mLocalOrientation = new QuaternionValue(0.0, 0.0, 0.0, 0.0);
 	mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
 	mNumberOfRays = new IntValue(1);
@@ -70,8 +72,6 @@ DistanceSensor::DistanceSensor(const QString &name)
 	mSensorNoise = new DoubleValue(0.0);
 	mMinIntersectionPoint = new Vector3DValue();
 	
-	mLocalOrientationEuler = new Vector3DValue();
-	mUseEulerAngle = new BoolValue(false);
 
 	mDistance = new InterfaceValue("", "Distance",
 			mMaxRange->get() - mMinRange->get(), 0.0,
@@ -87,15 +87,14 @@ DistanceSensor::DistanceSensor(const QString &name)
 	addParameter("Distance", mDistance);
 	addParameter("HostBody", mHostBodyName);
 	addParameter("InactiveColor", mInactiveColor);
-	addParameter("LocalOrientation", mLocalOrientation);
-	addParameter("LocalPosition", mLocalPosition);
+	addParameter("DisabledColor", mDisabledColor);
+	//addParameter("LocalOrientation", mLocalOrientation);
+	//addParameter("LocalPosition", mLocalPosition);
 	addParameter("MaxRange", mMaxRange);
 	addParameter("MinRange", mMinRange);
 	addParameter("Noise", mSensorNoise);
 	addParameter("NumberOfRays", mNumberOfRays);
 	addParameter("MinIntersectionPoint", mMinIntersectionPoint);
-	addParameter("LocalOrientationEuler", mLocalOrientationEuler);
-	addParameter("UseEulerAngles", mUseEulerAngle);
 }
 
 DistanceSensor::DistanceSensor(const DistanceSensor &other)
@@ -108,18 +107,17 @@ DistanceSensor::DistanceSensor(const DistanceSensor &other)
 	mDistance = dynamic_cast<InterfaceValue*>(getParameter("Distance"));
 	mHostBodyName = dynamic_cast<StringValue*>(getParameter("HostBody"));
 	mInactiveColor = dynamic_cast<ColorValue*>(getParameter("InactiveColor"));
-	mLocalOrientation = dynamic_cast<QuaternionValue*>(
-			getParameter("LocalOrientation"));
-	mLocalPosition = dynamic_cast<Vector3DValue*>(
-			getParameter("LocalPosition"));
+	mDisabledColor = dynamic_cast<ColorValue*>(getParameter("DisabledColor"));
+	//mLocalOrientation = dynamic_cast<QuaternionValue*>(getParameter("LocalOrientation"));
+	//mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
 	mMaxRange = dynamic_cast<DoubleValue*>(getParameter("MaxRange"));
 	mMinRange = dynamic_cast<DoubleValue*>(getParameter("MinRange"));
 	mSensorNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
 	mNumberOfRays = dynamic_cast<IntValue*>(getParameter("NumberOfRays"));
 	mMinIntersectionPoint = dynamic_cast<Vector3DValue*>(getParameter("MinIntersectionPoint"));
 	
-	mLocalOrientationEuler = dynamic_cast<Vector3DValue*>(getParameter("LocalOrientationEuler"));
-	mUseEulerAngle = dynamic_cast<BoolValue*>(getParameter("UseEulerAngles"));
+	mLocalOrientation = new QuaternionValue(*other.mLocalOrientation);
+	mLocalPosition = new Vector3DValue(*other.mLocalPosition);
 
 	if(mDistance != 0) {
 		mOutputValues.append(mDistance);
@@ -158,9 +156,9 @@ double DistanceSensor::getMinSensorValue() {
 
 	for(QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
 		ray = i.next();
-		d = ray->getDistance();
+		d = ray->getDistance(mMinRange->get());
 		ray->updateRay(d);
-		if (mMinRange->get() < d && d < distance) {
+		if(mMinRange->get() <= d && d < distance) {
 			distance = d;
 			minIntersectionPoint = ray->getClosestKnownCollisionPoint();
 		}
@@ -178,9 +176,9 @@ double DistanceSensor::getAvgSensorValue() {
 
 	for (QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
 		ray = i.next();
-		d = ray->getDistance();
+		d = ray->getDistance(mMinRange->get());
 		ray->updateRay(d);
-		if (mMinRange->get() < d) {
+		if(mMinRange->get() <= d) {
 			distance += d;
 		}
 		else {
@@ -195,7 +193,7 @@ void DistanceSensor::resetSensor() {
 	for(int i = 0; i < mRays.size(); ++i) {
 		DistanceRay *ray = mRays.at(i);
 		RayGeom *rayGeom = ray->getRayCollisionObject();
-		ray->updateRay(rayGeom->getLength());
+		ray->updateRay(rayGeom->getLength(), true);
 	}
 }
 
@@ -235,11 +233,20 @@ void DistanceSensor::setup() {
 		return;
 	}
 	
-	if(mUseEulerAngle->get()) {
-		mLocalOrientation->setFromAngles(mLocalOrientationEuler->getX(), 
-										 mLocalOrientationEuler->getY(), 
-										 mLocalOrientationEuler->getZ());
-	}
+// 	//collect undetectable objects
+// 	QStringList undetectableObjectNames = mUndetecableObjectsRegExps->get().split(",");
+// 	PhysicsManager *pm = Physics::getPhysicsManager();
+// 	
+// 	for(int i = 0; i < undetectableObjectNames.size(); ++i) {
+// 		QString regExp = undetectableObjectNames.at(i);
+// 		QList<SimObject*> undetectableObjects = pm->getSimObjects(regExp);
+// 		for(int j = 0; j < undetectableObjects.size(); ++j) {
+// 			SimBody *body = dynamic_cast<SimBody*>(undetectableObjects.at(j));
+// 			if(body != 0) {
+// 				mUndetectableObjects << body->getCollisionObjects();
+// 			}
+// 		}
+// 	}
 
 	//set target objects
 	QList<CollisionObject*> clist;
@@ -268,7 +275,7 @@ void DistanceSensor::setup() {
 		DistanceRay *ray
 				= new DistanceRay(getName() + "/Ray" + QString::number(i),
 				mLocalPosition->get(), orientations.at(i), mMaxRange->get(),
-				mRule, mActiveColor->get(), mInactiveColor->get());
+				mRule, mActiveColor->get(), mInactiveColor->get(), mDisabledColor->get());
 		ray->setOwner(this);
 		mRays.append(ray);
 		ray->getCollisionObject()->disableCollisions(true);

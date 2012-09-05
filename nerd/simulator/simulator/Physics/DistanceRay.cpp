@@ -51,9 +51,9 @@ namespace nerd {
 
 DistanceRay::DistanceRay(const QString &name, const Vector3D &position,
 		const Quaternion &orientation, double length, DistanceSensorRule *rule,
-		const Color &active, const Color &inactive)
+		const Color &active, const Color &inactive, const Color &disabledColor)
 		: mName(name), mRule(rule), mRayCollisionObject(0), mRay(0), mOwner(0),
-		mActiveColor(active), mInactiveColor(inactive)
+		mActiveColor(active), mInactiveColor(inactive), mDisabledColor(disabledColor)
 {
 	mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
 	
@@ -105,25 +105,26 @@ RayGeom* DistanceRay::getRayCollisionObject() const {
 	return mRay;
 }
 
-double DistanceRay::getDistance() {
+double DistanceRay::getDistance(double minRange) {
 	Vector3D localpos = mRay->getLocalPosition();
 	Vector3D simpos
-			= mRayCollisionObject->getHostBody()->getPositionValue()->get();
+	= mRayCollisionObject->getHostBody()->getPositionValue()->get();
 	Vector3D pos = localpos + simpos;
 	Vector3D vto;
 	double distance = mRay->getLength();
 	
 	mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
-
+	
 	if(mRule == 0) {
 		return distance;
 	}
 	QList<Vector3D> *points = mRule->getCollisionPoints(mRayCollisionObject);
-
+	
 	for(QListIterator<Vector3D> i(*points); i.hasNext();) {
 		Vector3D point = i.next();
 		vto = pos - point;
-		if(vto.length() < distance) {
+		double length = vto.length();
+		if(length < distance && length >= minRange) {
 			distance = vto.length();
 			mClosestKnownCollisionPoint = point;
 		}
@@ -136,14 +137,20 @@ Vector3D DistanceRay::getClosestKnownCollisionPoint() const {
 	return mClosestKnownCollisionPoint;
 }
 
-void DistanceRay::updateRay(double length) {
-	if(length < mRay->getLength()) {
-		mRay->setColor(mActiveColor);
-		mRay->setVisibleLength(length);
+void DistanceRay::updateRay(double length, bool disableRay) {
+	if(disableRay) {
+		mRay->setColor(mDisabledColor);
+		mRay->setVisibleLength(mRay->getLength());
 	}
 	else {
-		mRay->setColor(mInactiveColor);
-		mRay->setVisibleLength(mRay->getLength());
+		if(length < mRay->getLength()) {
+			mRay->setColor(mActiveColor);
+			mRay->setVisibleLength(length);
+		}
+		else {
+			mRay->setColor(mInactiveColor);
+			mRay->setVisibleLength(mRay->getLength());
+		}
 	}
 }
 

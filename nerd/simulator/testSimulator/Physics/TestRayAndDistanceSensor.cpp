@@ -140,13 +140,13 @@ void TestRayAndDistanceSensor::testRayGeomConstructor() {
 	delete simObject;
 }
 
-//Chris
+//Chris TODO!
 void TestRayAndDistanceSensor::testDistanceRayConstructor() {
 	Core::resetCore();
 
 	DistanceRay *distanceRay = new DistanceRay("DistanceRay",
 			Vector3D(1.0, 2.0, 3.0), Quaternion(1.05, 0.5, 0.4, 0.3), 100.0, 0,
-			Color(255, 255, 255), Color(0, 0, 0));
+			Color(255, 255, 255), Color(0, 0, 0), Color(100, 100, 100));
 
 	QVERIFY(distanceRay->getCollisionObject() != 0);
 
