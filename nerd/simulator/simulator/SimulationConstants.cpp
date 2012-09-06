@@ -146,6 +146,9 @@ const QString SimulationConstants::PROTOTYPE_HINGE_SPRING_ADAPTER = "Prototypes/
 const QString SimulationConstants::PROTOTYPE_SLIDER_SPRING_ADAPTER = "Prototypes/SliderSpringAdapter";
 
 const QString SimulationConstants::PROTOTYPE_GYROSCOPE = "Prototypes/Gyroscope";
+const QString SimulationConstants::PROTOTYPE_VALUE_TRANSFER_CONTROLLER = "Prototypes/ValueTransferController";
+const QString SimulationConstants::PROTOTYPE_AUTO_VALUE_TRANSFER_CONTROLLER = "Prototypes/AutomaticValueChanger";
+const QString SimulationConstants::PROTOTYPE_INTERNAL_STATE_VALUE = "Prototypes/InternalStateValue";
 
 const QString SimulationConstants::PROTOTYPE_TORQUE_DYNAMIXEL_M1 = "Prototypes/TorqueDynamixelM1";
 const QString SimulationConstants::PROTOTYPE_TORQUE_DYNAMIXEL_M2 = "Prototypes/TorqueDynamixelM2";

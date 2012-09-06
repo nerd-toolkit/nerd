@@ -42,61 +42,44 @@
  ***************************************************************************/
 
 
+#ifndef NERDInternalStateValue_H
+#define NERDInternalStateValue_H
 
-#include "Util/UnitTestMacros.h"
+#include "Physics/SimObject.h"
+#include "Value/NormalizedDoubleValue.h"
+#include "Value/RangeValue.h"
 
-#include "Physics/TestPhysicsManager.h"
-#include "Physics/TestGeom.h"
-#include "Physics/TestSimObject.h"
-#include "Physics/TestSimBody.h"
-#include "Collision/TestCollisionRule.h"
-#include "Collision/TestCollisionManager.h"
-#include "Physics/TestSimJoint.h"
-#include "Collision/TestCollisionObject.h"
-#include "Collision/TestMaterialProperties.h"
-#include "Physics/TestBoxBody.h"
-#include "Physics/TestSphereBody.h"
-#include "Physics/TestAccelSensor.h"
-#include "Randomization/TestRandomizer.h"
-#include "Gui/GuiMainWindow.h"
-#include "Physics/TestSimulationEnvironmentManager.h"
-#include "Physics/TestCylinderBody.h"
-#include "Physics/TestPhysics.h"
-#include "Physics/TestSphereBody.h"
-#include "Physics/TestSimObjectGroup.h"
-#include "Physics/TestRayAndDistanceSensor.h"
-#include "Signal/TestSignals.h"
-#include "TestSimulationConstants.h"
-#include "Physics/TestValueTransferController.h"
 
-TEST_START("TestSimulator", 1, -1, 21);
+namespace nerd {
+	
+	/**
+	 * InternalStateValue.
+	 * Provides a NormalizedDoubleValue as part of the animat.
+	 * This internal state can be manipulated by other processes and SimObjects, such as
+	 * the ValueTransferControllers.
+	 */
+	class InternalStateValue : public SimObject {
+	public:
+		InternalStateValue(const QString &name);
+		InternalStateValue(const InternalStateValue &other);
+		virtual ~InternalStateValue();
+		
+		virtual SimObject* createCopy() const;
+		
+		virtual void setup();
+		virtual void clear();
+		virtual void valueChanged(Value *value);
+		
+		virtual NormalizedDoubleValue* getInternalStateValue() const;
+		
+	protected:
+		NormalizedDoubleValue *mInternalStateValue;
+		//DoubleValue *mInitialValue;
+		RangeValue *mValueRange;
+	};
+	
+}
 
-	TEST(TestGeom); //tests all geoms.
-	TEST(TestCollisionObject);
-	TEST(TestCollisionRule);
-	TEST(TestSimObject);
-	TEST(TestSimBody); 
-	TEST(TestSimJoint);
-	TEST(TestBoxBody);
-	TEST(TestPhysicsManager); //still missing many tests. (see header)
-	TEST(TestCollisionManager); //in progress. //missing updateCollisionHandler.
-
-	//up to here test cases are checked for memory leaks.
-
-	TEST(TestSphereBody);
-// TODO: update test: axes were switched!
-	TEST(TestAccelSensor);
-	TEST(TestRandomizer);
-	TEST(TestSimulationEnvironmentManager);
-	TEST(TestCylinderBody);
-	TEST(TestPhysics);
-	TEST(TestMaterialProperties);
-	TEST(TestSimObjectGroup);
-	TEST(TestRayAndDistanceSensor);
-	TEST(TestSignals);
-	TEST(TestSimulationConstants);
-	TEST(TestValueTransferController);
-
-TEST_END;
+#endif
 
 

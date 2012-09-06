@@ -66,6 +66,8 @@
 #include "Physics/Gyroscope.h"
 #include "MotorModels/PassiveActuatorAdapter.h"
 #include "Physics/ControlParameter.h"
+#include "Physics/ValueTransferController.h"
+#include "Physics/InternalStateValue.h"
 
 
 using namespace std;
@@ -98,6 +100,14 @@ namespace nerd{
 
 	pm->addPrototype(SimulationConstants::PROTOTYPE_GYROSCOPE,
 		new Gyroscope(SimulationConstants::PROTOTYPE_GYROSCOPE));
+	
+	pm->addPrototype(SimulationConstants::PROTOTYPE_VALUE_TRANSFER_CONTROLLER,
+		new ValueTransferController(SimulationConstants::PROTOTYPE_VALUE_TRANSFER_CONTROLLER));
+	pm->addPrototype(SimulationConstants::PROTOTYPE_AUTO_VALUE_TRANSFER_CONTROLLER,
+		new ValueTransferController(SimulationConstants::PROTOTYPE_AUTO_VALUE_TRANSFER_CONTROLLER, true));
+	
+	pm->addPrototype(SimulationConstants::PROTOTYPE_INTERNAL_STATE_VALUE,
+		new InternalStateValue(SimulationConstants::PROTOTYPE_INTERNAL_STATE_VALUE));
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_BOX_BODY_NO_PHYSICS, 
         new BoxBody(SimulationConstants::PROTOTYPE_BOX_BODY_NO_PHYSICS)); 

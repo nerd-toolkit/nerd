@@ -24,6 +24,7 @@ set(nerd_testSimulator_SRCS
 	Physics/TestRayAndDistanceSensor.cpp  
 	Signal/TestSignals.cpp  
 	TestSimulationConstants.cpp
+	Physics/TestValueTransferController.cpp
 )
 
 
@@ -48,6 +49,7 @@ set(nerd_testSimulator_MOC_HDRS
 	Physics/TestRayAndDistanceSensor.h  
 	Signal/TestSignals.h  
 	TestSimulationConstants.h
+	Physics/TestValueTransferController.h
 )
 
 set(nerd_testSimulator_RCS

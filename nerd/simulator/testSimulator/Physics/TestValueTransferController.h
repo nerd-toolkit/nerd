@@ -40,63 +40,27 @@
  *   Publications based on work using the NERD kit have to state this      *
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
+#ifndef TESTTestValueTransferController_H_
+#define TESTTestValueTransferController_H_
 
+#include <QtTest/QtTest>
+#include "Physics/ValueTransferController.h"
 
+namespace nerd {
+	
+	class TestValueTransferController : public QObject {
+		Q_OBJECT
+		
+	private slots:
+		void testConstructor();
+		void testSimpleTransfer();
+		void testAutomaticSimpleTransfer();
+		
+	private:
+		void updateActuatorAndSensor(ValueTransferController *controller);
+	};
+	
+}
 
-#include "Util/UnitTestMacros.h"
-
-#include "Physics/TestPhysicsManager.h"
-#include "Physics/TestGeom.h"
-#include "Physics/TestSimObject.h"
-#include "Physics/TestSimBody.h"
-#include "Collision/TestCollisionRule.h"
-#include "Collision/TestCollisionManager.h"
-#include "Physics/TestSimJoint.h"
-#include "Collision/TestCollisionObject.h"
-#include "Collision/TestMaterialProperties.h"
-#include "Physics/TestBoxBody.h"
-#include "Physics/TestSphereBody.h"
-#include "Physics/TestAccelSensor.h"
-#include "Randomization/TestRandomizer.h"
-#include "Gui/GuiMainWindow.h"
-#include "Physics/TestSimulationEnvironmentManager.h"
-#include "Physics/TestCylinderBody.h"
-#include "Physics/TestPhysics.h"
-#include "Physics/TestSphereBody.h"
-#include "Physics/TestSimObjectGroup.h"
-#include "Physics/TestRayAndDistanceSensor.h"
-#include "Signal/TestSignals.h"
-#include "TestSimulationConstants.h"
-#include "Physics/TestValueTransferController.h"
-
-TEST_START("TestSimulator", 1, -1, 21);
-
-	TEST(TestGeom); //tests all geoms.
-	TEST(TestCollisionObject);
-	TEST(TestCollisionRule);
-	TEST(TestSimObject);
-	TEST(TestSimBody); 
-	TEST(TestSimJoint);
-	TEST(TestBoxBody);
-	TEST(TestPhysicsManager); //still missing many tests. (see header)
-	TEST(TestCollisionManager); //in progress. //missing updateCollisionHandler.
-
-	//up to here test cases are checked for memory leaks.
-
-	TEST(TestSphereBody);
-// TODO: update test: axes were switched!
-	TEST(TestAccelSensor);
-	TEST(TestRandomizer);
-	TEST(TestSimulationEnvironmentManager);
-	TEST(TestCylinderBody);
-	TEST(TestPhysics);
-	TEST(TestMaterialProperties);
-	TEST(TestSimObjectGroup);
-	TEST(TestRayAndDistanceSensor);
-	TEST(TestSignals);
-	TEST(TestSimulationConstants);
-	TEST(TestValueTransferController);
-
-TEST_END;
-
+#endif
 

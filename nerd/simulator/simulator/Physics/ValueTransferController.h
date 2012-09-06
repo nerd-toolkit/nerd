@@ -40,63 +40,75 @@
  *   Publications based on work using the NERD kit have to state this      *
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
+#ifndef NERD_ValueTransferController_H_
+#define NERD_ValueTransferController_H_
 
+#include "Event/EventListener.h"
+#include "Physics/SliderJoint.h"
+#include "Physics/SimSensor.h"
+#include "Physics/SimActuator.h"
 
-
-#include "Util/UnitTestMacros.h"
-
-#include "Physics/TestPhysicsManager.h"
-#include "Physics/TestGeom.h"
-#include "Physics/TestSimObject.h"
-#include "Physics/TestSimBody.h"
-#include "Collision/TestCollisionRule.h"
-#include "Collision/TestCollisionManager.h"
-#include "Physics/TestSimJoint.h"
-#include "Collision/TestCollisionObject.h"
-#include "Collision/TestMaterialProperties.h"
-#include "Physics/TestBoxBody.h"
-#include "Physics/TestSphereBody.h"
-#include "Physics/TestAccelSensor.h"
-#include "Randomization/TestRandomizer.h"
-#include "Gui/GuiMainWindow.h"
-#include "Physics/TestSimulationEnvironmentManager.h"
-#include "Physics/TestCylinderBody.h"
-#include "Physics/TestPhysics.h"
-#include "Physics/TestSphereBody.h"
-#include "Physics/TestSimObjectGroup.h"
-#include "Physics/TestRayAndDistanceSensor.h"
-#include "Signal/TestSignals.h"
-#include "TestSimulationConstants.h"
-#include "Physics/TestValueTransferController.h"
-
-TEST_START("TestSimulator", 1, -1, 21);
-
-	TEST(TestGeom); //tests all geoms.
-	TEST(TestCollisionObject);
-	TEST(TestCollisionRule);
-	TEST(TestSimObject);
-	TEST(TestSimBody); 
-	TEST(TestSimJoint);
-	TEST(TestBoxBody);
-	TEST(TestPhysicsManager); //still missing many tests. (see header)
-	TEST(TestCollisionManager); //in progress. //missing updateCollisionHandler.
-
-	//up to here test cases are checked for memory leaks.
-
-	TEST(TestSphereBody);
-// TODO: update test: axes were switched!
-	TEST(TestAccelSensor);
-	TEST(TestRandomizer);
-	TEST(TestSimulationEnvironmentManager);
-	TEST(TestCylinderBody);
-	TEST(TestPhysics);
-	TEST(TestMaterialProperties);
-	TEST(TestSimObjectGroup);
-	TEST(TestRayAndDistanceSensor);
-	TEST(TestSignals);
-	TEST(TestSimulationConstants);
-	TEST(TestValueTransferController);
-
-TEST_END;
-
+namespace nerd {
+	
+	/**
+	 * This SimObject provides an input InterfaceValue that regulates the transfer of "activation" between two arbitrary
+	 * DoubleValues. These two DoubleValues (source, target) can be chosen by name via the ValueManager and thus can 
+	 * be of any source. Activation of the control neuron removes a bit of the source DoubleValue and adds this bit to the
+	 * target DoubleValue. Negative activations results in an opposite transfer. Parameters allow to specify the transfer
+	 * mode (the way how activation is transfered depending on the state of source and target) and the cost per activation.
+	 * If there is a cost, then part of the removed activation of the source is not added to the target and therefore gets
+	 * lost. Parameters also allow to specify how much activation is transferred for a full activation of the control neuron.
+	 * The SimObject also provides a sensor that reflects the amount of activation that was actually transferred.
+	 **/
+	
+	class BoolValue;
+	
+	class ValueTransferController : public SimObject, public virtual SimSensor, public virtual SimActuator 
+	{
+		
+	public:
+		ValueTransferController(const QString &name, bool autoChangeTarget = false);
+		ValueTransferController(const ValueTransferController &other);
+		virtual ~ValueTransferController();
+		
+		virtual SimObject* createCopy() const;
+		virtual QString getName() const;
+		
+		virtual void setup();
+		virtual void clear();
+		
+		virtual void valueChanged(Value *value);
+		
+		virtual void updateActuators();
+		virtual void updateSensorValues();
+		
+		NormalizedDoubleValue* getSource() const;
+		NormalizedDoubleValue* getTarget() const;
+		
+		virtual bool transferActivations();
+		
+	protected:
+		virtual bool transferModeSimple();
+		
+	protected:		
+		InterfaceValue *mTransferController;
+		InterfaceValue *mTransferSensor;
+		
+		StringValue *mSourceValueName;
+		StringValue *mTargetValueName;
+		StringValue *mCustomNameOfControlNeuron;
+		StringValue *mCustomNameOfTransferSensor;
+		IntValue *mTransferMode;
+		DoubleValue *mMaximalTransferRate;
+		DoubleValue *mTransferCost;
+		
+		NormalizedDoubleValue *mSource;
+		NormalizedDoubleValue *mTarget;
+		NormalizedDoubleValue *mLocalSource;
+		
+		double mTransferredActivation;
+		bool mAutoChangeTarget;
+	};
+}
+#endif
 

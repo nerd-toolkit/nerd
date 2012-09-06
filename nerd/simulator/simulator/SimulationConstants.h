@@ -124,6 +124,9 @@ namespace nerd {
 		static const QString PROTOTYPE_HINGE_SPRING_ADAPTER;
 		static const QString PROTOTYPE_SLIDER_SPRING_ADAPTER;
 		static const QString PROTOTYPE_GYROSCOPE;
+		static const QString PROTOTYPE_VALUE_TRANSFER_CONTROLLER;
+		static const QString PROTOTYPE_AUTO_VALUE_TRANSFER_CONTROLLER;
+		static const QString PROTOTYPE_INTERNAL_STATE_VALUE;
 
 		static const QString PROTOTYPE_TORQUE_DYNAMIXEL_M1;
 		static const QString PROTOTYPE_TORQUE_DYNAMIXEL_M2;
