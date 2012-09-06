@@ -50,6 +50,7 @@
 #include <iostream>
 
 
+
 using namespace std;
 
 namespace nerd {
@@ -239,6 +240,7 @@ namespace nerd {
 	bool ValueTransferController::transferModeSimple() {
 		
 		if(mTarget == 0 || mSource == 0) {
+			mTransferredActivation = 0.0;
 			return false;
 		}
 		
@@ -269,7 +271,8 @@ namespace nerd {
 	
 	bool ValueTransferController::transferModeBothProportional() {
 		
-		if(mTarget == 0 || mSource == 0) {
+		if(mTarget == 0 || mSource == 0 || mTransferController->get() <= 0.0) {
+			mTransferredActivation = 0.0;
 			return false;
 		}
 			
@@ -281,10 +284,10 @@ namespace nerd {
 		//ignore negative changes.
 		double change = changeTarget;
 		if(changeTarget < 0.0) {
-			change = Math::max(change, mTarget->getMin() - mTarget->get());
+			change = Math::max(change, -1 * (mTarget->get() - mTarget->getMin()));
 		}
 		else if(changeTarget > 0.0) {
-			change = Math::max(change, mTarget->getMax() - mTarget->get());
+			change = Math::min(change, mTarget->getMax() - mTarget->get());
 		}
 		if(change != changeTarget || changeTarget == 0.0) {
 			if(change == 0.0) {
@@ -297,10 +300,10 @@ namespace nerd {
 		}
 		change = changeSource;
 		if(changeSource < 0.0) {
-			change = Math::max(change, mSource->getMin() - mSource->get());
+			change = Math::max(change, -1 * (mSource->get() - mSource->getMin()));
 		}
 		else if(changeSource > 0.0) {
-			change = Math::max(change, mSource->getMax() - mSource->get());
+			change = Math::min(change, mSource->getMax() - mSource->get());
 		}
 		if(change != changeSource || changeSource == 0.0) {
 			if(change == 0.0) {
@@ -312,6 +315,8 @@ namespace nerd {
 			changeSource = change;
 		}
 		mTransferredActivation = changeFactor;
+		mSource->set(mSource->get() + changeSource);
+		mTarget->set(mTarget->get() + changeTarget);
 		
 		return true;
 	}

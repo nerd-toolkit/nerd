@@ -61,7 +61,7 @@ void TestValueTransferController::testConstructor() {
 	
 	ValueTransferController *vtf = new ValueTransferController("TFController");
 	
-	QCOMPARE(vtf->getParameters().size(), 10);
+	QCOMPARE(vtf->getParameters().size(), 12);
 	
 	StringValue *nameOfSource = dynamic_cast<StringValue*>(vtf->getParameter("SourceValueName"));
 	StringValue *nameOfTarget = dynamic_cast<StringValue*>(vtf->getParameter("TargetValueName"));
@@ -550,7 +550,6 @@ void TestValueTransferController::testAutomaticSimpleTransfer() {
 	QVERIFY(vtf->getSource() != 0);
 	QVERIFY(vtf->getTarget() == target);
 	
-	
 	//do the automatic transfer
 	
 	target->set(0.5);
@@ -581,6 +580,204 @@ void TestValueTransferController::testAutomaticSimpleTransfer() {
 	
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(target->get(), 0.37);
+}
+
+void TestValueTransferController::testBothProportional() {
+	Core::resetCore();
+	
+	ValueTransferController *vtf = new ValueTransferController("TFController");
+
+	StringValue *nameOfSource = dynamic_cast<StringValue*>(vtf->getParameter("SourceValueName"));
+	StringValue *nameOfTarget = dynamic_cast<StringValue*>(vtf->getParameter("TargetValueName"));
+	InterfaceValue *controller = dynamic_cast<InterfaceValue*>(vtf->getParameter("Control"));
+	InterfaceValue *sensor = dynamic_cast<InterfaceValue*>(vtf->getParameter("Sensor"));
+	IntValue *mode = dynamic_cast<IntValue*>(vtf->getParameter("TransferMode"));
+	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("MaxTransferRate"));
+	DoubleValue *cost = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferCost"));
+	
+	QVERIFY(nameOfSource != 0);
+	QVERIFY(nameOfTarget != 0);
+	
+
+	NormalizedDoubleValue *source = new NormalizedDoubleValue(0.0, 0.0, 1.0, -1.0, 1.0);
+	NormalizedDoubleValue *target = new NormalizedDoubleValue(0.0, 0.0, 1.0, -1.0, 1.0);
+	
+
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	vm->addValue("/MySource", source);
+	vm->addValue("/TheTarget", target);
+	
+
+	nameOfSource->set("/MySource"); 
+	nameOfTarget->set("/TheTarget");
+	
+
+	vtf->setup();
+	
+	QVERIFY(vtf->getSource() == source);
+	QVERIFY(vtf->getTarget() == target);
+	
+
+	//do the actual transfers
+	
+	//******************************************
+	//BothProportional Model
+	
+	source->set(0.0);
+	target->set(0.0);
+	controller->set(0.5);
+	mode->set(1);
+	rate->set(-1.0);
+	cost->set(-0.5);
+	
+
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);
+	QCOMPARE(source->get(), 0.0);
+	QCOMPARE(target->get(), 0.0);
+	
+	source->set(0.8);
+	target->set(0.0);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);  
+	QCOMPARE(source->get(), 0.8); 
+	QCOMPARE(target->get(), 0.0);
+	
+
+	source->set(0.0);
+	target->set(0.8);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);  
+	QCOMPARE(source->get(), 0.0); 
+	QCOMPARE(target->get(), 0.8);
+	
+	source->set(0.8);
+	target->set(0.8);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.5);  
+	QCOMPARE(source->get(), 0.55); 
+	QCOMPARE(target->get(), 0.3);
+	
+	source->set(0.8);
+	target->set(0.4);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.4);  
+	QCOMPARE(source->get(), 0.6); 
+	QCOMPARE(target->get(), 0.0);
+	
+	source->set(0.125);
+	target->set(0.9);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.25);  
+	QCOMPARE(source->get(), 0.0); 
+	QCOMPARE(target->get(), 0.65);
+	
+	source->set(0.125);
+	target->set(0.9);
+	controller->set(1.0);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.25);  
+	QCOMPARE(source->get(), 0.0); 
+	QCOMPARE(target->get(), 0.65);
+	
+	source->set(0.125);
+	target->set(0.9);
+	controller->set(-1.0);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);  
+	QCOMPARE(source->get(), 0.125); 
+	QCOMPARE(target->get(), 0.9);
+	
+	
+	//positive changes
+	//***************************************************
+	cost->set(0.5);
+	rate->set(1.0);
+	source->set(0.1);
+	target->set(1.0);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);  
+	QCOMPARE(source->get(), 0.1); 
+	QCOMPARE(target->get(), 1.0);
+	
+	source->set(1.0);
+	target->set(0.2);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);  
+	QCOMPARE(source->get(), 1.0); 
+	QCOMPARE(target->get(), 0.2);
+	
+	source->set(0.1);
+	target->set(0.2);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.5);
+	QCOMPARE(source->get(), 0.35);
+	QCOMPARE(target->get(), 0.7);
+	
+	source->set(0.1);
+	target->set(0.75);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.25);
+	QCOMPARE(source->get(), 0.225);
+	QCOMPARE(target->get(), 1.0);
+	
+	source->set(0.975);
+	target->set(0.2);
+	controller->set(0.1);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.05);
+	QCOMPARE(source->get(), 1.0);
+	QCOMPARE(target->get(), 0.25);
+	
+	
+	//opposite change directions
+	//***************************************************
+	cost->set(-0.5);
+	rate->set(1.0);
+	source->set(0.0);
+	target->set(0.2);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);  
+	QCOMPARE(source->get(), 0.0); 
+	QCOMPARE(target->get(), 0.2);
+	
+	source->set(0.9);
+	target->set(1.0);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);  
+	QCOMPARE(source->get(), 0.9); 
+	QCOMPARE(target->get(), 1.0);
+	
+	source->set(0.9);
+	target->set(0.2);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.5);  
+	QCOMPARE(source->get(), 0.65); 
+	QCOMPARE(target->get(), 0.7);
+	
+	source->set(0.125);
+	target->set(0.2);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.25);  
+	QCOMPARE(source->get(), 0.0); 
+	QCOMPARE(target->get(), 0.45);
+	
+	source->set(0.9);
+	target->set(0.9);
+	controller->set(0.5);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.1);  
+	QCOMPARE(source->get(), 0.85); 
+	QCOMPARE(target->get(), 1.0);
+	
 }
 
 
