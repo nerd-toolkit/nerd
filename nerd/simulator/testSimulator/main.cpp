@@ -71,30 +71,30 @@
 
 TEST_START("TestSimulator", 1, -1, 21);
 
-	TEST(TestGeom); //tests all geoms.
-	TEST(TestCollisionObject);
-	TEST(TestCollisionRule);
-	TEST(TestSimObject);
-	TEST(TestSimBody); 
-	TEST(TestSimJoint);
-	TEST(TestBoxBody);
-	TEST(TestPhysicsManager); //still missing many tests. (see header)
-	TEST(TestCollisionManager); //in progress. //missing updateCollisionHandler.
-
-	//up to here test cases are checked for memory leaks.
-
-	TEST(TestSphereBody);
-// TODO: update test: axes were switched!
-	TEST(TestAccelSensor);
-	TEST(TestRandomizer);
-	TEST(TestSimulationEnvironmentManager);
-	TEST(TestCylinderBody);
-	TEST(TestPhysics);
-	TEST(TestMaterialProperties);
-	TEST(TestSimObjectGroup);
-	TEST(TestRayAndDistanceSensor);
-	TEST(TestSignals);
-	TEST(TestSimulationConstants);
+// 	TEST(TestGeom); //tests all geoms.
+// 	TEST(TestCollisionObject);
+// 	TEST(TestCollisionRule);
+// 	TEST(TestSimObject);
+// 	TEST(TestSimBody); 
+// 	TEST(TestSimJoint);
+// 	TEST(TestBoxBody);
+// 	TEST(TestPhysicsManager); //still missing many tests. (see header)
+// 	TEST(TestCollisionManager); //in progress. //missing updateCollisionHandler.
+// 
+// 	//up to here test cases are checked for memory leaks.
+// 
+// 	TEST(TestSphereBody);
+// // TODO: update test: axes were switched!
+// 	TEST(TestAccelSensor);
+// 	TEST(TestRandomizer);
+// 	TEST(TestSimulationEnvironmentManager);
+// 	TEST(TestCylinderBody);
+// 	TEST(TestPhysics);
+// 	TEST(TestMaterialProperties);
+// 	TEST(TestSimObjectGroup);
+// 	TEST(TestRayAndDistanceSensor);
+// 	TEST(TestSignals);
+// 	TEST(TestSimulationConstants);
 	TEST(TestValueTransferController);
 
 TEST_END;

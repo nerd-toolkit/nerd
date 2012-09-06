@@ -50,6 +50,7 @@
 #include "Physics/ValueTransferController.h"
 #include <iostream>
 
+
 using namespace std;
 using namespace nerd;
 
@@ -184,6 +185,8 @@ void TestValueTransferController::testSimpleTransfer() {
 	vm->addValue("/MySource", source);
 	vm->addValue("/TheTarget", target);
 	
+	nameOfSource->set("NonexistingName");
+	
 	QVERIFY(vtf->getSource() == 0);
 	QVERIFY(vtf->getTarget() == 0);
 	
@@ -194,13 +197,18 @@ void TestValueTransferController::testSimpleTransfer() {
 	QVERIFY(vtf->getTarget() == 0);
 	QVERIFY(vtf->transferActivations() == false);
 	
-	nameOfSource->set("/MySource");
-	QVERIFY(vtf->getSource() == 0);
-	QVERIFY(vtf->getTarget() == 0);
-	
+	nameOfSource->set("");
 	vtf->setup();
 	
-	QVERIFY(vtf->getSource() == source);
+	QVERIFY(vtf->getSource() != 0); //uses the internal, infinite source.
+	QVERIFY(vtf->getSource() != source);
+	QVERIFY(vtf->getTarget() == 0);
+	
+	
+	nameOfSource->set("/MySource"); 
+	vtf->setup();
+	
+	QVERIFY(vtf->getSource() == source); //uses the specified source
 	QVERIFY(vtf->getTarget() == 0);
 	QVERIFY(vtf->transferActivations() == false);
 	

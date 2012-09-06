@@ -46,7 +46,7 @@
 #include <math.h>
 #include "Math/Math.h"
 
-namespace nerd{
+namespace nerd {
 	
 	
 	Range::Range() {

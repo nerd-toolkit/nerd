@@ -43,8 +43,8 @@
 
 
 
-#ifndef RANGEVALUE_H_
-#define RANGEVALUE_H_
+#ifndef NERD_RANGEVALUE_H_
+#define NERD_RANGEVALUE_H_
 
 #include "Value.h"
 #include <QString>
@@ -80,4 +80,4 @@ namespace nerd {
 		
 	};
 }
-#endif /*BOOLVALUE_H_*/
+#endif 

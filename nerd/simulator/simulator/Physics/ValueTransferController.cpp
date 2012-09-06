@@ -49,6 +49,7 @@
 #include "Math/Math.h"
 #include <iostream>
 
+
 using namespace std;
 
 namespace nerd {
@@ -67,6 +68,10 @@ namespace nerd {
 		mTransferMode = new IntValue(0);
 		mMaximalTransferRate = new DoubleValue(0.01);
 		mTransferCost = new DoubleValue(0.00001);
+		mControllerRangeMax = new DoubleValue(1.0);
+		mControllerRangeMin = new DoubleValue(-1.0);
+		
+		mLocalSource = new NormalizedDoubleValue(0.0, -9999999.0, 9999999.0, 0.0, 1.0);
 		
 		if(!mAutoChangeTarget) {
 			addParameter("Control", mTransferController);
@@ -75,6 +80,8 @@ namespace nerd {
 			addParameter("CustomControllerName", mCustomNameOfControlNeuron);
 			addParameter("CustomSensorName", mCustomNameOfTransferSensor);
 			addParameter("TransferCost", mTransferCost);
+			addParameter("ControllerRangeMin", mControllerRangeMin);
+			addParameter("ControllerRangeMax", mControllerRangeMax);
 			
 			mInputValues.append(mTransferController);
 			mOutputValues.append(mTransferSensor);
@@ -82,7 +89,6 @@ namespace nerd {
 		else {
 			mTransferController->set(1.0); //set to automatic full activation
 			mTransferCost->set(0.0);
-			mLocalSource = new NormalizedDoubleValue(0.0, -9999999.0, 9999999.0, 0.0, 1.0);
 		}
 		addParameter("TargetValueName", mTargetValueName);
 		addParameter("TransferMode", mTransferMode);
@@ -94,6 +100,8 @@ namespace nerd {
 		mSource(0), mTarget(0), mLocalSource(0), mTransferredActivation(0.0), 
 		mAutoChangeTarget(other.mAutoChangeTarget)
 	{
+		mLocalSource = new NormalizedDoubleValue(0.0, -9999999.0, 9999999.0, 0.0, 1.0);
+		
 		if(mAutoChangeTarget) {
 			mTransferController = new InterfaceValue(getName(), "Control", 1.0, -1.0, 1.0); //set to automatic full activation
 			mTransferSensor = new InterfaceValue(getName(), "Transfer", 0.0, -1.0, 1.0);
@@ -101,8 +109,8 @@ namespace nerd {
 			mCustomNameOfControlNeuron = new StringValue("Control");
 			mCustomNameOfTransferSensor = new StringValue("Transfer");
 			mTransferCost = new DoubleValue(0.0);
-			
-			mLocalSource = new NormalizedDoubleValue(0.0, -9999999.0, 9999999.0, 0.0, 1.0);
+			mControllerRangeMax = new DoubleValue(1.0);
+			mControllerRangeMin = new DoubleValue(-1.0);
 		}
 		else {
 			mTransferController = dynamic_cast<InterfaceValue*>(getParameter("Control"));
@@ -111,6 +119,8 @@ namespace nerd {
 			mCustomNameOfControlNeuron = dynamic_cast<StringValue*>(getParameter("CustomControllerName"));
 			mCustomNameOfTransferSensor = dynamic_cast<StringValue*>(getParameter("CustomSensorName"));
 			mTransferCost = dynamic_cast<DoubleValue*>(getParameter("TransferCost"));
+			mControllerRangeMin = dynamic_cast<DoubleValue*>(getParameter("ControllerRangeMin"));
+			mControllerRangeMax = dynamic_cast<DoubleValue*>(getParameter("ControllerRangeMax"));
 			
 			mInputValues.append(mTransferController);
 			mOutputValues.append(mTransferSensor);
@@ -137,8 +147,7 @@ namespace nerd {
 		
 		ValueManager *vm = Core::getInstance()->getValueManager();
 		
-		mSource = 0;
-		if(mAutoChangeTarget) {
+		if(mSourceValueName->get() == "") {
 			mSource = mLocalSource;
 		}
 		else {
@@ -179,6 +188,12 @@ namespace nerd {
 			mTransferSensor->setMin(-mMaximalTransferRate->get());
 			mTransferSensor->setMax(mMaximalTransferRate->get());
 		}
+		else if(value == mControllerRangeMin) {
+			mTransferController->setMin(mControllerRangeMin->get());
+		}
+		else if(value == mControllerRangeMax) {
+			mTransferController->setMax(mControllerRangeMax->get());
+		}
 	}
 	
 	void ValueTransferController::updateActuators() {
@@ -210,6 +225,9 @@ namespace nerd {
 			case 0:
 				return transferModeSimple();
 				break;
+			case 1:
+				return transferModeBothProportional();
+				break;
 			default:
 				//no transfer
 				return false;
@@ -232,9 +250,7 @@ namespace nerd {
 		double positiveTransfer = Math::abs(activationToTransfer);
 		
 		if(positiveTransfer > 0.0) {
-			
-			//double activationAfterCost = positiveTransfer + mTransferCost->get();
-			
+
 			positiveTransfer = Math::min(positiveTransfer, Math::max(0.0, source->get() - source->getMin() - mTransferCost->get()));
 			positiveTransfer = Math::min(positiveTransfer, target->getMax() - target->get());
 			
@@ -248,6 +264,55 @@ namespace nerd {
 			mTransferredActivation = 0.0;
 		}
 
+		return true;
+	}
+	
+	bool ValueTransferController::transferModeBothProportional() {
+		
+		if(mTarget == 0 || mSource == 0) {
+			return false;
+		}
+			
+		double changeTarget = mMaximalTransferRate->get() * mTransferController->get();
+		double changeSource = mTransferCost->get() * mTransferController->get();
+		
+		double changeFactor = mTransferController->get();
+		
+		//ignore negative changes.
+		double change = changeTarget;
+		if(changeTarget < 0.0) {
+			change = Math::max(change, mTarget->getMin() - mTarget->get());
+		}
+		else if(changeTarget > 0.0) {
+			change = Math::max(change, mTarget->getMax() - mTarget->get());
+		}
+		if(change != changeTarget || changeTarget == 0.0) {
+			if(change == 0.0) {
+				mTransferredActivation = 0.0;
+				return true;
+			}
+			changeFactor = changeFactor * change / changeTarget;
+			changeSource = changeSource * change / changeTarget;
+			changeTarget = change;
+		}
+		change = changeSource;
+		if(changeSource < 0.0) {
+			change = Math::max(change, mSource->getMin() - mSource->get());
+		}
+		else if(changeSource > 0.0) {
+			change = Math::max(change, mSource->getMax() - mSource->get());
+		}
+		if(change != changeSource || changeSource == 0.0) {
+			if(change == 0.0) {
+				mTransferredActivation = 0.0;
+				return true;
+			}
+			changeFactor = changeFactor * change / changeSource;
+			changeTarget = changeTarget * change / changeSource;
+			changeSource = change;
+		}
+		mTransferredActivation = changeFactor;
+		
 		return true;
 	}
 	

@@ -56,7 +56,7 @@ namespace nerd {
 			mValue.set(max, min);
 		}
 		else {
-			mValue.set(min, max);
+			mValue.set(min, max); 
 		}
 	}
 	

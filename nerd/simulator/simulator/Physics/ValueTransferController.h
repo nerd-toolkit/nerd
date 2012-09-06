@@ -43,10 +43,11 @@
 #ifndef NERD_ValueTransferController_H_
 #define NERD_ValueTransferController_H_
 
+#include "Physics/SimObject.h"
 #include "Event/EventListener.h"
-#include "Physics/SliderJoint.h"
 #include "Physics/SimSensor.h"
 #include "Physics/SimActuator.h"
+#include "Value/DoubleValue.h"
 
 namespace nerd {
 	
@@ -62,6 +63,7 @@ namespace nerd {
 	 **/
 	
 	class BoolValue;
+	class RangeValue;
 	
 	class ValueTransferController : public SimObject, public virtual SimSensor, public virtual SimActuator 
 	{
@@ -89,6 +91,7 @@ namespace nerd {
 		
 	protected:
 		virtual bool transferModeSimple();
+		virtual bool transferModeBothProportional();
 		
 	protected:		
 		InterfaceValue *mTransferController;
@@ -101,6 +104,10 @@ namespace nerd {
 		IntValue *mTransferMode;
 		DoubleValue *mMaximalTransferRate;
 		DoubleValue *mTransferCost;
+		//RangeValue *mControllerRange;
+		//TODO check ahy RangeValue leads to linker error???
+		DoubleValue *mControllerRangeMin;
+		DoubleValue *mControllerRangeMax;
 		
 		NormalizedDoubleValue *mSource;
 		NormalizedDoubleValue *mTarget;
@@ -110,5 +117,6 @@ namespace nerd {
 		bool mAutoChangeTarget;
 	};
 }
+
 #endif
 

@@ -92,7 +92,6 @@ using namespace nerd;
 NerdNeuroSimApplication::NerdNeuroSimApplication()
 		: NeuroAndSimEvaluationStandardGuiApplication(true, true)
 {
-
 }
 
 NerdNeuroSimApplication::~NerdNeuroSimApplication()

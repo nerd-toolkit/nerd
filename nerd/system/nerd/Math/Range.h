@@ -41,14 +41,15 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#ifndef Range_H_
-#define Range_H_
+#ifndef NERD_Range_H_
+#define NERD_Range_H_
 
 
-namespace nerd{
+namespace nerd {
 	
 	/**
-	 * Math-Class for a 3D-Vector. This class provides several methods and operators to work with 3D-vectors (normalization, skalar-multiplication, cross-product...). 
+	 * Math-Class for a 3D-Vector. This class provides several methods and operators to work with 3D-vectors 
+	 * (normalization, skalar-multiplication, cross-product...). 
 	 */
 	class Range {
 		
@@ -76,4 +77,5 @@ namespace nerd{
 		
 	};
 }
+
 #endif
