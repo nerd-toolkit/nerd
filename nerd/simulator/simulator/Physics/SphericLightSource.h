@@ -50,6 +50,7 @@
 #include <QHash>
 #include "Physics/LightSource.h"
 #include "Physics/SimSensor.h"
+#include "Value/RangeValue.h"
 
 namespace nerd {
 	
@@ -97,6 +98,8 @@ namespace nerd {
 		StringValue *mReferenceObjectName;
 		Vector3DValue *mLocalPosition;
 		SimBody *mReferenceObject;
+		BoolValue *mHomogeneousDistribution;
+		RangeValue *mBrightnessRange;
 	};
 	
 }

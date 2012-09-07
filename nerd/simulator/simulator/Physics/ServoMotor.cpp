@@ -320,7 +320,7 @@ double ServoMotor::calculatedTorque(double, double currentPosition) {
 		
 		if((mMotorTemperature->get() + temperatureIncrease) > mTemperatureThresholdForFailure->get()) {
 			
-			//failuer, but cool down a bit.
+			//failure, but cool down a bit.
 			mMotorTemperature->set(mMotorTemperature->get() - mTemperatureCoolingRate->get());
 			return 0.0;
 		}

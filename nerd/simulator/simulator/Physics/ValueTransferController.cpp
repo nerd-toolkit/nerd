@@ -77,10 +77,8 @@ namespace nerd {
 		if(!mAutoChangeTarget) {
 			addParameter("Control", mTransferController);
 			addParameter("Sensor", mTransferSensor);
-			addParameter("SourceValueName", mSourceValueName);
 			addParameter("CustomControllerName", mCustomNameOfControlNeuron);
 			addParameter("CustomSensorName", mCustomNameOfTransferSensor);
-			addParameter("TransferCost", mTransferCost);
 			addParameter("ControllerRangeMin", mControllerRangeMin);
 			addParameter("ControllerRangeMax", mControllerRangeMax);
 			
@@ -91,8 +89,10 @@ namespace nerd {
 			mTransferController->set(1.0); //set to automatic full activation
 			mTransferCost->set(0.0);
 		}
+		addParameter("SourceValueName", mSourceValueName);
 		addParameter("TargetValueName", mTargetValueName);
 		addParameter("TransferMode", mTransferMode);
+		addParameter("TransferCost", mTransferCost);
 		addParameter("MaxTransferRate", mMaximalTransferRate);
 		
 		
@@ -121,28 +121,26 @@ namespace nerd {
 		if(mAutoChangeTarget) {
 			mTransferController = new InterfaceValue(getName(), "Control", 1.0, -1.0, 1.0); //set to automatic full activation
 			mTransferSensor = new InterfaceValue(getName(), "Transfer", 0.0, -1.0, 1.0);
-			mSourceValueName = new StringValue();
 			mCustomNameOfControlNeuron = new StringValue("Control");
 			mCustomNameOfTransferSensor = new StringValue("Transfer");
-			mTransferCost = new DoubleValue(0.0);
 			mControllerRangeMax = new DoubleValue(1.0);
 			mControllerRangeMin = new DoubleValue(-1.0);
 		}
 		else {
 			mTransferController = dynamic_cast<InterfaceValue*>(getParameter("Control"));
 			mTransferSensor = dynamic_cast<InterfaceValue*>(getParameter("Sensor"));
-			mSourceValueName = dynamic_cast<StringValue*>(getParameter("SourceValueName"));	
 			mCustomNameOfControlNeuron = dynamic_cast<StringValue*>(getParameter("CustomControllerName"));
 			mCustomNameOfTransferSensor = dynamic_cast<StringValue*>(getParameter("CustomSensorName"));
-			mTransferCost = dynamic_cast<DoubleValue*>(getParameter("TransferCost"));
 			mControllerRangeMin = dynamic_cast<DoubleValue*>(getParameter("ControllerRangeMin"));
 			mControllerRangeMax = dynamic_cast<DoubleValue*>(getParameter("ControllerRangeMax"));
 			
 			mInputValues.append(mTransferController);
 			mOutputValues.append(mTransferSensor);
 		}
+		mSourceValueName = dynamic_cast<StringValue*>(getParameter("SourceValueName"));	
 		mTargetValueName = dynamic_cast<StringValue*>(getParameter("TargetValueName"));
 		mTransferMode = dynamic_cast<IntValue*>(getParameter("TransferMode"));
+		mTransferCost = dynamic_cast<DoubleValue*>(getParameter("TransferCost"));
 		mMaximalTransferRate = dynamic_cast<DoubleValue*>(getParameter("MaxTransferRate"));
 
 	}

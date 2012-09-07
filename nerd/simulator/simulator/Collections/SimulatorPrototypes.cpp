@@ -96,6 +96,10 @@ namespace nerd{
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_LIGHT_SOURCE,
 		new SphericLightSource(SimulationConstants::PROTOTYPE_LIGHT_SOURCE, 0.8, 0.5, 0));
+	
+	pm->addPrototype(SimulationConstants::PROTOTYPE_SPHERIC_LIGHT_SOURCE,
+		new SphericLightSource(SimulationConstants::PROTOTYPE_SPHERIC_LIGHT_SOURCE, 0.8, 0.5, 0));
+	
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_LIGHT_SENSOR,
         new LightSensor(SimulationConstants::PROTOTYPE_LIGHT_SENSOR));

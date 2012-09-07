@@ -63,7 +63,7 @@ namespace nerd {
 	SphericLightSource::SphericLightSource(const QString &name, double brightness, double range, int type)
 	: LightSource(name, type), mRange(0), mBrightnessSensor(0), mBrightnessControl(0), 
 		mLightColor(0), mHideLightCone(0), mUseSphereAsLightCone(0), 
-		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0)
+		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0)
 	{
 		mRange = new DoubleValue(range);
 		mBrightnessSensor = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
@@ -73,6 +73,8 @@ namespace nerd {
 		mUseSphereAsLightCone = new BoolValue(false);
 		mReferenceObjectName = new StringValue("");
 		mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
+		mHomogeneousDistribution = new BoolValue(false);
+		mBrightnessRange = new RangeValue(0,1);
 		
 		addParameter("Range", mRange);
 		addParameter("Brightness", mBrightnessSensor);
@@ -82,6 +84,8 @@ namespace nerd {
 		addParameter("UseSphericLightCone", mUseSphereAsLightCone);
 		addParameter("ReferenceObject", mReferenceObjectName);
 		addParameter("LocalPosition", mLocalPosition);
+		addParameter("UniformLight", mHomogeneousDistribution);
+		addParameter("BrightnessRange", mBrightnessRange);
 		
 		mOutputValues.append(mBrightnessSensor);
 		mInputValues.append(mBrightnessControl);
@@ -100,7 +104,7 @@ namespace nerd {
 	 */
 	SphericLightSource::SphericLightSource(const SphericLightSource &other) 
 	: Object(), ValueChangedListener(), LightSource(other), 
-		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0)
+		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0)
 	{
 		mRange = dynamic_cast<DoubleValue*>(getParameter("Range"));
 		mBrightnessSensor = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
@@ -110,6 +114,8 @@ namespace nerd {
 		mUseSphereAsLightCone = dynamic_cast<BoolValue*>(getParameter("UseSphericLightCone"));
 		mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
 		mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
+		mHomogeneousDistribution = dynamic_cast<BoolValue*>(getParameter("UniformLight"));
+		mBrightnessRange = dynamic_cast<RangeValue*>(getParameter("BrightnessRange"));
 		
 		mOutputValues.clear();
 		mInputValues.clear();
@@ -182,12 +188,11 @@ namespace nerd {
 	
 	
 	void SphericLightSource::valueChanged(Value *value) {
-		
 		LightSource::valueChanged(value);
 		if(value == 0) {
 			return;
 		}
-		if(value == mRange) {
+		else if(value == mRange) {
 			if(mUseSphereAsLightCone->get()) {
 				SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
 				if(geom != 0) {
@@ -225,6 +230,12 @@ namespace nerd {
 				rotatedLocalPosQuat.getZ());
 			mPositionValue->set(mReferenceObject->getPositionValue()->get() + rotatedLocalPos);
 		}
+		else if(value == mBrightnessRange) {
+			mBrightnessSensor->setMin(mBrightnessRange->getMin());
+			mBrightnessSensor->setMax(mBrightnessRange->getMax());
+			mBrightnessControl->setMin(mBrightnessRange->getMin());
+			mBrightnessControl->setMax(mBrightnessRange->getMax());
+		}
 	}
 	
 	
@@ -238,7 +249,7 @@ namespace nerd {
 			color.setAlpha(0); 
 		}
 		else {
-			color.setAlpha((int) (mBrightnessSensor->get() * 80.0)); 
+			color.setAlpha((int) (Math::abs(mBrightnessSensor->get()) * 80.0)); 
 		}
 		mBodyCollisionObject->getGeometry()->setColor(color);
 	}
@@ -279,9 +290,14 @@ namespace nerd {
 			return brightness;
 		}
 		
-		//currently the light is assumed to decay linearly 
-		//TODO should be changed to 1/(r*r).
-		brightness = (range - distance) / range * getCurrentBrightness();
+		if(mHomogeneousDistribution->get()) {
+			brightness = getCurrentBrightness();
+		}
+		else {
+			//currently the light is assumed to decay linearly 
+			//TODO should be changed to 1/(r*r).
+			brightness = (range - distance) / range * getCurrentBrightness();
+		}
 		
 		return brightness;
 	}

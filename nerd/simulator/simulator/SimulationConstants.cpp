@@ -133,6 +133,7 @@ const QString SimulationConstants::PROTOTYPE_SLIDER_JOINT = "Prototypes/SliderJo
 const QString SimulationConstants::PROTOTYPE_SERVO_MOTOR = "Prototypes/ServoMotor";
 const QString SimulationConstants::PROTOTYPE_SERVO_MOTOR_WITH_TEMPERATURE = "Prototypes/ServoMotorTemp";
 const QString SimulationConstants::PROTOTYPE_LIGHT_SOURCE = "Prototypes/LightSource";
+const QString SimulationConstants::PROTOTYPE_SPHERIC_LIGHT_SOURCE = "Prototypes/SphericLightSource";
 const QString SimulationConstants::PROTOTYPE_LIGHT_SENSOR = "Prototypes/LightSensor";
 const QString SimulationConstants::PROTOTYPE_FORCE_SENSOR = "Prototypes/ForceSensor";
 const QString SimulationConstants::PROTOTYPE_CURRENT_CONSUMPTION_SENSOR = 

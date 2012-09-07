@@ -75,10 +75,11 @@ namespace nerd {
 		
 	private:
 		InterfaceValue *mSensorValue;
-		DoubleValue *mMonitoredValue;
-		StringValue *mMonitoredValueName;
+		QList<DoubleValue*> mMonitoredValues;
+		StringValue *mMonitoredValueNames;
 		StringValue *mCustomSensorName;
 		RangeValue *mSensorRange;
+		IntValue *mCalculationMode;
 	};
 }
 #endif

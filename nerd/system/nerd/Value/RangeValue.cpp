@@ -121,7 +121,7 @@ namespace nerd {
 			return false;
 		}
 		if(components.size() == 1) {
-			mValue.set(min, min);
+			set(min, min);
 			return true;
 		}
 		
@@ -132,7 +132,7 @@ namespace nerd {
 		if(min > max) {
 			return false;
 		}
-		mValue.set(min, max);
+		set(min, max);
 		return true;
 	}
 	

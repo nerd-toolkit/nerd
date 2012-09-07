@@ -56,22 +56,31 @@
 #include "Value/NormalizedDoubleValue.h"
 #include "Value/StringValue.h"
 #include "Value/RangeValue.h"
+#include <QStringList>
+
 
 namespace nerd {
 	
 	
 	ExternalSensorAdapter::ExternalSensorAdapter(const QString &name) 
-		: SimObject(name), mMonitoredValue(0)
+		: SimObject(name)
 	{
 		mSensorValue = new InterfaceValue(getName(), "Sensor", 0.0, 0.0, 1.0);
-		mMonitoredValueName = new StringValue();
+		mMonitoredValueNames = new StringValue();
 		mCustomSensorName = new StringValue("Sensor");
 		mSensorRange = new RangeValue(0.0, 1.0);
+		mCalculationMode = new IntValue(0);
+		
+		mCalculationMode->setDescription("The way multiple monitored values are combined:\n"
+											"0: mean\n"
+											"1: min\n"
+											"2: max");
 		
 		addParameter("Sensor", mSensorValue);
-		addParameter("MonitoredValueName", mMonitoredValueName);
+		addParameter("MonitoredValueNames", mMonitoredValueNames);
 		addParameter("CustomSensorName", mCustomSensorName);
 		addParameter("SensorRange", mSensorRange);
+		addParameter("Mode", mCalculationMode);
 		
 		mOutputValues.append(mSensorValue);
 	}
@@ -80,12 +89,13 @@ namespace nerd {
 	
 	
 	ExternalSensorAdapter::ExternalSensorAdapter(const ExternalSensorAdapter &sensor) 
-		: Object(), ValueChangedListener(), SimObject(sensor), mMonitoredValue(0)
+		: Object(), ValueChangedListener(), SimObject(sensor)
 	{
 		mSensorValue = dynamic_cast<InterfaceValue*>(getParameter("Sensor"));
-		mMonitoredValueName = dynamic_cast<StringValue*>(getParameter("MonitoredValueName"));
+		mMonitoredValueNames = dynamic_cast<StringValue*>(getParameter("MonitoredValueNames"));
 		mCustomSensorName = dynamic_cast<StringValue*>(getParameter("CustomSensorName"));
 		mSensorRange = dynamic_cast<RangeValue*>(getParameter("SensorRange"));
+		mCalculationMode = dynamic_cast<IntValue*>(getParameter("Mode"));
 		
 		mOutputValues.append(mSensorValue);
 	}
@@ -121,23 +131,63 @@ namespace nerd {
 		
 		ValueManager *vm = Core::getInstance()->getValueManager();
 		
-		mMonitoredValue = vm->getDoubleValue(mMonitoredValueName->get());
+		QStringList monitoredValueNames = mMonitoredValueNames->get().split(",");
+
+		for(QListIterator<QString> i(monitoredValueNames); i.hasNext();) {
+			QString name = i.next();
+			DoubleValue *value = vm->getDoubleValue(name);
+			if(value == 0) {
+				Core::log("ExternalSensorAdapter [" + getName() + "]: Could not find the "
+							"external value [" + name + "] to monitor. Ignoring that value!", true);
+			}
+			else {
+				mMonitoredValues.append(value);
+			}
+		}
 		
-		if(mMonitoredValue == 0) {
-			Core::log("ExternalSensorAdapter [" + getName() + "]: Could not find required "
-					  "monitored DoubleValue with name [" + mMonitoredValueName->get() + "]. "
+		if(mMonitoredValues.empty()) {
+			Core::log("ExternalSensorAdapter [" + getName() + "]: Could not find any valid "
+						"DoubleValue to monitor [" + mMonitoredValueNames->get() + "]. "
 					  "This sensor will be disabled!", true);
 		}
 	}
 	
 	void ExternalSensorAdapter::clear() {
-		mMonitoredValue = 0;
+		mMonitoredValues.clear();
 	}
 	
 	void ExternalSensorAdapter::updateSensorValues() {
-		if(mMonitoredValue != 0) {
-			mSensorValue->set(mMonitoredValue->get());
+		
+		double sensorValue = 0.0;
+		
+		if(!mMonitoredValues.empty()) {
+			switch(mCalculationMode->get()) {
+				case 0:
+					//mean
+					for(int i = 0; i < mMonitoredValues.size(); ++i) {
+						sensorValue += mMonitoredValues.at(i)->get();
+					}
+					sensorValue = sensorValue / ((double) mMonitoredValues.size());
+					break;
+				case 1:
+					//min
+					sensorValue = mMonitoredValues.at(0)->get();
+					for(int i = 1; i < mMonitoredValues.size(); ++i) {
+						sensorValue = Math::min(sensorValue, mMonitoredValues.at(i)->get());
+					}
+					break;
+				case 2:
+					//max
+					sensorValue = mMonitoredValues.at(0)->get();
+					for(int i = 1; i < mMonitoredValues.size(); ++i) {
+						sensorValue = Math::max(sensorValue, mMonitoredValues.at(i)->get());
+					}
+					break;
+				default:
+					;
+			}
 		}
+		mSensorValue->set(sensorValue);
 	}
 	
 	
