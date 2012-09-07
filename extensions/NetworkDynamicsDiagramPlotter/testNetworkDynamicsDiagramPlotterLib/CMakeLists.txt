@@ -10,6 +10,7 @@ set(nerd_testNetworkDynamicsDiagramPlotterLib_SRCS
 	DynamicsPlot/TestBasinPlotter.cpp
 	DynamicsPlot/TestBifurcationPlotter.cpp
 	DynamicsPlot/TestFirstReturnMap.cpp
+	DynamicsPlot/TestTransientPlotter.cpp
 	Adapters/DynamicsPlotterAdapter.cpp
 	Adapters/TransferFunctionAdapter.cpp
 )
@@ -23,6 +24,7 @@ set(nerd_testNetworkDynamicsDiagramPlotterLib_MOC_HDRS
 	DynamicsPlot/TestBasinPlotter.h
 	DynamicsPlot/TestBifurcationPlotter.h
 	DynamicsPlot/TestFirstReturnMap.h
+	DynamicsPlot/TestTransientPlotter.h
 )
 
 set(nerd_testNetworkDynamicsDiagramPlotterLib_RCS

@@ -42,18 +42,18 @@
  ***************************************************************************/
 
 
-#ifndef TRANSIENTENPLOTTER_H
-#define TRANSIENTENPLOTTER_H
+#ifndef TRANSIENTPLOTTER_H
+#define TRANSIENTPLOTTER_H
 
 #include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
 	
-	class TransientenPlotter : public DynamicsPlotter {
+	class TransientPlotter : public DynamicsPlotter {
 
 	public:
-		TransientenPlotter();
-		virtual ~TransientenPlotter();
+		TransientPlotter();
+		virtual ~TransientPlotter();
 		
 		virtual void calculateData();
 
@@ -72,4 +72,4 @@ namespace nerd {
 	};
 }
 
-#endif // TRANSIENTENPLOTTER_H
+#endif // TRANSIENTPLOTTER_H

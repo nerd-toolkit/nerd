@@ -52,7 +52,7 @@
 #include "Core/Core.h"
 #include "DynamicsPlot/BifurcationPlotter.h"
 #include "DynamicsPlot/BasinPlotter.h"
-#include "DynamicsPlot/TransientenPlotter.h"
+#include "DynamicsPlot/TransientPlotter.h"
 #include "DynamicsPlot/IsoperiodPlotter.h"
 #include "DynamicsPlot/FirstReturnMap.h"
 #include "DynamicsPlot/DummyPlotter.h"
@@ -72,7 +72,7 @@ DynamicsPlotCollection::DynamicsPlotCollection()
 	new BasinPlotter();
 	new IsoperiodPlotter();
 	new FirstReturnMap();
-	new TransientenPlotter();
+	new TransientPlotter();
 	
 	new DummyPlotter();
 

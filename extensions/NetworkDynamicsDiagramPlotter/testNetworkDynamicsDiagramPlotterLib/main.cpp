@@ -52,6 +52,7 @@
 #include "DynamicsPlot/TestBasinPlotter.h"
 #include "DynamicsPlot/TestBifurcationPlotter.h"
 #include "DynamicsPlot/TestFirstReturnMap.h"
+#include "DynamicsPlot/TestTransientPlotter.h"
 
 TEST_START("TestNetworkDiagramPlotterLib", 1, -1, 7);
  
@@ -62,6 +63,7 @@ TEST_START("TestNetworkDiagramPlotterLib", 1, -1, 7);
 	TEST(TestBasinPlotter);
 	TEST(TestBifurcationPlotter);
 	TEST(TestFirstReturnMap);
+	TEST(TestTransientPlotter);
 	
 
 TEST_END;

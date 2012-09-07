@@ -42,8 +42,8 @@
  ***************************************************************************/
 
 
-#ifndef TESTTestFirstReturnMap_H_
-#define TESTTestFirstReturnMap_H_
+#ifndef TESTFIRSTRETURNMAP_H
+#define TESTFIRSTRETURNMAP_H
 
 #include <QtTest/QtTest>
 

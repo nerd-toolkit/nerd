@@ -42,8 +42,8 @@
  ***************************************************************************/
 
 
-#ifndef TESTTestDynamicsPlotter_H_
-#define TESTTestDynamicsPlotter_H_
+#ifndef TESTDYNAMICSPLOTTER_H
+#define TESTDYNAMICSPLOTTER_H
 
 #include <QtTest/QtTest>
 
@@ -58,12 +58,9 @@ namespace nerd {
 		void cleanUpTestCase();
 		void initTestCase();
 		
-		void testConstructors(); //TODO
-		void testStoreAndRestoreNetworkActivities(); //TODO
-		void testStoreAndRestoreNetworkConfiguration(); //TODO
-		void testCheckStringListsItemCount(); //TODO
-		void testCreateListOfIds(); //TODO
-		void testCreateListOfDoubles(); //TODO
+		void testConstructors();
+		void testStoreAndRestoreNetworkActivities();
+		void testStoreAndRestoreNetworkConfiguration();
 		
 	private:
 		

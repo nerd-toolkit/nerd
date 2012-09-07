@@ -42,8 +42,8 @@
  ***************************************************************************/
 
 
-#ifndef TESTTestBasinPlotter_H_
-#define TESTTestBasinPlotter_H_
+#ifndef TESTBASINPLOTTER_H
+#define TESTBASINPLOTTER_H
 
 #include <QtTest/QtTest>
 

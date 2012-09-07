@@ -42,7 +42,7 @@
  ***************************************************************************/
 
 
-#include "TransientenPlotter.h"
+#include "TransientPlotter.h"
 #include <Util/DynamicsPlotterUtil.h>
 #include "Core/Core.h"
 #include "math.h"
@@ -53,7 +53,7 @@ using namespace std;
 
 namespace nerd {
 
-	TransientenPlotter::TransientenPlotter() : DynamicsPlotter("Transienten"), mCurrentMarker(1) {
+	TransientPlotter::TransientPlotter() : DynamicsPlotter("Transient"), mCurrentMarker(1) {
 	// initialising
 
 	mObservedElementsX = new StringValue("0");
@@ -103,12 +103,12 @@ namespace nerd {
 	
 	addParameter("Config/KeepPreviousData", mKeepPreviousData, true);
 	
-	mTitleNames->set("Transienten");
+	mTitleNames->set("Transient");
 }
 
-TransientenPlotter::~TransientenPlotter() {}
+TransientPlotter::~TransientPlotter() {}
 
-void TransientenPlotter::calculateData() {
+void TransientPlotter::calculateData() {
 	
 	// get program core
 	Core *core = Core::getInstance();
@@ -123,7 +123,7 @@ void TransientenPlotter::calculateData() {
 	QString observedElementSX = mObservedElementsX->get();
 	QString observedElementSY = mObservedElementsY->get();
 	if(observedElementSX.isEmpty() || observedElementSY.isEmpty()) {
-		reportProblem("TransientenPlotter: No elements to observe.");
+		reportProblem("TransientPlotter: No elements to observe.");
 		return;
 	}
 
@@ -139,7 +139,7 @@ void TransientenPlotter::calculateData() {
 	
 	if(observedValuesX.isEmpty() ||
 		observedValuesX.size() != observedValuesY.size()) {
-		reportProblem("TransientenPlotter: Number of plots does not match "
+		reportProblem("TransientPlotter: Number of plots does not match "
 						"through the dimensions.");
 		return;
 	}
@@ -152,7 +152,7 @@ void TransientenPlotter::calculateData() {
 				
 	if(observedRangesX.size() != observedRangesY.size() ||
 		observedRangesX.size() != 2*observedValuesX.size()) {
-		reportProblem("TransientenPlotter: Invalid ranges given.");
+		reportProblem("TransientPlotter: Invalid ranges given.");
 		return;
 	}
 
@@ -162,7 +162,7 @@ void TransientenPlotter::calculateData() {
 	
 	//avoid division by zero!
 	if(resolutionX < 2 || resolutionY < 2) {
-		reportProblem("TransientenPlotter: Invalid resolution given.");
+		reportProblem("TransientPlotter: Invalid resolution given.");
 		return;
 	}
 

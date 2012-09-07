@@ -42,8 +42,8 @@
  ***************************************************************************/
 
 
-#ifndef TESTTestBifurcationPlotter_H_
-#define TESTTestBifurcationPlotter_H_
+#ifndef TESTBIFURCATIONPLOTTER_H
+#define TESTBIFURCATIONPLOTTER_H
 
 #include <QtTest/QtTest>
 

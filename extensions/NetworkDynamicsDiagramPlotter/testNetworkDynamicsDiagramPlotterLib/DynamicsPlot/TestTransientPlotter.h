@@ -42,14 +42,14 @@
  ***************************************************************************/
 
 
-#ifndef TESTDYNAMICSPLOTMANAGER_H
-#define TESTDYNAMICSPLOTMANAGER_H
+#ifndef TESTTRANSIENTPLOTTER_H
+#define TESTTRANSIENTPLOTTER_H
 
 #include <QtTest/QtTest>
 
 namespace nerd {
 	
-	class TestDynamicsPlotManager : public QObject {
+	class TestTransientPlotter : public QObject {
 		
 		Q_OBJECT
 		
@@ -58,9 +58,8 @@ namespace nerd {
 		void cleanUpTestCase();
 		void initTestCase();
 		
-		void testConstructorsAndGlobalRegistration();
-		void testPlotterManagement();
-		
+		void testConstructors();	
+		void testParameterSettings();
 		
 	private:
 		

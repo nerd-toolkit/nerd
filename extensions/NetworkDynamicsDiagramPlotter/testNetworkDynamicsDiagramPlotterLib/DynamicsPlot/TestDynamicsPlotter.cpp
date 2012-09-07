@@ -81,22 +81,3 @@ void TestDynamicsPlotter::testStoreAndRestoreNetworkConfiguration() {
 	
 }
 
-//Author
-void TestDynamicsPlotter::testCheckStringListsItemCount() {
-	
-}
-
-//Author
-void TestDynamicsPlotter::testCreateListOfIds() {
-	
-}
-
-//Author
-void TestDynamicsPlotter::testCreateListOfDoubles() {
-	
-}
-
-
-
-
-

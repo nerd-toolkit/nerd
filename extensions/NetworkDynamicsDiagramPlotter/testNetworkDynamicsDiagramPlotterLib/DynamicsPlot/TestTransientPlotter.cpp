@@ -44,7 +44,7 @@
 
 
 
-#include "TestFirstReturnMap.h"
+#include "TestTransientPlotter.h"
 #include <iostream>
 #include "Core/Core.h"
 #include "Network/NeuralNetwork.h"
@@ -54,7 +54,7 @@
 #include "Adapters/TransferFunctionAdapter.h"
 #include <Util/NeuralNetworkUtil.h>
 #include <Util/DynamicsPlotterUtil.h>
-#include <DynamicsPlot/FirstReturnMap.h>
+#include <DynamicsPlot/TransientPlotter.h>
 #include "DynamicsPlotConstants.h"
 #include "NetworkEditorConstants.h"
 #include "NerdConstants.h"
@@ -65,21 +65,21 @@
 using namespace std;
 using namespace nerd;
 
-void TestFirstReturnMap::initTestCase() {
+void TestTransientPlotter::initTestCase() {
 }
 
-void TestFirstReturnMap::cleanUpTestCase() {
+void TestTransientPlotter::cleanUpTestCase() {
 }
 
 
 //Author
-void TestFirstReturnMap::testConstructors() {
+void TestTransientPlotter::testConstructors() {
 	
 }
 
 
 //josef
-void TestFirstReturnMap::testParameterSettings() {
+void TestTransientPlotter::testParameterSettings() {
 
 	// initialize NERD
 	Core::resetCore();
@@ -100,7 +100,7 @@ void TestFirstReturnMap::testParameterSettings() {
 
 
 	// create plotter object
-	FirstReturnMap *plotter = new FirstReturnMap();
+	TransientPlotter *plotter = new TransientPlotter();
 
 
 	// get general parameters and check them
@@ -126,27 +126,26 @@ void TestFirstReturnMap::testParameterSettings() {
 
 	
 	// get specific parameters and do simple non-null checks
-	StringValue *v_ObservedElems = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedElems"));
-	StringValue *v_ObservedRanges = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedRanges"));
-	IntValue *v_ObservedResolution = dynamic_cast<IntValue*>(plotter->getParameter("Config/ObservedResolution"));
-
-	DoubleValue *v_Accuracy = dynamic_cast<DoubleValue*>(plotter->getParameter("Config/Accuracy"));
+	StringValue *v_ObservedElementsX = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedElementsX"));
+	StringValue *v_ObservedRangesX = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedRangesX"));
+	StringValue *v_ObservedElementsY = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedElementsY"));
+	StringValue *v_ObservedRangesY = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedRangesY"));
+	IntValue *v_ResolutionX = dynamic_cast<IntValue*>(plotter->getParameter("Config/ResolutionX"));
+	IntValue *v_ResolutionY = dynamic_cast<IntValue*>(plotter->getParameter("Config/ResolutionY"));
 
 	IntValue *v_StepsToRun = dynamic_cast<IntValue*>(plotter->getParameter("Config/StepsToRun"));
 	IntValue *v_StepsToPlot = dynamic_cast<IntValue*>(plotter->getParameter("Config/StepsToPlot"));
 	
-	BoolValue *v_ResetNetworkActivation = dynamic_cast<BoolValue*>(plotter->getParameter("Config/ResetNetworkActivation"));
-	BoolValue *v_RestoreNetworkConfiguration = dynamic_cast<BoolValue*>(plotter->getParameter("Config/RestoreNetworkConfiguration"));
 	BoolValue *v_KeepPreviousData = dynamic_cast<BoolValue*>(plotter->getParameter("Config/KeepPreviousData"));
 	
-	QVERIFY(v_ObservedElems != 0);
-	QVERIFY(v_ObservedRanges != 0);
-	QVERIFY(v_ObservedResolution != 0);
-	QVERIFY(v_Accuracy != 0);
+	QVERIFY(v_ObservedElementsX != 0);
+	QVERIFY(v_ObservedRangesX != 0);
+	QVERIFY(v_ObservedElementsY != 0);
+	QVERIFY(v_ObservedRangesY != 0);
+	QVERIFY(v_ResolutionX != 0);
+	QVERIFY(v_ResolutionY != 0);
 	QVERIFY(v_StepsToRun != 0);
 	QVERIFY(v_StepsToPlot != 0);
-	QVERIFY(v_ResetNetworkActivation != 0);
-	QVERIFY(v_RestoreNetworkConfiguration != 0);
 	QVERIFY(v_KeepPreviousData != 0);
 
 
@@ -161,22 +160,21 @@ void TestFirstReturnMap::testParameterSettings() {
 	network->addNeuron(n1);
 	Neuron *n2 = new Neuron("Neuron2", *ramp, *af);
 	network->addNeuron(n2);
-	Synapse *s1 = Synapse::createSynapse(n1, n1, 1.03, *sf);
-	Synapse *s2 = Synapse::createSynapse(n1, n2, -1.2, *sf);
-	Synapse *s3 = Synapse::createSynapse(n2, n1, 1.1, *sf);
+	Synapse *s1 = Synapse::createSynapse(n1, n1, 1.033, *sf);
+	Synapse *s2 = Synapse::createSynapse(n1, n2, -1.04, *sf);
+	Synapse *s3 = Synapse::createSynapse(n2, n1, 1.2, *sf);
 
 	QVERIFY(Neuro::getNeuralNetworkManager()->addNeuralNetwork(network));
 	QVERIFY(Core::getInstance()->init());
 	
 
 	// check default parameter settings
-	QVERIFY(v_ObservedRanges->get() == "-1,1");
-	QVERIFY(v_ObservedResolution->get() == 200);
-	QVERIFY(v_Accuracy->get() == 0.001);
-	QVERIFY(v_StepsToRun->get() == 300);
+	QVERIFY(v_ObservedRangesX->get() == "-1,1");
+	QVERIFY(v_ObservedRangesY->get() == "-1,1");
+	QVERIFY(v_ResolutionX->get() == 400);
+	QVERIFY(v_ResolutionY->get() == 400);
+	QVERIFY(v_StepsToRun->get() == 0);
 	QVERIFY(v_StepsToPlot->get() == 100);
-	QVERIFY(v_ResetNetworkActivation->get() == true);
-	QVERIFY(v_RestoreNetworkConfiguration->get() == true);
 	QVERIFY(v_KeepPreviousData->get() == false);
 
 	// and matrix size
@@ -186,9 +184,12 @@ void TestFirstReturnMap::testParameterSettings() {
 
 
 	// configure them for the test case
-	v_ObservedElems->set(QString::number(n1->getId()) + ":o");
-	v_ObservedRanges->set("-0.8,1");
-	v_ObservedResolution->set(500);
+	v_ObservedElementsX->set(QString::number(n1->getId()) + ":o");
+	v_ObservedRangesX->set("-1,1");
+	v_ObservedElementsY->set(QString::number(n2->getId()) + ":o");
+	v_ObservedRangesY->set("-1,1");
+	v_ResolutionX->set(1000);
+	v_ResolutionY->set(500);
 
 
 	// run plotter
@@ -196,30 +197,30 @@ void TestFirstReturnMap::testParameterSettings() {
 
 
 	// check matrix dimensions
-	QVERIFY(v_Data->getMatrixWidth() == 501);
+	QVERIFY(v_Data->getMatrixWidth() == 1001);
 	QVERIFY(v_Data->getMatrixHeight() == 501);
 	QVERIFY(v_Data->getMatrixDepth() == 1);
 
 
 	// compare saved to newly generated test data
 	QString testDataNew = v_Data->getValueAsString();
-	QString fileName = "testData/FirstReturnMapTest.txt";
+	QString fileName = "testData/TransientPlotterTest.txt";
 
 	/**
 	QFile out_file(fileName);
 	if(!out_file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		Core::log("TestFirstReturnMap: Could not open file to save matrix to.", true);
+		Core::log("TestTransientPlotter: Could not open file to save matrix to.", true);
 		return;
 	}
 	QTextStream out_stream(&out_file);
     out_stream << testDataNew;
 	out_file.close();
-	Core::log("TestFirstReturnMap: Created file containing test data for comparison.", true);
+	Core::log("TestTransientPlotter: Created file containing test data for comparison.", true);
 	**/
 
 	QFile in_file(fileName);
 	if(!in_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		Core::log("TestFirstReturnMap: Could not open file to read matrix from.", true);
+		Core::log("TestTransientPlotter: Could not open file to read matrix from.", true);
 		return;
 	}
 	QTextStream in_stream(&in_file);
