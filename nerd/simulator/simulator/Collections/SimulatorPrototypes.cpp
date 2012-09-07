@@ -68,6 +68,7 @@
 #include "Physics/ControlParameter.h"
 #include "Physics/ValueTransferController.h"
 #include "Physics/InternalStateValue.h"
+#include "Physics/ExternalSensorAdapter.h"
 
 
 using namespace std;
@@ -108,6 +109,8 @@ namespace nerd{
 	
 	pm->addPrototype(SimulationConstants::PROTOTYPE_INTERNAL_STATE_VALUE,
 		new InternalStateValue(SimulationConstants::PROTOTYPE_INTERNAL_STATE_VALUE));
+	pm->addPrototype(SimulationConstants::PROTOTYPE_EXTERNAL_SENSOR_ADAPTER,
+		new ExternalSensorAdapter(SimulationConstants::PROTOTYPE_EXTERNAL_SENSOR_ADAPTER));
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_BOX_BODY_NO_PHYSICS, 
         new BoxBody(SimulationConstants::PROTOTYPE_BOX_BODY_NO_PHYSICS)); 

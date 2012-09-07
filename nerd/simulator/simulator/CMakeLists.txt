@@ -142,6 +142,7 @@ set(nerd_simulator_SRCS
 	Physics/ActiveDistanceSensor.cpp
 	Physics/ValueTransferController.cpp
 	Physics/InternalStateValue.cpp
+	Physics/ExternalSensorAdapter.cpp
 )
 
 set(nerd_simulator_MOC_HDRS
