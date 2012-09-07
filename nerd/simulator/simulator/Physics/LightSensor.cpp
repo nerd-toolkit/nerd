@@ -289,17 +289,20 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 		return brightness;
 	}
 
-	double distance = Math::distance(globalPosition, lightSource->getPositionValue()->get());
+// 	double distance = Math::distance(globalPosition, lightSource->getPositionValue()->get());
+// 
+// 	double range = lightSource->getRange();
+// 
+// 	if(range == 0.0 || distance > range) {
+// 		return brightness;
+// 	}
+// 
+// 	//currently the light is assumed to decay linearly 
+// 	//TODO should be changed to 1/(r*r).
+// 	double ambientLight = (range - distance) / range * lightSource->getCurrentBrightness();
 
-	double range = lightSource->getRange();
-
-	if(range == 0.0 || distance > range) {
-		return brightness;
-	}
-
-	//currently the light is assumed to decay linearly 
-	//TODO should be changed to 1/(r*r).
-	double ambientLight = (range - distance) / range * lightSource->getCurrentBrightness();
+	//let the light source calculate its current brightness at the desired global position.
+	double ambientLight = lightSource->getBrightness(globalPosition);
 
 	if(mUseAsAmbientLightSensor->get()) {
 		brightness = ambientLight;

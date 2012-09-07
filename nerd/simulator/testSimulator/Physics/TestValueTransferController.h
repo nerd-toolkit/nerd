@@ -56,6 +56,7 @@ namespace nerd {
 		void testSimpleTransfer();
 		void testAutomaticSimpleTransfer();
 		void testBothProportional();
+		void testEquilibrium();
 		
 	private:
 		void updateActuatorAndSensor(ValueTransferController *controller);

@@ -43,60 +43,65 @@
 
 
 
-#include "Util/UnitTestMacros.h"
+#ifndef NERDSphericLightSource_H
+#define NERDSphericLightSource_H
 
-#include "Physics/TestPhysicsManager.h"
-#include "Physics/TestGeom.h"
-#include "Physics/TestSimObject.h"
-#include "Physics/TestSimBody.h"
-#include "Collision/TestCollisionRule.h"
-#include "Collision/TestCollisionManager.h"
-#include "Physics/TestSimJoint.h"
-#include "Collision/TestCollisionObject.h"
-#include "Collision/TestMaterialProperties.h"
-#include "Physics/TestBoxBody.h"
-#include "Physics/TestSphereBody.h"
-#include "Physics/TestAccelSensor.h"
-#include "Randomization/TestRandomizer.h"
-#include "Gui/GuiMainWindow.h"
-#include "Physics/TestSimulationEnvironmentManager.h"
-#include "Physics/TestCylinderBody.h"
-#include "Physics/TestPhysics.h"
-#include "Physics/TestSphereBody.h"
-#include "Physics/TestSimObjectGroup.h"
-#include "Physics/TestRayAndDistanceSensor.h"
-#include "Signal/TestSignals.h"
-#include "TestSimulationConstants.h"
-#include "Physics/TestValueTransferController.h"
+#include <QString>
+#include <QHash>
+#include "Physics/LightSource.h"
+#include "Physics/SimSensor.h"
 
-TEST_START("TestSimulator", 1, -1, 21);
+namespace nerd {
+	
+	/**
+	 * SphericLightSource.
+	 *
+	 */
+	class SphericLightSource : public LightSource, public virtual SimSensor {
+	public:
+		SphericLightSource(const QString &name, double brightness, double range, int type = 0); 
+		SphericLightSource(const SphericLightSource &other);
+		virtual ~SphericLightSource();
+		
+		virtual SimBody* createCopy() const;
+		
+		virtual void setup();
+		virtual void clear();
+		
+		virtual void valueChanged(Value *value);
+		virtual void updateSensorValues();
+		
+		int getType() const;
+		void setType(int type);
+		
+		double getRange() const;
+		void setRange(double range);
+		
+		double getCurrentBrightness() const;
+		double getDesiredBrightness() const;
+		void setDesiredBrightness(double brightness);
+		
+		virtual double getBrightness(const Vector3D &globalPosition);
+		
+	private:
+		void createCollisionObject();
+		
+	private:
+		DoubleValue *mRange;
+		InterfaceValue *mBrightnessSensor;
+		InterfaceValue *mBrightnessControl;
+		ColorValue *mLightColor;
+		IntValue *mType;
+		BoolValue *mHideLightCone;
+		BoolValue *mUseSphereAsLightCone;
+		StringValue *mReferenceObjectName;
+		Vector3DValue *mLocalPosition;
+		SimBody *mReferenceObject;
+	};
+	
+}
 
-	TEST(TestGeom); //tests all geoms.
-	TEST(TestCollisionObject);
-	TEST(TestCollisionRule);
-	TEST(TestSimObject);
-	TEST(TestSimBody); 
-	TEST(TestSimJoint);
-	TEST(TestBoxBody);
-	TEST(TestPhysicsManager); //still missing many tests. (see header)
-	TEST(TestCollisionManager); //in progress. //missing updateCollisionHandler.
+#endif
 
-	//up to here test cases are checked for memory leaks.
-
-	TEST(TestSphereBody);
-// TODO: update test: axes were switched!
-	TEST(TestAccelSensor);
-	TEST(TestRandomizer);
-	TEST(TestSimulationEnvironmentManager);
-	TEST(TestCylinderBody);
-	TEST(TestPhysics);
-	TEST(TestMaterialProperties);
-	TEST(TestSimObjectGroup);
-	TEST(TestRayAndDistanceSensor);
-	TEST(TestSignals);
-	TEST(TestSimulationConstants);
-	TEST(TestValueTransferController);
-
-TEST_END;
 
 

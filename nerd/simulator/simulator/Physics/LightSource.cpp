@@ -60,38 +60,12 @@ namespace nerd {
 /**
  * Constructs a new LightSource.
  */
-LightSource::LightSource(const QString &name, double brightness, double range, int type)
-	: SimBody(name), mRange(0), mBrightnessSensor(0), mBrightnessControl(0), 
-	  mLightColor(0), mType(0), mHideLightCone(0), mUseSphereAsLightCone(0), 
-	  mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0)
+LightSource::LightSource(const QString &name, int type)
+	: SimBody(name), mType(0)
 {
-	mRange = new DoubleValue(range);
-	mBrightnessSensor = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
-	mBrightnessControl = new InterfaceValue("", "DesiredBrightness", brightness, 0.0, 1.0);
-	mLightColor = new ColorValue("yellow");
-	mHideLightCone = new BoolValue(false);
-	mUseSphereAsLightCone = new BoolValue(false);
 	mType = new IntValue(type);
-	mReferenceObjectName = new StringValue("");
-	mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
-
-	addParameter("Range", mRange);
-	addParameter("Brightness", mBrightnessSensor);
-	addParameter("DesiredBrightness", mBrightnessControl);
-	addParameter("Color", mLightColor);
-	addParameter("HideLightCone", mHideLightCone);
-	addParameter("UseSphericLightCone", mUseSphereAsLightCone);
+	
 	addParameter("LightType", mType);
-	addParameter("ReferenceObject", mReferenceObjectName);
-	addParameter("LocalPosition", mLocalPosition);
-
-	mOutputValues.append(mBrightnessSensor);
-	mInputValues.append(mBrightnessControl);
-
-
-	createCollisionObject();
-
-	updateSensorValues();
 }
 
 
@@ -101,150 +75,37 @@ LightSource::LightSource(const QString &name, double brightness, double range, i
  * @param other the LightSource object to copy.
  */
 LightSource::LightSource(const LightSource &other) 
-	: Object(), ValueChangedListener(), SimBody(other), mType(other.mType), 
-	  mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0)
+	: Object(), ValueChangedListener(), SimBody(other), mType(other.mType)
 {
-	mRange = dynamic_cast<DoubleValue*>(getParameter("Range"));
-	mBrightnessSensor = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
-	mBrightnessControl = dynamic_cast<InterfaceValue*>(getParameter("DesiredBrightness"));
-	mLightColor = dynamic_cast<ColorValue*>(getParameter("Color"));
-	mHideLightCone = dynamic_cast<BoolValue*>(getParameter("HideLightCone"));
-	mUseSphereAsLightCone = dynamic_cast<BoolValue*>(getParameter("UseSphericLightCone"));
 	mType = dynamic_cast<IntValue*>(getParameter("LightType"));
-	mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
-	mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
-
-	mOutputValues.clear();
-	mInputValues.clear();
-
-	mOutputValues.append(mBrightnessSensor);
-	mInputValues.append(mBrightnessControl);
-
-	createCollisionObject();
-
-	updateSensorValues();
 }
 
 /**
  * Destructor.
  */
 LightSource::~LightSource() {
-	//TODO delete CollisionObjects?
-	delete mBodyCollisionObject;
 }
 
-
-SimBody* LightSource::createCopy() const {
-	return new LightSource(*this);
-}
 
 
 		
 void LightSource::setup()  {
 	SimBody::setup();
-
-	if(mReferenceObjectName->get() != "") {
-		mReferenceObject = Physics::getPhysicsManager()->getSimBody(mReferenceObjectName->get());
-		if(mReferenceObject != 0) {
-			mReferenceObject->getPositionValue()->addValueChangedListener(this);
-			mReferenceObject->getQuaternionOrientationValue()->addValueChangedListener(this);
-			valueChanged(mReferenceObject->getPositionValue());
-		}
-	}
-
-	if(mBodyCollisionObject != 0) {
-		mBodyCollisionObject->setOwner(this);
-		mBodyCollisionObject->setHostBody(this);
-
-		if(mUseSphereAsLightCone->get()) {
-			SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
-			if(geom != 0) {
-				geom->setRadius(mRange->get());
-			}
-		}
-		else {
-			CylinderGeom *geom = dynamic_cast<CylinderGeom*>(mBodyCollisionObject->getGeometry());
-			if(geom != 0) {
-				geom->setRadius(mRange->get());
-			}
-		}
-		updateSensorValues();
-	}
 }
 
 
 void LightSource::clear() {
-	if(mReferenceObject != 0) {
-		mReferenceObject->getPositionValue()->removeValueChangedListener(this);
-		mReferenceObject->getQuaternionOrientationValue()->removeValueChangedListener(this);
-	}
-	mReferenceObject = 0;
 	SimBody::clear();
 }
 
 
 		
 void LightSource::valueChanged(Value *value) {
-
 	SimBody::valueChanged(value);
 	if(value == 0) {
 		return;
 	}
-	if(value == mRange) {
-		if(mUseSphereAsLightCone->get()) {
-			SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
-			if(geom != 0) {
-				geom->setRadius(mRange->get());
-			}
-		}
-		else {
-			CylinderGeom *geom = dynamic_cast<CylinderGeom*>(mBodyCollisionObject->getGeometry());
-			if(geom != 0) {
-				geom->setRadius(mRange->get());
-			}
-		}
-	}
-	else if(value == mHideLightCone) {
-		updateSensorValues();
-	}
-	else if(value == mLightColor) {
-		updateSensorValues();
-	}
-	else if(mReferenceObject != 0 
-		&& (value == mReferenceObject->getPositionValue() 
-			|| value == mReferenceObject->getQuaternionOrientationValue()))
-	{
-		Quaternion localPos(0.0, 
-						mLocalPosition->getX(), 
-						mLocalPosition->getY(), 
-						mLocalPosition->getZ());
-		Quaternion bodyOrientationInverse = 
-			mReferenceObject->getQuaternionOrientationValue()->get().getInverse();
-		Quaternion rotatedLocalPosQuat = mReferenceObject->getQuaternionOrientationValue()->get() 
-			* localPos * bodyOrientationInverse;
-		Vector3D rotatedLocalPos(rotatedLocalPosQuat.getX(), 
-								rotatedLocalPosQuat.getY(), 
-								rotatedLocalPosQuat.getZ());
-		mPositionValue->set(mReferenceObject->getPositionValue()->get() + rotatedLocalPos);
-	}
 }
-
-
-void LightSource::updateSensorValues() {
-	mBrightnessSensor->set(mBrightnessControl->get());
-
-	//Set transparency to a value between 0 and 80, depending on the current brightness.
-	//80 is about 30 percent of full opacity (255) at max.
-	Color color = mBodyCollisionObject->getGeometry()->getColor();
-	if(mHideLightCone->get()) {
-		color.setAlpha(0); 
-	}
-	else {
-		color.setAlpha((int) (mBrightnessSensor->get() * 80.0)); 
-	}
-	mBodyCollisionObject->getGeometry()->setColor(color);
-}
-
 
 int LightSource::getType() const {
 	return mType->get();
@@ -254,56 +115,6 @@ int LightSource::getType() const {
 void LightSource::setType(int type) {
 	mType->set(type);
 }
-
-double LightSource::getRange() const {
-	return mRange->get();
-}
-
-
-void LightSource::setRange(double range) {
-	mRange->set(range);
-}
-
-
-double LightSource::getCurrentBrightness() const {
-	return mBrightnessSensor->get();
-}
-
-
-double LightSource::getDesiredBrightness() const {
-	return mBrightnessControl->get();
-}
-
-
-void LightSource::setDesiredBrightness(double brightness) {
-	mBrightnessControl->set(brightness);
-}
-
-
-void LightSource::createCollisionObject() {
-
-	if(mBodyCollisionObject != 0) {
-		delete mBodyCollisionObject;
-	}
-	mBodyCollisionObject = 0;
-	if(mUseSphereAsLightCone->get()) {
-		mBodyCollisionObject = new CollisionObject(SphereGeom(this, mRange->get()));
-	}
-	else {
-		CylinderGeom geom(this, mRange->get(), 0.05);	
-		Quaternion orientation;
-		orientation.setFromAngles(90.0, 0.0, 0.0);
-		geom.setLocalOrientation(orientation);
-		mBodyCollisionObject = new CollisionObject(geom);
-	}
-	addGeometry(mBodyCollisionObject->getGeometry());
-	mBodyCollisionObject->setMaterialType("Light");
-	mBodyCollisionObject->setTextureType("None");
-	mBodyCollisionObject->getGeometry()->setColor(mLightColor->get());
-	addCollisionObject(mBodyCollisionObject);
-}
-
-
 
 
 }

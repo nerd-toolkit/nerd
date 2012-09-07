@@ -94,6 +94,21 @@ namespace nerd {
 		addParameter("TargetValueName", mTargetValueName);
 		addParameter("TransferMode", mTransferMode);
 		addParameter("MaxTransferRate", mMaximalTransferRate);
+		
+		
+		mTransferMode->setDescription("The mode in which transfers between a source and the target take place:\n"
+									  "0: Costy Transfer: Activation is removed from the source (+ the cost) "
+									    "and added to the target (without the cost)\n"
+									  "1: Simultaneous Change: Both, the source and the target, are changed by "
+									    "the same proportion. Rate is the change "
+										"of the target, cost the change of the source. "
+										"Both can be positive or negative.\n"
+									  "2: Equilibrium: The target is changed in the direction of the source, "
+									    "independent of the control neuron. So you should use the automatic version.\n"
+									  "3: Mutual Equilibrium: The source and target are changed towards each other. "
+									    "The change innetia is reflected by the difference of cost (source) "
+										"and rate (target):");
+		
 	}
 	
 	ValueTransferController::ValueTransferController(const ValueTransferController &other) 
@@ -185,9 +200,9 @@ namespace nerd {
 		else if(value == mCustomNameOfTransferSensor) {
 			mTransferSensor->setInterfaceName(mCustomNameOfTransferSensor->get());
 		}
-		else if(value == mMaximalTransferRate) {
-			mTransferSensor->setMin(-mMaximalTransferRate->get());
-			mTransferSensor->setMax(mMaximalTransferRate->get());
+		else if(value == mMaximalTransferRate || value == mTransferCost) {
+			mTransferSensor->setMin(-(mMaximalTransferRate->get() + mTransferCost->get()));
+			mTransferSensor->setMax(mMaximalTransferRate->get() + mTransferCost->get());
 		}
 		else if(value == mControllerRangeMin) {
 			mTransferController->setMin(mControllerRangeMin->get());
@@ -228,6 +243,12 @@ namespace nerd {
 				break;
 			case 1:
 				return transferModeBothProportional();
+				break;
+			case 2:
+				return transferModeEquilibrium(true);
+				break;
+			case 3:
+				return transferModeEquilibrium(false);
 				break;
 			default:
 				//no transfer
@@ -317,6 +338,41 @@ namespace nerd {
 		mTransferredActivation = changeFactor;
 		mSource->set(mSource->get() + changeSource);
 		mTarget->set(mTarget->get() + changeTarget);
+		
+		return true;
+	}
+	
+	bool ValueTransferController::transferModeEquilibrium(bool adaptTargetOnly) {
+		if(mTarget == 0 || mSource == 0 || mTransferController->get() <= 0.0) {
+			mTransferredActivation = 0.0;
+			return false;
+		}
+		//no control neuron is used here to regulate anything. This is an autonomous process.
+		
+		double difference = mSource->get() - mTarget->get();
+		
+		if(adaptTargetOnly) {
+			double change = difference * mMaximalTransferRate->get();
+			mTarget->set(mTarget->get() + change);
+			
+			mTransferredActivation = change;
+		}
+		else {
+			double factorSource = mTransferCost->get();
+			double factorTarget = mMaximalTransferRate->get();
+			double factorSum = factorSource + factorTarget;
+			if(factorSum > 1.0) {
+				factorSource = factorSource / factorSum;
+				factorTarget = factorTarget / factorSum;
+			}
+			double changeTarget = difference * factorTarget;
+			double changeSource = difference * factorSource;
+			
+			mTarget->set(mTarget->get() + changeTarget);
+			mSource->set(mSource->get() - changeSource);
+
+			mTransferredActivation = Math::abs(changeTarget) + Math::abs(changeSource);
+		}
 		
 		return true;
 	}

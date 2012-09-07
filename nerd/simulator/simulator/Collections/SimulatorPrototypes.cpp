@@ -69,6 +69,7 @@
 #include "Physics/ValueTransferController.h"
 #include "Physics/InternalStateValue.h"
 #include "Physics/ExternalSensorAdapter.h"
+#include "Physics/SphericLightSource.h"
 
 
 using namespace std;
@@ -94,7 +95,7 @@ namespace nerd{
 		new ActiveDistanceSensor(SimulationConstants::PROTOTYPE_ACTIVE_DISTANCE_SENSOR));
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_LIGHT_SOURCE,
-        new LightSource(SimulationConstants::PROTOTYPE_LIGHT_SOURCE, 0.8, 0.5, 0));
+		new SphericLightSource(SimulationConstants::PROTOTYPE_LIGHT_SOURCE, 0.8, 0.5, 0));
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_LIGHT_SENSOR,
         new LightSensor(SimulationConstants::PROTOTYPE_LIGHT_SENSOR));

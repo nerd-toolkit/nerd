@@ -59,45 +59,26 @@ namespace nerd {
 	 * LightSource.
 	 *
 	 */
-	class LightSource : public SimBody, public virtual SimSensor {
+	class LightSource : public SimBody {
 	public:
-		LightSource(const QString &name, double brightness, double range, int type = 0); 
-		//TODO add opening angle
+		LightSource(const QString &name, int type = 0); 
 		LightSource(const LightSource &other);
 		virtual ~LightSource();
 
-		virtual SimBody* createCopy() const;
+		virtual SimBody* createCopy() const = 0;
 		
 		virtual void setup();
 		virtual void clear();
 		
 		virtual void valueChanged(Value *value);
-		virtual void updateSensorValues();
 
 		int getType() const;
 		void setType(int type);
-	
-		double getRange() const;
-		void setRange(double range);
-
-		double getCurrentBrightness() const;
-		double getDesiredBrightness() const;
-		void setDesiredBrightness(double brightness);
+		
+		virtual double getBrightness(const Vector3D &globalPosition) = 0;
 
 	private:
-		void createCollisionObject();
-
-	private:
-		DoubleValue *mRange;
-		InterfaceValue *mBrightnessSensor;
-		InterfaceValue *mBrightnessControl;
-		ColorValue *mLightColor;
 		IntValue *mType;
-		BoolValue *mHideLightCone;
-		BoolValue *mUseSphereAsLightCone;
-		StringValue *mReferenceObjectName;
-		Vector3DValue *mLocalPosition;
-		SimBody *mReferenceObject;
 	};
 
 }

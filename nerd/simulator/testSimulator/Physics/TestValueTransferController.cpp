@@ -49,7 +49,7 @@
 #include "TestValueTransferController.h"
 #include "Physics/ValueTransferController.h"
 #include <iostream>
-
+#include "Math/Math.h"
 
 using namespace std;
 using namespace nerd;
@@ -254,7 +254,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(0.5); 
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.5);  
-	QCOMPARE(sensor->getNormalized(), 0.5); //0.5 * maximalTransferRate
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), 0.454545, 0.0001)); //0.5 * maximalTransferRate (Range [-1.1, 1.1])
 	QCOMPARE(source->get(), 0.1); //0.05 transfer + 0.01 cost
 	QCOMPARE(target->get(), 0.5);
 	
@@ -263,7 +263,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(0.5); 
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.4);  
-	QCOMPARE(sensor->getNormalized(), 0.4);
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), 0.36363636, 0.0001));
 	QCOMPARE(source->get(), 0.0); 
 	QCOMPARE(target->get(), 0.4);
 	
@@ -356,7 +356,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(-0.5); 
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), -0.5);  
-	QCOMPARE(sensor->getNormalized(), -0.5); //0.5 * maximalTransferRate
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), -0.454545, 0.0001)); //0.5 * maximalTransferRate
 	QCOMPARE(source->get(), 0.5); //0.05 transfer + 0.01 cost
 	QCOMPARE(target->get(), 0.1);
 	
@@ -365,7 +365,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(-0.5); 
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), -0.4);  
-	QCOMPARE(sensor->getNormalized(), -0.4);
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), -0.36363636, 0.0001));
 	QCOMPARE(source->get(), 0.4); 
 	QCOMPARE(target->get(), 0.0);
 	
@@ -441,7 +441,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), -0.08);
-	QCOMPARE(sensor->getNormalized(), -0.2);
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), -0.195122, 0.0001));
 	QCOMPARE(source->get(), 0.38); //+0.08
 	QCOMPARE(target->get(), 0.11); //-0.09 = -0.08 - 0.01 cost
 	
@@ -459,7 +459,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.05);
-	QCOMPARE(sensor->getNormalized(), 0.125);
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), 0.111111, 0.0001));
 	QCOMPARE(source->get(), -0.1); //
 	QCOMPARE(target->get(), 0.55); //
 	
@@ -477,7 +477,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.1);
-	QCOMPARE(sensor->getNormalized(), 0.25);
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), 0.22222, 0.0001));
 	QCOMPARE(source->get(), 0.35); //-0.15 = -(0.1 + 0.05 cost)
 	QCOMPARE(target->get(), 0.6); //+0.1 (maxed out)
 	
@@ -495,7 +495,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.3);
-	QCOMPARE(sensor->getNormalized(), 0.75);
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), 0.666667, 0.0001));
 	QCOMPARE(source->get(), 0.15); //
 	QCOMPARE(target->get(), 0.5); //
 }
@@ -778,6 +778,144 @@ void TestValueTransferController::testBothProportional() {
 	QCOMPARE(source->get(), 0.85); 
 	QCOMPARE(target->get(), 1.0);
 	
+}
+
+
+void TestValueTransferController::testEquilibrium() {
+	Core::resetCore();
+	
+	ValueTransferController *vtf = new ValueTransferController("TFController");
+	
+	StringValue *nameOfSource = dynamic_cast<StringValue*>(vtf->getParameter("SourceValueName"));
+	StringValue *nameOfTarget = dynamic_cast<StringValue*>(vtf->getParameter("TargetValueName"));
+	InterfaceValue *controller = dynamic_cast<InterfaceValue*>(vtf->getParameter("Control"));
+	InterfaceValue *sensor = dynamic_cast<InterfaceValue*>(vtf->getParameter("Sensor"));
+	IntValue *mode = dynamic_cast<IntValue*>(vtf->getParameter("TransferMode"));
+	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("MaxTransferRate"));
+	DoubleValue *cost = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferCost"));
+	
+	QVERIFY(nameOfSource != 0);
+	QVERIFY(nameOfTarget != 0);
+	
+	
+	NormalizedDoubleValue *source = new NormalizedDoubleValue(0.0, 0.0, 1.0, -1.0, 1.0);
+	NormalizedDoubleValue *target = new NormalizedDoubleValue(0.0, 0.0, 1.0, -1.0, 1.0);
+	
+	
+	ValueManager *vm = Core::getInstance()->getValueManager();
+	vm->addValue("/MySource", source);
+	vm->addValue("/TheTarget", target);
+	
+	
+	nameOfSource->set("/MySource"); 
+	nameOfTarget->set("/TheTarget");
+	
+	
+	vtf->setup();
+	
+	QVERIFY(vtf->getSource() == source);
+	QVERIFY(vtf->getTarget() == target);
+	
+	
+	//do the actual transfers
+	
+	//******************************************
+	//Equilibrium Model (target only)
+	
+	source->set(0.0);
+	target->set(0.0);
+	controller->set(0.5);
+	mode->set(2); //equilibrium target only
+	rate->set(0.2);
+	cost->set(0.4);
+	
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);
+	QCOMPARE(source->get(), 0.0);
+	QCOMPARE(target->get(), 0.0);
+	
+	
+	source->set(1);
+	target->set(0.0);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.2);
+	QCOMPARE(source->get(), 1.0);
+	QCOMPARE(target->get(), 0.2);
+	
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.16);
+	QCOMPARE(source->get(), 1.0);
+	QCOMPARE(target->get(), 0.36);
+	
+	
+	source->set(0.5);
+	target->set(0.7);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), -0.04);
+	QCOMPARE(source->get(), 0.5);
+	QCOMPARE(target->get(), 0.66);
+	
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), -0.032);
+	QCOMPARE(source->get(), 0.5);
+	QCOMPARE(target->get(), 0.628);
+	
+	
+	//******************************************
+	//Equilibrium Model (change both)
+	
+	source->set(0.0);
+	target->set(0.0);
+	controller->set(0.5);
+	mode->set(3); //equlibrium mutual
+	cost->set(0.4);
+	rate->set(0.2);
+	
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);
+	QCOMPARE(source->get(), 0.0);
+	QCOMPARE(target->get(), 0.0);
+	
+	
+	source->set(1);
+	target->set(0.0);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.6);
+	QCOMPARE(source->get(), 0.6);
+	QCOMPARE(target->get(), 0.2);
+	
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.24);
+	QCOMPARE(source->get(), 0.44);
+	QCOMPARE(target->get(), 0.28);
+	
+	
+	source->set(0.1);
+	target->set(0.7);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.36);
+	QCOMPARE(source->get(), 0.34);
+	QCOMPARE(target->get(), 0.58);
+	
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.144);
+	QCOMPARE(source->get(), 0.436);
+	QCOMPARE(target->get(), 0.532);
+	
+	//rate/cost sum > 1 (error is fully corrected in a single step)
+	cost->set(2.4);
+	rate->set(0.8);
+	source->set(0.1);
+	target->set(0.7);
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.6);
+	QCOMPARE(source->get(), 0.55);
+	QCOMPARE(target->get(), 0.55);
+	
+	updateActuatorAndSensor(vtf);
+	QCOMPARE(sensor->get(), 0.0);
+	QCOMPARE(source->get(), 0.55);
+	QCOMPARE(target->get(), 0.55);
 }
 
 

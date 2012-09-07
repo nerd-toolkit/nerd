@@ -92,6 +92,7 @@ namespace nerd {
 	protected:
 		virtual bool transferModeSimple();
 		virtual bool transferModeBothProportional();
+		virtual bool transferModeEquilibrium(bool adaptTargetOnly);
 		
 	protected:		
 		InterfaceValue *mTransferController;
