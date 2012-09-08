@@ -103,7 +103,7 @@ namespace nerd {
 		StringValue *mCustomNameOfControlNeuron;
 		StringValue *mCustomNameOfTransferSensor;
 		IntValue *mTransferMode;
-		DoubleValue *mMaximalTransferRate;
+		DoubleValue *mTransferRate;
 		DoubleValue *mTransferCost;
 		//RangeValue *mControllerRange;
 		//TODO check ahy RangeValue leads to linker error???

@@ -67,7 +67,7 @@ namespace nerd {
 		mCustomNameOfControlNeuron = new StringValue("Control");
 		mCustomNameOfTransferSensor = new StringValue("Transfer");
 		mTransferMode = new IntValue(0);
-		mMaximalTransferRate = new DoubleValue(0.01);
+		mTransferRate = new DoubleValue(0.01);
 		mTransferCost = new DoubleValue(0.00001);
 		mControllerRangeMax = new DoubleValue(1.0);
 		mControllerRangeMin = new DoubleValue(-1.0);
@@ -93,7 +93,7 @@ namespace nerd {
 		addParameter("TargetValueName", mTargetValueName);
 		addParameter("TransferMode", mTransferMode);
 		addParameter("TransferCost", mTransferCost);
-		addParameter("MaxTransferRate", mMaximalTransferRate);
+		addParameter("TransferRate", mTransferRate);
 		
 		
 		mTransferMode->setDescription("The mode in which transfers between a source and the target take place:\n"
@@ -141,7 +141,7 @@ namespace nerd {
 		mTargetValueName = dynamic_cast<StringValue*>(getParameter("TargetValueName"));
 		mTransferMode = dynamic_cast<IntValue*>(getParameter("TransferMode"));
 		mTransferCost = dynamic_cast<DoubleValue*>(getParameter("TransferCost"));
-		mMaximalTransferRate = dynamic_cast<DoubleValue*>(getParameter("MaxTransferRate"));
+		mTransferRate = dynamic_cast<DoubleValue*>(getParameter("TransferRate"));
 
 	}
 	
@@ -198,9 +198,9 @@ namespace nerd {
 		else if(value == mCustomNameOfTransferSensor) {
 			mTransferSensor->setInterfaceName(mCustomNameOfTransferSensor->get());
 		}
-		else if(value == mMaximalTransferRate || value == mTransferCost) {
-			mTransferSensor->setMin(-(mMaximalTransferRate->get() + mTransferCost->get()));
-			mTransferSensor->setMax(mMaximalTransferRate->get() + mTransferCost->get());
+		else if(value == mTransferRate || value == mTransferCost) {
+			mTransferSensor->setMin(-(mTransferRate->get() + mTransferCost->get()));
+			mTransferSensor->setMax(mTransferRate->get() + mTransferCost->get());
 		}
 		else if(value == mControllerRangeMin) {
 			mTransferController->setMin(mControllerRangeMin->get());
@@ -263,7 +263,7 @@ namespace nerd {
 			return false;
 		}
 		
-		double activationToTransfer = mMaximalTransferRate->get() * mTransferController->get();
+		double activationToTransfer = mTransferRate->get() * mTransferController->get();
 
 		NormalizedDoubleValue *source = activationToTransfer > 0.0 ? mSource : mTarget;
 		NormalizedDoubleValue *target = activationToTransfer > 0.0 ? mTarget : mSource;
@@ -275,8 +275,11 @@ namespace nerd {
 			positiveTransfer = Math::min(positiveTransfer, Math::max(0.0, source->get() - source->getMin() - mTransferCost->get()));
 			positiveTransfer = Math::min(positiveTransfer, target->getMax() - target->get());
 			
-			source->set(source->get() - positiveTransfer - mTransferCost->get());
-			target->set(target->get() + positiveTransfer);
+			//only apply changes (especially the cost) if there is actually a transfer going on!
+			if(positiveTransfer > 0.0) {
+				source->set(source->get() - positiveTransfer - mTransferCost->get());
+				target->set(target->get() + positiveTransfer);
+			}
 			
 			mTransferredActivation = activationToTransfer > 0.0 ? positiveTransfer : -1 * positiveTransfer;
 		}
@@ -295,7 +298,7 @@ namespace nerd {
 			return false;
 		}
 			
-		double changeTarget = mMaximalTransferRate->get() * mTransferController->get();
+		double changeTarget = mTransferRate->get() * mTransferController->get();
 		double changeSource = mTransferCost->get() * mTransferController->get();
 		
 		double changeFactor = mTransferController->get();
@@ -350,14 +353,14 @@ namespace nerd {
 		double difference = mSource->get() - mTarget->get();
 		
 		if(adaptTargetOnly) {
-			double change = difference * mMaximalTransferRate->get();
+			double change = difference * mTransferRate->get();
 			mTarget->set(mTarget->get() + change);
 			
 			mTransferredActivation = change;
 		}
 		else {
 			double factorSource = mTransferCost->get();
-			double factorTarget = mMaximalTransferRate->get();
+			double factorTarget = mTransferRate->get();
 			double factorSum = factorSource + factorTarget;
 			if(factorSum > 1.0) {
 				factorSource = factorSource / factorSum;
