@@ -70,7 +70,7 @@ void TestValueTransferController::testConstructor() {
 	InterfaceValue *controller = dynamic_cast<InterfaceValue*>(vtf->getParameter("Control"));
 	InterfaceValue *sensor = dynamic_cast<InterfaceValue*>(vtf->getParameter("Sensor"));
 	IntValue *mode = dynamic_cast<IntValue*>(vtf->getParameter("TransferMode"));
-	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("MaxTransferRate"));
+	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferRate"));
 	DoubleValue *cost = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferCost"));
 	
 	QVERIFY(nameOfSource != 0);
@@ -127,7 +127,7 @@ void TestValueTransferController::testConstructor() {
 	InterfaceValue *controllerC = dynamic_cast<InterfaceValue*>(copy->getParameter("Control"));
 	InterfaceValue *sensorC = dynamic_cast<InterfaceValue*>(copy->getParameter("Sensor"));
 	IntValue *modeC = dynamic_cast<IntValue*>(copy->getParameter("TransferMode"));
-	DoubleValue *rateC = dynamic_cast<DoubleValue*>(copy->getParameter("MaxTransferRate"));
+	DoubleValue *rateC = dynamic_cast<DoubleValue*>(copy->getParameter("TransferRate"));
 	DoubleValue *costC = dynamic_cast<DoubleValue*>(copy->getParameter("TransferCost"));
 	
 	QVERIFY(nameOfSourceC != 0);
@@ -175,7 +175,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	InterfaceValue *controller = dynamic_cast<InterfaceValue*>(vtf->getParameter("Control"));
 	InterfaceValue *sensor = dynamic_cast<InterfaceValue*>(vtf->getParameter("Sensor"));
 	IntValue *mode = dynamic_cast<IntValue*>(vtf->getParameter("TransferMode"));
-	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("MaxTransferRate"));
+	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferRate"));
 	DoubleValue *cost = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferCost"));
 	
 	NormalizedDoubleValue *source = new NormalizedDoubleValue(0.0, 0.0, 1.0, -1.0, 1.0);
@@ -296,7 +296,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(0.5); 
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.0);  
-	QCOMPARE(source->get(), 0.7); //still consumes energy, although no transfer took place
+	QCOMPARE(source->get(), 0.8); //does not consume energy, because no transfer takes place.
 	QCOMPARE(target->get(), 1.0);
 	
 	source->set(0.8);
@@ -312,7 +312,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(0.1); 
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.0);  
-	QCOMPARE(source->get(), 0.0); //consumes the last energy without transferring anything
+	QCOMPARE(source->get(), 0.1); //does not consume energy, because no transfer takes plae
 	QCOMPARE(target->get(), 0.5);
 	
 	source->set(0.15);
@@ -398,8 +398,8 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(-0.5); 
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.0);  
-	QCOMPARE(source->get(), 1.0); //still consumes energy, although no transfer took place
-	QCOMPARE(target->get(), 0.7);
+	QCOMPARE(source->get(), 1.0);
+	QCOMPARE(target->get(), 0.8); //no transfer took place => no energy used.
 	
 	source->set(0.95);
 	target->set(0.8);
@@ -414,8 +414,8 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(-0.1); 
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.0);  
-	QCOMPARE(source->get(), 0.5); //consumes the last energy without transferring anything
-	QCOMPARE(target->get(), 0.0);
+	QCOMPARE(source->get(), 0.5); 
+	QCOMPARE(target->get(), 0.1); //no transfer took place => no energy used.
 	
 	source->set(0.5);
 	target->set(0.15);
@@ -506,7 +506,7 @@ void TestValueTransferController::testAutomaticSimpleTransfer() {
 	
 	ValueTransferController *vtf = new ValueTransferController("TFController", true);
 	
-	QCOMPARE(vtf->getParameters().size(), 4);
+	QCOMPARE(vtf->getParameters().size(), 6);
 	
 	StringValue *nameOfSource = dynamic_cast<StringValue*>(vtf->getParameter("SourceValueName"));
 	StringValue *nameOfTarget = dynamic_cast<StringValue*>(vtf->getParameter("TargetValueName"));
@@ -515,10 +515,10 @@ void TestValueTransferController::testAutomaticSimpleTransfer() {
 	InterfaceValue *controller = dynamic_cast<InterfaceValue*>(vtf->getParameter("Control"));
 	InterfaceValue *sensor = dynamic_cast<InterfaceValue*>(vtf->getParameter("Sensor"));
 	IntValue *mode = dynamic_cast<IntValue*>(vtf->getParameter("TransferMode"));
-	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("MaxTransferRate"));
+	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferRate"));
 	DoubleValue *cost = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferCost"));
 	
-	QVERIFY(nameOfSource == 0);
+	QVERIFY(nameOfSource != 0); //!
 	QVERIFY(nameOfTarget != 0); //!
 	QVERIFY(customControllerName == 0);
 	QVERIFY(customSensorName == 0);
@@ -526,7 +526,7 @@ void TestValueTransferController::testAutomaticSimpleTransfer() {
 	QVERIFY(sensor == 0);
 	QVERIFY(mode != 0); //!
 	QVERIFY(rate != 0); //!
-	QVERIFY(cost == 0);
+	QVERIFY(cost != 0); //!
 	
 	NormalizedDoubleValue *target = new NormalizedDoubleValue(0.0, 0.0, 1.0, -1.0, 1.0);
 	
@@ -592,7 +592,7 @@ void TestValueTransferController::testBothProportional() {
 	InterfaceValue *controller = dynamic_cast<InterfaceValue*>(vtf->getParameter("Control"));
 	InterfaceValue *sensor = dynamic_cast<InterfaceValue*>(vtf->getParameter("Sensor"));
 	IntValue *mode = dynamic_cast<IntValue*>(vtf->getParameter("TransferMode"));
-	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("MaxTransferRate"));
+	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferRate"));
 	DoubleValue *cost = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferCost"));
 	
 	QVERIFY(nameOfSource != 0);
@@ -791,7 +791,7 @@ void TestValueTransferController::testEquilibrium() {
 	InterfaceValue *controller = dynamic_cast<InterfaceValue*>(vtf->getParameter("Control"));
 	InterfaceValue *sensor = dynamic_cast<InterfaceValue*>(vtf->getParameter("Sensor"));
 	IntValue *mode = dynamic_cast<IntValue*>(vtf->getParameter("TransferMode"));
-	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("MaxTransferRate"));
+	DoubleValue *rate = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferRate"));
 	DoubleValue *cost = dynamic_cast<DoubleValue*>(vtf->getParameter("TransferCost"));
 	
 	QVERIFY(nameOfSource != 0);
