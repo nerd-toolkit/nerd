@@ -76,7 +76,7 @@ class Value : public virtual Object
 		virtual QString getTypeName() const;
         virtual void setDescription(const QString &description);
         virtual QString getDescription() const;
-        virtual QList<QString> getOptionList();
+        virtual QList<QString>& getOptionList();
 
 		virtual bool setValueFromString(const QString &value) ;
 		virtual QString getValueAsString() const;

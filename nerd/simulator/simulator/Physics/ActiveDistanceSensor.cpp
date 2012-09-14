@@ -73,8 +73,8 @@ namespace nerd {
 		mNameOfExternalTemperatureValue->setDescription("The name of the DoubleValue that is treated as the "
 														"external thermometer.");
 		
-		mRequiredNumberOfStepsWithSimilarActivation = new IntValue(5);
-		mRequiredNumberOfStepsWithSimilarActivation->setDescription("The number of steps the actuator has to remain above"
+		mModeParameters = new IntValue(5);
+		mModeParameters->setDescription("The number of steps the actuator has to remain above"
 																	" or below its middle activation to trigger a scan in "
 																	"actuator mode 3.");
 		
@@ -98,7 +98,7 @@ namespace nerd {
 		addParameter("NameOfExternalEnergyValue", mNameOfExternalEnergyValue);
 		addParameter("NameOfExternalTemperatureValue", mNameOfExternalTemperatureValue);
 		addParameter("ActuatorMode", mActuatorMode);
-		addParameter("RequiredPersistentStepsForScan", mRequiredNumberOfStepsWithSimilarActivation);
+		addParameter("ModeParameters", mModeParameters);
 		addParameter("ScanTriggerActuator", mScanTrigger);
 	}
 	
@@ -111,7 +111,7 @@ namespace nerd {
 		mNameOfExternalEnergyValue = dynamic_cast<StringValue*>(getParameter("NameOfExternalEnergyValue"));
 		mNameOfExternalTemperatureValue = dynamic_cast<StringValue*>(getParameter("NameOfExternalTemperatureValue"));
 		mActuatorMode = dynamic_cast<IntValue*>(getParameter("ActuatorMode"));
-		mRequiredNumberOfStepsWithSimilarActivation = dynamic_cast<IntValue*>(getParameter("RequiredPersistentStepsForScan"));
+		mModeParameters = dynamic_cast<IntValue*>(getParameter("ModeParameters"));
 		
 		mScanTrigger = dynamic_cast<InterfaceValue*>(getParameter("ScanTriggerActuator"));
 		mInputValues.append(mScanTrigger);
@@ -212,7 +212,7 @@ namespace nerd {
 				}
 				mPreviousActuatorActivation = mScanTrigger->get();
 				
-				if(mNumberOfStepsWithSimilarActivation == mRequiredNumberOfStepsWithSimilarActivation->get())
+				if(mNumberOfStepsWithSimilarActivation == mModeParameters->get())
 				{
 					DistanceSensor::updateSensorValues();
 					updateExternalValues();
@@ -222,10 +222,10 @@ namespace nerd {
 				}
 				//make sure the step counter is not running away.
 				if(mNumberOfStepsWithSimilarActivation > 
-							mRequiredNumberOfStepsWithSimilarActivation->get() + 2) 
+							mModeParameters->get() + 2) 
 				{
 					mNumberOfStepsWithSimilarActivation = 
-							mRequiredNumberOfStepsWithSimilarActivation->get() + 2;
+							mModeParameters->get() + 2;
 				}
 				
 				break;

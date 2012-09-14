@@ -79,6 +79,9 @@ class MaterialProperties {
 
 		bool addTexture(const QString &textureName);
 		int getTextureIndex(const QString &textureName);
+		
+		QList<QString> getMaterialNames() const;
+		void addMaterialNamesAsValuePresets(StringValue *value);
 
 	private:
 		QMap<QString, int> mMaterialLookUp;

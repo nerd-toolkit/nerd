@@ -84,6 +84,8 @@ class ChangeStringValueTask: public Task {
 SimBody::SimBody(const QString &name, const QString &prefix) 
 		: SimObject(name, prefix), mBodyCollisionObject(0)
 {
+	CollisionManager *cm = Physics::getCollisionManager();
+	
 	mGeometryColorValue = new ColorValue();
 	mPositionValue = new Vector3DValue(0.0, 0.0, 0.0);
 	mOrientationValue = new Vector3DValue(0.0, 0.0, 0.0);
@@ -94,9 +96,12 @@ SimBody::SimBody(const QString &name, const QString &prefix)
 	mMassValue = new 	DoubleValue(0.0);
 	mDynamicFrictionValue = new DoubleValue(0.0);
 	mStaticFrictionValue = new DoubleValue(0.0);
-	mElasticityValue = new DoubleValue(1.0);
+	mElasticityValue = new DoubleValue(0.05);
 	mMaterialValue = new StringValue("Default");
+	cm->getMaterialProperties()->addMaterialNamesAsValuePresets(mMaterialValue);
 	mTexturesValue = new StringValue("Default");
+	cm->getMaterialProperties()->addMaterialNamesAsValuePresets(mTexturesValue);
+	
 
 	addParameter("Position", mPositionValue);
 	addParameter("Orientation", mOrientationValue);

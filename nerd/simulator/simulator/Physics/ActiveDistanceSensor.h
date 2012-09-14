@@ -72,7 +72,7 @@ namespace nerd {
 		StringValue *mNameOfExternalEnergyValue;
 		StringValue *mNameOfExternalTemperatureValue;
 		IntValue *mActuatorMode;
-		IntValue *mRequiredNumberOfStepsWithSimilarActivation;
+		IntValue *mModeParameters;
 		
 		
 		DoubleValue *mExternalEnergyValue;

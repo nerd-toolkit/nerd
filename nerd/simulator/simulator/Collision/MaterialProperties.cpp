@@ -46,6 +46,7 @@
 #include "MaterialProperties.h"
 #include "Core/Core.h"
 #include "Value/ValueManager.h"
+#include <Value/StringValue.h>
 
 namespace nerd {
 
@@ -391,6 +392,21 @@ bool MaterialProperties::addTexture(const QString &textureName) {
 int MaterialProperties::getTextureIndex(const QString &textureName) {
 	
 	return mTextureLookUp.indexOf(textureName);
+}
+
+
+QList<QString> MaterialProperties::getMaterialNames() const {
+	return mTextureLookUp;
+}
+
+void MaterialProperties::addMaterialNamesAsValuePresets(StringValue *value) {
+	if(value == 0) {
+		return;
+	}
+	value->getOptionList().append("None");
+	for(QListIterator<QString> i(mTextureLookUp); i.hasNext();) {
+		value->getOptionList().append(i.next());
+	}
 }
 
 }

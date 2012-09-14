@@ -167,7 +167,7 @@ QString Value::getDescription() const {
 }
 
 
-QList<QString> Value::getOptionList() {
+QList<QString>& Value::getOptionList() {
     return mOptionList;
 }
 
