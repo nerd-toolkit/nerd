@@ -171,6 +171,32 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 		p.addEllipse(pos, mRadius + 4.0, mRadius + 4.0);
 		painter->fillPath(p, QColor(255, 0, 0, 100));
 	}
+	
+	if(mShowNeuroModulators) {
+		QStringList propNames = mNeuron->getPropertyNames();
+		for(QListIterator<QString> i(propNames); i.hasNext();) {
+			QString modName = i.next();
+			if(modName.startsWith("_NMT")) {
+				QStringList modParams = mNeuron->getProperty(modName).split(",");
+				if(modParams.size() == 2) {
+					int type = modName.mid(4).toInt();
+					if(type > 0) {
+						double radius = modParams[1].toDouble();
+						double concentration = modParams[0].toDouble();
+						
+						if(radius > 0.0 && concentration > 0.0) {
+							Color color = Color::getColor((type * 2) % 7);
+							color.setAlpha(150 * Math::min(1.0, Math::max(0.0, concentration)));
+							QPainterPath p;
+							p.addEllipse(getGlobalPosition(), radius, radius);
+							painter->fillPath(p, QColor(color.red(), color.green(), color.blue(), color.alpha()));
+						}
+					}
+				}
+			}
+		}
+	}
+	
 
 	QColor outlineColor(0, 0, 0, 255);
 
@@ -385,6 +411,7 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 				Qt::AlignCenter, outputString);
 		}
 	}
+	
 
 	painter->setPen(oldPen);
 }

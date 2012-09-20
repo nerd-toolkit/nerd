@@ -127,6 +127,7 @@ namespace nerd {
 		void notifySelectionListeners();
 
 		void notifyNeuralNetworkModified();
+		void notifyNeuralNetworkParametersChanged();
 
 		bool addKeyListener(KeyListener *listener);
 		bool removedKeyListener(KeyListener *listener);
@@ -197,6 +198,7 @@ namespace nerd {
 	signals:
 		void neuralNetworkChanged(ModularNeuralNetwork *network);
 		void neuralNetworkModified(ModularNeuralNetwork *network);
+		void neuralNetworkParametersModified(ModularNeuralNetwork *network);
 		void triggerUpdateVisualizationHandler();
 
 
@@ -233,6 +235,7 @@ namespace nerd {
 		BoolValue *mPerformanceMode;
 		BoolValue *mStasisMode;
 		Event *mNetworkStructureChangedEvent;
+		Event *mNetworkParametersChangedEvent;
 		Event *mClearCommandExecutorStack;
 		NeuralNetworkEditor *mOwner;
 		bool mActivationVisualiationMode;

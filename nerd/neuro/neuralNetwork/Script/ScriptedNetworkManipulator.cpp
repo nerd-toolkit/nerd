@@ -854,7 +854,7 @@ bool ScriptedNetworkManipulator::setPosition(qlonglong objectId, double x, doubl
 	}
 	object->setPosition(Vector3D(x, y, z));
 	
-	nmm->triggerNetworkStructureChangedEvent();
+	nmm->triggerNetworkParametersChangedEvent();
 	return true;
 }
 
@@ -863,7 +863,7 @@ bool ScriptedNetworkManipulator::setPosition(qlonglong objectId, double x, doubl
  * The content may also be ommited, then it is replaced by "".
  * Will return false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::setProperty(qlonglong objectId, const QString &propName, const QString &content) {
+bool ScriptedNetworkManipulator::setProperty(qlonglong objectId, const QString &propName, const QString &content, bool severeChange) {
 	if(mNetwork == 0) {
 		return false;
 	}
@@ -881,7 +881,12 @@ bool ScriptedNetworkManipulator::setProperty(qlonglong objectId, const QString &
 	}
 	props->setProperty(propName, content);
 	
-	nmm->triggerNetworkStructureChangedEvent();
+	if(severeChange) {
+		nmm->triggerNetworkStructureChangedEvent();
+	}
+	else {
+		nmm->triggerNetworkParametersChangedEvent();
+	}
 	return true;
 }
 

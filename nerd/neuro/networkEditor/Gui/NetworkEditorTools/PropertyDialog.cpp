@@ -400,6 +400,8 @@ void PropertyDialog::currentEditorTabChanged(int) {
 	if(visu != 0) {
 		connect(visu, SIGNAL(neuralNetworkChanged(ModularNeuralNetwork*)),
 				this, SLOT(networkChanged(ModularNeuralNetwork*)));
+		connect(visu, SIGNAL(neuralNetworkParametersModified(ModularNeuralNetwork*)),
+				this, SLOT(updatePropertyList()));
 		
 		visu->addSelectionListener(this);
 	}

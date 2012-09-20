@@ -63,7 +63,7 @@ NeuronItem::NeuronItem(NetworkVisualization *owner)
 	: PaintItem(1000), mOwner(owner), mNeuron(0), 
 	  mShowName(true), mShowInputOutputMarker(false), mShowBias(false),
 	  mShowActivationFlipped(false), mShowBiasAsString(false),
-	  mShowModuleInputOutputMarker(true)
+	  mShowModuleInputOutputMarker(true), mShowNeuroModulators(false)
 {
 }
 
@@ -73,7 +73,8 @@ NeuronItem::NeuronItem(const NeuronItem &other)
 	  mShowName(other.mShowName), mShowInputOutputMarker(other.mShowInputOutputMarker),
 	  mShowBias(other.mShowBias), mShowActivationFlipped(other.mShowActivationFlipped),
 	  mShowBiasAsString(other.mShowBiasAsString),
-	  mShowModuleInputOutputMarker(other.mShowModuleInputOutputMarker)
+	  mShowModuleInputOutputMarker(other.mShowModuleInputOutputMarker),
+	  mShowNeuroModulators(other.mShowNeuroModulators)
 {
 
 }
@@ -130,6 +131,9 @@ void NeuronItem::setViewMode(int mode, bool enabled) {
 	}
 	else if(mode == PaintItem::SHOW_NEURON_MODULE_INPUT_OUTPUT) {
 		mShowModuleInputOutputMarker = enabled;
+	}
+	else if(mode == PaintItem::SHOW_NEURO_MODULATORS) {
+		mShowNeuroModulators = enabled;
 	}
 	else {
 		PaintItem::setViewMode(mode, enabled);

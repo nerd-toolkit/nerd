@@ -73,6 +73,9 @@ const QString NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORKS_REPLACED
 
 const QString NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_STRUCTURES_CHANGED
 		= "/NeuralNetwork/NetworkStructuresChanged";
+		
+const QString NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_PARAMETERS_CHANGED
+		= "/NeuralNetwork/NetworkParametersChanged";
 
 const QString NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_STARTED
 		= "/NeuralNetwork/ExecutionStarted";

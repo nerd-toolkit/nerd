@@ -92,6 +92,12 @@ NeuralNetworkManager::NeuralNetworkManager()
 				NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_STRUCTURES_CHANGED,
 				"This Event is triggered whenever at least on of the active NeuralNetworks "
 				"was modified in structure or relevant parameters.");
+	mNetworkParametersChanged = em->createEvent(
+				NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_PARAMETERS_CHANGED,
+				"This Event is triggered, when parameters (not the structure) of the network changed. "
+				"This event is called as upstream event of the NetworkStructureChanged event when that "
+				"event is triggered.");
+	mNetworkStructuresChanged->addUpstreamEvent(mNetworkParametersChanged);
 
 	mNetworkIterationCompleted = em->createEvent(
 				NeuralNetworkConstants::EVENT_NNM_NETWORK_ITERATION_COMPLETED,
@@ -386,6 +392,17 @@ void NeuralNetworkManager::triggerNetworkStructureChangedEvent() {
 		}
 		else {
 			Core::getInstance()->scheduleTask(new TriggerEventTask(mNetworkStructuresChanged));
+		}
+	}
+}
+
+void NeuralNetworkManager::triggerNetworkParametersChangedEvent() {
+	if(mNetworkStructuresChanged != 0) {
+		if(Core::getInstance()->isMainExecutionThread()) {
+			mNetworkParametersChanged->trigger();
+		}
+		else {
+			Core::getInstance()->scheduleTask(new TriggerEventTask(mNetworkParametersChanged));
 		}
 	}
 }

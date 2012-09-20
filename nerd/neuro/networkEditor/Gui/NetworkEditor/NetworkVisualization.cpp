@@ -120,6 +120,8 @@ NetworkVisualization::NetworkVisualization(const QString &name, NeuralNetworkEdi
 	Neuro::getNeuralNetworkManager();
 	mNetworkStructureChangedEvent = Core::getInstance()->getEventManager()->registerForEvent(
 			NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_STRUCTURES_CHANGED, this);
+	mNetworkParametersChangedEvent = Core::getInstance()->getEventManager()->registerForEvent(
+		NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_PARAMETERS_CHANGED, this);
 	mClearCommandExecutorStack = Core::getInstance()->getEventManager()->getEvent(
 			NeuralNetworkConstants::EVENT_NETWORK_CLEAR_MODIFICATION_STACKS, true);
 	if(mClearCommandExecutorStack != 0) {
@@ -173,6 +175,9 @@ void NetworkVisualization::eventOccured(Event *event){
 	else if(event == mNetworkStructureChangedEvent) {
 		//make sure that changes that did not origin from the command executor
 		notifyNeuralNetworkModified();
+	}
+	else if(event == mNetworkParametersChangedEvent) {
+		notifyNeuralNetworkParametersChanged();
 	}
 	else if(event == mClearCommandExecutorStack) {
 		mCommandExecutor->clearCommandStacks();
@@ -787,6 +792,11 @@ void NetworkVisualization::notifyNeuralNetworkModified() {
 	emit triggerUpdateVisualizationHandler();
 	emit neuralNetworkModified(getNeuralNetwork());
 	//repaint();
+	update();
+}
+
+void NetworkVisualization::notifyNeuralNetworkParametersChanged() {
+	emit neuralNetworkParametersModified(getNeuralNetwork());
 	update();
 }
 

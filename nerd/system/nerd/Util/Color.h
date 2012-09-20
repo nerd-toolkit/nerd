@@ -73,6 +73,8 @@ class Color {
 		const int* get() const;
 		
 		bool equals(const Color &toCompareWith) const;
+		
+		static Color getColor(int index);
 
 	private:
 		int mVector[4];

@@ -108,7 +108,7 @@ namespace nerd {
 		bool setActivation(qlonglong neuronId, double activation);
 		bool setWeight(qlonglong synapseId, double weight);
 		bool setPosition(qlonglong objectId, double x, double y, double z);
-		bool setProperty(qlonglong objectId, const QString &propName, const QString &content);
+		bool setProperty(qlonglong objectId, const QString &propName, const QString &content, bool severeChange = false);
 
 		bool addToGroup(qlonglong elementId, qlonglong groupId);
 		bool removeFromGroup(qlonglong elementId, qlonglong groupId);

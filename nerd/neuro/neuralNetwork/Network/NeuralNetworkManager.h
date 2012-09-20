@@ -83,6 +83,7 @@ namespace nerd {
 
 		void triggerCurrentNetworksReplacedEvent();
 		void triggerNetworkStructureChangedEvent();	
+		void triggerNetworkParametersChangedEvent();
 		void triggerNetworkIterationCompleted();
 
 		bool addTransferFunctionPrototype(const TransferFunction &tf);
@@ -115,6 +116,7 @@ namespace nerd {
 		Event *mNetworkEvaluationStarted;
 		Event *mNetworkEvaluationCompleted;
 		Event *mNetworkStructuresChanged;
+		Event *mNetworkParametersChanged;
 		Event *mNetworkIterationCompleted;
 
 		QList<NeuralNetwork*> mNeuralNetworks;

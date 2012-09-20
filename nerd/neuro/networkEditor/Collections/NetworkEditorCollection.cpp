@@ -108,6 +108,8 @@ NetworkEditorCollection::NetworkEditorCollection(QMenu *targetMenu, const QStrin
 	
 	new ChangeViewModeTool(editor, PaintItem::SHOW_ELEMENT_SLAVE_STATUS,
 							"Show Degrees of Freedom", Qt::Key_S);
+	new ChangeViewModeTool(editor, PaintItem::SHOW_NEURO_MODULATORS,
+						   "Show Neuro-Modulators", Qt::Key_T, false, false);
 	new ChangeViewModeTool(editor, PaintItem::DRAW_NAMES_SOLID,
 							"Draw all Names Black", Qt::Key_9, false, true);
 // 	new ChangeViewModeTool(editor, PaintItem::USE_COSMETIC_LINES,

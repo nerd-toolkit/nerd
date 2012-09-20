@@ -215,4 +215,59 @@ bool Color::equals(const Color &toCompareWith) const{
 	return false;
 }
 
+
+Color Color::getColor(int index) {
+
+	index = index % 15;
+	if(index == 0) {
+		return Color(0,0,0,255);
+	}
+	else if(index == 1) {
+		return Color(255,0,0,255);
+	}
+	else if(index == 2) {
+		return Color(128,0,0,255);
+	}
+	else if(index == 3) {
+		return Color(0,255,0,255);
+	}
+	else if(index == 4) {
+		return Color(0,128,0,255);
+	}
+	else if(index == 5) {
+		return Color(0,0,255,255);
+	}
+	else if(index == 6) {
+		return Color(0,0,128,255);
+	}
+	else if(index == 7) {
+		return Color(0,255,255,255);
+	}
+	else if(index == 8) {
+		return Color(0,128,128,255);
+	}
+	else if(index == 9) {
+		return Color(255,0,255,255);
+	}
+	else if(index == 10) {
+		return Color(128,0,128,255);
+	}
+	else if(index == 11) {
+		return Color(255,255,0,255);
+	}
+	else if(index == 12) {
+		return Color(128,128,0,255);
+	}
+	else if(index == 13) {
+		return Color(160,160,160,255);
+	}
+	else if(index == 14) {
+		return Color(128,128,128,255);
+	}
+	else if(index == 15) {
+		return Color(192,192,192,255);
+	}
+	return Color(0, 0, 0, 255);
+}
+
 }
