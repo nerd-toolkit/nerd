@@ -104,7 +104,7 @@ bool AlignModuleSizeCommand::doCommand() {
 		return false;
 	}
 
-	QSizeF refSize = mModulesToAlign.front()->getSize();
+	QSizeF refSize = mModulesToAlign.last()->getSize();
 
 	for(int i = 0; i < mModulesToAlign.size(); ++i) {
 		NeuroModule *module = mModulesToAlign.at(i);

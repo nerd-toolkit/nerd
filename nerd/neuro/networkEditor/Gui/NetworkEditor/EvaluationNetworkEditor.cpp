@@ -70,6 +70,7 @@
 #include "PlugIns/CommandLineArgument.h"
 #include "Gui/Control/BoolValueSwitcherAction.h"
 #include "NerdConstants.h"
+#include <Gui/Control/EventTriggerAction.h>
 
 using namespace std;
 
@@ -439,6 +440,14 @@ QMenu* EvaluationNetworkEditor::addControlMenu() {
 	pauseAction->setShortcut(tr("Ctrl+p"));
 	pauseAction->setWhatsThis("Pauses and resumes the simulation.");
 	controlMenu->addAction(pauseAction);
+	
+	QList<QString> resetEvents;
+	resetEvents.append(NerdConstants::EVENT_EXECUTION_RESET);
+	resetEvents.append(NerdConstants::EVENT_EXECUTION_RESET_COMPLETED);
+	EventTriggerAction *resetAction = new EventTriggerAction("&Reset Simulation", resetEvents);
+	resetAction->setShortcut(tr("Ctrl+r"));
+	resetAction->setWhatsThis("Resets the simulation to the initial conditions.");
+	controlMenu->addAction(resetAction);
 	
 	mainMenu->addMenu(controlMenu);
 

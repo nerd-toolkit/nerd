@@ -351,31 +351,61 @@ void NeuralNetworkToolbox::alignNetworkElementsAccordingToLocationProperties() {
 
 }
 
-void NeuralNetworkToolbox::alignNeuronsHoriztonally() {
-	alignNeurons(true, false);
+void NeuralNetworkToolbox::alignNetworkElementsCenterHoriztonally() {
+	alignNetworkElements(ALIGN_TYPE_HORIZONTAL, ALIGN_MODE_CENTER);
 }
 
  
-void NeuralNetworkToolbox::alignNeuronsVertically() {
-	alignNeurons(false, false);
+void NeuralNetworkToolbox::alignNetworkElementsCenterVertically() {
+	alignNetworkElements(ALIGN_TYPE_VERTICAL, ALIGN_MODE_CENTER);
 }
 
-void NeuralNetworkToolbox::alignNeuronDistanceHorizontally() {
-	alignNeurons(true, true);
+void NeuralNetworkToolbox::alignNetworkElementsDistanceHorizontally() {
+	alignNetworkElements(ALIGN_TYPE_HORIZONTAL, ALIGN_MODE_DISTANCE);
 }
 
 
-void NeuralNetworkToolbox::alignNeuronDistanceVertically() {
-	alignNeurons(false, true);
+void NeuralNetworkToolbox::alignNetworkElementsDistanceVertically() {
+	alignNetworkElements(ALIGN_TYPE_VERTICAL, ALIGN_MODE_DISTANCE);
 }
+
+void NeuralNetworkToolbox::alignNetworkElementsSpacingHorizontally() {
+	alignNetworkElements(ALIGN_TYPE_HORIZONTAL, ALIGN_MODE_SPACING);
+}
+
+
+void NeuralNetworkToolbox::alignNetworkElementsSpacingVertically() {
+	alignNetworkElements(ALIGN_TYPE_VERTICAL, ALIGN_MODE_SPACING);
+}
+
 
 void NeuralNetworkToolbox::alignModuleSizeHorizontally() {
-	alignModuleSize(true);
+	alignModuleSize(ALIGN_TYPE_HORIZONTAL);
 }
 
 void NeuralNetworkToolbox::alignModuleSizeVertically() {
-	alignModuleSize(false);
+	alignModuleSize(ALIGN_TYPE_VERTICAL);
 }
+
+void NeuralNetworkToolbox::alignNetworkElementsLeft() {
+	alignNetworkElements(ALIGN_TYPE_VERTICAL, ALIGN_MODE_LEFT);
+}
+
+
+void NeuralNetworkToolbox::alignNetworkElementsRight() {
+	alignNetworkElements(ALIGN_TYPE_VERTICAL, ALIGN_MODE_RIGHT);
+}
+
+
+void NeuralNetworkToolbox::alignNetworkElementsTop() {
+	alignNetworkElements(ALIGN_TYPE_HORIZONTAL, ALIGN_MODE_TOP);
+}
+
+
+void NeuralNetworkToolbox::alignNetworkElementsBottom() {
+	alignNetworkElements(ALIGN_TYPE_HORIZONTAL, ALIGN_MODE_BOTTOM);
+}
+
 
 
 void NeuralNetworkToolbox::useVisualizeElementPairTool() {
@@ -462,45 +492,88 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 
 	//add align synapse operators
 	
-	QAction *alignAllSynapses = mNetworkMenu->addAction("&Align Synapses");
+	QMenu *alignmentMenu = mNetworkMenu->addMenu("Alignment");
+	
+	QAction *alignAllSynapses = alignmentMenu->addAction("&Align Synapses");
 	alignAllSynapses->setShortcut(tr("ctrl+a"));
 	connect(alignAllSynapses, SIGNAL(triggered()),
 			this, SLOT(alignAllSynapses()));
 	
-	QAction *alignSelectedSynapses = mNetworkMenu->addAction("&Align Selected Synapses");
+	QAction *alignSelectedSynapses = alignmentMenu->addAction("&Align Selected Synapses");
 	alignSelectedSynapses->setShortcut(tr("ctrl+shift+a"));
 	connect(alignSelectedSynapses, SIGNAL(triggered()),
 			this, SLOT(alignSelectedSynapses()));
+	
+	alignmentMenu->addSeparator();
 
-	QAction *alignSelectedNeuronsHorizontally = mNetworkMenu->addAction("Align Elements Horizontally");
+	QAction *alignSelectedTop = alignmentMenu->addAction("Align Top");
+	//alignSelectedTop->setShortcut(tr("ctrl+shift+alt+h"));
+	connect(alignSelectedTop, SIGNAL(triggered()),
+			this, SLOT(alignNetworkElementsTop()));
+	
+	QAction *alignSelectedNeuronsHorizontally = alignmentMenu->addAction("Align Hori. Center");
 	alignSelectedNeuronsHorizontally->setShortcut(tr("ctrl+shift+h"));
 	connect(alignSelectedNeuronsHorizontally, SIGNAL(triggered()),
-			this, SLOT(alignNeuronsHoriztonally()));
-
-	QAction *alignSelectedNeuronsVertically = mNetworkMenu->addAction("Align Elements Vertically");
-	alignSelectedNeuronsVertically->setShortcut(tr("ctrl+shift+v"));
-	connect(alignSelectedNeuronsVertically, SIGNAL(triggered()),
-			this, SLOT(alignNeuronsVertically()));
-
+			this, SLOT(alignNetworkElementsCenterHoriztonally()));
+	
+	QAction *alignSelectedBottom = alignmentMenu->addAction("Align Bottom");
+	//alignSelectedBottom->setShortcut(tr("ctrl+shift+alt+h"));
+	connect(alignSelectedBottom, SIGNAL(triggered()),
+			this, SLOT(alignNetworkElementsBottom()));
+	
 	QAction *alignSelectedNeuronDistancesHorizontally = 
-					mNetworkMenu->addAction("Align Element Dist Horizontally");
+	alignmentMenu->addAction("Align Hori. Distance");
 	alignSelectedNeuronDistancesHorizontally->setShortcut(tr("ctrl+shift+alt+h"));
 	connect(alignSelectedNeuronDistancesHorizontally, SIGNAL(triggered()),
-			this, SLOT(alignNeuronDistanceHorizontally()));
+			this, SLOT(alignNetworkElementsDistanceHorizontally()));
+	
+	QAction *alignSelectedNeuronSpacingHorizontally = 
+	alignmentMenu->addAction("Align Hori. Spacing");
+	//alignSelectedNeuronSpacingHorizontally->setShortcut(tr("ctrl+shift+alt+h"));
+	connect(alignSelectedNeuronSpacingHorizontally, SIGNAL(triggered()),
+			this, SLOT(alignNetworkElementsSpacingHorizontally()));
+
+	
+	alignmentMenu->addSeparator();
+	
+	QAction *alignSelectedLeft = alignmentMenu->addAction("Align Left");
+	//alignSelectedLeft->setShortcut(tr("ctrl+shift+v"));
+	connect(alignSelectedLeft, SIGNAL(triggered()),
+			this, SLOT(alignNetworkElementsLeft()));
+	
+	QAction *alignSelectedNeuronsVertically = alignmentMenu->addAction("Align Vert. Center");
+	alignSelectedNeuronsVertically->setShortcut(tr("ctrl+shift+v"));
+	connect(alignSelectedNeuronsVertically, SIGNAL(triggered()),
+			this, SLOT(alignNetworkElementsCenterVertically()));
+	
+	QAction *alignSelectedRight = alignmentMenu->addAction("Align Right");
+	//alignSelectedRight->setShortcut(tr("ctrl+shift+v"));
+	connect(alignSelectedRight, SIGNAL(triggered()),
+			this, SLOT(alignNetworkElementsRight()));
+
 
 	QAction *alignSelectedNeuronDistancesVertically = 
-					mNetworkMenu->addAction("Align Element Dist Vertically");
+			alignmentMenu->addAction("Align Vert. Distance");
 	alignSelectedNeuronDistancesVertically->setShortcut(tr("ctrl+shift+alt+v"));
 	connect(alignSelectedNeuronDistancesVertically, SIGNAL(triggered()),
-			this, SLOT(alignNeuronDistanceVertically()));
+			this, SLOT(alignNetworkElementsDistanceVertically()));
+	
+	QAction *alignSelectedNeuronSpacingVertically = 
+	alignmentMenu->addAction("Align Vert. Spacing");
+	//alignSelectedNeuronSpacingVertically->setShortcut(tr("ctrl+shift+alt+v"));
+	connect(alignSelectedNeuronSpacingVertically, SIGNAL(triggered()),
+			this, SLOT(alignNetworkElementsSpacingVertically()));
+	
+	
+	alignmentMenu->addSeparator();
 	
 	QAction *alignSelectedModuleSizesHorizontally = 
-					mNetworkMenu->addAction("Align Module Widths");
+				alignmentMenu->addAction("Align Module Widths");
 	connect(alignSelectedModuleSizesHorizontally, SIGNAL(triggered()),
 			this, SLOT(alignModuleSizeHorizontally()));
 
 	QAction *alignSelectedModuleSizesVertically = 
-					mNetworkMenu->addAction("Align Module Heights");
+				alignmentMenu->addAction("Align Module Heights");
 	connect(alignSelectedModuleSizesVertically, SIGNAL(triggered()),
 			this, SLOT(alignModuleSizeVertically()));
 
@@ -509,7 +582,7 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 // 	connect(alignAccordingToLocations, SIGNAL(triggered()),
 // 			this, SLOT(alignNetworkElementsAccordingToLocationProperties()));
 // 
-	QAction *setAllLocationProperties = mNetworkMenu->addAction("Sync Location Properties");
+	QAction *setAllLocationProperties = alignmentMenu->addAction("Sync Location Properties");
 	connect(setAllLocationProperties, SIGNAL(triggered()),
 			this, SLOT(setAllLocationProperties()));
 
@@ -523,7 +596,7 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	mNetworkMenu->addSeparator();
 	
 	QAction *resetNetworkAction = mNetworkMenu->addAction("&Reset Network");
-	resetNetworkAction->setShortcut(tr("ctrl+r"));
+	resetNetworkAction->setShortcut(tr("ctrl+alt+r"));
 	connect(resetNetworkAction, SIGNAL(triggered()),
 			this, SLOT(resetCurrentNetwork()));
 
@@ -598,7 +671,7 @@ void NeuralNetworkToolbox::setTool(NetworkManipulationTool *currentTool) {
 }
 
 
-void NeuralNetworkToolbox::alignNeurons(bool horizontally, bool adjustDistance) {
+void NeuralNetworkToolbox::alignNetworkElements(int type, int mode) {
 	if(mOwner == 0) {
 		return;
 	}
@@ -609,6 +682,7 @@ void NeuralNetworkToolbox::alignNeurons(bool horizontally, bool adjustDistance) 
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<NeuralNetworkElement*> selectedNeurons;
+	QList<QRectF> boundingBoxes;
 
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		PaintItem *item = i.next();
@@ -617,6 +691,7 @@ void NeuralNetworkToolbox::alignNeurons(bool horizontally, bool adjustDistance) 
 			Neuron *neuron = neuronItem->getNeuron();
 			if(neuron != 0) {
 				selectedNeurons.append(neuron);
+				boundingBoxes.append(item->getBoundingBox());
 			}
 			continue;
 		}
@@ -625,6 +700,7 @@ void NeuralNetworkToolbox::alignNeurons(bool horizontally, bool adjustDistance) 
 			NeuroModule *module = moduleItem->getNeuroModule();
 			if(module != 0) {
 				selectedNeurons.append(module);
+				boundingBoxes.append(item->getBoundingBox());
 			}
 			continue;
 		}
@@ -633,6 +709,7 @@ void NeuralNetworkToolbox::alignNeurons(bool horizontally, bool adjustDistance) 
 			NeuronGroup *group = groupItem->getNeuronGroup();
 			if(group != 0) {
 				selectedNeurons.append(group);
+				boundingBoxes.append(item->getBoundingBox());
 			}
 			continue;
 		}
@@ -641,19 +718,44 @@ void NeuralNetworkToolbox::alignNeurons(bool horizontally, bool adjustDistance) 
 			Synapse *synapse = synapseItem->getSynapse();
 			if(synapse != 0) {
 				selectedNeurons.append(synapse);
+				boundingBoxes.append(item->getBoundingBox());
 			}
 			continue;
 		}
 	}
 
 	if(!selectedNeurons.empty()) {
-		int mode = horizontally ? AlignNeuronsCommand::HORIZONTAL : AlignNeuronsCommand::VERTICAL;
-		Command *command = new AlignNeuronsCommand(mode, adjustDistance, visu, selectedNeurons);
+		int c_type = (type == ALIGN_TYPE_HORIZONTAL) ? AlignNeuronsCommand::TYPE_HORIZONTAL : AlignNeuronsCommand::TYPE_VERTICAL;
+		int c_mode = 0;
+		switch(mode) {
+			case ALIGN_MODE_TOP:
+				c_mode = AlignNeuronsCommand::MODE_TOP;
+				break;
+			case ALIGN_MODE_BOTTOM:
+				c_mode = AlignNeuronsCommand::MODE_BOTTOM;
+				break;
+			case ALIGN_MODE_LEFT:
+				c_mode = AlignNeuronsCommand::MODE_LEFT;
+				break;
+			case ALIGN_MODE_RIGHT:
+				c_mode = AlignNeuronsCommand::MODE_RIGHT;
+				break;
+			case ALIGN_MODE_CENTER:
+				c_mode = AlignNeuronsCommand::MODE_CENTER;
+				break;
+			case ALIGN_MODE_DISTANCE:
+				c_mode = AlignNeuronsCommand::MODE_DISTANCE;
+				break;
+			case ALIGN_MODE_SPACING:
+				c_mode = AlignNeuronsCommand::MODE_SPACING;
+				break;
+		};
+		Command *command = new AlignNeuronsCommand(c_type, c_mode, visu, selectedNeurons, boundingBoxes);
 		visu->getCommandExecutor()->executeCommand(command);
 	}
 }
 
-void NeuralNetworkToolbox::alignModuleSize(bool horizontally) {
+void NeuralNetworkToolbox::alignModuleSize(int type) {
 	if(mOwner == 0) {
 		return;
 	}
@@ -678,7 +780,7 @@ void NeuralNetworkToolbox::alignModuleSize(bool horizontally) {
 	}
 
 	if(!selectedModules.empty()) {
-		int mode = horizontally ? AlignModuleSizeCommand::HORIZONTAL : AlignModuleSizeCommand::VERTICAL;
+		int mode = (type == ALIGN_TYPE_HORIZONTAL) ? AlignModuleSizeCommand::HORIZONTAL : AlignModuleSizeCommand::VERTICAL;
 		Command *command = new AlignModuleSizeCommand(mode, visu, selectedModules);
 		visu->getCommandExecutor()->executeCommand(command);
 	}

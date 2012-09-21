@@ -78,6 +78,9 @@ namespace nerd {
 	Q_OBJECT
 	public:
 		enum {NoTool, InsertNeuronTool, RemoveNeuronTool, InsertSynapseTool};
+		enum {ALIGN_TYPE_HORIZONTAL, ALIGN_TYPE_VERTICAL, ALIGN_MODE_LEFT, ALIGN_MODE_RIGHT, 
+				ALIGN_MODE_TOP, ALIGN_MODE_BOTTOM, ALIGN_MODE_CENTER, ALIGN_MODE_SPACING, 
+				ALIGN_MODE_DISTANCE};
 
 	public:
 		NeuralNetworkToolbox(NeuralNetworkEditor *owner);
@@ -100,12 +103,18 @@ namespace nerd {
 		void selectSynapsesOfMarkedNeurons();
 		void setAllLocationProperties();
 		void alignNetworkElementsAccordingToLocationProperties();
-		void alignNeuronsHoriztonally();
-		void alignNeuronsVertically();
-		void alignNeuronDistanceHorizontally();
-		void alignNeuronDistanceVertically();
+		void alignNetworkElementsCenterHoriztonally();
+		void alignNetworkElementsCenterVertically();
+		void alignNetworkElementsDistanceHorizontally();
+		void alignNetworkElementsDistanceVertically();
+		void alignNetworkElementsSpacingHorizontally();
+		void alignNetworkElementsSpacingVertically();
 		void alignModuleSizeHorizontally();
 		void alignModuleSizeVertically();
+		void alignNetworkElementsLeft();
+		void alignNetworkElementsRight();
+		void alignNetworkElementsTop();
+		void alignNetworkElementsBottom();
 		void useVisualizeElementPairTool();
 		void useReconnectSynapseTool();
 		void useReplaceModuleTool();
@@ -118,8 +127,8 @@ namespace nerd {
 		void setTool(NetworkManipulationTool *currentTool);
 
 	private:
-		void alignNeurons(bool horizontally, bool adjustDistance);
-		void alignModuleSize(bool horizontally);
+		void alignNetworkElements(int type, int mode);
+		void alignModuleSize(int type);
 // 		void setLocation(PaintItem *item, const QString &location);
 // 		void setLocationSize(ModuleItem *item, const QString &location);
 

@@ -56,6 +56,7 @@
 #include "Network/SynapseTarget.h"
 #include <QPointF>
 #include "Math/Vector3D.h"
+#include <QRectF>
 
 namespace nerd {
 
@@ -65,10 +66,11 @@ namespace nerd {
 	 */
 	class AlignNeuronsCommand : public Command {
 	public:
-		enum modes{HORIZONTAL, VERTICAL};
+		enum types {TYPE_HORIZONTAL, TYPE_VERTICAL};
+		enum modes {MODE_LEFT, MODE_RIGHT, MODE_TOP, MODE_BOTTOM, MODE_CENTER, MODE_SPACING, MODE_DISTANCE};
 	public:
-		AlignNeuronsCommand(int mode, bool adjustDistance, NetworkVisualization *context, 
-							QList<NeuralNetworkElement*> neurons);
+		AlignNeuronsCommand(int type, int mode, NetworkVisualization *context, 
+							QList<NeuralNetworkElement*> neurons, QList<QRectF> boundingBoxes);
 		virtual ~AlignNeuronsCommand();
 	
 		virtual bool isUndoable() const;
@@ -77,10 +79,11 @@ namespace nerd {
 		virtual bool undoCommand();
 
 	private:
+		int mType;
 		int mMode;
-		bool mAdjustDistance;
 		NetworkVisualization *mVisualizationContext;	
 		QList<NeuralNetworkElement*> mNeuronsToAlign;
+		QList<QRectF> mBoundingBoxes;
 		QList<Vector3D> mPreviousPositions;
 
 	};

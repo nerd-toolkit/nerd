@@ -114,10 +114,13 @@ bool InsertModuleCommand::doCommand() {
 		}
 	}
 	
-	NeuralNetworkUtil::setNetworkElementLocationProperty(mNewModule, mInsertPosition.x(),
-								mInsertPosition.y(), 0.0);
-	NeuralNetworkUtil::setNeuroModuleLocationSizeProperty(mNewModule, mModuleSize.width(),
-								mModuleSize.height());
+	mNewModule->setPosition(Vector3D(mInsertPosition.x(), mInsertPosition.y(), 0.0));
+	mNewModule->setSize(QSizeF(mModuleSize.width(), mModuleSize.height()));
+	
+// 	NeuralNetworkUtil::setNetworkElementLocationProperty(mNewModule, mInsertPosition.x(),
+// 								mInsertPosition.y(), 0.0);
+// 	NeuralNetworkUtil::setNeuroModuleLocationSizeProperty(mNewModule, mModuleSize.width(),
+// 								mModuleSize.height());
 
 
 	//handler->rebuildView();
