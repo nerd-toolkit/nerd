@@ -48,6 +48,7 @@
 
 #include <QString>
 #include <QHash>
+#include <QMutex>
 
 namespace nerd {
 	
@@ -94,6 +95,7 @@ namespace nerd {
 		QHash<QString, QString> mProperties;
 		QList<PropertyChangedListener*> mListeners;
 		QList<QString> mOptionalHiddenPrefixes;
+		QMutex mMutex;
 	};
 
 }

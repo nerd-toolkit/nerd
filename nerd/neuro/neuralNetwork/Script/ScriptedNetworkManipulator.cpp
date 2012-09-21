@@ -52,6 +52,7 @@
 #include "Network/NeuralNetworkManager.h"
 #include "Network/Neuro.h"
 #include "NeuralNetworkConstants.h"
+#include <Math/Math.h>
 
 using namespace std;
 
@@ -600,6 +601,26 @@ double ScriptedNetworkManipulator::getSynapseOutput(qlonglong synapseId) {
 	return synapse->calculateActivation();
 }
 
+
+/**
+ * Executes the synapse function without calling the calcualteActivation of the synapse.
+ * The returned value usually is the (modulated) weight of the synapse.
+ */
+double ScriptedNetworkManipulator::execSynapseFunction(qlonglong synapseId) {
+	if(mNetwork == 0) {
+		return 0.0;
+	}
+	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	if(synapse == 0) {
+		return 0.0;
+	}
+	SynapseFunction *sf = synapse->getSynapseFunction();
+	if(sf == 0) {
+		return 0.0;
+	}
+	return sf->calculate(synapse);
+}
+
 /**
  * Returns the current activation of a neuron.
  * Will return 0 in case of failure.
@@ -728,6 +749,9 @@ QString ScriptedNetworkManipulator::getProperty(qlonglong objectId, const QStrin
 	if(mNetwork == 0) {
 		return "~";
 	}
+	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
+	QMutexLocker g(nmm->getNetworkExecutionMutex());
+	
 	QList<NeuralNetworkElement*> networkElements;
 	mNetwork->getNetworkElements(networkElements);
 	NeuralNetworkElement *object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
@@ -1123,6 +1147,36 @@ bool ScriptedNetworkManipulator::removeNeuronGroup(qlonglong groupId) {
 }
 
 
+bool ScriptedNetworkManipulator::removeProperty(qlonglong objectId, const QString &propertyName, bool severeChange) {
+	if(mNetwork == 0) {
+		return false;
+	}
+	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
+	QMutexLocker g(nmm->getNetworkExecutionMutex());
+	
+	QList<NeuralNetworkElement*> networkElements;
+	mNetwork->getNetworkElements(networkElements);
+	NeuralNetworkElement *object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+	
+	Properties *props = dynamic_cast<Properties*>(object);
+	
+	if(props == 0) {
+		return false;
+	}
+	if(!props->hasProperty(propertyName)) {
+		return true;
+	}
+	props->removeProperty(propertyName);
+	
+	if(severeChange) {
+		nmm->triggerNetworkStructureChangedEvent();
+	}
+	else {
+		nmm->triggerNetworkParametersChangedEvent();
+	}
+	return true;
+}
+
 
 bool ScriptedNetworkManipulator::setTransferFunction(qlonglong neuronId, const QString &transferFunctionName) {
 	if(mNetwork == 0) {
@@ -1344,6 +1398,22 @@ double ScriptedNetworkManipulator::applyTransferFunction(qlonglong neuronId, dou
 
 double ScriptedNetworkManipulator::tf(qlonglong neuronId, double activity) {
 	return applyTransferFunction(neuronId, activity);
+}
+
+double ScriptedNetworkManipulator::getDistance(QVariantList pos1, QVariantList pos2) {
+	if(pos1.length() == 2 && pos2.length() == 2) {
+		QPointF point1(pos1.at(0).toDouble(), pos1.at(1).toDouble());
+		QPointF point2(pos2.at(0).toDouble(), pos2.at(1).toDouble());
+		
+		return Math::distance(point1, point2);
+	}
+	else if(pos1.length() == 3 && pos2.length() == 3) {
+		Vector3D point1(pos1.at(0).toDouble(), pos1.at(1).toDouble(), pos1.at(2).toDouble());
+		Vector3D point2(pos2.at(0).toDouble(), pos2.at(1).toDouble(), pos2.at(2).toDouble());
+		
+		return Math::distance(point1, point2);
+	}
+	return 0.0;
 }
 
 

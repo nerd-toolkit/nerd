@@ -51,6 +51,7 @@
 #include <QDir>
 #include <QListIterator>
 #include "Core/PropertyChangedListener.h"
+#include <QMutexLocker>
 
 using namespace std;
 
@@ -107,7 +108,9 @@ QList<QString> Properties::getOptionalHiddenPrefixes() const {
  * @param value the new value of the property.
  */
 void Properties::setProperty(const QString &name, const QString &value) {
+	mMutex.lock();
 	mProperties.insert(name, value);
+	mMutex.unlock();
 
 	for(QListIterator<PropertyChangedListener*> i(mListeners); i.hasNext();) {
 		i.next()->propertyChanged(this, name);
@@ -124,6 +127,8 @@ void Properties::setProperty(const QString &name, const QString &value) {
  * @return the value of the property if it exists, otherwise the empty string.
  */
 QString Properties::getProperty(const QString &name) const {
+	QMutexLocker locker(const_cast<QMutex*>(&mMutex));
+	
 	if(mProperties.contains(name)) {
 		return mProperties.value(name);
 	}
@@ -147,6 +152,8 @@ QString Properties::getProperty(const QString &name) const {
 }
 
 QString Properties::getExactProperty(const QString &name) const {
+	QMutexLocker locker(const_cast<QMutex*>(&mMutex));
+	
 	if(mProperties.contains(name)) {
 		return mProperties.value(name);
 	}
@@ -154,6 +161,8 @@ QString Properties::getExactProperty(const QString &name) const {
 }
 
 bool Properties::hasExactProperty(const QString &prefixedName) const {
+	QMutexLocker locker(const_cast<QMutex*>(&mMutex));
+	
 	return mProperties.contains(prefixedName);
 }
 
@@ -164,6 +173,8 @@ bool Properties::hasExactProperty(const QString &prefixedName) const {
  * @return true if the property exists, otherwise false.
  */
 bool Properties::hasProperty(const QString &name) const {
+	QMutexLocker locker(const_cast<QMutex*>(&mMutex));
+	
 	QString propName = name;
 	for(QListIterator<QString> j(mOptionalHiddenPrefixes); j.hasNext();) {
 		QString prefix = j.next();
@@ -195,7 +206,9 @@ bool Properties::hasProperty(const QString &name) const {
  * @param name the name of the property.
  */
 void Properties::removeProperty(const QString &name) {
+	mMutex.lock();
 	mProperties.remove(name);
+	mMutex.unlock();
 
 	for(QListIterator<PropertyChangedListener*> i(mListeners); i.hasNext();) {
 		i.next()->propertyChanged(this, name);
@@ -208,12 +221,16 @@ void Properties::removePropertyByPattern(const QString &namePattern) {
 	QList<QString> removedProperties;
 	
 	bool removed = false;
-	for(QListIterator<QString> i(mProperties.keys()); i.hasNext();) {
-		QString name = i.next();
-		if(expr.exactMatch(name)) {
-			mProperties.remove(name);
-			removedProperties.append(name);
-			removed = true;
+	{
+		QMutexLocker locker(&mMutex);
+	
+		for(QListIterator<QString> i(mProperties.keys()); i.hasNext();) {
+			QString name = i.next();
+			if(expr.exactMatch(name)) {
+				mProperties.remove(name);
+				removedProperties.append(name);
+				removed = true;
+			}
 		}
 	}
 
@@ -234,6 +251,7 @@ void Properties::removePropertyByPattern(const QString &namePattern) {
  * @return a list with all property names.
  */
 QList<QString> Properties::getPropertyNames() const {
+	//QMutexLocker locker(const_cast<QMutex*>(&mMutex));
 	return mProperties.keys();
 }
 
@@ -253,7 +271,8 @@ const QHash<QString, QString>&  Properties::getProperties() const {
  * @return a string containing a list of all properties and their values.
  */
 QString Properties::getPropertyList() const {
-
+	//QMutexLocker locker(const_cast<QMutex*>(&mMutex));
+	
 	QString output;
 
 	QList<QString> keys = mProperties.keys();
@@ -278,6 +297,8 @@ QString Properties::getPropertyList() const {
  * @return true if the list could be written successfully, otherwise false.
  */
 bool Properties::saveToFile(const QString &fileName) {
+	//QMutexLocker locker(&mMutex);
+	
 	QFile file(fileName);
 
 	if(!file.exists()) {
@@ -312,6 +333,8 @@ bool Properties::saveToFile(const QString &fileName) {
  * @return true if successful, otherwise false.
  */
 bool Properties::loadFromFile(const QString &fileName) {
+	//QMutexLocker locker(&mMutex);
+	
 	QFile file(fileName);
 
 	if(file.open(QFile::ReadOnly)) {

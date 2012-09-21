@@ -42,7 +42,7 @@
  ***************************************************************************/
 
 /*
- * Major change: Scripting mechanisms for neuron models and constraints are ready to use. (Summer 2012)
+ * Major change: Mutexes in Properties (Fall 2012)
  */
 
-#define NERD_VERSION "4.0"
+#define NERD_VERSION "4.1"

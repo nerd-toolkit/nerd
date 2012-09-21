@@ -49,11 +49,17 @@
 #include "Event/TriggerEventTask.h"
 #include <QListIterator>
 
+#include <iostream>
+
+using namespace std;
+
 namespace nerd {
 
 
-EventTriggerAction::EventTriggerAction(const QString &actionName, QList<QString> eventNames)
-	: QAction(actionName, 0), mEventNames(eventNames), mActivationBoolValue(0)
+	EventTriggerAction::EventTriggerAction(const QString &actionName, QList<QString> eventNames,
+										   bool disableIfEventNotFound)
+	: QAction(actionName, 0), mEventNames(eventNames), mActivationBoolValue(0), 
+		mDisableIfEventNotFound(disableIfEventNotFound)
 {
 	mName = QString("EventTriggerAction (").append(actionName).append(")");
 	connect(this, SIGNAL(triggered()), this, SLOT(triggerActivated()));
@@ -92,7 +98,9 @@ bool EventTriggerAction::bind() {
 		if(event == 0) {
 			Core::log(QString("EventTriggerAction: Could not find event [")
 					.append(name).append("] [DISABLING FUNCTION]"));
-			ok = false;
+			ok = mDisableIfEventNotFound;
+			setEnabled(false);
+			cerr << "disable function" << endl;
 			break;
 		}
 		else {

@@ -797,7 +797,7 @@ void NetworkVisualization::notifyNeuralNetworkModified() {
 
 void NetworkVisualization::notifyNeuralNetworkParametersChanged() {
 	emit neuralNetworkParametersModified(getNeuralNetwork());
-	update();
+	//update();
 }
 
 bool NetworkVisualization::addKeyListener(KeyListener *listener) {

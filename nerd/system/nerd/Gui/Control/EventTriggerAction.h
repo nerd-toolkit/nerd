@@ -64,7 +64,7 @@ namespace nerd {
 	{
 	Q_OBJECT
 	public:
-		EventTriggerAction(const QString &actionName, QList<QString> eventNames);
+		EventTriggerAction(const QString &actionName, QList<QString> eventNames, bool disableIfEventNotFound = true);
 		EventTriggerAction(const QString &actionName, QList<QString> eventNames,
 							const QString &activationBoolValueName, bool requiredBoolState);
 		virtual ~EventTriggerAction();
@@ -89,6 +89,7 @@ namespace nerd {
 		QString mActivationBoolValueName;
 		BoolValue *mActivationBoolValue;
 		bool mRequiredBoolState;
+		bool mDisableIfEventNotFound;
 	};
 
 }

@@ -94,6 +94,7 @@ namespace nerd {
 		double getBias(qlonglong neuronId);
 		double getWeight(qlonglong synapseId);
 		double getSynapseOutput(qlonglong synapseId);
+		double execSynapseFunction(qlonglong synapseId);
 		double getActivation(qlonglong neuronId);
 		double getLastActivation(qlonglong neuronId);
 		double getOutput(qlonglong neuronId);
@@ -121,6 +122,7 @@ namespace nerd {
 		bool removeNeuron(qlonglong neuronId);
 		bool removeSynapse(qlonglong synapseId);
 		bool removeNeuronGroup(qlonglong groupId);
+		bool removeProperty(qlonglong objectId, const QString &propertyName, bool severeChange = false);
 		
 		bool setTransferFunction(qlonglong neuronId, const QString &transferFunctionName);
 		QString getTransferFunctionName(qlonglong neuronId);
@@ -138,6 +140,7 @@ namespace nerd {
 		
 		double applyTransferFunction(qlonglong neuronId, double activity);
 		double tf(qlonglong neuronId, double activity);
+		double getDistance(QVariantList pos1, QVariantList pos2);
 		
 		//TODO
 		//set and get TF, AF, SF
