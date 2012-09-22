@@ -345,6 +345,15 @@ QPointF Math::centerOfLine(const QPointF &p1, const QPointF &p2, double offset) 
 }
 
 
+/**
+ * TODO Warning, this has to be implemented! Currently, this is only 2D distance.
+ */
+Vector3D Math::centerOfLine(const Vector3D &p1, const Vector3D &p2, double offset) {
+	QPointF pos = Math::centerOfLine(QPointF(p1.getX(), p1.getY()), QPointF(p2.getX(), p2.getY()), offset);
+	return Vector3D(pos.x(), pos.y(), 0.0);
+}
+
+
 }
 
 

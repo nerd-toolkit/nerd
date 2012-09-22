@@ -164,24 +164,24 @@ bool InsertModuleCommand::undoCommand() {
 	mInsertPosition = moduleItem->getGlobalPosition();
 	mModuleSize = moduleItem->getSize();
 	
-	if(mParentModule != 0) {
-		ModuleItem *item = handler->getModuleItem(mParentModule);
-		if(item != 0) {
-			item->removeMemberItem(moduleItem);
-		}
-		mParentModule->removeSubModule(mNewModule);
-	}
-
-	if(handler->removeModuleItem(moduleItem)) {
-		delete moduleItem;
-		Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
-		mVisualizationContext->notifyNeuralNetworkModified();
-		return true;
-	}
+// 	if(mParentModule != 0) {
+// 		ModuleItem *item = handler->getModuleItem(mParentModule);
+// 		if(item != 0) {
+// 			item->removeMemberItem(moduleItem);
+// 		}
+// 		mParentModule->removeSubModule(mNewModule);
+// 	}
+// 
+// 	if(handler->removeModuleItem(moduleItem)) {
+// 		delete moduleItem;
+// 		Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
+// 		mVisualizationContext->notifyNeuralNetworkModified();
+// 		return true;
+// 	}
 
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
 	//mVisualizationContext->notifyNeuralNetworkModified();
-	return false;
+	return true;
 }
 
 

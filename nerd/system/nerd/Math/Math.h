@@ -97,6 +97,7 @@ namespace nerd {
 		static double cos(double value);
 
 		static QPointF centerOfLine(const QPointF &p1, const QPointF &p2, double offset = 0.0);
+		static Vector3D centerOfLine(const Vector3D &p1, const Vector3D &p2, double offset = 0.0);
 
 	public:
 		static const double PI;

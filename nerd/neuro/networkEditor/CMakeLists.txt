@@ -80,6 +80,7 @@ set(nerd_networkEditor_SRCS
 	Gui/NetworkEditorTools/GuessModulePairsByPosition.cpp
 	NetworkEditorConstants.cpp
 	Gui/NetworkEditorCommands/AlignModuleSizeCommand.cpp
+	Gui/NetworkEditorTools/ConnectNeuronsWithSynapsesTool.cpp
 )
 
 set(nerd_networkEditor_MOC_HDRS
@@ -116,6 +117,7 @@ set(nerd_networkEditor_MOC_HDRS
 	Gui/NetworkEditorTools/AddFirstReturnMapPlotterAction.h
 	Gui/NetworkEditor/LoadRecentNetworkAction.h
 	Gui/NetworkEditorTools/GuessModulePairsByPosition.h
+	Gui/NetworkEditorTools/ConnectNeuronsWithSynapsesTool.h
 )
 
 set(nerd_networkEditor_RCS

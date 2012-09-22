@@ -94,6 +94,7 @@ set(nerd_neuralNetwork_SRCS
 	SynapseFunction/ScriptableSynapseFunction.cpp
 	TransferFunction/ScriptableTransferFunction.cpp
 	Constraints/ScriptableConstraint.cpp
+	Util/NetworkConnectivityUtil.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

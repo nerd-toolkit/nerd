@@ -42,54 +42,78 @@
  ***************************************************************************/
 
 
-#ifndef NERDInsertSynapseCommand_H
-#define NERDInsertSynapseCommand_H
+#ifndef NERDConnectNeuronsWithSynapsesTool_H
+#define NERDConnectNeuronsWithSynapsesTool_H
 
 #include <QString>
 #include <QHash>
-#include "Command/Command.h"
+#include "Gui/NetworkEditorTools/NetworkManipulationTool.h"
+#include "Gui/NetworkEditor/VisualizationMouseListener.h"
+#include "ModularNeuralNetwork/NeuronGroup.h"
+#include "Value/StringValue.h"
+#include "Gui/NetworkEditor/NeuralNetworkEditor.h"
 #include "Network/Neuron.h"
-#include <QPointF>
-#include "Gui/NetworkEditor/NetworkVisualization.h"
-#include "Network/Neuron.h"
-#include "Network/SynapseTarget.h"
 
 namespace nerd {
 
+	struct SynapseSet;
+	class NeuralNetworkToolbox;
+	
 	/**
-	 * InsertSynapseCommand.
-	 * 
-	 * Adds one of more synapses to the network. 
-	 * The source and target for each synapse have to be given.
-	 * Positions are optional. If no position is given, then the default position (middle between
-	 * source and target) is used.
+	 * ConnectNeuronsWithSynapsesTool.
 	 *
 	 */
-	class InsertSynapseCommand : public Command {
+	class ConnectNeuronsWithSynapsesTool  : public NetworkManipulationTool, 
+											public VisualizationMouseListener
+	{
+		Q_OBJECT
+		
 	public:
-		InsertSynapseCommand(NetworkVisualization *context, Synapse *synapse, 
-						Neuron *sourceNeuron, SynapseTarget *target, QPointF position);
-		InsertSynapseCommand(NetworkVisualization *context, QList<Synapse*> synapses, 
-							 QList<Neuron*> sourceNeurons, QList<SynapseTarget*> targets, QList<Vector3D> positions = QList<Vector3D>());
-		virtual ~InsertSynapseCommand();
-
-		virtual bool isUndoable() const;
-
-		virtual bool doCommand();
-		virtual bool undoCommand();
-
+		
+		static const int MODUS_BIDIRECTIONAL = 2;
+		static const int MODUS_IGNORE_INTERFACES = 4;
+		static const int MODUS_SINGLE_GROUP = 8;
+		static const int MODUS_SELECTED_ELEMENTS = 16;
+		
+	public:
+		ConnectNeuronsWithSynapsesTool(NeuralNetworkEditor *editor, NeuralNetworkToolbox *owner, int modus);
+		virtual ~ConnectNeuronsWithSynapsesTool();
+		
+		virtual void clear();
+		virtual void activate(NetworkVisualization *visu);
+		virtual QString getStatusMessage();
+		
+		virtual void mouseButtonPressed(NetworkVisualization *source, 
+										QMouseEvent *event, const QPointF &globalPosition);
+		virtual void mouseButtonReleased(NetworkVisualization *source, 
+										 QMouseEvent *event, const QPointF &globalPosition);
+		virtual void mouseDoubleClicked(NetworkVisualization *source,
+										QMouseEvent *event, const QPointF &globalPosition);
+		virtual void mouseDragged(NetworkVisualization *source, 
+								  QMouseEvent *event, const QPointF &globalDistance);
+		
+		virtual void setModus(int modus);
+		virtual void setBasicName(const QString &name);
+		
+		void interconnectSingleGroup(const QList<Neuron*> neurons);
+		void connectElements(const QList<Neuron*> &source, const QList<SynapseTarget*> &target);
+		
 	private:
-		NetworkVisualization *mVisualizationContext;	
-		QList<Synapse*> mNewSynapses;
-		QList<Neuron*> mSourceNeurons;
-		QList<SynapseTarget*> mTargets;
-		QList<Vector3D> mInsertPositions;
+		void createInsertSynapseCommand(SynapseSet set);
+		
+	private:
+		QString mBaseName;
+		int mModus;
+		NeuralNetworkEditor *mEditor;
+		NeuronGroup *mGroup1;
+		NeuronGroup *mGroup2;
+		int mCurrentState;
+		SynapseTarget *mTargetElement;
 	};
-
+	
 }
 
 #endif
-
 
 
 

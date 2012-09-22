@@ -42,54 +42,53 @@
  ***************************************************************************/
 
 
-#ifndef NERDInsertSynapseCommand_H
-#define NERDInsertSynapseCommand_H
+
+#ifndef NERDNetworkConnectivityUtil_H
+#define NERDNetworkConnectivityUtil_H
 
 #include <QString>
 #include <QHash>
-#include "Command/Command.h"
-#include "Network/Neuron.h"
+#include "Network/NeuralNetwork.h"
+#include "Network/NeuralNetworkElement.h"
+#include "ModularNeuralNetwork/NeuronGroup.h"
+#include "Network/Synapse.h"
 #include <QPointF>
-#include "Gui/NetworkEditor/NetworkVisualization.h"
-#include "Network/Neuron.h"
-#include "Network/SynapseTarget.h"
+#include <QSizeF>
 
 namespace nerd {
-
+	
+	struct SynapseSet {
+		QList<Synapse*> mSynapses;
+		QList<Neuron*> mSources;
+		QList<SynapseTarget*> mTargets;
+		QList<Vector3D> mPositions;
+	};
+	
 	/**
-	 * InsertSynapseCommand.
-	 * 
-	 * Adds one of more synapses to the network. 
-	 * The source and target for each synapse have to be given.
-	 * Positions are optional. If no position is given, then the default position (middle between
-	 * source and target) is used.
+	 * NetworkConnectivityUtil.
 	 *
 	 */
-	class InsertSynapseCommand : public Command {
+	class NetworkConnectivityUtil {
 	public:
-		InsertSynapseCommand(NetworkVisualization *context, Synapse *synapse, 
-						Neuron *sourceNeuron, SynapseTarget *target, QPointF position);
-		InsertSynapseCommand(NetworkVisualization *context, QList<Synapse*> synapses, 
-							 QList<Neuron*> sourceNeurons, QList<SynapseTarget*> targets, QList<Vector3D> positions = QList<Vector3D>());
-		virtual ~InsertSynapseCommand();
-
-		virtual bool isUndoable() const;
-
-		virtual bool doCommand();
-		virtual bool undoCommand();
-
-	private:
-		NetworkVisualization *mVisualizationContext;	
-		QList<Synapse*> mNewSynapses;
-		QList<Neuron*> mSourceNeurons;
-		QList<SynapseTarget*> mTargets;
-		QList<Vector3D> mInsertPositions;
+		
+		static const int MODUS_UNIDIRECTIONAL = 1;
+		static const int MODUS_BIDIRECTIONAL = 2;
+		static const int MODUS_IGNORE_INTERFACES = 4;
+		static const int MODUS_IGNORE_MODULE_BOUNDARIES = 8;
+		
+	public:
+// 		static SynapseSet fullyConnectGroups(NeuronGroup *sourceGroup, NeuronGroup *targetGroup, int modus);
+		static SynapseSet fullyConnectElements(NeuralNetwork *network, QList<Neuron*> sources, QList<SynapseTarget*> targets, int modus);
+// 		static SynapseSet fullyConnectGroup(NeuronGroup *group, int modus);
+		
+		static SynapseSet connectElementsUnidirectional(NeuralNetwork *network, QList<Neuron*> sources, 
+							QList<SynapseTarget*> targets, int modus, double defaultWeight = 0.0, 
+							SynapseFunction *defaultSynapseFunction = 0);
 	};
-
+	
 }
 
 #endif
-
 
 
 

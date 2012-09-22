@@ -261,16 +261,16 @@ void PictureSeriesCreator::deactivate() {
 
 		if(mVideoCreationCommand->get().trimmed() == "") {
 			QStringList args;
-			/* // old arguments
-			args << "mf://*.png"
-				<< "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()
-						 + ":h=" + mVideoResolutionHeight->getValueAsString() 
-						 + ":fps=" + QString::number(framePerSecond) + ":type=png"
-				<< "-ovc" << "lavc"
-				<< "-lavcopts" << "vcodec=mpeg4:mbd=2:trell"
-				<< "-oac" << "copy"
-				<< "-o" << mOutputFileName->get();
-			*/
+// 			// old arguments
+// 			args << "mf://*.png"
+// 				<< "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()
+// 						 + ":h=" + mVideoResolutionHeight->getValueAsString() 
+// 						 + ":fps=" + QString::number(framePerSecond) + ":type=png"
+// 				<< "-ovc" << "lavc"
+// 				<< "-lavcopts" << "vcodec=mpeg4:mbd=2:trell"
+// 				<< "-oac" << "copy"
+// 				<< "-o" << mOutputFileName->get();
+			
 			//new arguments should have a better quality?
 			args << "mf://*.png"
 				 << "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()

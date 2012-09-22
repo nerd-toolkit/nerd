@@ -65,7 +65,7 @@
 #include "Gui/NetworkEditorTools/ReplaceModuleTool.h"
 #include "Gui/NetworkEditorTools/GuessModulePairs.h"
 #include "Gui/NetworkEditorTools/GuessModulePairsByPosition.h"
-
+#include "Gui/NetworkEditorTools/ConnectNeuronsWithSynapsesTool.h"
 
 
 namespace nerd {
@@ -121,6 +121,13 @@ namespace nerd {
 		void useGuessGroupIdsTool();
 		void useGuessGroupIdsByPositionTool();
 		void updateViewMode();
+		void fullyConnectGroupsBidirectional();
+		void fullyConnectGroupsUniDirectional();
+		void fullyConnectGroupsBidirectionalIgnoreInterfaces();
+		void fullyConnectGroupsUniDirectionalIgnoreInterfaces();
+		void fullyConnectSelectedNeurons();
+		void fullyConnectSelectedNeuronsIgnoreInterfaces();
+		void fullyConnectSingleGroup();
 
 	protected:
 		virtual void addNetworkMenu();
@@ -151,6 +158,7 @@ namespace nerd {
 		ReplaceModuleTool *mReplaceModuleTool;
 		GuessModulePairs *mGuessGroupPairsTool;
 		GuessModulePairsByPosition *mGuessGroupPairsByPositionTool;
+		ConnectNeuronsWithSynapsesTool *mConnectNeuronsWithSynapsesTool;
 		
 	};
 

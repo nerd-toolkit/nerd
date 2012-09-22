@@ -102,6 +102,7 @@ NeuralNetworkToolbox::NeuralNetworkToolbox(NeuralNetworkEditor *owner)
 	mReplaceModuleTool = new ReplaceModuleTool(this);
 	mGuessGroupPairsTool = new GuessModulePairs(owner, this);
 	mGuessGroupPairsByPositionTool = new GuessModulePairsByPosition(owner, this);
+	mConnectNeuronsWithSynapsesTool = new ConnectNeuronsWithSynapsesTool(owner, this, 0);
 
 	addNetworkMenu();
 }
@@ -429,7 +430,50 @@ void NeuralNetworkToolbox::useGuessGroupIdsByPositionTool() {
 }
 
 void NeuralNetworkToolbox::updateViewMode() {
+}
 
+void NeuralNetworkToolbox::fullyConnectGroupsBidirectional() {
+	mConnectNeuronsWithSynapsesTool->setModus(ConnectNeuronsWithSynapsesTool::MODUS_BIDIRECTIONAL);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Connect Groups Bidirectionally. ");
+	setTool(mConnectNeuronsWithSynapsesTool);
+}
+
+void NeuralNetworkToolbox::fullyConnectGroupsUniDirectional() {
+	mConnectNeuronsWithSynapsesTool->setModus(0);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Connect Groups Unidirectionally. ");
+	setTool(mConnectNeuronsWithSynapsesTool);
+}
+
+void NeuralNetworkToolbox::fullyConnectGroupsBidirectionalIgnoreInterfaces() {
+	mConnectNeuronsWithSynapsesTool->setModus(ConnectNeuronsWithSynapsesTool::MODUS_BIDIRECTIONAL 
+						| ConnectNeuronsWithSynapsesTool::MODUS_IGNORE_INTERFACES);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Connect Groups Bidirectionally (Ignore Interfaces). ");
+	setTool(mConnectNeuronsWithSynapsesTool);
+}
+
+void NeuralNetworkToolbox::fullyConnectGroupsUniDirectionalIgnoreInterfaces() {
+	mConnectNeuronsWithSynapsesTool->setModus(ConnectNeuronsWithSynapsesTool::MODUS_IGNORE_INTERFACES);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Connect Groups Unidirectionally (Ignore Interfaces). ");
+	setTool(mConnectNeuronsWithSynapsesTool);
+}
+
+void NeuralNetworkToolbox::fullyConnectSelectedNeurons() {
+	mConnectNeuronsWithSynapsesTool->setModus(ConnectNeuronsWithSynapsesTool::MODUS_SELECTED_ELEMENTS);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Connect Selected Neurons. ");
+	setTool(mConnectNeuronsWithSynapsesTool);
+}
+
+void NeuralNetworkToolbox::fullyConnectSelectedNeuronsIgnoreInterfaces() {
+	mConnectNeuronsWithSynapsesTool->setModus(ConnectNeuronsWithSynapsesTool::MODUS_SELECTED_ELEMENTS 
+						| ConnectNeuronsWithSynapsesTool::MODUS_IGNORE_INTERFACES);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Connect Selected Neurons (Ignore Interfaces). ");
+	setTool(mConnectNeuronsWithSynapsesTool);
+}
+
+void NeuralNetworkToolbox::fullyConnectSingleGroup() {
+	mConnectNeuronsWithSynapsesTool->setModus(ConnectNeuronsWithSynapsesTool::MODUS_SINGLE_GROUP);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Interconnect Single Group. ");
+	setTool(mConnectNeuronsWithSynapsesTool);
 }
 
 
@@ -468,6 +512,38 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	connect(cloneObjectsAction, SIGNAL(triggered()),
 			this, SLOT(useCopyPasteTool()));
 
+	mNetworkMenu->addSeparator();
+	
+	//add connect/create synapse operators
+	
+	QMenu *connectivityMenu = mNetworkMenu->addMenu("Connectivity");
+	
+	QAction *connectSelectedNeurons = connectivityMenu->addAction("All Selected");
+	connectSelectedNeurons->setToolTip("Fully connects all selected elements.");
+	connect(connectSelectedNeurons, SIGNAL(triggered()),
+			this, SLOT(fullyConnectSelectedNeurons()));
+	
+	QAction *connectSingleGroup = connectivityMenu->addAction("Single Group");
+	connectSingleGroup->setToolTip("Fully interconnects a single group.");
+	connect(connectSingleGroup, SIGNAL(triggered()),
+			this, SLOT(fullyConnectSingleGroup()));
+	
+// 	QAction *connectAllWithinGroup = connectivityMenu->addAction("All in Group");
+// 	connectAllWithinGroup->setToolTip("Fully connects all neurons in a group.");
+// 	connect(connectAllWithinGroup, SIGNAL(triggered()),
+// 			this, SLOT(fullyConnect()));
+	
+	QAction *connectGroupsUnidirectional = connectivityMenu->addAction("Groups Unidir.");
+	connectGroupsUnidirectional->setToolTip("Connects two groups unidirectionally");
+	connect(connectGroupsUnidirectional, SIGNAL(triggered()),
+			this, SLOT(fullyConnectGroupsUniDirectional()));
+	
+	QAction *connectGroupsBidirectional = connectivityMenu->addAction("Groups Bidir.");
+	connectGroupsBidirectional->setToolTip("Connects two groups bidirectionally");
+	connect(connectGroupsBidirectional, SIGNAL(triggered()),
+			this, SLOT(fullyConnectGroupsBidirectional()));
+	
+	
 	mNetworkMenu->addSeparator();
 
 // 	QAction *removeObjectsAction = mNetworkMenu->addAction("&Delete Object");

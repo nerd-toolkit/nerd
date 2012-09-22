@@ -50,6 +50,7 @@
 #include "Gui/NetworkEditor/SimpleNetworkVisualizationHandler.h"
 #include "Network/Neuro.h"
 #include "Util/NeuralNetworkUtil.h"
+#include "Math/Math.h"
 
 using namespace std;
 
@@ -61,9 +62,19 @@ namespace nerd {
  */
 InsertSynapseCommand::InsertSynapseCommand(NetworkVisualization *context, Synapse *synapse, 
 						Neuron *sourceNeuron, SynapseTarget *target, QPointF position)
-	: Command("Insert Synapse"), mVisualizationContext(context), 
-	  mNewSynapse(synapse), mSourceNeuron(sourceNeuron),
-	  mTarget(target), mInsertPosition(position)
+	: Command("Insert Synapse"), mVisualizationContext(context)
+{
+	mNewSynapses.append(synapse);
+	mSourceNeurons.append(sourceNeuron);
+	mTargets.append(target);
+	mInsertPositions.append(Vector3D(position.x(), position.y(), 0.0));
+}
+
+InsertSynapseCommand::InsertSynapseCommand(NetworkVisualization *context, QList<Synapse*> synapses, 
+					 QList<Neuron*> sourceNeurons, QList<SynapseTarget*> targets, 
+					 QList<Vector3D> positions)
+	: Command("Insert Synapses"), mVisualizationContext(context), mNewSynapses(synapses),
+		mSourceNeurons(sourceNeurons), mTargets(targets), mInsertPositions(positions)
 {
 }
 
@@ -83,7 +94,13 @@ bool InsertSynapseCommand::isUndoable() const {
 
 bool InsertSynapseCommand::doCommand() {
 
-	if(mSourceNeuron == 0 || mTarget == 0 || mNewSynapse == 0 || mVisualizationContext == 0) {
+	if(mSourceNeurons.empty() 
+		|| mTargets.empty() 
+		|| mNewSynapses.empty() 
+		|| mSourceNeurons.size() != mTargets.size()
+		|| mTargets.size() != mNewSynapses.size()
+		|| mVisualizationContext == 0) 
+	{
 		return false;
 	}	
 	SimpleNetworkVisualizationHandler *handler = dynamic_cast<SimpleNetworkVisualizationHandler*>(
@@ -99,41 +116,74 @@ bool InsertSynapseCommand::doCommand() {
 	if(network == 0) {
 		return false;
 	}
+	
+	bool ok = true;
+	for(int i = 0; i < mNewSynapses.size(); ++i) {
+		
+		Synapse *synapse = mNewSynapses.at(i);
+		Neuron *source = mSourceNeurons.at(i);
+		SynapseTarget *target = mTargets.at(i);
 
-	if(network->getSynapses().contains(mNewSynapse)) {
-		return false;
-	}
-	if(!network->getNeurons().contains(mSourceNeuron) 
-		|| (!network->getSynapses().contains(dynamic_cast<Synapse*>(mTarget))
-			&& (!network->getNeurons().contains(dynamic_cast<Neuron*>(mTarget)))))
-	{
-		return false;
-	}
+		if(network->getSynapses().contains(synapse)) {
+			ok = false;
+			continue;
+		}
+		if(!network->getNeurons().contains(source) 
+			|| (!network->getSynapses().contains(dynamic_cast<Synapse*>(target))
+				&& (!network->getNeurons().contains(dynamic_cast<Neuron*>(target)))))
+		{
+			ok = false;
+			continue;
+		}
 
+		//check for position
+		Vector3D position;
+		if(i < mInsertPositions.size()) {
+			position = mInsertPositions.at(i);
+		}
+		else {
+			//create default
+			Vector3D sourcePos = source->getPosition();
+			Vector3D targetPos = target->getPosition();
+			QPointF newPos = Math::centerOfLine(QPointF(sourcePos.getX(), sourcePos.getY()), 
+												QPointF(targetPos.getX(), targetPos.getY()));
+			position = Vector3D(newPos.x(), newPos.y(), 0.0);
+		}
 
-	NeuralNetworkUtil::setNetworkElementLocationProperty(mNewSynapse, mInsertPosition.x(),
-														 mInsertPosition.y(), 0.0);
-	mNewSynapse->setSource(mSourceNeuron);
-	mNewSynapse->setTarget(mTarget);
+		NeuralNetworkUtil::setNetworkElementLocationProperty(
+						synapse, position.getX(), position.getY(), position.getZ());
+		
+		synapse->setSource(source);
+		synapse->setTarget(target);
 
-	if(!mTarget->addSynapse(mNewSynapse)) {
-		return false;
+		if(!target->addSynapse(synapse)) {
+			ok = false;
+			continue;
+		}
 	}
 
 	//handler->rebuildView();
 	QList<NeuralNetworkElement*> elems;
-	elems.append(mNewSynapse);
+	for(int i = 0; i < mNewSynapses.size(); ++i) {
+		elems.append(mNewSynapses.at(i));
+	}
 	handler->setSelectionHint(elems);
 
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
-	//mVisualizationContext->notifyNeuralNetworkModified();
 
-	return true;
+	return ok;
 }
 
 
 bool InsertSynapseCommand::undoCommand() {
-	if(mSourceNeuron == 0 || mTarget == 0 || mNewSynapse == 0 || mVisualizationContext == 0) {
+	
+	if(mSourceNeurons.empty() 
+		|| mTargets.empty() 
+		|| mNewSynapses.empty() 
+		|| mSourceNeurons.size() != mTargets.size()
+		|| mTargets.size() != mNewSynapses.size()
+		|| mVisualizationContext == 0) 
+	{
 		return false;
 	}	
 	SimpleNetworkVisualizationHandler *handler = dynamic_cast<SimpleNetworkVisualizationHandler*>(
@@ -143,40 +193,49 @@ bool InsertSynapseCommand::undoCommand() {
 		return false;
 	}
 	QMutexLocker guard(mVisualizationContext->getSelectionMutex());
-
-	SynapseItem *synapseItem = handler->getSynapseItem(mNewSynapse);
-	if(synapseItem == 0) {
-		return false;
-	}
-	mInsertPosition = synapseItem->getGlobalPosition();
-
-	NeuralNetwork *network = handler->getNeuralNetwork();
-
-	if(network == 0) {
-		return false;
-	}
-	if(!network->getSynapses().contains(mNewSynapse)) {
-		return false;
-	}
-	if(!network->getNeurons().contains(mSourceNeuron) 
-		|| (!network->getSynapses().contains(dynamic_cast<Synapse*>(mTarget))
-			&& (!network->getNeurons().contains(dynamic_cast<Neuron*>(mTarget)))))
-	{
-		return false;
-	}
-
-	//remove synapse
-	if(!mTarget->removeSynapse(mNewSynapse)) {
-		return false;
-	}
-	mNewSynapse->setSource(0);
-	mNewSynapse->setTarget(0);
-
-	//handler->rebuildView();
-	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
-	//mVisualizationContext->notifyNeuralNetworkModified();
 	
-	return true;
+	mInsertPositions.clear();
+	
+	bool ok = true;
+
+	//go from back to front to support the addition of higher order synapse assemblies.
+	for(int i = mNewSynapses.size() - 1; i >= 0; --i) {
+		
+		Synapse *synapse = mNewSynapses.at(i);
+		Neuron *source = mSourceNeurons.at(i);
+		SynapseTarget *target = mTargets.at(i);
+
+		mInsertPositions.prepend(synapse->getPosition());
+
+		NeuralNetwork *network = handler->getNeuralNetwork();
+
+		if(network == 0) {
+			return false;
+		}
+		if(!network->getSynapses().contains(synapse)) {
+			ok = false;
+			continue;
+		}
+		if(!network->getNeurons().contains(source) 
+			|| (!network->getSynapses().contains(dynamic_cast<Synapse*>(target))
+				&& (!network->getNeurons().contains(dynamic_cast<Neuron*>(target)))))
+		{
+			ok = false;
+			continue;
+		}
+
+		//remove synapse
+		if(!target->removeSynapse(synapse)) {
+			return false;
+		}
+		synapse->setSource(0);
+		synapse->setTarget(0);
+		
+	}
+
+	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
+	
+	return ok;
 }
 
 
