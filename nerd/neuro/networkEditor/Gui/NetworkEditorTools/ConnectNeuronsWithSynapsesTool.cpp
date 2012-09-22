@@ -151,6 +151,52 @@ namespace nerd {
 			return;
 		}
 		
+		
+		if(mTargetElement == 0) {
+			Neuron *selectedNeuron = 0;
+			Synapse *selectedSynapse = 0;
+			QList<PaintItem*> items = mVisuContext->getPaintItems();
+			for(int i = items.size() -1; i >= 0; --i) {
+				PaintItem *item = items.at(i);
+				NeuronItem *neuron = dynamic_cast<NeuronItem*>(item);
+				SynapseItem *synapse = dynamic_cast<SynapseItem*>(item);
+				if(neuron != 0 && neuron->isHit(globalPosition, event->buttons(), mVisuContext->getScaling())) {
+					selectedNeuron = neuron->getNeuron();
+					break;
+				}
+				else if(synapse != 0 && synapse->isHit(globalPosition, event->buttons(), mVisuContext->getScaling())) {
+					selectedSynapse = synapse->getSynapse();
+					break;
+				}
+			}
+			if(selectedNeuron != 0 || selectedSynapse != 0) {
+			
+				mTargetElement = selectedNeuron;
+				if(mTargetElement == 0) {
+					mTargetElement = selectedSynapse;
+				}
+				
+				if(mTargetElement != 0 && mGroup1 != 0) {
+					//we have a module and a single object!
+					
+					QList<Neuron*> sources = mGroup1->getNeurons();
+					QList<SynapseTarget*> targets;
+					targets.append(mTargetElement);
+					
+					connectElements(sources, targets);
+					
+					emit done();
+					return;
+				}
+				else if(mTargetElement != 0 && mGroup1 == 0) {
+					
+					updateStatusMessage(mBaseName + " Select target(s)");
+					return;
+				}
+			}
+			
+		}
+		
 		if(mGroup1 == 0 || mGroup2 == 0) {
 			
 			QPointF pos = globalPosition;
@@ -230,52 +276,6 @@ namespace nerd {
 				updateStatusMessage(mBaseName + " Select target(s)");
 				return;
 			}
-		}
-		if(mTargetElement == 0) {
-			Neuron *selectedNeuron = 0;
-			Synapse *selectedSynapse = 0;
-			QList<PaintItem*> items = mVisuContext->getPaintItems();
-			for(int i = items.size() -1; i >= 0; --i) {
-				PaintItem *item = items.at(i);
-				NeuronItem *neuron = dynamic_cast<NeuronItem*>(item);
-				SynapseItem *synapse = dynamic_cast<SynapseItem*>(item);
-				if(neuron != 0 && neuron->isHit(globalPosition, event->buttons(), mVisuContext->getScaling())) {
-					selectedNeuron = neuron->getNeuron();
-					break;
-				}
-				else if(synapse != 0 && synapse->isHit(globalPosition, event->buttons(), mVisuContext->getScaling())) {
-					selectedSynapse = synapse->getSynapse();
-					break;
-				}
-			}
-			if(selectedNeuron == 0 && selectedSynapse == 0) {
-				emit done();
-				return;
-			}
-
-			mTargetElement = selectedNeuron;
-			if(mTargetElement == 0) {
-				mTargetElement = selectedSynapse;
-			}
-
-			if(mTargetElement != 0 && mGroup1 != 0) {
-				//we have a module and a single object!
-
-				QList<Neuron*> sources = mGroup1->getNeurons();
-				QList<SynapseTarget*> targets;
-				targets.append(mTargetElement);
-				
-				connectElements(sources, targets);
-				
-				emit done();
-				return;
-			}
-			else if(mTargetElement != 0 && mGroup1 == 0) {
-
-				updateStatusMessage(mBaseName + " Select target(s)");
-				return;
-			}
-			
 		}
 		emit done();
 		
