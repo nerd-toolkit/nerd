@@ -42,56 +42,54 @@
  ***************************************************************************/
 
 
+#ifndef NERDNeuroModulator_H
+#define NERDNeuroModulator_H
 
-#ifndef NERDNetworkConnectivityUtil_H
-#define NERDNetworkConnectivityUtil_H
 
-#include <QString>
-#include <QHash>
-#include "Network/NeuralNetwork.h"
-#include "Network/NeuralNetworkElement.h"
-#include "ModularNeuralNetwork/NeuronGroup.h"
-#include "Network/Synapse.h"
-#include <QPointF>
-#include <QSizeF>
+#include "Core/ParameterizedObject.h"
+#include "Network/ObservableNetworkElement.h"
+#include "Math/Vector3D.h"
 
 namespace nerd {
-	
-	struct SynapseSet {
-		QList<Synapse*> mSynapses;
-		QList<Neuron*> mSources;
-		QList<SynapseTarget*> mTargets;
-		QList<Vector3D> mPositions;
-	};
-	
+
+	class Neuron;
+
 	/**
-	 * NetworkConnectivityUtil.
-	 *
+	 * NeuroModulator
 	 */
-	class NetworkConnectivityUtil {
+	class NeuroModulator {
 	public:
+		NeuroModulator();
+		NeuroModulator(const NeuroModulator &other);
+		virtual ~NeuroModulator();
+
+		virtual NeuroModulator* createCopy();
+		virtual void reset(Neuron *owner);
+		virtual void update(Neuron *owner);
 		
-		static const int MODUS_UNIDIRECTIONAL = 1;
-		static const int MODUS_BIDIRECTIONAL = 2;
-		static const int MODUS_IGNORE_INTERFACES = 4;
-		static const int MODUS_IGNORE_MODULE_BOUNDARIES = 8;
-		static const int MODUS_IGNORE_PROPERTIES = 16;
+		virtual void setConcentration(int type, double concentration, Neuron *owner);
+		virtual double getConcentration(int type, Neuron *owner);
+		virtual double getConcentrationAt(int type, Vector3D position, Neuron *owner);
+		virtual QList<int> getModulatorTypes() const;
 		
-	public:
-		static SynapseSet fullyConnectElements(NeuralNetwork *network, QList<Neuron*> sources, 
-											    QList<SynapseTarget*> targets, int modus);
-		static SynapseSet connectElementsUnidirectional(NeuralNetwork *network, QList<Neuron*> sources, 
-							QList<SynapseTarget*> targets, int modus, double defaultWeight = 0.0, 
-							SynapseFunction *defaultSynapseFunction = 0);
+		virtual void setRadius(int type, double radius, Neuron *owner);
+		virtual double getRadius(int type, Neuron *owner) const;
 		
-		static QList<Neuron*> getValidSourceNeurons(Neuron *target, ModularNeuralNetwork *net);
-		static QList<Neuron*> getValidTargetNeurons(Neuron *source, ModularNeuralNetwork *net);
-		static int getInterfaceLevel(Neuron *neuron, const QString &moduleInterfaceType);
+		virtual void setModus(int modus);
+		virtual int getModus() const;
+		
+		virtual bool equals(NeuroModulator *modulator) const;
+		
+	protected:
+		QHash<int, double> mConcentrations;
+		QHash<int, double> mRadii;
+		int mModus;
+		
+
 	};
-	
+
 }
 
 #endif
-
 
 

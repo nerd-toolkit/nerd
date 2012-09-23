@@ -54,8 +54,8 @@ using namespace std;
 namespace nerd {
 
 ScriptableActivationFunction::ScriptableActivationFunction()
-	: ScriptingContext("Scripted"), ActivationFunction("Scripted"), mErrorState(0), mOwner(0),
-	  mFirstExecution(true)
+	: ScriptingContext("Scripted"), NeuroModulatorActivationFunction("Scripted"), 
+	  mErrorState(0), mOwner(0), mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
@@ -94,8 +94,8 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 
 ScriptableActivationFunction::ScriptableActivationFunction(
 			const ScriptableActivationFunction &other)
-	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), ActivationFunction(other),
-	  mErrorState(0), mOwner(0), mFirstExecution(true)
+	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), 
+	  NeuroModulatorActivationFunction(other), mErrorState(0), mOwner(0), mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
@@ -136,12 +136,12 @@ ActivationFunction* ScriptableActivationFunction::createCopy() const {
 }
 
 QString ScriptableActivationFunction::getName() const {
-	return ActivationFunction::getName();
+	return NeuroModulatorActivationFunction::getName();
 }
 
 void ScriptableActivationFunction::valueChanged(Value *value) {
 	ScriptingContext::valueChanged(value);
-	ActivationFunction::valueChanged(value);
+	NeuroModulatorActivationFunction::valueChanged(value);
 	
 	if(value == mScriptCode) {
 		//additionally call the reset function in the script 
@@ -158,14 +158,16 @@ void ScriptableActivationFunction::resetScriptContext() {
 
 
 void ScriptableActivationFunction::reset(Neuron *neuron) {
+	NeuroModulatorActivationFunction::reset(neuron);
 	mOwner = neuron;
 	ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(neuron->getOwnerNetwork());
 	if(mNetworkManipulator != 0) {
 		mNetworkManipulator->setNeuralNetwork(network);
 	}
-
+	
 	resetScriptContext();
 	executeScriptFunction("reset();");
+	
 }
 
 
@@ -173,6 +175,9 @@ double ScriptableActivationFunction::calculateActivation(Neuron *owner) {
 	if(owner == 0) {
 		return 0.0;
 	}
+	//just call the parent function to update the neuroModulators, but ignore
+	//the return value of this method (is constant 0.0)
+	NeuroModulatorActivationFunction::calculateActivation(owner);
 
 	if(mFirstExecution) {
 		reset(owner);
@@ -185,7 +190,7 @@ double ScriptableActivationFunction::calculateActivation(Neuron *owner) {
 }
 
 bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction) const {
-	if(ActivationFunction::equals(activationFunction) == false) {
+	if(NeuroModulatorActivationFunction::equals(activationFunction) == false) {
 		return false;
 	}
 	ScriptableActivationFunction *af =
@@ -212,6 +217,66 @@ bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction
 	
 	return true;
 }
+
+
+void ScriptableActivationFunction::enableNeuroModulators(bool enable, NeuroModulator *modulator) {
+	if(enable) {
+		if(modulator != 0) {
+			setNeuroModulator(modulator);
+		}
+		else {
+			if(mNeuroModulator == 0) {
+				setNeuroModulator();
+			}
+			//don't change the EXISTING modulator object, if enable == true and no modulator given
+		}
+	}
+	else {
+		//diable modulators.
+		setNeuroModulator(0);
+	}
+}
+
+void ScriptableActivationFunction::setModulatorRadius(int type, double radius) {
+	if(mNeuroModulator != 0) {
+		mNeuroModulator->setRadius(type, radius, mOwner);
+	}
+}
+
+double ScriptableActivationFunction::getModulatorRadius(int type) {
+	if(mNeuroModulator == 0) {
+		return 0.0;
+	}
+	return mNeuroModulator->getRadius(type, mOwner);
+}
+
+void ScriptableActivationFunction::setModulatorConcentration(int type, double concentration) {
+	if(mNeuroModulator != 0) {
+		mNeuroModulator->setConcentration(type, concentration, mOwner);
+	}
+}
+
+double ScriptableActivationFunction::getModulatorConcentration(int type) {
+	if(mNeuroModulator == 0) {
+		return 0.0;
+	}
+	return mNeuroModulator->getConcentration(type, mOwner);
+}
+
+void ScriptableActivationFunction::setModulatorModus(int modus) {
+	if(mNeuroModulator != 0) {
+		mNeuroModulator->setModus(modus);
+	}
+}
+
+int ScriptableActivationFunction::getModulatorModus() {
+	if(mNeuroModulator == 0) {
+		return -1;
+	}
+	return mNeuroModulator->getModus();
+}
+
+
 
 
 

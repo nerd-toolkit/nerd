@@ -42,56 +42,45 @@
  ***************************************************************************/
 
 
+#ifndef NERDNeuroModulatorActivationFunction_H
+#define NERDNeuroModulatorActivationFunction_H
 
-#ifndef NERDNetworkConnectivityUtil_H
-#define NERDNetworkConnectivityUtil_H
 
-#include <QString>
-#include <QHash>
-#include "Network/NeuralNetwork.h"
-#include "Network/NeuralNetworkElement.h"
-#include "ModularNeuralNetwork/NeuronGroup.h"
-#include "Network/Synapse.h"
-#include <QPointF>
-#include <QSizeF>
+#include "ActivationFunction/ActivationFunction.h"
+#include "Value/DoubleValue.h"
+#include "Value/NormalizedDoubleValue.h"
+#include "NeuroModulation/NeuroModulator.h"
 
 namespace nerd {
 	
-	struct SynapseSet {
-		QList<Synapse*> mSynapses;
-		QList<Neuron*> mSources;
-		QList<SynapseTarget*> mTargets;
-		QList<Vector3D> mPositions;
-	};
-	
+	class Neuron;
+
 	/**
-	 * NetworkConnectivityUtil.
-	 *
+	 * NeuroModulatorActivationFunction
 	 */
-	class NetworkConnectivityUtil {
+	class NeuroModulatorActivationFunction : public ActivationFunction {
 	public:
+		NeuroModulatorActivationFunction(const QString &name);
+		NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other);
+		virtual ~NeuroModulatorActivationFunction();
+
+		virtual ActivationFunction* createCopy() const = 0;
 		
-		static const int MODUS_UNIDIRECTIONAL = 1;
-		static const int MODUS_BIDIRECTIONAL = 2;
-		static const int MODUS_IGNORE_INTERFACES = 4;
-		static const int MODUS_IGNORE_MODULE_BOUNDARIES = 8;
-		static const int MODUS_IGNORE_PROPERTIES = 16;
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
 		
-	public:
-		static SynapseSet fullyConnectElements(NeuralNetwork *network, QList<Neuron*> sources, 
-											    QList<SynapseTarget*> targets, int modus);
-		static SynapseSet connectElementsUnidirectional(NeuralNetwork *network, QList<Neuron*> sources, 
-							QList<SynapseTarget*> targets, int modus, double defaultWeight = 0.0, 
-							SynapseFunction *defaultSynapseFunction = 0);
+		virtual void setNeuroModulator(NeuroModulator *modulator = new NeuroModulator());
+		virtual NeuroModulator* getNeuroModulator() const;
 		
-		static QList<Neuron*> getValidSourceNeurons(Neuron *target, ModularNeuralNetwork *net);
-		static QList<Neuron*> getValidTargetNeurons(Neuron *source, ModularNeuralNetwork *net);
-		static int getInterfaceLevel(Neuron *neuron, const QString &moduleInterfaceType);
+		virtual bool equals(ActivationFunction *activationFunction) const;
+		
+	protected:
+		NeuroModulator *mNeuroModulator;
+
 	};
-	
+
 }
 
 #endif
-
 
 

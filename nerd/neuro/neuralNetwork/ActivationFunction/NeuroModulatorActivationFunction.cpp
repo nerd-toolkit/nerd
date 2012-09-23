@@ -41,57 +41,61 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-
-
-#ifndef NERDNetworkConnectivityUtil_H
-#define NERDNetworkConnectivityUtil_H
-
-#include <QString>
-#include <QHash>
-#include "Network/NeuralNetwork.h"
-#include "Network/NeuralNetworkElement.h"
-#include "ModularNeuralNetwork/NeuronGroup.h"
-#include "Network/Synapse.h"
-#include <QPointF>
-#include <QSizeF>
+#include "NeuroModulatorActivationFunction.h"
 
 namespace nerd {
-	
-	struct SynapseSet {
-		QList<Synapse*> mSynapses;
-		QList<Neuron*> mSources;
-		QList<SynapseTarget*> mTargets;
-		QList<Vector3D> mPositions;
-	};
-	
-	/**
-	 * NetworkConnectivityUtil.
-	 *
-	 */
-	class NetworkConnectivityUtil {
-	public:
-		
-		static const int MODUS_UNIDIRECTIONAL = 1;
-		static const int MODUS_BIDIRECTIONAL = 2;
-		static const int MODUS_IGNORE_INTERFACES = 4;
-		static const int MODUS_IGNORE_MODULE_BOUNDARIES = 8;
-		static const int MODUS_IGNORE_PROPERTIES = 16;
-		
-	public:
-		static SynapseSet fullyConnectElements(NeuralNetwork *network, QList<Neuron*> sources, 
-											    QList<SynapseTarget*> targets, int modus);
-		static SynapseSet connectElementsUnidirectional(NeuralNetwork *network, QList<Neuron*> sources, 
-							QList<SynapseTarget*> targets, int modus, double defaultWeight = 0.0, 
-							SynapseFunction *defaultSynapseFunction = 0);
-		
-		static QList<Neuron*> getValidSourceNeurons(Neuron *target, ModularNeuralNetwork *net);
-		static QList<Neuron*> getValidTargetNeurons(Neuron *source, ModularNeuralNetwork *net);
-		static int getInterfaceLevel(Neuron *neuron, const QString &moduleInterfaceType);
-	};
-	
+
+NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const QString &name)
+	: ActivationFunction(name)
+{
 }
 
-#endif
+NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other)
+	: Object(), ValueChangedListener(), ActivationFunction(other)
+{
+}
 
+NeuroModulatorActivationFunction::~NeuroModulatorActivationFunction() {
+}
+
+
+void NeuroModulatorActivationFunction::reset(Neuron *owner) {
+	if(mNeuroModulator != 0) {
+		mNeuroModulator->reset(owner);
+	}
+}
+
+
+/**
+ * Returns 0.0, but executes the NeuroModulator if available!
+ */
+double NeuroModulatorActivationFunction::calculateActivation(Neuron *owner) {
+	
+	if(mNeuroModulator != 0) {
+		mNeuroModulator->update(owner);
+	}
+	return 0.0;
+}
+		
+
+void NeuroModulatorActivationFunction::setNeuroModulator(NeuroModulator *modulator) {
+	if(mNeuroModulator != 0) {
+		delete mNeuroModulator;
+	}
+	mNeuroModulator = modulator;
+}
+
+NeuroModulator* NeuroModulatorActivationFunction::getNeuroModulator() const {
+	return mNeuroModulator;
+}
+		
+		
+bool NeuroModulatorActivationFunction::equals(ActivationFunction *activationFunction) const {
+	return ActivationFunction::equals(activationFunction);
+}
+
+
+
+}
 
 

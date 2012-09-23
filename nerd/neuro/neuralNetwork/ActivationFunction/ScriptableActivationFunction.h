@@ -45,7 +45,7 @@
 #ifndef NERDScriptableActivationFunction_H
 #define NERDScriptableActivationFunction_H
 
-#include "ActivationFunction/ActivationFunction.h"
+#include "ActivationFunction/NeuroModulatorActivationFunction.h"
 #include <QObject>
 #include <QScriptEngine>
 #include "Value/StringValue.h"
@@ -60,7 +60,9 @@ namespace nerd {
 	/**
 	 * ScriptableActivationFunction
 	 */
-	class ScriptableActivationFunction : public virtual ScriptingContext, public ActivationFunction {
+	class ScriptableActivationFunction : public ScriptingContext, 
+										  public NeuroModulatorActivationFunction 
+	{
 		Q_OBJECT
 
 	public:
@@ -78,6 +80,15 @@ namespace nerd {
 		virtual double calculateActivation(Neuron *owner);
 
 		virtual bool equals(ActivationFunction *activationFunction) const;
+		
+	public slots: 
+		void enableNeuroModulators(bool enable, NeuroModulator *modulator = 0);
+		void setModulatorRadius(int type, double radius);
+		double getModulatorRadius(int type);
+		void setModulatorConcentration(int type, double concentration);
+		double getModulatorConcentration(int type);
+		void setModulatorModus(int modus);
+		int getModulatorModus();
 		
 	protected:
 		virtual void reportError(const QString &message);

@@ -41,57 +41,138 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
+#include "NeuroModulator.h"
+#include <Math/Math.h>
+#include "Network/Neuron.h"
+#include <iostream>
 
-
-#ifndef NERDNetworkConnectivityUtil_H
-#define NERDNetworkConnectivityUtil_H
-
-#include <QString>
-#include <QHash>
-#include "Network/NeuralNetwork.h"
-#include "Network/NeuralNetworkElement.h"
-#include "ModularNeuralNetwork/NeuronGroup.h"
-#include "Network/Synapse.h"
-#include <QPointF>
-#include <QSizeF>
+using namespace std;
 
 namespace nerd {
-	
-	struct SynapseSet {
-		QList<Synapse*> mSynapses;
-		QList<Neuron*> mSources;
-		QList<SynapseTarget*> mTargets;
-		QList<Vector3D> mPositions;
-	};
-	
-	/**
-	 * NetworkConnectivityUtil.
-	 *
-	 */
-	class NetworkConnectivityUtil {
-	public:
-		
-		static const int MODUS_UNIDIRECTIONAL = 1;
-		static const int MODUS_BIDIRECTIONAL = 2;
-		static const int MODUS_IGNORE_INTERFACES = 4;
-		static const int MODUS_IGNORE_MODULE_BOUNDARIES = 8;
-		static const int MODUS_IGNORE_PROPERTIES = 16;
-		
-	public:
-		static SynapseSet fullyConnectElements(NeuralNetwork *network, QList<Neuron*> sources, 
-											    QList<SynapseTarget*> targets, int modus);
-		static SynapseSet connectElementsUnidirectional(NeuralNetwork *network, QList<Neuron*> sources, 
-							QList<SynapseTarget*> targets, int modus, double defaultWeight = 0.0, 
-							SynapseFunction *defaultSynapseFunction = 0);
-		
-		static QList<Neuron*> getValidSourceNeurons(Neuron *target, ModularNeuralNetwork *net);
-		static QList<Neuron*> getValidTargetNeurons(Neuron *source, ModularNeuralNetwork *net);
-		static int getInterfaceLevel(Neuron *neuron, const QString &moduleInterfaceType);
-	};
+
+NeuroModulator::NeuroModulator() {
 	
 }
 
-#endif
 
+NeuroModulator::NeuroModulator(const NeuroModulator &other) {
+	
+}
+
+
+NeuroModulator::~NeuroModulator() {
+	
+}
+
+
+
+NeuroModulator* NeuroModulator::createCopy() {
+	return new NeuroModulator(*this);
+}
+
+void NeuroModulator::reset(Neuron *owner) {
+	mRadii.clear();
+	mConcentrations.clear();
+}
+
+void NeuroModulator::update(Neuron *owner) {
+	cerr << "Modulator: " << endl;
+	for(int i = 0; i < mConcentrations.keys().size(); ++i) {
+		int type = mConcentrations.keys().at(i);
+		cerr << type << ": " << getConcentration(type, 0) << " % " << getRadius(type, 0) << endl;
+	}
+}
+
+void NeuroModulator::setConcentration(int type, double concentration, Neuron *owner) {
+	mConcentrations.insert(type, concentration);
+}
+
+double NeuroModulator::getConcentration(int type, Neuron *owner) {
+	return mConcentrations.value(type, 0.0);
+}
+
+
+/**
+ * Simple linear model.
+ * Modi:
+ * (0): off
+ * (1): equal concentration
+ * (2): linear concentration
+ * (3): quadratic concentration
+ */
+double NeuroModulator::getConcentrationAt(int type, Vector3D position, Neuron *owner) {
+	
+	
+	if(mModus == 0) {
+		return 0.0;
+	}
+	
+	//2D only here (on a plane)
+	double concentration = mConcentrations.value(type, 0.0);
+	if(concentration == 0.0) {
+		return 0.0;
+	}
+	double radius = mRadii.value(type, 0.0);
+	if(radius == 0.0) {
+		return 0.0;
+	}
+	
+	
+	//equal concentration
+	//the concentration at all points in the circle are similar.
+	if(mModus == 1) {
+		return concentration;
+	}
+
+	double distance = Math::distance(position, owner->getPosition());
+	if(distance >= radius) {
+		return 0.0;
+	}
+	
+	//linear distribution
+	//the concentration is linearly decaying from the center to the border of the circle.
+	if(mModus == 2) {
+		return (1.0 - (distance / radius)) * concentration;
+	}
+// 	if(mModus == 3) {
+// 		
+// 	}
+	
+	return 0.0;
+}
+
+QList<int> NeuroModulator::getModulatorTypes() const {
+	return mConcentrations.keys();
+}
+
+void NeuroModulator::setRadius(int type, double radius, Neuron *owner) {
+	mRadii.insert(type, radius);
+}
+
+double NeuroModulator::getRadius(int type, Neuron *owner) const {
+	return mRadii.value(type, 0.0);
+}
+
+
+void NeuroModulator::setModus(int modus) {
+	//TODO check for possible types?
+	mModus = modus;
+}
+
+
+int NeuroModulator::getModus() const {
+	return mModus;
+}
+
+
+bool NeuroModulator::equals(NeuroModulator *modulator) const {
+	//TODO
+	
+	return true;
+}
+
+
+
+}
 
 
