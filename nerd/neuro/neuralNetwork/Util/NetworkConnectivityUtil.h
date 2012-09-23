@@ -75,6 +75,7 @@ namespace nerd {
 		static const int MODUS_BIDIRECTIONAL = 2;
 		static const int MODUS_IGNORE_INTERFACES = 4;
 		static const int MODUS_IGNORE_MODULE_BOUNDARIES = 8;
+		static const int MODUS_IGNORE_PROPERTIES = 16;
 		
 	public:
 // 		static SynapseSet fullyConnectGroups(NeuronGroup *sourceGroup, NeuronGroup *targetGroup, int modus);
@@ -84,6 +85,10 @@ namespace nerd {
 		static SynapseSet connectElementsUnidirectional(NeuralNetwork *network, QList<Neuron*> sources, 
 							QList<SynapseTarget*> targets, int modus, double defaultWeight = 0.0, 
 							SynapseFunction *defaultSynapseFunction = 0);
+		
+		static QList<Neuron*> getValidSourceNeurons(Neuron *target, ModularNeuralNetwork *net);
+		static QList<Neuron*> getValidTargetNeurons(Neuron *source, ModularNeuralNetwork *net);
+		static int getInterfaceLevel(Neuron *neuron, const QString &moduleInterfaceType);
 	};
 	
 }

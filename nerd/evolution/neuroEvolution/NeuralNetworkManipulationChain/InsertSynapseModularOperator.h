@@ -81,9 +81,9 @@ namespace nerd {
 		bool addSynapseToSourceNeuron(Neuron *neuron, ModularNeuralNetwork *net);
 		bool addSynapseToTargetNeuron(Neuron *neuron, ModularNeuralNetwork *net);
 
-		QList<Neuron*> getValidSourceNeurons(Neuron *target, ModularNeuralNetwork *net);
-		QList<Neuron*> getValidTargetNeurons(Neuron *source, ModularNeuralNetwork *net);
-		int getInterfaceLevel(Neuron *neuron, const QString &moduleInterfaceType);
+// 		QList<Neuron*> getValidSourceNeurons(Neuron *target, ModularNeuralNetwork *net);
+// 		QList<Neuron*> getValidTargetNeurons(Neuron *source, ModularNeuralNetwork *net);
+// 		int getInterfaceLevel(Neuron *neuron, const QString &moduleInterfaceType);
 
 		void updatePermittedPaths(ModularNeuralNetwork *net);
 		bool canBeConnected(Neuron *source, Neuron *target, ModularNeuralNetwork *net);

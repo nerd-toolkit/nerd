@@ -88,6 +88,7 @@ namespace nerd {
 
 		bool addPropertyChangedListener(PropertyChangedListener *listener);
 		bool removePropertyChangedListener(PropertyChangedListener *listener);
+		QList<PropertyChangedListener*> getPropertyChangedListeners() const;
 
 		virtual bool equals(Properties *properties) const;
 

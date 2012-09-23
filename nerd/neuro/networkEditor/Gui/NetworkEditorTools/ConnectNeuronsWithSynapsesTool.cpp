@@ -61,6 +61,7 @@
 #include "Network/NeuralNetworkManager.h"
 #include <QMutexLocker>
 #include "Value/ValueManager.h"
+#include <Util/Util.h>
 #include "Gui/NetworkEditorTools/NeuralNetworkToolbox.h"
 #include "Util/NetworkConnectivityUtil.h"
 #include "Gui/NetworkEditorCommands/InsertSynapseCommand.h"
@@ -180,6 +181,12 @@ namespace nerd {
 					//we have a module and a single object!
 					
 					QList<Neuron*> sources = mGroup1->getNeurons();
+					NeuroModule *group1Module = dynamic_cast<NeuroModule*>(mGroup1);
+					if(group1Module != 0 && ((mModus & MODUS_IGNORE_INTERFACES) == 0)) {
+						Util::addWithoutDuplicates<Neuron>(sources, group1Module->getInputNeurons());
+						Util::addWithoutDuplicates<Neuron>(sources, group1Module->getOutputNeurons());
+					}
+					
 					QList<SynapseTarget*> targets;
 					targets.append(mTargetElement);
 					
@@ -198,8 +205,6 @@ namespace nerd {
 		}
 		
 		if(mGroup1 == 0 || mGroup2 == 0) {
-			
-			QPointF pos = globalPosition;
 			NeuronGroup *selectedGroup = 0;
 			
 			QList<PaintItem*> items = mVisuContext->getPaintItems();
@@ -223,18 +228,24 @@ namespace nerd {
 				mGroup2 = selectedGroup;
 				
 				QList<Neuron*> g1Neurons = mGroup1->getNeurons();
-				QList<Neuron*> sources;
-				for(QListIterator<Neuron*> i(g1Neurons); i.hasNext();) {
-					sources.append(i.next());
+				NeuroModule *group1Module = dynamic_cast<NeuroModule*>(mGroup1);
+				if(group1Module != 0 && ((mModus & MODUS_IGNORE_INTERFACES) == 0)) {
+					Util::addWithoutDuplicates<Neuron>(g1Neurons, group1Module->getInputNeurons());
+					Util::addWithoutDuplicates<Neuron>(g1Neurons, group1Module->getOutputNeurons());
 				}
 				
 				QList<Neuron*> g2Neurons = mGroup2->getNeurons();
 				QList<SynapseTarget*> targets;
+				NeuroModule *group2Module = dynamic_cast<NeuroModule*>(mGroup2);
+				if(group2Module != 0 && ((mModus & MODUS_IGNORE_INTERFACES) == 0)) {
+					Util::addWithoutDuplicates<Neuron>(g2Neurons, group2Module->getInputNeurons());
+					Util::addWithoutDuplicates<Neuron>(g2Neurons, group2Module->getOutputNeurons());
+				}
 				for(QListIterator<Neuron*> i(g2Neurons); i.hasNext();) {
 					targets.append(i.next());
 				}
 				
-				connectElements(sources, targets);
+				connectElements(g1Neurons, targets);
 				emit done();
 				return;
 			}
@@ -261,6 +272,12 @@ namespace nerd {
 					sources.append(dynamic_cast<Neuron*>(mTargetElement));
 					
 					QList<Neuron*> neurons = mGroup1->getNeurons();
+					NeuroModule *group1Module = dynamic_cast<NeuroModule*>(mGroup1);
+					if(group1Module != 0 && ((mModus & MODUS_IGNORE_INTERFACES) == 0)) {
+						Util::addWithoutDuplicates<Neuron>(neurons, group1Module->getInputNeurons());
+						Util::addWithoutDuplicates<Neuron>(neurons, group1Module->getOutputNeurons());
+					}
+					
 					QList<SynapseTarget*> targets;
 					for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 						targets.append(i.next());
@@ -311,6 +328,7 @@ namespace nerd {
 		int modi = 0;
 		if((mModus & MODUS_IGNORE_INTERFACES) != 0) {
 			modi = (modi | NetworkConnectivityUtil::MODUS_IGNORE_INTERFACES);
+			modi = (modi | NetworkConnectivityUtil::MODUS_IGNORE_PROPERTIES);
 		}
 		
 		QList<SynapseTarget*> targets;
@@ -333,6 +351,7 @@ namespace nerd {
 		int modi = 0;
 		if((mModus & MODUS_IGNORE_INTERFACES) != 0) {
 			modi = (modi | NetworkConnectivityUtil::MODUS_IGNORE_INTERFACES);
+			modi = (modi | NetworkConnectivityUtil::MODUS_IGNORE_PROPERTIES);
 		}
 		if((mModus & MODUS_BIDIRECTIONAL) != 0) {
 			modi = (modi | NetworkConnectivityUtil::MODUS_BIDIRECTIONAL);

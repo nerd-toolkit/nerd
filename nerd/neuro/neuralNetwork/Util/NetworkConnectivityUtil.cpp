@@ -55,6 +55,9 @@
 #include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 #include "Math/Math.h"
 #include "SynapseFunction/SimpleSynapseFunction.h"
+#include "Util/Util.h"
+#include <limits>
+
 
 using namespace std;
 
@@ -85,8 +88,6 @@ SynapseSet NetworkConnectivityUtil::fullyConnectElements(NeuralNetwork *network,
 		
 		SynapseSet set2 = connectElementsUnidirectional(network, biDirSources, biDirTargets, modus);
 		
-		cerr << "Got set: " << set2.mSynapses.size() << endl;
-		
 		set.mSynapses << set2.mSynapses;
 		set.mSources << set2.mSources;
 		set.mTargets << set2.mTargets;
@@ -109,11 +110,37 @@ SynapseSet NetworkConnectivityUtil::connectElementsUnidirectional(NeuralNetwork 
 	
 	SynapseFunction *defaultSF = new SimpleSynapseFunction();
 	
+	ModularNeuralNetwork *mnn = dynamic_cast<ModularNeuralNetwork*>(network);
+	
+	bool ignoreInterfaces = (modus & NetworkConnectivityUtil::MODUS_IGNORE_INTERFACES) != 0;
+	bool ignoreProperties = (modus & NetworkConnectivityUtil::MODUS_IGNORE_PROPERTIES) != 0;
+	
 	for(QListIterator<Neuron*> i(sources); i.hasNext();) {
 		Neuron *source = i.next();
 		
 		if(source == 0) {
 			continue;
+		}
+		
+		if(!ignoreProperties) {
+			if(source->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
+				|| source->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_NO_SYNAPSE_SOURCE)) 
+			{
+				continue;
+			}
+			QString maxOutputSyn = source->getProperty(
+						NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_OUT_SYNAPSES);
+			bool ok = true;
+			int numberOfSyn = maxOutputSyn.toInt(&ok);
+			if(ok && (source->getOutgoingSynapses().size() >= numberOfSyn)) {
+				continue;
+			}
+		}
+
+		QList<Neuron*> validTargets = mnn->getNeurons();
+		
+		if(!ignoreInterfaces) {
+			validTargets = NetworkConnectivityUtil::getValidTargetNeurons(source, mnn);
 		}
 		
 		for(QListIterator<SynapseTarget*> j(targets); j.hasNext();) {
@@ -122,6 +149,40 @@ SynapseSet NetworkConnectivityUtil::connectElementsUnidirectional(NeuralNetwork 
 			if(target == 0) {
 				continue;
 			}
+			
+			if(!ignoreProperties) {
+				
+				if(target->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
+					|| target->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_NO_SYNAPSE_TARGET)) 
+				{
+					continue;
+				}
+				QString maxInputSyn = source->getProperty(
+							NeuralNetworkConstants::TAG_NEURON_MAX_NUMBER_OF_IN_SYNAPSES);
+				bool ok = true;
+				int numberOfSyn = maxInputSyn.toInt(&ok);
+				if(ok && (target->getSynapses().size() >= numberOfSyn)) {
+					continue;
+				}
+			}
+			
+			if(!ignoreInterfaces) {
+				
+				Neuron *targetNeuron = dynamic_cast<Neuron*>(target);
+				
+				//check for interface neurons.
+				if(targetNeuron != 0 && !validTargets.contains(targetNeuron)) {
+					continue;
+				}
+				if(targetNeuron != 0) {
+					QList<Neuron*> validSources = NetworkConnectivityUtil::getValidSourceNeurons(targetNeuron, mnn);
+					if(!validSources.contains(source)) {
+						continue;
+					}
+				}
+			}
+			
+		
 			
 			bool hasSynapse = false;
 			
@@ -166,6 +227,125 @@ SynapseSet NetworkConnectivityUtil::connectElementsUnidirectional(NeuralNetwork 
 }
 
 
+QList<Neuron*> NetworkConnectivityUtil::getValidSourceNeurons(Neuron *target, ModularNeuralNetwork *net)
+{
+	QList<Neuron*> allOutputModuleNeurons;
+
+	if(target == 0 || net == 0) {
+		return allOutputModuleNeurons;
+	}
+
+	int interfaceLevel = getInterfaceLevel(target, NeuralNetworkConstants::TAG_MODULE_INPUT);
+	bool isInterface = interfaceLevel > 0 ? true : false;
+
+	//crawl down into parent modules as deep as the interface level allows.
+	NeuroModule *parentModule = net->getOwnerModule(target);
+	//NeuroModule *previousModule = parentModule;
+	int k = 0;
+	for(; k <= interfaceLevel; ++k) {
+
+		if(parentModule != 0) {
+			Util::addWithoutDuplicates(allOutputModuleNeurons, parentModule->getNeurons());
+
+			for(QListIterator<NeuroModule*> j(parentModule->getSubModules()); j.hasNext();) {
+				Util::addWithoutDuplicates(allOutputModuleNeurons, j.next()->getOutputNeurons());
+			}
+			if(isInterface) {
+				//previousModule = parentModule;
+				parentModule = parentModule->getParentModule();
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			Util::addWithoutDuplicates(allOutputModuleNeurons, net->getRootNeurons());
+			QList<NeuroModule*> rootModules = net->getRootModules();
+			for(QListIterator<NeuroModule*> i(rootModules); i.hasNext();) {
+				Util::addWithoutDuplicates(allOutputModuleNeurons, i.next()->getOutputNeurons());
+			}
+			break;
+		}
+	}
+
+	return allOutputModuleNeurons;
+}
+
+
+QList<Neuron*> NetworkConnectivityUtil::getValidTargetNeurons(Neuron *source, ModularNeuralNetwork *net)
+{
+	QList<Neuron*> allInputModuleNeurons;
+
+	if(source == 0 || net == 0) {
+		return allInputModuleNeurons;
+	}
+
+	int interfaceLevel = getInterfaceLevel(source, NeuralNetworkConstants::TAG_MODULE_OUTPUT);
+	bool isInterface = interfaceLevel > 0 ? true : false;
+
+	//crawl down into parent modules as deep as the interface level allows.
+	NeuroModule *parentModule = net->getOwnerModule(source);
+	//NeuroModule *previousModule = parentModule;
+	int k = 0;
+	for(; k <= interfaceLevel; ++k) {
+
+		if(parentModule != 0) {
+			Util::addWithoutDuplicates(allInputModuleNeurons, parentModule->getNeurons());
+
+			for(QListIterator<NeuroModule*> j(parentModule->getSubModules()); j.hasNext();) {
+				Util::addWithoutDuplicates(allInputModuleNeurons, j.next()->getInputNeurons());
+			}
+			if(isInterface) {
+				//previousModule = parentModule;
+				parentModule = parentModule->getParentModule();
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			Util::addWithoutDuplicates(allInputModuleNeurons, net->getRootNeurons());
+			QList<NeuroModule*> rootModules = net->getRootModules();
+			for(QListIterator<NeuroModule*> i(rootModules); i.hasNext();) {
+				Util::addWithoutDuplicates(allInputModuleNeurons, i.next()->getInputNeurons());
+			}
+			break;
+		}
+	}
+
+	return allInputModuleNeurons;
+}
+
+int NetworkConnectivityUtil::getInterfaceLevel(Neuron *neuron, const QString &moduleInterfaceType) {
+	
+	if(moduleInterfaceType == "") {
+		return 0;
+	}
+	bool neuronIsInterfaceNeuron = neuron->hasProperty(moduleInterfaceType);
+	bool neuronIsExtendedInterfaceNeuron = 
+			neuron->hasProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
+	QString levelString = neuron->getProperty(moduleInterfaceType);
+	if(neuronIsExtendedInterfaceNeuron) {
+		levelString = neuron->getProperty(NeuralNetworkConstants::TAG_MODULE_EXTENDED_INTERFACE);
+	}
+
+	int interfaceLevel = 0;
+	if(neuronIsInterfaceNeuron) {
+		interfaceLevel = 1;
+
+		if(neuronIsExtendedInterfaceNeuron && levelString.trimmed() == "") {
+			interfaceLevel = numeric_limits<int>::max();
+		}
+		else {
+			bool ok = true;
+			int level = levelString.toInt(&ok);
+			if(ok) {
+				interfaceLevel =  level + 1; //TODO adapt neuroModule::getInput/Outputs
+			}
+		}
+	}
+	return interfaceLevel;
+}
 
 }
 

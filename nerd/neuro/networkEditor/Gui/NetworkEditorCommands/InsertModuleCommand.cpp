@@ -180,7 +180,6 @@ bool InsertModuleCommand::undoCommand() {
 // 	}
 
 	Neuro::getNeuralNetworkManager()->triggerNetworkStructureChangedEvent();
-	//mVisualizationContext->notifyNeuralNetworkModified();
 	return true;
 }
 

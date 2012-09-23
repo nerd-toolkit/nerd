@@ -518,10 +518,16 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	
 	QMenu *connectivityMenu = mNetworkMenu->addMenu("Connectivity");
 	
-	QAction *connectSelectedNeurons = connectivityMenu->addAction("All Selected");
+	QAction *connectSelectedNeurons = connectivityMenu->addAction("Selected");
 	connectSelectedNeurons->setToolTip("Fully connects all selected elements.");
 	connect(connectSelectedNeurons, SIGNAL(triggered()),
 			this, SLOT(fullyConnectSelectedNeurons()));
+	
+	QAction *connectSelectedNeuronsForce = connectivityMenu->addAction("Selected (Force)");
+	connectSelectedNeuronsForce->setToolTip("Fully connects all selected elements ignoring "
+										"properties and interface neurons.");
+	connect(connectSelectedNeuronsForce, SIGNAL(triggered()),
+			this, SLOT(fullyConnectSelectedNeuronsIgnoreInterfaces()));
 	
 	QAction *connectSingleGroup = connectivityMenu->addAction("Single Group");
 	connectSingleGroup->setToolTip("Fully interconnects a single group.");
@@ -533,15 +539,27 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 // 	connect(connectAllWithinGroup, SIGNAL(triggered()),
 // 			this, SLOT(fullyConnect()));
 	
-	QAction *connectGroupsUnidirectional = connectivityMenu->addAction("Groups Unidir.");
+	QAction *connectGroupsUnidirectional = connectivityMenu->addAction("Group1 to Group2");
 	connectGroupsUnidirectional->setToolTip("Connects two groups unidirectionally");
 	connect(connectGroupsUnidirectional, SIGNAL(triggered()),
 			this, SLOT(fullyConnectGroupsUniDirectional()));
 	
-	QAction *connectGroupsBidirectional = connectivityMenu->addAction("Groups Bidir.");
+	QAction *connectGroupsUnidirectionalForce = connectivityMenu->addAction("Group1 to Group2 (Force)");
+	connectGroupsUnidirectionalForce->setToolTip("Connects two groups unidirectionally ignoring"
+											" properties and interfaces.");
+	connect(connectGroupsUnidirectionalForce, SIGNAL(triggered()),
+			this, SLOT(fullyConnectGroupsUniDirectionalIgnoreInterfaces()));
+	
+	QAction *connectGroupsBidirectional = connectivityMenu->addAction("Two Groups Mutually");
 	connectGroupsBidirectional->setToolTip("Connects two groups bidirectionally");
 	connect(connectGroupsBidirectional, SIGNAL(triggered()),
 			this, SLOT(fullyConnectGroupsBidirectional()));
+	
+	QAction *connectGroupsBidirectionalForce = connectivityMenu->addAction("Two Groups Mutually (Force)");
+	connectGroupsBidirectionalForce->setToolTip("Connects two groups bidirectionally ignoring"
+											" properties and interfaces");
+	connect(connectGroupsBidirectionalForce, SIGNAL(triggered()),
+			this, SLOT(fullyConnectGroupsBidirectionalIgnoreInterfaces()));
 	
 	
 	mNetworkMenu->addSeparator();
@@ -559,7 +577,7 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 
 	mNetworkMenu->addSeparator();
 	
-	QAction *selectSynapsesOfMarkedNeurons = mNetworkMenu->addAction("Select Synapses of Selected Neurons");
+	QAction *selectSynapsesOfMarkedNeurons = mNetworkMenu->addAction("&Select Synapses of Neurons");
 	selectSynapsesOfMarkedNeurons->setShortcut(tr("ctrl+s"));
 	connect(selectSynapsesOfMarkedNeurons, SIGNAL(triggered(bool)),
 			this, SLOT(selectSynapsesOfMarkedNeurons()));

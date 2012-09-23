@@ -375,6 +375,12 @@ bool Properties::removePropertyChangedListener(PropertyChangedListener *listener
 }
 
 
+QList<PropertyChangedListener*> Properties::getPropertyChangedListeners() const {
+	return mListeners;
+}
+
+
+
 /**
  * Returns true if both Properties are equal, thus have the same properties set.
  */
@@ -401,6 +407,7 @@ bool Properties::equals(Properties *properties) const {
 	}
 	return true;
 }
+
 
 
 
