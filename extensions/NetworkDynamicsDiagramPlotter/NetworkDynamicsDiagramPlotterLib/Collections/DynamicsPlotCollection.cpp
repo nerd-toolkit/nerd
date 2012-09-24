@@ -56,6 +56,7 @@
 #include "DynamicsPlot/IsoperiodPlotter.h"
 #include "DynamicsPlot/FirstReturnMap.h"
 #include "DynamicsPlot/DummyPlotter.h"
+#include "DynamicsPlot/LyapunovExponent.h"
 #include "Event/EventManager.h"
 
 using namespace std;
@@ -73,6 +74,7 @@ DynamicsPlotCollection::DynamicsPlotCollection()
 	new IsoperiodPlotter();
 	new FirstReturnMap();
 	new TransientPlotter();
+	new LyapunovExponent();
 	
 	new DummyPlotter();
 

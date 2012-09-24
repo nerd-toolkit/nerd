@@ -45,6 +45,7 @@
 #include "DynamicsPlotterUtil.h"
 #include <Core/Core.h>
 #include <Math/Math.h>
+#include <math.h>
 #include <Gui/GuiManager.h>
 #include <ModularNeuralNetwork/ModularNeuralNetwork.h>
 #include <Gui/NetworkEditorTools/EditorMessageWidget.h>
@@ -521,6 +522,21 @@ namespace nerd {
 		
 		return true;
 	}
+
+
+	double DynamicsPlotterUtil::getDistance(const QList<double> &state1, const QList<double> &state2) {
+		if(state1.size() != state2.size()) {
+			reportProblem("DynamicsPlotterUtil::getDistance : State dimensions do not match.");
+			return 0;
+		}
+
+		double sum = 0;
+		for(int i = 0; i < state1.size(); ++i) {
+			sum += pow(state1.at(i)-state2.at(i),2);
+		}
+		return sqrt(sum);
+	}
+
 
 	void DynamicsPlotterUtil::transferNeuronActivationToOutput(NeuralNetwork *network) {
 			

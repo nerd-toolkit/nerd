@@ -42,65 +42,30 @@
  ***************************************************************************/
 
 
-#ifndef DYNAMICSPLOTTERUTIL_H
-#define DYNAMICSPLOTTERUTIL_H
+#ifndef LYAPUNOVEXPONENT_H
+#define LYAPUNOVEXPONENT_H
 
-#include "Core/SystemObject.h"
-#include "Core/ParameterizedObject.h"
-#include "Value/DoubleValue.h"
-#include <QList>
-#include "Network/NeuralNetwork.h"
-#include <QStringList>
-#include "Core/Core.h"
+#include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
+	
+	class LyapunovExponent : public DynamicsPlotter {
 
-	class EditorMessageWidget;
-	class DynamicsPlotterUtil {
-
-	public:	
+	public:
+		LyapunovExponent();
+		virtual ~LyapunovExponent();
 		
-		static DoubleValue* getElementValue(const QString &parameter,
-											NeuralNetworkElement* networkElement,
-											QList<Neuron*> *neuronsWithActivationChange = 0);
-
-		static DoubleValue* getElementValue(const QString &specifier, 
-											const QList<NeuralNetworkElement*> &networkElements,
-											QList<Neuron*> *neuronsWithActivationChange = 0);
-		
-		static QList< QList<DoubleValue*> > getElementValues(const QList<QStringList> &specifiers, 
-															const QList<NeuralNetworkElement*> &networkElements,
-															QList<Neuron*> *neuronsWithActivationChange = 0);
-
-		static double getMeanValue(const QList<DoubleValue*> &valuesList);
-
-		static QList<double> getMeanValues(const QList< QList<DoubleValue*> > &valuesListList);
-
-		static QList<QStringList> parseElementString(QString const &string);
-
-		static QList<double> getDoublesFromString(const QString &list, const QString &separator = ",", 
-												const QString &replace = "|");
-		
-		static QList<DoubleValue*> getNetworkValues(const QList<NeuralNetworkElement*> networkElements);
-		
-		static QList<double> getNetworkState(const QList<DoubleValue*> networkValues);
-				
-		static bool compareNetworkStates(const QList<double> &state1, 
-										const QList<double> &state2, double accuracy = 0.001);
-
-		static double getDistance(const QList<double> &state1, const QList<double> &state2);
-		
-		static void transferNeuronActivationToOutput(NeuralNetwork *network);
-		static void transferNeuronActivationToOutput(const QList<Neuron*> neurons);
-		
-		static void reportProblem(const QString &errorMessage);
-		static void clearProblemMessageArea();
+		virtual void calculateData();
 
 	private:
-		static EditorMessageWidget *sMessageWidget;
-		static Core *sCore;
+		StringValue *mVariedElement;
+		StringValue *mVariedRange;
+		IntValue *mResolutionX;
+		IntValue *mResolutionY;
+		
+		IntValue *mStepsPrePlot;
+		IntValue *mStepsToPlot;
 	};
-
 }
 
-#endif // DYNAMICSPLOTTERUTIL_H
+#endif // LYAPUNOVEXPONENT_H

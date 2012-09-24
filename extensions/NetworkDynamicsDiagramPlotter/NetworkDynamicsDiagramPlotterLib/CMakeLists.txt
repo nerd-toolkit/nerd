@@ -8,6 +8,7 @@ set(nerd_dynamicsPlotLib_SRCS
 	DynamicsPlot/IsoperiodPlotter.cpp
 	DynamicsPlot/FirstReturnMap.cpp
 	DynamicsPlot/TransientPlotter.cpp
+	DynamicsPlot/LyapunovExponent.cpp
 	Gui/DynamicsPlotterMainWindow.cpp  
 	Execution/PlotterExecutionLoop.cpp  
 	DynamicsPlot/DynamicsPlotManager.cpp  
