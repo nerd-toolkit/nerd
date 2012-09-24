@@ -57,6 +57,10 @@
 
 namespace nerd {
 
+class NeuroModulatorElement;
+
+class NeuroModulator;
+
 	/**
 	 * ScriptedNetworkManipulator.
 	 *
@@ -69,87 +73,106 @@ namespace nerd {
 
 	public slots:
 		void setNeuralNetwork(ModularNeuralNetwork *network);
+		
+		void setOwnerHint(NeuralNetworkElement *owner);
+		NeuralNetworkElement* getOwnerHint() const;
 
-		qlonglong getNeuron(const QString &name);
-		qlonglong getNeuroModule(const QString &name);
-		qlonglong getNeuronGroup(const QString &name);
+		qulonglong getNeuron(const QString &name);
+		qulonglong getNeuroModule(const QString &name);
+		qulonglong getNeuronGroup(const QString &name);
 
-		QVariantList getNeurons(qlonglong groupId = 0, bool allEnclosed = false);
+		QVariantList getNeurons(qulonglong groupId = 0, bool allEnclosed = false);
 		QVariantList getSynapses();
 		QVariantList getGroupsAndModules();
 		QVariantList getGroups();
 		QVariantList getModules();
-		QVariantList getSubModules(qlonglong groupId);
-		qlonglong getParentModule(qlonglong elementId);
+		QVariantList getSubModules(qulonglong groupId);
+		qulonglong getParentModule(qulonglong elementId);
 
 		QVariantList getSynapses(QVariantList targetIds, bool includeFromExternals = false, 
 								 bool includeToExternals = false, bool excludeDisabledSynapses = true);
-		QVariantList getInSynapses(qlonglong targetId, bool excludeDisabledSynapses = true);
-		QVariantList getOutSynapses(qlonglong neuronId, bool excludeDisabledSynapses = true);
+		QVariantList getInSynapses(qulonglong targetId, bool excludeDisabledSynapses = true);
+		QVariantList getOutSynapses(qulonglong neuronId, bool excludeDisabledSynapses = true);
 		QVariantList getInSynapses(QVariantList targetIds, bool includeFromExternals = false, bool excludeDisabledSynapses = true);
 		QVariantList getOutSynapses(QVariantList neuronIds, bool includeToExternals = false, bool excludeDisabledSynapses = true);
-		qlonglong getSource(qlonglong synapseId);
-		qlonglong getTarget(qlonglong synapseId);
+		qulonglong getSource(qulonglong synapseId);
+		qulonglong getTarget(qulonglong synapseId);
 
-		double getBias(qlonglong neuronId);
-		double getWeight(qlonglong synapseId);
-		double getSynapseOutput(qlonglong synapseId);
-		double execSynapseFunction(qlonglong synapseId);
-		double getActivation(qlonglong neuronId);
-		double getLastActivation(qlonglong neuronId);
-		double getOutput(qlonglong neuronId);
-		double getLastOutput(qlonglong neuronId);
-		QVariantList getPosition(qlonglong objectId);
-		QVariantList getProperties(qlonglong objectId);
-		QString getProperty(qlonglong objectId, const QString &name);
-		QString getName(qlonglong neuronId);
+		double getBias(qulonglong neuronId);
+		double getWeight(qulonglong synapseId);
+		double getSynapseOutput(qulonglong synapseId);
+		double execSynapseFunction(qulonglong synapseId);
+		double getActivation(qulonglong neuronId);
+		double getLastActivation(qulonglong neuronId);
+		double getOutput(qulonglong neuronId);
+		double getLastOutput(qulonglong neuronId);
+		QVariantList getPosition(qulonglong objectId);
+		QVariantList getProperties(qulonglong objectId);
+		QString getProperty(qulonglong objectId, const QString &name);
+		QString getName(qulonglong neuronId);
 
-		bool setBias(qlonglong neuronId, double bias);
-		bool setOutput(qlonglong neuronId, double output);
-		bool setActivation(qlonglong neuronId, double activation);
-		bool setWeight(qlonglong synapseId, double weight);
-		bool setPosition(qlonglong objectId, double x, double y, double z);
-		bool setProperty(qlonglong objectId, const QString &propName, const QString &content, bool severeChange = false);
+		bool setBias(qulonglong neuronId, double bias);
+		bool setOutput(qulonglong neuronId, double output);
+		bool setActivation(qulonglong neuronId, double activation);
+		bool setWeight(qulonglong synapseId, double weight);
+		bool setPosition(qulonglong objectId, double x, double y, double z);
+		bool setProperty(qulonglong objectId, const QString &propName, const QString &content, bool severeChange = false);
 
-		bool addToGroup(qlonglong elementId, qlonglong groupId);
-		bool removeFromGroup(qlonglong elementId, qlonglong groupId);
+		bool addToGroup(qulonglong elementId, qulonglong groupId);
+		bool removeFromGroup(qulonglong elementId, qulonglong groupId);
 
-		qlonglong createNeuron(const QString &name = "");
-		qlonglong createSynapse(qlonglong sourceId, qlonglong targetId, double weight);
-		qlonglong createNeuroModule(const QString &name = "");
-		qlonglong createNeuronGroup(const QString &name = "Group");
+		qulonglong createNeuron(const QString &name = "");
+		qulonglong createSynapse(qulonglong sourceId, qulonglong targetId, double weight);
+		qulonglong createNeuroModule(const QString &name = "");
+		qulonglong createNeuronGroup(const QString &name = "Group");
 
-		bool removeNeuron(qlonglong neuronId);
-		bool removeSynapse(qlonglong synapseId);
-		bool removeNeuronGroup(qlonglong groupId);
-		bool removeProperty(qlonglong objectId, const QString &propertyName, bool severeChange = false);
+		bool removeNeuron(qulonglong neuronId);
+		bool removeSynapse(qulonglong synapseId);
+		bool removeNeuronGroup(qulonglong groupId);
+		bool removeProperty(qulonglong objectId, const QString &propertyName, bool severeChange = false);
 		
-		bool setTransferFunction(qlonglong neuronId, const QString &transferFunctionName);
-		QString getTransferFunctionName(qlonglong neuronId);
-		bool setActivationFunction(qlonglong neuronId, const QString &activationFunctionName);
-		QString getActivationFunctionName(qlonglong neuronId);
-		bool setSynapseFunction(qlonglong synapseId, const QString &synapseFunctionName);
-		QString getSynapseFunctionName(qlonglong synapseId);
+		bool setTransferFunction(qulonglong neuronId, const QString &transferFunctionName);
+		QString getTransferFunctionName(qulonglong neuronId);
+		bool setActivationFunction(qulonglong neuronId, const QString &activationFunctionName);
+		QString getActivationFunctionName(qulonglong neuronId);
+		bool setSynapseFunction(qulonglong synapseId, const QString &synapseFunctionName);
+		QString getSynapseFunctionName(qulonglong synapseId);
 		
-		bool setTransferFunctionParameter(qlonglong neuronId, const QString &parameterName, const QString &value);
-		QString getTransferFunctionParameter(qlonglong neuronId, const QString &parameterName);
-		bool setActivationFunctionParameter(qlonglong neuronId, const QString &parameterName, const QString &value);
-		QString getActivationFunctionParameter(qlonglong neuronId, const QString &parameterName);
-		bool setSynapseFunctionParameter(qlonglong synapseId, const QString &parameterName, const QString &value);
-		QString getSynapseFunctionParameter(qlonglong synapseId, const QString &parameterName);
+		bool setTransferFunctionParameter(qulonglong neuronId, const QString &parameterName, const QString &value);
+		QString getTransferFunctionParameter(qulonglong neuronId, const QString &parameterName);
+		bool setActivationFunctionParameter(qulonglong neuronId, const QString &parameterName, const QString &value);
+		QString getActivationFunctionParameter(qulonglong neuronId, const QString &parameterName);
+		bool setSynapseFunctionParameter(qulonglong synapseId, const QString &parameterName, const QString &value);
+		QString getSynapseFunctionParameter(qulonglong synapseId, const QString &parameterName);
 		
-		double applyTransferFunction(qlonglong neuronId, double activity);
-		double tf(qlonglong neuronId, double activity);
+		double applyTransferFunction(qulonglong neuronId, double activity);
+		double tf(qulonglong neuronId, double activity);
 		double getDistance(QVariantList pos1, QVariantList pos2);
 		
 		//TODO
 		//set and get TF, AF, SF
 		//insert module from library
 		//resize of modules
+		
+		void enableNeuroModulators(qulonglong elementId, bool enable);
+ 		void setModulatorArea(qulonglong elementId, int type, double width, double height, bool circle = true);
+		void setModulatorAreaReferenceModule(qulonglong elementId, int type, qulonglong moduleId);
+		QVariantList getModulatorArea(qulonglong elementId, int type);
+		void setModulatorConcentration(qulonglong elementId, int type, double concentration);
+		double getModulatorConcentration(qulonglong elementId, int type);
+		double getModulatorConcentrationAt(qulonglong elementId, int type, double x, double y, double z);
+		double getModulatorConcentrationAt(int type, double x, double y, double z);
+		void setModulatorModus(qulonglong elementId, int type, int modus);
+		int getModulatorModus(qulonglong elementId, int type = -1);
+		
+	protected:
+		NeuroModulator* getNeuroModulator(qulonglong elementId, NeuralNetworkElement **element = 0, 
+										  NeuroModulatorElement **modElem = 0);
 
 	private:
 		ModularNeuralNetwork *mNetwork;
 		Event *mClearNetworkModificationStacks;
+		NeuralNetworkElement *mOwner;
 	};
 
 }

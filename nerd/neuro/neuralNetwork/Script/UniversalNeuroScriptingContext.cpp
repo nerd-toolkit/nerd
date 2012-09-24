@@ -104,6 +104,17 @@ void UniversalNeuroScriptingContext::addCustomScriptContextStructures() {
 
 		if(interface->getName() == mNameOfAgentInterface->get()) {
 			mNetworkManipulator->setNeuralNetwork(modNet);
+			
+			//make sure that the assumed owner really is part of the current network.
+			//if not, set the owner hint to 0
+			if(mNetworkManipulator->getOwnerHint() != 0) {
+				QList<NeuralNetworkElement*> elements;
+				modNet->getNetworkElements(elements);
+				if(!elements.contains(mNetworkManipulator->getOwnerHint())) {
+					mNetworkManipulator->setOwnerHint(0);
+				}
+				   
+			}
 		}
 	}
 }

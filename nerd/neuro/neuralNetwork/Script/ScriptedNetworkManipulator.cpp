@@ -53,6 +53,11 @@
 #include "Network/Neuro.h"
 #include "NeuralNetworkConstants.h"
 #include <Math/Math.h>
+#include "NeuroModulation/NeuroModulatorElement.h"
+#include "ModularNeuralNetwork/NeuronGroup.h"
+#include "ModularNeuralNetwork/NeuroModule.h"
+#include "Constraints/GroupConstraint.h"
+
 
 using namespace std;
 
@@ -63,7 +68,7 @@ namespace nerd {
  * Constructs a new ScriptedNetworkManipulator.
  */
 ScriptedNetworkManipulator::ScriptedNetworkManipulator()
-	: mNetwork(0), mClearNetworkModificationStacks(0)
+	: mNetwork(0), mClearNetworkModificationStacks(0), mOwner(0)
 {
 	mClearNetworkModificationStacks = Core::getInstance()->getEventManager()->getEvent(
 			NeuralNetworkConstants::EVENT_NETWORK_CLEAR_MODIFICATION_STACKS, true);
@@ -75,15 +80,36 @@ ScriptedNetworkManipulator::ScriptedNetworkManipulator()
 ScriptedNetworkManipulator::~ScriptedNetworkManipulator() {
 }
 
+
+/**
+ * Sets the neural network on which all operations will be performed. 
+ */
 void ScriptedNetworkManipulator::setNeuralNetwork(ModularNeuralNetwork *network) {
 	mNetwork = network;
 }
 
 
 /**
+ * The owner hint speeds up manipulations of parameters that belong to a scripted NeuralNetworkElement
+ * if there is any. All methods that use the id to address the target object FIRST check if the 
+ * id belongs to the owner element. This heuristics avoids a time-consuming search for that 
+ * network element. Since most operations are local changes at the scripting object itself, 
+ * this considerably speeds up operations.
+ * Therefore, whenever possible, a suitable owner hint should be given!
+ */
+void ScriptedNetworkManipulator::setOwnerHint(NeuralNetworkElement *owner) {
+	mOwner = owner;
+}
+
+NeuralNetworkElement* ScriptedNetworkManipulator::getOwnerHint() const {
+	return mOwner;
+}
+
+
+/**
  * Returns the id of the first neuron with the given name.
  */
-qlonglong ScriptedNetworkManipulator::getNeuron(const QString &name) {
+qulonglong ScriptedNetworkManipulator::getNeuron(const QString &name) {
 	if(mNetwork == 0) {
 		return 0;
 	}
@@ -101,7 +127,7 @@ qlonglong ScriptedNetworkManipulator::getNeuron(const QString &name) {
 /**
  * Returns the id of the first NeuroModule with the given name.
  */
-qlonglong ScriptedNetworkManipulator::getNeuroModule(const QString &name) {
+qulonglong ScriptedNetworkManipulator::getNeuroModule(const QString &name) {
 	if(mNetwork == 0) {
 		return 0;
 	}
@@ -120,7 +146,7 @@ qlonglong ScriptedNetworkManipulator::getNeuroModule(const QString &name) {
 /**
  * Returns the id of the first NeuronGroup with the given name.
  */
-qlonglong ScriptedNetworkManipulator::getNeuronGroup(const QString &name) {
+qulonglong ScriptedNetworkManipulator::getNeuronGroup(const QString &name) {
 	if(mNetwork == 0) {
 		return 0;
 	}
@@ -136,7 +162,7 @@ qlonglong ScriptedNetworkManipulator::getNeuronGroup(const QString &name) {
 }
 
 /**
- * Returns a list with the ids of all neurons of a given NeuronGroup.. If allEnclosed is true,
+ * Returns a list with the ids of all neurons of a given NeuronGroup. If allEnclosed is true,
  * then all neurons of the group and all of its direct or indirect submodules are returned.
  * If false, then only the direct member neurons of the group are returned.
  * 
@@ -145,7 +171,7 @@ qlonglong ScriptedNetworkManipulator::getNeuronGroup(const QString &name) {
  * The allEnclosed parameter can be ommited. It defaults to false.
  * The groupId can also be ommited. It defaults to 0. 
  */
-QVariantList ScriptedNetworkManipulator::getNeurons(qlonglong groupId, bool allEnclosed) {
+QVariantList ScriptedNetworkManipulator::getNeurons(qulonglong groupId, bool allEnclosed) {
 	QVariantList neuronIds;
 
 	if(mNetwork == 0) {
@@ -158,7 +184,17 @@ QVariantList ScriptedNetworkManipulator::getNeurons(qlonglong groupId, bool allE
 		
 	}
 	else {
-		NeuronGroup *group = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+		NeuronGroup *group = 0;
+		{
+			//check owner hint to speed up things.
+			NeuronGroup *owner = dynamic_cast<NeuronGroup*>(mOwner);
+			if(owner != 0 && owner->getId() == groupId) {
+				group = owner;
+			}
+			else {
+				group = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+			}
+		}
 		if(group == 0) {
 			return neuronIds;
 		}
@@ -257,14 +293,24 @@ QVariantList ScriptedNetworkManipulator::getModules() {
 /**
  * Returns a list with the ids of all submodules that are contained in the group/modele with the given id.
  */
-QVariantList ScriptedNetworkManipulator::getSubModules(qlonglong groupId) {
+QVariantList ScriptedNetworkManipulator::getSubModules(qulonglong groupId) {
 	QVariantList moduleIds;
 
 	if(mNetwork == 0) {
 		return moduleIds;
 	}
-
-	NeuronGroup *mainGroup = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+	
+	NeuronGroup *mainGroup = 0;
+	{
+		//check owner hint to speed up things.
+		NeuronGroup *owner = dynamic_cast<NeuronGroup*>(mOwner);
+		if(owner != 0 && owner->getId() == groupId) {
+			mainGroup = owner;
+		}
+		else {
+			mainGroup = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+		}
+	}
 	if(mainGroup == 0) {
 		return moduleIds;
 	}
@@ -281,18 +327,37 @@ QVariantList ScriptedNetworkManipulator::getSubModules(qlonglong groupId) {
  * Returns the id of the parent module for a Neuron or NeuroModule.
  * Will return 0 in case of failure.
  */
-qlonglong ScriptedNetworkManipulator::getParentModule(qlonglong elementId) {
+qulonglong ScriptedNetworkManipulator::getParentModule(qulonglong elementId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	NeuroModule *module = ModularNeuralNetwork::selectNeuroModuleById(elementId, mNetwork->getNeuroModules());
+	Neuron *neuron = 0;
+	NeuroModule *module = 0;
+	{
+		//check owner hint to speed up things.
+		NeuroModule *ownerModule = dynamic_cast<NeuroModule*>(mOwner);
+		Neuron *ownerNeuron = dynamic_cast<Neuron*>(mOwner);
+		if(ownerModule != 0 && ownerModule->getId() == elementId) {
+			module = ownerModule;
+		}
+		else if(ownerNeuron != 0 && ownerNeuron->getId() == elementId) {
+			neuron = ownerNeuron;
+		}
+	}
+	if(module == 0 && neuron == 0) {
+		module = ModularNeuralNetwork::selectNeuroModuleById(elementId, mNetwork->getNeuroModules());
+	}
 	if(module != 0) {
 		if(module->getParentModule() == 0) {
 			return 0;
 		}
 		return module->getParentModule()->getId();
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(elementId, mNetwork->getNeurons());
+	
+	
+	if(neuron == 0) {
+		neuron = NeuralNetwork::selectNeuronById(elementId, mNetwork->getNeurons());
+	}
 	if(neuron != 0) {
 		NeuroModule *m = mNetwork->getOwnerModule(neuron);
 		if(m == 0) {
@@ -307,19 +372,30 @@ qlonglong ScriptedNetworkManipulator::getParentModule(qlonglong elementId) {
  * Returns a list with the ids of all synapses going into the neuron specified by its neuronId.
  * Will return an empty list in case of failure.
  */
-QVariantList ScriptedNetworkManipulator::getInSynapses(qlonglong targetId, bool excludeDisabledSynapses) {
+QVariantList ScriptedNetworkManipulator::getInSynapses(qulonglong targetId, bool excludeDisabledSynapses) {
 	QVariantList synapseIds;
 
 	if(mNetwork == 0) {
 		return synapseIds;
 	}
-
-	SynapseTarget *target = NeuralNetwork::selectNeuronById(targetId, mNetwork->getNeurons());
-	if(target == 0) {
-		target = NeuralNetwork::selectSynapseById(targetId, mNetwork->getSynapses());
-		if(target == 0) {
-			return synapseIds;
+	
+	SynapseTarget *target = 0;
+	{
+		//check owner hint to speed up things.
+		SynapseTarget *owner = dynamic_cast<SynapseTarget*>(mOwner);
+		if(owner != 0 && owner->getId() == targetId) {
+			target = owner;
 		}
+		if(target == 0) {
+			target = NeuralNetwork::selectNeuronById(targetId, mNetwork->getNeurons());
+		}
+		if(target == 0) {
+			target = NeuralNetwork::selectSynapseById(targetId, mNetwork->getSynapses());
+		}
+	}
+
+	if(target == 0) {
+		return synapseIds;
 	}
 
 	QList<Synapse*> synapses = target->getSynapses();
@@ -336,14 +412,25 @@ QVariantList ScriptedNetworkManipulator::getInSynapses(qlonglong targetId, bool 
  * Returns a list with the ids of all synapses going out of the neuron specified by its neuronId.
  * Will return an empty list in case of failure.
  */
-QVariantList ScriptedNetworkManipulator::getOutSynapses(qlonglong neuronId, bool excludeDisabledSynapses) {
+QVariantList ScriptedNetworkManipulator::getOutSynapses(qulonglong neuronId, bool excludeDisabledSynapses) {
 	QVariantList synapseIds;
 
 	if(mNetwork == 0) {
 		return synapseIds;
 	}
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
 
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
 	if(neuron == 0) {
 		return synapseIds;
 	}
@@ -375,17 +462,28 @@ QVariantList ScriptedNetworkManipulator::getSynapses(QVariantList targetIds, boo
 	bool ok = false;
 	for(QListIterator<QVariant> i(targetIds); i.hasNext();) {
 		
-		qlonglong id = i.next().toLongLong(&ok);
+		qulonglong id = i.next().toLongLong(&ok);
 		if(!ok) {
 			//TODO warning?
 			continue;
 		}
-		SynapseTarget *target = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
-		if(target == 0) {
-			target = NeuralNetwork::selectSynapseById(id, allSynapses);
-			if(target == 0) {
-				continue;
+		SynapseTarget *target = 0;
+		{
+			//check owner hint to speed up things.
+			SynapseTarget *owner = dynamic_cast<SynapseTarget*>(mOwner);
+			if(owner != 0 && owner->getId() == id) {
+				target = owner;
 			}
+			if(target == 0) {
+				target = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
+			}
+			if(target == 0) {
+				target = NeuralNetwork::selectSynapseById(id, allSynapses);
+			}
+		}
+		
+		if(target == 0) {
+			continue;
 		}
 		
 		if(!targets.contains(target)) {
@@ -441,18 +539,27 @@ QVariantList ScriptedNetworkManipulator::getInSynapses(QVariantList targetIds,
 	bool ok = false;
 	for(QListIterator<QVariant> i(targetIds); i.hasNext();) {
 		
-		qlonglong id = i.next().toLongLong(&ok);
+		qulonglong id = i.next().toLongLong(&ok);
 		if(!ok) {
 			//TODO warning?
 			continue;
 		}
-		SynapseTarget *target = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
-		if(target != 0) {
-			targets.append(target);
-			continue;
+		SynapseTarget *target = 0;
+		{
+			//check owner hint to speed up things.
+			SynapseTarget *owner = dynamic_cast<SynapseTarget*>(mOwner);
+			if(owner != 0 && owner->getId() == id) {
+				target = owner;
+			}
+			if(target == 0) {
+				target = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
+			}
+			if(target == 0) {
+				target = NeuralNetwork::selectSynapseById(id, allSynapses);
+			}
 		}
-		target = NeuralNetwork::selectSynapseById(id, allSynapses);
-		if(target != 0) {
+		
+		if(target != 0 && !targets.contains(target)) {
 			targets.append(target);
 		}
 	}
@@ -490,13 +597,23 @@ QVariantList ScriptedNetworkManipulator::getOutSynapses(QVariantList neuronIds,
 	bool ok = false;
 	for(QListIterator<QVariant> i(neuronIds); i.hasNext();) {
 		
-		qlonglong id = i.next().toLongLong(&ok);
+		qulonglong id = i.next().toLongLong(&ok);
 		if(!ok) {
 			//TODO warning?
 			continue;
 		}
-		Neuron *source = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
-		if(source != 0) {
+		Neuron *source = 0;
+		{
+			//check owner hint to speed up things.
+			Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+			if(owner != 0 && owner->getId() == id) {
+				source = owner;
+			}
+			if(source == 0) {
+				source = NeuralNetwork::selectNeuronById(id, mNetwork->getNeurons());
+			}
+		}
+		if(source != 0 && !neurons.contains(source)) {
 			neurons.append(source);
 		}
 	}
@@ -521,11 +638,23 @@ QVariantList ScriptedNetworkManipulator::getOutSynapses(QVariantList neuronIds,
  * Returns the id of the source neuron of the synapse specified by its synapseId.
  * Will return 0 in case of failure.
  */
-qlonglong ScriptedNetworkManipulator::getSource(qlonglong synapseId) {
+qulonglong ScriptedNetworkManipulator::getSource(qulonglong synapseId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+	
 	if(synapse == 0) {
 		return 0;
 	}
@@ -540,11 +669,23 @@ qlonglong ScriptedNetworkManipulator::getSource(qlonglong synapseId) {
  * Returns the id of the synapse target (neuron or synpse) of the synapse specified by its synapseId.
  * Will return 0 in case of failure.
  */
-qlonglong ScriptedNetworkManipulator::getTarget(qlonglong synapseId) {
+qulonglong ScriptedNetworkManipulator::getTarget(qulonglong synapseId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+	
 	if(synapse == 0) {
 		return 0;
 	}
@@ -559,11 +700,23 @@ qlonglong ScriptedNetworkManipulator::getTarget(qlonglong synapseId) {
 /**
  * Returns the bias of the neuron with the given neuronId.
  */
-double ScriptedNetworkManipulator::getBias(qlonglong neuronId) {
+double ScriptedNetworkManipulator::getBias(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron == 0) {
 		return 0;
 	}
@@ -574,11 +727,23 @@ double ScriptedNetworkManipulator::getBias(qlonglong neuronId) {
  * Returns the weight of the synapse with the given synapseId.
  * Will return 0 in case of failure.
  */
-double ScriptedNetworkManipulator::getWeight(qlonglong synapseId) {
+double ScriptedNetworkManipulator::getWeight(qulonglong synapseId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+	
 	if(synapse == 0) {
 		return 0;
 	}
@@ -590,11 +755,23 @@ double ScriptedNetworkManipulator::getWeight(qlonglong synapseId) {
  * Executes the calculateActivation() funciton of a synapses and returns its result.
  * Will return 0 in case of a failure...
  */
-double ScriptedNetworkManipulator::getSynapseOutput(qlonglong synapseId) {
+double ScriptedNetworkManipulator::getSynapseOutput(qulonglong synapseId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+
 	if(synapse == 0) {
 		return 0;
 	}
@@ -606,11 +783,23 @@ double ScriptedNetworkManipulator::getSynapseOutput(qlonglong synapseId) {
  * Executes the synapse function without calling the calcualteActivation of the synapse.
  * The returned value usually is the (modulated) weight of the synapse.
  */
-double ScriptedNetworkManipulator::execSynapseFunction(qlonglong synapseId) {
+double ScriptedNetworkManipulator::execSynapseFunction(qulonglong synapseId) {
 	if(mNetwork == 0) {
 		return 0.0;
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+
 	if(synapse == 0) {
 		return 0.0;
 	}
@@ -625,11 +814,23 @@ double ScriptedNetworkManipulator::execSynapseFunction(qlonglong synapseId) {
  * Returns the current activation of a neuron.
  * Will return 0 in case of failure.
  */
-double ScriptedNetworkManipulator::getActivation(qlonglong neuronId) {
+double ScriptedNetworkManipulator::getActivation(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron == 0) {
 		return 0;
 	}
@@ -641,11 +842,23 @@ double ScriptedNetworkManipulator::getActivation(qlonglong neuronId) {
  * Returns the last stored activation of a neuron.
  * Will return 0 in case of failure.
  */
-double ScriptedNetworkManipulator::getLastActivation(qlonglong neuronId) {
+double ScriptedNetworkManipulator::getLastActivation(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0) {
 		return 0;
 	}
@@ -658,11 +871,23 @@ double ScriptedNetworkManipulator::getLastActivation(qlonglong neuronId) {
  * Returns the current output of a neuron.
  * Will return 0 in case of failure.
  */
-double ScriptedNetworkManipulator::getOutput(qlonglong neuronId) {
+double ScriptedNetworkManipulator::getOutput(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0) {
 		return 0;
 	}
@@ -674,11 +899,23 @@ double ScriptedNetworkManipulator::getOutput(qlonglong neuronId) {
  * Returns the last stored output of a neuron.
  * Will return 0 in case of failure.
  */
-double ScriptedNetworkManipulator::getLastOutput(qlonglong neuronId) {
+double ScriptedNetworkManipulator::getLastOutput(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0) {
 		return 0;
 	}
@@ -690,15 +927,26 @@ double ScriptedNetworkManipulator::getLastOutput(qlonglong neuronId) {
  * Returns a 3-dimensional list with the x,y,z coordinates of the network object with the given objectId.
  * Will return an empty list in case of failure.
  */
-QVariantList ScriptedNetworkManipulator::getPosition(qlonglong objectId) {
+QVariantList ScriptedNetworkManipulator::getPosition(qulonglong objectId) {
 	QVariantList position;
 
 	if(mNetwork == 0) {
 		return position;
 	}
-	QList<NeuralNetworkElement*> networkElements;
-	mNetwork->getNetworkElements(networkElements);
-	NeuralNetworkElement *object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+	
+	NeuralNetworkElement *object = 0;
+	{
+		//check owner hint to speed up things.
+		NeuralNetworkElement *owner = dynamic_cast<NeuralNetworkElement*>(mOwner);
+		if(owner != 0 && owner->getId() == objectId) {
+			object = owner;
+		}
+		if(object == 0) {
+			QList<NeuralNetworkElement*> networkElements;
+			mNetwork->getNetworkElements(networkElements);
+			object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+		}
+	}
 	
 	if(object == 0) {
 		return position;
@@ -716,15 +964,28 @@ QVariantList ScriptedNetworkManipulator::getPosition(qlonglong objectId) {
  * Returns a list with the property names available of the network element with the given objectId.
  * Will return an empty list in case of failure.
  */
-QVariantList ScriptedNetworkManipulator::getProperties(qlonglong objectId) {
+QVariantList ScriptedNetworkManipulator::getProperties(qulonglong objectId) {
 	QVariantList properties;
 
 	if(mNetwork == 0) {
 		return properties;
 	}
-	QList<NeuralNetworkElement*> networkElements;
-	mNetwork->getNetworkElements(networkElements);
-	NeuralNetworkElement *object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
+	QMutexLocker g(nmm->getNetworkExecutionMutex());
+	
+	NeuralNetworkElement *object = 0;
+	{
+		//check owner hint to speed up things.
+		NeuralNetworkElement *owner = dynamic_cast<NeuralNetworkElement*>(mOwner);
+		if(owner != 0 && owner->getId() == objectId) {
+			object = owner;
+		}
+		if(object == 0) {
+			QList<NeuralNetworkElement*> networkElements;
+			mNetwork->getNetworkElements(networkElements);
+			object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+		}
+	}
 	
 	Properties *props = dynamic_cast<Properties*>(object);
 
@@ -744,7 +1005,7 @@ QVariantList ScriptedNetworkManipulator::getProperties(qlonglong objectId) {
  * Returns the content of the specified property (name) of the network element with the given objectId. 
  * In case of failure or in case there is no such property, the string "~" is returned.
  */
-QString ScriptedNetworkManipulator::getProperty(qlonglong objectId, const QString &name) {
+QString ScriptedNetworkManipulator::getProperty(qulonglong objectId, const QString &name) {
 
 	if(mNetwork == 0) {
 		return "~";
@@ -752,9 +1013,19 @@ QString ScriptedNetworkManipulator::getProperty(qlonglong objectId, const QStrin
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
 	
-	QList<NeuralNetworkElement*> networkElements;
-	mNetwork->getNetworkElements(networkElements);
-	NeuralNetworkElement *object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+	NeuralNetworkElement *object = 0;
+	{
+		//check owner hint to speed up things.
+		NeuralNetworkElement *owner = dynamic_cast<NeuralNetworkElement*>(mOwner);
+		if(owner != 0 && owner->getId() == objectId) {
+			object = owner;
+		}
+		if(object == 0) {
+			QList<NeuralNetworkElement*> networkElements;
+			mNetwork->getNetworkElements(networkElements);
+			object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+		}
+	}
 	
 	Properties *props = dynamic_cast<Properties*>(object);
 
@@ -767,11 +1038,23 @@ QString ScriptedNetworkManipulator::getProperty(qlonglong objectId, const QStrin
 	return "~";
 }
 
-QString ScriptedNetworkManipulator::getName(qlonglong neuronId) {
+QString ScriptedNetworkManipulator::getName(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return "Unknown";
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0) {
 		return "Unknown";
 	}
@@ -783,11 +1066,23 @@ QString ScriptedNetworkManipulator::getName(qlonglong neuronId) {
  * Sets the bias of the neuron with the given neuronId.
  * Returns false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::setBias(qlonglong neuronId, double bias) {
+bool ScriptedNetworkManipulator::setBias(qulonglong neuronId, double bias) {
 	if(mNetwork == 0) {
 		return false;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0) {
 		return false;
 	}
@@ -804,11 +1099,23 @@ bool ScriptedNetworkManipulator::setBias(qlonglong neuronId, double bias) {
  *
  * Returns false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::setOutput(qlonglong neuronId, double output) {
+bool ScriptedNetworkManipulator::setOutput(qulonglong neuronId, double output) {
 	if(mNetwork == 0) {
 		return false;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron == 0) {
 		return false;
 	}
@@ -826,11 +1133,23 @@ bool ScriptedNetworkManipulator::setOutput(qlonglong neuronId, double output) {
  * 
  * Will return false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::setActivation(qlonglong neuronId, double activation) {
+bool ScriptedNetworkManipulator::setActivation(qulonglong neuronId, double activation) {
 	if(mNetwork == 0) {
 		return false;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron == 0) {
 		return false;
 	}
@@ -844,11 +1163,23 @@ bool ScriptedNetworkManipulator::setActivation(qlonglong neuronId, double activa
  * Sets the weight of the synapse specified with the synapseId.
  * Will return false in case of failure.
  */
-bool ScriptedNetworkManipulator::setWeight(qlonglong synapseId, double weight) {
+bool ScriptedNetworkManipulator::setWeight(qulonglong synapseId, double weight) {
 	if(mNetwork == 0) {
 		return false;
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+	
 	if(synapse == 0) {
 		return false;
 	}
@@ -860,7 +1191,7 @@ bool ScriptedNetworkManipulator::setWeight(qlonglong synapseId, double weight) {
  * Sets the new position of the network element specified by the objectId. 
  * Will return false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::setPosition(qlonglong objectId, double x, double y, double z) {
+bool ScriptedNetworkManipulator::setPosition(qulonglong objectId, double x, double y, double z) {
 	QVariantList position;
 
 	if(mNetwork == 0) {
@@ -869,9 +1200,19 @@ bool ScriptedNetworkManipulator::setPosition(qlonglong objectId, double x, doubl
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
 
-	QList<NeuralNetworkElement*> networkElements;
-	mNetwork->getNetworkElements(networkElements);
-	NeuralNetworkElement *object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+	NeuralNetworkElement *object = 0;
+	{
+		//check owner hint to speed up things.
+		NeuralNetworkElement *owner = dynamic_cast<NeuralNetworkElement*>(mOwner);
+		if(owner != 0 && owner->getId() == objectId) {
+			object = owner;
+		}
+		if(object == 0) {
+			QList<NeuralNetworkElement*> networkElements;
+			mNetwork->getNetworkElements(networkElements);
+			object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+		}
+	}
 	
 	if(object == 0) {
 		return false;
@@ -887,16 +1228,26 @@ bool ScriptedNetworkManipulator::setPosition(qlonglong objectId, double x, doubl
  * The content may also be ommited, then it is replaced by "".
  * Will return false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::setProperty(qlonglong objectId, const QString &propName, const QString &content, bool severeChange) {
+bool ScriptedNetworkManipulator::setProperty(qulonglong objectId, const QString &propName, const QString &content, bool severeChange) {
 	if(mNetwork == 0) {
 		return false;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
 
-	QList<NeuralNetworkElement*> networkElements;
-	mNetwork->getNetworkElements(networkElements);
-	NeuralNetworkElement *object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+	NeuralNetworkElement *object = 0;
+	{
+		//check owner hint to speed up things.
+		NeuralNetworkElement *owner = dynamic_cast<NeuralNetworkElement*>(mOwner);
+		if(owner != 0 && owner->getId() == objectId) {
+			object = owner;
+		}
+		if(object == 0) {
+			QList<NeuralNetworkElement*> networkElements;
+			mNetwork->getNetworkElements(networkElements);
+			object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+		}
+	}
 	
 	Properties *props = dynamic_cast<Properties*>(object);
 
@@ -918,19 +1269,43 @@ bool ScriptedNetworkManipulator::setProperty(qlonglong objectId, const QString &
  * Adds a network element (Neuron or NeuroModule) to the group specified by the groupId.
  * Will return false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::addToGroup(qlonglong elementId, qlonglong groupId) {
+bool ScriptedNetworkManipulator::addToGroup(qulonglong elementId, qulonglong groupId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
 
-	NeuronGroup *group = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+	//get target group to which the element should be added
+	NeuronGroup *group = 0;
+	{
+		//check owner hint to speed up things.
+		NeuronGroup *owner = dynamic_cast<NeuronGroup*>(mOwner);
+		if(owner != 0 && owner->getId() == groupId) {
+			group = owner;
+		}
+		if(group == 0) {
+			group = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+		}
+	}
+
 	if(group == 0) {
 		return false;
 	}
 	
-	NeuroModule *module = ModularNeuralNetwork::selectNeuroModuleById(elementId, mNetwork->getNeuroModules());
+	//check if the element to be added is a module 
+	NeuroModule *module = 0;
+	{
+		//check owner hint to speed up things.
+		NeuroModule *owner = dynamic_cast<NeuroModule*>(mOwner);
+		if(owner != 0 && owner->getId() == groupId) {
+			module = owner;
+		}
+		if(module == 0) {
+			module = ModularNeuralNetwork::selectNeuroModuleById(elementId, mNetwork->getNeuroModules());
+		}
+	}
+	
 	if(module != 0) {
 		bool ok = group->addSubModule(module);
 		if(ok) {
@@ -938,7 +1313,20 @@ bool ScriptedNetworkManipulator::addToGroup(qlonglong elementId, qlonglong group
 		}
 		return ok;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(elementId, mNetwork->getNeurons());
+	
+	//check if the element to be added is a neuron 
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == groupId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(elementId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron != 0) {
 		bool ok = group->addNeuron(neuron);
 		if(ok) {
@@ -953,19 +1341,42 @@ bool ScriptedNetworkManipulator::addToGroup(qlonglong elementId, qlonglong group
  * Removes a network element (Neuron or NeuroModule) from a NeuronGroup / NeuroModule specified by groupId.
  * Will return false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::removeFromGroup(qlonglong elementId, qlonglong groupId) {
+bool ScriptedNetworkManipulator::removeFromGroup(qulonglong elementId, qulonglong groupId) {
 	if(mNetwork == 0) {
 		return 0;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
 
-	NeuronGroup *group = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+	NeuronGroup *group = 0;
+	{
+		//check owner hint to speed up things.
+		NeuronGroup *owner = dynamic_cast<NeuronGroup*>(mOwner);
+		if(owner != 0 && owner->getId() == groupId) {
+			group = owner;
+		}
+		if(group == 0) {
+			group = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+		}
+	}
+	
 	if(group == 0) {
 		return false;
 	}
 	
-	NeuroModule *module = ModularNeuralNetwork::selectNeuroModuleById(elementId, mNetwork->getNeuroModules());
+	//check if the element to be added is a module 
+	NeuroModule *module = 0;
+	{
+		//check owner hint to speed up things.
+		NeuroModule *owner = dynamic_cast<NeuroModule*>(mOwner);
+		if(owner != 0 && owner->getId() == groupId) {
+			module = owner;
+		}
+		if(module == 0) {
+			module = ModularNeuralNetwork::selectNeuroModuleById(elementId, mNetwork->getNeuroModules());
+		}
+	}
+
 	if(module != 0) {
 		bool ok = group->removeSubModule(module);
 		if(ok) {
@@ -973,7 +1384,20 @@ bool ScriptedNetworkManipulator::removeFromGroup(qlonglong elementId, qlonglong 
 		}
 		return ok;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(elementId, mNetwork->getNeurons());
+	
+	//check if the element to be added is a neuron 
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == groupId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(elementId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron != 0) {
 		bool ok = group->removeNeuron(neuron);
 		if(ok) {
@@ -989,12 +1413,13 @@ bool ScriptedNetworkManipulator::removeFromGroup(qlonglong elementId, qlonglong 
  * of the neuron.
  * The id of the neuron is returned if successful, otherwise 0 is returned.
  */
-qlonglong ScriptedNetworkManipulator::createNeuron(const QString &name) {
+qulonglong ScriptedNetworkManipulator::createNeuron(const QString &name) {
 	if(mNetwork == 0) {
 		return 0;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
+	
 	Neuron *neuron = new Neuron(name, *(mNetwork->getDefaultTransferFunction()), 
 								*(mNetwork->getDefaultActivationFunction()));
 	mNetwork->addNeuron(neuron);
@@ -1007,7 +1432,7 @@ qlonglong ScriptedNetworkManipulator::createNeuron(const QString &name) {
  * Creates a new synapse, going from neuron sourceId to target targetId. 
  * Returns the id of the new synapse in case of success, otherwise returns 0.
  */
-qlonglong ScriptedNetworkManipulator::createSynapse(qlonglong sourceId, qlonglong targetId, double weight) {
+qulonglong ScriptedNetworkManipulator::createSynapse(qulonglong sourceId, qulonglong targetId, double weight) {
 	if(mNetwork == 0) {
 		return 0;
 	}
@@ -1017,16 +1442,38 @@ qlonglong ScriptedNetworkManipulator::createSynapse(qlonglong sourceId, qlonglon
 	QList<Neuron*> neurons = mNetwork->getNeurons();
 	QList<Synapse*> synapses = mNetwork->getSynapses();
 
-	Neuron *source = NeuralNetwork::selectNeuronById(sourceId, neurons);
-	SynapseTarget *target = NeuralNetwork::selectNeuronById(targetId, neurons);
-
-	if(target == 0) {
-		target = NeuralNetwork::selectSynapseById(targetId, synapses);
+	Neuron *source = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == sourceId) {
+			source = owner;
+		}
+		if(source == 0) {
+			source = NeuralNetwork::selectNeuronById(sourceId, neurons);
+		}
 	}
+	
+	SynapseTarget *target = 0;
+	{
+		//check owner hint to speed up things.
+		SynapseTarget *owner = dynamic_cast<SynapseTarget*>(mOwner);
+		if(owner != 0 && owner->getId() == targetId) {
+			target = owner;
+		}
+		if(target == 0) {
+			target = NeuralNetwork::selectNeuronById(targetId, neurons);
+		}
+		if(target == 0) {
+			target = NeuralNetwork::selectSynapseById(targetId, synapses);
+		}
+	}
+
 	if(source == 0 || target == 0) {
 		return 0;
 	}
 
+	//check if there is already a synaspe between the two elements.
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
 		Synapse *synapse = i.next();
 		if(synapse->getSource() == source && synapse->getTarget() == target) {
@@ -1045,12 +1492,13 @@ qlonglong ScriptedNetworkManipulator::createSynapse(qlonglong sourceId, qlonglon
  * Creates a new NeuroModule with the given name and returns its id.
  * Returns 0 in case of failure.
  */
-qlonglong ScriptedNetworkManipulator::createNeuroModule(const QString &name) {
+qulonglong ScriptedNetworkManipulator::createNeuroModule(const QString &name) {
 	if(mNetwork == 0) {
 		return 0;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
+	
 	NeuroModule *module = new NeuroModule(name);
 	mNetwork->addNeuronGroup(module);
 
@@ -1062,12 +1510,13 @@ qlonglong ScriptedNetworkManipulator::createNeuroModule(const QString &name) {
  * Creates a new NeuronGroup with the given name and returns its id.
  * Returns 0 in case of failure.
  */
-qlonglong ScriptedNetworkManipulator::createNeuronGroup(const QString &name) {
+qulonglong ScriptedNetworkManipulator::createNeuronGroup(const QString &name) {
 	if(mNetwork == 0) {
 		return 0;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
+	
 	NeuronGroup *group = new NeuronGroup(name);
 	mNetwork->addNeuronGroup(group);
 
@@ -1076,13 +1525,24 @@ qlonglong ScriptedNetworkManipulator::createNeuronGroup(const QString &name) {
 }
 
 
-bool ScriptedNetworkManipulator::removeNeuron(qlonglong neuronId) {
+bool ScriptedNetworkManipulator::removeNeuron(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return false;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
 
 	if(neuron == 0) {
 		return false;
@@ -1099,13 +1559,24 @@ bool ScriptedNetworkManipulator::removeNeuron(qlonglong neuronId) {
 }
 
 
-bool ScriptedNetworkManipulator::removeSynapse(qlonglong synapseId) {
+bool ScriptedNetworkManipulator::removeSynapse(qulonglong synapseId) {
 	if(mNetwork == 0) {
 		return false;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
 
 	if(synapse == 0 || synapse->getTarget() == 0) { 
 		return false;
@@ -1124,13 +1595,24 @@ bool ScriptedNetworkManipulator::removeSynapse(qlonglong synapseId) {
 
 
 
-bool ScriptedNetworkManipulator::removeNeuronGroup(qlonglong groupId) {
+bool ScriptedNetworkManipulator::removeNeuronGroup(qulonglong groupId) {
 	if(mNetwork == 0) {
 		return false;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
-	NeuronGroup *group = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+	
+	NeuronGroup *group = 0;
+	{
+		//check owner hint to speed up things.
+		NeuronGroup *owner = dynamic_cast<NeuronGroup*>(mOwner);
+		if(owner != 0 && owner->getId() == groupId) {
+			group = owner;
+		}
+		if(group == 0) {
+			group = ModularNeuralNetwork::selectNeuronGroupById(groupId, mNetwork->getNeuronGroups());
+		}
+	}
 
 	if(group == 0) { 
 		return false;
@@ -1147,16 +1629,26 @@ bool ScriptedNetworkManipulator::removeNeuronGroup(qlonglong groupId) {
 }
 
 
-bool ScriptedNetworkManipulator::removeProperty(qlonglong objectId, const QString &propertyName, bool severeChange) {
+bool ScriptedNetworkManipulator::removeProperty(qulonglong objectId, const QString &propertyName, bool severeChange) {
 	if(mNetwork == 0) {
 		return false;
 	}
 	NeuralNetworkManager *nmm = Neuro::getNeuralNetworkManager();
 	QMutexLocker g(nmm->getNetworkExecutionMutex());
 	
-	QList<NeuralNetworkElement*> networkElements;
-	mNetwork->getNetworkElements(networkElements);
-	NeuralNetworkElement *object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+	NeuralNetworkElement *object = 0;
+	{
+		//check owner hint to speed up things.
+		NeuralNetworkElement *owner = dynamic_cast<NeuralNetworkElement*>(mOwner);
+		if(owner != 0 && owner->getId() == objectId) {
+			object = owner;
+		}
+		if(object == 0) {
+			QList<NeuralNetworkElement*> networkElements;
+			mNetwork->getNetworkElements(networkElements);
+			object = NeuralNetwork::selectNetworkElementById(objectId, networkElements);
+		}
+	}
 	
 	Properties *props = dynamic_cast<Properties*>(object);
 	
@@ -1178,11 +1670,23 @@ bool ScriptedNetworkManipulator::removeProperty(qlonglong objectId, const QStrin
 }
 
 
-bool ScriptedNetworkManipulator::setTransferFunction(qlonglong neuronId, const QString &transferFunctionName) {
+bool ScriptedNetworkManipulator::setTransferFunction(qulonglong neuronId, const QString &transferFunctionName) {
 	if(mNetwork == 0) {
 		return false;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0) {
 		return false;
 	}
@@ -1199,11 +1703,23 @@ bool ScriptedNetworkManipulator::setTransferFunction(qlonglong neuronId, const Q
 }
 
 
-QString ScriptedNetworkManipulator::getTransferFunctionName(qlonglong neuronId) {
+QString ScriptedNetworkManipulator::getTransferFunctionName(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return "";
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0 || neuron->getTransferFunction() == 0) {
 		return "";
 	}
@@ -1211,11 +1727,23 @@ QString ScriptedNetworkManipulator::getTransferFunctionName(qlonglong neuronId) 
 }
 
 
-bool ScriptedNetworkManipulator::setActivationFunction(qlonglong neuronId, const QString &activationFunctionName) {
+bool ScriptedNetworkManipulator::setActivationFunction(qulonglong neuronId, const QString &activationFunctionName) {
 	if(mNetwork == 0) {
 		return false;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0) {
 		return false;
 	}
@@ -1232,11 +1760,23 @@ bool ScriptedNetworkManipulator::setActivationFunction(qlonglong neuronId, const
 }
 
 
-QString ScriptedNetworkManipulator::getActivationFunctionName(qlonglong neuronId) {
+QString ScriptedNetworkManipulator::getActivationFunctionName(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return "";
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0 || neuron->getActivationFunction() == 0) {
 		return "";
 	}
@@ -1244,11 +1784,23 @@ QString ScriptedNetworkManipulator::getActivationFunctionName(qlonglong neuronId
 }
 
 
-bool ScriptedNetworkManipulator::setSynapseFunction(qlonglong synapseId, const QString &synapseFunctionName) {
+bool ScriptedNetworkManipulator::setSynapseFunction(qulonglong synapseId, const QString &synapseFunctionName) {
 	if(mNetwork == 0) {
 		return false;
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+	
 	if(synapse == 0) {
 		return false;
 	}
@@ -1266,11 +1818,23 @@ bool ScriptedNetworkManipulator::setSynapseFunction(qlonglong synapseId, const Q
 }
 
 
-QString ScriptedNetworkManipulator::getSynapseFunctionName(qlonglong synapseId) {
+QString ScriptedNetworkManipulator::getSynapseFunctionName(qulonglong synapseId) {
 	if(mNetwork == 0) {
 		return "";
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+	
 	if(synapse == 0 || synapse->getSynapseFunction() == 0) {
 		return "";
 	}
@@ -1279,12 +1843,24 @@ QString ScriptedNetworkManipulator::getSynapseFunctionName(qlonglong synapseId) 
 
 
 bool ScriptedNetworkManipulator::setTransferFunctionParameter(
-				qlonglong neuronId, const QString &parameterName, const QString &value)
+				qulonglong neuronId, const QString &parameterName, const QString &value)
 {
 	if(mNetwork == 0) {
 		return "";
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron == 0 || neuron->getTransferFunction() == 0) {
 		return "";
 	}
@@ -1297,12 +1873,24 @@ bool ScriptedNetworkManipulator::setTransferFunctionParameter(
 
 
 QString ScriptedNetworkManipulator::getTransferFunctionParameter(
-				qlonglong neuronId, const QString &parameterName)
+				qulonglong neuronId, const QString &parameterName)
 {
 	if(mNetwork == 0) {
 		return "";
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron == 0 || neuron->getTransferFunction() == 0) {
 		return "";
 	}
@@ -1315,12 +1903,24 @@ QString ScriptedNetworkManipulator::getTransferFunctionParameter(
 
 
 bool ScriptedNetworkManipulator::setActivationFunctionParameter(
-				qlonglong neuronId, const QString &parameterName, const QString &value)
+				qulonglong neuronId, const QString &parameterName, const QString &value)
 {
 	if(mNetwork == 0) {
 		return false;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron == 0 || neuron->getActivationFunction() == 0) {
 		return false;
 	}
@@ -1333,12 +1933,24 @@ bool ScriptedNetworkManipulator::setActivationFunctionParameter(
 
 
 QString ScriptedNetworkManipulator::getActivationFunctionParameter(
-				qlonglong neuronId, const QString &parameterName)
+				qulonglong neuronId, const QString &parameterName)
 {
 	if(mNetwork == 0) {
 		return "";
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
 	if(neuron == 0 || neuron->getActivationFunction() == 0) {
 		return "";
 	}
@@ -1351,12 +1963,24 @@ QString ScriptedNetworkManipulator::getActivationFunctionParameter(
 
 
 bool ScriptedNetworkManipulator::setSynapseFunctionParameter(
-				qlonglong synapseId, const QString &parameterName, const QString &value)
+				qulonglong synapseId, const QString &parameterName, const QString &value)
 {
 	if(mNetwork == 0) {
 		return "";
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+
 	if(synapse == 0 || synapse->getSynapseFunction() == 0) {
 		return "";
 	}
@@ -1369,12 +1993,24 @@ bool ScriptedNetworkManipulator::setSynapseFunctionParameter(
 
 
 QString ScriptedNetworkManipulator::getSynapseFunctionParameter(
-				qlonglong synapseId, const QString &parameterName)
+				qulonglong synapseId, const QString &parameterName)
 {
 	if(mNetwork == 0) {
 		return "";
 	}
-	Synapse *synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+	
+	Synapse *synapse = 0;
+	{
+		//check owner hint to speed up things.
+		Synapse *owner = dynamic_cast<Synapse*>(mOwner);
+		if(owner != 0 && owner->getId() == synapseId) {
+			synapse = owner;
+		}
+		if(synapse == 0) {
+			synapse = NeuralNetwork::selectSynapseById(synapseId, mNetwork->getSynapses());
+		}
+	}
+
 	if(synapse == 0 || synapse->getSynapseFunction() == 0) {
 		return "";
 	}
@@ -1385,18 +2021,30 @@ QString ScriptedNetworkManipulator::getSynapseFunctionParameter(
 	return param->getValueAsString();
 }
 
-double ScriptedNetworkManipulator::applyTransferFunction(qlonglong neuronId, double activity) {
+double ScriptedNetworkManipulator::applyTransferFunction(qulonglong neuronId, double activity) {
 	if(mNetwork == 0) {
 		return 0.0;
 	}
-	Neuron *neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+	
 	if(neuron == 0 || neuron->getTransferFunction() == 0) {
 		return 0.0;
 	}
 	return neuron->getTransferFunction()->transferActivation(activity, neuron);
 }
 
-double ScriptedNetworkManipulator::tf(qlonglong neuronId, double activity) {
+double ScriptedNetworkManipulator::tf(qulonglong neuronId, double activity) {
 	return applyTransferFunction(neuronId, activity);
 }
 
@@ -1416,6 +2064,274 @@ double ScriptedNetworkManipulator::getDistance(QVariantList pos1, QVariantList p
 	return 0.0;
 }
 
+
+
+/**
+ * Enables the neuromodulators for a neuromodulator element.
+ * If the element is not a neuromodulator element, then nothing will happen.
+ */
+void ScriptedNetworkManipulator::enableNeuroModulators(qulonglong elementId, bool enable) {
+	if(mNetwork == 0) {
+		return;
+	}
+
+	NeuralNetworkElement *object = 0;
+	NeuroModulatorElement *nModElem = 0;
+	NeuroModulator *modulator = getNeuroModulator(elementId, &object, &nModElem);
+	
+	if(object == 0 || nModElem == 0) {
+		return;
+	}
+	
+	if(enable) {
+		if(nModElem->getNeuroModulator() == 0) {
+			nModElem->setNeuroModulator();
+		}
+		//don't change the EXISTING modulator object, if enable == true and no modulator given
+	}
+	else {
+		//diable modulators.
+		nModElem->setNeuroModulator(0);
+	}
+}
+
+
+
+/**
+ * Sets the current concentration level of a specific neuromodulator type spread by the given element.
+ * If the element is not an active neuromodulator element, then there is no effect.
+ */
+void ScriptedNetworkManipulator::setModulatorArea(qulonglong elementId, int type, double width, 
+												  double height, bool circle) 
+{
+	if(mNetwork == 0) {
+		return;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		modulator->setLocalAreaRect(type, width, height, Vector3D(0.0, 0.0, 0.0), circle);
+	}
+}
+
+/**
+ * Sets a reference module use by the NeuroModulators to determin the area of influence.
+ * With a reference module, that area is the area of the module (including submodules)
+ * 
+ */
+void ScriptedNetworkManipulator::setModulatorAreaReferenceModule(qulonglong elementId, int type, 
+																 qulonglong moduleId) 
+{
+	if(mNetwork == 0) {
+		return;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		
+		NeuroModule *module = 0;
+		{
+			//check owner hint to speed up things.
+			NeuroModule *owner = dynamic_cast<NeuroModule*>(mOwner);
+			if(owner != 0 && owner->getId() == moduleId) {
+				module = owner;
+			}
+			if(module == 0) {
+				module = ModularNeuralNetwork::selectNeuroModuleById(moduleId, mNetwork->getNeuroModules());
+			}
+		}
+		modulator->setAreaReferenceModule(type, module);
+	}
+}
+
+/**
+ * Returns the rectangle of the area of a specific neuromodulator type spread by the given element.
+ * The first two numbers in the returned list are the width and height of the area.
+ * The third number specifies, if this is a circle (1) or not (0).
+ * The last two numbers give an (optional local offset).
+ * 
+ * If the element is not an active neuromodulator element, then 0.0 is returned.
+ */
+QVariantList ScriptedNetworkManipulator::getModulatorArea(qulonglong elementId, int type) {
+	QVariantList area;
+	
+	if(mNetwork == 0) {
+		return area;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		QRectF rect = modulator->getLocalRect(type);
+		bool isCircle = modulator->isCircularArea(type);
+		
+		area.append(rect.width());
+		area.append(rect.height());
+		area.append(isCircle ? 1.0 : 0.0);
+		area.append(rect.x());
+		area.append(rect.y());
+	}
+	return area;
+}
+
+
+
+
+/**
+ * Sets the current concentration level of a specific neuromodulator type spread by the given element.
+ * If the element is not an active neuromodulator element, then there is no effect.
+ */
+void ScriptedNetworkManipulator::setModulatorConcentration(qulonglong elementId, int type, double concentration) {
+	if(mNetwork == 0) {
+		return;
+	}
+	
+	NeuralNetworkElement *object = 0;
+	NeuroModulator *modulator = getNeuroModulator(elementId, &object);
+	if(modulator != 0) {
+		modulator->setConcentration(type, concentration, object);
+	}
+}
+
+/**
+ * Returns the current concentration level of a specific neuromodulator type spread by the given element.
+ * If the element is not an active neuromodulator element, then 0.0 is returned.
+ */
+double ScriptedNetworkManipulator::getModulatorConcentration(qulonglong elementId, int type) {
+	if(mNetwork == 0) {
+		return 0.0;
+	}
+	
+	NeuralNetworkElement *object = 0;
+	NeuroModulator *modulator = getNeuroModulator(elementId, &object);
+	if(modulator != 0) {
+		return modulator->getConcentration(type, object);
+	}
+	return 0.0;
+}
+
+/**
+ * Returns the current concentration level of a specific neuromodulator type 
+ * at a certain global positinon in a network that is spread by the given element.
+ * This will only consider the concentration level caused by the specified element.
+ * 
+ * If the element is not an active neuromodulator element, then 0.0 is returned.
+ */
+double ScriptedNetworkManipulator::getModulatorConcentrationAt(qulonglong elementId, 
+											int type, double x, double y, double z) 
+{
+	if(mNetwork == 0) {
+		return 0.0;
+	}
+	
+	NeuralNetworkElement *object = 0;
+	NeuroModulator *modulator = getNeuroModulator(elementId, &object);
+	if(modulator != 0) {
+		return modulator->getConcentrationAt(type, Vector3D(x, y, z), object);
+	}
+	return 0.0;
+}
+
+/**
+ * Returns the global concentration level of a specific neuromodulator type 
+ * at a certain global positinon in the entire network. 
+ * This includes all concentration levels caused by all elements in the network 
+ * of that type!
+ */
+double ScriptedNetworkManipulator::getModulatorConcentrationAt(int type, double x, double y, double z) {
+	if(mNetwork == 0) {
+		return 0.0;
+	}
+	
+	return NeuroModulator::getConcentrationInNetworkAt(type, Vector3D(x, y, z), mNetwork);
+}
+
+/**
+ * Sets the concentration calculation modus for a specific type of the given element.
+ * If the element is not an active neuromodulator element, then there is no effect.
+ */
+void ScriptedNetworkManipulator::setModulatorModus(qulonglong elementId, int type, int modus) {
+	if(mNetwork == 0) {
+		return;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		modulator->setModus(type, modus);
+	}
+}
+
+int ScriptedNetworkManipulator::getModulatorModus(qulonglong elementId, int type) {
+	if(mNetwork == 0) {
+		return -1;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		return modulator->getModus(type);
+	}
+	return -1;
+}
+
+
+NeuroModulator* ScriptedNetworkManipulator::getNeuroModulator(qulonglong elementId, 
+						NeuralNetworkElement **element, NeuroModulatorElement **modElem) 
+{ 
+	if(mNetwork == 0) {
+		return 0;
+	}
+	
+	NeuralNetworkElement *object = 0;
+	{
+		//check owner hint to speed up things.
+		NeuralNetworkElement *owner = dynamic_cast<NeuralNetworkElement*>(mOwner);
+		if(owner != 0 && owner->getId() == elementId) {
+			object = owner;
+		}
+		if(object == 0) {
+			QList<NeuralNetworkElement*> networkElements;
+			mNetwork->getNetworkElements(networkElements);
+			object = NeuralNetwork::selectNetworkElementById(elementId, networkElements);
+		}
+	}
+	if(object == 0) {
+		return 0;
+	}
+	NeuroModulatorElement *nModElem = 0;
+	
+	Neuron *neuron = dynamic_cast<Neuron*>(object);
+	Synapse *synapse = dynamic_cast<Synapse*>(object);
+	NeuroModule *module = dynamic_cast<NeuroModule*>(object);
+	if(neuron != 0) {
+		nModElem = dynamic_cast<NeuroModulatorElement*>(dynamic_cast<Neuron*>(object)->getActivationFunction());
+	}
+	else if(synapse != 0) {
+		nModElem = dynamic_cast<NeuroModulatorElement*>(dynamic_cast<Synapse*>(object)->getSynapseFunction());
+	}
+	else if(module != 0) {
+		//use the first NeuroModulator constaint (ignore all others)
+		QList<GroupConstraint*> constraints = dynamic_cast<NeuroModule*>(object)->getConstraints();
+		for(QListIterator<GroupConstraint*> j(constraints); j.hasNext();) {
+			GroupConstraint *group = j.next();
+			nModElem = dynamic_cast<NeuroModulatorElement*>(group);
+			
+			if(nModElem != 0) {
+				break;
+			}
+		}
+	}
+	
+	if(nModElem == 0) {
+		return 0;
+	}
+	
+	if(element != 0) {
+		(*element) = object;
+	}
+	if(modElem != 0) {
+		(*modElem) = nModElem;
+	}
+	return nModElem->getNeuroModulator();
+}
 
 
 }

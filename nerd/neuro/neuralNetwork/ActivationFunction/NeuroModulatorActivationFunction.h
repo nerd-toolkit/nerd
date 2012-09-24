@@ -50,6 +50,7 @@
 #include "Value/DoubleValue.h"
 #include "Value/NormalizedDoubleValue.h"
 #include "NeuroModulation/NeuroModulator.h"
+#include <NeuroModulation/NeuroModulatorElement.h>
 
 namespace nerd {
 	
@@ -58,7 +59,9 @@ namespace nerd {
 	/**
 	 * NeuroModulatorActivationFunction
 	 */
-	class NeuroModulatorActivationFunction : public ActivationFunction {
+	class NeuroModulatorActivationFunction : public ActivationFunction, 
+											 public virtual NeuroModulatorElement 
+	{
 	public:
 		NeuroModulatorActivationFunction(const QString &name);
 		NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other);
@@ -68,9 +71,6 @@ namespace nerd {
 		
 		virtual void reset(Neuron *owner);
 		virtual double calculateActivation(Neuron *owner);
-		
-		virtual void setNeuroModulator(NeuroModulator *modulator = new NeuroModulator());
-		virtual NeuroModulator* getNeuroModulator() const;
 		
 		virtual bool equals(ActivationFunction *activationFunction) const;
 		

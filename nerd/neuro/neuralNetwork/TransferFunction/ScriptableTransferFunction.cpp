@@ -156,6 +156,7 @@ void ScriptableTransferFunction::reset(Neuron *neuron) {
 	ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(neuron->getOwnerNetwork());
 	if(mNetworkManipulator != 0) {
 		mNetworkManipulator->setNeuralNetwork(network);
+		mNetworkManipulator->setOwnerHint(neuron);
 	}
 
 	resetScriptContext();

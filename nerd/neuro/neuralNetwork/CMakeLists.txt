@@ -97,6 +97,8 @@ set(nerd_neuralNetwork_SRCS
 	Util/NetworkConnectivityUtil.cpp
 	ActivationFunction/NeuroModulatorActivationFunction.cpp
 	NeuroModulation/NeuroModulator.cpp
+	NeuroModulation/NeuroModulatorElement.cpp
+	SynapseFunction/NeuroModulatorSynapseFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

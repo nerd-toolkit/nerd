@@ -257,6 +257,7 @@ bool ScriptableConstraint::applyConstraint() {
 	ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(mOwner->getOwnerNetwork());
 	if(mNetworkManipulator != 0) {
 		mNetworkManipulator->setNeuralNetwork(network);
+		mNetworkManipulator->setOwnerHint(mOwner);
 	}
 	
 	if(mFirstExecution) {

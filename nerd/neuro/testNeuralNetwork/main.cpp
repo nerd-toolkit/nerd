@@ -61,25 +61,27 @@
 #include "TestNeuralNetworkConstants.h"
 #include "Util/TestNeuralNetworkUtil.h"
 #include "Constraints/TestSymmetryConstraint.h"
+#include "NeuroModulation/TestNeuroModulator.h"
 
-TEST_START("TestNeuralNetwork", 1, -1, 16);
+TEST_START("TestNeuralNetwork", 1, -1, 17);
  
-	TEST(TestTransferFunction); 
-	TEST(TestSynapseFunction);
-	TEST(TestActivationFunction);
-	TEST(TestSynapse);
-	TEST(TestNeuron);
-	TEST(TestNeuralNetworkManager);
-	TEST(TestNeuralNetwork);
-	TEST(TestNeuralNetworkIO); //has still memory leaks
-	TEST(TestASeriesFunctions);
-	TEST(TestNeuralNetworkIONerdV1Xml); //has still memory leaks
-	TEST(TestNeuronGroup);
-	TEST(TestNeuroModule);
-	TEST(TestModularNeuralNetwork);
-	TEST(TestNeuralNetworkConstants);
-	TEST(TestNeuralNetworkUtil);
-	TEST(TestSymmetryConstraint);
+// 	TEST(TestTransferFunction); 
+// 	TEST(TestSynapseFunction);
+// 	TEST(TestActivationFunction);
+// 	TEST(TestSynapse);
+// 	TEST(TestNeuron);
+// 	TEST(TestNeuralNetworkManager);
+// 	TEST(TestNeuralNetwork);
+// 	TEST(TestNeuralNetworkIO); //has still memory leaks
+// 	TEST(TestASeriesFunctions);
+// 	TEST(TestNeuralNetworkIONerdV1Xml); //has still memory leaks
+// 	TEST(TestNeuronGroup);
+// 	TEST(TestNeuroModule);
+// 	TEST(TestModularNeuralNetwork);
+// 	TEST(TestNeuralNetworkConstants);
+// 	TEST(TestNeuralNetworkUtil);
+// 	TEST(TestSymmetryConstraint);
+	TEST(TestNeuroModulator);
 
 TEST_END;
 

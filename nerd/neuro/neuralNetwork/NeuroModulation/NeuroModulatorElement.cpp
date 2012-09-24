@@ -41,45 +41,65 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "NeuroModulatorActivationFunction.h"
-#include "Network/Neuron.h"
+#include "NeuroModulatorElement.h"
+#include "Network/NeuralNetworkElement.h"
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
-
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const QString &name)
-	: NeuroModulatorElement(), ActivationFunction(name)
-{
-}
-
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other)
-	: Object(), ValueChangedListener(), NeuroModulatorElement(other), ActivationFunction(other)
-{
-}
-
-NeuroModulatorActivationFunction::~NeuroModulatorActivationFunction() {
-}
-
-
-void NeuroModulatorActivationFunction::reset(Neuron *owner) {
-	resetNeuroModulators(owner);
-}
-
-
-/**
- * Returns 0.0, but executes the NeuroModulator if available!
- */
-double NeuroModulatorActivationFunction::calculateActivation(Neuron *owner) {
 	
-	return updateNeuroModulators(owner);
-}
+	NeuroModulatorElement::NeuroModulatorElement() 
+		: mNeuroModulator(0)
+	{
+	}
+	
+	NeuroModulatorElement::NeuroModulatorElement(const NeuroModulatorElement &other)
+		: mNeuroModulator(0)
+	{
+		if(other.mNeuroModulator != 0) {
+			mNeuroModulator = other.mNeuroModulator->createCopy();
+		}
+	}
+	
+	NeuroModulatorElement::~NeuroModulatorElement() {
+	}
+	
+	
+	void NeuroModulatorElement::resetNeuroModulators(NeuralNetworkElement *owner) {
+		if(mNeuroModulator != 0) {
+			mNeuroModulator->reset(owner);
+		}
+	}
+	
+	
+	/**
+	 * Returns 0.0, but executes the NeuroModulator if available!
+	 */
+	double NeuroModulatorElement::updateNeuroModulators(NeuralNetworkElement *owner) {
 		
-		
-bool NeuroModulatorActivationFunction::equals(ActivationFunction *activationFunction) const {
-	return ActivationFunction::equals(activationFunction);
-}
+		if(mNeuroModulator != 0) {
+			mNeuroModulator->update(owner);
+		}
+		return 0.0;
+	}
+	
+	
+	void NeuroModulatorElement::setNeuroModulator(NeuroModulator *modulator) {
+		cerr << "Adding modulator" << endl;
+		if(mNeuroModulator != 0) {
+			delete mNeuroModulator;
+		}
+		mNeuroModulator = modulator;
+	}
+	
+	NeuroModulator* NeuroModulatorElement::getNeuroModulator() const {
+		return mNeuroModulator;
+	}
+	
 
-
-
+	
+	
 }
 
 

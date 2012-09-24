@@ -41,45 +41,41 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "NeuroModulatorActivationFunction.h"
-#include "Network/Neuron.h"
+
+#ifndef NERDNeuroModulatorElement_H
+#define NERDNeuroModulatorElement_H
+
+
+#include "Value/DoubleValue.h"
+#include "Value/NormalizedDoubleValue.h"
+#include "NeuroModulation/NeuroModulator.h"
 
 namespace nerd {
 
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const QString &name)
-	: NeuroModulatorElement(), ActivationFunction(name)
-{
-}
-
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other)
-	: Object(), ValueChangedListener(), NeuroModulatorElement(other), ActivationFunction(other)
-{
-}
-
-NeuroModulatorActivationFunction::~NeuroModulatorActivationFunction() {
-}
-
-
-void NeuroModulatorActivationFunction::reset(Neuron *owner) {
-	resetNeuroModulators(owner);
-}
-
-
-/**
- * Returns 0.0, but executes the NeuroModulator if available!
- */
-double NeuroModulatorActivationFunction::calculateActivation(Neuron *owner) {
+	class NeuralNetworkElement;
+	class Neuron;
 	
-	return updateNeuroModulators(owner);
-}
+	/**
+	 * NeuroModulatorElement
+	 */
+	class NeuroModulatorElement {
+	public:
+		NeuroModulatorElement();
+		NeuroModulatorElement(const NeuroModulatorElement &other);
+		virtual ~NeuroModulatorElement();
+
+		virtual void resetNeuroModulators(NeuralNetworkElement *owner);
+		virtual double updateNeuroModulators(NeuralNetworkElement *owner);
 		
+		virtual void setNeuroModulator(NeuroModulator *modulator = new NeuroModulator());
+		virtual NeuroModulator* getNeuroModulator() const;
 		
-bool NeuroModulatorActivationFunction::equals(ActivationFunction *activationFunction) const {
-	return ActivationFunction::equals(activationFunction);
+	protected:
+		NeuroModulator *mNeuroModulator;
+	};
+	
 }
 
-
-
-}
+#endif
 
 

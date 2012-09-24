@@ -53,6 +53,7 @@
 #include "Script/ScriptedNetworkManipulator.h"
 #include "Script/ScriptingContext.h"
 #include "Value/DoubleValue.h"
+#include "NeuroModulatorSynapseFunction.h"
 
 
 namespace nerd {
@@ -60,7 +61,8 @@ namespace nerd {
 	/**
 	 * ScriptableSynapseFunction
 	 */
-	class ScriptableSynapseFunction : public virtual ScriptingContext, public SynapseFunction {
+	class ScriptableSynapseFunction : public virtual ScriptingContext, 
+									  public NeuroModulatorSynapseFunction {
 		Q_OBJECT
 
 	public:

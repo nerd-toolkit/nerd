@@ -41,26 +41,26 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "NeuroModulatorActivationFunction.h"
-#include "Network/Neuron.h"
+#include "NeuroModulatorSynapseFunction.h"
 
 namespace nerd {
 
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const QString &name)
-	: NeuroModulatorElement(), ActivationFunction(name)
+NeuroModulatorSynapseFunction::NeuroModulatorSynapseFunction(const QString &name)
+	: NeuroModulatorElement(), SynapseFunction(name)
 {
 }
 
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other)
-	: Object(), ValueChangedListener(), NeuroModulatorElement(other), ActivationFunction(other)
+NeuroModulatorSynapseFunction::NeuroModulatorSynapseFunction(const NeuroModulatorSynapseFunction &other) 
+	: Object(), ValueChangedListener(), NeuroModulatorElement(other), SynapseFunction(other)
 {
 }
 
-NeuroModulatorActivationFunction::~NeuroModulatorActivationFunction() {
+NeuroModulatorSynapseFunction::~NeuroModulatorSynapseFunction() {
 }
 
 
-void NeuroModulatorActivationFunction::reset(Neuron *owner) {
+
+void NeuroModulatorSynapseFunction::reset(Synapse *owner) {
 	resetNeuroModulators(owner);
 }
 
@@ -68,18 +68,17 @@ void NeuroModulatorActivationFunction::reset(Neuron *owner) {
 /**
  * Returns 0.0, but executes the NeuroModulator if available!
  */
-double NeuroModulatorActivationFunction::calculateActivation(Neuron *owner) {
+double NeuroModulatorSynapseFunction::calculate(Synapse *owner) {
 	
 	return updateNeuroModulators(owner);
 }
-		
-		
-bool NeuroModulatorActivationFunction::equals(ActivationFunction *activationFunction) const {
-	return ActivationFunction::equals(activationFunction);
+
+
+bool NeuroModulatorSynapseFunction::equals(SynapseFunction *synapseFunction) const {
+	return SynapseFunction::equals(synapseFunction);
 }
-
-
-
+	
+	
 }
 
 

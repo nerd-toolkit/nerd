@@ -82,13 +82,6 @@ namespace nerd {
 		virtual bool equals(ActivationFunction *activationFunction) const;
 		
 	public slots: 
-		void enableNeuroModulators(bool enable, NeuroModulator *modulator = 0);
-		void setModulatorRadius(int type, double radius);
-		double getModulatorRadius(int type);
-		void setModulatorConcentration(int type, double concentration);
-		double getModulatorConcentration(int type);
-		void setModulatorModus(int modus);
-		int getModulatorModus();
 		
 	protected:
 		virtual void reportError(const QString &message);

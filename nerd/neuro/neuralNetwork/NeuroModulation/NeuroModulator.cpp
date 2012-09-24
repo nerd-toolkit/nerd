@@ -45,17 +45,25 @@
 #include <Math/Math.h>
 #include "Network/Neuron.h"
 #include <iostream>
+#include <Network/NeuralNetwork.h>
+#include <ActivationFunction/NeuroModulatorActivationFunction.h>
+#include "ModularNeuralNetwork/NeuroModule.h"
+#include "Math/Vector3D.h"
 
 using namespace std;
 
 namespace nerd {
 
-NeuroModulator::NeuroModulator() {
+NeuroModulator::NeuroModulator() 
+	: mGeneralModus(2) 
+{
 	
 }
 
 
-NeuroModulator::NeuroModulator(const NeuroModulator &other) {
+NeuroModulator::NeuroModulator(const NeuroModulator &other) 
+	: mGeneralModus(other.mGeneralModus) 
+{
 	
 }
 
@@ -70,24 +78,22 @@ NeuroModulator* NeuroModulator::createCopy() {
 	return new NeuroModulator(*this);
 }
 
-void NeuroModulator::reset(Neuron *owner) {
-	mRadii.clear();
+void NeuroModulator::reset(NeuralNetworkElement *owner) {
 	mConcentrations.clear();
 }
 
-void NeuroModulator::update(Neuron *owner) {
-	cerr << "Modulator: " << endl;
-	for(int i = 0; i < mConcentrations.keys().size(); ++i) {
-		int type = mConcentrations.keys().at(i);
-		cerr << type << ": " << getConcentration(type, 0) << " % " << getRadius(type, 0) << endl;
-	}
+void NeuroModulator::update(NeuralNetworkElement *owner) {
+// 	for(int i = 0; i < mConcentrations.keys().size(); ++i) {
+// 		int type = mConcentrations.keys().at(i);
+// 		cerr << type << ": " << getConcentration(type, 0) << " % " << getRadius(type, 0) << endl;
+// 	}
 }
 
-void NeuroModulator::setConcentration(int type, double concentration, Neuron *owner) {
+void NeuroModulator::setConcentration(int type, double concentration, NeuralNetworkElement *owner) {
 	mConcentrations.insert(type, concentration);
 }
 
-double NeuroModulator::getConcentration(int type, Neuron *owner) {
+double NeuroModulator::getConcentration(int type, NeuralNetworkElement *owner) {
 	return mConcentrations.value(type, 0.0);
 }
 
@@ -100,11 +106,11 @@ double NeuroModulator::getConcentration(int type, Neuron *owner) {
  * (2): linear concentration
  * (3): quadratic concentration
  */
-double NeuroModulator::getConcentrationAt(int type, Vector3D position, Neuron *owner) {
+double NeuroModulator::getConcentrationAt(int type, Vector3D position, NeuralNetworkElement *owner) {
 	
-	
-	if(mModus == 0) {
-		return 0.0;
+	int modus = mGeneralModus;
+	if(modus == -1) {
+		modus = mModus.value(type, -1.0);
 	}
 	
 	//2D only here (on a plane)
@@ -112,32 +118,52 @@ double NeuroModulator::getConcentrationAt(int type, Vector3D position, Neuron *o
 	if(concentration == 0.0) {
 		return 0.0;
 	}
-	double radius = mRadii.value(type, 0.0);
-	if(radius == 0.0) {
+	QRectF area = getLocalRect(type);
+	bool isCircle = isCircularArea(type);
+	
+	if(area.width() <= 0.0 || area.height() <= 0.0) {
 		return 0.0;
 	}
 	
+	//check if the point is in the area of influence
+	double radius = 0.0;
+	double distance = 0.0;
+	if(isCircle) {
+		radius = area.width() / 2.0;
+		distance = Math::distance(position, owner->getPosition() + Vector3D(area.x(), area.y(), 0.0));
+		
+		if(distance >= radius) {
+			return 0.0;
+		}
+	}
+	else {
+		Vector3D ownerPos = owner->getPosition();
+		QRectF areaOfInfluence(ownerPos.getX() + area.x(), ownerPos.getY() + area.y(), area.width(), area.height());
+		
+		distance = Math::distance(position, ownerPos + Vector3D(area.x(), area.y(), 0.0));
+		radius = Math::max(area.width(), area.height());
+		
+		if(!areaOfInfluence.contains(position.getX(), position.getY())) {
+			return 0.0;
+		}
+	}
 	
 	//equal concentration
 	//the concentration at all points in the circle are similar.
-	if(mModus == 1) {
+	if(modus == 1) {
 		return concentration;
-	}
-
-	double distance = Math::distance(position, owner->getPosition());
-	if(distance >= radius) {
-		return 0.0;
 	}
 	
 	//linear distribution
 	//the concentration is linearly decaying from the center to the border of the circle.
-	if(mModus == 2) {
+	if(modus == 2) {
 		return (1.0 - (distance / radius)) * concentration;
 	}
 // 	if(mModus == 3) {
 // 		
 // 	}
 	
+	//return 0 if there is no supported modus.
 	return 0.0;
 }
 
@@ -145,23 +171,77 @@ QList<int> NeuroModulator::getModulatorTypes() const {
 	return mConcentrations.keys();
 }
 
-void NeuroModulator::setRadius(int type, double radius, Neuron *owner) {
-	mRadii.insert(type, radius);
+
+void NeuroModulator::setLocalAreaRect(int type, double width, double height, 
+									const Vector3D &offset, bool isCircle)
+{
+	mReferenceModules.remove(type);
+	if(isCircle) {
+		////TODO currently, only real circles are supported (no ellipses)
+		height = width;
+	}
+	mAreas.insert(type, QRectF(offset.getX(), offset.getY(), width, height));
+	mIsCircle.insert(type, isCircle);
 }
 
-double NeuroModulator::getRadius(int type, Neuron *owner) const {
-	return mRadii.value(type, 0.0);
+
+void NeuroModulator::setAreaReferenceModule(int type, NeuroModule *module) {
+	if(module == 0) {
+		return;
+	}
+	mAreas.remove(type);
+	mIsCircle.remove(type);
+	mReferenceModules.insert(type, module);
 }
 
 
-void NeuroModulator::setModus(int modus) {
-	//TODO check for possible types?
-	mModus = modus;
+QRectF NeuroModulator::getLocalRect(int type) {
+	NeuroModule *refModule = mReferenceModules.value(type, 0);
+	if(refModule == 0) {
+		return mAreas.value(type, QRectF(0.0, 0.0, 0.0, 0.0));
+	}
+	
+	//only if a reference module is given
+	Vector3D refPos = refModule->getPosition();
+	QSizeF size = refModule->getSize();
+	return QRectF(refPos.getX(), refPos.getY(), size.width(), size.height());
 }
 
 
-int NeuroModulator::getModus() const {
-	return mModus;
+bool NeuroModulator::isCircularArea(int type) {
+	return mIsCircle.value(type, true);
+}
+
+
+
+void NeuroModulator::setModus(int type, int modus) {
+	if(type == -1) {
+		mModus.clear();
+		mGeneralModus = modus;
+		return;
+	}
+	QList<int> types = mConcentrations.keys();
+	for(int i = 0; i < types.size(); ++i) {
+		int t = types.at(i);
+		if(t == type) {
+			mModus.insert(t, modus);
+		}
+		else if(!mModus.keys().contains(t)) {
+			mModus.insert(t, mGeneralModus);
+		}
+	}
+	mGeneralModus = -1;
+}
+
+
+int NeuroModulator::getModus(int type) const {
+	if(type == -1 || mGeneralModus != -1) {
+		return mGeneralModus;
+	}
+	if(mModus.values().empty()) {
+		return -1;
+	}
+	return mModus.value(type, -1.0);
 }
 
 
@@ -172,6 +252,26 @@ bool NeuroModulator::equals(NeuroModulator *modulator) const {
 }
 
 
+double NeuroModulator::getConcentrationInNetworkAt(int type, const Vector3D &position, NeuralNetwork *network) {
+	if(network == 0) {
+		return 0.0;
+	}
+	double concentration = 0.0;
+	
+	QList<Neuron*> neurons = network->getNeurons();
+	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
+		Neuron *neuron = i.next();
+		NeuroModulatorActivationFunction *nmaf = 
+					dynamic_cast<NeuroModulatorActivationFunction*>(neuron->getActivationFunction());
+		if(nmaf != 0) {
+			NeuroModulator *mod = nmaf->getNeuroModulator();
+			if(mod != 0) {
+				concentration += mod->getConcentrationAt(type, position, neuron);
+			}
+		}
+	}
+	return concentration;
+}
 
 }
 

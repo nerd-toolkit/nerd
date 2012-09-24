@@ -41,45 +41,35 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "NeuroModulatorActivationFunction.h"
-#include "Network/Neuron.h"
+#ifndef TESTTestNeuroModulator_H_
+#define TESTTestNeuroModulator_H_
+
+#include <QtTest/QtTest>
 
 namespace nerd {
-
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const QString &name)
-	: NeuroModulatorElement(), ActivationFunction(name)
-{
-}
-
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other)
-	: Object(), ValueChangedListener(), NeuroModulatorElement(other), ActivationFunction(other)
-{
-}
-
-NeuroModulatorActivationFunction::~NeuroModulatorActivationFunction() {
-}
-
-
-void NeuroModulatorActivationFunction::reset(Neuron *owner) {
-	resetNeuroModulators(owner);
-}
-
-
-/**
- * Returns 0.0, but executes the NeuroModulator if available!
- */
-double NeuroModulatorActivationFunction::calculateActivation(Neuron *owner) {
 	
-	return updateNeuroModulators(owner);
-}
+	class TestNeuroModulator : public QObject {
+		
+		Q_OBJECT
+		
+	private slots:
+		
+		void cleanUpTestCase();
+		void initTestCase();
+		
+		void testConstructionAndSettings();
+		void testLocalConcentrationCalculation();
+		void testNetworkConcentrationCalculation();
 		
 		
-bool NeuroModulatorActivationFunction::equals(ActivationFunction *activationFunction) const {
-	return ActivationFunction::equals(activationFunction);
+	private:
+		
+		
+	};
+	
 }
 
 
-
-}
+#endif 
 
 

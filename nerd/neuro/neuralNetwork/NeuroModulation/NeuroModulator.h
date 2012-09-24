@@ -49,10 +49,14 @@
 #include "Core/ParameterizedObject.h"
 #include "Network/ObservableNetworkElement.h"
 #include "Math/Vector3D.h"
+#include <QRectF>
 
 namespace nerd {
 
+	class NeuroModule;
+	class NeuralNetworkElement;
 	class Neuron;
+	class NeuralNetwork;
 
 	/**
 	 * NeuroModulator
@@ -64,27 +68,33 @@ namespace nerd {
 		virtual ~NeuroModulator();
 
 		virtual NeuroModulator* createCopy();
-		virtual void reset(Neuron *owner);
-		virtual void update(Neuron *owner);
+		virtual void reset(NeuralNetworkElement *owner);
+		virtual void update(NeuralNetworkElement *owner);
 		
-		virtual void setConcentration(int type, double concentration, Neuron *owner);
-		virtual double getConcentration(int type, Neuron *owner);
-		virtual double getConcentrationAt(int type, Vector3D position, Neuron *owner);
+		virtual void setConcentration(int type, double concentration, NeuralNetworkElement *owner);
+		virtual double getConcentration(int type, NeuralNetworkElement *owner);
+		virtual double getConcentrationAt(int type, Vector3D position, NeuralNetworkElement *owner);
 		virtual QList<int> getModulatorTypes() const;
 		
-		virtual void setRadius(int type, double radius, Neuron *owner);
-		virtual double getRadius(int type, Neuron *owner) const;
+		virtual void setLocalAreaRect(int type, double width, double height, const Vector3D &offset, bool isCircle);
+		virtual void setAreaReferenceModule(int type, NeuroModule *module);
+		virtual QRectF getLocalRect(int type);
+		virtual bool isCircularArea(int type);
 		
-		virtual void setModus(int modus);
-		virtual int getModus() const;
+		virtual void setModus(int type, int modus);
+		virtual int getModus(int type = -1) const;
 		
 		virtual bool equals(NeuroModulator *modulator) const;
 		
+		static double getConcentrationInNetworkAt(int type, const Vector3D &position, NeuralNetwork *network);
+		
 	protected:
 		QHash<int, double> mConcentrations;
-		QHash<int, double> mRadii;
-		int mModus;
-		
+		QHash<int, QRectF> mAreas;
+		QHash<int, NeuroModule*> mReferenceModules;
+		QHash<int, bool> mIsCircle;
+		QHash<int, int> mModus;
+		int mGeneralModus;
 
 	};
 

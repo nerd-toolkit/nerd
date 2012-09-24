@@ -310,12 +310,13 @@ void TestNeuralNetworkManager::testEvents() {
 	QVERIFY(em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_STARTED) == 0);
 	QVERIFY(em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_COMPLETED) == 0);
 	QVERIFY(em->getEvent(NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_STRUCTURES_CHANGED) == 0);
+	QVERIFY(em->getEvent(NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_PARAMETERS_CHANGED) == 0);
 	QVERIFY(em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_ITERATION_COMPLETED) == 0);
 	QVERIFY(em->getEvent(NeuralNetworkConstants::EVENT_NNM_RESET_NETWORKS) == 0);
 
 	NeuralNetworkManager *nnm = new NeuralNetworkManager();
 
-	QVERIFY(em->getEvents().size() == numberOfEvents + 6);
+	QVERIFY(em->getEvents().size() == numberOfEvents + 7);
 
 	Event *replacedEvent = 
 		em->getEvent(NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORKS_REPLACED);
@@ -325,15 +326,18 @@ void TestNeuralNetworkManager::testEvents() {
 		em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_COMPLETED);
 	Event *structuresChanged =
 		em->getEvent(NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_STRUCTURES_CHANGED);
+	Event *paramsChanged =
+		em->getEvent(NeuralNetworkConstants::EVENT_NNM_CURRENT_NETWORK_PARAMETERS_CHANGED);
 	Event *networkIteration =
 		em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_ITERATION_COMPLETED);
 	Event *resetNetworks =
-	em->getEvent(NeuralNetworkConstants::EVENT_NNM_RESET_NETWORKS);
+		em->getEvent(NeuralNetworkConstants::EVENT_NNM_RESET_NETWORKS);
 
 	QVERIFY(replacedEvent != 0);
 	QVERIFY(executionStarted != 0);
 	QVERIFY(executionCompleted != 0);
 	QVERIFY(structuresChanged != 0);
+	QVERIFY(paramsChanged != 0);
 	QVERIFY(networkIteration != 0);
 	QVERIFY(resetNetworks != 0);
 
@@ -351,7 +355,7 @@ void TestNeuralNetworkManager::testEvents() {
 	//a second NeuralNetworkManager will not initialze successful, as the required Events
 	//can not be created and a registration as global object is not possible.
 	NeuralNetworkManager *nnm2 = new NeuralNetworkManager();
-	QVERIFY(em->getEvents().size() == numberOfEvents + 6); //no additional Events created.
+	QVERIFY(em->getEvents().size() == numberOfEvents + 7); //no additional Events created.
 	QVERIFY(nnm2->registerAsGlobalObject() == false);
 	QVERIFY(nnm2->init() == false);
 

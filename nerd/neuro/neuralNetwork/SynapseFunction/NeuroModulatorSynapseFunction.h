@@ -41,45 +41,41 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "NeuroModulatorActivationFunction.h"
-#include "Network/Neuron.h"
+
+#ifndef NERDNeuroModulatorSynapseFunction_H
+#define NERDNeuroModulatorSynapseFunction_H
+
+#include "Network/Synapse.h"
+#include "Network/ObservableNetworkElement.h"
+#include "Core/ParameterizedObject.h"
+#include <NeuroModulation/NeuroModulatorElement.h>
+#include "SynapseFunction.h"
+
 
 namespace nerd {
-
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const QString &name)
-	: NeuroModulatorElement(), ActivationFunction(name)
-{
-}
-
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other)
-	: Object(), ValueChangedListener(), NeuroModulatorElement(other), ActivationFunction(other)
-{
-}
-
-NeuroModulatorActivationFunction::~NeuroModulatorActivationFunction() {
-}
-
-
-void NeuroModulatorActivationFunction::reset(Neuron *owner) {
-	resetNeuroModulators(owner);
-}
-
-
-/**
- * Returns 0.0, but executes the NeuroModulator if available!
- */
-double NeuroModulatorActivationFunction::calculateActivation(Neuron *owner) {
 	
-	return updateNeuroModulators(owner);
-}
+	/**
+	 * NeuroModulatorSynapseFunction
+	 */
+	class NeuroModulatorSynapseFunction : public SynapseFunction, 
+										  public virtual NeuroModulatorElement {
+	public:
+		NeuroModulatorSynapseFunction(const QString &name);
+		NeuroModulatorSynapseFunction(const NeuroModulatorSynapseFunction &other);
+		virtual ~NeuroModulatorSynapseFunction();
 		
+		virtual void reset(Synapse *owner);
+		virtual double calculate(Synapse *owner);
 		
-bool NeuroModulatorActivationFunction::equals(ActivationFunction *activationFunction) const {
-	return ActivationFunction::equals(activationFunction);
+		bool equals(SynapseFunction *synapseFunction) const;
+		
+	private:
+		
+	};
+	
 }
 
+#endif
 
-
-}
 
 

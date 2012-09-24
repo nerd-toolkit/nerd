@@ -41,45 +41,98 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "NeuroModulatorActivationFunction.h"
-#include "Network/Neuron.h"
 
-namespace nerd {
 
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const QString &name)
-	: NeuroModulatorElement(), ActivationFunction(name)
-{
+
+#include "TestNeuroModulator.h"
+#include "SynapseFunction/SimpleSynapseFunction.h"
+#include "SynapseFunction/ASeriesSynapseFunction.h"
+#include "SynapseFunction/SynapseFunctionAdapter.h"
+#include "Value/DoubleValue.h"
+#include "Network/Synapse.h"
+#include "Math/ASeriesFunctions.h"
+#include "NeuroModulation/NeuroModulator.h"
+
+
+using namespace nerd;
+
+void TestNeuroModulator::initTestCase() {
 }
 
-NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other)
-	: Object(), ValueChangedListener(), NeuroModulatorElement(other), ActivationFunction(other)
-{
-}
-
-NeuroModulatorActivationFunction::~NeuroModulatorActivationFunction() {
+void TestNeuroModulator::cleanUpTestCase() {
 }
 
 
-void NeuroModulatorActivationFunction::reset(Neuron *owner) {
-	resetNeuroModulators(owner);
-}
-
-
-/**
- * Returns 0.0, but executes the NeuroModulator if available!
- */
-double NeuroModulatorActivationFunction::calculateActivation(Neuron *owner) {
+//Chris
+void TestNeuroModulator::testConstructionAndSettings() {
 	
-	return updateNeuroModulators(owner);
+	NeuroModulator mod;
+	
+	//create modulator types (by setting concentration levels)
+	QVERIFY(mod.getModulatorTypes().empty());
+	mod.setConcentration(5, 100, 0);
+	QCOMPARE(mod.getModulatorTypes().size(), 1);
+	QVERIFY(mod.getModulatorTypes().contains(5));
+	
+	mod.setConcentration(12, 50, 0);
+	QCOMPARE(mod.getModulatorTypes().size(), 2);
+	QVERIFY(mod.getModulatorTypes().contains(12));
+	
+	//every type is only present once.
+	mod.setConcentration(12, 11.5, 0);
+	QCOMPARE(mod.getModulatorTypes().size(), 2);
+	
+	
+	//set local areas
+	QCOMPARE(mod.getLocalRect(88), QRectF(0.0, 0.0, 0.0, 0.0));
+	mod.setLocalAreaRect(88, 150.0, 200.0, Vector3D(0.1, 0.2, 0.0), false);
+	QCOMPARE(mod.getLocalRect(88), QRectF(0.1, 0.2, 150.0, 200.0));
+	QVERIFY(mod.isCircularArea(88) == false);
+	
+	mod.setLocalAreaRect(88, 77.7, 99.9, Vector3D(1.1, 2.2, 5.0), true);
+	QCOMPARE(mod.getLocalRect(88), QRectF(1.1, 2.2, 77.7, 77.7));
+	QVERIFY(mod.isCircularArea(88) == true);
+	
+	
+	
+	QCOMPARE(2, mod.getModus(-1));
+	mod.setModus(-1, 1);
+	QCOMPARE(1, mod.getModus(-1)); //for all types
+	
+	mod.setModus(88, 4);
+	QCOMPARE(-1, mod.getModus(-1));
+	QCOMPARE(1, mod.getModus(5));
+	QCOMPARE(1, mod.getModus(12));
+	QCOMPARE(-1, mod.getModus(88)); //not found (requires set concentration levels for a type, not a rectangle
+	
+	mod.setModus(12, 101);
+	QCOMPARE(-1, mod.getModus(-1));
+	QCOMPARE(1, mod.getModus(5));
+	QCOMPARE(101, mod.getModus(12));
+	
+	mod.setModus(-1, 222);
+	QCOMPARE(222, mod.getModus(-1));
+	QCOMPARE(222, mod.getModus(5));
+	QCOMPARE(222, mod.getModus(12));
+	
+	mod.setModus(5, 11); 
+	QCOMPARE(-1, mod.getModus(-1));
+	QCOMPARE(11, mod.getModus(5));
+	QCOMPARE(222, mod.getModus(12));
+	
+	
 }
-		
-		
-bool NeuroModulatorActivationFunction::equals(ActivationFunction *activationFunction) const {
-	return ActivationFunction::equals(activationFunction);
+
+
+//Chris
+void TestNeuroModulator::testLocalConcentrationCalculation() {
+	
 }
 
 
-
+//Chris
+void TestNeuroModulator::testNetworkConcentrationCalculation() {
+	
 }
 
 

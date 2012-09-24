@@ -163,6 +163,7 @@ void ScriptableActivationFunction::reset(Neuron *neuron) {
 	ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(neuron->getOwnerNetwork());
 	if(mNetworkManipulator != 0) {
 		mNetworkManipulator->setNeuralNetwork(network);
+		mNetworkManipulator->setOwnerHint(neuron);
 	}
 	
 	resetScriptContext();
@@ -217,65 +218,6 @@ bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction
 	
 	return true;
 }
-
-
-void ScriptableActivationFunction::enableNeuroModulators(bool enable, NeuroModulator *modulator) {
-	if(enable) {
-		if(modulator != 0) {
-			setNeuroModulator(modulator);
-		}
-		else {
-			if(mNeuroModulator == 0) {
-				setNeuroModulator();
-			}
-			//don't change the EXISTING modulator object, if enable == true and no modulator given
-		}
-	}
-	else {
-		//diable modulators.
-		setNeuroModulator(0);
-	}
-}
-
-void ScriptableActivationFunction::setModulatorRadius(int type, double radius) {
-	if(mNeuroModulator != 0) {
-		mNeuroModulator->setRadius(type, radius, mOwner);
-	}
-}
-
-double ScriptableActivationFunction::getModulatorRadius(int type) {
-	if(mNeuroModulator == 0) {
-		return 0.0;
-	}
-	return mNeuroModulator->getRadius(type, mOwner);
-}
-
-void ScriptableActivationFunction::setModulatorConcentration(int type, double concentration) {
-	if(mNeuroModulator != 0) {
-		mNeuroModulator->setConcentration(type, concentration, mOwner);
-	}
-}
-
-double ScriptableActivationFunction::getModulatorConcentration(int type) {
-	if(mNeuroModulator == 0) {
-		return 0.0;
-	}
-	return mNeuroModulator->getConcentration(type, mOwner);
-}
-
-void ScriptableActivationFunction::setModulatorModus(int modus) {
-	if(mNeuroModulator != 0) {
-		mNeuroModulator->setModus(modus);
-	}
-}
-
-int ScriptableActivationFunction::getModulatorModus() {
-	if(mNeuroModulator == 0) {
-		return -1;
-	}
-	return mNeuroModulator->getModus();
-}
-
 
 
 

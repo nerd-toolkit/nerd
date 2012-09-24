@@ -54,7 +54,7 @@ using namespace std;
 namespace nerd {
 
 ScriptableSynapseFunction::ScriptableSynapseFunction()
-	: ScriptingContext("Scripted"), SynapseFunction("Scripted"), mErrorState(0), mOwner(0),
+: ScriptingContext("Scripted"), NeuroModulatorSynapseFunction("Scripted"), mErrorState(0), mOwner(0),
 	  mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
@@ -95,7 +95,7 @@ ScriptableSynapseFunction::ScriptableSynapseFunction()
 
 ScriptableSynapseFunction::ScriptableSynapseFunction(
 			const ScriptableSynapseFunction &other)
-	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), SynapseFunction(other),
+: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), NeuroModulatorSynapseFunction(other),
 	  mErrorState(0), mOwner(0), mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
@@ -136,12 +136,12 @@ SynapseFunction* ScriptableSynapseFunction::createCopy() const {
 }
 
 QString ScriptableSynapseFunction::getName() const {
-	return SynapseFunction::getName();
+	return NeuroModulatorSynapseFunction::getName();
 }
 
 void ScriptableSynapseFunction::valueChanged(Value *value) {
 	ScriptingContext::valueChanged(value);
-	SynapseFunction::valueChanged(value);
+	NeuroModulatorSynapseFunction::valueChanged(value);
 	
 	if(value == mScriptCode) {
 		//additionally call the reset function in the script 
@@ -166,6 +166,7 @@ void ScriptableSynapseFunction::reset(Synapse *owner) {
 	}
 	if(mNetworkManipulator != 0) {
 		mNetworkManipulator->setNeuralNetwork(network);
+		mNetworkManipulator->setOwnerHint(owner);
 	}
 
 	resetScriptContext();
@@ -189,7 +190,7 @@ double ScriptableSynapseFunction::calculate(Synapse *owner) {
 }
 
 bool ScriptableSynapseFunction::equals(SynapseFunction *synapseFunction) const {
-	if(SynapseFunction::equals(synapseFunction) == false) {
+	if(NeuroModulatorSynapseFunction::equals(synapseFunction) == false) {
 		return false;
 	}
 	ScriptableSynapseFunction *af =
