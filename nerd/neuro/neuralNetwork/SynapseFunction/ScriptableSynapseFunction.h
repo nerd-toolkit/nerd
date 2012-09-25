@@ -81,6 +81,10 @@ namespace nerd {
 
 		virtual bool equals(SynapseFunction *synapseFunction) const;
 		
+	public slots:
+		double useDefaultSynapseFunction();
+		bool setDefaultSynapseFunction(const QString &name);
+		
 	protected:
 		virtual void reportError(const QString &message);
 		virtual void addCustomScriptContextStructures();
@@ -101,6 +105,7 @@ namespace nerd {
 		DoubleValue mOutput;
 		
 		bool mFirstExecution;
+		SynapseFunction *mDefaultSynapseFunction;
 		
 	};
 

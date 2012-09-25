@@ -351,10 +351,10 @@ QMenu* EvaluationNetworkEditor::addFileMenu() {
 
 	mFileMenu->addSeparator();
 
-	mSaveNetworkAction = mFileMenu->addAction("&Save Network");
-	mSaveNetworkAction->setEnabled(false);
-	connect(mSaveNetworkAction, SIGNAL(triggered()),
-			this, SLOT(overwriteCurrentNetwork()));
+// 	mSaveNetworkAction = mFileMenu->addAction("&Save Network");
+// 	mSaveNetworkAction->setEnabled(false);
+// 	connect(mSaveNetworkAction, SIGNAL(triggered()),
+// 			this, SLOT(overwriteCurrentNetwork()));
 
 	QAction *saveNetworkAsAction = mFileMenu->addAction("Save Network As...");
 	connect(saveNetworkAsAction, SIGNAL(triggered()),

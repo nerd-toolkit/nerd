@@ -95,30 +95,33 @@ void TestNeuroModulator::testConstructionAndSettings() {
 	
 	
 	
-	QCOMPARE(2, mod.getModus(-1));
-	mod.setModus(-1, 1);
-	QCOMPARE(1, mod.getModus(-1)); //for all types
+	QCOMPARE(2, mod.getDistributionModus(-1));
+	mod.setDistributionModus(-1, 1);
+	QCOMPARE(1, mod.getDistributionModus(-1)); //for all types
 	
-	mod.setModus(88, 4);
-	QCOMPARE(-1, mod.getModus(-1));
-	QCOMPARE(1, mod.getModus(5));
-	QCOMPARE(1, mod.getModus(12));
-	QCOMPARE(-1, mod.getModus(88)); //not found (requires set concentration levels for a type, not a rectangle
+	mod.setDistributionModus(88, 4);
+	QCOMPARE(1, mod.getDistributionModus(-1));
+	QCOMPARE(1, mod.getDistributionModus(5));
+	QCOMPARE(1, mod.getDistributionModus(12));
+	QCOMPARE(1, mod.getDistributionModus(88)); //not found, but still is set to default
 	
-	mod.setModus(12, 101);
-	QCOMPARE(-1, mod.getModus(-1));
-	QCOMPARE(1, mod.getModus(5));
-	QCOMPARE(101, mod.getModus(12));
+	mod.setDistributionModus(12, 101);
+	QCOMPARE(1, mod.getDistributionModus(-1));
+	QCOMPARE(1, mod.getDistributionModus(5));
+	QCOMPARE(101, mod.getDistributionModus(12));
 	
-	mod.setModus(-1, 222);
-	QCOMPARE(222, mod.getModus(-1));
-	QCOMPARE(222, mod.getModus(5));
-	QCOMPARE(222, mod.getModus(12));
+	mod.setDistributionModus(-1, 222);
+	QCOMPARE(222, mod.getDistributionModus(-1));
+	QCOMPARE(222, mod.getDistributionModus(5));
+	QCOMPARE(222, mod.getDistributionModus(12));
 	
-	mod.setModus(5, 11); 
-	QCOMPARE(-1, mod.getModus(-1));
-	QCOMPARE(11, mod.getModus(5));
-	QCOMPARE(222, mod.getModus(12));
+	mod.setDistributionModus(5, 11); 
+	QCOMPARE(222, mod.getDistributionModus(-1));
+	QCOMPARE(11, mod.getDistributionModus(5));
+	QCOMPARE(222, mod.getDistributionModus(12));
+	
+	mod.setConcentration(909, 0.5, 0);
+	QCOMPARE(222, mod.getDistributionModus(909));
 	
 	
 }

@@ -48,6 +48,8 @@
 #include <iostream>
 #include "Value/CodeValue.h"
 #include "Core/Core.h"
+#include <Network/NeuralNetworkManager.h>
+#include <Network/Neuro.h>
 
 using namespace std;
 
@@ -55,7 +57,7 @@ namespace nerd {
 
 ScriptableActivationFunction::ScriptableActivationFunction()
 	: ScriptingContext("Scripted"), NeuroModulatorActivationFunction("Scripted"), 
-	  mErrorState(0), mOwner(0), mFirstExecution(true)
+		mErrorState(0), mOwner(0), mFirstExecution(true), mDefaultActivationFunction(0)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
@@ -95,7 +97,8 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 ScriptableActivationFunction::ScriptableActivationFunction(
 			const ScriptableActivationFunction &other)
 	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), 
-	  NeuroModulatorActivationFunction(other), mErrorState(0), mOwner(0), mFirstExecution(true)
+	  NeuroModulatorActivationFunction(other), mErrorState(0), mOwner(0), mFirstExecution(true),
+	  mDefaultActivationFunction(0)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
@@ -122,6 +125,10 @@ ScriptableActivationFunction::ScriptableActivationFunction(
 	
 	//allow script executions and reset also in the GUI thread (to react on changes immediately)
 	mRestrictToMainExecutionThread = false;
+	
+	if(other.mDefaultActivationFunction != 0) {
+		mDefaultActivationFunction = other.mDefaultActivationFunction->createCopy();
+	}
 }
 
 ScriptableActivationFunction::~ScriptableActivationFunction() {
@@ -215,11 +222,52 @@ bool ScriptableActivationFunction::equals(ActivationFunction *activationFunction
 	if(!mVar4->equals(af->mVar4)) {
 		return false;
 	}
+	if(mDefaultActivationFunction == 0 && af->mDefaultActivationFunction != 0) {
+		return false;
+	}
+	if(af->mDefaultActivationFunction != 0 && mDefaultActivationFunction != 0) {
+		if(!mDefaultActivationFunction->equals(af->mDefaultActivationFunction)) {
+			return false;
+		}
+	}
 	
 	return true;
 }
 
 
+double ScriptableActivationFunction::useDefaultActivationFunction() {
+	if(mDefaultActivationFunction == 0) {
+		return 0.0;
+	}
+	return mDefaultActivationFunction->calculateActivation(mOwner);
+}
+
+
+bool ScriptableActivationFunction::setDefaultActivationFunction(const QString &name) {
+	if(mDefaultActivationFunction != 0) {
+		if(mDefaultActivationFunction->getName() == name) {
+			//don't change anything
+			return true;
+		}
+		delete mDefaultActivationFunction;
+		mDefaultActivationFunction = 0;
+	}
+	if(name == "") {
+		//indicates to remove the default activation function
+		return true;
+	}
+	
+	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
+	QList<ActivationFunction*> prototypes = nnm->getActivationFunctionPrototypes();
+	for(QListIterator<ActivationFunction*> i(prototypes); i.hasNext();) {
+		ActivationFunction *af = i.next();
+		if(af->getName() == name) {
+			mDefaultActivationFunction = af->createCopy();
+			return true;
+		}
+	}
+	return false;
+}
 
 
 void ScriptableActivationFunction::reportError(const QString &message) {

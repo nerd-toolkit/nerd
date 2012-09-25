@@ -2077,7 +2077,7 @@ void ScriptedNetworkManipulator::enableNeuroModulators(qulonglong elementId, boo
 
 	NeuralNetworkElement *object = 0;
 	NeuroModulatorElement *nModElem = 0;
-	NeuroModulator *modulator = getNeuroModulator(elementId, &object, &nModElem);
+	getNeuroModulator(elementId, &object, &nModElem);
 	
 	if(object == 0 || nModElem == 0) {
 		return;
@@ -2249,28 +2249,156 @@ double ScriptedNetworkManipulator::getModulatorConcentrationAt(int type, double 
  * Sets the concentration calculation modus for a specific type of the given element.
  * If the element is not an active neuromodulator element, then there is no effect.
  */
-void ScriptedNetworkManipulator::setModulatorModus(qulonglong elementId, int type, int modus) {
+void ScriptedNetworkManipulator::setModulatorDistributionModus(qulonglong elementId, int type, int modus) {
 	if(mNetwork == 0) {
 		return;
 	}
 	
 	NeuroModulator *modulator = getNeuroModulator(elementId);
 	if(modulator != 0) {
-		modulator->setModus(type, modus);
+		modulator->setDistributionModus(type, modus);
 	}
 }
 
-int ScriptedNetworkManipulator::getModulatorModus(qulonglong elementId, int type) {
+/**
+ * Returns the currently used modulator distribution modus of the given modulator type.
+ */
+int ScriptedNetworkManipulator::getModulatorDistributionModus(qulonglong elementId, int type) {
 	if(mNetwork == 0) {
 		return -1;
 	}
 	
 	NeuroModulator *modulator = getNeuroModulator(elementId);
 	if(modulator != 0) {
-		return modulator->getModus(type);
+		return modulator->getDistributionModus(type);
 	}
 	return -1;
 }
+
+/**
+ * Sets the update modus for a specific modulator type of the given element.
+ * If the element is not an active neuromodulator element, then there is no effect.
+ */
+void ScriptedNetworkManipulator::setModulatorUpdateModus(qulonglong elementId, int type, int modus) {
+	if(mNetwork == 0) {
+		return;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		modulator->setUpdateModus(type, modus);
+	}
+}
+
+/**
+ * Returns the currently used modulator update modus of the given modulator type.
+ */
+int ScriptedNetworkManipulator::getModulatorUpdateModus(qulonglong elementId, int type) {
+	if(mNetwork == 0) {
+		return -1;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		return modulator->getUpdateModus(type);
+	}
+	return -1;
+}
+
+bool ScriptedNetworkManipulator::setModulatorUpdateParameters(qulonglong elementId, int modus, QVariantList params) {
+	if(mNetwork == 0) {
+		return false;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		
+		QList<double> parameters;
+		for(int i = 0; i < params.size(); ++i) {
+			parameters.append(params.at(i).toDouble());
+		}
+		
+		return modulator->setUpdateModusParameters(modus, parameters);
+	}
+	return false;
+}
+
+
+QVariantList ScriptedNetworkManipulator::getModulatorUpdateParameters(qulonglong elementId, int type) {
+	
+	QVariantList params;
+	
+	if(mNetwork == 0) {
+		return params;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		QList<double> parameters = modulator->getUpdateModusParameters(type);
+		for(QListIterator<double> i(parameters); i.hasNext();) {
+			params.append(i.next());
+		}
+	}
+	
+	return params;
+}
+
+QVariantList ScriptedNetworkManipulator::getModulatorUpdateParameterNames(qulonglong elementId, int type) {
+	
+	QVariantList names;
+	
+	if(mNetwork == 0) {
+		return names;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		QList<QString> parameters = modulator->getUpdateModusParameterNames(type);
+		for(int i = 0; i < parameters.size(); ++i) {
+			names.append(QString::number(i) + ": " + parameters.at(i));
+		}
+	}
+	
+	return names;
+}
+
+QVariantList ScriptedNetworkManipulator::getModulatorUpdateVariables(qulonglong elementId, int type) {
+	QVariantList variables;
+	
+	if(mNetwork == 0) {
+		return variables;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		QList<double> parameters = modulator->getUpdateModusVariables(type);
+		for(QListIterator<double> i(parameters); i.hasNext();) {
+			variables.append(i.next());
+		}
+	}
+	
+	return variables;
+}
+
+
+QVariantList ScriptedNetworkManipulator::getModulatorUpdateVariableNames(qulonglong elementId, int type) {
+	QVariantList names;
+	
+	if(mNetwork == 0) {
+		return names;
+	}
+	
+	NeuroModulator *modulator = getNeuroModulator(elementId);
+	if(modulator != 0) {
+		QList<QString> parameters = modulator->getUpdateModusVariableNames(type);
+		for(int i = 0; i < parameters.size(); ++i) {
+			names.append(QString::number(i) + ": " + parameters.at(i));
+		}
+	}
+	
+	return names;
+}
+
 
 
 NeuroModulator* ScriptedNetworkManipulator::getNeuroModulator(qulonglong elementId, 

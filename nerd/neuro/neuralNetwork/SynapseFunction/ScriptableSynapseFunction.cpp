@@ -48,14 +48,16 @@
 #include <iostream>
 #include "Value/CodeValue.h"
 #include "Core/Core.h"
+#include "Network/NeuralNetworkManager.h"
+#include "Network/Neuro.h"
 
 using namespace std;
 
 namespace nerd {
 
 ScriptableSynapseFunction::ScriptableSynapseFunction()
-: ScriptingContext("Scripted"), NeuroModulatorSynapseFunction("Scripted"), mErrorState(0), mOwner(0),
-	  mFirstExecution(true)
+	: ScriptingContext("Scripted"), NeuroModulatorSynapseFunction("Scripted"), mErrorState(0), mOwner(0),
+		mFirstExecution(true), mDefaultSynapseFunction(0)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
@@ -95,8 +97,8 @@ ScriptableSynapseFunction::ScriptableSynapseFunction()
 
 ScriptableSynapseFunction::ScriptableSynapseFunction(
 			const ScriptableSynapseFunction &other)
-: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), NeuroModulatorSynapseFunction(other),
-	  mErrorState(0), mOwner(0), mFirstExecution(true)
+	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), NeuroModulatorSynapseFunction(other),
+		mErrorState(0), mOwner(0), mFirstExecution(true), mDefaultSynapseFunction(0)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	
@@ -122,6 +124,10 @@ ScriptableSynapseFunction::ScriptableSynapseFunction(
 	
 	//allow script executions and reset also in the GUI thread (to react on changes immediately)
 	mRestrictToMainExecutionThread = false;
+	
+	if(other.mDefaultSynapseFunction != 0) {
+		mDefaultSynapseFunction = other.mDefaultSynapseFunction->createCopy();
+	}
 }
 
 ScriptableSynapseFunction::~ScriptableSynapseFunction() {
@@ -215,10 +221,52 @@ bool ScriptableSynapseFunction::equals(SynapseFunction *synapseFunction) const {
 	if(!mVar4->equals(af->mVar4)) {
 		return false;
 	}
+	if(mDefaultSynapseFunction == 0 && af->mDefaultSynapseFunction != 0) {
+		return false;
+	}
+	if(af->mDefaultSynapseFunction != 0 && mDefaultSynapseFunction != 0) {
+		if(!mDefaultSynapseFunction->equals(af->mDefaultSynapseFunction)) {
+			return false;
+		}
+	}
 	
 	return true;
 }
 
+
+double ScriptableSynapseFunction::useDefaultSynapseFunction() {
+	if(mDefaultSynapseFunction == 0) {
+		return 0.0;
+	}
+	return mDefaultSynapseFunction->calculate(mOwner);
+}
+
+
+bool ScriptableSynapseFunction::setDefaultSynapseFunction(const QString &name) {
+	if(mDefaultSynapseFunction != 0) {
+		if(mDefaultSynapseFunction->getName() == name) {
+			//don't change anything
+			return true;
+		}
+		delete mDefaultSynapseFunction;
+		mDefaultSynapseFunction = 0;
+	}
+	if(name == "") {
+		//indicates to remove the default activation function
+		return true;
+	}
+	
+	NeuralNetworkManager *nnm = Neuro::getNeuralNetworkManager();
+	QList<SynapseFunction*> prototypes = nnm->getSynapseFunctionPrototypes();
+	for(QListIterator<SynapseFunction*> i(prototypes); i.hasNext();) {
+		SynapseFunction *sf = i.next();
+		if(sf->getName() == name) {
+			mDefaultSynapseFunction = sf->createCopy();
+			return true;
+		}
+	}
+	return false;
+}
 
 
 void ScriptableSynapseFunction::reportError(const QString &message) {

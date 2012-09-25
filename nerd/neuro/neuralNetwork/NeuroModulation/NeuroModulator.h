@@ -69,7 +69,7 @@ namespace nerd {
 
 		virtual NeuroModulator* createCopy();
 		virtual void reset(NeuralNetworkElement *owner);
-		virtual void update(NeuralNetworkElement *owner);
+		virtual void update(NeuralNetworkElement *owner, bool isReset = false);
 		
 		virtual void setConcentration(int type, double concentration, NeuralNetworkElement *owner);
 		virtual double getConcentration(int type, NeuralNetworkElement *owner);
@@ -81,20 +81,36 @@ namespace nerd {
 		virtual QRectF getLocalRect(int type);
 		virtual bool isCircularArea(int type);
 		
-		virtual void setModus(int type, int modus);
-		virtual int getModus(int type = -1) const;
+		virtual void setDistributionModus(int type, int modus);
+		virtual int getDistributionModus(int type = -1) const;
+		virtual void setUpdateModus(int type, int modus);
+		virtual int getUpdateModus(int type = -1) const;
+		virtual bool setUpdateModusParameters(int modus, const QList<double> &parameters);
+		virtual QList<double> getUpdateModusParameters(int type) const;
+		virtual QList<QString> getUpdateModusParameterNames(int type) const;
+		virtual QList<double> getUpdateModusVariables(int type) const;
+		virtual QList<QString> getUpdateModusVariableNames(int type) const;
 		
 		virtual bool equals(NeuroModulator *modulator) const;
 		
 		static double getConcentrationInNetworkAt(int type, const Vector3D &position, NeuralNetwork *network);
 		
 	protected:
+		virtual void updateModulatorDefault(int type, NeuralNetworkElement *owner, bool reset = false);
+		
+	protected:
 		QHash<int, double> mConcentrations;
 		QHash<int, QRectF> mAreas;
 		QHash<int, NeuroModule*> mReferenceModules;
 		QHash<int, bool> mIsCircle;
-		QHash<int, int> mModus;
-		int mGeneralModus;
+		QHash<int, int> mDistributionModi;
+		QHash<int, int> mUpdateModi;
+		QHash<int, QList<double> > mUpdateModiParameters;
+		QHash<int, QList<double> > mUpdateModiVariables;
+		QHash<int, QList<QString> > mUpdateModiParameterNames;
+		QHash<int, QList<QString> > mUpdateModiVariableNames;
+		int mDefaultDistributionModus;
+		int mDefaultUpdateModus;
 
 	};
 

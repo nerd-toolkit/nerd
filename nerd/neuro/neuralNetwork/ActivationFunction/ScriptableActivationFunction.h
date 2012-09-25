@@ -61,7 +61,7 @@ namespace nerd {
 	 * ScriptableActivationFunction
 	 */
 	class ScriptableActivationFunction : public ScriptingContext, 
-										  public NeuroModulatorActivationFunction 
+										 public NeuroModulatorActivationFunction 
 	{
 		Q_OBJECT
 
@@ -82,6 +82,8 @@ namespace nerd {
 		virtual bool equals(ActivationFunction *activationFunction) const;
 		
 	public slots: 
+		double useDefaultActivationFunction();
+		bool setDefaultActivationFunction(const QString &name);
 		
 	protected:
 		virtual void reportError(const QString &message);
@@ -103,6 +105,8 @@ namespace nerd {
 		DoubleValue mActivation;
 		
 		bool mFirstExecution;
+		
+		ActivationFunction *mDefaultActivationFunction;
 		
 	};
 

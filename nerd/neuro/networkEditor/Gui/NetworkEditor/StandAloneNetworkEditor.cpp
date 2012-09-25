@@ -89,9 +89,9 @@ QMenu* StandAloneNetworkEditor::addFileMenu() {
 	connect(loadNetworkAction, SIGNAL(triggered()),
 			this, SLOT(loadNetwork()));
 
-	QAction *saveNetworkAction = fileMenu->addAction("Save Network");
-	connect(saveNetworkAction, SIGNAL(triggered()),
-			this, SLOT(saveNetwork()));
+// 	QAction *saveNetworkAction = fileMenu->addAction("Save Network");
+// 	connect(saveNetworkAction, SIGNAL(triggered()),
+// 			this, SLOT(saveNetwork()));
 
 	fileMenu->addSeparator();
 

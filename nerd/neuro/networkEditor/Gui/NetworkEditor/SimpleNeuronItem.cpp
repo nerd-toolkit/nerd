@@ -198,6 +198,14 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 							p.addEllipse(getGlobalPosition() + QPointF(rect.x(), rect.y()), rect.width(), rect.height());
 							painter->fillPath(p, QColor(color.red(), color.green(), color.blue(), color.alpha()));
 						}
+						else {
+							QPointF pos = getGlobalPosition();
+							painter->fillRect(pos.x() + rect.x() - (rect.width() / 2.0), 
+											  pos.y() + rect.y() - (rect.height() / 2.0),
+											  rect.width(), 
+											  rect.height(),
+											  QColor(color.red(), color.green(), color.blue(), color.alpha()));
+						}
 					}
 				}
 			}

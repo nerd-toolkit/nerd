@@ -162,8 +162,15 @@ class NeuroModulator;
 		double getModulatorConcentration(qulonglong elementId, int type);
 		double getModulatorConcentrationAt(qulonglong elementId, int type, double x, double y, double z);
 		double getModulatorConcentrationAt(int type, double x, double y, double z);
-		void setModulatorModus(qulonglong elementId, int type, int modus);
-		int getModulatorModus(qulonglong elementId, int type = -1);
+		void setModulatorDistributionModus(qulonglong elementId, int type, int modus);
+		int getModulatorDistributionModus(qulonglong elementId, int type = -1);
+		void setModulatorUpdateModus(qulonglong elementId, int type, int modus);
+		int getModulatorUpdateModus(qulonglong elementId, int type = -1);
+		bool setModulatorUpdateParameters(qulonglong elementId, int modus, QVariantList params);
+		QVariantList getModulatorUpdateParameters(qulonglong elementId, int type);
+		QVariantList getModulatorUpdateParameterNames(qulonglong elementId, int type);
+		QVariantList getModulatorUpdateVariables(qulonglong elementId, int type);
+		QVariantList getModulatorUpdateVariableNames(qulonglong elementId, int type);
 		
 	protected:
 		NeuroModulator* getNeuroModulator(qulonglong elementId, NeuralNetworkElement **element = 0, 
