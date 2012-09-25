@@ -69,8 +69,10 @@ namespace nerd {
 
 		virtual NeuroModulator* createCopy();
 		virtual void reset(NeuralNetworkElement *owner);
-		virtual void update(NeuralNetworkElement *owner, bool isReset = false);
+		virtual void update(NeuralNetworkElement *owner);
 		
+		virtual void updateType(int type, NeuralNetworkElement *owner, bool reset = false);
+
 		virtual void setConcentration(int type, double concentration, NeuralNetworkElement *owner);
 		virtual double getConcentration(int type, NeuralNetworkElement *owner);
 		virtual double getConcentrationAt(int type, Vector3D position, NeuralNetworkElement *owner);
@@ -111,6 +113,7 @@ namespace nerd {
 		QHash<int, QList<QString> > mUpdateModiVariableNames;
 		int mDefaultDistributionModus;
 		int mDefaultUpdateModus;
+		bool mResetPending;
 
 	};
 

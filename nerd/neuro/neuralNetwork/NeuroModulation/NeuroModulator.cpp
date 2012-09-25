@@ -56,7 +56,7 @@ using namespace std;
 namespace nerd {
 
 NeuroModulator::NeuroModulator() 
-	: mDefaultDistributionModus(2), mDefaultUpdateModus(1)
+	: mDefaultDistributionModus(2), mDefaultUpdateModus(1), mResetPending(true)
 {
 	
 }
@@ -64,7 +64,7 @@ NeuroModulator::NeuroModulator()
 
 NeuroModulator::NeuroModulator(const NeuroModulator &other) 
 	: mDefaultDistributionModus(other.mDefaultDistributionModus),
-	  mDefaultUpdateModus(other.mDefaultUpdateModus)
+		mDefaultUpdateModus(other.mDefaultUpdateModus), mResetPending(true)
 {
 	
 }
@@ -81,31 +81,50 @@ NeuroModulator* NeuroModulator::createCopy() {
 }
 
 void NeuroModulator::reset(NeuralNetworkElement *owner) {
-	QList<int> types = getModulatorTypes();
-	for(int i = 0; i < types.size(); ++i) {
-		int type = types.at(i);
-		mConcentrations.insert(type, 0.0);
-	}
+// 	QList<int> types = getModulatorTypes();
+// 	for(int i = 0; i < types.size(); ++i) {
+// 		int type = types.at(i);
+// 		mConcentrations.insert(type, 0.0);
+// 	}
+	mConcentrations.clear();
+	mAreas.clear();
+	mReferenceModules.clear();
+	mDistributionModi.clear();
+	mUpdateModi.clear();
+	mUpdateModiParameters.clear();
+	mUpdateModiVariables.clear();
 	
-	update(owner, true);
+	mResetPending = true;
 }
 
-void NeuroModulator::update(NeuralNetworkElement *owner, bool isReset) {
+void NeuroModulator::update(NeuralNetworkElement *owner) {
 	
 	QList<int> types = getModulatorTypes();
 	for(int i = 0; i < types.size(); ++i) {
 		int type = types.at(i);
 		
-		int modus = getUpdateModus(type);
-		
-		if(modus == 1) {
-			updateModulatorDefault(type, owner, isReset);
-		}
+		updateType(type, owner, mResetPending);
+	}
+	if(!types.empty()) {
+		mResetPending = false;
+	}
+}
+
+void NeuroModulator::updateType(int type, NeuralNetworkElement *owner, bool reset) {
+	int modus = getUpdateModus(type);
+	
+	if(modus == 1) {
+		updateModulatorDefault(type, owner, reset);
 	}
 }
 
 void NeuroModulator::setConcentration(int type, double concentration, NeuralNetworkElement *owner) {
+	bool containsType = mConcentrations.keys().contains(type);
 	mConcentrations.insert(type, concentration);
+	if(!containsType) {
+		//initialize the update operator.
+		updateType(type, owner, true);
+	}
 }
 
 double NeuroModulator::getConcentration(int type, NeuralNetworkElement *owner) {
@@ -414,7 +433,7 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 	}
 	
 
-	QList<double> variables = mUpdateModiVariables.value(1);
+	QList<double> variables = mUpdateModiVariables.value(type);
 	if(variables.empty() || reset) {
 		variables.clear();
 		QList<QString> variableNames;
@@ -424,10 +443,6 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		
 		mUpdateModiVariableNames.insert(1, variableNames);
 		mUpdateModiVariables.insert(type, variables);
-	}
-	
-	if(reset) {
-		return;
 	}
 	
 	double activationGain = parameters.at(0);
@@ -470,6 +485,8 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 	
 	double triggerActivation =  (currentActivation - lowerTrigger) / (upperTrigger - lowerTrigger);
 	
+	//cerr << "curr: " << currentActivation << " tri " << triggerActivation << endl;
+	
 	if(triggerActivation < 0.0 || triggerActivation > 1.0) {
 		//not triggered
 		
@@ -486,8 +503,15 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 			
 			//change area
 			QRectF area = getLocalRect(type);
-			area.setWidth(Math::max(0.0, area.width() - (maxWidth * areaDrop)));
-			area.setHeight(Math::max(0.0, area.height() - (maxHeight * areaDrop)));
+			if(concentration > 0.0) {
+				area.setWidth(Math::max(0.0, area.width() - (maxWidth * areaDrop)));
+				area.setHeight(Math::max(0.0, area.height() - (maxHeight * areaDrop)));
+			}
+			else {
+				//reset area if there is no modulator level left.
+				area.setWidth(0.0);
+				area.setHeight(0.0);
+			}
 			
 			mAreas.insert(type, QRectF(area.x(), area.y(), area.width(), area.height()));
 		}
@@ -495,14 +519,21 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 	else {
 		//triggered
 		
+		double concentration = getConcentration(type, owner);
+		
 		double modActivationState = variables.at(0);
-		modActivationState = Math::min(1.0, modActivationState + activationGain);
+		
+		if(concentration > 0.0) {
+			modActivationState = 1.0;
+		}
+		else {
+			modActivationState = Math::min(1.0, modActivationState + activationGain);
+		}
 		variables.replace(0, modActivationState);
 		
 		if(modActivationState >= activationThreshold) {
 			
 			//change concentration
-			double concentration = getConcentration(type, owner);
 			concentration = Math::min(1.0, concentration + concentrationGain);
 			setConcentration(type, concentration, owner);
 			

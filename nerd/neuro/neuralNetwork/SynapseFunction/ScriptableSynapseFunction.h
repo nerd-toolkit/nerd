@@ -61,7 +61,7 @@ namespace nerd {
 	/**
 	 * ScriptableSynapseFunction
 	 */
-	class ScriptableSynapseFunction : public virtual ScriptingContext, 
+	class ScriptableSynapseFunction : public ScriptingContext, 
 									  public NeuroModulatorSynapseFunction {
 		Q_OBJECT
 

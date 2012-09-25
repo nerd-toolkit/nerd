@@ -153,6 +153,10 @@ namespace nerd {
 				mReferenceObject->getQuaternionOrientationValue()->addValueChangedListener(this);
 				valueChanged(mReferenceObject->getPositionValue());
 			}
+			else {
+				Core::log("SphericalLightSource: Could not find reference object ["
+						  + mReferenceObjectName->get() + "]!", true);
+			}
 		}
 		
 		if(mBodyCollisionObject != 0) {
