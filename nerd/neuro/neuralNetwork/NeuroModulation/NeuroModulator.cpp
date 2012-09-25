@@ -56,7 +56,7 @@ using namespace std;
 namespace nerd {
 
 NeuroModulator::NeuroModulator() 
-	: mDefaultDistributionModus(2), mDefaultUpdateModus(1), mResetPending(true)
+	: mDefaultDistributionModus(2), mDefaultUpdateModus(0), mResetPending(true)
 {
 	
 }
@@ -308,6 +308,7 @@ void NeuroModulator::setUpdateModus(int type, int modus) {
 		if(currentModus != mUpdateModi.value(t)) {
 			mUpdateModiParameters.insert(t, QList<double>());
 			mUpdateModiVariables.insert(t, QList<double>());
+			updateType(t, 0, true);
 		}
 	}
 }

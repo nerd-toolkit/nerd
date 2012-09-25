@@ -195,7 +195,7 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 					if(concentration > 0.0 && rect.width() > 0.0 && rect.height() > 0.0) {
 						if(isCircle) {
 							QPainterPath p;
-							p.addEllipse(getGlobalPosition() + QPointF(rect.x(), rect.y()), rect.width(), rect.height());
+							p.addEllipse(getGlobalPosition() + QPointF(rect.x(), rect.y()), rect.width() / 2.0, rect.height() / 2.0);
 							painter->fillPath(p, QColor(color.red(), color.green(), color.blue(), color.alpha()));
 						}
 						else {
