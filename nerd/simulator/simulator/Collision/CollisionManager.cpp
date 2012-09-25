@@ -103,11 +103,11 @@ bool CollisionManager::bind() {
 
 	CommandLineArgument *printCollisionRulePrototypesArg = new CommandLineArgument(
 			"collisionRulePrototypes", "colp", "", 
-			"Dispalys a list with all available collion rule prototypes",
+			"Displays a list with all available collision rule prototypes",
 			0, 0, false, false);
 	CommandLineArgument *printCollisionRulesArg = new CommandLineArgument(
 			"collisionRules", "col", "", 
-			"Dispalys a list with all available collion rules registered until the binding phase.",
+			"Displays a list with all available collision rules that have been registered up to the binding phase.",
 			0, 0, false, false);
 
 	if(printCollisionRulePrototypesArg->getNumberOfEntries() > 0) {

@@ -65,7 +65,7 @@ ScriptedModelLoader::ScriptedModelLoader()
 {
 	CommandLineArgument *scriptLoaderArgument = new CommandLineArgument(
 		"installScriptedModel", "ism", "<FileName> [<PrototypeName>]", 
-		QString("Installs a new scripted model from file name <FileName>\n.")
+		QString("Installs a new scripted model from file <FileName> ")
 		+ "during the start-up phase.", 1, 1, true);
 
 	int numberOfScriptsToInstall = scriptLoaderArgument->getNumberOfEntries();

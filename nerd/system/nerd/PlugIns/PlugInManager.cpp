@@ -162,11 +162,11 @@ bool PlugInManager::checkHelpMessageRequest() {
 	//will automatically register at the PlugInManager, so it has to be constructed first.
 
 	if(mArgHelp == 0) {
-		mArgHelp = new CommandLineArgument("help", "h", "<type>", "Shows this help message. \n"
-						 "     The shown command line arguments can be modified with an optional"
-						 "\n     argument <type>, which indicates the desired type of arguments."	
-						 "\n     If <type> is empty then only 'common' arguments are shon; "
-						 "\n     to see all arguments set <type> to 'all'",
+		mArgHelp = new CommandLineArgument("help", "h", "<type>", "Shows this help message.\n"
+						 "The shown command line arguments can be modified with an optional "
+						 "argument <type>, which indicates the desired type of arguments."	
+						 "\nIf <type> is empty then only 'common' arguments are shown; "
+						 "to see all arguments set <type> to 'all'",
 						0, 1, true, true);
 
 		bool printedHelp = false;
@@ -477,11 +477,11 @@ QString PlugInManager::getCommandLineHelpMessage(const QString &type) const {
 			if(c->isDeactivated()) {
 				message.append("[deactivated] ");
 			}
-			message.append("-").append(c->getShortArgumentName());
+			message.append(" -").append(c->getShortArgumentName());
 			message.append(" [--").append(c->getFullArgumentName()).append("]");
 			
 			message.append(" " + c->getParameterDescription());
-			message.append("\n   " + c->getDescription());
+			message.append("\n" + c->getDescription() + "\n");
 		}
 	}
 	return message;

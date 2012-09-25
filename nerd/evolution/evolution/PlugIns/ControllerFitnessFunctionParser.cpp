@@ -63,10 +63,10 @@ ControllerFitnessFunctionParser::ControllerFitnessFunctionParser(
 	mControllerProvider = provider;
 	mFitnessArgumentDescription = new CommandLineArgument(
 		"loadFitness", "fit", "<ControllerName> <PrototypeName> <FitnessName> <Prefix>",
-		"Load a fitness function and connects it with a controller. <ControllerName> identifies the "
-		"ControllerInterface to connect the FitneeFunction to. The <Prefix> can be used to change the "
-		"parameter path of the new FitnessFunction."
-		"prototype-information.", 2, 2, true);
+		"Loads a fitness function and connects it with a controller.\n"
+		"<ControllerName> identifies the ControllerInterface to connect the FitnessFunction to.\n" 
+		"<Prefix> can be used to change the parameter path of the new FitnessFunction prototype-information.", 
+		2, 2, true);
 }
 
 ControllerFitnessFunctionParser::~ControllerFitnessFunctionParser() {

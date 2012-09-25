@@ -63,9 +63,9 @@ UniversalNeuroScriptLoader::UniversalNeuroScriptLoader()
 {
 	CommandLineArgument *scriptLoaderArgument = new CommandLineArgument(
 		"installScript", "is", "<ScriptName> [<ScriptFileName> <TriggerEvent> <ResetEvent> <AgentInterface>]", 
-		QString("Installs a new script with name <ScriptName>, that loads file <ScriptFileName>\n.")
-		+ "during the bind phase. The script is reset by <ResetEvent> and executed each\n"
-		+ "time <TriggerEvent> is triggered. The <AgentInterface>\n"
+		QString("Installs a new script with name <ScriptName>, that loads file <ScriptFileName> ")
+		+ "during the bind phase. The script is reset by <ResetEvent> and executed each "
+		+ "time <TriggerEvent> is triggered.\nThe <AgentInterface> "
 		+ "specifies the agents whose neural network can be changed.", 1, 4, true);
 
 	QList<QString> scriptNames;

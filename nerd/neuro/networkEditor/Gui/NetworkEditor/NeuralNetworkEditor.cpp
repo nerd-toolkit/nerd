@@ -1760,10 +1760,10 @@ void NeuralNetworkEditor::setupTools() {
 	CommandLineArgument *moveNeuronDetailWidgetToTheLeft 
 			= new CommandLineArgument("editorWidgetPositions", "ewp", "<widget1Pos1>,<widget2Pos2>...",
 									  "Starts the editor with custom default locations for the tool "
-									  "widgets.\n     Positions: lrtb (left, right, top, bottom)"
-									  "\n    Widgets: gncsmtpa (group, neuron, constraints, synapses, "
-									  "\n    modules, neTwork, properties, message Area"
-									  "\n    Example: nt,pb,ab,sr", 1, 0, true, false);
+									  "widgets.\nPositions: lrtb (left, right, top, bottom)"
+									  "\nWidgets: gncsmtpa (group, neuron, constraints, synapses, "
+									  "modules, network, properties, message Area)"
+									  "\nExample: nt,pb,ab,sr", 1, 0, true, false);
 	
 	QHash<QString, Qt::DockWidgetArea> availablePositions;
 	QHash<QString, Qt::DockWidgetArea> widgetPositions;

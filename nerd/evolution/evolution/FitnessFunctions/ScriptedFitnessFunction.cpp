@@ -89,8 +89,8 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const QString &name)
 	if(mScriptFileNameArg == 0) {
 		mScriptFileNameArg = new CommandLineArgument("fitnessScriptFile", "fsf", 
 				"<fitnessName> <fileName>",
-				"Loads a fitness function script from file <fileName>\n   and attaches it "
-				"to the ScriptedFitnessFunction\n   with name <fitnessName>.",
+				"Loads a fitness function script from file <fileName> and attaches it "
+				"to the ScriptedFitnessFunction with name <fitnessName>.",
 				2, 0, true, true);
 	}
 

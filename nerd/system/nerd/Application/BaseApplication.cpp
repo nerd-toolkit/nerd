@@ -76,15 +76,15 @@ BaseApplication::BaseApplication()
 
 	mArgument_val = new CommandLineArgument(
 			"loadValues", "val", "<file>",
-			"Loads a value file after the initialization phase. "
-			"\n    <file> specifies the file to load",
+			"Loads a value file after the initialization phase.\n"
+			"<file> specifies the file to load",
 			1, 0,
 			true);
 
 	mArgument_ival = new CommandLineArgument(
 			"loadInitValues", "ival", "<file>",
-			"Loads a value file before the initialization phase."
-			"\n    <file> specifies the file to load",
+			"Loads a value file before the initialization phase.\n"
+			"<file> specifies the file to load",
 			1, 0,
 			true);
 

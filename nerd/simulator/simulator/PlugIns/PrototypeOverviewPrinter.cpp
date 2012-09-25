@@ -64,7 +64,7 @@ PrototypeOverviewPrinter::PrototypeOverviewPrinter()
 {
 	mOverviewArg = new CommandLineArgument("print-prototypes", "pp", "[script]", 
 					"Prints all known physics prototypes to the screen.\n"
-					"If this option is followed by a 'script', then the parameters are formatted\n"
+					"If this option is followed by a 'script', then the parameters are formatted "
 					"to be directly used in model scripts.", 0, 1, true);
 
 	Core::getInstance()->addSystemObject(this);

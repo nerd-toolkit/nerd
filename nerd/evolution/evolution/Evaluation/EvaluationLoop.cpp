@@ -80,7 +80,9 @@ EvaluationLoop::EvaluationLoop(int numberOfSteps, int numberOfTries)
 	mIsEvolutionModeArgument = new CommandLineArgument(
 		"testMode", "test", "",
 		"Switches the mode of the EvaluationLoop to test mode. That means that setting" 
-		" tries and steps to -1 will result in infinit simulation.",
+		" tries and steps to -1 will result in infinite simulation."
+		"\nYou have to use -test to run the evaluation applications manually, otherwise "
+		"the application immediately quits (this is a security mechanism for computer clusters).",
 		0, 0, true);
 	
 	

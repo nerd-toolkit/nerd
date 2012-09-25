@@ -512,7 +512,7 @@ bool Core::init() {
 	
 	{
 		CommandLineArgument *optionalPlugInDirs = new CommandLineArgument("pluginDir", "pdir", "<directory",
-						"Loads all plugins in <directory>", 1, 0, true, true);
+						"Loads all plugins in <directory>.", 1, 0, true, true);
 						
 		int numberOfEntries = optionalPlugInDirs->getNumberOfEntries();
 		for(int i = 0; i < numberOfEntries; ++i) {
@@ -534,9 +534,9 @@ bool Core::init() {
 
 	//add command line arguments for -disableLogging and -enableLogging (are handled in constructor)
 	new CommandLineArgument("enableLogging", "enableLogging", "",
-					"Enables the log file", 0, 0, false, false);
+					"Enables the log files.", 0, 0, false, false);
 	new CommandLineArgument("disableLogging", "disableLogging", "",
-					"Disables the log file", 0, 0, false, false);
+					"Disables the log files.", 0, 0, false, false);
 	
 	//add command line arguments for -configDir (is handled in constructor)
 	new CommandLineArgument("configDir", "configDir", "<directory>",

@@ -140,8 +140,8 @@ bool NerdNeuroSimApplication::setupApplication()
 
 	//Choose Physics Engine (or external Yars simulator)
 	CommandLineArgument *physicsArg = new CommandLineArgument("physics", "p", "<physicsLibrary>",
-			"Uses <physicsLibrary> as physics engine.\n"
-			"     Currently there are [ode, yars].", 1,0, true);
+			"Uses <physicsLibrary> as physics engine. "
+			"Currently there are [ode, yars].", 1,0, true);
 	if(physicsArg->getNumberOfEntries() != 0 && !physicsArg->getEntryParameters(0).empty()
 			&& physicsArg->getEntryParameters(0).at(0).trimmed() == "yars")
 	{
@@ -190,8 +190,8 @@ bool NerdNeuroSimApplication::setupApplication()
 	//add simple fitness logger
 	CommandLineArgument *useSimpleFitnessLogger = 
 			new CommandLineArgument("simpleFitnessLogger", "sfl", "<logfile name>",
-			"Loggs all fitness values of all fitness functions\n"
-			"     incrementally to a file.", 1, 0, true, false);
+			"Logs all fitness values of all fitness functions "
+			"incrementally to a file.", 1, 0, true, false);
 	if(useSimpleFitnessLogger->getNumberOfEntries() != 0 
 			&& !useSimpleFitnessLogger->getEntryParameters(0).empty())
 	{

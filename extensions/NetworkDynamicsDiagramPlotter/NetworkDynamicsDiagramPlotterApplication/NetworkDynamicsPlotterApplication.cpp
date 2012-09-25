@@ -181,8 +181,8 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 		
 		//Choose Physics Engine (or external Yars simulator)
 		CommandLineArgument *physicsArg = new CommandLineArgument("physics", "p", "<physicsLibrary>",
-											"Uses <physicsLibrary> as physics engine.\n"
-											"     Currently there are [ode, yars].", 1,0, true);
+											"Uses <physicsLibrary> as physics engine. "
+											"Currently there are [ode, yars].", 1,0, true);
 		
 		if(physicsArg->getNumberOfEntries() != 0 && !physicsArg->getEntryParameters(0).empty()
 			&& physicsArg->getEntryParameters(0).at(0).trimmed() == "yars")

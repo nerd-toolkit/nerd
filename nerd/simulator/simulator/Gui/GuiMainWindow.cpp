@@ -279,7 +279,7 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	
 	
 	mToggleWindowArgument = new CommandLineArgument("toggle", "toggle", "", 
-						"Makes the OpenGL windows toggle.", 0, 0, true, false);
+						"Makes the OpenGL windows toggle. (Required in some VNC Viewers)", 0, 0, true, false);
 	
 	mToggleWindowValue = mToggleWindowArgument->getParameterValue();
 	if(mToggleWindowValue != 0) {

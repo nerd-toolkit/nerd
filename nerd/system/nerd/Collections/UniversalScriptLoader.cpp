@@ -64,8 +64,8 @@ UniversalScriptLoader::UniversalScriptLoader()
 
 	CommandLineArgument *scriptLoaderArgument = new CommandLineArgument(
 		"installScript", "is", "<ScriptName> [<ScriptFileName> <TriggerEvent> <ResetEvent>]", 
-		QString("Installs a new script with name <ScriptName>, that loads file <ScriptFileName>\n.")
-		+ "during the bind phase. The script is reset by <ResetEvent> and executed each\n"
+		QString("Installs a new script with name <ScriptName>, that loads file <ScriptFileName> ")
+		+ "during the bind phase. The script is reset by <ResetEvent> and executed each "
 		+ "time <TriggerEvent> is triggered.", 1, 3, true);
 
 	QList<QString> scriptNames;

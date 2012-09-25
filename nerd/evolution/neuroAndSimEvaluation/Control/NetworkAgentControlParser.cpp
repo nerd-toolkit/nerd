@@ -61,10 +61,10 @@ NetworkAgentControlParser::NetworkAgentControlParser()
 {
 	mNetLoaderArgument = new CommandLineArgument("loadNet", "net", 
 			"<agent> <network> [<fitness>]", "Loads a neural network from file "
-			"\n     <network> and attaches it as controller to the SimObjectGroup <agent>. "
-			"\n     If no <network> is given, then an empty default network is used. "
-			"\n     If no <agent> is given, then the first available agent is used. "
-			"\n     If 'c' (continue) is given for <agent> or <network>, then the agent will use "
+			"<network> and attaches it as controller to the SimObjectGroup <agent>. "
+			"\nIf no <network> is given, then an empty default network is used. "
+			"\nIf no <agent> is given, then the first available agent is used. "
+			"\nIf 'c' (continue) is given for <agent> or <network>, then the agent will use "
 			"the last known network (first network in the list or recent networks in the editor.",
 			0, 2, true);
 
