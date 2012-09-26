@@ -42,34 +42,32 @@
  ***************************************************************************/
 
 
+#ifndef TESTLYAPUNOVEXPONENT_H
+#define TESTLYAPUNOVEXPONENT_H
 
+#include <QtTest/QtTest>
 
-#include "Util/UnitTestMacros.h"
-#include "Util/TestDynamicsPlotterUtil.h"
-#include "Exporters/TestMatlabExporter.h"
-#include "DynamicsPlot/TestDynamicsPlotManager.h"
-#include "DynamicsPlot/TestDynamicsPlotter.h"
-#include "DynamicsPlot/TestBasinPlotter.h"
-#include "DynamicsPlot/TestBifurcationPlotter.h"
-#include "DynamicsPlot/TestFirstReturnMap.h"
-#include "DynamicsPlot/TestTransientPlotter.h"
-#include "DynamicsPlot/TestIsoperiodPlotter.h"
-#include "DynamicsPlot/TestLyapunovExponent.h"
-
-TEST_START("TestNetworkDiagramPlotterLib", 1, -1, 7);
- 
-	TEST(TestDynamicsPlotterUtil);
-	TEST(TestMatlabExporter);
-	TEST(TestDynamicsPlotManager);
-	TEST(TestDynamicsPlotter);
-	TEST(TestBasinPlotter);
-	TEST(TestBifurcationPlotter);
-	TEST(TestFirstReturnMap);
-	TEST(TestTransientPlotter);
-	TEST(TestIsoperiodPlotter);
-	TEST(TestLyapunovExponent);
+namespace nerd {
 	
+	class TestLyapunovExponent : public QObject {
+		
+		Q_OBJECT
+		
+	private slots:
+		
+		void cleanUpTestCase();
+		void initTestCase();
+		
+		void testConstructors();	
+		void testParameterSettings();
+		
+	private:
+		
+		
+	};
+	
+}
 
-TEST_END;
 
+#endif 
 
