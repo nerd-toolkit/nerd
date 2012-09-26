@@ -97,6 +97,8 @@ namespace nerd {
 		mGroup1 = 0;
 		mGroup2 = 0;
 		mTargetElement = 0;
+		mSourceNeurons.clear();
+		mTargetElements.clear();
 		NetworkManipulationTool::clear();
 	}
 	
@@ -108,13 +110,19 @@ namespace nerd {
 		mGroup1 = 0;
 		mGroup2 = 0;
 		mTargetElement = 0;
+		mSourceNeurons.clear();
+		mTargetElements.clear();
+		
 		if(mVisuContext != 0) {
 			mVisuContext->addMouseListener(this);
 		}
 
-		if((mModus & MODUS_SELECTED_ELEMENTS) != 0) {
+		//choose elements immediately
+		if(((mModus & MODUS_SELECTED_ELEMENTS) != 0)
+			|| ((mModus & MODUS_SELECTED_TO_GROUP) != 0))
+		{
 			
-			//do it immediately
+			
 			QList<Neuron*> neurons;
 			
 			QList<PaintItem*> items = mVisuContext->getSelectedItems();
@@ -126,10 +134,33 @@ namespace nerd {
 				}
 			}
 			
-			if(neurons.size() > 0) {
-				interconnectSingleGroup(neurons);
+			if((mModus & MODUS_SELECTED_ELEMENTS) != 0) {
+				//execute command immediately
+				if(neurons.size() > 0) {
+					interconnectSingleGroup(neurons);
+				}
+				emit done();
 			}
-			emit done();
+			if((mModus & MODUS_SELECTED_TO_GROUP) != 0) {
+				mSourceNeurons = neurons;
+			}
+		}
+		else if((mModus & MODUS_SELECTED_FROM_GROUP) != 0) {
+			mTargetElements.clear();
+			
+			QList<PaintItem*> items = mVisuContext->getSelectedItems();
+			for(QListIterator<PaintItem*> i(items); i.hasNext();) {
+				PaintItem *item = i.next();
+				NeuronItem *neuron = dynamic_cast<NeuronItem*>(item);
+				SynapseItem *synapse = dynamic_cast<SynapseItem*>(item);
+				
+				if(neuron != 0) {
+					mTargetElements.append(neuron->getNeuron());
+				}
+				else if(synapse != 0) {
+					mTargetElements.append(synapse->getSynapse());
+				}
+			}
 		}
 		
 	}
@@ -177,7 +208,31 @@ namespace nerd {
 					mTargetElement = selectedSynapse;
 				}
 				
-				if(mTargetElement != 0 && mGroup1 != 0) {
+				if((mModus & MODUS_SELECTED_TO_GROUP) != 0) {
+					//we have a single object to connect source neurons to
+					if(!mSourceNeurons.empty()) {
+						QList<SynapseTarget*> targets;
+						targets.append(mTargetElement);
+						
+						connectElements(mSourceNeurons, targets);
+					}
+					
+					emit done();
+					return;
+				}
+				else if((mModus & MODUS_SELECTED_FROM_GROUP) != 0) {
+					//we have a single object to connect target neurons from
+					if(!mTargetElements.empty() && selectedNeuron != 0) {
+						QList<Neuron*> sources;
+						sources.append(selectedNeuron);
+						
+						connectElements(sources, mTargetElements);
+					}
+					
+					emit done();
+					return;
+				}
+				else if(mTargetElement != 0 && mGroup1 != 0) {
 					//we have a module and a single object!
 					
 					QList<Neuron*> sources = mGroup1->getNeurons();
@@ -222,7 +277,43 @@ namespace nerd {
 				}
 			}
 			
-			if(mGroup1 != 0 && selectedGroup != 0) {
+			if((mModus & MODUS_SELECTED_TO_GROUP) != 0 && selectedGroup != 0) {
+				//we have a selection of sources and a target group
+				QList<Neuron*> neurons = selectedGroup->getNeurons();
+				NeuroModule *group1Module = dynamic_cast<NeuroModule*>(selectedGroup);
+				if(group1Module != 0 && ((mModus & MODUS_IGNORE_INTERFACES) == 0)) {
+					Util::addWithoutDuplicates<Neuron>(neurons, group1Module->getInputNeurons());
+					Util::addWithoutDuplicates<Neuron>(neurons, group1Module->getOutputNeurons());
+				}
+				
+				QList<SynapseTarget*> targets;
+				for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
+					targets.append(i.next());
+				}
+				
+				if(!mSourceNeurons.empty()) {
+					connectElements(mSourceNeurons, targets);
+				}
+				emit done();
+				return;
+			}
+			else if((mModus & MODUS_SELECTED_FROM_GROUP) != 0 && selectedGroup != 0) {
+				//we have a selection of targets and a source group.
+				
+				QList<Neuron*> neurons = selectedGroup->getNeurons();
+				NeuroModule *group1Module = dynamic_cast<NeuroModule*>(selectedGroup);
+				if(group1Module != 0 && ((mModus & MODUS_IGNORE_INTERFACES) == 0)) {
+					Util::addWithoutDuplicates<Neuron>(neurons, group1Module->getInputNeurons());
+					Util::addWithoutDuplicates<Neuron>(neurons, group1Module->getOutputNeurons());
+				}
+				
+				if(!mTargetElements.empty()) {
+					connectElements(neurons, mTargetElements);
+				}
+				emit done();
+				return;
+			}
+			else if(mGroup1 != 0 && selectedGroup != 0) {
 				//we have two modules... connect
 
 				mGroup2 = selectedGroup;

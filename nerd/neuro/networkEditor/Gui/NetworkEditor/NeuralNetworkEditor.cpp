@@ -91,6 +91,8 @@
 #include "Value/ColorValue.h"
 #include <PlugIns/CommandLineArgument.h>
 #include <Gui/GuiManager.h>
+#include <Network/NeuroTagManager.h>
+#include <NeuralNetworkConstants.h>
 
 using namespace std;
 
@@ -160,6 +162,20 @@ NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	renameCurrentNetwork("");
 	
 	GuiManager::getGlobalGuiManager()->addWidget(NetworkEditorConstants::WIDGET_NETWORK_EDITOR, this);
+	
+	NeuroTagManager *ntm = NeuroTagManager::getInstance();
+	if(ntm != 0) {
+		ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_HIDE_LAYERS, 
+							 NeuralNetworkConstants::TAG_TYPE_NETWORK, 
+				"Contains a comma separated list of layer names, that are hidden, "
+				"if the option 'Hide Layers' is active"));
+		
+		ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_LAYER_IDENTIFIER, 
+							 NeuralNetworkConstants::TAG_TYPE_NETWORK_ELEMENT, 
+				"Contains a list of layers this network element belongs to. This determins "
+				"whether and when the network element is shown in the editor if the "
+				"'Hide Layers' option is active."));
+	}
 }
 
 

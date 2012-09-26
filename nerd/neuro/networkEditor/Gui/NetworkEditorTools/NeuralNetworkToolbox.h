@@ -128,6 +128,8 @@ namespace nerd {
 		void fullyConnectSelectedNeurons();
 		void fullyConnectSelectedNeuronsIgnoreInterfaces();
 		void fullyConnectSingleGroup();
+		void fullyConnectSelectedNeuronsToTarget();
+		void fullyConnectTargetToSelectedElements();
 
 	protected:
 		virtual void addNetworkMenu();

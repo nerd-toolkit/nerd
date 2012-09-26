@@ -476,6 +476,20 @@ void NeuralNetworkToolbox::fullyConnectSingleGroup() {
 	setTool(mConnectNeuronsWithSynapsesTool);
 }
 
+void NeuralNetworkToolbox::fullyConnectSelectedNeuronsToTarget() {
+	mConnectNeuronsWithSynapsesTool->setModus(ConnectNeuronsWithSynapsesTool::MODUS_SELECTED_TO_GROUP
+						| ConnectNeuronsWithSynapsesTool::MODUS_IGNORE_INTERFACES);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Interconnect Selected to Targets");
+	setTool(mConnectNeuronsWithSynapsesTool);
+}
+
+
+void NeuralNetworkToolbox::fullyConnectTargetToSelectedElements() {
+	mConnectNeuronsWithSynapsesTool->setModus(ConnectNeuronsWithSynapsesTool::MODUS_SELECTED_FROM_GROUP
+						| ConnectNeuronsWithSynapsesTool::MODUS_IGNORE_INTERFACES);
+	mConnectNeuronsWithSynapsesTool->setBasicName("Interconnect Targets to Selected");
+	setTool(mConnectNeuronsWithSynapsesTool);
+}
 
 void NeuralNetworkToolbox::addNetworkMenu() {
 	if(mOwner == 0) {
@@ -529,6 +543,18 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	connect(connectSelectedNeuronsForce, SIGNAL(triggered()),
 			this, SLOT(fullyConnectSelectedNeuronsIgnoreInterfaces()));
 	
+	QAction *connectSelectedToTarget = connectivityMenu->addAction("Selected to Target");
+	connectSelectedToTarget->setToolTip("Fully connects all selected elements to the chosen target.");
+	connect(connectSelectedToTarget, SIGNAL(triggered()),
+			this, SLOT(fullyConnectSelectedNeuronsToTarget()));
+	
+	QAction *connectTargetToSelected = connectivityMenu->addAction("Target to Selected");
+	connectTargetToSelected->setToolTip("Fully connects the chosen target to all selected elements.");
+	connect(connectTargetToSelected, SIGNAL(triggered()),
+			this, SLOT(fullyConnectTargetToSelectedElements()));
+	
+	connectivityMenu->addSeparator();
+	
 	QAction *connectSingleGroup = connectivityMenu->addAction("Single Group");
 	connectSingleGroup->setToolTip("Fully interconnects a single group.");
 	connect(connectSingleGroup, SIGNAL(triggered()),
@@ -538,6 +564,8 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 // 	connectAllWithinGroup->setToolTip("Fully connects all neurons in a group.");
 // 	connect(connectAllWithinGroup, SIGNAL(triggered()),
 // 			this, SLOT(fullyConnect()));
+	
+	connectivityMenu->addSeparator();
 	
 	QAction *connectGroupsUnidirectional = connectivityMenu->addAction("Group1 to Group2");
 	connectGroupsUnidirectional->setToolTip("Connects two groups unidirectionally");

@@ -446,6 +446,10 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		mUpdateModiVariables.insert(type, variables);
 	}
 	
+	if(reset) {
+		return;
+	}
+	
 	double activationGain = parameters.at(0);
 	double activationDrop = parameters.at(1);
 	double activationThreshold = parameters.at(2);

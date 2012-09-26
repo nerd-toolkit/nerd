@@ -74,6 +74,8 @@ namespace nerd {
 		static const int MODUS_IGNORE_INTERFACES = 4;
 		static const int MODUS_SINGLE_GROUP = 8;
 		static const int MODUS_SELECTED_ELEMENTS = 16;
+		static const int MODUS_SELECTED_TO_GROUP = 32;
+		static const int MODUS_SELECTED_FROM_GROUP = 64;
 		
 	public:
 		ConnectNeuronsWithSynapsesTool(NeuralNetworkEditor *editor, NeuralNetworkToolbox *owner, int modus);
@@ -109,6 +111,8 @@ namespace nerd {
 		NeuronGroup *mGroup2;
 		int mCurrentState;
 		SynapseTarget *mTargetElement;
+		QList<Neuron*> mSourceNeurons;
+		QList<SynapseTarget*> mTargetElements;
 	};
 	
 }
