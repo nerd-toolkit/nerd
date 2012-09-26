@@ -73,6 +73,9 @@ namespace nerd {
 								"_before_ plotting!");
 	mStepsToPlot = new IntValue(100);
 	mStepsToPlot->setDescription("Number of simulation steps that are calculated and plotted");
+
+	mDrawNL = new BoolValue(true);
+	mDrawNL->setDescription("Draw a red line at y=0 for orientation");
 	
 	addParameter("Config/VariedElement", mVariedElement, true);
 	addParameter("Config/VariedRange", mVariedRange, true);
@@ -81,6 +84,8 @@ namespace nerd {
 	
 	addParameter("Config/StepsPrePlot", mStepsPrePlot, true);
 	addParameter("Config/StepsToPlot", mStepsToPlot, true);
+
+	addParameter("Config/DrawNL", mDrawNL, true);
 	
 	mTitleNames->set("Lyapunov Exponent");
 }
@@ -162,6 +167,8 @@ void LyapunovExponent::calculateData() {
 	int stepsPrePlot = mStepsPrePlot->get();
 	int stepsToPlot = mStepsToPlot->get();
 
+	bool drawNL = mDrawNL->get();
+
 	QList<double> ynum;
 	double eps = pow(10,-9);
 	for(int x = 0; x < variedValues.size(); ++x) {
@@ -217,7 +224,54 @@ void LyapunovExponent::calculateData() {
 
 		}
 
+		// save current hightest exponent
 		ynum.append(ljanum/c);
+
+		// find smallest and biggest exponent
+		double ymin = ynum.first(); double ymax = ynum.first();
+		for(int i = 1; i < ynum.size(); ++i) {
+			double y = ynum.at(i);
+			if(y < ymin) {
+				ymin = y;
+			}
+			if(y > ymax) {
+				ymax = y;
+			}
+		}
+		double ystep = (ymax - ymin) / (double)(resolutionY - 1);
+		if(ystep == 0) {
+			reportProblem("LyapunovExponent: No suitable data found.");
+			ymin = 1;
+			ymax = 1;
+		}
+
+		// clear data matrix
+		mData->fill(0);
+
+		// rescale
+		for(int y = 1; y <= resolutionY; ++y) {
+			double v = ymin + (y-1) * ystep;
+			mData->set(Math::round(v,5), 0, y, 0);
+		}
+		
+		// fill rescaled matrix again
+		for(int x = 1; x <= ynum.size(); ++x) {
+			double v = min(max(ymin,ynum.at(x-1)),ymax);
+			int y = ceil(((v-ymin)/ystep)+1);
+			mData->set(1, x, y, 0);
+		}
+
+		// find null position (if any)
+		int ny = ceil(((-ymin)/ystep)+1);
+		// and draw red line indicating y=0
+		if(drawNL && ny < resolutionY && ny > 0) {
+			for(int x = 0; x < resolutionX; ++x) {
+				if(mData->get(x, ny, 0) == 0) {
+					mData->set(2, x, ny, 0);
+				}
+			}
+		}
+
 
 		// runtime maintencance
 		if(core->isShuttingDown()) {
@@ -226,36 +280,6 @@ void LyapunovExponent::calculateData() {
 		core->executePendingTasks();
 	
 	}
-
-	// find smallest and biggest exponent
-	double ymin = ynum.first(); double ymax = ynum.first();
-	for(int i = 1; i < ynum.size(); ++i) {
-		double y = ynum.at(i);
-		if(y < ymin) {
-			ymin = y;
-		}
-		if(y > ymax) {
-			ymax = y;
-		}
-	}
-	double ystep = (ymax - ymin) / (double)(resolutionY - 1);
-	if(ystep == 0) {
-		reportProblem("LyapunovExponent: No suitable data found.");
-		ymin = 1;
-		ymax = 1;
-	}
-
-	for(int y = 1; y <= resolutionY; ++y) {
-		double v = ymin + (y-1) * ystep;
-		mData->set(Math::round(v,5), 0, y, 0);
-	}
-	
-	for(int x = 1; x <= ynum.size(); ++x) {
-		double v = min(max(ymin,ynum.at(x-1)),ymax);
-		int y = ceil(((v-ymin)/ystep)+1);
-		mData->set(1, x, y, 0);
-	}
-
 	
 	// re-set original parameter value
 	variedValue->set(originalValue);

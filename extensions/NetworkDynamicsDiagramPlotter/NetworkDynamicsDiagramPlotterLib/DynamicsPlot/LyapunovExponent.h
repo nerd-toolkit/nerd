@@ -65,6 +65,8 @@ namespace nerd {
 		
 		IntValue *mStepsPrePlot;
 		IntValue *mStepsToPlot;
+
+		BoolValue *mDrawNL;
 	};
 }
 
