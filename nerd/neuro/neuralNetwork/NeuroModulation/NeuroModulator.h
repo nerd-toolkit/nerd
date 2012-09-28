@@ -57,6 +57,7 @@ namespace nerd {
 	class NeuralNetworkElement;
 	class Neuron;
 	class NeuralNetwork;
+	class BoolValue;
 
 	/**
 	 * NeuroModulator
@@ -114,6 +115,9 @@ namespace nerd {
 		int mDefaultDistributionModus;
 		int mDefaultUpdateModus;
 		bool mResetPending;
+		
+		BoolValue *mEnableUpdate;
+		BoolValue *mEnableConcentrationCalculation;
 
 	};
 

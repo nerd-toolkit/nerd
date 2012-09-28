@@ -108,6 +108,7 @@
 #include "Collections/ScriptedModelLoader.h"
 #include "Collections/Simple2D_Physics.h"
 #include "PlugIns/NetworkDegreeOfFreedomCalculator.h"
+#include <NeuroModulation/NeuroModulatorManager.h>
 
 
 using namespace std;
@@ -231,6 +232,9 @@ bool NerdNeuroEvoApplication::setupApplication()
 	//Install neuro modules
 	NeuroModuleCollection();
 	StandardTagCollection();
+	
+	//Enable NeuroModulation
+	NeuroModulatorManager::getInstance();
 
 	//Install network attribute characterizer
 	new NeuralNetworkAttributes();

@@ -50,23 +50,29 @@
 #include "ModularNeuralNetwork/NeuroModule.h"
 #include "Math/Vector3D.h"
 #include "Core/Core.h"
+#include "Value/BoolValue.h"
+#include "NeuroModulatorManager.h"
 
 using namespace std;
 
 namespace nerd {
 
 NeuroModulator::NeuroModulator() 
-	: mDefaultDistributionModus(2), mDefaultUpdateModus(0), mResetPending(true)
+	: mDefaultDistributionModus(2), mDefaultUpdateModus(0), mResetPending(true),
+		mEnableUpdate(0), mEnableConcentrationCalculation(0)
 {
-	
+	mEnableUpdate = NeuroModulatorManager::getInstance()->getEnableModulatorUpdateValue();
+	mEnableConcentrationCalculation = NeuroModulatorManager::getInstance()->getEnableModulatorConcentrationLevelsValue();
 }
 
 
 NeuroModulator::NeuroModulator(const NeuroModulator &other) 
 	: mDefaultDistributionModus(other.mDefaultDistributionModus),
-		mDefaultUpdateModus(other.mDefaultUpdateModus), mResetPending(true)
+		mDefaultUpdateModus(other.mDefaultUpdateModus), mResetPending(true),
+		mEnableUpdate(0), mEnableConcentrationCalculation(0)
 {
-	
+	mEnableUpdate = NeuroModulatorManager::getInstance()->getEnableModulatorUpdateValue();
+	mEnableConcentrationCalculation = NeuroModulatorManager::getInstance()->getEnableModulatorConcentrationLevelsValue();
 }
 
 
@@ -103,7 +109,9 @@ void NeuroModulator::update(NeuralNetworkElement *owner) {
 	for(int i = 0; i < types.size(); ++i) {
 		int type = types.at(i);
 		
-		updateType(type, owner, mResetPending);
+		if(mEnableUpdate->get() || mResetPending) {
+			updateType(type, owner, mResetPending);
+		}
 	}
 	if(!types.empty()) {
 		mResetPending = false;
@@ -141,6 +149,10 @@ double NeuroModulator::getConcentration(int type, NeuralNetworkElement *owner) {
  * (3): quadratic concentration
  */
 double NeuroModulator::getConcentrationAt(int type, Vector3D position, NeuralNetworkElement *owner) {
+	
+	if(!mEnableConcentrationCalculation->get()) {
+		return 0.0;
+	}
 	
 	int modus = mDefaultDistributionModus;
 	if(modus == -1) {
@@ -350,7 +362,6 @@ QList<double> NeuroModulator::getUpdateModusVariables(int type) const {
 QList<QString> NeuroModulator::getUpdateModusVariableNames(int type) const {
 	return mUpdateModiVariableNames.value(getUpdateModus(type), QList<QString>());
 }
-
 
 
 bool NeuroModulator::equals(NeuroModulator *modulator) const {

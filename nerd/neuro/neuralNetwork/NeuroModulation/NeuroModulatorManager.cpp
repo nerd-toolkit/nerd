@@ -41,64 +41,102 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "NeuroModulatorElement.h"
-#include "Network/NeuralNetworkElement.h"
+
+
+#include "NeuroModulatorManager.h"
 #include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "NeuralNetworkConstants.h"
 
 using namespace std;
 
 namespace nerd {
 	
-	NeuroModulatorElement::NeuroModulatorElement() 
-		: mNeuroModulator(0)
+	
+	/**
+	 * Constructs a new NeuroModulatorManager.
+	 */
+	NeuroModulatorManager::NeuroModulatorManager()
 	{
-	}
-	
-	NeuroModulatorElement::NeuroModulatorElement(const NeuroModulatorElement &other)
-		: mNeuroModulator(0)
-	{
-		if(other.mNeuroModulator != 0) {
-			mNeuroModulator = other.mNeuroModulator->createCopy();
-		}
-	}
-	
-	NeuroModulatorElement::~NeuroModulatorElement() {
-	}
-	
-	
-	void NeuroModulatorElement::resetNeuroModulators(NeuralNetworkElement *owner) {
-		if(mNeuroModulator != 0) {
-			mNeuroModulator->reset(owner);
-		}
+		mEnableNeuroModulatorUpdate = new BoolValue(true);
+		mEnableNeuroModulatorConcentrationLevels = new BoolValue(true);
+		
+		ValueManager *vm = Core::getInstance()->getValueManager();
+		vm->addValue("/NeuralNetwork/NeuroModulators/EnableUpdate", mEnableNeuroModulatorUpdate);
+		vm->addValue("/NeuralNetwork/NeuroModulators/EnableConcentrationLevels", mEnableNeuroModulatorConcentrationLevels);
 	}
 	
 	
 	/**
-	 * Returns 0.0, but executes the NeuroModulator if available!
+	 * Destructor.
 	 */
-	double NeuroModulatorElement::updateNeuroModulators(NeuralNetworkElement *owner) {
+	NeuroModulatorManager::~NeuroModulatorManager() {
+	}
+	
+	/**
+	 * This method returns the singleton instance of the NeuroModulatorManager.
+	 * Note: calling this method in volves string comparisons and is computationally expensive.
+	 * Try to minimize the use of this method.
+	 *
+	 * @return the global NeuroModulatorManager.
+	 */
+	NeuroModulatorManager* NeuroModulatorManager::getInstance() {
+		NeuroModulatorManager *nm = dynamic_cast<NeuroModulatorManager*>(Core::getInstance()
+		->getGlobalObject(NeuralNetworkConstants::OBJECT_NEURO_MODULATOR_MANAGER));
+		if(nm == 0) {
+			nm = new NeuroModulatorManager();
+			if(!nm->registerAsGlobalObject()) {
+				delete nm;
+			}
+			nm = dynamic_cast<NeuroModulatorManager*>(Core::getInstance()
+			->getGlobalObject(NeuralNetworkConstants::OBJECT_NEURO_MODULATOR_MANAGER));
+		}
+		return nm;
+	}
+	
+	
+	QString NeuroModulatorManager::getName() const {
+		return "NeuroModulatorManager";
+	}
+	
+	bool NeuroModulatorManager::registerAsGlobalObject() {
+		Core::getInstance()->addGlobalObject(
+			NeuralNetworkConstants::OBJECT_NEURO_MODULATOR_MANAGER, this);
 		
-		if(mNeuroModulator != 0) {
-			mNeuroModulator->update(owner);
-		}
-		return 0.0;
+		return Core::getInstance()->getGlobalObject(
+			NeuralNetworkConstants::OBJECT_NEURO_MODULATOR_MANAGER) == this;
 	}
 	
 	
-	void NeuroModulatorElement::setNeuroModulator(NeuroModulator *modulator) {
-		if(mNeuroModulator != 0) {
-			delete mNeuroModulator;
-		}
-		mNeuroModulator = modulator;
+	bool NeuroModulatorManager::init() {
+		return true;
 	}
 	
-	NeuroModulator* NeuroModulatorElement::getNeuroModulator() const {
-		return mNeuroModulator;
+	
+	bool NeuroModulatorManager::bind() {
+		return true;
 	}
 	
-
 	
+	bool NeuroModulatorManager::cleanUp() {
+		return true;
+	}
+	
+	BoolValue* NeuroModulatorManager::getEnableModulatorUpdateValue() const {
+		return mEnableNeuroModulatorUpdate;
+	}
+	
+	
+	BoolValue* NeuroModulatorManager::getEnableModulatorConcentrationLevelsValue() const {
+		return mEnableNeuroModulatorConcentrationLevels;
+	}
 	
 }
+
+
+
+
+
 
 

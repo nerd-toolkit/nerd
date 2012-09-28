@@ -65,6 +65,7 @@ namespace nerd {
 		static const QString OBJECT_NEURO_MODULE_MANAGER;
 		static const QString OBJECT_EVOLUTION_MANAGER;
 		static const QString OBJECT_NEURO_TAG_MANAGER;
+		static const QString OBJECT_NEURO_MODULATOR_MANAGER;
 
 	//**************************************************************************
 	//Event Names
@@ -95,6 +96,7 @@ namespace nerd {
 		static const QString VALUE_NNM_BYPASS_NETWORKS;
 		static const QString VALUE_EVO_CURRENT_GENERATION_NUMBER;
 		static const QString VALUE_ANALYZER_RUN_COUNTER;
+		static const QString VALUE_ENABLE_NEURO_MODULATORS;
 
 	//**************************************************************************
 	//Tag Names
@@ -169,6 +171,7 @@ namespace nerd {
 		static const QString TAG_NEURON_BDN_BOARD_INTERFACE;
 		static const QString TAG_EVOLUTION_NEW_ELEMENT;
 		static const QString TAG_EVOLUTION_NEW_BIAS;
+		static const QString TAG_DISABLE_NEURO_MODULATORS;
 		
 		
 	};

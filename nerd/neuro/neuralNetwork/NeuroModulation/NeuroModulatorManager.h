@@ -41,64 +41,49 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "NeuroModulatorElement.h"
-#include "Network/NeuralNetworkElement.h"
-#include <iostream>
 
-using namespace std;
+
+#ifndef NERDNeuroModulatorManager_H
+#define NERDNeuroModulatorManager_H
+
+#include <QString>
+#include <QHash>
+#include "Core/SystemObject.h"
+#include "Value/BoolValue.h"
 
 namespace nerd {
 	
-	NeuroModulatorElement::NeuroModulatorElement() 
-		: mNeuroModulator(0)
-	{
-	}
-	
-	NeuroModulatorElement::NeuroModulatorElement(const NeuroModulatorElement &other)
-		: mNeuroModulator(0)
-	{
-		if(other.mNeuroModulator != 0) {
-			mNeuroModulator = other.mNeuroModulator->createCopy();
-		}
-	}
-	
-	NeuroModulatorElement::~NeuroModulatorElement() {
-	}
-	
-	
-	void NeuroModulatorElement::resetNeuroModulators(NeuralNetworkElement *owner) {
-		if(mNeuroModulator != 0) {
-			mNeuroModulator->reset(owner);
-		}
-	}
-	
 	
 	/**
-	 * Returns 0.0, but executes the NeuroModulator if available!
+	 * NeuroModulatorManager.
+	 *
 	 */
-	double NeuroModulatorElement::updateNeuroModulators(NeuralNetworkElement *owner) {
+	class NeuroModulatorManager : public virtual SystemObject {
+	public:
+		NeuroModulatorManager();
+		virtual ~NeuroModulatorManager();
 		
-		if(mNeuroModulator != 0) {
-			mNeuroModulator->update(owner);
-		}
-		return 0.0;
-	}
-	
-	
-	void NeuroModulatorElement::setNeuroModulator(NeuroModulator *modulator) {
-		if(mNeuroModulator != 0) {
-			delete mNeuroModulator;
-		}
-		mNeuroModulator = modulator;
-	}
-	
-	NeuroModulator* NeuroModulatorElement::getNeuroModulator() const {
-		return mNeuroModulator;
-	}
-	
-
-	
+		static NeuroModulatorManager* getInstance();
+		
+		virtual QString getName() const;
+		
+		virtual bool registerAsGlobalObject();
+		virtual bool init();
+		virtual bool bind();
+		virtual bool cleanUp();
+		
+		BoolValue* getEnableModulatorUpdateValue() const;
+		BoolValue* getEnableModulatorConcentrationLevelsValue() const;
+		
+		
+	private:
+		BoolValue *mEnableNeuroModulatorUpdate;
+		BoolValue *mEnableNeuroModulatorConcentrationLevels;
+	};
 	
 }
+
+#endif
+
 
 

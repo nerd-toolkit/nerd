@@ -99,6 +99,7 @@ set(nerd_neuralNetwork_SRCS
 	NeuroModulation/NeuroModulator.cpp
 	NeuroModulation/NeuroModulatorElement.cpp
 	SynapseFunction/NeuroModulatorSynapseFunction.cpp
+	NeuroModulation/NeuroModulatorManager.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

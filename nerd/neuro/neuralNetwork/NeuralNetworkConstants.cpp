@@ -63,6 +63,9 @@ const QString NeuralNetworkConstants::OBJECT_EVOLUTION_MANAGER
 
 const QString NeuralNetworkConstants::OBJECT_NEURO_TAG_MANAGER
 		= "NeuroTagManager";
+		
+const QString NeuralNetworkConstants::OBJECT_NEURO_MODULATOR_MANAGER
+		= "NeuroModulatorManager";
 
 //**************************************************************************
 //Event Names
@@ -122,6 +125,9 @@ const QString NeuralNetworkConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER
 //used to enable one-shot constraints in the networks analyzer extension
 const QString NeuralNetworkConstants::VALUE_ANALYZER_RUN_COUNTER
 		= "/Plotter/AnalyzerRunCounter";
+		
+const QString NeuralNetworkConstants::VALUE_ENABLE_NEURO_MODULATORS
+		= "/NeuralNetwork/EnableNeuroModulators";
 
 //**************************************************************************
 //Tag Names
@@ -334,6 +340,7 @@ const QString NeuralNetworkConstants::TAG_EVOLUTION_NEW_ELEMENT
 const QString NeuralNetworkConstants::TAG_EVOLUTION_NEW_BIAS
 		= "__NEW_BIAS__";
 		
-		
+const QString NeuralNetworkConstants::TAG_DISABLE_NEURO_MODULATORS
+		= "DisableNeuroModulators";
 		
 		

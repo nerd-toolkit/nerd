@@ -960,7 +960,7 @@ void NetworkVisualization::mouseMoveEvent(QMouseEvent *event) {
 
 				if(mSelectedItems.contains(item)) {
 					if((event->modifiers() & Qt::ControlModifier) != Qt::ControlModifier) {
-						if(!item->isActive() || item->isHidden()
+						if(!item->isActive() || item->isHidden() || item->isInHiddenLayer()
 							|| !rect.contains(item->getBoundingBox()))
 						{
 							item->setSelected(false);	
@@ -970,7 +970,8 @@ void NetworkVisualization::mouseMoveEvent(QMouseEvent *event) {
 					}
 				}
 				else {
-					if(item->isActive() && !item->isHidden() && item != mSelectionRectangle
+					if(item->isActive() && !item->isHidden() && !item->isInHiddenLayer() 
+						&& item != mSelectionRectangle
 						&& rect.contains(item->getBoundingBox()))
 					{
 						item->setSelected(true);

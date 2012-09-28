@@ -84,6 +84,7 @@
 #include "PlugIns/NetworkDegreeOfFreedomCalculator.h"
 #include "Logging/SimpleFitnessLogger.h"
 #include <NerdConstants.h>
+#include <NeuroModulation/NeuroModulatorManager.h>
 
 using namespace std;
 
@@ -175,6 +176,9 @@ bool NerdNeuroSimApplication::setupApplication()
 	//Install neuro modules
 	NeuroModuleCollection();
 	StandardTagCollection();
+	
+	//Enable NeuroModulation
+	NeuroModulatorManager::getInstance();
 	
 	Fitness::install();
 	new FitnessLogger();

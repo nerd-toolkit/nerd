@@ -66,6 +66,7 @@
 #include "SynapseFunction/SimpleSynapseFunction.h"
 #include "PlugIns/NeuralNetworkAttributes.h"
 #include "Collections/StandardTagCollection.h"
+#include <NeuroModulation/NeuroModulatorManager.h>
 
 using namespace std;
 
@@ -164,6 +165,9 @@ bool NeuralNetworkEditorApplication::setupApplication() {
 	//install network characterizer
 	new NeuralNetworkAttributes();
 	StandardTagCollection();
+	
+	//Enable NeuroModulation
+	NeuroModulatorManager::getInstance();
 
 	return ok;
 }
