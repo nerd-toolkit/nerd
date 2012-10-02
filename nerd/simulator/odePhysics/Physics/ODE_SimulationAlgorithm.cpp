@@ -100,6 +100,8 @@ ODE_SimulationAlgorithm::ODE_SimulationAlgorithm()
 	vm->addValue("/ExecutionTime/ODE_SimAlgorithm/StepExecution", mStepDurationValue);
 	vm->addValue("/ExecutionTime/ODE_SimAlgorithm/CollisionExecution", mStepCollisionDurationValue);
 	
+	mSwitchYZAxes = vm->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
+	
 }
 
 /**
@@ -142,7 +144,13 @@ bool ODE_SimulationAlgorithm::resetPhysics() {
 	dWorldSetContactSurfaceLayer(mODEWorld, mContactSurfaceLayerValue->get());
 
 	dWorldSetContactMaxCorrectingVel(mODEWorld,mContactMaxCorrectingVel->get());
-	dWorldSetGravity(mODEWorld, 0.0, -1 * mGravitationValue->get(), 0.0);
+	
+	if(mSwitchYZAxes != 0 && mSwitchYZAxes->get() == false) {
+		dWorldSetGravity(mODEWorld, 0.0, 0.0, -1 * mGravitationValue->get());
+	}
+	else {
+		dWorldSetGravity(mODEWorld, 0.0, -1 * mGravitationValue->get(), 0.0);
+	}
 		
 	mODECollisionHandler = dynamic_cast<ODE_CollisionHandler*>(
 		Physics::getCollisionManager()->getCollisionHandler());	

@@ -76,7 +76,14 @@ void PlaneGround::createModel() {
 	PARAM(DoubleValue, plane, "Distance")->set(0);
 	PARAM(DoubleValue, plane, "StaticFriction")->set(0.01);
 	PARAM(DoubleValue, plane, "DynamicFriction")->set(0);
-	PARAM(Vector3DValue, plane, "Axis")->set(0,1,0);
+	
+	BoolValue *switchYZAxes = Core::getInstance()->getValueManager()->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
+	if(switchYZAxes == 0 || switchYZAxes->get()) {
+		PARAM(Vector3DValue, plane, "Axis")->set(0,1,0);
+	}
+	else {
+		PARAM(Vector3DValue, plane, "Axis")->set(0,0,1);
+	}
 	dynamic_cast<ColorValue*>(plane->getParameter("Color"))->set(Color(0,150,0));
 	pm->addSimObject(plane);
 }

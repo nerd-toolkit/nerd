@@ -76,6 +76,9 @@ const QString SimulationConstants::VALUE_RUN_SIMULATION_IN_REALTIME
 
 const QString SimulationConstants::VALUE_RUN_REAL_TIME_RECORDER
 		= "/ScreenRecorder/Control/Run";
+		
+const QString SimulationConstants::VALUE_SWITCH_YZ_AXES
+		= "/Simulation/Switch-Y-Z-Axes";
 
 //**************************************************************************
 //Event names

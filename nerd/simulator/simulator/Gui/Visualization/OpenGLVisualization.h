@@ -119,6 +119,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		void mouseReleaseEvent(QMouseEvent *e);
 		void mouseMoveEvent(QMouseEvent *e);
 		void moveViewPoint();
+		void wheelEvent(QWheelEvent *e);
 	
 	private slots:
 		void updateGL();
@@ -227,6 +228,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 
 		BoolValue *mIsTranslationalValue;
 		BoolValue *mIgnoreTranslationalYAxis;
+		BoolValue *mSwitchYZAxes;
 
 		QString mVisualizationName;
 

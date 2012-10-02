@@ -63,7 +63,8 @@ namespace nerd {
 	SphericLightSource::SphericLightSource(const QString &name, double brightness, double range, int type)
 	: LightSource(name, type), mRange(0), mBrightnessSensor(0), mBrightnessControl(0), 
 		mLightColor(0), mHideLightCone(0), mUseSphereAsLightCone(0), 
-		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0)
+		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0),
+		mSwitchYZAxes(0)
 	{
 		mRange = new DoubleValue(range);
 		mBrightnessSensor = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
@@ -90,6 +91,12 @@ namespace nerd {
 		mOutputValues.append(mBrightnessSensor);
 		mInputValues.append(mBrightnessControl);
 		
+		Physics::getPhysicsManager();
+		
+		if(mSwitchYZAxes == 0) {
+			mSwitchYZAxes = Core::getInstance()->getValueManager()->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
+		}
+		
 		
 		createCollisionObject();
 		
@@ -104,7 +111,8 @@ namespace nerd {
 	 */
 	SphericLightSource::SphericLightSource(const SphericLightSource &other) 
 	: Object(), ValueChangedListener(), LightSource(other), 
-		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0)
+		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0),
+		mSwitchYZAxes(other.mSwitchYZAxes)
 	{
 		mRange = dynamic_cast<DoubleValue*>(getParameter("Range"));
 		mBrightnessSensor = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
@@ -145,7 +153,7 @@ namespace nerd {
 	
 	void SphericLightSource::setup()  {
 		LightSource::setup();
-		
+
 		if(mReferenceObjectName->get() != "") {
 			mReferenceObject = Physics::getPhysicsManager()->getSimBody(mReferenceObjectName->get());
 			if(mReferenceObject != 0) {
@@ -319,7 +327,12 @@ namespace nerd {
 		else {
 			CylinderGeom geom(this, mRange->get(), 0.05);	
 			Quaternion orientation;
-			orientation.setFromAngles(90.0, 0.0, 0.0);
+			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+				orientation.setFromAngles(90.0, 0.0, 0.0);
+			}
+			else {
+				orientation.setFromAngles(0.0, 0.0, 90.0);
+			}
 			geom.setLocalOrientation(orientation);
 			mBodyCollisionObject = new CollisionObject(geom);
 		}

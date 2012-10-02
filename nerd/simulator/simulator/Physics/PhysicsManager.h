@@ -183,6 +183,7 @@ class PhysicsManager : public virtual SystemObject, public virtual EventListener
 		IntValue *mSynchronizationDuration;
 		IntValue *mPostStepDuration;
 		IntValue *mCollisionHandlingDuration;
+		BoolValue *mSwitchYZAxes;
 
 		QMutex mResetMutex;
 };

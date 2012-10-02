@@ -87,6 +87,7 @@ class ODE_SimulationAlgorithm : public PhysicalSimulationAlgorithm {
 		DoubleValue *mERP;
 		DoubleValue *mContactSurfaceLayerValue;
 		DoubleValue *mContactMaxCorrectingVel;
+		BoolValue *mSwitchYZAxes;
 
 	protected:		
 		bool mInitialized;

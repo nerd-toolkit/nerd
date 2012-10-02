@@ -208,11 +208,22 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 
 	mVisualizationName = name;
 	mPublishValues = publishValues;
+	
+	Physics::getPhysicsManager();
+	mSwitchYZAxes = Core::getInstance()->getValueManager()->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
 
-	mStartOrientation = new Vector3DValue(-10.0, 0.3, 0.0);
-	mStartOrientation->setDescription("The camera orientation after view reset (STRG+V)");
-	mStartPosition = new Vector3DValue(0.0, 0.5, 1.5);
+	if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+		mStartPosition = new Vector3DValue(0.0, 0.5, 1.5);
+		mStartOrientation = new Vector3DValue(-10.0, 0.3, 0.0);
+	}
+	else {
+		mStartPosition = new Vector3DValue(0.5, -5, 0.75);
+		mStartOrientation = new Vector3DValue(90,0,0);
+	}
+	
+	
 	mStartPosition->setDescription("The camera position after view reset (STRG+V)");
+	mStartOrientation->setDescription("The camera orientation after view reset (STRG+V)");
 	mCurrentOrientation = new Vector3DValue();
 	mCurrentOrientation->setDescription("The current camera orientation");
 	mCurrentPosition = new Vector3DValue();
@@ -650,9 +661,16 @@ void OpenGLVisualization::updateVisualization() {
 	}
 
 	if(mIgnoreTranslationalYAxis->get()) {
-		glTranslated(-mReferenceBodyPosition->getX(),
-					0.0,
-					-mReferenceBodyPosition->getZ());
+		if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+			glTranslated(-mReferenceBodyPosition->getX(),
+						0.0,
+						-mReferenceBodyPosition->getZ());
+		}
+		else {
+			glTranslated(-mReferenceBodyPosition->getX(),
+						 -mReferenceBodyPosition->getZ(),
+						 0.0);
+		}
 	}
 	else {
 		glTranslated(-mReferenceBodyPosition->getX(),
@@ -917,18 +935,34 @@ void OpenGLVisualization::drawAxis() {
 					glColor4f(255,  255,255, 100);
 				}
 				glPushMatrix();
-				glTranslatef(i,k+off,0);
+				if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+					glTranslatef(i, k+off, 0);
+				}
+				else {
+					glTranslatef(i, 0, k+off);
+				}
 				glBegin(GL_LINES);
-					glVertex3d(0, 0, -axisLength / 2.0);
-					glVertex3d(0, 0, axisLength / 2.0);
+					if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+						glVertex3d(0, 0, -axisLength / 2.0);
+						glVertex3d(0, 0, axisLength / 2.0);
+					}
+					else {
+						glVertex3d(0, -axisLength / 2.0, 0.0);
+						glVertex3d(0, axisLength / 2.0, 0.0);
+					}
 				glEnd();
 
 				glPopMatrix();
 				glPushMatrix();
-				glTranslatef(0, k + off, i);
+				if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+					glTranslatef(0, k + off, i);
+				}
+				else {
+					glTranslatef(0, i, k + off);
+				}
 				glBegin(GL_LINES);
-					glVertex3d(-axisLength / 2.0, 0, 0);
-					glVertex3d(axisLength / 2.0, 0, 0);
+				glVertex3d(-axisLength / 2.0, 0, 0);
+				glVertex3d(axisLength / 2.0, 0, 0);
 				glEnd();
 				glPopMatrix();
 			}
@@ -1800,7 +1834,10 @@ void OpenGLVisualization::mouseMoveEvent(QMouseEvent *e) {
 									mCurrentOrientation->getZ());
 				Quaternion inverse;
 				inverse = rot.getInverse();
-				Quaternion startPoint(0.0, -offsetX, 0.0, -offsetY);
+				Quaternion startPoint(0.0, -offsetX, -offsetY, 0.0);
+				if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+					startPoint = Quaternion(0.0, -offsetX, 0.0, -offsetY);
+				}
 				Quaternion rotated = rot * startPoint * inverse;
 
 				mX += rotated.getX();
@@ -1823,7 +1860,7 @@ void OpenGLVisualization::mouseMoveEvent(QMouseEvent *e) {
 				mZ += rotated.getZ();
 			}
 			if(mLeftButtonPress) {
-				mMouseCurrentPosition.set(e->x(), e->y(), 0);
+				mMouseCurrentPosition.set(e->x(), e->y(), 0.0);
 			}
 		}
 
@@ -1871,8 +1908,14 @@ void OpenGLVisualization::moveViewPoint() {
 
 			alpha += -(-mMouseClickPosition.getY() + mMouseCurrentPosition.getY())
 						* mMouseRotationStepSize->get();
-			beta += -(-mMouseClickPosition.getX() + mMouseCurrentPosition.getX())
+			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+				beta += -(-mMouseClickPosition.getX() + mMouseCurrentPosition.getX())
 						* mMouseRotationStepSize->get();
+			}
+			else {
+				gamma += -(-mMouseClickPosition.getX() + mMouseCurrentPosition.getX())
+					* mMouseRotationStepSize->get();
+			}
 
 			//switch between helicopter mode.
 			mMouseClickPosition.set(mMouseCurrentPosition);
@@ -1908,8 +1951,7 @@ void OpenGLVisualization::moveViewPoint() {
 			c += sideIncrement;
 		}
 		if((mPressedMovementKeys & KEY_DOWN) == KEY_DOWN) {
-			c -= sideIncrement;
-		}
+			c -= sideIncrement;		}
 
 		Quaternion rot;
 		rot.setFromAngles(alpha, beta, gamma);
@@ -1925,6 +1967,24 @@ void OpenGLVisualization::moveViewPoint() {
 		ChangeVectorValueTask *adaptPositionTask =
 				new ChangeVectorValueTask(mCurrentPosition, mX, mY, mZ);
 		Core::getInstance()->scheduleTask(adaptPositionTask);
+	}
+}
+
+void OpenGLVisualization::wheelEvent(QWheelEvent *e) {
+	if(e == 0) {
+		return;
+	}
+	if(e->delta() > 0) {
+		unsigned int oldKeyState = mPressedMovementKeys;
+		mPressedMovementKeys = mPressedMovementKeys | KEY_FWD;
+		moveViewPoint();
+		mPressedMovementKeys = oldKeyState;
+	}
+	else if(e->delta() < 0) {
+		unsigned int oldKeyState = mPressedMovementKeys;
+		mPressedMovementKeys = mPressedMovementKeys | KEY_BWD;
+		moveViewPoint();
+		mPressedMovementKeys = oldKeyState;
 	}
 }
 

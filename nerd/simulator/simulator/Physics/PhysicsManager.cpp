@@ -63,6 +63,8 @@
 
 #define TRACE(message)
 //#define TRACE(message) Tracer _ttt_(message);
+#include <PlugIns/CommandLineArgument.h>
+#include <Command/Command.h>
 
 
 using namespace std;
@@ -90,6 +92,16 @@ PhysicsManager::PhysicsManager() : mPhysicalSimulationAlgorithm(0), mCollisionMa
 	em->getEvent(NerdConstants::EVENT_EXECUTION_RESET_SETTINGS_COMPLETED, true);
 	mPhysicsEnvironmentChangedEvent = em->createEvent(
 					SimulationConstants::EVENT_PHYSICS_ENVIRONMENT_CHANGED);
+	
+	CommandLineArgument *switchXZArg = new CommandLineArgument("switchYZAxis", "switchYZAxis", "",
+						"The y-axis now means height, so that the position of a robot in the plane is (x,z).",
+						0, 0, true, false);
+	bool switchXZ = switchXZArg->getNumberOfEntries() > 0 ? false : true;
+	
+	mSwitchYZAxes = new BoolValue(switchXZ);
+	Core::getInstance()->getValueManager()->addValue(SimulationConstants::VALUE_SWITCH_YZ_AXES, mSwitchYZAxes);
+	
+	
 }
 
 

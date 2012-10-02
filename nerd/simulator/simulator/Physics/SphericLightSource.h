@@ -100,6 +100,7 @@ namespace nerd {
 		SimBody *mReferenceObject;
 		BoolValue *mHomogeneousDistribution;
 		RangeValue *mBrightnessRange;
+		BoolValue *mSwitchYZAxes;
 	};
 	
 }
