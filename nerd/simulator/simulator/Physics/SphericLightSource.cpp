@@ -155,15 +155,22 @@ namespace nerd {
 		LightSource::setup();
 
 		if(mReferenceObjectName->get() != "") {
+			if(mReferenceObject != 0) {
+				mReferenceObject->getPositionValue()->removeValueChangedListener(this);
+				mReferenceObject->getQuaternionOrientationValue()->removeValueChangedListener(this);
+				mReferenceObject = 0;
+			}
+			
 			mReferenceObject = Physics::getPhysicsManager()->getSimBody(mReferenceObjectName->get());
 			if(mReferenceObject != 0) {
 				mReferenceObject->getPositionValue()->addValueChangedListener(this);
 				mReferenceObject->getQuaternionOrientationValue()->addValueChangedListener(this);
 				valueChanged(mReferenceObject->getPositionValue());
 			}
-			else {
+			else if(mReferenceObjectName->get().trimmed() != "") {
+				//error
 				Core::log("SphericalLightSource: Could not find reference object ["
-						  + mReferenceObjectName->get() + "]!", true);
+						  + mReferenceObjectName->get() + "]! Ignoring!", true);
 			}
 		}
 		

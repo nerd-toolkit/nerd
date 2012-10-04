@@ -129,7 +129,8 @@ void Gyroscope::setup() {
 	mHostBodyOrientation = 0;
 	mHostBody = Physics::getPhysicsManager()->getSimBody(mHostBodyName->get());
 	if(mHostBody == 0) {
-		Core::log("Gyroscope: Sensor has no valid reference body.");
+		Core::log("Gyroscope: Sensor has no valid reference body. Name was [" 
+					+ mHostBodyName->get() + "].Ignoring.", true);
 		return;
 	}
 	else {

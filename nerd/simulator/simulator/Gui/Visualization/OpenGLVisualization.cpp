@@ -250,8 +250,8 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 
 	mIsTranslationalValue = new BoolValue(false);
 	mIsTranslationalValue->setDescription("In translation mode, the camera is not following the orientation.");
-	mIgnoreTranslationalYAxis = new BoolValue(true);
-	mIgnoreTranslationalYAxis->setDescription("In translational mode, the camera ignores the y axis changes of the reference body.");
+	mIgnoreHeightAxisInTranslationalMode = new BoolValue(true);
+	mIgnoreHeightAxisInTranslationalMode->setDescription("In translational mode, the camera ignores the y axis changes of the reference body.");
 	mUseAsFrameGrabber = new BoolValue(false);
 	mUseAsFrameGrabber->setDescription("In frame grabber mode the camera image is stored in a buffer file.");
 	mDrawOnTopOfPreviousFrame = new BoolValue(false);
@@ -281,7 +281,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	addParameter("MinCutoff", mMinDistanceCutoffValue, publishValues);
 	addParameter("MaxCutoff", mMaxDistanceCutoffValue, publishValues);
 	addParameter("Translational", mIsTranslationalValue, publishValues);
-	addParameter("IgnoreTranslationalY", mIgnoreTranslationalYAxis, publishValues);
+	addParameter("IgnoreHeightInTranslationalMode", mIgnoreHeightAxisInTranslationalMode, publishValues);
 	addParameter("ReferenceBodyName", mReferenceBodyName, publishValues);
 	addParameter("UseAsFrameGrabber", mUseAsFrameGrabber, publishValues);
 	addParameter("DrawOnTopOfPreviousFrame", mDrawOnTopOfPreviousFrame, publishValues);
@@ -660,7 +660,7 @@ void OpenGLVisualization::updateVisualization() {
 		glRotated(-angle, x, y, z);
 	}
 
-	if(mIgnoreTranslationalYAxis->get()) {
+	if(mIgnoreHeightAxisInTranslationalMode->get()) {
 		if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
 			glTranslated(-mReferenceBodyPosition->getX(),
 						0.0,
@@ -1637,13 +1637,35 @@ void OpenGLVisualization::valueChanged(Value *value) {
 	}
 	else if(value == mReferenceBodyName) {
 
-		//TODO make default values NULL and check for NULL when using them (avoid memory leak)
+		if(mReferenceBody != 0) {
+			mReferenceBody = 0;
+			mReferenceBodyPosition = 0;
+			mReferenceBodyOrientation = 0;
+		}
+		else {
+			if(mReferenceBodyPosition != 0) {
+				delete mReferenceBodyPosition;
+				mReferenceBodyPosition = 0;
+			}
+			if(mReferenceBodyOrientation != 0) {
+				delete mReferenceBodyOrientation;
+				mReferenceBodyOrientation = 0;
+			}
+		}
+		
 		mReferenceBody = Physics::getPhysicsManager()->getSimBody(mReferenceBodyName->get());
+		
 		if(mReferenceBody != 0) {
 			mReferenceBodyPosition = mReferenceBody->getPositionValue();
 			mReferenceBodyOrientation = mReferenceBody->getQuaternionOrientationValue();
 		}
 		else {
+			cerr << "check" << endl;
+			if(mReferenceBodyName->get().trimmed() != "") {
+				Core::log("OpenGLVisualization: Could not find reference body with name ["
+						  + mReferenceBodyName->get() + "]. Ignoring", true);
+			}
+			
 			mReferenceBodyPosition = new Vector3DValue(0.0, 0.0, 0.0);
 			mReferenceBodyOrientation = new QuaternionValue();
 		}

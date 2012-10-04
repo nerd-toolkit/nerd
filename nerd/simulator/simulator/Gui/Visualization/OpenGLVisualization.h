@@ -227,7 +227,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		BoolValue *mHideRecordSymbol;
 
 		BoolValue *mIsTranslationalValue;
-		BoolValue *mIgnoreTranslationalYAxis;
+		BoolValue *mIgnoreHeightAxisInTranslationalMode;
 		BoolValue *mSwitchYZAxes;
 
 		QString mVisualizationName;

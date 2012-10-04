@@ -105,6 +105,7 @@ namespace nerd {
 		
 		double mTolerance;
 		QList<SimBody*> mCollisionFreeObjects;
+		BoolValue *mSwitchYZAxes;
 	};
 
 }

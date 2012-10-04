@@ -239,7 +239,8 @@ void AccelSensor::setup() {
 	if(mInitialized == false) {
 		mHostBody = Physics::getPhysicsManager()->getSimBody(mReferenceBodyName->get());
 		if(mHostBody == 0) {
-			Core::log("AccelSensor: Sensor has no valid reference body.");
+			Core::log("AccelSensor: Sensor has no valid reference body. Name was ["
+					+ mReferenceBodyName->get() + "]! Ignoring", true);
 			return;
 		}
 		createSensor();	

@@ -93,6 +93,9 @@ namespace nerd {
 		Vector3DValue *mTmpPosition;
 		StringValue *mDetectableLightSourceTypes;	
 		CollisionObject *mSensorObject;
+		BoolValue *mSwitchYZAxes;
+		BoolValue *mRestrictToHorizontalDirection;
+		DoubleValue *mMaxDetectionAngle;
 	};
 
 }

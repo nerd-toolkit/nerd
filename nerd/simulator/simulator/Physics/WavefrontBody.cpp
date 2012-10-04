@@ -45,6 +45,7 @@
 #include "WavefrontBody.h"
 #include "WavefrontGeom.h"
 #include "Physics/Physics.h"
+#include "Core/Core.h"
 
 
 #include <iostream>
@@ -141,12 +142,24 @@ void WavefrontBody::setup() {
 	SimBody::setup();
 
 	if(mReferenceObjectName->get() != "") {
+		if(mReferenceObject != 0) {
+			mReferenceObject->getPositionValue()->removeValueChangedListener(this);
+			mReferenceObject->getQuaternionOrientationValue()->removeValueChangedListener(this);
+			mReferenceObject->getOrientationValue()->removeValueChangedListener(this);
+			mReferenceObject = 0;
+		}
+		
 		mReferenceObject = Physics::getPhysicsManager()->getSimBody(mReferenceObjectName->get());
 		if(mReferenceObject != 0) {
 			mReferenceObject->getPositionValue()->addValueChangedListener(this);
 			mReferenceObject->getQuaternionOrientationValue()->addValueChangedListener(this);
 			mReferenceObject->getOrientationValue()->addValueChangedListener(this);
 			valueChanged(mReferenceObject->getPositionValue());
+		}
+		else if(mReferenceObjectName->get().trimmed() != "") {
+			//error
+			Core::log("WavefrontBody: Could not find reference body with name [" 
+					  + mReferenceObjectName->get() + "]! Ignoring.", true);
 		}
 	}
 

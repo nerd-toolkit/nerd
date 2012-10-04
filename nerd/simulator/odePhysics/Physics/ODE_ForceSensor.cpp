@@ -114,6 +114,8 @@ SimObject* ODE_ForceSensor::createCopy() const {
 
 void ODE_ForceSensor::setup() {
 	PhysicsManager *pm = Physics::getPhysicsManager();
+	
+	//TODO undo all changes when the host body is changed!
 
 	SimBody *simBody = pm->getSimBody(mHostBodyName->get());
 

@@ -263,6 +263,10 @@ void VisualizationChooser::createNewVisualization() {
 	}
 	else {
 		referenceBody = Physics::getPhysicsManager()->getSimBody(objectName);
+		
+		if(referenceBody == 0) {
+			Core::log("VisualizationChooser: Could not get reference body with name [" + objectName + "]!", true);
+		}
 	}	
 	QString title;
 	if(mVisualizationName->text().compare("") == 0) {

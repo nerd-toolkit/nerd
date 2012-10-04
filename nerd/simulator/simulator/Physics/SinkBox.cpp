@@ -112,6 +112,8 @@ SinkBox::SinkBox(const QString &name)
 	addParameter("MaxForce", mMaximalForce);	
 	addParameter("CollisionFreeObjects", mCollisionFreeObjectNames);
 	
+	mSwitchYZAxes = Core::getInstance()->getValueManager()->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
+	
 
 	updateChildObjectNames();
 	collectParameters();
@@ -169,6 +171,8 @@ SinkBox::SinkBox(const SinkBox &other)
 	mColor = dynamic_cast<ColorValue*>(getParameter("Color"));
 	mMaximalForce = dynamic_cast<DoubleValue*>(getParameter("MaxForce"));
 	mCollisionFreeObjectNames = dynamic_cast<StringValue*>(getParameter("CollisionFreeObjects"));
+	
+	mSwitchYZAxes = other.mSwitchYZAxes;
 
 	updateChildObjectNames();
 	collectParameters();
@@ -296,24 +300,51 @@ void SinkBox::updateChildObjects() {
 		return;
 	}
 
-	double dimY = mDimensions->getY();
+	double dimY = 0.0;
+	if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+		dimY = mDimensions->getY();
+	}
+	else {
+		dimY = mDimensions->getZ();
+	}
+	
 	if(mGlobalSizeFactor != 0) {
 		dimY = dimY * mGlobalSizeFactor->get();
 	}
 
 	mBoxWidth->set(mDimensions->getX());
-	mBoxHeight->set(dimY);
-	mBoxDepth->set(mDimensions->getZ());
+	
+	if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+		mBoxHeight->set(dimY);
+		mBoxDepth->set(mDimensions->getZ());
+	}
+	else {
+		mBoxHeight->set(mDimensions->getY());
+		mBoxDepth->set(dimY);
+	}
 	
 	mBoxColor->set(mColor->get());
 
 	mBoxOrientation->set(mOrientation->get());
-	mBoxPosition->set(mPosition->get() - Vector3D(0.0, mTolerance, 0.0));
+	if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+		mBoxPosition->set(mPosition->get() - Vector3D(0.0, mTolerance, 0.0));
+	}
+	else {
+		mBoxPosition->set(mPosition->get() - Vector3D(0.0, 0.0, mTolerance));
+	}
 
-	mSliderAxisPoint1->set(Vector3D(mPosition->getX(), 
-				mPosition->getY() - dimY - mTolerance, mPosition->getZ()));
-	mSliderAxisPoint2->set(Vector3D(
-				mPosition->getX(), mPosition->getY() + mTolerance, mPosition->getZ()));
+	if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+		mSliderAxisPoint1->set(Vector3D(mPosition->getX(), 
+					mPosition->getY() - dimY - mTolerance, mPosition->getZ()));
+		mSliderAxisPoint2->set(Vector3D(
+					mPosition->getX(), mPosition->getY() + mTolerance, mPosition->getZ()));
+	}
+	else {
+		mSliderAxisPoint1->set(Vector3D(mPosition->getX(), 
+										mPosition->getY(), mPosition->getZ() - dimY - mTolerance));
+		mSliderAxisPoint2->set(Vector3D(
+			mPosition->getX(), mPosition->getY(), mPosition->getZ() + mTolerance));
+	}
 	mSliderDesiredSetting->set(dimY + mTolerance);
 	mSliderMinPosition->set(0);
 	mSliderMaxPosition->set(dimY + (2 * mTolerance));
