@@ -126,6 +126,8 @@ class SimBody : public SimObject {
 		StringValue *mMaterialValue;
 
 		CollisionObject *mBodyCollisionObject;
+		bool mUpdatingQuaternion;
+		bool mUpdatingOrientation;
 };
 
 }

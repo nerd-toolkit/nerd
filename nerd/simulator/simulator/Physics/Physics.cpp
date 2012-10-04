@@ -46,6 +46,10 @@
 #include "Core/Core.h"
 #include "Math/Quaternion.h"
 
+#include <iostream>
+
+using namespace std;
+
 namespace nerd {
 
 PhysicsManager *Physics::mGlobalPhysicsManager = 0;
@@ -169,6 +173,8 @@ void Physics::rotateSimObjects(QList<SimObject*> simObjects, Vector3D orientatio
 
 	for(int i = 0; i < simObjects.size(); i++) {
 		if(dynamic_cast<SimBody*>(simObjects.at(i)) != 0) {	
+			SimBody *obj = dynamic_cast<SimBody*>(simObjects.at(i));
+			
 			Vector3DValue *bodyPosition = dynamic_cast<SimBody*>(simObjects.at(i))->getPositionValue();
 			
 			Quaternion oldPosition(0, 0, 0, 0);
@@ -176,9 +182,13 @@ void Physics::rotateSimObjects(QList<SimObject*> simObjects, Vector3D orientatio
 			Quaternion newPointQ = orientation * oldPosition * inverse;
 			bodyPosition->set(newPointQ.getX(), newPointQ.getY(), newPointQ.getZ());
 			
-			Vector3DValue *bodyOrientation = 
-							dynamic_cast<SimBody*>(simObjects.at(i))->getOrientationValue();
-			bodyOrientation->set(bodyOrientation->get() + orientationOffset);
+			Vector3DValue *bodyOrientation = obj->getOrientationValue();
+
+			QuaternionValue *currentOrientation = obj->getQuaternionOrientationValue();
+			Quaternion newOrientation = orientation * currentOrientation->get(); 
+			
+			obj->getQuaternionOrientationValue()->set(newOrientation);
+
 			continue;
 		}
 		else if(dynamic_cast<SimJoint*>(simObjects.at(i)) != 0) {

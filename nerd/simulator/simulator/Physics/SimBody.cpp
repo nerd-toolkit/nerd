@@ -82,7 +82,8 @@ class ChangeStringValueTask: public Task {
  * All available parameters are set to zero as default. Except for "OrientationQuaterion" (set to (1, 0, 0, 0)) and "Elasticity" (set to 1).
  */
 SimBody::SimBody(const QString &name, const QString &prefix) 
-		: SimObject(name, prefix), mBodyCollisionObject(0)
+		: SimObject(name, prefix), mBodyCollisionObject(0), mUpdatingQuaternion(false),
+		  mUpdatingOrientation(false)
 {
 	CollisionManager *cm = Physics::getCollisionManager();
 	
@@ -127,7 +128,8 @@ SimBody::SimBody(const QString &name, const QString &prefix)
  */
 
 SimBody::SimBody(const SimBody &body) 
-	: Object(), ValueChangedListener(), SimObject(body), mBodyCollisionObject(0)
+	: Object(), ValueChangedListener(), SimObject(body), mBodyCollisionObject(0), mUpdatingQuaternion(false),
+	  mUpdatingOrientation(false)
 {
 	mPositionValue = dynamic_cast<Vector3DValue*>(getParameter("Position"));
 	mOrientationValue = dynamic_cast<Vector3DValue*>(getParameter("Orientation"));
@@ -210,9 +212,16 @@ SimObject* SimBody::createCopy() const {
  */
 void SimBody::valueChanged(Value *value) {
 	SimObject::valueChanged(value);
-	if(value == mOrientationValue && !mSynchronizingWithPhysicalModel) {	
+	if(value == mOrientationValue && !mSynchronizingWithPhysicalModel && !mUpdatingOrientation) {	
+		mUpdatingQuaternion = true;
 		mQuaternionOrientationValue->setFromAngles(mOrientationValue->getX(),
 		 	mOrientationValue->getY(), mOrientationValue->getZ());
+		mUpdatingQuaternion = false;
+	}
+	else if(value == mQuaternionOrientationValue && !mUpdatingQuaternion) {
+		mUpdatingOrientation = true;
+		mOrientationValue->set(mQuaternionOrientationValue->get().toAngles());
+		mUpdatingOrientation = false;
 	}
 	else if(value == mGeometryColorValue) {
 		for(int i = 0; i < mSimGeometries.size(); ++i) {
