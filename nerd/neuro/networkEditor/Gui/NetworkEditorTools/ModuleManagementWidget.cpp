@@ -138,7 +138,7 @@ ModuleManagementWidget::ModuleManagementWidget(NeuralNetworkEditor *owner)
 	connect(mLoadButton, SIGNAL(pressed()),
 			this, SLOT(reloadModules()));
 
-	updateView();
+	//updateView();
 }
 
 
