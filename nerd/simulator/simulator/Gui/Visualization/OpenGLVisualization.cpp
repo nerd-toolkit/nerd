@@ -668,7 +668,7 @@ void OpenGLVisualization::updateVisualization() {
 		}
 		else {
 			glTranslated(-mReferenceBodyPosition->getX(),
-						 -mReferenceBodyPosition->getZ(),
+						 -mReferenceBodyPosition->getY(),
 						 0.0);
 		}
 	}
