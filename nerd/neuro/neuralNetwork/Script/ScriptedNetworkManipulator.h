@@ -117,6 +117,7 @@ class NeuroModulator;
 		bool setWeight(qulonglong synapseId, double weight);
 		bool setPosition(qulonglong objectId, double x, double y, double z);
 		bool setProperty(qulonglong objectId, const QString &propName, const QString &content, bool severeChange = false);
+		bool setName(qulonglong neuronId, const QString &name);
 
 		bool addToGroup(qulonglong elementId, qulonglong groupId);
 		bool removeFromGroup(qulonglong elementId, qulonglong groupId);

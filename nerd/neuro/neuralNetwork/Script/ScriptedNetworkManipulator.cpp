@@ -1265,6 +1265,32 @@ bool ScriptedNetworkManipulator::setProperty(qulonglong objectId, const QString 
 	return true;
 }
 
+
+bool ScriptedNetworkManipulator::setName(qulonglong neuronId, const QString &name) {
+	if(mNetwork == 0) {
+		return false;
+	}
+	
+	Neuron *neuron = 0;
+	{
+		//check owner hint to speed up things.
+		Neuron *owner = dynamic_cast<Neuron*>(mOwner);
+		if(owner != 0 && owner->getId() == neuronId) {
+			neuron = owner;
+		}
+		if(neuron == 0) {
+			neuron = NeuralNetwork::selectNeuronById(neuronId, mNetwork->getNeurons());
+		}
+	}
+
+	if(neuron == 0) {
+		return false;
+	}
+	neuron->getNameValue().set(name);
+	return true;
+}
+
+
 /**
  * Adds a network element (Neuron or NeuroModule) to the group specified by the groupId.
  * Will return false in case of failure, otherwise true.
