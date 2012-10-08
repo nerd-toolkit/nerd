@@ -128,6 +128,11 @@ double DistanceRay::getDistance(double minRange) {
 			distance = vto.length();
 			mClosestKnownCollisionPoint = point;
 		}
+		if(length < minRange && length > pos.length()) { // if sight is blocked
+			distance = mRay->getLength();
+			mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
+			break;
+		}
 	}
 	points->clear();
 	return distance;
