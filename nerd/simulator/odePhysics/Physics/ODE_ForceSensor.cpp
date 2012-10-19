@@ -70,6 +70,7 @@ ODE_ForceSensor::ODE_ForceSensor(const QString &name, double minForce, double ma
 	mHostBodyName = new StringValue("");
 	mCollisionObjectIndices = new StringValue("0");
 	mLocalSensorAxis = new Vector3DValue(1.0, 0.0, 0.0);
+	mMaxOverSteps = new IntValue(2);
 
 	addParameter("Force", mForceSensorValue);
 	addParameter("MinForce", mMinForce);
@@ -77,6 +78,7 @@ ODE_ForceSensor::ODE_ForceSensor(const QString &name, double minForce, double ma
 	addParameter("HostBodyName", mHostBodyName);
 	addParameter("CollisionObjectIndices", mCollisionObjectIndices);
 	addParameter("LocalSensorAxis", mLocalSensorAxis);
+	addParameter("MaxOverSteps", mMaxOverSteps);
 
 	mOutputValues.append(mForceSensorValue);
 }
@@ -97,6 +99,7 @@ ODE_ForceSensor::ODE_ForceSensor(const ODE_ForceSensor &other)
 	mHostBodyName = dynamic_cast<StringValue*>(getParameter("HostBodyName"));
 	mCollisionObjectIndices = dynamic_cast<StringValue*>(getParameter("CollisionObjectIndices"));
 	mLocalSensorAxis = dynamic_cast<Vector3DValue*>(getParameter("LocalSensorAxis"));
+	mMaxOverSteps = dynamic_cast<IntValue*>(getParameter("MaxOverSteps"));
 
 	mOutputValues.append(mForceSensorValue);
 }
@@ -230,7 +233,20 @@ void ODE_ForceSensor::updateSensorValues() {
 		+ forceSum.getY() * axisRotatedQuat.getY() 
 		+ forceSum.getZ() * axisRotatedQuat.getZ();
 
-	mForceSensorValue->set(sensorValue);
+	double maxSensorValue = sensorValue;
+	if(mMaxOverSteps->get() > 1 && !mPreviousSensorValues.isEmpty()) {
+		for(int i = 0; i < mPreviousSensorValues.size(); ++i) {
+			maxSensorValue = Math::max(mPreviousSensorValues.at(i), maxSensorValue);
+		}
+	}
+
+	mPreviousSensorValues.prepend(sensorValue);
+
+	while(!mPreviousSensorValues.isEmpty() && mPreviousSensorValues.size() > mMaxOverSteps->get()) {
+		mPreviousSensorValues.removeLast();
+	}
+
+	mForceSensorValue->set(maxSensorValue);
 
 }
 

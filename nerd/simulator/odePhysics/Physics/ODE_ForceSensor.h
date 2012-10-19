@@ -93,9 +93,11 @@ namespace nerd {
 		StringValue *mHostBodyName;
 		StringValue *mCollisionObjectIndices;
 		Vector3DValue *mLocalSensorAxis;
+		IntValue *mMaxOverSteps;
 
 		ODE_Body *mHostBody;
 		QList<CollisionObject*> mReferenceCollisionObjects;
+		QList<double> mPreviousSensorValues;
 		
 	};
 

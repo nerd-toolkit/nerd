@@ -111,9 +111,6 @@ double DistanceRay::getDistance(double minRange, double deadZone) {
 	Vector3D rayPosition = hostPosition + rayOffset;
 	double collisionDistance = mRay->getLength(); // start at greatest distance
 
-	Quaternion lo = mRay->getLocalOrientation();
-	cout << QString::number(lo.getW()).toStdString() << ", " << QString::number(lo.getX()).toStdString() << ", " << QString::number(lo.getY()).toStdString() << ", " << QString::number(lo.getZ()).toStdString() << endl;
-	
 	mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
 	
 	if(mRule == 0) {
@@ -133,7 +130,6 @@ double DistanceRay::getDistance(double minRange, double deadZone) {
 		}
 		
 		if(collisionVectorLength < minRange && collisionVectorLength > deadZone) {
-			// cout << "DistanceRay [" << mName.toStdString() << "] blocked" << endl;
 			collisionDistance = mRay->getLength();
 			mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
 			break;
