@@ -78,6 +78,7 @@ class DistanceSensor : public SimObject, public SimSensor {
 		DoubleValue *mAngle;
 		DoubleValue *mMaxRange;
 		DoubleValue *mMinRange;
+		DoubleValue *mDeadZone;
 		DoubleValue *mSensorNoise;
 		Vector3DValue *mMinIntersectionPoint;
 		IntValue *mNumberOfRays;

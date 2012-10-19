@@ -105,58 +105,63 @@ RayGeom* DistanceRay::getRayCollisionObject() const {
 	return mRay;
 }
 
-double DistanceRay::getDistance(double minRange) {
-	Vector3D localpos = mRay->getLocalPosition();
-	Vector3D simpos
-	= mRayCollisionObject->getHostBody()->getPositionValue()->get();
-	Vector3D pos = localpos + simpos;
-	Vector3D vto;
-	double distance = mRay->getLength();
+double DistanceRay::getDistance(double minRange, double deadZone) {
+	Vector3D rayOffset = mRay->getLocalPosition();
+	Vector3D hostPosition = mRayCollisionObject->getHostBody()->getPositionValue()->get();
+	Vector3D rayPosition = hostPosition + rayOffset;
+	double collisionDistance = mRay->getLength(); // start at greatest distance
+
+	Quaternion lo = mRay->getLocalOrientation();
+	cout << QString::number(lo.getW()).toStdString() << ", " << QString::number(lo.getX()).toStdString() << ", " << QString::number(lo.getY()).toStdString() << ", " << QString::number(lo.getZ()).toStdString() << endl;
 	
 	mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
 	
 	if(mRule == 0) {
-		return distance;
+		return collisionDistance;
 	}
-	QList<Vector3D> *points = mRule->getCollisionPoints(mRayCollisionObject);
+
+	QList<Vector3D> *collisionPoints = mRule->getCollisionPoints(mRayCollisionObject);
 	
-	for(QListIterator<Vector3D> i(*points); i.hasNext();) {
-		Vector3D point = i.next();
-		vto = pos - point;
-		double length = vto.length();
-		if(length < distance && length >= minRange) {
-			distance = vto.length();
-			mClosestKnownCollisionPoint = point;
+	for(QListIterator<Vector3D> i(*collisionPoints); i.hasNext();) {
+		Vector3D collisionPoint = i.next();
+		Vector3D collisionVector = rayPosition - collisionPoint;
+		double collisionVectorLength = collisionVector.length();
+
+		if(collisionVectorLength < collisionDistance && collisionVectorLength >= minRange) {
+			collisionDistance = collisionVectorLength;
+			mClosestKnownCollisionPoint = collisionPoint;
 		}
-		if(length < minRange && length > pos.length()) { // if sight is blocked
-			distance = mRay->getLength();
+		
+		if(collisionVectorLength < minRange && collisionVectorLength > deadZone) {
+			// cout << "DistanceRay [" << mName.toStdString() << "] blocked" << endl;
+			collisionDistance = mRay->getLength();
 			mClosestKnownCollisionPoint.set(0.0, 0.0, 0.0);
 			break;
 		}
 	}
-	points->clear();
-	return distance;
+	collisionPoints->clear();
+	return collisionDistance;
 }
 
 Vector3D DistanceRay::getClosestKnownCollisionPoint() const {
 	return mClosestKnownCollisionPoint;
 }
 
-void DistanceRay::updateRay(double length, bool disableRay) {
+void DistanceRay::updateRay(double rayLength, bool disableRay) {
 	if(disableRay) {
 		mRay->setColor(mDisabledColor);
 		mRay->setVisibleLength(mRay->getLength());
 		
 		//erase the stored collision data.
 		if(mRule != 0) {
-			QList<Vector3D> *points = mRule->getCollisionPoints(mRayCollisionObject);
-			points->clear();
+			QList<Vector3D> *collisionPoints = mRule->getCollisionPoints(mRayCollisionObject);
+			collisionPoints->clear();
 		}
 	}
 	else {
-		if(length < mRay->getLength()) {
+		if(rayLength < mRay->getLength()) {
 			mRay->setColor(mActiveColor);
-			mRay->setVisibleLength(length);
+			mRay->setVisibleLength(rayLength);
 		}
 		else {
 			mRay->setColor(mInactiveColor);

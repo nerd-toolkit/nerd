@@ -53,6 +53,10 @@
 #include <Mmsystem.h>
 #endif
 
+#ifdef Q_WS_X11
+#include <X11/Xlib.h>
+#endif
+
 
 using namespace std;
 using namespace nerd;
@@ -61,6 +65,10 @@ int main(int argc, char *argv[])
 {
 #ifdef _WIN32
 	timeBeginPeriod(1);
+#endif
+
+#ifdef Q_WS_X11
+	XInitThreads();
 #endif
 
 	//initialize ressources (compiled images, etc.)

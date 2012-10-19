@@ -71,7 +71,7 @@ class DistanceRay {
 		virtual CollisionObject* getCollisionObject() const;
 		virtual RayGeom* getRayCollisionObject() const;
 		
-		virtual double getDistance(double minRange);
+		virtual double getDistance(double minRange, double deadZone);
 		Vector3D getClosestKnownCollisionPoint() const;
 
 		virtual void updateRay(double length, bool disable = false);

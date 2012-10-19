@@ -69,6 +69,7 @@ DistanceSensor::DistanceSensor(const QString &name)
 	mNumberOfRays = new IntValue(1);
 	mMaxRange = new DoubleValue(1.0);
 	mMinRange = new DoubleValue(0.0);
+	mDeadZone = new DoubleValue(0.0);
 	mSensorNoise = new DoubleValue(0.0);
 	mMinIntersectionPoint = new Vector3DValue();
 	
@@ -92,6 +93,7 @@ DistanceSensor::DistanceSensor(const QString &name)
 	//addParameter("LocalPosition", mLocalPosition);
 	addParameter("MaxRange", mMaxRange);
 	addParameter("MinRange", mMinRange);
+	addParameter("DeadZone", mDeadZone);
 	addParameter("Noise", mSensorNoise);
 	addParameter("NumberOfRays", mNumberOfRays);
 	addParameter("MinIntersectionPoint", mMinIntersectionPoint);
@@ -112,6 +114,7 @@ DistanceSensor::DistanceSensor(const DistanceSensor &other)
 	//mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
 	mMaxRange = dynamic_cast<DoubleValue*>(getParameter("MaxRange"));
 	mMinRange = dynamic_cast<DoubleValue*>(getParameter("MinRange"));
+	mDeadZone = dynamic_cast<DoubleValue*>(getParameter("DeadZone"));
 	mSensorNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
 	mNumberOfRays = dynamic_cast<IntValue*>(getParameter("NumberOfRays"));
 	mMinIntersectionPoint = dynamic_cast<Vector3DValue*>(getParameter("MinIntersectionPoint"));
@@ -156,7 +159,7 @@ double DistanceSensor::getMinSensorValue() {
 
 	for(QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
 		ray = i.next();
-		d = ray->getDistance(mMinRange->get());
+		d = ray->getDistance(mMinRange->get(), mDeadZone->get());
 		ray->updateRay(d);
 		if(mMinRange->get() <= d && d < distance) {
 			distance = d;
@@ -176,7 +179,7 @@ double DistanceSensor::getAvgSensorValue() {
 
 	for (QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
 		ray = i.next();
-		d = ray->getDistance(mMinRange->get());
+		d = ray->getDistance(mMinRange->get(), mDeadZone->get());
 		ray->updateRay(d);
 		if(mMinRange->get() <= d) {
 			distance += d;
@@ -250,18 +253,18 @@ void DistanceSensor::setup() {
 
 	//set target objects
 	QList<CollisionObject*> clist;
-	QList<SimBody*> bodies = Physics::getPhysicsManager()->getSimBodies();
+	QList<SimBody*> bodies = Physics::getPhysicsManager()->getSimBodies(); // get all bodies
 
 	for(QListIterator<SimBody*> i(bodies); i.hasNext();) {
-		QList<CollisionObject*> collisionObjects = i.next()->getCollisionObjects();
+		QList<CollisionObject*> collisionObjects = i.next()->getCollisionObjects(); // and their coll objs
 		for(QListIterator<CollisionObject*> j(collisionObjects); j.hasNext();) {
-			CollisionObject *obj = j.next();
-			if(dynamic_cast<RayGeom*>(obj->getGeometry()) == 0) {
-				clist.append(obj);
+			CollisionObject *obj = j.next(); // current object
+			if(dynamic_cast<RayGeom*>(obj->getGeometry()) == 0) { // if it's NOT a ray
+				clist.append(obj); // add as collision object
 			}
 		}
 	}
-	mRule->setTargetGroup(clist);
+	mRule->setTargetGroup(clist); // in target group
 
 	for(QListIterator<CollisionObject*> j(mHostBody->getCollisionObjects()); j.hasNext();) {
 		CollisionObject *obj = j.next();
@@ -274,7 +277,7 @@ void DistanceSensor::setup() {
 	for(int i = 0; i < orientations.size(); ++i) {
 		DistanceRay *ray
 				= new DistanceRay(getName() + "/Ray" + QString::number(i),
-				mLocalPosition->get(), orientations.at(i), mMaxRange->get(),
+				mLocalPosition->get(), orientations.at(i), mMaxRange->get(), // mMaxRange == RayLength???
 				mRule, mActiveColor->get(), mInactiveColor->get(), mDisabledColor->get());
 		ray->setOwner(this);
 		mRays.append(ray);
