@@ -141,7 +141,7 @@ SimObject* DistanceSensor::createCopy() const {
 void DistanceSensor::updateSensorValues() {
 	double distance;
 	
-	if (mCalcMinDistance->get()) {
+	if(mCalcMinDistance->get()) {
 		distance = getMinSensorValue();
 	}
 	else {

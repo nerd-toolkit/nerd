@@ -195,7 +195,7 @@ bool InsertNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 
 					if(module->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
 						|| module->hasProperty(NeuralNetworkConstants::TAG_CONSTRAINT_SLAVE)
-						|| module->hasProperty("ProtectNeurons"))
+						|| module->hasProperty(NeuralNetworkConstants::TAG_MODULE_PROTECT_NEURONS))
 					{
 						continue;
 					}

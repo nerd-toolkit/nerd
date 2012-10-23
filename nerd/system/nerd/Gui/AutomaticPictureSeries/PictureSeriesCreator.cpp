@@ -261,26 +261,26 @@ void PictureSeriesCreator::deactivate() {
 
 		if(mVideoCreationCommand->get().trimmed() == "") {
 			QStringList args;
-// 			// old arguments
-// 			args << "mf://*.png"
-// 				<< "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()
-// 						 + ":h=" + mVideoResolutionHeight->getValueAsString() 
-// 						 + ":fps=" + QString::number(framePerSecond) + ":type=png"
-// 				<< "-ovc" << "lavc"
-// 				<< "-lavcopts" << "vcodec=mpeg4:mbd=2:trell"
-// 				<< "-oac" << "copy"
-// 				<< "-o" << mOutputFileName->get();
-			
-			//new arguments should have a better quality?
+			// old arguments
 			args << "mf://*.png"
-				 << "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()
-					+ ":h=" + mVideoResolutionHeight->getValueAsString() 
-					+ ":fps=" + QString::number(framePerSecond) + ":type=png"
-				 << "-mf" << "w=800:h=600:fps=25:type=png"
-				 << "-ovc" << "x264"
-				 << "-x264encopts" << "preset=slow:tune=film:crf=20"
-				 << "-of" << "rawvideo" 
-				 << "-o" <<  mOutputFileName->get();
+				<< "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()
+						 + ":h=" + mVideoResolutionHeight->getValueAsString() 
+						 + ":fps=" + QString::number(framePerSecond) + ":type=png"
+				<< "-ovc" << "lavc"
+				<< "-lavcopts" << "vcodec=mpeg4:mbd=2:trell"
+				<< "-oac" << "copy"
+				<< "-o" << mOutputFileName->get();
+			
+// 			//new arguments should have a better quality?
+// 			args << "mf://*.png"
+// 				 << "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()
+// 					+ ":h=" + mVideoResolutionHeight->getValueAsString() 
+// 					+ ":fps=" + QString::number(framePerSecond) + ":type=png"
+// 				 //<< "-mf" << "w=800:h=600:fps=25:type=png"
+// 				 << "-ovc" << "x264"
+// 				 << "-x264encopts" << "preset=slow:tune=film:crf=20"
+// 				 << "-of" << "rawvideo" 
+// 				 << "-o" <<  mOutputFileName->get();
 				
 			Core::log("Execute: " + args.join(" "), true);
 			encoderProc.start("mencoder", args);

@@ -151,7 +151,7 @@ QString GuiMainWindow::getIconName() {
 
 void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 
-	CommandLineArgument *windowTitleArg = new CommandLineArgument("setTitle", "setTitle", "", 
+	CommandLineArgument *windowTitleArg = new CommandLineArgument("setTitle", "setTitle", "<Title with up to 10 words>", 
 						"Sets the title of the main application.", 1, 10, false, false);
 	if(windowTitleArg->getNumberOfEntries() > 0) {
 		QStringList titleFragments = windowTitleArg->getEntryParameters(0);

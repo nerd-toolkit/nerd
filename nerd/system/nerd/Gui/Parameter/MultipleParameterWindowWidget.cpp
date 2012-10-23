@@ -188,9 +188,9 @@ void MultipleParameterWindowWidget::handleInitPhase() {
 void MultipleParameterWindowWidget::saveAllPanelsToFile() {
 
 	//do not write anything if reduced file writing mode is active.
-	if(Core::getInstance()->isUsingReducedFileWriting()) {
-		return;
-	}
+// 	if(Core::getInstance()->isUsingReducedFileWriting()) {
+// 		return;
+// 	}
 
 	Properties &props = Core::getInstance()->getProperties();
 

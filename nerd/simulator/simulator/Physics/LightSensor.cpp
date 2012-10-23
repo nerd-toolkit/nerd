@@ -58,6 +58,8 @@
 using namespace std;
 
 namespace nerd {
+	
+	//TODO add minimal angle factor parameter.
 
 
 /**

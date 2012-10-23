@@ -84,6 +84,7 @@ namespace nerd {
 	public slots:
 		
 		double tf(double activation);
+		double nm(int type);
 		
 		void setStringBuffer(const QString &string);
 		QString getStringBuffer() const;

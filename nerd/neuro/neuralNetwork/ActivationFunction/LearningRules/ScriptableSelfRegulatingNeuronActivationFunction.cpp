@@ -50,6 +50,8 @@
 #include "Network/Neuron.h"
 #include "Math/Math.h"
 #include <math.h>
+#include <ModularNeuralNetwork/ModularNeuralNetwork.h>
+#include <NeuroModulation/NeuroModulator.h>
 
 
 using namespace std;
@@ -203,6 +205,19 @@ double ScriptableSelfRegulatingNeuronActivationFunction::tf(double activation) {
 		return 0.0;
 	}
 	return mOwner->getTransferFunction()->transferActivation(activation, mOwner);
+}
+
+double ScriptableSelfRegulatingNeuronActivationFunction::nm(int type) {
+	if(mOwner == 0 || mOwner->getOwnerNetwork() == 0) {
+		return 0.0;
+	}
+	ModularNeuralNetwork *mnn = dynamic_cast<ModularNeuralNetwork*>(mOwner->getOwnerNetwork());
+	if(mnn == 0) {
+		return 0.0;
+	}
+	Vector3D position = mOwner->getPosition();
+	
+	return NeuroModulator::getConcentrationInNetworkAt(type, position, mnn);
 }
 
 
@@ -360,7 +375,7 @@ void ScriptableSelfRegulatingNeuronActivationFunction::setupScriptingContext(dou
 		mEquationScript->globalObject().setProperty("nerd", nerdScriptObj);
 		
 		mEquationScript->evaluate(QString("function tf(act) { return nerd.tf(act); }"));
-		
+		mEquationScript->evaluate(QString("function nm(type) { return nerd.nm(type); }"));
 		
 		mEquationScript->evaluate("var alpha = 0;");
 		mEquationScript->evaluate("var beta = 0;");
