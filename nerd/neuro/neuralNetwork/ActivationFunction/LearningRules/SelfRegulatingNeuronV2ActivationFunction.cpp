@@ -227,6 +227,8 @@ void SelfRegulatingNeuronV2ActivationFunction::valueChanged(Value *value) {
 
 
 void SelfRegulatingNeuronV2ActivationFunction::reset(Neuron *owner) {
+	mXi->set(1.0);
+	mEta->set(1.0);
 }
 
 double SelfRegulatingNeuronV2ActivationFunction::calculateActivation(Neuron *owner) {
