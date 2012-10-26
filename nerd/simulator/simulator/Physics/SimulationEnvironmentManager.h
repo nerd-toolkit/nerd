@@ -105,6 +105,7 @@ class SimulationEnvironmentManager : public virtual SystemObject,
 		Event *mRandomizeEnvironmentEvent;
 		IntValue *mCurrentTry;
 		IntValue *mCurrentSimulationSeed;
+		BoolValue *mRandomizeSeedAtReset;
 	
 		QHash<SimObject*, QHash<Value*, QString> > mParameterSettings;	
 		QList<Randomizer*> mSimulationRandomizer;

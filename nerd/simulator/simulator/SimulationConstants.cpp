@@ -55,6 +55,8 @@ const QString SimulationConstants::VALUE_EXECUTION_PAUSE
 const QString SimulationConstants::VALUE_RANDOMIZATION_SIMULATION_SEED 
 		= "/Simulation/Seed";
 
+const QString SimulationConstants::VALUE_RANDOMIZE_SEED_AT_RESET
+		= "/Simulation/RandomizeSeedAtReset";
 
 const QString SimulationConstants::VALUE_EXECUTION_CURRENT_TRY
 		= "/Control/CurrentTry";

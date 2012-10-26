@@ -48,7 +48,10 @@
 
 namespace nerd {
 
-SignalRandom::SignalRandom(QString name, QString prefix) : ParameterizedObject(name, prefix), Signal(name, prefix), SignalDouble(name, prefix), mOldRandomValue(0.0), mCurrentRandomValue(0.0), mCurrentRandomValueIndex(0) {
+SignalRandom::SignalRandom(QString name, QString prefix) 
+	: ParameterizedObject(name, prefix), Signal(name, prefix), SignalDouble(name, prefix), 
+		mOldRandomValue(0.0), mCurrentRandomValue(0.0), mCurrentRandomValueIndex(0) 
+{
 	mPeriodValue = new DoubleValue(1.0);
 	mAmplitudeValue = new DoubleValue(1.0);
 	mOffsetValue = new DoubleValue(0.0);

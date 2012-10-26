@@ -54,6 +54,7 @@
 #include "NerdConstants.h"
 #include "Math/Random.h"
 #include <iostream>
+#include <Math/Math.h>
 
 using namespace std;
 
@@ -70,6 +71,9 @@ SimulationEnvironmentManager::SimulationEnvironmentManager() : mResetSettingsEve
 	mCurrentSimulationSeed = new IntValue(Random::nextInt());
 	vManager->addValue(SimulationConstants::VALUE_RANDOMIZATION_SIMULATION_SEED,
 		mCurrentSimulationSeed);
+	
+	mRandomizeSeedAtReset = new BoolValue(false);
+	vManager->addValue(SimulationConstants::VALUE_RANDOMIZE_SEED_AT_RESET, mRandomizeSeedAtReset);
 
 	mRandomizeEnvironmentEvent = Core::getInstance()->getEventManager()
 			->createEvent(SimulationConstants::EVENT_RANDOMIZE_ENVIRONMENT);
@@ -136,6 +140,10 @@ bool SimulationEnvironmentManager::cleanUp() {
  */
 void SimulationEnvironmentManager::eventOccured(Event *event) {
 	if(event == mResetSettingsEvent) {
+		if(mRandomizeSeedAtReset->get()) {
+			mCurrentSimulationSeed->set(Random::nextInt());
+			performRandomization();
+		}
 		resetStartConditions();	
 	}
 }

@@ -65,6 +65,7 @@ namespace nerd {
 
 		static const QString VALUE_EXECUTION_PAUSE;
 		static const QString VALUE_RANDOMIZATION_SIMULATION_SEED;
+		static const QString VALUE_RANDOMIZE_SEED_AT_RESET;
 		static const QString VALUE_EXECUTION_CURRENT_TRY;
 		static const QString VALUE_EVO_CURRENT_GENERATION_NUMBER;
 		static const QString VALUE_TIME_STEP_SIZE;

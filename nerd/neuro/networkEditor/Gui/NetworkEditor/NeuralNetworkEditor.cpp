@@ -1642,7 +1642,6 @@ void NeuralNetworkEditor::selectAllItems() {
 
 
 void NeuralNetworkEditor::selectAllVisibleItems() {
-	cerr << "huhu" << endl;
 	NetworkVisualization *visu = getCurrentNetworkVisualization();
 	if(visu != 0) {
 		visu->selectAllItems(true);
