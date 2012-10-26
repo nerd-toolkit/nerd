@@ -78,7 +78,9 @@ namespace nerd {
 		void handleInitPhase();
 		void handleShutDownPhase();
 		void saveAllPanelsToFile();
+		void saveSinglePanelToFile();
 		void loadAllPanelsFromFile();
+		void loadSinglePanelFromFile();
 		void addPanelsFromFile();
 		void applyAllProperties();
 		void applyAndSelectAllProperties();
@@ -86,6 +88,10 @@ namespace nerd {
 		void deselectAllProperties();
 		void copyFirstValueToAllOtherValues();
 		void setInitToAllValues();
+		void applySinglePanel();
+		void selectSinglePanel();
+		void clearSinglePanel();
+		
 
 	protected:
 		virtual void timerEvent(QTimerEvent * event);

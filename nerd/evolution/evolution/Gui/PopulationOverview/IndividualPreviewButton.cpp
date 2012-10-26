@@ -66,7 +66,7 @@ IndividualPreviewButton::IndividualPreviewButton(const QString &startScriptFullF
 	}
 	QString titleString = QString("Preview_Gen:_").append(QString::number(generation))
 							.append("_Ind:_").append(QString::number(id));
-	Core::log("String: " + titleString, true);
+	//Core::log("String: " + titleString, true);
 	mArguments <<  "-setTitle" << titleString << "-gui";
 
 	setToolTip("Preview Ind. " + QString::number(id));

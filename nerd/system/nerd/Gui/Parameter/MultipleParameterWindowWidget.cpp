@@ -81,6 +81,16 @@ MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name
 	QMenuBar *localMenuBar = menuBar();
 
 	QMenu *fileMenu = localMenuBar->addMenu("File");
+	QAction *saveSinglePanelsAction = fileMenu->addAction("Save Panel");
+	connect(saveSinglePanelsAction, SIGNAL(triggered()),
+			this, SLOT(saveSinglePanelToFile()));
+	
+	QAction *loadSinglePanelsAction = fileMenu->addAction("Load Panel");
+	connect(loadSinglePanelsAction, SIGNAL(triggered()),
+			this, SLOT(loadSinglePanelFromFile()));
+	
+	fileMenu->addSeparator();
+	
 	QAction *saveAllPanelsAction = fileMenu->addAction("Save All Panels");
 	connect(saveAllPanelsAction, SIGNAL(triggered()),
 			this, SLOT(saveAllPanelsToFile()));
@@ -90,6 +100,21 @@ MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name
 			this, SLOT(loadAllPanelsFromFile()));
 
 	QMenu *editMenu = localMenuBar->addMenu("Edit");
+	
+	QAction *selectSingleAction = editMenu->addAction("Select Panel");
+	connect(selectSingleAction, SIGNAL(triggered()),
+			this, SLOT(selectSinglePanel()));
+	
+	QAction *applySingleAction = editMenu->addAction("Apply Panel");
+	connect(applySingleAction, SIGNAL(triggered()),
+			this, SLOT(applySinglePanel()));
+	
+	QAction *clearSingleAction = editMenu->addAction("Clear Panel");
+	connect(clearSingleAction, SIGNAL(triggered()),
+			this, SLOT(clearSinglePanel()));
+	
+	editMenu->addSeparator();
+	
 	QAction *applyAllAction = editMenu->addAction("Apply All in All Panels");
 	connect(applyAllAction, SIGNAL(triggered()),
 			this, SLOT(applyAllProperties()));
@@ -249,6 +274,17 @@ void MultipleParameterWindowWidget::saveAllPanelsToFile() {
 	file.close();
 }
 
+void MultipleParameterWindowWidget::saveSinglePanelToFile() {
+	ParameterVisualizationWindow *currentVisu = dynamic_cast<ParameterVisualizationWindow*>(mTabWidget->currentWidget());
+	if(currentVisu != 0) {
+			currentVisu->saveSettings();
+	}
+}
+
+
+
+
+
 
 void MultipleParameterWindowWidget::loadAllPanelsFromFile() {
 	Properties &props = Core::getInstance()->getProperties();
@@ -311,6 +347,13 @@ void MultipleParameterWindowWidget::loadAllPanelsFromFile() {
 			"Could not find the following Values:\n\n" + missingValues, QMessageBox::Ok, 0, 0);
 	}
 	file.close();
+}
+
+void MultipleParameterWindowWidget::loadSinglePanelFromFile() {
+	ParameterVisualizationWindow *currentVisu = dynamic_cast<ParameterVisualizationWindow*>(mTabWidget->currentWidget());
+	if(currentVisu != 0) {
+		currentVisu->loadSettings();
+	}
 }
 
 
@@ -405,6 +448,40 @@ void MultipleParameterWindowWidget::setInitToAllValues()  {
 		}
 	}
 }
+
+void MultipleParameterWindowWidget::applySinglePanel() {
+	
+	ParameterVisualizationWindow *visu = dynamic_cast<ParameterVisualizationWindow*>(mTabWidget->currentWidget());
+		
+	if(visu == 0) {
+		return;
+	}
+	visu->applyAllChanges();
+}
+
+
+void MultipleParameterWindowWidget::selectSinglePanel() {
+	
+	ParameterVisualizationWindow *visu = dynamic_cast<ParameterVisualizationWindow*>(mTabWidget->currentWidget());
+	
+	if(visu == 0) {
+		return;
+	}
+	visu->modifySelection(true);
+}
+
+
+void MultipleParameterWindowWidget::clearSinglePanel() {
+	
+	ParameterVisualizationWindow *visu = dynamic_cast<ParameterVisualizationWindow*>(mTabWidget->currentWidget());
+	
+	if(visu == 0) {
+		return;
+	}
+	visu->deleteValuesFromList();
+}
+
+
 
 
 void MultipleParameterWindowWidget::handleShutDownPhase() {

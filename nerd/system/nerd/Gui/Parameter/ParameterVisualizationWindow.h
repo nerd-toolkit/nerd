@@ -165,8 +165,6 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 		QString mRestorationBuffer;
 		ValuePlotterWidget *mValuePlotter;
 		QPushButton *mPlotterButton;
-		QPushButton *mLoadSettingsButton;
-		QPushButton *mSaveSettingsButton;
 		Event *mPhysicsEnvironmentChangedEvent;
 		Event *mValueRepositoryChangedEvent;
 		SetInitValueTask *mSetInitValueTaskPrototype;

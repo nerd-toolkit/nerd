@@ -282,6 +282,9 @@ QString ParameterVisualizationWindow::loadParametersFromFile(const QString &file
 	}
 
 	file.close();
+	
+	modifySelection(false);
+	
 	return unknownValues;
 }
 
@@ -294,21 +297,17 @@ void ParameterVisualizationWindow::createEditButtons() {
 	mLayout->addLayout(mEditLayout);
 
 	mSelectAllButton = new QPushButton("Deselect All");
-	mEditLayout->addWidget(mSelectAllButton, 0, 0);
-	mRemoveAll = new QPushButton("Remove All");
-	mEditLayout->addWidget(mRemoveAll, 1, 0);
+	mEditLayout->addWidget(mSelectAllButton, 1, 0);
+	mRemoveAll = new QPushButton("Clear");
+	mEditLayout->addWidget(mRemoveAll, 1, 1);
 
 	mApplyAllChanges = new QPushButton("Apply");
-	mEditLayout->addWidget(mApplyAllChanges, 1, 1);
+	mEditLayout->addWidget(mApplyAllChanges, 1, 2);
 	mLoggerButton = new QPushButton("Log");
-	mEditLayout->addWidget(mLoggerButton, 1, 2);
+	mEditLayout->addWidget(mLoggerButton, 1, 3);
 	mPlotterButton = new QPushButton("Plot");
-	mEditLayout->addWidget(mPlotterButton, 1, 3);
+	mEditLayout->addWidget(mPlotterButton, 1, 4);
 
-	mLoadSettingsButton = new QPushButton("Load");
-	mEditLayout->addWidget(mLoadSettingsButton, 0, 4);
-	mSaveSettingsButton = new QPushButton("Save");
-	mEditLayout->addWidget(mSaveSettingsButton, 1, 4);
 
 	connect(mApplyAllChanges, SIGNAL(clicked()),
 			this, SLOT(applyAllChanges()));
@@ -322,11 +321,6 @@ void ParameterVisualizationWindow::createEditButtons() {
 			this, SLOT(updateLoggerButton(bool)));
 	connect(mPlotterButton, SIGNAL(clicked()),
 			this, SLOT(showAndUpdatePlotter()));
-	connect(mLoadSettingsButton, SIGNAL(clicked()),
-			this, SLOT(loadSettings()));
-	connect(mSaveSettingsButton, SIGNAL(clicked()),
-			this, SLOT(saveSettings()));
-
 }
 
 void ParameterVisualizationWindow::createValueList()

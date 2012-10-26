@@ -78,6 +78,15 @@ namespace nerd {
 	public:
 		ValueDetailPanel();
 		virtual ~ValueDetailPanel();
+		
+	private slots:
+		void closeEvent(QCloseEvent *e);
+		void showWindow();
+		void fillValueList(const QString  &text);
+		void showMatchingValues();
+		void removeAllValuesFromList();
+		void updateData();
+	
 
 	protected:
 		virtual void showEvent(QShowEvent *event);
@@ -112,13 +121,6 @@ namespace nerd {
 		QBoxLayout *mControlButtonLayout;
 		QMap<Value*, ValueDetailVisualization*> mValueDetailVisualizations;
 
-	private slots:
-		void closeEvent(QCloseEvent *e);
-		void showWindow();
-		void fillValueList(const QString  &text);
-		void showMatchingValues();
-		void removeAllValuesFromList();
-		void updateData();
 	};
 
 }
