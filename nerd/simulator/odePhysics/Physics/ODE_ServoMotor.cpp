@@ -54,6 +54,9 @@
 #define TRACE(message)
 //#define TRACE(message) Tracer _ttt_(message);
 
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
@@ -129,6 +132,7 @@ void ODE_ServoMotor::setup() {
 	}
 	mCurrentMotorAngle = dJointGetHingeAngle(mJoint);		
 	mLastMotorAngle = mCurrentMotorAngle;
+	mLastSensorMotorAngle = mCurrentMotorAngle;
 }
 
 
@@ -209,8 +213,25 @@ void ODE_ServoMotor::updateSensorValues() {
 	if(mJoint != 0) {
 		mCurrentMotorAngle = dJointGetHingeAngle(mJoint);
 		double angle = mCurrentMotorAngle * 180.0 / Math::PI;
-		angle = Math::calculateGaussian(angle, mSensorNoise);
-		mMotorAngleSensor->set(angle);
+		
+		if(mControlMotorAngle->get()) {
+			angle = Math::calculateGaussian(angle, mSensorNoise);
+			mMotorAngleSensor->set(angle);
+		}
+		else {
+			double velocity = angle - mLastSensorMotorAngle;
+// 			if((angle < 0.0 && mLastSensorMotorAngle > 0.0) || (angle > 0.0 && mLastSensorMotorAngle < 0.0)) {
+// 				velocity = mLastSensorMotorAngle - angle;
+// 			}
+			while(velocity >= 180.0) {
+				velocity -= 360.0;
+			}
+			while(velocity <= -180.0) {
+				velocity += 360.0;
+			}
+			mMotorAngleSensor->set(velocity); //-180.0 to 180.0 as change between two time steps (cannot reliably detect more than 180 degrees!) //TODO
+		}
+		mLastSensorMotorAngle = angle;
 	}
 }
 

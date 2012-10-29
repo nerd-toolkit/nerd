@@ -3,6 +3,7 @@ project(nerd_nerd)
 
 set(nerd_nerd_SRCS
 	Value/Value.cpp  
+	Value/RangeValue.cpp
 	Value/ValueManager.cpp  
 	Core/Core.cpp  
 	Value/BoolValue.cpp  
@@ -91,7 +92,6 @@ set(nerd_nerd_SRCS
 	Util/NerdFileSelector.cpp
 	Gui/GuiManager.cpp
 	Math/Range.cpp
-	Value/RangeValue.cpp
 	Value/CodeValue.cpp
 	Value/FileNameValue.cpp
 	Gui/ScriptEditor/ScriptEditor.cpp

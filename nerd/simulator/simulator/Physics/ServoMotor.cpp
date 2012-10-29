@@ -48,8 +48,9 @@
 #include "SimulationConstants.h"
 #include <QDebug>
 #include <iostream>
+#include "Value/RangeValue.h"
 
-using namespace std;
+using namespace std; 
 
 namespace nerd {
 
@@ -81,6 +82,8 @@ ServoMotor::ServoMotor(const QString &name, bool enableTemperature) : EventListe
 	mTemperatureThresholdForFailure = new DoubleValue(0.9);
 	mExternalEnergyValueName = new StringValue();
 	mMotorTemperature = new InterfaceValue(getName(), "Temperature", 0.0, 0.0, 1.0);
+	mAngleSensorRangeMin = new DoubleValue(-180.0);
+	mAngleSensorRangeMax = new DoubleValue(180.0);
 	
 	mInputValues.append(mDesiredMotorSetting);
 	mOutputValues.append(mMotorAngleSensor);
@@ -114,6 +117,8 @@ ServoMotor::ServoMotor(const QString &name, bool enableTemperature) : EventListe
 	}
 	addParameter("EnergyConsumptionFactor", mEnergyConsumptionFactor);
 	addParameter("ExternalEnergyValueName", mExternalEnergyValueName);
+	addParameter("AngleSensorRangeMin", mAngleSensorRangeMin);
+	addParameter("AngleSensorRangeMax", mAngleSensorRangeMax);
 	
 	
 	mHistorySize = mHistorySizeValue->get();
@@ -155,6 +160,8 @@ ServoMotor::ServoMotor(const ServoMotor &joint) : Object(), ValueChangedListener
 	mTemperatureThresholdForFailure = dynamic_cast<DoubleValue*>(getParameter("FailureTemperature"));
 	mExternalEnergyValueName = dynamic_cast<StringValue*>(getParameter("ExternalEnergyValueName"));
 	mMotorTemperature = dynamic_cast<InterfaceValue*>(getParameter("MotorTemperature"));
+	mAngleSensorRangeMin = dynamic_cast<DoubleValue*>(getParameter("AngleSensorRangeMin"));
+	mAngleSensorRangeMax = dynamic_cast<DoubleValue*>(getParameter("AngleSensorRangeMax"));
 	
 	
 	mInputValues.append(mDesiredMotorSetting);
@@ -221,6 +228,10 @@ void ServoMotor::clear() {
 		
 void ServoMotor::valueChanged(Value *value) {
 	SimJoint::valueChanged(value);
+	if(value == mAngleSensorRangeMin || value == mAngleSensorRangeMax) {
+		mMotorAngleSensor->setMin(mAngleSensorRangeMin->get());
+		mMotorAngleSensor->setMax(mAngleSensorRangeMax->get());
+	}
 }
 
 void ServoMotor::eventOccured(Event *event) {

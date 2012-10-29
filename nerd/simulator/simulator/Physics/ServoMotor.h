@@ -55,6 +55,7 @@
 
 namespace nerd {
 
+
 /**
  * ServoMotor: MinAngle and MaxAngle mark the maximum position of the motor that are
  * achievable due to architectural constraints. If the motor is required to have a 
@@ -96,6 +97,8 @@ class ServoMotor : public HingeJoint, public virtual EventListener,
 		DoubleValue *mMaxAngleValue;
 		DoubleValue *mMaxTorque;
 		BoolValue *mControlMotorAngle;
+		DoubleValue *mAngleSensorRangeMin;
+		DoubleValue *mAngleSensorRangeMax;
 		DoubleValue *mTemperatureGainFactor;
 		DoubleValue *mTemperatureCoolingRate;
 		DoubleValue *mEnergyConsumptionFactor;
@@ -126,6 +129,7 @@ class ServoMotor : public HingeJoint, public virtual EventListener,
 		double mDamping;
 		double mCurrentMotorAngle;
 		double mLastMotorAngle;
+		double mLastSensorMotorAngle;
 		double mSensorNoise;
 
 		double mLastError;

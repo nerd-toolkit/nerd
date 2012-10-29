@@ -46,9 +46,10 @@
 #ifndef NERD_RANGEVALUE_H_
 #define NERD_RANGEVALUE_H_
 
+#include "Math/Range.h"
 #include "Value.h"
 #include <QString>
-#include "Math/Range.h"
+
 
 namespace nerd {
 	

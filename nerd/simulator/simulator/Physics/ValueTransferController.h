@@ -48,6 +48,7 @@
 #include "Physics/SimSensor.h"
 #include "Physics/SimActuator.h"
 #include "Value/DoubleValue.h"
+#include "Value/RangeValue.h"
 
 namespace nerd {
 	
@@ -63,7 +64,6 @@ namespace nerd {
 	 **/
 	
 	class BoolValue;
-	class RangeValue;
 	
 	class ValueTransferController : public SimObject, public virtual SimSensor, public virtual SimActuator 
 	{

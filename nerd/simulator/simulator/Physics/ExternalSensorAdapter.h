@@ -47,11 +47,11 @@
 
 #include "SimObject.h"
 #include "Physics/SimSensor.h"
+#include "Value/RangeValue.h"
 
 namespace nerd {
 	
 	class InterfaceValue;
-	class RangeValue;
 	class DoubleValue;
 	class NormalizedDoubleValue;
 	class StringValue;
