@@ -82,7 +82,10 @@ ParameterVisualizationWindow::ParameterVisualizationWindow(const QString &name,
 	mLayout = new QVBoxLayout;
 
 	mParameterLoggerWidget = new ParameterLoggerWidget(name, this);
+	
 	mValuePlotter = new ValuePlotterWidget(name, 0);
+	mXYPlotter = new ValuePlotterWidget(name, 0);
+	
 
 	createValueList();
 	setLayout(mLayout);
@@ -115,6 +118,7 @@ ParameterVisualizationWindow::~ParameterVisualizationWindow() {
 
 	delete mParameterLoggerWidget;
 	delete mValuePlotter;
+	delete mXYPlotter;
 
 	//TODO delete all objects not created with this as parent object!
 }
@@ -135,7 +139,8 @@ void ParameterVisualizationWindow::eventOccured(Event *event) {
 		}
 		//update combobox and plotter.
 		emit executeFillComboList(mValueComboBox->lineEdit()->text());
-		showAndUpdatePlotter(false);
+		showAndUpdateHistoryPlotter(false);
+		showAndUpdateXYPlotter(false);
 	}
 	else if(event == Core::getInstance()->getShutDownEvent()) {
 		if(mPhysicsEnvironmentChangedEvent != 0) {
@@ -320,7 +325,7 @@ void ParameterVisualizationWindow::createEditButtons() {
 	connect(mParameterLoggerWidget, SIGNAL(loggerStatusChanged(bool)),
 			this, SLOT(updateLoggerButton(bool)));
 	connect(mPlotterButton, SIGNAL(clicked()),
-			this, SLOT(showAndUpdatePlotter()));
+			this, SLOT(showAndUpdateHistoryPlotter()));
 }
 
 void ParameterVisualizationWindow::createValueList()
@@ -391,7 +396,7 @@ void ParameterVisualizationWindow::showComboBoxList() {
 }
 
 
-void ParameterVisualizationWindow::showAndUpdatePlotter(bool show) {
+void ParameterVisualizationWindow::showAndUpdateHistoryPlotter(bool show) {
 
 	QList<QString> keys = mValues.keys();
 	QList<Value*> values;
@@ -441,6 +446,59 @@ void ParameterVisualizationWindow::showAndUpdatePlotter(bool show) {
 
 	if(show) {
 		mValuePlotter->showWidget();
+	}
+}
+
+void ParameterVisualizationWindow::showAndUpdateXYPlotter(bool show) {
+	
+	QList<QString> keys = mValues.keys();
+	QList<Value*> values;
+	
+	//collect all available Values.
+	for(int i = 0; i < keys.size(); ++i) {
+		Value *value = mValues.value(keys.at(i))->getValue();
+		if(value != 0) {
+			values.append(value);
+		}
+	}
+	
+	//remove all values that are not in the list any more.
+	QList<Value*> plotterValues = mXYPlotter->getValuePlotter()->getPlottedValues();
+	
+	for(int i = 0; i < plotterValues.size(); ++i) {
+		Value *value = plotterValues.at(i);
+		if(!values.contains(value)) {
+			bool found = false;
+			for(int j = 0; j < values.size(); ++j) {
+				MultiPartValue *mpv = dynamic_cast<MultiPartValue*>(values.at(j));
+				if(mpv != 0) {
+					for(int k = 0; k < mpv->getNumberOfValueParts(); ++k) {
+						if(value == mpv->getValuePart(k)) {
+							found = true;
+							break;
+						}
+					}
+				}
+				if(found) {
+					break;
+				}
+			}
+			if(!found) {
+				mXYPlotter->getValuePlotter()->removeValue(value);
+			}
+		}
+	}
+	
+	//add all values (that are not already in the plotter)
+	for(int i = 0; i < keys.size(); ++i) {
+		QString name = keys.at(i);
+		Value *value = mValues.value(name)->getValue();
+		
+		mXYPlotter->getValuePlotter()->addValue(name, value);
+	}
+	
+	if(show) {
+		mXYPlotter->showWidget();
 	}
 }
 

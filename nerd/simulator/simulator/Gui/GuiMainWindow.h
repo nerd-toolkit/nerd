@@ -107,6 +107,8 @@ class GuiMainWindow : public QWidget, ValueChangedListener {
 	public slots:
 		void toggleTimerExpired();
 		void showWindow();
+		void openWebHelp();
+		void openWebHome();
 
 	private:
 		OpenGLVisualization *mVisualization;

@@ -141,8 +141,22 @@ MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name
 	connect(setInitForAllValuesAction, SIGNAL(triggered()),
 			this, SLOT(setInitToAllValues()));
 
+	
+	QMenu *plotterMenu = localMenuBar->addMenu("Plotter");
+	
+	QAction *activateHistoryPlotter = plotterMenu->addAction("History Plotter");
+	connect(activateHistoryPlotter, SIGNAL(triggered()),
+			this, SLOT(activateHistoryPlotter()));
+	
+	QAction *activateXYPlotter = plotterMenu->addAction("X/Y Plotter");
+	connect(activateXYPlotter, SIGNAL(triggered()),
+			this, SLOT(activateXYPlotter()));
+	
+	
     QMenu *helpMenu = localMenuBar->addMenu("Help");
     helpMenu->addAction(QWhatsThis::createAction());
+	
+	
 
 }
 
@@ -479,6 +493,23 @@ void MultipleParameterWindowWidget::clearSinglePanel() {
 		return;
 	}
 	visu->deleteValuesFromList();
+}
+
+
+
+void MultipleParameterWindowWidget::activateHistoryPlotter() {
+	ParameterVisualizationWindow *currentVisu = dynamic_cast<ParameterVisualizationWindow*>(mTabWidget->currentWidget());
+	if(currentVisu != 0) {
+		currentVisu->showAndUpdateHistoryPlotter(true);
+	}
+}
+
+
+void MultipleParameterWindowWidget::activateXYPlotter() {
+	ParameterVisualizationWindow *currentVisu = dynamic_cast<ParameterVisualizationWindow*>(mTabWidget->currentWidget());
+	if(currentVisu != 0) {
+		currentVisu->showAndUpdateXYPlotter(true);
+	}
 }
 
 

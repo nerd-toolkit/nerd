@@ -91,6 +91,8 @@ namespace nerd {
 		void applySinglePanel();
 		void selectSinglePanel();
 		void clearSinglePanel();
+		void activateHistoryPlotter();
+		void activateXYPlotter();
 		
 
 	protected:

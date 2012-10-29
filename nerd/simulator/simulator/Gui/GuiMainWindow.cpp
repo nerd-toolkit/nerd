@@ -63,6 +63,7 @@
 #include "Gui/GuiManager.h"
 #include <QDir>
 #include <QFile>
+#include <QDesktopServices>
 
 
 using namespace std;
@@ -264,15 +265,25 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	viewMenu->addAction(recordWithCameraAction);
 
 	//add help window.
-	HtmlInfoWidget *helpWindow = new HtmlInfoWidget(":/resources/doc/NERDHelp.html", "Help");
+	HtmlInfoWidget *helpWindow = new HtmlInfoWidget(":/resources/doc/NERDHelp.html", "Quick Reference");
 	mPluginWindows.append(helpWindow);
 	helpWindow->getAction()->setShortcut(tr("F1"));
 	helpMenu->addAction(helpWindow->getAction());
+	
+	QAction *showWebHelp = helpMenu->addAction("Online Help");
+	connect(showWebHelp, SIGNAL(triggered(bool)),
+			this, SLOT(openWebHelp()));
+	
+	helpMenu->addSeparator();
 
 	helpMenu->addAction(QWhatsThis::createAction());
 
 	helpMenu->addSeparator();
-
+	
+	QAction *showHomepage = helpMenu->addAction("NERD Toolkit Homepage");
+	connect(showHomepage, SIGNAL(triggered(bool)),
+			this, SLOT(openWebHome()));
+	
 	AboutInfoWidget *aboutWindow = new AboutInfoWidget(tr("About NERD"));
 	mPluginWindows.append(aboutWindow);
 	helpMenu->addAction(aboutWindow->getAction());
@@ -427,6 +438,14 @@ void GuiMainWindow::showWindow() {
 	connect(&mWindowToggleTimer, SIGNAL(timeout()),
 						this, SLOT(toggleTimerExpired()));
 	valueChanged(mToggleWindowValue);
+}
+
+void GuiMainWindow::openWebHelp() {
+	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org", QUrl::StrictMode));
+}
+
+void GuiMainWindow::openWebHome() {
+	QDesktopServices::openUrl(QUrl("http://nerd.x-bot.org", QUrl::StrictMode));
 }
 
 }

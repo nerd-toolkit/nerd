@@ -124,7 +124,8 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 		void modifySelection();
 		void closeEvent(QCloseEvent *e);
 		void showComboBoxList();
-		void showAndUpdatePlotter(bool show = true);
+		void showAndUpdateHistoryPlotter(bool show = true);
+		void showAndUpdateXYPlotter(bool show = true);
 		void updateLoggerButton(bool loggerActive);
 		void saveSettings();
 		void loadSettings();
@@ -164,6 +165,7 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 		QString mLastEnteredParameterName;
 		QString mRestorationBuffer;
 		ValuePlotterWidget *mValuePlotter;
+		ValuePlotterWidget *mXYPlotter;
 		QPushButton *mPlotterButton;
 		Event *mPhysicsEnvironmentChangedEvent;
 		Event *mValueRepositoryChangedEvent;
