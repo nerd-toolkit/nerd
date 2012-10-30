@@ -496,9 +496,7 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 		return;
 	}
 
-	QMenuBar *menuBar = mOwner->menuBar();
-	
-	mNetworkMenu = menuBar->addMenu("Neural Network");
+	mNetworkMenu = mOwner->addMenuToMenuBar("Neural Network");
 
 	QAction *insertNeuronAction = mNetworkMenu->addAction("Insert &Neuron");
 	insertNeuronAction->setShortcut(tr("n"));
@@ -723,7 +721,7 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 			this, SLOT(resetCurrentNetwork()));
 
 
-	mToolsMenu = menuBar->addMenu("Tools");
+	mToolsMenu = mOwner->addMenuToMenuBar("Tools");
 
 	//add constraint resolvers
 
@@ -767,7 +765,6 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 
 
 	//mViewMenu = menuBar->addMenu("View");
-
 
 }
 

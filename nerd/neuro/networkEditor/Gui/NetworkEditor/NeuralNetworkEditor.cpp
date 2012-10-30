@@ -93,6 +93,8 @@
 #include <Gui/GuiManager.h>
 #include <Network/NeuroTagManager.h>
 #include <NeuralNetworkConstants.h>
+#include <QDesktopServices>
+#include <QUrl>
 
 using namespace std;
 
@@ -104,7 +106,7 @@ namespace nerd {
  */
 NeuralNetworkEditor::NeuralNetworkEditor(QWidget *parent)
 	: QMainWindow(parent), mMainPane(0),
-	  mUndoAction(0), mRedoAction(0), mWindowToggleState(true), mViewModeMenu(0),
+	mUndoAction(0), mRedoAction(0), mWindowToggleState(true), mViewModeMenu(0), mHelpMenu(0),
 	  mToggleWindowArgument(0), mFirstShowing(true)
 {	
 
@@ -389,7 +391,7 @@ void NeuralNetworkEditor::updateRecentNetworkMenu(const QString &fileName) {
 	
 	QList<QAction*> actions = mRecentNetworksMenu->actions();
 	for(QListIterator<QAction*> i(actions); i.hasNext();) {
-		LoadRecentNetworkAction *action = dynamic_cast<LoadRecentNetworkAction*>(i.next());
+		LoadRecentNetworkAction *action = dynamic_cast<LoadRecentNetworkAction*>(i.next()); 
 		if(action->getFileName() == fileName) {
 			if(actions.size() <= 1) {
 				return;
@@ -481,6 +483,13 @@ void NeuralNetworkEditor::restoreWidgetGeometries() {
 // 		move(pos);
 // 		resize(size);
 // 	}
+}
+
+QMenu* NeuralNetworkEditor::addMenuToMenuBar(const QString &name) {
+	QMenuBar *bar = menuBar();
+	QMenu *menu = new QMenu(name, bar);
+	bar->insertMenu(mHelpMenu, menu);
+	return menu;
 }
 
 
@@ -1657,6 +1666,33 @@ void NeuralNetworkEditor::setVisible(bool visible) {
 }
 
 
+void NeuralNetworkEditor::openNerdWebDocumentation() {
+	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org", QUrl::StrictMode));
+}
+
+
+void NeuralNetworkEditor::openNerdWebDocuNetworkEditor() {
+	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org/wiki/Tutorials", QUrl::StrictMode));
+}
+
+
+void NeuralNetworkEditor::openNerdWebDocuScripting() {
+	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org/wiki/Scripting_HowToWriteAScriptedFitnessFunction", QUrl::StrictMode));
+}
+
+
+void NeuralNetworkEditor::openNerdWebDocuNetworkScripting() {
+	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org/wiki/Scripting_HowToScriptNetworks", QUrl::StrictMode));
+}
+
+
+void NeuralNetworkEditor::openNerdWebDocuConstraints() {
+	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org/wiki/Tutorials", QUrl::StrictMode));
+}
+
+
+
+
 void NeuralNetworkEditor::setupMenuBar() {
 	addEditMenu();
 	addPlotterMenu();
@@ -1759,6 +1795,41 @@ QMenu* NeuralNetworkEditor::addViewModeMenu() {
 	mainMenu->addMenu(mViewModeMenu);
 
 	return mViewModeMenu;
+}
+
+
+QMenu* NeuralNetworkEditor::addHelpMenu() {
+	QMenuBar *mainMenu= menuBar();
+
+	//Edit Menu
+	QMenu *helpMenu = new QMenu("Help", mainMenu);
+	
+	QAction *docNerd = helpMenu->addAction("NERD Documentation (www)");
+	connect(docNerd, SIGNAL(triggered()),
+			this, SLOT(openNerdWebDocumentation()));
+	
+	QAction *docEditorHandbook = helpMenu->addAction("Editor Handbook (www)");
+	connect(docEditorHandbook, SIGNAL(triggered()),
+			this, SLOT(openNerdWebDocuNetworkEditor()));
+	
+	helpMenu->addSeparator();
+	
+	QAction *docScripting = helpMenu->addAction("Scripting (www)");
+	connect(docScripting, SIGNAL(triggered()),
+			this, SLOT(openNerdWebDocuScripting()));
+	
+	QAction *docNetworkScripting = helpMenu->addAction("Network Scripting (www)");
+	connect(docNetworkScripting, SIGNAL(triggered()),
+			this, SLOT(openNerdWebDocuNetworkScripting()));
+	
+	QAction *docConstraints = helpMenu->addAction("Constraints (www)");
+	connect(docConstraints, SIGNAL(triggered()),
+			this, SLOT(openNerdWebDocuConstraints()));
+	
+	
+	mHelpMenu = mainMenu->insertMenu(0, helpMenu);
+	
+	return helpMenu;
 }
 
 

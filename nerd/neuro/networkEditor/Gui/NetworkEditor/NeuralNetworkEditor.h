@@ -119,6 +119,8 @@ namespace nerd {
 		
 		virtual void storeWidgetGeometries();
 		virtual void restoreWidgetGeometries();
+		
+		virtual QMenu* addMenuToMenuBar(const QString &name);
 
 	signals:
 		void tabSelectionChanged(int index);
@@ -157,12 +159,18 @@ namespace nerd {
 		
 		virtual void setVisible(bool visible);
 		
+		void openNerdWebDocumentation();
+		void openNerdWebDocuNetworkEditor();
+		void openNerdWebDocuScripting();
+		void openNerdWebDocuNetworkScripting();
+		void openNerdWebDocuConstraints();
 
 	protected:
 		virtual void setupMenuBar();
 		virtual QMenu* addEditMenu();
 		virtual QMenu* addPlotterMenu();
 		virtual QMenu* addViewModeMenu();
+		virtual QMenu* addHelpMenu();
 		virtual void setupTools();
 		void updateUndoRedoActions();
 
@@ -192,6 +200,7 @@ namespace nerd {
 		FileNameValue *mAutoSaveNetworkDirectory;
 		QMenu *mRecentNetworksMenu;
 		QMenu *mViewModeMenu;
+		QAction *mHelpMenu;
 		Event *mShutDownEvent;
 		QAction *mEnableHiddenLayersCheckbox;
 		StringValue *mToggleWindowArgument;

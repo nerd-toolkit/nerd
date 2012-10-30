@@ -331,6 +331,7 @@ void EvaluationNetworkEditor::setupMenuBar() {
 	extendEditMenu(editMenu);
 	addPlotterMenu();
 	addViewModeMenu();
+	addHelpMenu();
 }
 
  

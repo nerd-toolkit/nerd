@@ -77,6 +77,7 @@ void StandAloneNetworkEditor::setupMenuBar() {
 	QMenu *editMenu = addEditMenu();
 	extendEditMenu(editMenu);
 	addPlotterMenu();
+	addHelpMenu();
 }
 
 QMenu* StandAloneNetworkEditor::addFileMenu() {
