@@ -41,70 +41,118 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardSynapseFunctions.h"
-#include "Network/Neuro.h"
-#include "SynapseFunction/SimpleSynapseFunction.h"
-#include "SynapseFunction/ASeriesSynapseFunction.h"
-#include "SynapseFunction/AbsoluteValueSynapseFunction.h"
-#include "SynapseFunction/MultiplicativeSynapseFunction.h"
-#include "SynapseFunction/ASeriesMultiSynapseFunction.h"
-#include "SynapseFunction/MSeriesSynapseFunction.h"
-#include "SynapseFunction/MSeriesAdjustableSynapseFunction.h"
-#include "SynapseFunction/SimpleLinkSynapseFunction.h"
-#include "SynapseFunction/Learning/HebbSynapseFunction.h"
-#include "SynapseFunction/Learning/TesauroSynapseFunction.h"
-#include "SynapseFunction/ScriptableSynapseFunction.h"
-#include "SynapseFunction/CloneSimpleSynapseFunction.h"
+#include "CloneSimpleSynapseFunction.h"
+#include <iostream>
+#include "Value/ULongLongValue.h"
+#include <Network/NeuralNetwork.h>
+
+using namespace std;
 
 namespace nerd {
-
-StandardSynapseFunctions::StandardSynapseFunctions()
-{
-	//Simple synapse function (plain unmodulated synapse strength)
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		SimpleSynapseFunction());
-
-	//ASeries synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ASeriesSynapseFunction());
-
-	//ASeries multipart synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ASeriesMultiSynapseFunction());
+	
+	
+	/**
+	 * Constructor.
+	 */
+	CloneSimpleSynapseFunction::CloneSimpleSynapseFunction()
+	: SimpleSynapseFunction(), mTargetSynapse(0)
+	{
+		setName("SimpleClone");
+		mTargetId = new ULongLongValue();
 		
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MSeriesSynapseFunction());
-
-	//Absolute Value synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		AbsoluteValueSynapseFunction());
-
-	//Multiplicative Synapse Function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MultiplicativeSynapseFunction());
+		addParameter("TargetId", mTargetId);
+	}
 	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MSeriesAdjustableSynapseFunction());
 	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		SimpleLinkSynapseFunction());
+	/**
+	 * Copy constructor.
+	 */
+	CloneSimpleSynapseFunction::CloneSimpleSynapseFunction(const CloneSimpleSynapseFunction &other)
+	: Object(), ValueChangedListener(), SimpleSynapseFunction(other), mTargetSynapse(0)
+	{
+		mTargetId = dynamic_cast<ULongLongValue*>(getParameter("TargetId"));
+	}
 	
-	//Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-	//	HebbSynapseFunction());
 	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		TesauroSynapseFunction()); //Hebb Variants (Hebb, Tesauro, Barto & Sutton)
+	/**
+	 * Destructor.
+	 */
+	CloneSimpleSynapseFunction::~CloneSimpleSynapseFunction() {
+	}
+	
+	SynapseFunction* CloneSimpleSynapseFunction::createCopy() const {
+		return new CloneSimpleSynapseFunction(*this);
+	}
+	
+	
+	/**
+	 * Does nothing in this implementation.
+	 */
+	void CloneSimpleSynapseFunction::reset(Synapse*) {
+		mTargetSynapse = 0;
+	}
+	
+	
+	/**
+	 * Returns the strength of the owner synapse.
+	 * 
+	 * @param owner the owner of this SynapseFunction.
+	 * @return the strength of the owner.
+	 */
+	double CloneSimpleSynapseFunction::calculate(Synapse *owner) {
+		if(owner == 0) {
+			return 0.0;
+		}
+		if(mTargetId->get() == 0) {
+			//per default set the id to the own synapse.
+			mTargetId->set(owner->getId());
+		}
+		if(mLastKnownTargetId != mTargetId->get()) {
+			mTargetSynapse = 0;
+		}
+		mLastKnownTargetId = mTargetId->get();
+		if(mTargetId->get() == owner->getId()) {
+			mTargetSynapse = owner;
+		}
+		else {
+			Neuron *neuron = owner->getSource();
+			QList<Synapse*> synapses;
+			if(neuron != 0) {
+				NeuralNetwork *network = neuron->getOwnerNetwork();
+				if(network != 0) {
+					synapses = network->getSynapses();
+				}
+			}
+			if(mTargetSynapse == 0) {
+				mTargetSynapse = NeuralNetwork::selectSynapseById(mTargetId->get(), synapses);
+			}
+			if(mTargetSynapse != 0) {
+				if(!synapses.contains(mTargetSynapse)) {
+					mTargetSynapse = 0;
+				}
+			}
+			if(mTargetSynapse != 0) {
+				owner->getStrengthValue().set(mTargetSynapse->getStrengthValue().get());
+			}
+		}
 		
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		CloneSimpleSynapseFunction());
+		return SimpleSynapseFunction::calculate(owner);
+	}
+	
+	bool CloneSimpleSynapseFunction::equals(SynapseFunction *synapseFunction) const {
+		if(SimpleSynapseFunction::equals(synapseFunction) == false) {
+			return false;
+		}
 		
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ScriptableSynapseFunction());
+		CloneSimpleSynapseFunction *sf = dynamic_cast<CloneSimpleSynapseFunction*>(synapseFunction);
+		
+		if(sf == 0) {
+			return false;
+		}
+		return true;
+	}
 	
 	
-	
-}
-
 }
 
 

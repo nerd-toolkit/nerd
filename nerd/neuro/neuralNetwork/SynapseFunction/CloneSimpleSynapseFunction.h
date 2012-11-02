@@ -41,70 +41,43 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardSynapseFunctions.h"
-#include "Network/Neuro.h"
+
+#ifndef NERDCloneSimpleSynapseFunction_H
+#define NERDCloneSimpleSynapseFunction_H
+
 #include "SynapseFunction/SimpleSynapseFunction.h"
-#include "SynapseFunction/ASeriesSynapseFunction.h"
-#include "SynapseFunction/AbsoluteValueSynapseFunction.h"
-#include "SynapseFunction/MultiplicativeSynapseFunction.h"
-#include "SynapseFunction/ASeriesMultiSynapseFunction.h"
-#include "SynapseFunction/MSeriesSynapseFunction.h"
-#include "SynapseFunction/MSeriesAdjustableSynapseFunction.h"
-#include "SynapseFunction/SimpleLinkSynapseFunction.h"
-#include "SynapseFunction/Learning/HebbSynapseFunction.h"
-#include "SynapseFunction/Learning/TesauroSynapseFunction.h"
-#include "SynapseFunction/ScriptableSynapseFunction.h"
-#include "SynapseFunction/CloneSimpleSynapseFunction.h"
 
 namespace nerd {
 
-StandardSynapseFunctions::StandardSynapseFunctions()
-{
-	//Simple synapse function (plain unmodulated synapse strength)
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		SimpleSynapseFunction());
-
-	//ASeries synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ASeriesSynapseFunction());
-
-	//ASeries multipart synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ASeriesMultiSynapseFunction());
+class ULongLongValue;
+	
+	/**
+	 * CloneSimpleSynapseFunction.
+	 *
+	 * The CloneSimpleSynapseFunction simply returns the strength of the
+	 * owner Synapse. This strength is not modulated in any way.
+	 */
+	class CloneSimpleSynapseFunction : public SimpleSynapseFunction {
+	public:
+		CloneSimpleSynapseFunction();
+		CloneSimpleSynapseFunction(const CloneSimpleSynapseFunction &other);
+		virtual ~CloneSimpleSynapseFunction();
 		
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MSeriesSynapseFunction());
-
-	//Absolute Value synapse function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		AbsoluteValueSynapseFunction());
-
-	//Multiplicative Synapse Function
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MultiplicativeSynapseFunction());
-	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		MSeriesAdjustableSynapseFunction());
-	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		SimpleLinkSynapseFunction());
-	
-	//Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-	//	HebbSynapseFunction());
-	
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		TesauroSynapseFunction()); //Hebb Variants (Hebb, Tesauro, Barto & Sutton)
+		virtual SynapseFunction* createCopy() const;
 		
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		CloneSimpleSynapseFunction());
+		virtual void reset(Synapse *owner);
+		virtual double calculate(Synapse *owner);
 		
-	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
-		ScriptableSynapseFunction());
-	
-	
+		bool equals(SynapseFunction *synapseFunction) const;
+		
+	private:
+		ULongLongValue *mTargetId;
+		Synapse *mTargetSynapse;
+		qulonglong mLastKnownTargetId;
+	};
 	
 }
 
-}
+#endif
 
 

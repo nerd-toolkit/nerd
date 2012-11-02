@@ -100,6 +100,7 @@ set(nerd_neuralNetwork_SRCS
 	NeuroModulation/NeuroModulatorElement.cpp
 	SynapseFunction/NeuroModulatorSynapseFunction.cpp
 	NeuroModulation/NeuroModulatorManager.cpp
+	SynapseFunction/CloneSimpleSynapseFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
