@@ -174,6 +174,10 @@ bool InsertBiasOperator::applyOperator(Individual *individual, CommandExecutor*)
 		individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,
 						generationDate);
 		
+		individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",N:" + QString::number(neuron->getId()) + ":aB"); 
+		
 	}
 
 	return true;

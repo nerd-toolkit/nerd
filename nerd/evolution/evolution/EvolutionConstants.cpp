@@ -230,4 +230,7 @@ const QString EvolutionConstants::TAG_EVO_CREATION_DATE
 
 const QString EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE
 		= "_Modified";
+		
+const QString EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY
+		= "Mutations";
 

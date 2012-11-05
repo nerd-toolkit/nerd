@@ -233,6 +233,10 @@ bool InsertSynapseOperator::applyOperator(Individual *individual, CommandExecuto
 		individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,
 						generationDate);
 		
+		individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",S:" + QString::number(synapse->getId()) + ":aS"); 
+		
 	}
 
 	return true;

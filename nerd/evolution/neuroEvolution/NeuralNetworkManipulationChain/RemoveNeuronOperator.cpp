@@ -169,10 +169,19 @@ bool RemoveNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 		}
 
 		neurons.removeAll(neuron);
+		
+		QString removeString = "";
 
 		QList<NeuralNetworkElement*> deletedElements = net->savelyRemoveNetworkElement(neuron);
 		while(!deletedElements.empty()) {
 			NeuralNetworkElement *elem = deletedElements.at(0);
+			
+			QString type = "N";
+			if(dynamic_cast<Synapse*>(elem) != 0) {
+				type = "S";
+			}
+			removeString += "," + type + ":" + QString::number(elem->getId()) + ":r" + type;
+			
 			deletedElements.removeAll(elem);
 			delete elem;
 		}
@@ -180,6 +189,10 @@ bool RemoveNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 		//mark the individual as significantly modified
 		individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,
 									currentGenString);
+		
+		individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ removeString); 
 	}
 
 	return true;

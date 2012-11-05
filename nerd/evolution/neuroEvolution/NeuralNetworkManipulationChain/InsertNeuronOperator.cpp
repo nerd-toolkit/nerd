@@ -271,7 +271,9 @@ bool InsertNeuronOperator::applyOperator(Individual *individual, CommandExecutor
 			//mark the individual as significantly modified
 			individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,
 									currentGenString);
-
+			individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",N:" + QString::number(neuron->getId()) + ":aN"); 
 			
 		}
 	}

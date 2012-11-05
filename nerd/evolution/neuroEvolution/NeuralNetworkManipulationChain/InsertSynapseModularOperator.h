@@ -103,6 +103,7 @@ namespace nerd {
 		QHash<NeuroModule*, QList<NeuroModule*>*> mPermittedPathsFromDest;
 		QList<NeuroModule*> mModulesWithPermissionTag;
 // 		QHash<NeuroModule*, QList<NeuroModule*>*> mPermittedPathsByTarget;
+		QList<Synapse*> mNewSynapses;
 	};
 
 }

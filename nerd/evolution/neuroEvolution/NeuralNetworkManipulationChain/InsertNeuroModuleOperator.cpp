@@ -251,7 +251,10 @@ bool InsertNeuroModuleOperator::applyOperator(Individual *individual, CommandExe
 			//mark the individual as significantly modified
 			individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,
 									currentGenString);
-
+			individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",M:" + QString::number(newModule->getId()) + ":aM"); 
+			
 			
 			QPointF pos;
 			if(notASubModule) {

@@ -237,6 +237,8 @@ bool InsertSynapseModularOperator::applyOperator(Individual *individual, Command
 // 		}
 // 	}
 	
+	mNewSynapses.clear();
+	
 	connectNewNeurons(net);
 	
 	randomlyConnect(net);
@@ -247,7 +249,18 @@ bool InsertSynapseModularOperator::applyOperator(Individual *individual, Command
 		//mark the individual as significantly modified
 		individual->setProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE,
 									mGenerationDate);
+		
+		QString synapseString = "";
+		for(QListIterator<Synapse*> i(mNewSynapses); i.hasNext();) {
+			Synapse *synapse = i.next();
+			synapseString += ",S:" + QString::number(synapse->getId()) + ":aS";
+		}
+		individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY)
+							+ synapseString);
+			
 	}
+	mNewSynapses.clear();
 
 	return true;
 }
@@ -442,6 +455,8 @@ bool InsertSynapseModularOperator::addSynapseToSourceNeuron(Neuron *source, Modu
 	
 		//mark as modified.
 		synapse->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+		
+		mNewSynapses.append(synapse);
 	}
 	return true;
 }
@@ -531,6 +546,8 @@ bool InsertSynapseModularOperator::addSynapseToTargetNeuron(Neuron *target, Modu
 	
 		//mark as modified.
 		synapse->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+		
+		mNewSynapses.append(synapse);
 	}
 
 	return true;

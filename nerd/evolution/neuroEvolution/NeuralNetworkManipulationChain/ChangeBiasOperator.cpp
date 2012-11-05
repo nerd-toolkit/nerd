@@ -56,6 +56,7 @@
 #include "NeuroEvolutionConstants.h"
 #include "Network/NeuroTagManager.h"
 #include "Util/NeuroEvolutionUtil.h"
+#include <EvolutionConstants.h>
 #include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 
 using namespace std;
@@ -195,6 +196,12 @@ bool ChangeBiasOperator::applyOperator(Individual *individual, CommandExecutor*)
 							NeuralNetworkConstants::TAG_NEURON_PREVIOUS_BIAS).toDouble(&ok);
 				neuron->removeProperty(NeuralNetworkConstants::TAG_NEURON_PREVIOUS_BIAS);
 				
+				neuron->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+				
+				individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",N:" + QString::number(neuron->getId()) + ":eB"); 
+				
 				if(!ok) {
 					continue;
 				}	
@@ -212,6 +219,9 @@ bool ChangeBiasOperator::applyOperator(Individual *individual, CommandExecutor*)
 
 				//mark as modified.
 				neuron->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+				individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",N:" + QString::number(neuron->getId()) + ":dB"); 
 				continue;
 			}
 			else {
@@ -278,6 +288,10 @@ bool ChangeBiasOperator::applyOperator(Individual *individual, CommandExecutor*)
 
 		//mark as modified.
 		neuron->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+		
+		individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",N:" + QString::number(neuron->getId()) + ":cB"); 
 	}
 
 	return true;

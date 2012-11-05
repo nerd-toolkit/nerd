@@ -513,6 +513,7 @@ bool EvolutionManager::processNextGeneration() {
 				
 				//remove marker for significant genome changes.
 				ind->removeProperty(EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE);
+				ind->removeProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY);
 			}
 
 			//update actual population size

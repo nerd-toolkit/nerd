@@ -55,6 +55,7 @@
 #include <iostream>
 #include "Network/NeuroTagManager.h"
 #include "Util/NeuroEvolutionUtil.h"
+#include <EvolutionConstants.h>
 #include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 
 //TODO allow overwriting with factors, fixed values, variables and the like. (auch bei bias)
@@ -313,6 +314,10 @@ bool ChangeSynapseStrengthOperator::applyOperator(Individual *individual,
 
 		//mark as modified.
 		synapse->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+		
+		individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",S:" + QString::number(synapse->getId()) + ":cW"); 
 	}
 
 	return true;

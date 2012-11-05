@@ -140,6 +140,7 @@ namespace nerd {
 
 		static const QString TAG_EVO_CREATION_DATE;
 		static const QString TAG_GENOME_SIGNIFICANT_CHANGE;
+		static const QString TAG_GENOME_CHANGE_SUMMARY;
 
 	};
 

@@ -56,6 +56,7 @@
 #include "Core/Properties.h"
 #include <iostream>
 #include "Evolution/Evolution.h"
+#include <EvolutionConstants.h>
 
 using namespace std;
 
@@ -164,6 +165,10 @@ bool EnableSynapseOperator::applyOperator(Individual *individual, CommandExecuto
 
 		//mark as modified.
 		synapse->setProperty(NeuralNetworkConstants::PROP_ELEMENT_MODIFIED);
+		
+		individual->setProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY,
+						individual->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY) 
+							+ ",S:" + QString::number(synapse->getId()) + ":eS"); 
 		
 	}
 
