@@ -70,10 +70,22 @@ NeuralNetworkManipulationChainAlgorithm::NeuralNetworkManipulationChainAlgorithm
 {
 	mCurrentStateValue = new StringValue();
 	mVerboseState = new BoolValue(false);
+	
+	mEnableMutationHistory = new BoolValue(false);
+	mMutationHistoryDoc = new StringValue("");
+	mMutationHistoryHide = new BoolValue(true);
+	mMutationHistoryCanBeDisabled = new BoolValue(true);
+	mMutationHistoryIndex = new IntValue(-10);
 
 	addParameter("CurrentState", mCurrentStateValue);
 	addParameter("VerboseState", mVerboseState);
+	addParameter("EnableMutationHistory", mEnableMutationHistory);
 	
+	addParameter("MutationHistory/Config/Enable", mEnableMutationHistory);
+	addParameter("MutationHistory/Config/Doc", mMutationHistoryDoc);
+	addParameter("MutationHistory/Config/Hidden", mMutationHistoryHide);
+	addParameter("MutationHistory/Config/CanBeDisabled", mMutationHistoryCanBeDisabled);
+	addParameter("MutationHistory/Config/OperatorIndex", mMutationHistoryIndex);
 	
 	EventManager *em = Core::getInstance()->getEventManager();
 	mGenerateIndividualStartedEvent = em->getEvent(
@@ -93,7 +105,13 @@ NeuralNetworkManipulationChainAlgorithm::NeuralNetworkManipulationChainAlgorithm
 	}
 	
 	mCurrentStateValue = dynamic_cast<StringValue*>(getParameter("CurrentState"));
+	mVerboseState = dynamic_cast<BoolValue*>(getParameter("VerboseState"));
+	mEnableMutationHistory = dynamic_cast<BoolValue*>(getParameter("EnableMutationHistory"));
 	
+	mMutationHistoryDoc = dynamic_cast<StringValue*>(getParameter("MutationHistory/Config/Doc"));
+	mMutationHistoryHide = dynamic_cast<BoolValue*>(getParameter("MutationHistory/Config/Hidden"));
+	mMutationHistoryCanBeDisabled = dynamic_cast<BoolValue*>(getParameter("MutationHistory/Config/CanBeDisabled"));
+	mMutationHistoryIndex = dynamic_cast<IntValue*>(getParameter("MutationHistory/Config/OperatorIndex"));
 	
 	EventManager *em = Core::getInstance()->getEventManager();
 	mGenerateIndividualStartedEvent = em->getEvent(
@@ -324,6 +342,25 @@ bool NeuralNetworkManipulationChainAlgorithm::createNextGeneration(QList<Individ
 			else {
 				//remove modification markers and temporary markers (starting with __ and ending __
 				NeuralNetwork *network = dynamic_cast<NeuralNetwork*>(ind->getGenome());
+				
+				//update mutation history (if enabled)
+				if(mEnableMutationHistory->get() == true) {
+					Properties *p = dynamic_cast<Properties*>(network);
+					if(p != 0 && ind != 0) {
+						QString mutations = ind->getProperty(EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY).trimmed();
+
+						if(mutations != "") {
+							QString generationDate = QString::number(Evolution::getEvolutionManager()
+									->getCurrentGenerationValue()->get());
+							QString currentString = p->getProperty(EvolutionConstants::TAG_NETWORK_MUTATION_HISTORY).trimmed();
+
+							QString newString = QString("|") + generationDate + ":" + mutations;
+
+							p->setProperty(EvolutionConstants::TAG_NETWORK_MUTATION_HISTORY, 
+												currentString + newString);
+						}
+					}
+				}
 
 				if(network != 0) {
 					QList<NeuralNetworkElement*> elements;

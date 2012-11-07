@@ -79,6 +79,12 @@ namespace nerd {
 		BoolValue *mVerboseState;
 		Event *mGenerateIndividualStartedEvent;
 		Event *mGenerateIndividualCompletedEvent;
+		
+		BoolValue *mEnableMutationHistory;
+		StringValue *mMutationHistoryDoc;
+		BoolValue *mMutationHistoryHide;
+		BoolValue *mMutationHistoryCanBeDisabled;
+		IntValue *mMutationHistoryIndex;
 	};
 
 }

@@ -233,4 +233,8 @@ const QString EvolutionConstants::TAG_GENOME_SIGNIFICANT_CHANGE
 		
 const QString EvolutionConstants::TAG_GENOME_CHANGE_SUMMARY
 		= "Mutations";
+		
+const QString EvolutionConstants::TAG_NETWORK_MUTATION_HISTORY
+		= "_MutationHistory";
+		
 
