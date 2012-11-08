@@ -71,9 +71,6 @@ FirstReturnMap::FirstReturnMap()
 
 	mObservedResolution = new IntValue(200);
 	mObservedResolution->setDescription("How many pixels on both axes?");
-	
-	mAccuracy = new DoubleValue(0.001);
-	mAccuracy->setDescription("Accuracy for network state comparison");
 
 	mStepsToRun = new IntValue(300);
 	mStepsToRun->setDescription("Number of simulation steps that are computed");
@@ -100,8 +97,6 @@ FirstReturnMap::FirstReturnMap()
 	addParameter("Config/ObservedElems", mObservedElems, true);
 	addParameter("Config/ObservedRanges", mObservedRanges, true);
 	addParameter("Config/ObservedResolution", mObservedResolution, true);
-	
-	addParameter("Config/Accuracy", mAccuracy, true);
 	
 	addParameter("Config/StepsToRun", mStepsToRun, true);
 	addParameter("Config/StepsToPlot", mStepsToPlot, true);

@@ -230,6 +230,7 @@ void IsoperiodPlotter::calculateData() {
 		
 	int stepsRun = mStepsToRun->get();
 	int stepsCheck = mStepsToCheck->get();
+	double accuracy = mAccuracy->get();
 	
 	for(int x = 1; x <= resolutionX && mActiveValue->get(); ++x) {
 			
@@ -285,7 +286,9 @@ void IsoperiodPlotter::calculateData() {
 				// compare states to find attractors
 				for(int i = 1; i <= k && !foundMatch; ++i) {
 					foundMatch = DynamicsPlotterUtil::
-						compareNetworkStates(states.at(k-i), networkState);
+						compareNetworkStates(states.at(k-i),
+						networkState,
+						accuracy);
 					currPeriod = i;
 				}
 				

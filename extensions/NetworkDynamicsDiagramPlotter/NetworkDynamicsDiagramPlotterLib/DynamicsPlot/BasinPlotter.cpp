@@ -322,6 +322,7 @@ void BasinPlotter::calculateData() {
 		
 	int stepsRun = mStepsToRun->get();
 	int stepsCheck = mStepsToCheck->get();
+	double accuracy = mAccuracy->get();
 	
 	QList< QList<double> > attractors;
 		
@@ -382,7 +383,9 @@ void BasinPlotter::calculateData() {
 				// compare states to find attractors
 				for(int period = 1; period <= checkStep && !foundMatch; ++period) {
 					foundMatch = DynamicsPlotterUtil::compareNetworkStates(
-									networkStates.at(checkStep-period), networkState);
+							networkStates.at(checkStep-period),
+							networkState,
+							accuracy);
 					attrPeriod = period;
 				}
 				
@@ -409,8 +412,9 @@ void BasinPlotter::calculateData() {
 				while(attrNo < attractors.size() && !attrMatch) {
 					for(int state = 1; state <= attrPeriod && !attrMatch; ++state) {
 						attrMatch = DynamicsPlotterUtil::compareNetworkStates(
-											attractors.at(attrNo),
-											networkStates.at(networkStates.size()-1-state));
+								attractors.at(attrNo),
+								networkStates.at(networkStates.size()-1-state),
+								accuracy);
 					}
 					attrNo++;
 				}
