@@ -479,7 +479,6 @@ void FirstReturnMapPlotter::showLegendCheckBoxChanged(bool) {
 }
 
 void FirstReturnMapPlotter::supportedTriggerEventsChanged() {
-	cerr << "trigger " << endl;
 	mUpdateEventSelector->clear();
 	QMap<Event*, QString> triggerEvents = mValuePlotter->getSupportedUpdateTriggerEvents();
 
@@ -493,7 +492,6 @@ void FirstReturnMapPlotter::supportedTriggerEventsChanged() {
 		if(mValuePlotter->getUpdateTriggerEvent() == i.key()) {
 			mUpdateEventSelector->setCurrentIndex(index);
 		}
-		cerr << "added event " << index << endl;
 		++index;
 	}
 }

@@ -313,43 +313,55 @@ void NeuralNetwork::executeStep() {
 
 	int currentIteration = mMinimalIterationNumber;
 
-	QList<Neuron*> remainingNeurons = mProcessibleNeurons;
-	QList<Neuron*> lastExecutedNeurons;
+	QLinkedList<Neuron*> remainingNeurons = mProcessibleNeurons;
+	QLinkedList<Neuron*> lastExecutedNeurons;
 
 	do {
 		
-		QList<Neuron*> remainingNeuronsBuffer = remainingNeurons;
-		for(QListIterator<Neuron*> j(remainingNeuronsBuffer); j.hasNext();) {
-			Neuron *neuron = j.next();
+		//QLinkedList<Neuron*> remainingNeuronsBuffer = remainingNeurons;
+		for(QLinkedList<Neuron*>::iterator j = remainingNeurons.begin(); j != remainingNeurons.end();) {
 			//if(neuron->getStartIteration() <= currentIteration)
-			if(neuron->requiresUpdate(currentIteration)) {
-				lastExecutedNeurons.append(neuron);
-				remainingNeurons.removeAll(neuron);
+			if((*j)->requiresUpdate(currentIteration)) {
+				lastExecutedNeurons.append(*j);
+				//remainingNeurons.removeAll(neuron);
+				j = remainingNeurons.erase(j);
 			}
-			else if(neuron->getStartIteration() < currentIteration) {
-				remainingNeurons.removeAll(neuron);
+			else if((*j)->getStartIteration() < currentIteration) {
+				j = remainingNeurons.erase(j);
+			}
+			else {
+				j++;
 			}
 		}
 
 		//update all affected neurons
-		for(QListIterator<Neuron*> i(lastExecutedNeurons); i.hasNext();) {
-			i.next()->updateActivation();
+		for(QLinkedList<Neuron*>::iterator i = lastExecutedNeurons.begin(); 
+						i != lastExecutedNeurons.end(); i++) 
+		{
+			(*i)->updateActivation();
 		}
 
 		//prepare for next iteration
-		for(QListIterator<Neuron*> i(lastExecutedNeurons); i.hasNext();) {
-			i.next()->prepare();
+		for(QLinkedList<Neuron*>::iterator i = lastExecutedNeurons.begin(); 
+						i != lastExecutedNeurons.end(); i++) 
+		{
+			(*i)->prepare();
 		}
 
 		++currentIteration;
 
 		//update list or affected neurons
-		QList<Neuron*> lastExecutedNeuronsBuffer = lastExecutedNeurons;
-		for(QListIterator<Neuron*> j(lastExecutedNeuronsBuffer); j.hasNext();) {
-			Neuron *neuron = j.next();
+		//QLinkedList<Neuron*> lastExecutedNeuronsBuffer = lastExecutedNeurons;
+		for(QLinkedList<Neuron*>::iterator j = lastExecutedNeurons.begin(); 
+					j != lastExecutedNeurons.end();) 
+		{
 			//if(neuron->getStartIteration() + (neuron->getRequiredIterations() - 1) < currentIteration) {
-			if(!neuron->requiresUpdate(currentIteration)) {
-				lastExecutedNeurons.removeAll(neuron);
+			if(!(*j)->requiresUpdate(currentIteration)) {
+				//lastExecutedNeurons.removeAll(neuron);
+				j = lastExecutedNeurons.erase(j);
+			}
+			else {
+				j++;
 			}
 		}
 

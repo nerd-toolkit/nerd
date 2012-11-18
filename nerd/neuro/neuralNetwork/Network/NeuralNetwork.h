@@ -47,6 +47,7 @@
 
 #include "Network/Neuron.h"
 #include <QList>
+#include <QLinkedList>
 #include <QHash>
 #include "TransferFunction/TransferFunction.h"
 #include "ActivationFunction/ActivationFunction.h"
@@ -173,7 +174,7 @@ namespace nerd {
 		QList<NeuronInterfaceValuePair> mOutputPairs;
 		QList<Neuron*> mInputNeurons;
 		QList<Neuron*> mOutputNeurons;
-		QList<Neuron*> mProcessibleNeurons;
+		QLinkedList<Neuron*> mProcessibleNeurons;
 		bool mBypassNetwork;
 		int mMinimalIterationNumber;
 	};
