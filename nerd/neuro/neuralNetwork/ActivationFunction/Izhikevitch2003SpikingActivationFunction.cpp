@@ -145,6 +145,12 @@ double Izhikevitch2003SpikingActivationFunction::calculateActivation(Neuron *own
 	}
 	
 	mInputCurrent->set(activation);
+
+// 	if(mMembranePotential_v->get() >= 30.0) {
+// 		mMembranePotential_v->set(mRestValueAfterSpike_c->get());
+// 		mMembraneRecovery_u->set(mMembraneRecovery_u->get() + mSpikingEffectOnU_d->get());
+// 	}
+// 	
 	
 	double v = mMembranePotential_v->get();
 	
@@ -156,24 +162,67 @@ double Izhikevitch2003SpikingActivationFunction::calculateActivation(Neuron *own
 	
 	double u = mMembraneRecovery_u->get();
 	
-	v += Math::min(30.0, 
-					(mStepSize_dt->get() * (0.04 * v * v)
-						+ mX->get() * v
-						+ mY->get() 
-						- u
-						+ activation));
+	v = Math::min(30.0, 
+					v + (mStepSize_dt->get() 
+							* (0.04 * v * v
+								+ mX->get() * v
+								+ mY->get() 
+								- u
+								+ activation)));
 	mMembranePotential_v->set(v);
 
+	
 	if(mRecoveryUpdateMode_du->get() == 1) {
 		
 	}
 	else {
 		u = u + (mStepSize_dt->get() 
 					* (mTimeScaleRecovery_a->get() * 
-						(mSubthresholdSensitivityRelation_b->get() 
-							* v - u)));
+						(mSubthresholdSensitivityRelation_b->get() * v - u)));
 		mMembraneRecovery_u->set(u);
 	}
+	
+// 	if(mRecoveryUpdateMode_du->get() == 1) {
+// 		
+// 	}
+// 	else {
+// 		u = mMembraneRecovery_u->get() 
+// 					+ (mStepSize_dt->get() 
+// 						* (mTimeScaleRecovery_a->get() * 
+// 							(mSubthresholdSensitivityRelation_b->get() 
+// 								* v - mMembraneRecovery_u->get())));
+// 		mMembraneRecovery_u->set(u);
+// 	}
+	
+	
+// 	double v = mMembranePotential_v->get();
+// 	
+// 	if(v >= 30.0) {
+// 		mMembranePotential_v->set(mRestValueAfterSpike_c->get());
+// 		mMembraneRecovery_u->set(mMembraneRecovery_u->get() + mSpikingEffectOnU_d->get());
+// 		v = mMembranePotential_v->get();
+// 	}
+// 	
+// 	double u = mMembraneRecovery_u->get();
+// 	
+// 	v = Math::min(30.0, 
+// 					v + (mStepSize_dt->get() * (0.04 * v * v)
+// 							+ mX->get() * v
+// 							+ mY->get() 
+// 							- u
+// 							+ activation));
+// 	mMembranePotential_v->set(v);
+// 
+// 	if(mRecoveryUpdateMode_du->get() == 1) {
+// 		
+// 	}
+// 	else {
+// 		u = u + (mStepSize_dt->get() 
+// 					* (mTimeScaleRecovery_a->get() * 
+// 						(mSubthresholdSensitivityRelation_b->get() * v - u)));
+// 		mMembraneRecovery_u->set(u);
+// 	}
+	
 	
 // a*(b*v - u)
 // 	n.v += self.dt * (0.04*n.v**2 + self.x*n.v + self.y - n.u + self.stim[i])
@@ -187,7 +236,7 @@ double Izhikevitch2003SpikingActivationFunction::calculateActivation(Neuron *own
 //         trace[1,i] = n.u
 //     return trace
 
-	return v;
+	return mMembranePotential_v->get();
 }
 
 bool Izhikevitch2003SpikingActivationFunction::equals(ActivationFunction *activationFunction) const {
