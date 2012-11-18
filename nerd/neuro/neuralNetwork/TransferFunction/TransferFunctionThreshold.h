@@ -41,61 +41,38 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
-#include "ActivationFunction/ScriptableActivationFunction.h"
-#include "ActivationFunction/Izhikevitch2003SpikingActivationFunction.h"
+
+#ifndef NERDTransferFunctionThreshold_H
+#define NERDTransferFunctionThreshold_H
+
+#include "TransferFunction/TransferFunction.h"
+#include "Value/DoubleValue.h"
 
 namespace nerd {
-
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
-
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+	
+	/**
+	 * TransferFunctionThreshold
+	 */
+	class TransferFunctionThreshold : public TransferFunction {
+	public:
+		TransferFunctionThreshold();
+		TransferFunctionThreshold(const TransferFunctionThreshold &other);
+		virtual ~TransferFunctionThreshold();
 		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
+		virtual TransferFunction* createCopy() const;
+		
+		virtual void reset(Neuron *owner);
+		virtual double transferActivation(double activation, Neuron *owner);
+		
+		bool equals(TransferFunction *transferFunction) const;
+		
+	private:
+		DoubleValue *mThreshold;
+	};
 	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronV2ActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		Izhikevitch2003SpikingActivationFunction());
-
 }
 
-}
+#endif
+
 
 

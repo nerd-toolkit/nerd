@@ -53,6 +53,7 @@
 #include "TransferFunction/TransferFunctionGauss.h"
 #include "TransferFunction/TransferFunctionStep.h"
 #include "TransferFunction/ScriptableTransferFunction.h"
+#include "TransferFunction/TransferFunctionThreshold.h"
 
 
 
@@ -79,6 +80,7 @@ StandardTransferFunctions::StandardTransferFunctions()
 	nnm->addTransferFunctionPrototype(TransferFunctionStep());
 	//scriptable
 	nnm->addTransferFunctionPrototype(ScriptableTransferFunction());
+	nnm->addTransferFunctionPrototype(TransferFunctionThreshold());
 	
 }
 

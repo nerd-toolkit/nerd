@@ -41,61 +41,63 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
-#include "ActivationFunction/ScriptableActivationFunction.h"
-#include "ActivationFunction/Izhikevitch2003SpikingActivationFunction.h"
+#include "TransferFunctionThreshold.h"
+#include <math.h>
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
-
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
-
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+	
+	TransferFunctionThreshold::TransferFunctionThreshold()
+	: TransferFunction("threshold", -1000000.0, 1000000.0)
+	{
+		mThreshold = new DoubleValue(30.0);
 		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
+		addParameter("Threshold", mThreshold);
+	}
 	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
+	TransferFunctionThreshold::TransferFunctionThreshold(const TransferFunctionThreshold &other) 
+	: Object(), ValueChangedListener(), TransferFunction(other)
+	{
+		mThreshold = dynamic_cast<DoubleValue*>(getParameter("Threshold"));
+	}
 	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
+	TransferFunctionThreshold::~TransferFunctionThreshold() {
+	}
 	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronV2ActivationFunction());
 	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableActivationFunction());
+	TransferFunction* TransferFunctionThreshold::createCopy() const {
+		return new TransferFunctionThreshold(*this);
+	}
 	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		Izhikevitch2003SpikingActivationFunction());
-
-}
-
+	
+	void TransferFunctionThreshold::reset(Neuron*) {
+	}
+	
+	
+	double TransferFunctionThreshold::transferActivation(double activation, Neuron*) {
+		if(activation >= mThreshold->get()) {
+			return activation;
+		}
+		return 0.0;
+	}
+	
+	bool TransferFunctionThreshold::equals(TransferFunction *transferFunction) const {
+		if(TransferFunction::equals(transferFunction) == false) {
+			return false;
+		}
+		
+		TransferFunctionThreshold *tf = 
+		dynamic_cast<TransferFunctionThreshold*>(transferFunction);
+		
+		if(tf == 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 }
 
 

@@ -41,61 +41,53 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
-#include "ActivationFunction/ScriptableActivationFunction.h"
-#include "ActivationFunction/Izhikevitch2003SpikingActivationFunction.h"
+
+#ifndef NERDIzhikevitch2003SpikingActivationFunction_H
+#define NERDIzhikevitch2003SpikingActivationFunction_H
+
+#include "ActivationFunction/ActivationFunction.h"
+#include "Value/DoubleValue.h"
+#include "Value/IntValue.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	/**
+	 * Izhikevitch2003SpikingActivationFunction.
+	 * Implementation of spiking neuron model proposed in Izhikevitch 2003
+	 * (IEEE Transactions on Neural Networks, Vol. 14, No. 6, Nov. 2003)
+	 * 
+	 * Implemenation is a C++ port of the phython code published at
+	 * http://www.neurdon.com/2011/02/02/neural-modeling-with-python-part-3/
+	 */
+	class Izhikevitch2003SpikingActivationFunction : public ActivationFunction {
+	public:
+		Izhikevitch2003SpikingActivationFunction();
+		Izhikevitch2003SpikingActivationFunction(const Izhikevitch2003SpikingActivationFunction &other);
+		virtual ~Izhikevitch2003SpikingActivationFunction();
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+		virtual ActivationFunction* createCopy() const;
+
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
+
+		bool equals(ActivationFunction *activationFunction) const;
 		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronV2ActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		Izhikevitch2003SpikingActivationFunction());
+	private:
+		DoubleValue *mMembranePotential_v;
+		DoubleValue *mMembraneRecovery_u;
+		DoubleValue *mTimeScaleRecovery_a;
+		DoubleValue *mSubthresholdSensitivityRelation_b;
+		DoubleValue *mRestValueAfterSpike_c;
+		DoubleValue *mSpikingEffectOnU_d;
+		DoubleValue *mStepSize_dt;
+		DoubleValue *mX;
+		DoubleValue *mY;
+		IntValue *mRecoveryUpdateMode_du;
+		DoubleValue *mInputCurrent;
+	};
 
 }
 
-}
+#endif
 
 
