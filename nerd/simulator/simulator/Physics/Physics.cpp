@@ -182,7 +182,7 @@ void Physics::rotateSimObjects(QList<SimObject*> simObjects, Vector3D orientatio
 			Quaternion newPointQ = orientation * oldPosition * inverse;
 			bodyPosition->set(newPointQ.getX(), newPointQ.getY(), newPointQ.getZ());
 			
-			Vector3DValue *bodyOrientation = obj->getOrientationValue();
+			//Vector3DValue *bodyOrientation = obj->getOrientationValue();
 
 			QuaternionValue *currentOrientation = obj->getQuaternionOrientationValue();
 			Quaternion newOrientation = orientation * currentOrientation->get(); 

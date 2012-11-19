@@ -53,6 +53,7 @@
 #include "SynapseFunction/SynapseFunction.h"
 #include "Network/NeuralNetwork.h"
 #include <QMutex>
+#include "Value/IntValue.h"
 
 namespace nerd {
 
@@ -127,6 +128,7 @@ namespace nerd {
 
 		QMutex mNetworkExecutionMutex;
 		BoolValue *mBypassNetworkValue;
+		IntValue *mNumberOfNetworkUpdatesPerStep;
 
 	};
 

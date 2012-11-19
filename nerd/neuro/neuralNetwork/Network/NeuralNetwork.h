@@ -99,7 +99,7 @@ namespace nerd {
 		virtual void setControlInterface(ControlInterface *controlInterface);
 		virtual ControlInterface* getControlInterface() const;
 
-		virtual void executeStep();
+		virtual void executeStep(int numberOfSteps = 1);
 		virtual void reset();
 
 		virtual bool addNeuron(Neuron *neuron);

@@ -94,6 +94,7 @@ namespace nerd {
 
 		static const QString VALUE_EVO_STASIS_MODE;
 		static const QString VALUE_NNM_BYPASS_NETWORKS;
+		static const QString VALUE_NNM_NUMBER_OF_ITERATIONS_PER_STEP;
 		static const QString VALUE_EVO_CURRENT_GENERATION_NUMBER;
 		static const QString VALUE_ANALYZER_RUN_COUNTER;
 		static const QString VALUE_ENABLE_NEURO_MODULATORS;

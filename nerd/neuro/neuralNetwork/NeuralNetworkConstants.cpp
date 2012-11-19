@@ -118,6 +118,9 @@ const QString NeuralNetworkConstants::VALUE_EVO_STASIS_MODE
 
 const QString NeuralNetworkConstants::VALUE_NNM_BYPASS_NETWORKS
 		= "/NeuralNetwork/BypassNetworks";
+		
+		const QString NeuralNetworkConstants::VALUE_NNM_NUMBER_OF_ITERATIONS_PER_STEP
+		= "/NeuralNetwork/UpdatesPerStep";
 
 const QString NeuralNetworkConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER
 		= "/Evolution/CurrentGeneration";

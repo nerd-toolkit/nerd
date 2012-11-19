@@ -13,4 +13,13 @@
 
 
 
+Editor:
+- clear all plotters (in menu, via event or slot?)
+- save window positions / window selection
+- connect windows (when window a is moved, then window b follows)
+- mimick window (size (width and or height) follow the master window)
+- save plotter configuration, restore configuration, autorestore
+
+
+
 

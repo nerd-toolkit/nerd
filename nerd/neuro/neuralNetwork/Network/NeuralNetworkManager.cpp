@@ -113,8 +113,17 @@ NeuralNetworkManager::NeuralNetworkManager()
 	//this value can be switched to disable the neural network control.
 	mBypassNetworkValue = new BoolValue(false);
 	mBypassNetworkValue->addValueChangedListener(this);
+	mBypassNetworkValue->setDescription("If true, then the networks are executed each step, but the output of the "
+										"output neurons is NOT applied to the motors, so the network has no effect"
+										"on the controlled animat.");
 	Core::getInstance()->getValueManager()->addValue(
 					NeuralNetworkConstants::VALUE_NNM_BYPASS_NETWORKS, mBypassNetworkValue);
+	
+	mNumberOfNetworkUpdatesPerStep = new IntValue(1);
+	mNumberOfNetworkUpdatesPerStep->setDescription("Number of network update steps during each network update. "
+												   "This allows networks running faster than the physical simulation.");
+	Core::getInstance()->getValueManager()->addValue(
+		NeuralNetworkConstants::VALUE_NNM_NUMBER_OF_ITERATIONS_PER_STEP, mNumberOfNetworkUpdatesPerStep);
 	
 	//add default tags
 	NeuroTagManager *ntm = NeuroTagManager::getInstance();
@@ -502,7 +511,7 @@ void NeuralNetworkManager::executeNeuralNetworks() {
 	QMutexLocker locker(&mNetworkExecutionMutex);
 	for(QListIterator<NeuralNetwork*> i(mNeuralNetworks); i.hasNext();) {
 		NeuralNetwork *net = i.next();
-		net->executeStep();
+		net->executeStep(mNumberOfNetworkUpdatesPerStep->get());
 	}
 	mNetworkEvaluationCompleted->trigger();
 }

@@ -286,7 +286,7 @@ ControlInterface* NeuralNetwork::getControlInterface() const {
 
 
 
-void NeuralNetwork::executeStep() {
+void NeuralNetwork::executeStep(int numberOfSteps) {
 	TRACE("NeuralNetwork::executeStep");
 
 	//update input neurons
@@ -305,69 +305,76 @@ void NeuralNetwork::executeStep() {
 			pair.mNeuron->getOutputActivationValue().set(activation);
 		}
 	}
+	
+	for(int k = 0; k < numberOfSteps; ++k) {
 
-	for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
-		//prepare ALL neurons
-		i.next()->prepare();
-	}
+		for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
+			//prepare ALL neurons
+			i.next()->prepare();
+		}
 
-	int currentIteration = mMinimalIterationNumber;
+		int currentIteration = mMinimalIterationNumber;
 
-	QLinkedList<Neuron*> remainingNeurons = mProcessibleNeurons;
-	QLinkedList<Neuron*> lastExecutedNeurons;
+		QLinkedList<Neuron*> remainingNeurons = mProcessibleNeurons;
+		QLinkedList<Neuron*> lastExecutedNeurons;
 
-	do {
+		do {
+			
+			//QLinkedList<Neuron*> remainingNeuronsBuffer = remainingNeurons;
+			for(QLinkedList<Neuron*>::iterator j = remainingNeurons.begin(); j != remainingNeurons.end();) {
+				//if(neuron->getStartIteration() <= currentIteration)
+				if((*j)->requiresUpdate(currentIteration)) {
+					lastExecutedNeurons.append(*j);
+					//remainingNeurons.removeAll(neuron);
+					j = remainingNeurons.erase(j);
+				}
+				else if((*j)->getStartIteration() < currentIteration) {
+					j = remainingNeurons.erase(j);
+				}
+				else {
+					j++;
+				}
+			}
+
+			//update all affected neurons
+			for(QLinkedList<Neuron*>::iterator i = lastExecutedNeurons.begin(); 
+							i != lastExecutedNeurons.end(); i++) 
+			{
+				(*i)->updateActivation();
+			}
+
+			//prepare for next iteration
+			for(QLinkedList<Neuron*>::iterator i = lastExecutedNeurons.begin(); 
+							i != lastExecutedNeurons.end(); i++) 
+			{
+				(*i)->prepare();
+			}
+
+			++currentIteration;
+
+			//update list or affected neurons
+			//QLinkedList<Neuron*> lastExecutedNeuronsBuffer = lastExecutedNeurons;
+			for(QLinkedList<Neuron*>::iterator j = lastExecutedNeurons.begin(); 
+						j != lastExecutedNeurons.end();) 
+			{
+				//if(neuron->getStartIteration() + (neuron->getRequiredIterations() - 1) < currentIteration) {
+				if(!(*j)->requiresUpdate(currentIteration)) {
+					//lastExecutedNeurons.removeAll(neuron);
+					j = lastExecutedNeurons.erase(j);
+				}
+				else {
+					j++;
+				}
+			}
+
+			Neuro::getNeuralNetworkManager()->triggerNetworkIterationCompleted();
+
+		} while(!lastExecutedNeurons.empty() || !remainingNeurons.empty());
 		
-		//QLinkedList<Neuron*> remainingNeuronsBuffer = remainingNeurons;
-		for(QLinkedList<Neuron*>::iterator j = remainingNeurons.begin(); j != remainingNeurons.end();) {
-			//if(neuron->getStartIteration() <= currentIteration)
-			if((*j)->requiresUpdate(currentIteration)) {
-				lastExecutedNeurons.append(*j);
-				//remainingNeurons.removeAll(neuron);
-				j = remainingNeurons.erase(j);
-			}
-			else if((*j)->getStartIteration() < currentIteration) {
-				j = remainingNeurons.erase(j);
-			}
-			else {
-				j++;
-			}
+		if(k < numberOfSteps) {
+			Core::getInstance()->executePendingTasks();
 		}
-
-		//update all affected neurons
-		for(QLinkedList<Neuron*>::iterator i = lastExecutedNeurons.begin(); 
-						i != lastExecutedNeurons.end(); i++) 
-		{
-			(*i)->updateActivation();
-		}
-
-		//prepare for next iteration
-		for(QLinkedList<Neuron*>::iterator i = lastExecutedNeurons.begin(); 
-						i != lastExecutedNeurons.end(); i++) 
-		{
-			(*i)->prepare();
-		}
-
-		++currentIteration;
-
-		//update list or affected neurons
-		//QLinkedList<Neuron*> lastExecutedNeuronsBuffer = lastExecutedNeurons;
-		for(QLinkedList<Neuron*>::iterator j = lastExecutedNeurons.begin(); 
-					j != lastExecutedNeurons.end();) 
-		{
-			//if(neuron->getStartIteration() + (neuron->getRequiredIterations() - 1) < currentIteration) {
-			if(!(*j)->requiresUpdate(currentIteration)) {
-				//lastExecutedNeurons.removeAll(neuron);
-				j = lastExecutedNeurons.erase(j);
-			}
-			else {
-				j++;
-			}
-		}
-
-		Neuro::getNeuralNetworkManager()->triggerNetworkIterationCompleted();
-
-	} while(!lastExecutedNeurons.empty() || !remainingNeurons.empty());
+	}
 	
 	//transfer output neuron activations to actuators
 	if(!mBypassNetwork) {

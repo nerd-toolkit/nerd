@@ -57,7 +57,7 @@ namespace nerd {
 	public:
 		virtual ~Controller();
 
-		virtual void executeStep() = 0;
+		virtual void executeStep(int numberOfSteps) = 0;
 		virtual void reset() = 0;
 
 		virtual void setControlInterface(ControlInterface *controlInterface) = 0;
