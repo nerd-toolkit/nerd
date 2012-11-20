@@ -62,7 +62,7 @@ namespace nerd {
 	{
 		mTypeParameters = new StringValue("1, 1.0, 0.2, 0");
 		mTypeParameters->setDescription("Parameter Settings: NM-type, change probability, "
-										"disable probability, mode, opt1, opt2, opt3|<second entry>|<third>|...");
+						"disable probability, mode, opt1, opt2, opt3|<second entry>|<third>|...");
 
 		mProbabilityForChange = new DoubleValue(0.5);
 		mProbabilityForChange->setDescription("Reference probability for changes.");
@@ -174,7 +174,8 @@ namespace nerd {
 			return false;
 		}
 
-		SimpleModulatedRandomSearchSynapseFunction *sf = dynamic_cast<SimpleModulatedRandomSearchSynapseFunction*>(synapseFunction);
+		SimpleModulatedRandomSearchSynapseFunction *sf = 
+					dynamic_cast<SimpleModulatedRandomSearchSynapseFunction*>(synapseFunction);
 
 		if(sf == 0) {
 			return false;
@@ -204,8 +205,8 @@ namespace nerd {
 			QStringList paramStrings = entry.split(",");
 			
 			if(paramStrings.length() < 4) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Too few parameters in ["
-						+ entry + "]", true);
+				Core::log("SimpleModulatedRandomSearchSynapseFunction: Too few "
+						  "parameters in [" + entry + "]", true);
 				continue;
 			}
 			
@@ -215,26 +216,26 @@ namespace nerd {
 			
 			params.mType = paramStrings.at(0).toInt(&ok);
 			if(!ok) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse type (1) in ["
-						+ entry + "]", true);
+				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse "
+						  "type (1) in [" + entry + "]", true);
 				continue;
 			}
 			params.mChangeProbability = paramStrings.at(1).toDouble(&ok);
 			if(!ok) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse change probability (2) in ["
-						+ entry + "]", true);
+				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse "
+						  "change probability (2) in [" + entry + "]", true);
 				continue;
 			}
 			params.mDisableProbability = paramStrings.at(2).toDouble(&ok);
 			if(!ok) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse disable probability (3) in ["
-						+ entry + "]", true);
+				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse "
+						  "disable probability (3) in [" + entry + "]", true);
 				continue;
 			}
 			params.mMode = paramStrings.at(3).toInt(&ok);
 			if(!ok) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse mode (4) in ["
-						+ entry + "]", true);
+				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse "
+						  "mode (4) in [" + entry + "]", true);
 				continue;
 			}
 			if(paramStrings.size() > 4) {
@@ -305,6 +306,7 @@ namespace nerd {
 			if(!ok) {
 				countDisables = 0;
 			}
+			countDisables++;
 			owner->setProperty("MRS-E", QString::number(countDisables));
 		}
 		if(!mInactive->get() && (Random::nextDouble() < changeProbability)) {
@@ -319,11 +321,11 @@ namespace nerd {
 			owner->getStrengthValue().set(newWeight);
 			
 			bool ok = true;
-			Core::log("Prop: " + owner->getProperty("MRS-M"), true);
 			int countChanges = owner->getProperty("MRS-M").toInt(&ok);
 			if(!ok) {
 				countChanges = 0;
 			}
+			countChanges++;
 			owner->setProperty("MRS-M", QString::number(countChanges));
 		}
 		if(params.mObservable != 0) {
