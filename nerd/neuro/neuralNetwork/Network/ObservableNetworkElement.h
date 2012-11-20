@@ -63,7 +63,7 @@ namespace nerd {
 		virtual QList<QString> getObservableOutputNames() const;
 		virtual QList<Value*> getObservableOutputs() const;
 		
-	private:
+	protected:
 		QHash<QString, Value*> mObservableOutputs;
 	};
 

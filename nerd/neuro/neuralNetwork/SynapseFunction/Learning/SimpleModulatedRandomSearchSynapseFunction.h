@@ -42,64 +42,69 @@
  ***************************************************************************/
 
 
-#ifndef NERDSynapseItem_H
-#define NERDSynapseItem_H
+#ifndef NERDSimpleModulatedRandomSearchSynapseFunction_H
+#define NERDSimpleModulatedRandomSearchSynapseFunction_H
 
-#include <QString>
-#include <QHash>
-#include "Network/Synapse.h"
-#include "Gui/NetworkEditor/PaintItem.h"
-#include <QSize>
-#include "Core/PropertyChangedListener.h"
-#include "Math/Vector3D.h"
+#include "SynapseFunction/NeuroModulatorSynapseFunction.h"
+#include "Value/RangeValue.h"
 
 namespace nerd {
-
-	class NeuronItem;
-	class NetworkVisualizationHandler;
-
-	/**
-	 * SynapseItem.
-	 *
-	 */
-	class SynapseItem : public PaintItem, public PropertyChangedListener {
+	
+	struct SimpleModulatedRandomSearchParameters {
 	public:
-		SynapseItem(NetworkVisualization *owner);
-		SynapseItem(const SynapseItem &other);
-		virtual ~SynapseItem();
-
-		virtual SynapseItem* createCopy() const = 0;
-
-		virtual NeuralNetworkElement* getNetworkElement() const;
-		virtual bool setSynapse(Synapse *synapse);
-		Synapse* getSynapse() const;
-
-		virtual bool isHit(const QPointF &point, Qt::MouseButtons mouseButton, double scaling) = 0;
-		virtual void mouseMoved(const QPointF &distance, Qt::MouseButtons mouseButton) = 0;
-		virtual void paintSelf(QPainter *painter);
-
-		virtual Properties* getEncapsulatedProperties() const;
-		virtual void propertyChanged(Properties *owner, const QString &property);
-		
-		virtual void setViewMode(int mode, bool enabled);
-		virtual bool isViewModeEnabled(int mode);
-		
-	protected:
-		NetworkVisualization *mOwner;
-		Synapse *mSynapse;
-		NeuronItem *mSourceNeuron;
-		PaintItem *mTarget;
-		Vector3D mPositionOffset;
-		bool mHideWeight;
-		bool mUseSynapseTypeSymbols;
-		bool mLocalHideWeight;
-		bool mHighlightWeightChanges;
+		SimpleModulatedRandomSearchParameters() : mType(0), mChangeProbability(0),
+			mDisableProbability(0), mMode(0), mParam1(0), mParam2(0), mParam3(0), mObservable(0) {}
+			
+		int mType;
+		double mChangeProbability;
+		double mDisableProbability;
+		int mMode;
+		double mParam1;
+		double mParam2;
+		double mParam3;
+		DoubleValue *mObservable;
 	};
+	
+	/**
+	* SimpleModulatedRandomSearchSynapseFunction.
+	*
+	* The SimpleModulatedRandomSearchSynapseFunction does random changes to its weight
+	* as long as the given set of NeuroModulators is present.
+	*/
+	class SimpleModulatedRandomSearchSynapseFunction : public NeuroModulatorSynapseFunction {
+	public:
+		SimpleModulatedRandomSearchSynapseFunction();
+		SimpleModulatedRandomSearchSynapseFunction(const SimpleModulatedRandomSearchSynapseFunction &other);
+		virtual ~SimpleModulatedRandomSearchSynapseFunction();
 
+		virtual SynapseFunction* createCopy() const;
+
+		virtual void valueChanged(Value *value);
+
+		virtual void reset(Synapse *owner);
+		virtual double calculate(Synapse *owner);
+
+		bool equals(SynapseFunction *synapseFunction) const;
+
+	protected:
+		virtual void updateSettings();
+		
+		virtual void randomSearchMode0(Synapse *owner, SimpleModulatedRandomSearchParameters &params);
+
+	private:
+		StringValue *mTypeParameters;
+		DoubleValue *mProbabilityForChange;
+		BoolValue *mInactive;
+
+		QList<DoubleValue*> mObservables;
+		QList<SimpleModulatedRandomSearchParameters> mParameters;
+
+		
+		NeuralNetwork *mCurrentNetwork;
+	};
+	
 }
 
 #endif
-
-
 
 

@@ -103,6 +103,7 @@ set(nerd_neuralNetwork_SRCS
 	SynapseFunction/CloneSimpleSynapseFunction.cpp
 	ActivationFunction/Izhikevitch2003SpikingActivationFunction.cpp
 	TransferFunction/TransferFunctionThreshold.cpp
+	SynapseFunction/Learning/SimpleModulatedRandomSearchSynapseFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS

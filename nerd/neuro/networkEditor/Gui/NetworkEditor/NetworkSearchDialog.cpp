@@ -88,6 +88,8 @@ NetworkSearchDialog::NetworkSearchDialog(NeuralNetworkEditor *owner, QWidget *pa
 
 	mSearchButton = new QPushButton("Search");
 	layout->addWidget(mSearchButton);
+	
+	//TODO add "search only selected" checkbox
 
 	connect(mSearchButton, SIGNAL(pressed()),
 			this, SLOT(selectMatchingElements()));
@@ -139,19 +141,41 @@ void NetworkSearchDialog::selectMatchingElements() {
 		QList<PaintItem*> selectedItems;
 	
 		QString regExpText = mSearchTextField->text();
+		QString paramValue = "";
 
 		qulonglong id = 0;
 		bool searchForId = false;
+		bool searchForModelFunction = false;
+		bool searchForModelFunctionParameter = false;
+		bool searchForModelFunctionParameterValue = false;
+		
 		if(regExpText.startsWith("$")) {
 			//id mode
 			id = regExpText.mid(1).toULongLong();
 			searchForId = true;
 		}
-
+		else if(regExpText.startsWith("@@")) {
+			regExpText = regExpText.mid(2);
+			searchForModelFunctionParameter = true;
+			if(regExpText.contains("=")) {
+				searchForModelFunctionParameterValue = true;
+				paramValue = regExpText.mid(regExpText.indexOf("=") + 1);
+				regExpText = regExpText.mid(0, regExpText.indexOf("="));
+			}
+		}
+		else if(regExpText.startsWith("@")) {
+			regExpText = regExpText.mid(1);
+			searchForModelFunction = true;
+		}
+		
 		regExpText.replace("**", ".*");
-
+		paramValue.replace("**", ".*");
+		
 		QRegExp expr(regExpText);
 		expr.setCaseSensitivity(Qt::CaseInsensitive);
+		
+		QRegExp contentExpr(paramValue);
+		contentExpr.setCaseSensitivity(Qt::CaseInsensitive);
 	
 
 		QList<Neuron*> neurons = net->getNeurons();
@@ -159,12 +183,30 @@ void NetworkSearchDialog::selectMatchingElements() {
 			Neuron *neuron = i.next();
 	
 			if((searchForId && id == neuron->getId()) 
-				|| (!searchForId && expr.exactMatch(neuron->getNameValue().get()))) 
+				|| (!searchForId && expr.exactMatch(neuron->getNameValue().get()))
+				|| (!searchForId 
+					&& searchForModelFunction 
+					&& ((expr.exactMatch(neuron->getTransferFunction()->getName()))
+						|| (expr.exactMatch(neuron->getActivationFunction()->getName())))))
 			{
 				//add this neuron to the list of selected items
 				PaintItem *item = handler->getNeuronItem(neuron);
 				if(item != 0) {
 					selectedItems.append(item);
+				}
+			}
+			if(searchForModelFunction || searchForModelFunctionParameter) {
+				if((matchFunctionParameters(neuron->getActivationFunction(), expr, contentExpr, 
+											searchForModelFunctionParameterValue))
+					||
+					(matchFunctionParameters(neuron->getTransferFunction(), expr, contentExpr, 
+											 searchForModelFunctionParameterValue)))
+				{
+					//add this neuron to the list of selected items
+					PaintItem *item = handler->getNeuronItem(neuron);
+					if(item != 0) {
+						selectedItems.append(item);
+					}
 				}
 			}
 		}
@@ -173,12 +215,25 @@ void NetworkSearchDialog::selectMatchingElements() {
 			Synapse *synapse = i.next();
 	
 			if((searchForId && id == synapse->getId())
-				|| (!searchForId && expr.exactMatch(synapse->getStrengthValue().getValueAsString()))) 
+				|| (!searchForId && expr.exactMatch(synapse->getStrengthValue().getValueAsString()))
+				|| (!searchForId && searchForModelFunction && expr.exactMatch(synapse->getSynapseFunction()->getName()))) 
 			{
 				//add this synapse to the list of selected items
 				PaintItem *item = handler->getSynapseItem(synapse);
 				if(item != 0) {
 					selectedItems.append(item);
+				}
+			}
+			if(searchForModelFunction || searchForModelFunctionParameter) {
+				if(matchFunctionParameters(synapse->getSynapseFunction(), expr, contentExpr, 
+											searchForModelFunctionParameterValue))
+				{
+					//add this neuron to the list of selected items
+					//add this synapse to the list of selected items
+					PaintItem *item = handler->getSynapseItem(synapse);
+					if(item != 0) {
+						selectedItems.append(item);
+					}
 				}
 			}
 		}
@@ -209,6 +264,26 @@ void NetworkSearchDialog::selectMatchingElements() {
 		visu->setSelectedItems(selectedItems);
 	}
 
+}
+
+bool NetworkSearchDialog::matchFunctionParameters(ParameterizedObject *funct, QRegExp &nameRegExp, 
+												  QRegExp &contentRegExp, bool matchContent)
+{
+	if(funct == 0) {
+		return false;
+	}
+	QList<QString> paramNames = funct->getParameterNames();
+	for(QListIterator<QString> k(paramNames); k.hasNext();) {
+		QString name = k.next();
+		if(nameRegExp.exactMatch(name)) {
+			if(!matchContent
+				|| contentRegExp.exactMatch(funct->getParameter(name)->getValueAsString()))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 

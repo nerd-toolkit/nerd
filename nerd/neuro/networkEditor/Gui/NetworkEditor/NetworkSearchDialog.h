@@ -56,6 +56,8 @@
 
 namespace nerd {
 
+class ParameterizedObject;
+
 	/**
 	 * NetworkSearchDialog.
 	 *
@@ -70,6 +72,9 @@ namespace nerd {
 
 	public slots:
 		void selectMatchingElements();
+		
+	private:
+		bool matchFunctionParameters(ParameterizedObject *funct, QRegExp &nameRegExp, QRegExp &contentRegExp, bool matchContent); 
 
 	private:
 		NeuralNetworkEditor *mOwner;

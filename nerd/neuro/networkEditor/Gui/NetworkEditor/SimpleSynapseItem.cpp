@@ -65,7 +65,7 @@ namespace nerd {
  * Constructs a new SimpleSynapseItem.
  */
 SimpleSynapseItem::SimpleSynapseItem(NetworkVisualization *owner)
-	: SynapseItem(owner), mSize(60, 20)
+	: SynapseItem(owner), mSize(60, 20), mPreviousWeight(0.0), mLastSize(0.0)
 {
 }
 
@@ -76,7 +76,7 @@ SimpleSynapseItem::SimpleSynapseItem(NetworkVisualization *owner)
  * @param other the SimpleSynapseItem object to copy.
  */
 SimpleSynapseItem::SimpleSynapseItem(const SimpleSynapseItem &other) 
-	: SynapseItem(other), mSize(other.mSize)
+	: SynapseItem(other), mSize(other.mSize), mLastSize(other.mLastSize)
 {
 }
 
@@ -95,6 +95,14 @@ SynapseItem* SimpleSynapseItem::createCopy() const {
 bool SimpleSynapseItem::setSynapse(Synapse *synapse) {
 	bool ok = SynapseItem::setSynapse(synapse);
 
+	if(synapse != 0) {
+		mPreviousWeight = synapse->getStrengthValue().get();
+	}
+	else {
+		mPreviousWeight = 0.0;
+	}
+	mLastSize = 0.0;
+	
 	return ok;
 }
 
@@ -274,11 +282,28 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 		}
 		QFont oldFont = painter->font();
 		QFont newFont(oldFont);
-		newFont.setPointSizeF(oldFont.pointSizeF() + 0.5);
+		if(!mHighlightWeightChanges) {
+			newFont.setPointSizeF(oldFont.pointSizeF() + 0.5);
+		}
+		else {
+			if(mLastSize <= 0.0) {
+				mLastSize = oldFont.pointSizeF();
+			}
+			double diff = Math::abs(mPreviousWeight - mSynapse->getStrengthValue().get());
+			if(diff > 0.001) {
+				mLastSize = oldFont.pointSizeF() + 2.0 + (Math::min(5.0, diff * 8.0));
+			}
+			newFont.setPointSizeF(mLastSize);
+			mLastSize = Math::max((double) oldFont.pointSizeF(), mLastSize - 0.5);
+			mPreviousWeight = mSynapse->getStrengthValue().get();
+		}
 		painter->setFont(newFont);
 		
 		QRectF textRect = rect;
 		textRect.moveTo(textRect.x() + mPositionOffset.getX(), textRect.y() + mPositionOffset.getY());
+		if(mHighlightWeightChanges) {
+			textRect.setRect(textRect.x() - 10.0, textRect.y() - 5.0, textRect.width() + 20.0, textRect.height() + 10.0);
+		}
 		
 		if(mIncreaseReadability) {
 			QRectF textBoundingRect = painter->boundingRect(textRect, 

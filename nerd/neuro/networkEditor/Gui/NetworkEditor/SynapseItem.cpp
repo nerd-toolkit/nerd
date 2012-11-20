@@ -66,7 +66,7 @@ namespace nerd {
  */
 SynapseItem::SynapseItem(NetworkVisualization *owner)
 	: PaintItem(800), mOwner(owner), mHideWeight(false), mUseSynapseTypeSymbols(true),
-		mLocalHideWeight(false)
+		mLocalHideWeight(false), mHighlightWeightChanges(false)
 {
 }
 
@@ -78,7 +78,8 @@ SynapseItem::SynapseItem(NetworkVisualization *owner)
  */
 SynapseItem::SynapseItem(const SynapseItem &other) 
 	: PaintItem(other), mOwner(other.mOwner), mSynapse(0), 
-	mHideWeight(other.mHideWeight), mUseSynapseTypeSymbols(other.mUseSynapseTypeSymbols)
+	mHideWeight(other.mHideWeight), mUseSynapseTypeSymbols(other.mUseSynapseTypeSymbols),
+	mHighlightWeightChanges(other.mHighlightWeightChanges)
 {
 }
 
@@ -173,6 +174,9 @@ void SynapseItem::setViewMode(int mode, bool enabled) {
 	}
 	else if(mode == PaintItem::USE_SYNAPSE_TYPE_SYMBOLS) {
 		mUseSynapseTypeSymbols = enabled;
+	}
+	else if(mode == PaintItem::HIGHLIGHT_WEIGHT_CHANGES) {
+		mHighlightWeightChanges = enabled;
 	}
 	else {
 		PaintItem::setViewMode(mode, enabled);

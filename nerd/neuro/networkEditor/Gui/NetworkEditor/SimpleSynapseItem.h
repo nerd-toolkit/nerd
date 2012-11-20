@@ -74,6 +74,8 @@ namespace nerd {
 
 	private:
 		QSizeF mSize;
+		double mPreviousWeight;
+		double mLastSize;
 	};
 
 }
