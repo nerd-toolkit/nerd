@@ -148,9 +148,9 @@ MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name
 	connect(activateHistoryPlotter, SIGNAL(triggered()),
 			this, SLOT(activateHistoryPlotter()));
 	
-	QAction *activateXYPlotter = plotterMenu->addAction("X/Y Plotter");
-	connect(activateXYPlotter, SIGNAL(triggered()),
-			this, SLOT(activateXYPlotter()));
+	//QAction *activateXYPlotter = plotterMenu->addAction("X/Y Plotter");
+	//connect(activateXYPlotter, SIGNAL(triggered()),
+	//		this, SLOT(activateXYPlotter()));
 	
 	
     QMenu *helpMenu = localMenuBar->addMenu("Help");

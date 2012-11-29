@@ -61,7 +61,7 @@ FirstReturnMap::FirstReturnMap()
 	mObservedElems = new StringValue("0");
 	mObservedElems->setDescription("Network elements to observe\n"
 					"Format is ID:PARAM or ID:FUNC:PARAM\n"
-					"separated by ',' for the mean or\n"
+					"separated by ',' for the average or\n"
 					"          by '|' for multiple plots");
 	
 	mObservedRanges = new StringValue("-1,1");
