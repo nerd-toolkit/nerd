@@ -42,42 +42,92 @@
  ***************************************************************************/
 
 
-#ifndef ORCSChaoticNeuronActivationFunction_H
-#define ORCSChaoticNeuronActivationFunction_H
+
+#ifndef NERDSimulationRecorder_H
+#define NERDSimulationRecorder_H
 
 #include <QString>
-#include <QHash>
-#include "ActivationFunction/ActivationFunction.h"
+#include <QFile>
+#include <QTextStream>
+#include "Value/InterfaceValue.h"
+#include "Physics/SimObjectGroup.h"
+#include "Core/SystemObject.h"
+#include "Event/EventListener.h"
 #include "Value/DoubleValue.h"
-#include "Value/IntValue.h"
+#include "Value/StringValue.h"
+#include "Value/FileNameValue.h"
+#include "Value/BoolValue.h"
+#include <QFile>
+#include <QVarLengthArray>
 
 namespace nerd {
 
 	/**
-	 * ChaoticNeuronActivationFunction.
-	 *
+	 * SimulationRecorder
 	 */
-	class ChaoticNeuronActivationFunction : public ActivationFunction {
+	class SimulationRecorder : public virtual SystemObject, public virtual EventListener,
+							public virtual ValueChangedListener 
+	{
 	public:
-		ChaoticNeuronActivationFunction();
-		ChaoticNeuronActivationFunction(const ChaoticNeuronActivationFunction &other);
-		virtual ~ChaoticNeuronActivationFunction();
+		SimulationRecorder();
+		virtual ~SimulationRecorder();
 
-		virtual ActivationFunction* createCopy() const;
+		virtual QString getName() const;
+		
+		virtual bool init();
+		virtual bool bind();
+		virtual bool cleanUp();
+		
+		virtual void eventOccured(Event *event);
+		virtual void valueChanged(Value *value) ;
+		
+		virtual void startRecording();
+		virtual void stopRecording();
+		virtual void recordData(bool forceRecording = false);
+		
+		
+		virtual void startPlayback();
+		virtual void stopPlayback();
+		virtual void playbackData();
+		
+	protected:
+		
+		virtual void updateListOfRecordedValues();
+		virtual void updateRecordedData();
+		virtual void updatePlaybackData();
 
-		virtual void reset(Neuron *owner);
-		virtual double calculateActivation(Neuron *owner);
-
-		bool equals(ActivationFunction *activationFunction) const;
-
-	private:
-		DoubleValue *mGamma;
-		IntValue *mMode;
+	private:	
+		Event *mResetEvent;
+		Event *mStepStartedEvent;
+		Event *mStepCompletedEvent;
+		
+		IntValue *mCurrentStep;
+		BoolValue *mPhysicsDisabled;
+		
+		BoolValue *mActivateRecording;
+		BoolValue *mActivatePlayback;
+		FileNameValue *mRecordingDirectory;
+		StringValue *mFileNamePrefix;
+		FileNameValue *mPlaybackFile;
+		BoolValue *mIncludeSimulation;
+		
+		QList<DoubleValue*> mRecordedValues;
+		QVector<double> mFrameMarker;
+		
+		bool mPhysicsWasDisabled;
+		
+	protected:
+		QFile *mFile;
+		QByteArray mData;
+		QDataStream *mDataStream;
+		QDataStream mFileDataStream;
+		
+		int mExecutionMode;
+		bool mReachedAndOfFile;
 	};
 
 }
 
 #endif
-
 
 

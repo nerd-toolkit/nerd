@@ -61,9 +61,9 @@ namespace nerd {
 		PhysicalSimulationAlgorithm(const QString &name);
 		virtual ~PhysicalSimulationAlgorithm();
 		
-		virtual bool resetPhysics() = 0;
-		virtual bool executeSimulationStep(PhysicsManager *pmanager) = 0;
-		virtual bool finalizeSetup() = 0;
+		virtual bool resetPhysics();
+		virtual bool executeSimulationStep(PhysicsManager *pmanager);
+		virtual bool finalizeSetup();
 
 		int getIterationsPerStep() const;
 		double getTimeStepSize() const;

@@ -144,6 +144,7 @@ set(nerd_simulator_SRCS
 	Physics/InternalStateValue.cpp
 	Physics/ExternalSensorAdapter.cpp
 	Physics/SphericLightSource.cpp
+	PlugIns/SimulationRecorder/SimulationRecorder.cpp
 )
 
 set(nerd_simulator_MOC_HDRS

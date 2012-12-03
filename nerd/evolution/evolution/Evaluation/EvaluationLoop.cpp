@@ -358,6 +358,7 @@ void EvaluationLoop::executeEvaluationLoop() {
 			mCurrentStep->set(mCurrentStep->get() + 1);
 
 			mNextStepEvent->trigger();
+
 			Core::getInstance()->executePendingTasks();
 
 			if(mDoShutDown) {

@@ -303,6 +303,9 @@ void NeuralNetworkManager::eventOccured(Event *event) {
 	if(event == 0) {
 		return;
 	}
+	else if(Core::getInstance()->isShuttingDown()) {
+		return;
+	}
 	else if(event == mNetworkEvaluationStarted) {
 		executeNeuralNetworks();
 	}

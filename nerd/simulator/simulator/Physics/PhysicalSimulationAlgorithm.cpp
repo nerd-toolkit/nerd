@@ -82,6 +82,22 @@ PhysicalSimulationAlgorithm::PhysicalSimulationAlgorithm(const QString &name)
 PhysicalSimulationAlgorithm::~PhysicalSimulationAlgorithm() {
 }
 
+
+bool PhysicalSimulationAlgorithm::resetPhysics() {
+	return true;
+}
+	
+	
+bool PhysicalSimulationAlgorithm::executeSimulationStep(PhysicsManager *pmanager) {
+	return true;
+}
+
+
+bool PhysicalSimulationAlgorithm::finalizeSetup() {
+	return true;
+}
+
+
 int PhysicalSimulationAlgorithm::getIterationsPerStep() const {
 	return mIterationsPerStepValue->get();
 }

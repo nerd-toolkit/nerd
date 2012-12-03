@@ -85,6 +85,7 @@
 #include "Logging/SimpleFitnessLogger.h"
 #include <NerdConstants.h>
 #include <NeuroModulation/NeuroModulatorManager.h>
+#include "PlugIns/SimulationRecorder/SimulationRecorder.h"
 
 using namespace std;
 
@@ -157,6 +158,9 @@ bool NerdNeuroSimApplication::setupApplication()
 		//install ODE PhysicsLayer
 		ODE_Physics();
 	}
+	
+	//install simulation recorder
+	new SimulationRecorder();
 	
 	new StepsPerSecondCounter();
 

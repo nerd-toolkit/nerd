@@ -47,6 +47,7 @@
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
+#include <Value/IntValue.h>
 #include "Network/Neuron.h"
 
 
@@ -62,8 +63,14 @@ ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction()
 	: ActivationFunction("Chaotic")
 {
 	mGamma = new DoubleValue(0.9);
+	mMode = new IntValue(0);
 	
 	addParameter("Gamma", mGamma);
+	addParameter("Mode", mMode);
+	
+	mMode->setDescription("Update Mode:\n"
+							"(0) a(t+1) = (gamma * a(t)) + ((1 - gamma) * input)\n"
+							"(1) a(t+1) = (gamma * a(t) + input");
 }
 
 
@@ -77,6 +84,7 @@ ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction(
 	: ActivationFunction(other)
 {
 	mGamma = dynamic_cast<DoubleValue*>(getParameter("Gamma"));
+	mMode = dynamic_cast<IntValue*>(getParameter("Mode"));
 }
 
 /**
@@ -106,7 +114,12 @@ double ChaoticNeuronActivationFunction::calculateActivation(Neuron *owner) {
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
 		externalInput += i.next()->calculateActivation();
 	}
-	return (mGamma->get() * activation) + ((1.0 - mGamma->get()) * externalInput);
+	if(mMode->get() == 0) {
+		return (mGamma->get() * activation) + ((1.0 - mGamma->get()) * externalInput);
+	}
+	else {
+		return (mGamma->get() * activation) + externalInput;
+	}
 }
 
 
@@ -121,6 +134,9 @@ bool ChaoticNeuronActivationFunction::equals(ActivationFunction *activationFunct
 		return false;
 	}
 	if(af->mGamma->get() != mGamma->get()) {
+		return false;
+	}
+	if(af->mMode->get() != mMode->get()) {
 		return false;
 	}
 	return true;

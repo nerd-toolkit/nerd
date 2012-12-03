@@ -81,6 +81,9 @@ const QString SimulationConstants::VALUE_RUN_REAL_TIME_RECORDER
 		
 const QString SimulationConstants::VALUE_SWITCH_YZ_AXES
 		= "/Simulation/Switch-Y-Z-Axes";
+		
+const QString SimulationConstants::VALUE_DISABLE_PHYSICS
+		= "/Simulation/DisablePhysics";
 
 //**************************************************************************
 //Event names

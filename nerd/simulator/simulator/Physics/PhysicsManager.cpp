@@ -83,7 +83,7 @@ PhysicsManager::PhysicsManager() : mPhysicalSimulationAlgorithm(0), mCollisionMa
 		mResetSettingsTerminatedEvent(0), mInitialResetDone(false), mCurrentSimulationTime(0),
 		mCurrentRealTime(0),  mResetDuration(0), mStepExecutionDuration(0),
 		mPhysicalStepDuration(0), mSynchronizationDuration(0), mPostStepDuration(0),
-		mCollisionHandlingDuration(0), mResetMutex(QMutex::Recursive)
+		mCollisionHandlingDuration(0), mDisablePhysics(0), mResetMutex(QMutex::Recursive)
 {
 	EventManager *em = Core::getInstance()->getEventManager();
 
@@ -99,9 +99,12 @@ PhysicsManager::PhysicsManager() : mPhysicalSimulationAlgorithm(0), mCollisionMa
 	bool switchXZ = switchXZArg->getNumberOfEntries() > 0 ? false : true;
 	
 	mSwitchYZAxes = new BoolValue(switchXZ);
+	mSwitchYZAxes->setDescription("Changes the XYZ space to a XZY space, so that X and Y are in the plain.");
 	Core::getInstance()->getValueManager()->addValue(SimulationConstants::VALUE_SWITCH_YZ_AXES, mSwitchYZAxes);
 	
-	
+	mDisablePhysics = new BoolValue(false);
+	mDisablePhysics->setDescription("If true, then the physical simulation is skipped and no update of the physics takes place.");
+	Core::getInstance()->getValueManager()->addValue(SimulationConstants::VALUE_DISABLE_PHYSICS, mDisablePhysics);
 }
 
 
@@ -282,6 +285,10 @@ bool PhysicsManager::resetSimulation() {
 
 bool PhysicsManager::executeSimulationStep() {
 
+	if(mDisablePhysics->get()) {
+		return true;
+	}
+	
 	QTime stepTime;
 	QTime time;
 
@@ -695,7 +702,11 @@ void PhysicsManager::eventOccured(Event *e) {
 	if(e == 0) {
 		return;
 	}
+	else if(Core::getInstance()->isShuttingDown()) {
+		return;
+	}
 	else if(e == mNextStepEvent) {
+		
 		if(mInitialResetDone == false) {
 			//this should ensure that reset was executed at least once before a
 			//step is executed.
