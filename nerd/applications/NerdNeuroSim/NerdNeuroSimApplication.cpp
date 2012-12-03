@@ -85,7 +85,7 @@
 #include "Logging/SimpleFitnessLogger.h"
 #include <NerdConstants.h>
 #include <NeuroModulation/NeuroModulatorManager.h>
-#include "PlugIns/SimulationRecorder/SimulationRecorder.h"
+#include "PlugIns/NetworkSimulationRecorder/NetworkSimulationRecorder.h"
 
 using namespace std;
 
@@ -133,10 +133,14 @@ bool NerdNeuroSimApplication::setupGui() {
 
 bool NerdNeuroSimApplication::setupApplication()
 {
+	//install simulation recorder
+	new NetworkSimulationRecorder();
+	
+	
 // 	StandardConstraintCollection();
 // 	StandardNeuralNetworkFunctions();
 	NeuroAndSimEvaluationStandardGuiApplication::setupApplication();
-
+	
 	//Install network characterization
 	new NeuralNetworkAttributes();
 
@@ -159,8 +163,7 @@ bool NerdNeuroSimApplication::setupApplication()
 		ODE_Physics();
 	}
 	
-	//install simulation recorder
-	new SimulationRecorder();
+	
 	
 	new StepsPerSecondCounter();
 

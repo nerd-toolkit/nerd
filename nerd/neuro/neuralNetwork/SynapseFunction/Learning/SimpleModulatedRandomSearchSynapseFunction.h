@@ -101,6 +101,7 @@ namespace nerd {
 
 		
 		NeuralNetwork *mCurrentNetwork;
+		NeuralNetworkManager *mNetworkManager;
 	};
 	
 }

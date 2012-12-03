@@ -117,13 +117,19 @@ NeuralNetworkManager::NeuralNetworkManager()
 										"output neurons is NOT applied to the motors, so the network has no effect"
 										"on the controlled animat.");
 	Core::getInstance()->getValueManager()->addValue(
-					NeuralNetworkConstants::VALUE_NNM_BYPASS_NETWORKS, mBypassNetworkValue);
+				NeuralNetworkConstants::VALUE_NNM_BYPASS_NETWORKS, mBypassNetworkValue);
 	
 	mNumberOfNetworkUpdatesPerStep = new IntValue(1);
 	mNumberOfNetworkUpdatesPerStep->setDescription("Number of network update steps during each network update. "
 												   "This allows networks running faster than the physical simulation.");
 	Core::getInstance()->getValueManager()->addValue(
-		NeuralNetworkConstants::VALUE_NNM_NUMBER_OF_ITERATIONS_PER_STEP, mNumberOfNetworkUpdatesPerStep);
+				NeuralNetworkConstants::VALUE_NNM_NUMBER_OF_ITERATIONS_PER_STEP, mNumberOfNetworkUpdatesPerStep);
+	
+	mDisablePlasticity = new BoolValue(false);
+	mDisablePlasticity->setDescription("Gives a hint to all plastic synapse and activation functions to stop plasticity.\n"
+										"Note: There is no guarantee that there are no violations of that hint!");
+	Core::getInstance()->getValueManager()->addValue(
+				NeuralNetworkConstants::VALUE_DISABLE_NEURAL_PLASTICITY, mDisablePlasticity);
 	
 	//add default tags
 	NeuroTagManager *ntm = NeuroTagManager::getInstance();
@@ -485,6 +491,10 @@ QList<SynapseFunction*> NeuralNetworkManager::getSynapseFunctionPrototypes() con
 
 BoolValue* NeuralNetworkManager::getBypassNetworksValue() const {
 	return mBypassNetworkValue;
+}
+
+BoolValue* NeuralNetworkManager::getDisablePlasticityValue() const {
+	return mDisablePlasticity;
 }
 
 

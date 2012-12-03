@@ -96,6 +96,7 @@ namespace nerd {
 		QList<SynapseFunction*> getSynapseFunctionPrototypes() const;
 
 		BoolValue* getBypassNetworksValue() const;
+		BoolValue* getDisablePlasticityValue() const;
 
 		QMutex* getNetworkExecutionMutex();
 		
@@ -129,6 +130,7 @@ namespace nerd {
 		QMutex mNetworkExecutionMutex;
 		BoolValue *mBypassNetworkValue;
 		IntValue *mNumberOfNetworkUpdatesPerStep;
+		BoolValue *mDisablePlasticity;
 
 	};
 

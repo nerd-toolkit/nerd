@@ -46,6 +46,7 @@
 #include "Network/Neuron.h"
 #include <iostream>
 #include <Network/NeuralNetwork.h>
+#include <Network/Neuro.h>
 #include <ActivationFunction/NeuroModulatorActivationFunction.h>
 #include "ModularNeuralNetwork/NeuroModule.h"
 #include "Math/Vector3D.h"
@@ -63,6 +64,8 @@ NeuroModulator::NeuroModulator()
 {
 	mEnableUpdate = NeuroModulatorManager::getInstance()->getEnableModulatorUpdateValue();
 	mEnableConcentrationCalculation = NeuroModulatorManager::getInstance()->getEnableModulatorConcentrationLevelsValue();
+	
+	mNetworkManager = Neuro::getNeuralNetworkManager();
 }
 
 
@@ -73,6 +76,8 @@ NeuroModulator::NeuroModulator(const NeuroModulator &other)
 {
 	mEnableUpdate = NeuroModulatorManager::getInstance()->getEnableModulatorUpdateValue();
 	mEnableConcentrationCalculation = NeuroModulatorManager::getInstance()->getEnableModulatorConcentrationLevelsValue();
+	
+	mNetworkManager = Neuro::getNeuralNetworkManager();
 }
 
 
@@ -104,6 +109,12 @@ void NeuroModulator::reset(NeuralNetworkElement *owner) {
 }
 
 void NeuroModulator::update(NeuralNetworkElement *owner) {
+	
+	if(mNetworkManager->getDisablePlasticityValue()->get()) {
+		//disable neuro modulators as long as this hint value is true.
+		return;
+	}
+
 	
 	QList<int> types = getModulatorTypes();
 	for(int i = 0; i < types.size(); ++i) {

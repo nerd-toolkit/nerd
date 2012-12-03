@@ -77,7 +77,7 @@ SimulationRecorder::SimulationRecorder()
 	vm->addValue("/DataRecorder/ActivatePlayback", mActivatePlayback);
 	vm->addValue("/DataRecorder/FileName", mFileNamePrefix);
 	vm->addValue("/DataRecorder/PlaybackFile", mPlaybackFile);
-	vm->addValue("/DataRecorder/IncludeSimulation", mIncludeSimulation);
+	//vm->addValue("/DataRecorder/IncludeSimulation", mIncludeSimulation);
 	vm->addValue("/DataRecorder/RecordingDirectory", mRecordingDirectory);
 	
 	mActivateRecording->addValueChangedListener(this);
@@ -146,7 +146,12 @@ bool SimulationRecorder::bind() {
 
 
 bool SimulationRecorder::cleanUp() {
-	stopRecording();
+	if(mExecutionMode == 1) {
+		stopRecording();
+	}
+	else if(mExecutionMode == -1) {
+		stopPlayback();
+	}
 	mActivateRecording->removeValueChangedListener(this);
 	mActivatePlayback->removeValueChangedListener(this);
 	return true;
@@ -281,7 +286,8 @@ void SimulationRecorder::recordData(bool forceRecording) {
 	}
 	mData.clear();
 	mDataStream = new QDataStream(&mData, QIODevice::WriteOnly);
-	updateRecordedData();
+	
+	updateRecordedData(*mDataStream);
 	
 	//cerr << "writing bytes: " << mData.size() << endl;
 	
@@ -297,13 +303,13 @@ void SimulationRecorder::recordData(bool forceRecording) {
 
 
 
-void SimulationRecorder::startPlayback() {
+bool SimulationRecorder::startPlayback() {
 	if(mExecutionMode == 1) {
 		stopRecording();
 	}
 	
 	if(mPhysicsDisabled == 0) {
-		return;
+		return false;
 	}
 	
 	mStepStartedEvent->addEventListener(this);
@@ -315,7 +321,7 @@ void SimulationRecorder::startPlayback() {
 		mFile->close();
 		delete mFile;
 		mFile = 0;
-		return;
+		return false;
 	}
 	
 	mFileDataStream.setDevice(mFile);
@@ -331,10 +337,12 @@ void SimulationRecorder::startPlayback() {
 	mExecutionMode = -1;
 	
 	mReachedAndOfFile = false;
+	
+	return true;
 }
 
 
-void SimulationRecorder::stopPlayback() {
+bool SimulationRecorder::stopPlayback() {
 	
 	mStepStartedEvent->removeEventListener(this);
 	
@@ -358,6 +366,8 @@ void SimulationRecorder::stopPlayback() {
 	mFileDataStream.setDevice(0);
 	
 	mExecutionMode = 0;
+	
+	return true;
 }
 
 
@@ -391,7 +401,7 @@ void SimulationRecorder::playbackData() {
 	mData.setRawData(content, size);
 	mDataStream = new QDataStream(&mData, QIODevice::ReadOnly);
 	
-	updatePlaybackData();
+	updatePlaybackData(*mDataStream);
 	
 	delete mDataStream;
 	mDataStream = 0;
@@ -402,6 +412,7 @@ void SimulationRecorder::playbackData() {
 
 
 void SimulationRecorder::updateListOfRecordedValues() {
+	
 	
 	mRecordedValues.clear();
 	
@@ -444,9 +455,10 @@ void SimulationRecorder::updateListOfRecordedValues() {
 }
 
 
-void SimulationRecorder::updateRecordedData() {
+void SimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 	
-	(*mDataStream) << mCurrentStep->get();
+	dataStream << ((int) mRecordedValues.size());
+	dataStream << mCurrentStep->get();
 	
 	//cerr << "record: " << mCurrentStep->get() << " with # " << mRecordedValues.size() << endl;
 	
@@ -454,7 +466,7 @@ void SimulationRecorder::updateRecordedData() {
 	
 	for(QListIterator<DoubleValue*> i(mRecordedValues); i.hasNext();) {
 		double value = i.next()->get();
-		(*mDataStream) << value;
+		dataStream << value;
 		
 		//s += QString::number(value) + ",";
 	}
@@ -463,9 +475,13 @@ void SimulationRecorder::updateRecordedData() {
 }
 
 
-void SimulationRecorder::updatePlaybackData() {
+void SimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
+	
+	int numberOfValues = 0;
+	dataStream >> numberOfValues;
+	
 	int step = 0;
-	(*mDataStream) >> step;
+	dataStream >> step;
 	mCurrentStep->set(step);
 	
 	//cerr << "step: " << step << endl;
@@ -473,11 +489,17 @@ void SimulationRecorder::updatePlaybackData() {
 	//QString s;
 	
 	double val = 0.0;
-	for(QListIterator<DoubleValue*> i(mRecordedValues); i.hasNext();) {
-		(*mDataStream) >> val;
+	int counter = 0;
+	for(QListIterator<DoubleValue*> i(mRecordedValues); i.hasNext() && (counter < numberOfValues);) {
+		dataStream >> val;
 		i.next()->set(val);
+		counter++;
 		
 		//s += QString::number(val) + ",";
+	}
+	//make sure that the network information can be read afterwards, even when objects are missing.
+	for(; counter < numberOfValues; ++counter) {
+		dataStream >> val;
 	}
 	
 	//Core::log("Read: " + s, true);

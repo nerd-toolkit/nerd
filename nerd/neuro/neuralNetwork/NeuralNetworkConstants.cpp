@@ -131,6 +131,9 @@ const QString NeuralNetworkConstants::VALUE_ANALYZER_RUN_COUNTER
 		
 const QString NeuralNetworkConstants::VALUE_ENABLE_NEURO_MODULATORS
 		= "/NeuralNetwork/EnableNeuroModulators";
+		
+const QString NeuralNetworkConstants::VALUE_DISABLE_NEURAL_PLASTICITY
+		= "/NeuralNetwork/DisableNeuralPlasticity";
 
 //**************************************************************************
 //Tag Names

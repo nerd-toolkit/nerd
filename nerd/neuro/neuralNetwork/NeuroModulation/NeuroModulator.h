@@ -53,6 +53,8 @@
 
 namespace nerd {
 
+class NeuralNetworkManager;
+
 	class NeuroModule;
 	class NeuralNetworkElement;
 	class Neuron;
@@ -118,6 +120,8 @@ namespace nerd {
 		
 		BoolValue *mEnableUpdate;
 		BoolValue *mEnableConcentrationCalculation;
+		
+		NeuralNetworkManager *mNetworkManager;
 
 	};
 

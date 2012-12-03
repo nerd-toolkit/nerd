@@ -46,6 +46,7 @@
 #include <Math/Math.h>
 #include <Math/Random.h>
 #include "Network/Neuron.h"
+#include <Network/Neuro.h>
 #include <QStringList>
 #include <Core/Core.h>
 
@@ -74,6 +75,8 @@ namespace nerd {
 		addParameter("Probability", mProbabilityForChange);
 		addParameter("Inactive", mInactive);
 		
+		mNetworkManager = Neuro::getNeuralNetworkManager();
+		
 		updateSettings();
 	}
 
@@ -94,6 +97,9 @@ namespace nerd {
 			i.next();
 			addObserableOutput(i.key(), i.value()->createCopy());
 		}
+		
+		mNetworkManager = Neuro::getNeuralNetworkManager();
+		
 		updateSettings();
 	}
 
@@ -151,14 +157,17 @@ namespace nerd {
 			return owner->getStrengthValue().get();
 		}
 		
-		for(int i = 0; i < mParameters.size(); ++i) {
-		
-			SimpleModulatedRandomSearchParameters &params = mParameters[i];
+		if(mNetworkManager->getDisablePlasticityValue()->get() == false) {
+			//only execute modulation if the global plasticity hint allows it.
+			for(int i = 0; i < mParameters.size(); ++i) {
+			
+				SimpleModulatedRandomSearchParameters &params = mParameters[i];
 
-			switch(params.mMode) {
-				case 0:
-				default:
-					randomSearchMode0(owner, params);
+				switch(params.mMode) {
+					case 0:
+					default:
+						randomSearchMode0(owner, params);
+				}
 			}
 		}
 		

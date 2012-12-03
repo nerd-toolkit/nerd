@@ -43,11 +43,12 @@
 
 
 
-#ifndef NERDSimulationRecorder_H
-#define NERDSimulationRecorder_H
+#ifndef NERDNetworkSimulationRecorder_H
+#define NERDNetworkSimulationRecorder_H
 
 #include <QString>
 #include <QFile>
+#include <QHash>
 #include <QTextStream>
 #include "Value/InterfaceValue.h"
 #include "Physics/SimObjectGroup.h"
@@ -57,20 +58,19 @@
 #include "Value/StringValue.h"
 #include "Value/FileNameValue.h"
 #include "Value/BoolValue.h"
-#include <QFile>
-#include <QVarLengthArray>
+#include "PlugIns/SimulationRecorder/SimulationRecorder.h"
+#include "Network/NeuralNetworkManager.h"
 
 namespace nerd {
 
 	/**
-	 * SimulationRecorder
+	 * NetworkSimulationRecorder
 	 */
-	class SimulationRecorder : public virtual SystemObject, public virtual EventListener,
-							public virtual ValueChangedListener 
+	class NetworkSimulationRecorder : public SimulationRecorder
 	{
 	public:
-		SimulationRecorder();
-		virtual ~SimulationRecorder();
+		NetworkSimulationRecorder();
+		virtual ~NetworkSimulationRecorder();
 
 		virtual QString getName() const;
 		
@@ -81,49 +81,27 @@ namespace nerd {
 		virtual void eventOccured(Event *event);
 		virtual void valueChanged(Value *value) ;
 		
-		virtual void startRecording();
-		virtual void stopRecording();
-		virtual void recordData(bool forceRecording = false);
-		
-		
 		virtual bool startPlayback();
 		virtual bool stopPlayback();
-		virtual void playbackData();
 		
 	protected:
-		
 		virtual void updateListOfRecordedValues();
 		virtual void updateRecordedData(QDataStream &dataStream);
 		virtual void updatePlaybackData(QDataStream &dataStream);
-
-	private:	
-		Event *mResetEvent;
-		Event *mStepStartedEvent;
-		Event *mStepCompletedEvent;
-		
-		IntValue *mCurrentStep;
-		BoolValue *mPhysicsDisabled;
-		
-		BoolValue *mActivateRecording;
-		BoolValue *mActivatePlayback;
-		FileNameValue *mRecordingDirectory;
-		StringValue *mFileNamePrefix;
-		FileNameValue *mPlaybackFile;
-		BoolValue *mIncludeSimulation;
-		
-		QList<DoubleValue*> mRecordedValues;
-		QVector<double> mFrameMarker;
-		
-		bool mPhysicsWasDisabled;
 		
 	protected:
-		QFile *mFile;
-		QByteArray mData;
-		QDataStream *mDataStream;
-		QDataStream mFileDataStream;
+		Event *mNetworksReplacedEvent;
+		Event *mNetworkStructureChangedEvent;
 		
-		int mExecutionMode;
-		bool mReachedAndOfFile;
+		BoolValue *mDisablePlasticityValue;
+		bool mPlasticityWasDisabled;
+		bool mNetworksChanged;
+		
+		BoolValue *mIncludeNetworks;
+		
+		NeuralNetworkManager *mNetworkManager;
+		QList<Neuron*> mNeurons;
+		QList<Synapse*> mSynapses;
 	};
 
 }
