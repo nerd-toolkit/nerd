@@ -398,8 +398,8 @@ void SimulationRecorder::playbackData() {
 		mReachedAndOfFile = true;
 	}
 	
-	mData.setRawData(content, size);
-	mDataStream = new QDataStream(&mData, QIODevice::ReadOnly);
+	QByteArray data(content, size);;
+	mDataStream = new QDataStream(&data, QIODevice::ReadOnly);
 	
 	updatePlaybackData(*mDataStream);
 	
