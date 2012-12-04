@@ -324,9 +324,21 @@ namespace nerd {
 			double min = params.mParam2;
 			double max = params.mParam3;
 			
-			double newWeight = Math::max(min, Math::min(max, 
-								owner->getStrengthValue().get() 
-									+ (Random::nextDoubleBetween(-variance, variance))));
+// 			double newWeight = Math::max(min, Math::min(max, 
+// 								owner->getStrengthValue().get() 
+// 									+ (Random::nextDoubleBetween(-variance, variance))));
+			
+			//if the new weight is out of range, then do not saturate, but flip to the other side
+			//of the range. This should avoid that weights tend to be saturated at the max and min values.
+			double newWeight = owner->getStrengthValue().get() + (Random::nextDoubleBetween(-variance, variance));
+			
+			while(newWeight > max) {
+				newWeight -= (max - min);
+			}
+			while(newWeight < min) {
+				newWeight += (max - min);
+			}
+			
 			owner->getStrengthValue().set(newWeight);
 			
 			bool ok = true;

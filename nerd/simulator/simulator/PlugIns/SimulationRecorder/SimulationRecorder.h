@@ -48,7 +48,7 @@
 
 #include <QString>
 #include <QFile>
-#include <QTextStream>
+#include <QDataStream>
 #include "Value/InterfaceValue.h"
 #include "Physics/SimObjectGroup.h"
 #include "Core/SystemObject.h"

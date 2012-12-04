@@ -104,7 +104,7 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 					"parameters like bias, weight, observable parameters are "
 					"reset to the initial state before each run");
 
-	mResetSimulator = new BoolValue(true);
+	mResetSimulator = new BoolValue(false);
 	mResetSimulator->setDescription("If a simulation is used, then this property "
 									"decides whether the simulation is reset before each run.");
 	

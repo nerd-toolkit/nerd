@@ -312,6 +312,8 @@ void PictureSeriesCreator::deactivate() {
 		
 			cerr << "Video [" << fileName.toStdString().c_str() 
 				 << "] created successfully!" << endl;
+				 
+				 cerr << "Deleting screenshots... Please wait!" << endl;
 	
 			QDir dir(mCurrentWorkingDirectory);
 	

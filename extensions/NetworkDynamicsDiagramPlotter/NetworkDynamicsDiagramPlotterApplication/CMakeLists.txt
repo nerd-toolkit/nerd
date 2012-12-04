@@ -33,8 +33,10 @@ QT4_ADD_RESOURCES(nerd_networkDynamicsDiagramPlotter_RC_SRCS ${nerd_networkDynam
 QT4_WRAP_UI(nerd_networkDynamicsDiagramPlotter_UI_HDRS ${nerd_networkDynamicsDiagramPlotter_UIS})
 
 
-#Create library.
+#Create executable.
 add_executable(NetworkDynamicsDiagramPlotterApplication ${nerd_networkDynamicsDiagramPlotter_SRCS} ${nerd_networkDynamicsDiagramPlotter_MOC_SRCS} ${nerd_networkDynamicsDiagramPlotter_RC_SRCS} ${nerd_networkDynamicsDiagramPlotter_UI_HDRS})
+
+add_executable(NerdDynamicsAnalyzer ${nerd_networkDynamicsDiagramPlotter_SRCS} ${nerd_networkDynamicsDiagramPlotter_MOC_SRCS} ${nerd_networkDynamicsDiagramPlotter_RC_SRCS} ${nerd_networkDynamicsDiagramPlotter_UI_HDRS})
 
 set(ODE_INCLUDE_PATH ../../../ode-0.12/include)
 set(ODE_LIBRARY_PATH ../../../ode-0.12/ode/src/.libs/libode.a)
@@ -67,9 +69,28 @@ TARGET_LINK_LIBRARIES(NetworkDynamicsDiagramPlotterApplication
 	${QT_LIBRARIES}
 )
 
+TARGET_LINK_LIBRARIES(NerdDynamicsAnalyzer
+	${CMAKE_CURRENT_BINARY_DIR}/../NetworkDynamicsDiagramPlotterLib/libNetworkDynamicsDiagramPlotterLib.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/evolution/neuroAndSimEvaluation/libneuroAndSimEvaluation.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/neuro/networkEditor/libnetworkEditor.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/neuro/neuralNetwork/libneuralNetwork.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/simulator/odePhysics/libodePhysics.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/simulator/simple2DPhysics/libsimple2DPhysics.a
+	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/simulator/simulator/libsimulator.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/evolution/evolution/libevolution.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../../nerd/system/nerd/libnerd.a
+	${QT_LIBRARIES}
+)
+
 if(WIN32)
 elseif(UNIX)
 TARGET_LINK_LIBRARIES(NetworkDynamicsDiagramPlotterApplication
+	-lGLU
+	-lGL
+)
+
+TARGET_LINK_LIBRARIES(NerdDynamicsAnalyzer
 	-lGLU
 	-lGL
 )
