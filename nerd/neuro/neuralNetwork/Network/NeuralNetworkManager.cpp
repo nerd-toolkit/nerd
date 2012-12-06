@@ -131,6 +131,11 @@ NeuralNetworkManager::NeuralNetworkManager()
 	Core::getInstance()->getValueManager()->addValue(
 				NeuralNetworkConstants::VALUE_DISABLE_NEURAL_PLASTICITY, mDisablePlasticity);
 	
+	mDisableNetworkUpdate = new BoolValue(false);
+	mDisableNetworkUpdate->setDescription("Disables the entire network update of all networks.");
+	Core::getInstance()->getValueManager()->addValue(
+				NeuralNetworkConstants::VALUE_DISABLE_NETWORK_UPDATE, mDisableNetworkUpdate);
+	
 	//add default tags
 	NeuroTagManager *ntm = NeuroTagManager::getInstance();
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_FLIP_NEURON_ACTIVITY, 
@@ -497,6 +502,9 @@ BoolValue* NeuralNetworkManager::getDisablePlasticityValue() const {
 	return mDisablePlasticity;
 }
 
+BoolValue* NeuralNetworkManager::getDisableNetworkUpdateValue() const {
+	return mDisableNetworkUpdate;
+}
 
 QMutex* NeuralNetworkManager::getNetworkExecutionMutex() {
 	return &mNetworkExecutionMutex;
@@ -520,12 +528,16 @@ Event* NeuralNetworkManager::getIterationCompletedEvent() const {
 void NeuralNetworkManager::executeNeuralNetworks() {
 	TRACE("NeuralNetworkManager::executeNeuralNetworks");
 
-	//mNetworkEvaluationStarted is triggered as upstream event of NextStep.
-	QMutexLocker locker(&mNetworkExecutionMutex);
-	for(QListIterator<NeuralNetwork*> i(mNeuralNetworks); i.hasNext();) {
-		NeuralNetwork *net = i.next();
-		net->executeStep(mNumberOfNetworkUpdatesPerStep->get());
+	if(!mDisableNetworkUpdate->get()) {
+		//mNetworkEvaluationStarted is triggered as upstream event of NextStep.
+		QMutexLocker locker(&mNetworkExecutionMutex);
+		for(QListIterator<NeuralNetwork*> i(mNeuralNetworks); i.hasNext();) {
+			NeuralNetwork *net = i.next();
+			net->executeStep(mNumberOfNetworkUpdatesPerStep->get());
+		}
 	}
+	//trigger evaluation competed even if the update was not triggered
+	//because it may still be changed by a third-party plug-in, e.g. a playback device.
 	mNetworkEvaluationCompleted->trigger();
 }
 

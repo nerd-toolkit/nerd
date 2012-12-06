@@ -97,6 +97,7 @@ namespace nerd {
 
 		BoolValue* getBypassNetworksValue() const;
 		BoolValue* getDisablePlasticityValue() const;
+		BoolValue* getDisableNetworkUpdateValue() const;
 
 		QMutex* getNetworkExecutionMutex();
 		
@@ -131,6 +132,7 @@ namespace nerd {
 		BoolValue *mBypassNetworkValue;
 		IntValue *mNumberOfNetworkUpdatesPerStep;
 		BoolValue *mDisablePlasticity;
+		BoolValue *mDisableNetworkUpdate;
 
 	};
 

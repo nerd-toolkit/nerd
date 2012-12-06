@@ -99,6 +99,7 @@ namespace nerd {
 		static const QString VALUE_ANALYZER_RUN_COUNTER;
 		static const QString VALUE_ENABLE_NEURO_MODULATORS;
 		static const QString VALUE_DISABLE_NEURAL_PLASTICITY;
+		static const QString VALUE_DISABLE_NETWORK_UPDATE;
 
 	//**************************************************************************
 	//Tag Names

@@ -101,9 +101,11 @@ bool NetworkSimulationRecorder::bind() {
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	
 	mDisablePlasticityValue = vm->getBoolValue(NeuralNetworkConstants::VALUE_DISABLE_NEURAL_PLASTICITY);
+	mDisableNetworkUpdateValue = vm->getBoolValue(NeuralNetworkConstants::VALUE_DISABLE_NETWORK_UPDATE);
 	
-	
-	if(mNetworksReplacedEvent == 0 || mNetworkStructureChangedEvent == 0 || mDisablePlasticityValue == 0) {
+	if(mNetworksReplacedEvent == 0 || mNetworkStructureChangedEvent == 0 
+		|| mDisablePlasticityValue == 0 || mDisableNetworkUpdateValue == 0) 
+	{
 		ok = false;
 		Core::log("NetworkSimulationRecorder: Could not find all required events and values.");
 	}
@@ -142,7 +144,9 @@ bool NetworkSimulationRecorder::startPlayback() {
 	bool ok = SimulationRecorder::startPlayback();
 	
 	mPlasticityWasDisabled = mDisablePlasticityValue->get();
+	mNetworkUpdateWasDisabled = mDisableNetworkUpdateValue->get();
 	mDisablePlasticityValue->set(true);
+	mDisableNetworkUpdateValue->set(true);
 	
 	return ok;
 }
@@ -152,6 +156,7 @@ bool NetworkSimulationRecorder::stopPlayback() {
 	bool ok = SimulationRecorder::stopPlayback();
 	
 	mDisablePlasticityValue->set(mPlasticityWasDisabled);
+	mDisableNetworkUpdateValue->set(mNetworkUpdateWasDisabled);
 	
 	return ok;
 }
@@ -200,7 +205,10 @@ void NetworkSimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 	for(QListIterator<Neuron*> i(mNeurons); i.hasNext();) {
 		Neuron *neuron = i.next();
 		
-		dataStream << neuron->getId() << neuron->getBiasValue().get();
+		dataStream << neuron->getId() 
+					<< neuron->getBiasValue().get()
+					<< neuron->getOutputActivationValue().get() 
+					<< neuron->getActivationValue().get();
 		
 		NeuroModulatorActivationFunction *af = 
 					dynamic_cast<NeuroModulatorActivationFunction*>(neuron->getActivationFunction());
@@ -259,13 +267,15 @@ void NetworkSimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 	dataStream >> numberOfNeurons;
 	
 	qulonglong id = 0;
-	double bias = 0;
+	double bias = 0.0;
+	double output = 0.0;
+	double activation = 0.0;
 	int numberOfNMs = 0;
 	
 	for(int i = 0; i < numberOfNeurons; ++i) {
-		dataStream >> id;
-		dataStream >> bias;
-		dataStream >> numberOfNMs;
+		dataStream >> id >> bias >> output >> activation;
+		
+		dataStream >> numberOfNMs; 
 		
 		Neuron *neuron = NeuralNetwork::selectNeuronById(id, mNeurons);
 		
@@ -275,6 +285,8 @@ void NetworkSimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 			continue;
 		}
 		neuron->getBiasValue().set(bias);
+		neuron->getActivationValue().set(activation);
+		neuron->getOutputActivationValue().set(output);
 
 		NeuroModulatorActivationFunction *af = 
 					dynamic_cast<NeuroModulatorActivationFunction*>(neuron->getActivationFunction());

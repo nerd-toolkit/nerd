@@ -134,6 +134,9 @@ const QString NeuralNetworkConstants::VALUE_ENABLE_NEURO_MODULATORS
 		
 const QString NeuralNetworkConstants::VALUE_DISABLE_NEURAL_PLASTICITY
 		= "/NeuralNetwork/DisableNeuralPlasticity";
+		
+const QString NeuralNetworkConstants::VALUE_DISABLE_NETWORK_UPDATE
+		= "/NeuralNetwork/DisableNetworkUpdate";
 
 //**************************************************************************
 //Tag Names

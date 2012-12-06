@@ -94,7 +94,9 @@ namespace nerd {
 		Event *mNetworkStructureChangedEvent;
 		
 		BoolValue *mDisablePlasticityValue;
+		BoolValue *mDisableNetworkUpdateValue;
 		bool mPlasticityWasDisabled;
+		bool mNetworkUpdateWasDisabled;
 		bool mNetworksChanged;
 		
 		BoolValue *mIncludeNetworks;
