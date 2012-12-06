@@ -110,9 +110,9 @@ namespace nerd {
 		StringValue *mFileNamePrefix;
 		FileNameValue *mPlaybackFile;
 		BoolValue *mIncludeSimulation;
+		IntValue *mRecordingInterval;
 		
 		QList<DoubleValue*> mRecordedValues;
-		QVector<double> mFrameMarker;
 		
 		bool mPhysicsWasDisabled;
 		
@@ -124,6 +124,10 @@ namespace nerd {
 		
 		int mExecutionMode;
 		bool mReachedAndOfFile;
+		
+		int mStepCounter;
+		bool mFirstPlaybackStep;
+		bool readStepNumber;
 	};
 
 }

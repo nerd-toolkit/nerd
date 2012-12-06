@@ -177,6 +177,7 @@ class PhysicsManager : public virtual SystemObject, public virtual EventListener
 
 		DoubleValue *mCurrentSimulationTime;
 		DoubleValue *mCurrentRealTime;
+		IntValue *mCurrentStep;
 		IntValue *mResetDuration;
 		IntValue *mStepExecutionDuration;
 		IntValue *mPhysicalStepDuration;

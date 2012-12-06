@@ -71,6 +71,7 @@ SimulationRecorder::SimulationRecorder()
 	mFileNamePrefix = new StringValue("rec");
 	mPlaybackFile = new FileNameValue("");
 	mIncludeSimulation = new BoolValue(true);
+	mRecordingInterval = new IntValue(1);
 	
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/DataRecorder/ActivateRecording", mActivateRecording);
@@ -79,15 +80,11 @@ SimulationRecorder::SimulationRecorder()
 	vm->addValue("/DataRecorder/PlaybackFile", mPlaybackFile);
 	//vm->addValue("/DataRecorder/IncludeSimulation", mIncludeSimulation);
 	vm->addValue("/DataRecorder/RecordingDirectory", mRecordingDirectory);
+	vm->addValue("/DataRecorder/RecordingInterval", mRecordingInterval);
 	
 	mActivateRecording->addValueChangedListener(this);
 	mActivatePlayback->addValueChangedListener(this);
 	
-	//TODO redo frame markers with byte array.
-	mFrameMarker.append(1234);
-	mFrameMarker.append(-5678);
-	mFrameMarker.append(246);
-	mFrameMarker.append(-864);
 	
 }
 
@@ -240,7 +237,11 @@ void SimulationRecorder::startRecording() {
 	mData.reserve(5000);
 	mFileDataStream.setDevice(mFile);
 	
+	//write data file format version number
+	mFileDataStream << ((uint) 1);
+	
 	mExecutionMode = 1;
+	mStepCounter = 0;
 	
 }
 
@@ -284,8 +285,17 @@ void SimulationRecorder::recordData(bool forceRecording) {
 	if(mFile == 0 || !mFile->isOpen()) {
 		return;
 	}
+	
+	++mStepCounter;
+	if(!forceRecording && mStepCounter < mRecordingInterval->get()) {
+		return;
+	}
+	mStepCounter = 0;
+	
 	mData.clear();
 	mDataStream = new QDataStream(&mData, QIODevice::WriteOnly);
+	
+	mFileDataStream << mCurrentStep->get();
 	
 	updateRecordedData(*mDataStream);
 	
@@ -329,14 +339,20 @@ bool SimulationRecorder::startPlayback() {
 	mPhysicsWasDisabled = mPhysicsDisabled->get();
 	mPhysicsDisabled->set(true);
 	
-	Core::log("Starting data playback from file [" + mFile->fileName() + "]! ", true);
-	
 	//get all values to record...
 	updateListOfRecordedValues();
 	
 	mExecutionMode = -1;
 	
 	mReachedAndOfFile = false;
+	
+	//read out data file format version number
+	uint version = 0;
+	mFileDataStream >> version;
+	Core::log("Starting data playback from file [" + mFile->fileName() + "]! Data Format: " + QString::number(version), true);
+	
+	mFirstPlaybackStep = true;
+	readStepNumber = false;
 	
 	return true;
 }
@@ -386,7 +402,24 @@ void SimulationRecorder::playbackData() {
 		mFile->reset();
 		mFileDataStream.setDevice(mFile);
 		mReachedAndOfFile = false;
+		uint version = 0;
+		mFileDataStream >> version;
+		readStepNumber = false;
 	}
+	
+	//check if the new frame should be applied...
+	if(!readStepNumber) {
+		mFileDataStream >> mStepCounter;
+		readStepNumber = true;
+	}
+	
+	if(!mFirstPlaybackStep && (mStepCounter > mCurrentStep->get())) {
+		return;
+	}
+	mFirstPlaybackStep = false;
+	readStepNumber = false;
+	
+	mCurrentStep->set(mStepCounter);
 	
 	uint size = 0;
 	mFileDataStream >> size;
@@ -458,7 +491,6 @@ void SimulationRecorder::updateListOfRecordedValues() {
 void SimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 	
 	dataStream << ((int) mRecordedValues.size());
-	dataStream << mCurrentStep->get();
 	
 	//cerr << "record: " << mCurrentStep->get() << " with # " << mRecordedValues.size() << endl;
 	
@@ -479,10 +511,6 @@ void SimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 	
 	int numberOfValues = 0;
 	dataStream >> numberOfValues;
-	
-	int step = 0;
-	dataStream >> step;
-	mCurrentStep->set(step);
 	
 	//cerr << "step: " << step << endl;
 	

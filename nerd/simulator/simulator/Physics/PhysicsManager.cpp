@@ -81,7 +81,7 @@ PhysicsManager::PhysicsManager() : mPhysicalSimulationAlgorithm(0), mCollisionMa
 		mCompletedNextStepEvent(0),
 		mResetEvent(0), mResetFinalizedEvent(0), mResetSettingsEvent(0), 
 		mResetSettingsTerminatedEvent(0), mInitialResetDone(false), mCurrentSimulationTime(0),
-		mCurrentRealTime(0),  mResetDuration(0), mStepExecutionDuration(0),
+		mCurrentRealTime(0),  mCurrentStep(0), mResetDuration(0), mStepExecutionDuration(0),
 		mPhysicalStepDuration(0), mSynchronizationDuration(0), mPostStepDuration(0),
 		mCollisionHandlingDuration(0), mDisablePhysics(0), mResetMutex(QMutex::Recursive)
 {
@@ -185,6 +185,8 @@ bool PhysicsManager::bind() {
 	mNextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, true);
 	mCompletedNextStepEvent = em->getEvent(
 		NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, true);
+	
+	mCurrentStep = Core::getInstance()->getValueManager()->getIntValue(SimulationConstants::VALUE_EXECUTION_CURRENT_STEP);
 
 	if(mNextStepEvent == 0
 		|| mCompletedNextStepEvent == 0
@@ -286,6 +288,14 @@ bool PhysicsManager::resetSimulation() {
 bool PhysicsManager::executeSimulationStep() {
 
 	if(mDisablePhysics->get()) {
+		//still update the simulation time!
+		if(mCurrentStep != 0) {
+			//calculate the simulation time according to the current step.
+			mCurrentSimulationTime->set(mCurrentStep->get()
+					* mPhysicalSimulationAlgorithm->getTimeStepSize()
+					* mPhysicalSimulationAlgorithm->getIterationsPerStep());
+		}
+		
 		return true;
 	}
 	
@@ -327,9 +337,17 @@ bool PhysicsManager::executeSimulationStep() {
 		if(measurePerformance) {
 			mCollisionHandlingDuration->set(time.restart());
 		}
-		mCurrentSimulationTime->set(mCurrentSimulationTime->get()
-				+ mPhysicalSimulationAlgorithm->getTimeStepSize()
-				* mPhysicalSimulationAlgorithm->getIterationsPerStep());
+		if(mCurrentStep != 0) {
+			//calculate the simulation time according to the current step.
+			mCurrentSimulationTime->set(mCurrentStep->get()
+					* mPhysicalSimulationAlgorithm->getTimeStepSize()
+					* mPhysicalSimulationAlgorithm->getIterationsPerStep());
+		}
+		else {
+			mCurrentSimulationTime->set(mCurrentSimulationTime->get()
+					+ mPhysicalSimulationAlgorithm->getTimeStepSize()
+					* mPhysicalSimulationAlgorithm->getIterationsPerStep());
+		}
 	}
 	else {
 		Core::log("PhysicsManager: Can not execute simulation step due to missing algorithm.");
