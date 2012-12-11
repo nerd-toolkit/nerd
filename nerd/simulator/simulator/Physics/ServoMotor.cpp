@@ -84,6 +84,7 @@ ServoMotor::ServoMotor(const QString &name, bool enableTemperature) : EventListe
 	mMotorTemperature = new InterfaceValue(getName(), "Temperature", 0.0, 0.0, 1.0);
 	mAngleSensorRangeMin = new DoubleValue(-180.0);
 	mAngleSensorRangeMax = new DoubleValue(180.0);
+	mIgnoreEnergyEmpty = new BoolValue(false);
 	
 	mInputValues.append(mDesiredMotorSetting);
 	mOutputValues.append(mMotorAngleSensor);
@@ -119,6 +120,7 @@ ServoMotor::ServoMotor(const QString &name, bool enableTemperature) : EventListe
 	addParameter("ExternalEnergyValueName", mExternalEnergyValueName);
 	addParameter("AngleSensorRangeMin", mAngleSensorRangeMin);
 	addParameter("AngleSensorRangeMax", mAngleSensorRangeMax);
+	addParameter("IgnoreEnergyEmpty", mIgnoreEnergyEmpty);
 	
 	
 	mHistorySize = mHistorySizeValue->get();
@@ -162,6 +164,7 @@ ServoMotor::ServoMotor(const ServoMotor &joint) : Object(), ValueChangedListener
 	mMotorTemperature = dynamic_cast<InterfaceValue*>(getParameter("MotorTemperature"));
 	mAngleSensorRangeMin = dynamic_cast<DoubleValue*>(getParameter("AngleSensorRangeMin"));
 	mAngleSensorRangeMax = dynamic_cast<DoubleValue*>(getParameter("AngleSensorRangeMax"));
+	mIgnoreEnergyEmpty = dynamic_cast<BoolValue*>(getParameter("IgnoreEnergyEmpty"));
 	
 	
 	mInputValues.append(mDesiredMotorSetting);
@@ -314,7 +317,7 @@ double ServoMotor::calculatedTorque(double, double currentPosition) {
 	//depending on the torque, process the energy consumption
 	if(mExternalEnergyValue != 0 && mEnergyConsumptionFactor != 0) {
 		double energyConsumption = Math::abs(torque) * mEnergyConsumptionFactor->get();
-		if(mExternalEnergyValue->get() < energyConsumption) {
+		if(mExternalEnergyValue->get() < energyConsumption && !mIgnoreEnergyEmpty->get()) {
 			//failure if there is no battery power left.
 			return 0.0;
 		}

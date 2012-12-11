@@ -104,6 +104,7 @@ class ServoMotor : public HingeJoint, public virtual EventListener,
 		DoubleValue *mEnergyConsumptionFactor;
 		DoubleValue *mTemperatureThresholdForFailure;
 		StringValue *mExternalEnergyValueName;
+		BoolValue *mIgnoreEnergyEmpty;
 
 		bool mIsInitialized;
 
