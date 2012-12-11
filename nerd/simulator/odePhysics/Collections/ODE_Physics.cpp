@@ -74,6 +74,8 @@
 #include "Physics/ODE_ForceHandle.h"
 #include "MotorModels/ODE_LinearSpringModel.h"
 #include "MotorModels/ODE_PID_PassiveActuatorModel.h"
+#include "Physics/ODE_UniversalJoint.h"
+#include <Physics/ODE_BallAndSocketJoint.h>
 
 namespace nerd {
 
@@ -117,6 +119,10 @@ ODE_Physics::ODE_Physics()
 		new ODE_CapsuleBody(SimulationConstants::PROTOTYPE_CAPSULE_BODY));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_FORCE_HANDLE, 
 		new ODE_ForceHandle(SimulationConstants::PROTOTYPE_FORCE_HANDLE));
+	pm->addPrototype(SimulationConstants::PROTOTYPE_UNIVERSAL_JOINT,
+		new ODE_UniversalJoint(SimulationConstants::PROTOTYPE_UNIVERSAL_JOINT));
+	pm->addPrototype(SimulationConstants::PROTOTYPE_BALL_JOINT,
+		new ODE_BallAndSocketJoint(SimulationConstants::PROTOTYPE_BALL_JOINT));
 
 	// add new prototypes for the motormodel
 	pm->addPrototype("Prototypes/DynamixelFrictionMotor",

@@ -41,8 +41,42 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-/*
- * Major change: Mutexes in Properties (Fall 2012)
- */
 
-#define NERD_VERSION "4.2"
+
+#ifndef NERDODE_BallAndSocketJoint_H
+#define NERDODE_BallAndSocketJoint_H
+
+#include <QString>
+#include <QHash>
+#include "ODE_Joint.h"
+#include "Physics/UniversalJoint.h"
+
+namespace nerd {
+
+	/**
+	 * ODE_BallAndSocketJoint.
+	 *
+	 */
+	class ODE_BallAndSocketJoint : public UniversalJoint, public ODE_Joint  {
+	public:
+		ODE_BallAndSocketJoint(const QString &name);
+		ODE_BallAndSocketJoint(const ODE_BallAndSocketJoint &other);
+		virtual ~ODE_BallAndSocketJoint();
+
+		virtual SimJoint* createCopy() const;
+		
+		virtual void setup();
+		virtual void clear();
+		
+		virtual void synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm *psa);
+
+	protected:
+		virtual dJointID createJoint(dBodyID body1, dBodyID body2);
+	};
+
+}
+
+#endif
+
+
+

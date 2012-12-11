@@ -31,6 +31,7 @@ set(nerd_odePhysics_SRCS
 	MotorModels/ODE_LinearSpringModel.cpp
 	MotorModels/ODE_PID_PassiveActuatorModel.cpp
     OdeConstants.cpp
+    Physics/ODE_BallAndSocketJoint.cpp
 )
 
 set(nerd_odePhysics_MOC_HDRS

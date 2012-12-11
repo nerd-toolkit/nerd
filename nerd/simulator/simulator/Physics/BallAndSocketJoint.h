@@ -41,8 +41,41 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-/*
- * Major change: Mutexes in Properties (Fall 2012)
- */
 
-#define NERD_VERSION "4.2"
+
+#ifndef NERDBallAndSocketJoint_H
+#define NERDBallAndSocketJoint_H
+
+#include <QString>
+#include <QHash>
+
+#include "SimJoint.h"
+
+namespace nerd {
+
+	/**
+	 * BallAndSocketJoint.
+	 *
+	 */
+	class BallAndSocketJoint : public SimJoint {
+	public:
+		BallAndSocketJoint(const QString &name);
+		BallAndSocketJoint(const BallAndSocketJoint &other);
+		virtual ~BallAndSocketJoint();
+
+		virtual SimObject* createCopy() const;
+		
+		virtual void setup();
+		virtual void clear();
+
+	protected:	
+		Vector3DValue *mAnchorPoint;
+
+	};
+
+}
+
+#endif
+
+
+

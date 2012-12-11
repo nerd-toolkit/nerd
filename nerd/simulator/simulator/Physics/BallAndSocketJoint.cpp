@@ -41,8 +41,66 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-/*
- * Major change: Mutexes in Properties (Fall 2012)
- */
 
-#define NERD_VERSION "4.2"
+
+#include "BallAndSocketJoint.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+
+using namespace std;
+
+namespace nerd {
+
+
+/**
+ * Constructs a new BallAndSocketJoint.
+ */
+BallAndSocketJoint::BallAndSocketJoint(const QString &name)
+	: SimJoint(name)
+{
+	mAnchorPoint = new Vector3DValue();
+	
+	addParameter("JointAnchor", mAnchorPoint);
+
+	mAxisPoints.push_back(mAnchorPoint);
+}
+
+
+/**
+ * Copy constructor. 
+ * 
+ * @param other the BallAndSocketJoint object to copy.
+ */
+BallAndSocketJoint::BallAndSocketJoint(const BallAndSocketJoint &other) 
+	: SimJoint(other)
+{
+	mAnchorPoint = dynamic_cast<Vector3DValue*>(getParameter("JointAnchor"));
+}
+
+/**
+ * Destructor.
+ */
+BallAndSocketJoint::~BallAndSocketJoint() {
+}
+
+
+SimObject* BallAndSocketJoint::createCopy() const {
+	return new BallAndSocketJoint(*this);
+}
+
+
+void BallAndSocketJoint::setup() {
+	SimJoint::setup();
+}
+
+
+void BallAndSocketJoint::clear() {
+	SimJoint::clear();
+}
+
+
+}
+
+
+

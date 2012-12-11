@@ -160,6 +160,9 @@ const QString SimulationConstants::PROTOTYPE_AUTO_VALUE_TRANSFER_CONTROLLER = "P
 const QString SimulationConstants::PROTOTYPE_INTERNAL_STATE_VALUE = "Prototypes/InternalStateValue";
 const QString SimulationConstants::PROTOTYPE_EXTERNAL_SENSOR_ADAPTER = "Prototypes/ExternalSensor";
 
+const QString SimulationConstants::PROTOTYPE_UNIVERSAL_JOINT = "UniversalJoint";
+const QString SimulationConstants::PROTOTYPE_BALL_JOINT = "BallJoint";
+
 const QString SimulationConstants::PROTOTYPE_TORQUE_DYNAMIXEL_M1 = "Prototypes/TorqueDynamixelM1";
 const QString SimulationConstants::PROTOTYPE_TORQUE_DYNAMIXEL_M2 = "Prototypes/TorqueDynamixelM2";
 const QString SimulationConstants::PROTOTYPE_TORQUE_DYNAMIXEL_M4 = "Prototypes/TorqueDynamixelM4";

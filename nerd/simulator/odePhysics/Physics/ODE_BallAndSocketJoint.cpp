@@ -41,8 +41,110 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
-/*
- * Major change: Mutexes in Properties (Fall 2012)
- */
 
-#define NERD_VERSION "4.2"
+
+#include "ODE_BallAndSocketJoint.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+
+using namespace std;
+
+namespace nerd {
+
+
+/**
+ * Constructs a new ODE_BallAndSocketJoint.
+ */
+ODE_BallAndSocketJoint::ODE_BallAndSocketJoint(const QString &name)
+	: UniversalJoint(name), ODE_Joint()
+{
+}
+
+
+/**
+ * Copy constructor. 
+ * 
+ * @param other the ODE_BallAndSocketJoint object to copy.
+ */
+ODE_BallAndSocketJoint::ODE_BallAndSocketJoint(const ODE_BallAndSocketJoint &other)
+	: Object(), ValueChangedListener(), UniversalJoint(other), ODE_Joint()
+{
+}
+
+/**
+ * Destructor.
+ */
+ODE_BallAndSocketJoint::~ODE_BallAndSocketJoint() {
+}
+
+
+
+SimJoint* ODE_BallAndSocketJoint::createCopy() const {
+	return new ODE_BallAndSocketJoint(*this);
+}
+
+
+/**
+ * Creates an ODE_BallAndSocketJoint with the rotation axis specified by the four points 
+ * given by parameters Axis1Point1, Axis1Point2, Axis2Point1 and Axis2Point2. 
+ * The UniversalJoint connects the two bodies.
+ *
+ * @param body1 the first body to connect to.
+ * @param body2 the second body to connect o.
+ * @return a new ODE::UniversalJoint. 
+ */
+void ODE_BallAndSocketJoint::setup() {
+	ODE_Joint::setup();	
+	UniversalJoint::setup();
+	mJoint = (dJointID) ODE_Joint::createJoint();
+
+	if(mJoint == 0) {
+		Core::log("ODE_BallAndSocketJoint: dJoint could not be created.");
+	}
+}
+
+
+/**
+ * Clears the UniversalJoint. 
+ * This implementation sets the internal UniversalJoint pointer to NULL.
+ */
+void ODE_BallAndSocketJoint::clear() {
+	ODE_Joint::clearJoint();
+	UniversalJoint::clear();
+	mJoint = 0;
+}
+		
+
+
+void ODE_BallAndSocketJoint::synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm *psa) {
+
+}
+
+
+/**
+ * Creates a new ODE_BallAndSocketJoint.
+ *
+ * @param body1 the first body to connect the joint to.
+ * @param body2 the second body to connect the joint to.
+ * @return the new ODE_BallAndSocketJoint.
+ */
+dJointID ODE_BallAndSocketJoint::createJoint(dBodyID body1, dBodyID body2) {
+
+
+	//if one of the bodyIDs is null, the joint is connected to a static object.
+	dJointID newJoint = dJointCreateBall(mWorldID, mGeneralJointGroup);
+	dJointAttach(newJoint, body1, body2);
+	
+	Vector3D anchor = mAnchorPoint->get() ;
+	
+	dJointSetBallAnchor(newJoint, anchor.getX(), anchor.getY(), anchor.getZ());
+
+	return newJoint; 
+}
+
+
+}
+
+
+
