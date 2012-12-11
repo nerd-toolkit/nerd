@@ -41,6 +41,11 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
+/***************************************************************************
+ * Deprecated!                                                             *
+ *                                                                         *
+ * This class will be removed in a later release!                          *
+ * *************************************************************************/
 
 #ifndef NERDValueDetailPanel_H
 #define NERDValueDetailPanel_H

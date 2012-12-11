@@ -41,6 +41,14 @@
  *   clearly by citing the nerd homepage and the nerd overview paper.      *
  ***************************************************************************/
 
+/***************************************************************************
+ * Deprecated!                                                             *
+ *                                                                         *
+ * This class will be removed in a later release!                          *
+ * *************************************************************************/
+
+
+
 #include "ValueVisualizationWindow.h"
 #include "Core/Core.h"
 #include "Core/Properties.h"

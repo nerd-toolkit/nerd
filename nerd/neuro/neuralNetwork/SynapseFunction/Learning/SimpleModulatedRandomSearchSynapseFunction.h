@@ -53,15 +53,13 @@ namespace nerd {
 	struct SimpleModulatedRandomSearchParameters {
 	public:
 		SimpleModulatedRandomSearchParameters() : mType(0), mChangeProbability(0),
-			mDisableProbability(0), mMode(0), mParam1(0), mParam2(0), mParam3(0), mObservable(0) {}
+			mDisableProbability(0), mMode(0), mObservable(0) {}
 			
 		int mType;
 		double mChangeProbability;
 		double mDisableProbability;
 		int mMode;
-		double mParam1;
-		double mParam2;
-		double mParam3;
+		QList<double> mParams;
 		DoubleValue *mObservable;
 	};
 	
@@ -89,7 +87,11 @@ namespace nerd {
 	protected:
 		virtual void updateSettings();
 		
-		virtual void randomSearchMode0(Synapse *owner, SimpleModulatedRandomSearchParameters &params);
+		virtual void randomSearchModeSimpleRandom(Synapse *owner, SimpleModulatedRandomSearchParameters &params);
+		virtual void randomSearchModeBacktracking(Synapse *owner, SimpleModulatedRandomSearchParameters &params);
+		
+		int incrementDisableChangeCounter(Synapse *owner);
+		int incrementWeightChangeCounter(Synapse *owner);
 
 	private:
 		StringValue *mTypeParameters;
@@ -102,6 +104,12 @@ namespace nerd {
 		
 		NeuralNetwork *mCurrentNetwork;
 		NeuralNetworkManager *mNetworkManager;
+		
+		bool mNotifiedErrors;
+		
+		QList<double> mKnownPersistentSettings;
+		QList<bool> mKnownPersistentDisableStates;
+		int mNumberOfStepsWithoutModulators;
 	};
 	
 }
