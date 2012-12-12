@@ -49,7 +49,7 @@
 #include <QString>
 #include <QHash>
 #include "ODE_Joint.h"
-#include "Physics/UniversalJoint.h"
+#include <Physics/BallAndSocketJoint.h>
 
 namespace nerd {
 
@@ -57,7 +57,7 @@ namespace nerd {
 	 * ODE_BallAndSocketJoint.
 	 *
 	 */
-	class ODE_BallAndSocketJoint : public UniversalJoint, public ODE_Joint  {
+	class ODE_BallAndSocketJoint : public BallAndSocketJoint, public ODE_Joint  {
 	public:
 		ODE_BallAndSocketJoint(const QString &name);
 		ODE_BallAndSocketJoint(const ODE_BallAndSocketJoint &other);

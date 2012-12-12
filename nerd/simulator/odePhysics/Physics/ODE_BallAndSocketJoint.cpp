@@ -57,7 +57,7 @@ namespace nerd {
  * Constructs a new ODE_BallAndSocketJoint.
  */
 ODE_BallAndSocketJoint::ODE_BallAndSocketJoint(const QString &name)
-	: UniversalJoint(name), ODE_Joint()
+	: BallAndSocketJoint(name), ODE_Joint()
 {
 }
 
@@ -68,7 +68,7 @@ ODE_BallAndSocketJoint::ODE_BallAndSocketJoint(const QString &name)
  * @param other the ODE_BallAndSocketJoint object to copy.
  */
 ODE_BallAndSocketJoint::ODE_BallAndSocketJoint(const ODE_BallAndSocketJoint &other)
-	: Object(), ValueChangedListener(), UniversalJoint(other), ODE_Joint()
+	: Object(), ValueChangedListener(), BallAndSocketJoint(other), ODE_Joint()
 {
 }
 
@@ -96,7 +96,7 @@ SimJoint* ODE_BallAndSocketJoint::createCopy() const {
  */
 void ODE_BallAndSocketJoint::setup() {
 	ODE_Joint::setup();	
-	UniversalJoint::setup();
+	BallAndSocketJoint::setup();
 	mJoint = (dJointID) ODE_Joint::createJoint();
 
 	if(mJoint == 0) {
@@ -111,7 +111,7 @@ void ODE_BallAndSocketJoint::setup() {
  */
 void ODE_BallAndSocketJoint::clear() {
 	ODE_Joint::clearJoint();
-	UniversalJoint::clear();
+	BallAndSocketJoint::clear();
 	mJoint = 0;
 }
 		
