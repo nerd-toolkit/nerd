@@ -72,6 +72,7 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 		}else{
 			mPar = parent;
 		}
+		mMatrix = new MatrixValue();
 	}
 
 
@@ -130,15 +131,21 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 		}
 	}
 	
-	void MouseMoveLabel::setMatrix(MatrixValue *matrix){
-		if(matrix == 0){
-			Core::log("MouseMoveLabel: No matrix found! Using coordinates instead.", true);
-			return;
+	MatrixValue* MouseMoveLabel::getMatrix() {
+		if(mMatrix == 0){
+			Core::log("MouseMoveLabel: No matrix found!", true);
+			return 0;
 		}
-		mMatrix = matrix;	
+		return mMatrix;
 	}
 	
-	
+	void MouseMoveLabel::setMatrix(MatrixValue* matrix) {
+		if(matrix == 0) {
+			Core::log("MouseMoveLabel: No Matrix given. Aborting:", true);
+			return;
+		}
+		mMatrix->set(matrix->get());
+	}	
 	
 }
 

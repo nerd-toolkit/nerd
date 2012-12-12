@@ -100,7 +100,7 @@ namespace nerd {
 		mColors.append(qRgb(255, 0, 255));
 		mColors.append(qRgb(150, 0, 255));
 		mColors.append(qRgb(255, 160, 0));
-		mColors.append(qRgb(220, 220, 220));//period to high
+		mColors.append(qRgb(220, 220, 220));//period too high
 		
 		mPixelSize = new IntValue(1);
 		
@@ -279,7 +279,7 @@ namespace nerd {
 		mWidth = mMatrix->getMatrixWidth();
 		mHeight = mMatrix->getMatrixHeight();
 		//mTitleLabel->setText(QString("<b><big>") + name + QString("<\big><\b>"));
-
+		
 		//mYLabel->setText(yDescr);
 		//mXLabel->setText(xDescr);
 		
@@ -359,57 +359,37 @@ namespace nerd {
 			
 			QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
 			image.fill(qRgb(255, 255, 255));
+			
+			mLabel->setMatrix(mMatrix);
+			
 			for(int j = 1; j < mWidth; j++){
 				for (int k = 1; k < mHeight; k++){
 					
-					int colorId = Math::max(0, Math::min((int) mColors.size() - 1, (int) mMatrix->get(j, k, mIndex)));
+					int value = (int)mMatrix->get(j, k, mIndex);
+					int colorId = Math::max(0, Math::min((int) mColors.size() - 1, value));
 					
 					//don't draw white points, because the background is already white.
 					if(colorId == 0) {
 						continue;
 					}
 					
-					//image.setPixel(j - 1,  mHeight - k - 1, mColors.at(colorId));
-					
 					int pixelSize = mPixelSize->get() - 1;
 					
 					
 					for(int s = -pixelSize; s <= pixelSize; ++s) {
 						for(int t = -pixelSize; t <= pixelSize; ++t) {
-							image.setPixel(Math::max(0, Math::min(mWidth - 2, j - 1 + s)),  
-										   Math::max(0, Math::min(mHeight - 2,  mHeight - k - 1 + t)), 
-											mColors.at(colorId));
+							int xpos = Math::max(0, Math::min(mWidth - 2, j - 1 + s));
+							int ypos = Math::max(0, Math::min(mHeight - 2,  mHeight - k - 1 + t));
+							image.setPixel(xpos, ypos, mColors.at(colorId));
+							
+							int yposL = Math::max(0, Math::min(mHeight -2, k - 1 + t));
+							mLabel->getMatrix()->set((double)value, xpos, yposL, mIndex);
 						}
 					}
-					
-					
-// 					if(mMatrix->get(j, k, mIndex) == 0){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 255)); //no attractor
-// 					}else if(mMatrix->get(j, k, mIndex) == 1){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 0));
-// 					}else if(mMatrix->get(j, k, mIndex) == 2){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 0));
-// 					}else if(mMatrix->get(j, k, mIndex) == 3){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 0));
-// 					}else if(mMatrix->get(j, k, mIndex) == 4){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 0, 255));
-// 					}else if(mMatrix->get(j, k, mIndex) == 5){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 255, 0));
-// 					}else if(mMatrix->get(j, k, mIndex) == 6){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(0, 255, 255));
-// 					}else if(mMatrix->get(j, k, mIndex) == 7){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 0, 255));
-// 					}else if(mMatrix->get(j, k, mIndex) == 8){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(150, 0, 255));
-// 					}else if(mMatrix->get(j, k, mIndex) == 9){
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(255, 160, 0));
-// 					}else{
-// 						image.setPixel(j - 1,  mHeight - k - 1, qRgb(220, 220, 220));//period to high
-// 					}
 				} 
-			}//for
+			}
+
 			mLabel->clear();
-			mLabel->setMatrix(mMatrix);
 			mPixmap = QPixmap::fromImage(image);
 			mLabel->setFixedSize(mPixmap.width(), mPixmap.height());
 			mLabel->setPixmap(mPixmap); //print QImage on label
