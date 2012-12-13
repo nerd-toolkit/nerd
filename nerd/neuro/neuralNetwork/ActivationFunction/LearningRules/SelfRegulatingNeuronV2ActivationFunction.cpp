@@ -132,7 +132,7 @@ SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFuncti
  */
 SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFunction(
 						const SelfRegulatingNeuronV2ActivationFunction &other) 
-	: ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0),
+	: ObservableNetworkElement(other), ActivationFunction(other), mOwner(0), mTransmitterResult(0), mReceptorResult(0),
 		mRestrictToLinks(other.mRestrictToLinks)
 {
 	mXi = dynamic_cast<DoubleValue*>(getParameter("Xi (Rec)"));
@@ -226,7 +226,7 @@ void SelfRegulatingNeuronV2ActivationFunction::valueChanged(Value *value) {
 }
 
 
-void SelfRegulatingNeuronV2ActivationFunction::reset(Neuron *owner) {
+void SelfRegulatingNeuronV2ActivationFunction::reset(Neuron*) {
 	mXi->set(1.0);
 	mEta->set(1.0);
 }

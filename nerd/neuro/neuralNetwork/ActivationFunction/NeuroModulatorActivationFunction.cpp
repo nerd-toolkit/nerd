@@ -52,7 +52,8 @@ NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const QString
 }
 
 NeuroModulatorActivationFunction::NeuroModulatorActivationFunction(const NeuroModulatorActivationFunction &other)
-	: Object(), ValueChangedListener(), NeuroModulatorElement(other), ActivationFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), NeuroModulatorElement(other), 
+	  ActivationFunction(other)
 {
 }
 

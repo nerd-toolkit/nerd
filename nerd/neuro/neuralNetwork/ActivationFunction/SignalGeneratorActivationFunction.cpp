@@ -100,7 +100,7 @@ SignalGeneratorActivationFunction::SignalGeneratorActivationFunction()
  */
 SignalGeneratorActivationFunction::SignalGeneratorActivationFunction(
 			const SignalGeneratorActivationFunction &other) 
-	: ActivationFunction(other), mCurrentActivation(0.0), 
+	: ObservableNetworkElement(other), ActivationFunction(other), mCurrentActivation(0.0), 
 	  mCurrentTargetActivation(0), mCurrentDuration(0), mCurrentStep(0),
 	  mTypeId(other.mTypeId)
 {

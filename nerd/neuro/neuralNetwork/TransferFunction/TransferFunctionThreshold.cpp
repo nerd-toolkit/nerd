@@ -58,7 +58,7 @@ namespace nerd {
 	}
 	
 	TransferFunctionThreshold::TransferFunctionThreshold(const TransferFunctionThreshold &other) 
-	: Object(), ValueChangedListener(), TransferFunction(other)
+		: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other)
 	{
 		mThreshold = dynamic_cast<DoubleValue*>(getParameter("Threshold"));
 	}

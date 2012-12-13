@@ -88,7 +88,8 @@ ScriptableTransferFunction::ScriptableTransferFunction()
 
 ScriptableTransferFunction::ScriptableTransferFunction(
 			const ScriptableTransferFunction &other)
-	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), TransferFunction(other),
+	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), 
+	  ObservableNetworkElement(other), TransferFunction(other),
 	  mErrorState(0), mOwner(0), mFirstExecution(true)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();

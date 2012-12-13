@@ -74,7 +74,7 @@ GuiManager::GuiManager()
  * 
  * @param other the GuiManager object to copy.
  */
-GuiManager::GuiManager(const GuiManager &other) {
+GuiManager::GuiManager(const GuiManager&) {
 }
 
 /**

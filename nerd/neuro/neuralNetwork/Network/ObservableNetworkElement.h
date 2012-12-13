@@ -57,7 +57,13 @@ namespace nerd {
 	 * ObservableNetworkElement
 	 */
 	class ObservableNetworkElement {
+		
 	public:
+		ObservableNetworkElement();
+		ObservableNetworkElement(const ObservableNetworkElement &other);
+		virtual ~ObservableNetworkElement();
+		
+		
 		virtual bool addObserableOutput(const QString &name, Value *observableOutput);
 		virtual Value* getObservableOutput(const QString &name) const;
 		virtual QList<QString> getObservableOutputNames() const;

@@ -59,7 +59,8 @@ namespace nerd {
 	* Constructor.
 	*/
 	SimpleModulatedRandomSearchSynapseFunction::SimpleModulatedRandomSearchSynapseFunction()
-	: NeuroModulatorSynapseFunction("MRS1"), mCurrentNetwork(0), mNumberOfStepsWithoutModulators(0)
+		: NeuroModulatorSynapseFunction("MRS1"), mOwner(0), 
+		  mCurrentNetwork(0), mNumberOfStepsWithoutModulators(0)
 	{
 		mTypeParameters = new StringValue("1, 1.0, 0.2, 0");
 		mTypeParameters->setDescription("Parameter Settings: NM-type, change probability, "
@@ -88,16 +89,20 @@ namespace nerd {
 	*/
 	SimpleModulatedRandomSearchSynapseFunction::SimpleModulatedRandomSearchSynapseFunction(
 											const SimpleModulatedRandomSearchSynapseFunction &other)
-		: Object(), ValueChangedListener(), NeuroModulatorSynapseFunction(other), 
-			mCurrentNetwork(0), mNumberOfStepsWithoutModulators(0)
+		: Object(), ValueChangedListener(), NeuroModulatorElement(other), NeuroModulatorSynapseFunction(other), 
+		  mOwner(0), mCurrentNetwork(0), mNumberOfStepsWithoutModulators(0)
 	{
+		mObservables.clear();
+		
 		mTypeParameters = dynamic_cast<StringValue*>(getParameter("Settings"));
 		mProbabilityForChange = dynamic_cast<DoubleValue*>(getParameter("Probability"));
 		mInactive = dynamic_cast<BoolValue*>(getParameter("Inactive"));
 
 		for(QHashIterator<QString, Value*> i(other.mObservableOutputs); i.hasNext();) {
 			i.next();
-			addObserableOutput(i.key(), i.value()->createCopy());
+			DoubleValue *obs = dynamic_cast<DoubleValue*>(i.value()->createCopy());  
+			addObserableOutput(i.key(), obs);
+			mObservables.append(obs);
 		}
 		
 		mNetworkManager = Neuro::getNeuralNetworkManager();
@@ -140,6 +145,9 @@ namespace nerd {
 		else if(value == mTypeParameters) {
 			updateSettings();
 		}
+		else if(value == mInactive) {
+			enableWeight(mOwner, !mInactive->get());
+		}
 	}
 
 
@@ -147,6 +155,7 @@ namespace nerd {
 	* Updates the parameter settings by parsing the parameter string anew.
 	*/
 	void SimpleModulatedRandomSearchSynapseFunction::reset(Synapse *synapse) {
+		mOwner = synapse;
 		mCurrentNetwork = 0;
 		updateSettings();
 	}
@@ -160,10 +169,12 @@ namespace nerd {
 	* @return the strength of the owner.
 	*/
 	double SimpleModulatedRandomSearchSynapseFunction::calculate(Synapse *owner) {
+		mOwner = owner;
 		mCurrentNetwork = 0;
 		if(owner == 0 || owner->getSource() == 0) {
 			return 0.0;
 		}
+		
 		mCurrentNetwork = owner->getSource()->getOwnerNetwork();
 		if(mCurrentNetwork == 0) {
 			return owner->getStrengthValue().get();
@@ -186,9 +197,9 @@ namespace nerd {
 			}
 		}
 		
-		if(mInactive->get()) {
-			return 0.0;
-		}
+		//if(mInactive->get()) {
+		//	return 0.0;
+		//}
 		
 		return owner->getStrengthValue().get();
 	}
@@ -239,6 +250,7 @@ namespace nerd {
 	 */
 	void SimpleModulatedRandomSearchSynapseFunction::updateSettings() {
 		
+
 		//enable one-shot error messages to prevent a flooding of the console / log file.
 		mNotifiedErrors = false; 
 		
@@ -310,7 +322,9 @@ namespace nerd {
 			else {
 				DoubleValue *newObservable = new DoubleValue();
 				params.mObservable = newObservable;
+				
 				addObserableOutput("Observable" + QString::number(i) + "_T" + QString::number(params.mType), newObservable);
+				
 				mObservables.append(newObservable);
 			}
 			mParameters.append(params);
@@ -351,6 +365,10 @@ namespace nerd {
 		double concentration = NeuroModulator::getConcentrationInNetworkAt(
 						params.mType, owner->getPosition(), mCurrentNetwork);
 		
+		if(params.mObservable != 0) {
+			params.mObservable->set(concentration);
+		}
+		
 		double disableProbability = Math::max(0.0, Math::min(1.0, 
 						concentration * params.mDisableProbability * mProbabilityForChange->get()));
 		
@@ -361,6 +379,8 @@ namespace nerd {
 		
 		if(Random::nextDouble() < disableProbability) {
 			mInactive->set(!mInactive->get());
+			
+			enableWeight(owner, !mInactive->get());
 			
 			incrementDisableChangeCounter(owner);
 		}
@@ -388,9 +408,6 @@ namespace nerd {
 			owner->getStrengthValue().set(newWeight);
 			
 			incrementWeightChangeCounter(owner);
-		}
-		if(params.mObservable != 0) {
-			params.mObservable->set(concentration);
 		}
 	}
 	
@@ -454,6 +471,15 @@ namespace nerd {
 			}
 		}
 		
+		//udpate current modulator concentration.
+		double concentration = NeuroModulator::getConcentrationInNetworkAt(
+			params.mType, owner->getPosition(), mCurrentNetwork);
+		
+		if(params.mObservable != 0) {
+			params.mObservable->set(concentration);
+		}
+		
+		
 		if(noModulatorDetected) {
 			//check if we should memorize the setting as known working solution (in the broader context at least).
 			++mNumberOfStepsWithoutModulators;
@@ -468,6 +494,9 @@ namespace nerd {
 				mKnownPersistentSettings.append(owner->getStrengthValue().get());
 				
 				mNumberOfStepsWithoutModulators = 0;
+				
+				owner->setProperty("Memory:", QString::number(mKnownPersistentSettings.last()) 
+								+ "," + QString::number((int) mKnownPersistentDisableStates.last()));
 			}
 		}
 		else {
@@ -480,18 +509,13 @@ namespace nerd {
 			
 			//check if we should revert to a known (hopefully still) working solution...
 			
-			double concentration = NeuroModulator::getConcentrationInNetworkAt(
-				params.mType, owner->getPosition(), mCurrentNetwork);
 			
-			if(params.mObservable != 0) {
-				params.mObservable->set(concentration);
-			}
 			
-			double disableProbability = Math::max(0.0, Math::min(1.0, 
-																concentration * params.mDisableProbability * mProbabilityForChange->get()));
+			//double disableProbability = Math::max(0.0, Math::min(1.0, 
+			//													concentration * params.mDisableProbability * mProbabilityForChange->get()));
 			
 			double changeProbability = Math::max(0.0, Math::min(1.0, 
-																concentration * params.mChangeProbability * mProbabilityForChange->get()));
+																concentration * params.mChangeProbability));
 			
 			int backtrackingMode = (int) params.mParams.at(1); //backtracking mode
 			
@@ -504,6 +528,8 @@ namespace nerd {
 					//make sure the synapse is in the same enable/disable state as in the last known working configuration.
 					if(mInactive->get() != mKnownPersistentDisableStates.last()) {
 						mInactive->set(mKnownPersistentDisableStates.last());
+						
+						enableWeight(owner, !mInactive->get());
 						
 						incrementDisableChangeCounter(owner);
 					}
@@ -557,6 +583,34 @@ namespace nerd {
 		owner->setProperty("MRS-M", QString::number(countChanges));
 		
 		return countChanges;
+	}
+	
+	
+	/**
+	 * When a synapse is disabled, then its weigth is set to 0.0 (to allow cloning synapses to disable as well)
+	 * and stored as property. When the synapse is enabled again, then that stored value is recovered (if present).
+	 * 
+	 * Note: Because of the conversions, the accuracy of the disabled synapse may change. But this is usually not
+	 * a problem. 
+	 */
+	void SimpleModulatedRandomSearchSynapseFunction::enableWeight(Synapse *owner, bool enable) {
+		if(owner == 0) {
+			return ;
+		}
+		
+		if(enable) {
+			bool ok = true;
+			double oldWeight = owner->getProperty("_SMRS_w").toDouble(&ok);
+			
+			if(ok) {
+				owner->getStrengthValue().set(oldWeight);
+			}
+		}
+		else {
+			double currentWeight = owner->getStrengthValue().get();
+			owner->getStrengthValue().set(0.0);
+			owner->setProperty("_SMRS_w", QString::number(currentWeight));
+		}
 	}
 	
 	

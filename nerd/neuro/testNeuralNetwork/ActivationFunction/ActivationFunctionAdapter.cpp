@@ -53,7 +53,7 @@ ActivationFunctionAdapter::ActivationFunctionAdapter(const QString &name)
 
 
 ActivationFunctionAdapter::ActivationFunctionAdapter(const ActivationFunctionAdapter &other) 
-	: Object(), ValueChangedListener(), ActivationFunction(other), 
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), ActivationFunction(other), 
 	  mLastOwner(0), mResetCounter(0), mCalculationCounter(0), 
 	  mCalculationReturnValue(0), mDeletedFlag(0)
 {

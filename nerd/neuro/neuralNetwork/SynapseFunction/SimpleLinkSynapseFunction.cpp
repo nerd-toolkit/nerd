@@ -91,7 +91,7 @@ void SimpleLinkSynapseFunction::reset(Synapse*) {
  * @param owner the owner of this SynapseFunction.
  * @return the strength of the owner.
  */
-double SimpleLinkSynapseFunction::calculate(Synapse *owner) {
+double SimpleLinkSynapseFunction::calculate(Synapse*) {
 	return 0.0;
 }
 

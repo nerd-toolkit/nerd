@@ -142,7 +142,7 @@ bool SynchronizeTagsConstraint::isValid(NeuronGroup*) {
 
 bool SynchronizeTagsConstraint::applyConstraint(NeuronGroup *owner, 
 									CommandExecutor*, 
-									QList<NeuralNetworkElement*> &trashcan)
+									QList<NeuralNetworkElement*>&)
 {
 	if(owner == 0 || owner->getOwnerNetwork() == 0) {
 		//do not do anything.

@@ -81,7 +81,7 @@ ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction()
  */
 ChaoticNeuronActivationFunction::ChaoticNeuronActivationFunction(
 						const ChaoticNeuronActivationFunction &other) 
-	: ActivationFunction(other)
+	: ObservableNetworkElement(other), ActivationFunction(other)
 {
 	mGamma = dynamic_cast<DoubleValue*>(getParameter("Gamma"));
 	mMode = dynamic_cast<IntValue*>(getParameter("Mode"));
@@ -98,7 +98,7 @@ ActivationFunction* ChaoticNeuronActivationFunction::createCopy() const {
 	return new ChaoticNeuronActivationFunction(*this);
 }
 
-void ChaoticNeuronActivationFunction::reset(Neuron *owner) {
+void ChaoticNeuronActivationFunction::reset(Neuron*) {
 }
 
 double ChaoticNeuronActivationFunction::calculateActivation(Neuron *owner) {

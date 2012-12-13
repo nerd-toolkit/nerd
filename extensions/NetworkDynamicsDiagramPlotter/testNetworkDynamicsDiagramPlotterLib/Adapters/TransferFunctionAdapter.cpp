@@ -54,7 +54,7 @@ TransferFunctionAdapter::TransferFunctionAdapter(const QString &name, double low
 }
 
 TransferFunctionAdapter::TransferFunctionAdapter(const TransferFunctionAdapter &other) 
-	: Object(), ValueChangedListener(), TransferFunction(other), 
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other), 
 	  mResetCounter(0), mTransferCounter(0), mLastOwner(0), mDeletedFlag(0),
 	  mLastTransferFunctionInputActivation(0.0), mUseOwnTransferFunctionReturnValue(false)
 {

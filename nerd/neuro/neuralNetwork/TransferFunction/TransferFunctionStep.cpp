@@ -55,7 +55,7 @@ namespace nerd {
 	}
 	
 	TransferFunctionStep::TransferFunctionStep(const TransferFunctionStep &other) 
-	: Object(), ValueChangedListener(), TransferFunction(other)
+		: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other)
 	{
 	}
 	

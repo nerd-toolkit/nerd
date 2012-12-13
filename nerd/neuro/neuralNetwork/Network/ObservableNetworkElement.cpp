@@ -42,12 +42,33 @@
  ***************************************************************************/
 
 #include "ObservableNetworkElement.h"
+#include "Core/Core.h"
+
+#include <iostream>
+
+#include "SynapseFunction/Learning/SimpleModulatedRandomSearchSynapseFunction.h"
+
+using namespace std;
 
 namespace nerd {
+	
+ObservableNetworkElement::ObservableNetworkElement() {
+	
+}
+
+ObservableNetworkElement::ObservableNetworkElement(const ObservableNetworkElement&) 
+	: mObservableOutputs()
+{
+}
+
+ObservableNetworkElement::~ObservableNetworkElement() {
+}
 
 bool ObservableNetworkElement::addObserableOutput(const QString &name, Value *observableOutput) 
 {
 	if(mObservableOutputs.keys().contains(name) || observableOutput == 0) {
+		Core::log("ObservableNetworkElement: Could not add new observable with name [" 
+					+ name + "] because there was already an Observable with that name. Ignoring", true);
 		return false;
 	}
 	mObservableOutputs.insert(name, observableOutput);

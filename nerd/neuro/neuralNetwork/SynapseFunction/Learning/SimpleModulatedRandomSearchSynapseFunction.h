@@ -92,8 +92,12 @@ namespace nerd {
 		
 		int incrementDisableChangeCounter(Synapse *owner);
 		int incrementWeightChangeCounter(Synapse *owner);
+		
+		void enableWeight(Synapse *owner, bool enable = true);
 
 	private:
+		Synapse *mOwner;
+		
 		StringValue *mTypeParameters;
 		DoubleValue *mProbabilityForChange;
 		BoolValue *mInactive;

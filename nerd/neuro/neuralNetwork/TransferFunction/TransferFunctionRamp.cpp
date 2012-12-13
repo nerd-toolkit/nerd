@@ -58,7 +58,7 @@ TransferFunctionRamp::TransferFunctionRamp(const QString &name, double min, doub
 }
 
 TransferFunctionRamp::TransferFunctionRamp(const TransferFunctionRamp &other)
-	: Object(), ValueChangedListener(), TransferFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other)
 {
 	mMinValue = dynamic_cast<DoubleValue*>(getParameter("Min"));
 	mMaxValue = dynamic_cast<DoubleValue*>(getParameter("Max"));

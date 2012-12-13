@@ -51,7 +51,7 @@ SynapseFunction::SynapseFunction(const QString &name)
 }
 
 SynapseFunction::SynapseFunction(const SynapseFunction &other) : Object(), 
-	ValueChangedListener(), ParameterizedObject(other), ObservableNetworkElement()
+	ValueChangedListener(), ParameterizedObject(other), ObservableNetworkElement(other)
 {
 }
 

@@ -56,7 +56,7 @@ TransferFunctionTanh01::TransferFunctionTanh01()
 }
 
 TransferFunctionTanh01::TransferFunctionTanh01(const TransferFunctionTanh01 &other) 
-	: Object(), ValueChangedListener(), TransferFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other)
 {
 }
 

@@ -67,7 +67,7 @@ TransferFunctionNeutral::TransferFunctionNeutral()
  * @param other the TransferFunctionNeutral object to copy.
  */
 TransferFunctionNeutral::TransferFunctionNeutral(const TransferFunctionNeutral &other) 
-	: TransferFunction(other)
+	: ObservableNetworkElement(other), TransferFunction(other)
 {
 }
 

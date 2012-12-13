@@ -76,7 +76,7 @@ TransferFunctionGauss::TransferFunctionGauss(double deviation, double shift)
  */
 TransferFunctionGauss::TransferFunctionGauss(
 			const TransferFunctionGauss &other) 
-	: Object(), ValueChangedListener(), TransferFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other)
 {
 	mDeviation = dynamic_cast<DoubleValue*>(getParameter("Deviation"));
 	mShift = dynamic_cast<DoubleValue*>(getParameter("Shift"));

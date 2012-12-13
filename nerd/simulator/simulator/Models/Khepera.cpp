@@ -70,7 +70,7 @@ Khepera::Khepera(const QString &name, bool useDistanceSensors,
 	  mUseLightSensors(0)
 {
 	mUseDistanceSensors = new BoolValue(useDistanceSensors);
-	mUseLightSensors = new BoolValue(mUseLightSensors);
+	mUseLightSensors = new BoolValue(useLightSensors);
 	mDistanceSensorLayout = new StringValue("11111111");
 
 	addParameter("UseDistanceSensors", mUseDistanceSensors);

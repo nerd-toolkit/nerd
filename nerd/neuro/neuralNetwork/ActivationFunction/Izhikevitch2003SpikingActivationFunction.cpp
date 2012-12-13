@@ -98,7 +98,7 @@ Izhikevitch2003SpikingActivationFunction::Izhikevitch2003SpikingActivationFuncti
 
 Izhikevitch2003SpikingActivationFunction::Izhikevitch2003SpikingActivationFunction(
 			const Izhikevitch2003SpikingActivationFunction &other)
-	: Object(), ValueChangedListener(), ActivationFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), ActivationFunction(other)
 {
 	mMembranePotential_v = dynamic_cast<DoubleValue*>(getParameter("v"));
 	mMembraneRecovery_u = dynamic_cast<DoubleValue*>(getParameter("u"));

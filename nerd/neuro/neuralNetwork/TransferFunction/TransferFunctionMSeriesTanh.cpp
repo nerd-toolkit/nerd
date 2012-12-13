@@ -73,7 +73,7 @@ TransferFunctionMSeriesTanh::TransferFunctionMSeriesTanh()
 }
 
 TransferFunctionMSeriesTanh::TransferFunctionMSeriesTanh(const TransferFunctionMSeriesTanh &other) 
-	: Object(), ValueChangedListener(), TransferFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other)
 {
 }
 

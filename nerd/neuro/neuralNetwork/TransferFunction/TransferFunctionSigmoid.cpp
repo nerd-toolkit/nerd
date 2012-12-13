@@ -69,7 +69,7 @@ TransferFunctionSigmoid::TransferFunctionSigmoid()
  * @param other the TransferFunctionSigmoid object to copy.
  */
 TransferFunctionSigmoid::TransferFunctionSigmoid(const TransferFunctionSigmoid &other) 
-	: Object(), ValueChangedListener(), TransferFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other)
 {
 }
 

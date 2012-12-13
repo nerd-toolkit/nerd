@@ -70,6 +70,7 @@ ScriptedModel::ScriptedModel(const QString &name, const QString &script)
 		mCurrentSimObject(0), mEnvironmentMode(false), mSetupEnvironmentMode(false), 
 		mRandomizationMode(false), mMorphologyBase(0)
 {
+	setScriptCode(script);
 }
 
 
@@ -844,7 +845,7 @@ QString ScriptedModel::getPrototypeName() const {
 	return mPrototypeName;
 }
 
-void ScriptedModel::setModelName(const QString &name) {
+void ScriptedModel::setModelName(const QString&) {
 	//do not allow changes here.
 	//the model name must not be changed by the script.
 }

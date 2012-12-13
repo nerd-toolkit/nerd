@@ -51,7 +51,7 @@ ActivationFunction::ActivationFunction(const QString &name)
 }
 
 ActivationFunction::ActivationFunction(const ActivationFunction &other)
-: Object(), ValueChangedListener(), ObservableNetworkElement(), ParameterizedObject(other)
+: Object(), ValueChangedListener(), ObservableNetworkElement(other), ParameterizedObject(other)
 {
 }
 

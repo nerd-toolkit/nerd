@@ -701,15 +701,15 @@ void ValuePlotterWidget::showLegendCheckBoxChanged(bool) {
 	mValuePlotter->getPlotterWidget()->enableLegend(mShowLegendCheckBox->isChecked());
 }
 
-void ValuePlotterWidget::useOpaqueLegendCheckBoxChanged(bool checked) {
+void ValuePlotterWidget::useOpaqueLegendCheckBoxChanged(bool) {
 	mValuePlotter->getPlotterWidget()->setSolidLegend(mUseOpaqueLegendCheckBox->isChecked());
 }
 
-void ValuePlotterWidget::diagramModeCheckBoxChanged(bool checked) {
+void ValuePlotterWidget::diagramModeCheckBoxChanged(bool) {
 	mValuePlotter->getPlotterWidget()->enableDiagramMode(mDiagramModeCheckBox->isChecked());
 }
 
-void ValuePlotterWidget::plotValuesInLegendCheckBoxChanged(bool checked) {
+void ValuePlotterWidget::plotValuesInLegendCheckBoxChanged(bool) {
 	mValuePlotter->getPlotterWidget()->showValuesInLegend(mPlotValuesInLegendCheckBox->isChecked());
 }
 

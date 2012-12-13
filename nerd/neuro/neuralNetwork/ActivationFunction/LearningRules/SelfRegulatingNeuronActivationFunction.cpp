@@ -139,7 +139,7 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
  */
 SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 						const SelfRegulatingNeuronActivationFunction &other) 
-	: ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0),
+	: ObservableNetworkElement(other), ActivationFunction(other),  mOwner(0), mTransmitterResult(0), mReceptorResult(0),
 		mAdjustWeights(other.mAdjustWeights), mRestrictToLinks(other.mRestrictToLinks), 
 		mUseCurrentActivations(other.mUseCurrentActivations),
 		mEpsilon(other.mEpsilon)
@@ -196,7 +196,7 @@ void SelfRegulatingNeuronActivationFunction::valueChanged(Value *value) {
 }
 
 
-void SelfRegulatingNeuronActivationFunction::reset(Neuron *owner) {
+void SelfRegulatingNeuronActivationFunction::reset(Neuron*) {
 	mXi->set(1.0);
 	mEta->set(1.0);
 }

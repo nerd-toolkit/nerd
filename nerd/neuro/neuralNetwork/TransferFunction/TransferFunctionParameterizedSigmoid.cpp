@@ -76,7 +76,7 @@ TransferFunctionParameterizedSigmoid::TransferFunctionParameterizedSigmoid(
  */
 TransferFunctionParameterizedSigmoid::TransferFunctionParameterizedSigmoid(
 			const TransferFunctionParameterizedSigmoid &other) 
-	: Object(), ValueChangedListener(), TransferFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), TransferFunction(other)
 {
 	mShift = dynamic_cast<DoubleValue*>(getParameter("Shift"));
 	mSteepness = dynamic_cast<DoubleValue*>(getParameter("Steepness"));

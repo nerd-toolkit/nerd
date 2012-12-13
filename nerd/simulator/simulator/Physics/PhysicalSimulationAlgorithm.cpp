@@ -88,7 +88,7 @@ bool PhysicalSimulationAlgorithm::resetPhysics() {
 }
 	
 	
-bool PhysicalSimulationAlgorithm::executeSimulationStep(PhysicsManager *pmanager) {
+bool PhysicalSimulationAlgorithm::executeSimulationStep(PhysicsManager*) {
 	return true;
 }
 

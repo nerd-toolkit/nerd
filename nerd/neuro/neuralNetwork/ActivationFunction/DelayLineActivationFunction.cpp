@@ -73,7 +73,7 @@ DelayLineActivationFunction::DelayLineActivationFunction()
  * @param other the DelayLineActivationFunction object to copy.
  */
 DelayLineActivationFunction::DelayLineActivationFunction(const DelayLineActivationFunction &other)
-	: Object(), ValueChangedListener(), ActivationFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), ActivationFunction(other)
 {
 	mDelay = dynamic_cast<IntValue*>(getParameter("Delay"));
 }

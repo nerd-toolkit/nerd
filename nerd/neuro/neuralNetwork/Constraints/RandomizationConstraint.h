@@ -83,7 +83,7 @@ namespace nerd {
 	 */
 	class RandomizationConstraint : public GroupConstraint {
 	public:
-		RandomizationConstraint(int minNumberOfNeurons = 0, int maxNumberOfNeurons = 10000);
+		RandomizationConstraint();
 		RandomizationConstraint(const RandomizationConstraint &other);
 		virtual ~RandomizationConstraint();
 

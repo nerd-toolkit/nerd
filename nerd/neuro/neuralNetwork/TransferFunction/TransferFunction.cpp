@@ -55,7 +55,7 @@ TransferFunction::TransferFunction(const QString &name, double lowerBound , doub
 }
 
 TransferFunction::TransferFunction(const TransferFunction &other) 
-	: Object(), ValueChangedListener(), ParameterizedObject(other)
+: Object(), ValueChangedListener(other), ObservableNetworkElement(other), ParameterizedObject(other)
 {
 	mLowerBound = other.mLowerBound;
 	mUpperBound = other.mUpperBound;

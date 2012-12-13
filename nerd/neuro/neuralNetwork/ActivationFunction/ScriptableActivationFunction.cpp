@@ -96,9 +96,9 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 
 ScriptableActivationFunction::ScriptableActivationFunction(
 			const ScriptableActivationFunction &other)
-	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), 
-	  NeuroModulatorActivationFunction(other), mErrorState(0), mOwner(0), mFirstExecution(true),
-	  mDefaultActivationFunction(0)
+: Object(), ValueChangedListener(), EventListener(), ObservableNetworkElement(other), NeuroModulatorElement(other), ScriptingContext(other), 
+		NeuroModulatorActivationFunction(other), 
+		mErrorState(0), mOwner(0), mFirstExecution(true), mDefaultActivationFunction(0)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	

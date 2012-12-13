@@ -58,7 +58,7 @@ AdditiveTimeDiscreteActivationFunction::AdditiveTimeDiscreteActivationFunction()
 
 AdditiveTimeDiscreteActivationFunction::AdditiveTimeDiscreteActivationFunction(
 			const AdditiveTimeDiscreteActivationFunction &other)
-	: Object(), ValueChangedListener(), ActivationFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), ActivationFunction(other)
 {
 }
 

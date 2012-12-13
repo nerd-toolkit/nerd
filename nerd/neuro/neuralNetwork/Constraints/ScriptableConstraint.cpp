@@ -239,7 +239,7 @@ bool ScriptableConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor *
 		//active constraints are only executed 
 		return true;
 	}
-	return applyConstraint();
+	return applyConstraint(); //TODO check if this should use the trashcan!
 }
 
 

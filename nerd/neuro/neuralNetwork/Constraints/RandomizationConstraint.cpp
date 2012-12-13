@@ -60,7 +60,7 @@ using namespace std;
 namespace nerd {
 
 
-RandomizationConstraint::RandomizationConstraint(int minNumberOfNeurons, int maxNumberOfNeurons) 
+RandomizationConstraint::RandomizationConstraint() 
 	: GroupConstraint("Randomization"), mGlobalBiasRange(0), mGlobalOutputRange(0),
 		mGlobalActivationRange(0), mGlobalWeightRange(0), mIndividualRanges(0),
 		mStoreRandomizedValuesInNetwork(0), mApplyStoredValuesFromNetwork(0),
@@ -150,7 +150,7 @@ bool RandomizationConstraint::isValid(NeuronGroup*) {
 
 
 bool RandomizationConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
-												QList<NeuralNetworkElement*> &trashcan) 
+												QList<NeuralNetworkElement*>&) 
 {
 
 	if(owner == 0 || owner->getOwnerNetwork() == 0) {

@@ -95,10 +95,9 @@ ScriptableSynapseFunction::ScriptableSynapseFunction()
 	mRestrictToMainExecutionThread = false;
 }
 
-ScriptableSynapseFunction::ScriptableSynapseFunction(
-			const ScriptableSynapseFunction &other)
-	: Object(), ValueChangedListener(), EventListener(), ScriptingContext(other), NeuroModulatorSynapseFunction(other),
-		mErrorState(0), mOwner(0), mFirstExecution(true), mDefaultSynapseFunction(0)
+ScriptableSynapseFunction::ScriptableSynapseFunction(const ScriptableSynapseFunction &other)
+	: Object(), ValueChangedListener(), EventListener(), NeuroModulatorElement(other), ScriptingContext(other), 
+		NeuroModulatorSynapseFunction(other), mErrorState(0), mOwner(0), mFirstExecution(true), mDefaultSynapseFunction(0)
 {
 	mNetworkManipulator = new ScriptedNetworkManipulator();
 	

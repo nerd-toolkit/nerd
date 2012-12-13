@@ -117,7 +117,7 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
  */
 ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuronActivationFunction(
 						const ScriptableSelfRegulatingNeuronActivationFunction &other) 
-	: QObject(), SelfRegulatingNeuronActivationFunction(other), mEquationScript(0)
+	: ObservableNetworkElement(other), QObject(), SelfRegulatingNeuronActivationFunction(other), mEquationScript(0)
 {
 	mTransmitterEquation = dynamic_cast<StringValue*>(getParameter("Trans-Eq (eta,h)"));
 	mReceptorEquation = dynamic_cast<StringValue*>(getParameter("Recept-Eq (xi,g)"));

@@ -56,7 +56,7 @@ ASeriesActivationFunction::ASeriesActivationFunction()
 
 ASeriesActivationFunction::ASeriesActivationFunction(
 			const ASeriesActivationFunction &other)
-	: Object(), ValueChangedListener(), ActivationFunction(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), ActivationFunction(other)
 {
 }
 
