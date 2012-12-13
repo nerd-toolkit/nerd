@@ -165,10 +165,15 @@ double NeuroModulator::getConcentrationAt(int type, Vector3D position, NeuralNet
 		return 0.0;
 	}
 	
-	int modus = mDefaultDistributionModus;
-	if(modus == -1) {
-		modus = mDistributionModi.value(type, -1.0);
+	if(!mDistributionModi.keys().contains(type)) {
+		return 0.0;
 	}
+	
+	//TODO check what to do with default stuff (is that necessary?)
+//  	int modus = mDefaultDistributionModus;
+//  	if(modus == -1) {
+		int modus = mDistributionModi.value(type, -1);
+//  	}
 	
 	//2D only here (on a plane)
 	double concentration = mConcentrations.value(type, 0.0);
@@ -279,9 +284,13 @@ bool NeuroModulator::isCircularArea(int type) {
  * If the type is a specific type, then only that type's modus is changed.
  */
 void NeuroModulator::setDistributionModus(int type, int modus) {
+	modus = modus;
 	if(type == -1) {
 		mDistributionModi.clear();
 		mDefaultDistributionModus = modus;
+	}
+	if(!mConcentrations.keys().contains(type)) {
+		mConcentrations.insert(type, 0.0);
 	}
 	QList<int> types = mConcentrations.keys();
 	for(int i = 0; i < types.size(); ++i) {

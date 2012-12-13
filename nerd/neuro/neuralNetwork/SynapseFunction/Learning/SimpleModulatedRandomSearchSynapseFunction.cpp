@@ -366,7 +366,7 @@ namespace nerd {
 						params.mType, owner->getPosition(), mCurrentNetwork);
 		
 		if(params.mObservable != 0) {
-			params.mObservable->set(concentration);
+			params.mObservable->set(concentration); 
 		}
 		
 		double disableProbability = Math::max(0.0, Math::min(1.0, 
