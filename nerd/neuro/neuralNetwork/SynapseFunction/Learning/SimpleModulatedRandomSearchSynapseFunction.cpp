@@ -380,7 +380,8 @@ namespace nerd {
 		if(Random::nextDouble() < disableProbability) {
 			mInactive->set(!mInactive->get());
 			
-			enableWeight(owner, !mInactive->get());
+			//don't do it twice!
+			//enableWeight(owner, !mInactive->get());
 			
 			incrementDisableChangeCounter(owner);
 		}
@@ -529,7 +530,8 @@ namespace nerd {
 					if(mInactive->get() != mKnownPersistentDisableStates.last()) {
 						mInactive->set(mKnownPersistentDisableStates.last());
 						
-						enableWeight(owner, !mInactive->get());
+						//don't do it twice. Changing mInactive alreay calls this method!
+						//enableWeight(owner, !mInactive->get());
 						
 						incrementDisableChangeCounter(owner);
 					}
