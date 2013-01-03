@@ -192,16 +192,21 @@ ModularNeuroEvolution1::ModularNeuroEvolution1(World *world)
 		TournamentSelectionMethod *tournament = new TournamentSelectionMethod(5);
 		StochasticUniversalSamplingSelection *universalSampling = new StochasticUniversalSamplingSelection();
 		MultiObjectiveTournamentSelection *multiObjectivTournament = new MultiObjectiveTournamentSelection(5);
+		PoissonDistributionRanking *poissonDistribution = new PoissonDistributionRanking();
 		population->addSelectionMethod(tournament);
 		population->addSelectionMethod(universalSampling);
 		population->addSelectionMethod(multiObjectivTournament);
+		population->addSelectionMethod(poissonDistribution);
 		tournament->getPopulationProportion()->set(1.0);
 		universalSampling->getPopulationProportion()->set(0.0);
 		multiObjectivTournament->getPopulationProportion()->set(0.0);
+		poissonDistribution->getPopulationProportion()->set(0.0);
 
 		tournament->setResponsibleFitnessFunction(population->getFitnessFunctions().at(0));
 		universalSampling->setResponsibleFitnessFunction(population->getFitnessFunctions().at(0));
 		multiObjectivTournament->setResponsibleFitnessFunction(population->getFitnessFunctions().at(0));
+		poissonDistribution->setResponsibleFitnessFunction(population->getFitnessFunctions().at(0));
+		
 
 		//Add GenotypePhenotypeMapper.
 		IdentityGenotypePhenotypeMapper *mapper = new IdentityGenotypePhenotypeMapper();

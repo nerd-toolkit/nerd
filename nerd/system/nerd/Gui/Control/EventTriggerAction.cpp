@@ -100,7 +100,6 @@ bool EventTriggerAction::bind() {
 					.append(name).append("] [DISABLING FUNCTION]"));
 			ok = mDisableIfEventNotFound;
 			setEnabled(false);
-			cerr << "disable function" << endl;
 			break;
 		}
 		else {

@@ -167,8 +167,9 @@ QList<Individual*> PoissonDistributionRanking::createSeed(
 	maxFitness += minFitness;
 
 	if(maxFitness == minFitness) {
-		Core::log("PoissonDistributionRanking: Fitness is always the same!");
+		Core::log("PoissonDistributionRanking: All indiduals have a similar fitness.!", true);
 
+		//TODO check if this should still be a stochastic process...
 		newGeneration << newParents;
 		fillUpGeneration(newGeneration, parentGeneration.front(), numberOfIndividuals);
 
@@ -179,7 +180,8 @@ QList<Individual*> PoissonDistributionRanking::createSeed(
 
 	for(QListIterator<Individual*> i(parentGeneration); i.hasNext();) {
 		double fitness = (minFitness + i.next()->getFitness(fitnessFunction)) * normFactor;
-		fitnessSum += (minFitness * normFactor) + fitness;
+		//fitnessSum += (minFitness * normFactor) + fitness; //Cr
+		fitnessSum += fitness;
 	}
 
 	
@@ -196,7 +198,7 @@ QList<Individual*> PoissonDistributionRanking::createSeed(
 
 
 	if(average == 0) {
-		Core::log("PoissonDistributionRanking: Fitness average was 0!");
+		Core::log("PoissonDistributionRanking: Fitness average was 0!", true);
 
 		newGeneration << newParents;
 		fillUpGeneration(newGeneration, parentGeneration.front(), numberOfIndividuals);
@@ -206,37 +208,53 @@ QList<Individual*> PoissonDistributionRanking::createSeed(
 
 	double offspringProbabilitySum = 0.0;
 	for(QListIterator<Individual*> i(parentGeneration); i.hasNext();) {
+// 		offspringProbabilitySum += 
+// 				exp((-gamma * (((maxFitness - minFitness) - (
+// 					(minFitness + i.next()->getFitness(fitnessFunction)))) * normFactor)) 
+// 					/ average); //Cr
+
+		//required later for the denumerator of individual offspring o_i.
 		offspringProbabilitySum += 
-				exp((-gamma * (((maxFitness - minFitness) - (
-					(minFitness + i.next()->getFitness(fitnessFunction)))) * normFactor)) 
+				exp((-gamma * (1 - ((minFitness + i.next()->getFitness(fitnessFunction)) * normFactor))) 
 					/ average);
 	}
 
 	if(offspringProbabilitySum == 0) {
-		Core::log("PoissonDistributionRanking: OffspringProbabilitySum was 0!");
+		Core::log("PoissonDistributionRanking: OffspringProbabilitySum was 0!", true);
 
 		newGeneration << newParents;
 		fillUpGeneration(newGeneration, parentGeneration.front(), numberOfIndividuals);
 
 		return newGeneration;
 	}
+	
+	int desiredPopulationSize = Math::max(1, numberOfIndividuals - numberOfPreservedParents);
 
-	//normalize probabilitySum according to desired population size.
-	double normalizedOffspringProbabilitySum = 
-				Math::max(0.0, ((double) (numberOfIndividuals - numberOfPreservedParents)))
-				/ offspringProbabilitySum;
+// 	//normalize probabilitySum according to desired population size.
+// 	double normalizedOffspringProbabilitySum = 
+// 				Math::max(0.0, ((double) (numberOfIndividuals - numberOfPreservedParents)))
+// 				/ offspringProbabilitySum; //Cr
 
 	double boost = 1.0;
 	while(numberOfIndividuals > (newGeneration.size() + newParents.size())) {
+		if(boost < 1.0) {
+			Core::log(QString("PoissonDistribution: Doing a second sweep with ") + QString::number(boost), true);
+		}
 		for(QListIterator<Individual*> i(parentGeneration); i.hasNext();) {
 	
 			Individual *parent = i.next();
 			
 			//double birthRate = exp(-gamma * ((maxFitness - parent->getFitness(fitnessFunction)) 
 			//					/ average)) * normalizedOffspringProbabilitySum;
-			double birthRate = exp((-gamma * (((maxFitness - minFitness) - 
-						(minFitness + parent->getFitness(fitnessFunction))) * normFactor)) 
-					/ average) * normalizedOffspringProbabilitySum;
+// 			double birthRate = exp((-gamma * (((maxFitness - minFitness) - 
+// 						(minFitness + parent->getFitness(fitnessFunction))) * normFactor)) 
+// 					/ average) * normalizedOffspringProbabilitySum; /Cr
+			
+			//b_i = z * o_i (z == desiredPopulationSize)
+			//o_i = e^(-gamma (p_max - p_i) / sigma^2) / sum[j=1_N](e^(-gamma (p_max - p_j) / sigma^2) (p_i fitness of individual i)
+			double birthRate = ((double) desiredPopulationSize) * 
+						exp(-gamma * (1 - ((minFitness + parent->getFitness(fitnessFunction)) * normFactor)) 
+					/ average) / offspringProbabilitySum;
 	
 			int numberOfChildren = -1;
 			double limit = exp(-1.0 * Math::abs(birthRate)) * boost;
