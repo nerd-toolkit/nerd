@@ -71,10 +71,10 @@ NeuralNetwork* NeuralNetworkAdapter::createCopy() {
 }
 
 
-void NeuralNetworkAdapter::executeStep() {
+void NeuralNetworkAdapter::executeStep(int numberOfSteps) {
 	mExecuteStepCounter++;
 	if(!mInterceptFunctionCalls) {
-		NeuralNetwork::executeStep();
+		NeuralNetwork::executeStep(numberOfSteps);
 	}
 }
 

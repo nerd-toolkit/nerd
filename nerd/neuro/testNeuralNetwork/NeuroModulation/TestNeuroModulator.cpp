@@ -103,7 +103,7 @@ void TestNeuroModulator::testConstructionAndSettings() {
 	QCOMPARE(1, mod.getDistributionModus(-1));
 	QCOMPARE(1, mod.getDistributionModus(5));
 	QCOMPARE(1, mod.getDistributionModus(12));
-	QCOMPARE(1, mod.getDistributionModus(88)); //not found, but still is set to default
+	QCOMPARE(4, mod.getDistributionModus(88)); 
 	
 	mod.setDistributionModus(12, 101);
 	QCOMPARE(1, mod.getDistributionModus(-1));

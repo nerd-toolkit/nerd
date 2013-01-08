@@ -245,7 +245,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(0.0); //half strong source->target
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.0);  
-	QCOMPARE(sensor->getNormalized(), 0.0); //0.5 * maximalTransferRate
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), 0.0, 0.00001)); //0.5 * maximalTransferRate
 	QCOMPARE(source->get(), 0.7); //0.05 transfer + 0.01 cost
 	QCOMPARE(target->get(), 0.0);
 	
@@ -347,7 +347,7 @@ void TestValueTransferController::testSimpleTransfer() {
 	controller->set(0.0); //half strong source->target
 	updateActuatorAndSensor(vtf);
 	QCOMPARE(sensor->get(), 0.0);  
-	QCOMPARE(sensor->getNormalized(), 0.0); //0.5 * maximalTransferRate
+	QVERIFY(Math::compareDoubles(sensor->getNormalized(), 0.0, 0.0001)); //0.5 * maximalTransferRate
 	QCOMPARE(source->get(), 0.0); //0.05 transfer + 0.01 cost
 	QCOMPARE(target->get(), 0.7);
 	

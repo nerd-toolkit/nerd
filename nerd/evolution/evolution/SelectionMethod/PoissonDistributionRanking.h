@@ -51,6 +51,7 @@
 #include "SelectionMethod/SelectionMethod.h"
 #include "Value/IntValue.h"
 #include "Value/DoubleValue.h"
+#include "Value/BoolValue.h"
 
 
 namespace nerd {
@@ -78,6 +79,7 @@ namespace nerd {
 
 	private:
 		DoubleValue *mSelectionPressure;
+		BoolValue *mUseSoftMax;
 	};
 
 }

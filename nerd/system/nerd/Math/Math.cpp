@@ -54,6 +54,7 @@ using namespace std;
 namespace nerd {
 
 const double Math::PI = 3.14159265;
+QVector<long long> Math::mFactorials = QVector<long long>();
 
 Math::Math() {
 }
@@ -353,6 +354,33 @@ Vector3D Math::centerOfLine(const Vector3D &p1, const Vector3D &p2, double offse
 	return Vector3D(pos.x(), pos.y(), 0.0);
 }
 
+
+/**
+ * Factorial is only defined for long long and thus up to approx. 12!.
+ * Larger x are just treated as 12 and a warning is printed to the console!
+ */
+long long Math::factorial(int x) {
+	if(mFactorials.empty()) {
+		mFactorials.append(0);
+		mFactorials.append(1);
+	}
+	if(x <= 0) {
+		return 0;
+	}
+	if(x < mFactorials.size()) {
+		return mFactorials.at(x);
+	}
+	if(x > 12) {
+		Core::log(QString("Math::factorial() Warning: A number greater than 12 (") 
+				+ QString::number(x) + ")! has been requested. Due to numeric limitations, x cannot be greater than 12! "
+				+ "x therefore has been truncated to 12.", true);
+		x = 12;
+	}
+	for(int i = mFactorials.size(); i <= x; ++i) {
+		mFactorials.append(mFactorials.at(i - 1) * (long long) i);
+	}
+	return mFactorials.last();
+}
 
 }
 

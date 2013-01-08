@@ -75,17 +75,17 @@ void TestNeuralNetworkManager::cleanUpTestCase() {
 void TestNeuralNetworkManager::testConstruction() {
 	Core::resetCore();
 
-	NeuralNetworkManager nnm1;
+	NeuralNetworkManager *nnm1 = new NeuralNetworkManager();
 
 	//NeuralNetworkManager does NOT automatically register at the Core as global object.
-	QVERIFY(!Core::getInstance()->getGlobalObjects().contains(&nnm1));
+	QVERIFY(!Core::getInstance()->getGlobalObjects().contains(nnm1));
 	
-	QVERIFY(nnm1.getName() == "NeuralNetworkManager");
-	QVERIFY(nnm1.getTransferFunctionPrototypes().size() == 0);
-	QVERIFY(nnm1.getActivationFunctionPrototypes().size() == 0);
-	QVERIFY(nnm1.getSynapseFunctionPrototypes().size() == 0);
+	QVERIFY(nnm1->getName() == "NeuralNetworkManager");
+	QVERIFY(nnm1->getTransferFunctionPrototypes().size() == 0);
+	QVERIFY(nnm1->getActivationFunctionPrototypes().size() == 0);
+	QVERIFY(nnm1->getSynapseFunctionPrototypes().size() == 0);
 
-
+	Core::resetCore();
 }
 
 
@@ -114,104 +114,104 @@ void TestNeuralNetworkManager::testPrototypes() {
 	bool destroyedSynapseFunctions = false;
 	
 	{
-		NeuralNetworkManager nn1;
+		NeuralNetworkManager *nn1 = new NeuralNetworkManager();
 	
-		QVERIFY(nn1.getTransferFunctionPrototypes().size() == 0);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 0);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getTransferFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 0);
 	
 		//*********************
 		//TransferFunctions
 	
 		//add a transferfunction prototype
-		QVERIFY(nn1.addTransferFunctionPrototype(tfa1) == true);
+		QVERIFY(nn1->addTransferFunctionPrototype(tfa1) == true);
 		
-		QVERIFY(nn1.getTransferFunctionPrototypes().size() == 1);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 0);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getTransferFunctionPrototypes().size() == 1);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 0);
 	
-		QVERIFY(nn1.getTransferFunctionPrototypes().at(0) != &tfa1); //is a copy
-		QVERIFY(nn1.getTransferFunctionPrototypes().at(0)->getName() == "F-1");
-		QVERIFY(nn1.getTransferFunctionPrototypes().at(0)->getLowerBound() == 0.1);
+		QVERIFY(nn1->getTransferFunctionPrototypes().at(0) != &tfa1); //is a copy
+		QVERIFY(nn1->getTransferFunctionPrototypes().at(0)->getName() == "F-1");
+		QVERIFY(nn1->getTransferFunctionPrototypes().at(0)->getLowerBound() == 0.1);
 	
 		//add the same transferfunction or a transferfunction with the same name 
 		//(both fail because of a name conflict, each prototype has to have an own name).
-		QVERIFY(nn1.addTransferFunctionPrototype(tfa1) == false);
-		QVERIFY(nn1.addTransferFunctionPrototype(tfa3) == false); //same name F-1
+		QVERIFY(nn1->addTransferFunctionPrototype(tfa1) == false);
+		QVERIFY(nn1->addTransferFunctionPrototype(tfa3) == false); //same name F-1
 		
-		QVERIFY(nn1.getTransferFunctionPrototypes().size() == 1);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 0);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getTransferFunctionPrototypes().size() == 1);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 0);
 	
 		//add a transferfunction prototype with a different name (works)
-		QVERIFY(nn1.addTransferFunctionPrototype(tfa2));
-		QVERIFY(nn1.getTransferFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->addTransferFunctionPrototype(tfa2));
+		QVERIFY(nn1->getTransferFunctionPrototypes().size() == 2);
 		
 	
 		//*********************
 		//ActivationFunctions
 		
-		QVERIFY(nn1.getTransferFunctionPrototypes().size() == 2);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 0);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getTransferFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 0);
 	
 		//add an ActivationFunctionPrototype 
 		//(works, even if the name is the same as one of the TransferFunctions).
-		QVERIFY(nn1.addActivationFunctionPrototype(afa1) == true);
+		QVERIFY(nn1->addActivationFunctionPrototype(afa1) == true);
 	
-		QVERIFY(nn1.getTransferFunctionPrototypes().size() == 2);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 1);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getTransferFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 1);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 0);
 	
-		QVERIFY(nn1.getActivationFunctionPrototypes().at(0) != &afa1); //is a copy
-		QVERIFY(nn1.getActivationFunctionPrototypes().at(0)->getName() == "F-1");
+		QVERIFY(nn1->getActivationFunctionPrototypes().at(0) != &afa1); //is a copy
+		QVERIFY(nn1->getActivationFunctionPrototypes().at(0)->getName() == "F-1");
 	
 		//add the same ActivationFunction or one with the same name (both fails)
-		QVERIFY(nn1.addActivationFunctionPrototype(afa1) == false);
-		QVERIFY(nn1.addActivationFunctionPrototype(afa3) == false);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 1);
+		QVERIFY(nn1->addActivationFunctionPrototype(afa1) == false);
+		QVERIFY(nn1->addActivationFunctionPrototype(afa3) == false);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 1);
 	
 		//add an ActivationFunction with another name
-		QVERIFY(nn1.addActivationFunctionPrototype(afa2) == true);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->addActivationFunctionPrototype(afa2) == true);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 2);
 	
 	
 		//*********************
 		//SynapseFunctions
 		
-		QVERIFY(nn1.getTransferFunctionPrototypes().size() == 2);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 2);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 0);
+		QVERIFY(nn1->getTransferFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 0);
 	
 		//add a SynapseFunctionPrototype 
 		//(works, even if the name is the same as one of the ActivationFunctions).
-		QVERIFY(nn1.addSynapseFunctionPrototype(sfa1) == true);
+		QVERIFY(nn1->addSynapseFunctionPrototype(sfa1) == true);
 	
-		QVERIFY(nn1.getTransferFunctionPrototypes().size() == 2);
-		QVERIFY(nn1.getActivationFunctionPrototypes().size() == 2);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 1);
+		QVERIFY(nn1->getTransferFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->getActivationFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 1);
 	
-		QVERIFY(nn1.getSynapseFunctionPrototypes().at(0) != &sfa1); //is a copy
-		QVERIFY(nn1.getSynapseFunctionPrototypes().at(0)->getName() == "F-1");
+		QVERIFY(nn1->getSynapseFunctionPrototypes().at(0) != &sfa1); //is a copy
+		QVERIFY(nn1->getSynapseFunctionPrototypes().at(0)->getName() == "F-1");
 	
 		//add the same ActivationFunction or one with the same name (both fails)
-		QVERIFY(nn1.addSynapseFunctionPrototype(sfa1) == false);
-		QVERIFY(nn1.addSynapseFunctionPrototype(sfa3) == false);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 1);
+		QVERIFY(nn1->addSynapseFunctionPrototype(sfa1) == false);
+		QVERIFY(nn1->addSynapseFunctionPrototype(sfa3) == false);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 1);
 	
 		//add an ActivationFunction with another name
-		QVERIFY(nn1.addSynapseFunctionPrototype(sfa2) == true);
-		QVERIFY(nn1.getSynapseFunctionPrototypes().size() == 2);
+		QVERIFY(nn1->addSynapseFunctionPrototype(sfa2) == true);
+		QVERIFY(nn1->getSynapseFunctionPrototypes().size() == 2);
 
 
 		aap1 = dynamic_cast<ActivationFunctionAdapter*>(
-					nn1.getActivationFunctionPrototypes().at(0));
+					nn1->getActivationFunctionPrototypes().at(0));
 
 		tap1 = dynamic_cast<TransferFunctionAdapter*>(
-					nn1.getTransferFunctionPrototypes().at(0));
+					nn1->getTransferFunctionPrototypes().at(0));
 
 		sap1 = dynamic_cast<SynapseFunctionAdapter*>(
-					nn1.getSynapseFunctionPrototypes().at(0));
+					nn1->getSynapseFunctionPrototypes().at(0));
 
 		QVERIFY(aap1 != 0);
 		QVERIFY(tap1 != 0);
@@ -221,13 +221,19 @@ void TestNeuralNetworkManager::testPrototypes() {
 		tap1->mDeletedFlag = &destroyedTransferFunctions;
 		sap1->mDeletedFlag = &destroyedSynapseFunctions;
 
+		delete nn1;
 	}
+	
+	//Core::resetCore();
+	
+	
 
 	//all prototypes are destroyed with the NeuralNetworkManager (here only 1 sample per type)
 	QVERIFY(destroyedTransferFunctions == true);
 	QVERIFY(destroyedActivationFunctions == true);
 	QVERIFY(destroyedSynapseFunctions == true);
 
+	
 
 }
 
@@ -294,7 +300,7 @@ void TestNeuralNetworkManager::testAddAndRemoveNeuralNetworks() {
 	//network1 was still registered when the NeuralNetworkManager was destroyed (so it is, too).
 	QVERIFY(destroyedN1 == true);
 
-
+	Core::resetCore();
 }
 
 
@@ -465,7 +471,6 @@ void TestNeuralNetworkManager::testBehavior() {
 	QVERIFY(nn2->mResetCounter == 1);
 
 	Core::resetCore();
-
 }
 
 

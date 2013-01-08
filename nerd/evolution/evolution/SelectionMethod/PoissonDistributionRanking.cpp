@@ -70,6 +70,10 @@ PoissonDistributionRanking::PoissonDistributionRanking()
 {
 	mSelectionPressure = new DoubleValue(1.0);
 	addParameter("Pressure", mSelectionPressure);
+	
+	//prepare for poisson function (but check how to cope with large n! (lookup table?)
+	mUseSoftMax = new BoolValue(true);
+	//addParameter("UseSoftMax", mUseSoftMax);
 }
 
 
@@ -82,6 +86,8 @@ PoissonDistributionRanking::PoissonDistributionRanking(const PoissonDistribution
 	: Object(), ValueChangedListener(), SelectionMethod(other) 
 {
 	mSelectionPressure = dynamic_cast<DoubleValue*>(getParameter("Pressure"));
+	//mUseSoftMax = dynamic_cast<BoolValue*>(getParameter("UseSoftMax"));
+	mUseSoftMax = new BoolValue(true);
 }
 
 /**
@@ -114,8 +120,6 @@ QList<Individual*> PoissonDistributionRanking::createSeed(
 				int numberOfIndividuals, int numberOfPreservedParents, 
 				int)
 {
-
-// 	cerr << "poisson" << endl;
 
 	if(mOwnerPopulation == 0) {
 		return QList<Individual*>();
@@ -208,10 +212,6 @@ QList<Individual*> PoissonDistributionRanking::createSeed(
 
 	double offspringProbabilitySum = 0.0;
 	for(QListIterator<Individual*> i(parentGeneration); i.hasNext();) {
-// 		offspringProbabilitySum += 
-// 				exp((-gamma * (((maxFitness - minFitness) - (
-// 					(minFitness + i.next()->getFitness(fitnessFunction)))) * normFactor)) 
-// 					/ average); //Cr
 
 		//required later for the denumerator of individual offspring o_i.
 		offspringProbabilitySum += 
@@ -230,54 +230,39 @@ QList<Individual*> PoissonDistributionRanking::createSeed(
 	
 	int desiredPopulationSize = Math::max(1, numberOfIndividuals - numberOfPreservedParents);
 
-// 	//normalize probabilitySum according to desired population size.
-// 	double normalizedOffspringProbabilitySum = 
-// 				Math::max(0.0, ((double) (numberOfIndividuals - numberOfPreservedParents)))
-// 				/ offspringProbabilitySum; //Cr
-
 	double boost = 1.0;
 	while(numberOfIndividuals > (newGeneration.size() + newParents.size())) {
 		if(boost < 1.0) {
 			Core::log(QString("PoissonDistribution: Doing a second sweep with ") + QString::number(boost), true);
 		}
-		for(QListIterator<Individual*> i(parentGeneration); i.hasNext();) {
+		for(int i = 0; i < parentGeneration.size(); ++i) {
 	
-			Individual *parent = i.next();
-			
-			//double birthRate = exp(-gamma * ((maxFitness - parent->getFitness(fitnessFunction)) 
-			//					/ average)) * normalizedOffspringProbabilitySum;
-// 			double birthRate = exp((-gamma * (((maxFitness - minFitness) - 
-// 						(minFitness + parent->getFitness(fitnessFunction))) * normFactor)) 
-// 					/ average) * normalizedOffspringProbabilitySum; /Cr
+			Individual *parent = parentGeneration.at(i);
 			
 			//b_i = z * o_i (z == desiredPopulationSize)
 			//o_i = e^(-gamma (p_max - p_i) / sigma^2) / sum[j=1_N](e^(-gamma (p_max - p_j) / sigma^2) (p_i fitness of individual i)
-			double birthRate = ((double) desiredPopulationSize) * 
-						exp(-gamma * (1 - ((minFitness + parent->getFitness(fitnessFunction)) * normFactor)) 
-					/ average) / offspringProbabilitySum;
+			
+			double birthRate = 1.0;
+			if(mUseSoftMax->get()) {
+			
+				birthRate = ((double) desiredPopulationSize) * 
+							exp(-gamma * (1 - ((minFitness + parent->getFitness(fitnessFunction)) * normFactor)) 
+						/ average) / offspringProbabilitySum;
+			}
 	
 			int numberOfChildren = -1;
 			double limit = exp(-1.0 * Math::abs(birthRate)) * boost;
 			double product = 1.0;
 
-// 			cerr << "inner: " << (((maxFitness - 
-// 						(minFitness + parent->getFitness(fitnessFunction))) * normFactor)) << endl;
-// 
-// 			cerr << "maxfit: " << maxFitness << " parentfit: " << parent->getFitness(fitnessFunction)
-// 				<< " normalized: " << ((minFitness + parent->getFitness(fitnessFunction)) * normFactor)
-// 				<< "  gamma: " << gamma << endl;
-// 			cerr << "limit: " << limit << " birthrate: " << birthRate <<  " abs: " << Math::abs(birthRate) << " average: " << average << "  normOffspringSum: " << normalizedOffspringProbabilitySum << endl;
-
-// algorithm poisson random number (Knuth):
-//     init:
-//          Let L ← e−λ, k ← 0 and p ← 1.
-//     do:
-//          k ← k + 1.
-//          Generate uniform random number u in [0,1] and let p ← p × u.
-//     while p > L.
-//     return k − 1.
 			
-			
+			// algorithm poisson random number (Knuth):
+			//     init:
+			//          Let L ← e^(−λ), k ← 0 and p ← 1.
+			//     do:
+			//          k ← k + 1.
+			//          Generate uniform random number u in [0,1] and let p ← p × u.
+			//     while p > L.
+			//     return k − 1.
 			do {
 				++numberOfChildren;
 				product *= Random::nextDouble();

@@ -171,8 +171,8 @@ void TestNeuralNetworkIONerdV1Xml::testCreateXmlFromNetwork() {
 			xmlLine = xmlLines.at(i);
 		}
 
-		cout << line.toStdString().c_str();
-		cout << xmlLine.toStdString().c_str() << endl;;
+		//cout << line.toStdString().c_str();
+		//cout << xmlLine.toStdString().c_str() << endl;;
 
 		QVERIFY(line.trimmed() == xmlLine.trimmed());
 

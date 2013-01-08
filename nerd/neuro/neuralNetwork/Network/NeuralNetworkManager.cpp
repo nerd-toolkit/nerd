@@ -174,10 +174,8 @@ NeuralNetworkManager::NeuralNetworkManager()
 NeuralNetworkManager::~NeuralNetworkManager() {
 	TRACE("NeuralNetworkManager::~NeuralNetworkManager");
 
-	if(mBypassNetworkValue != 0) {
-		mBypassNetworkValue->removeValueChangedListener(this);
-	}
-
+	//do not destroy mBypassNetworkValue (is destroyed by ValueManager.
+	
 	destroyNeuralNetworks();
 	while(!mTransferFunctionPrototypes.empty()) {
 		TransferFunction *tf = mTransferFunctionPrototypes.at(0);

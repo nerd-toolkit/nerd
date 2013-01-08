@@ -62,7 +62,7 @@ namespace nerd {
 
 		virtual NeuralNetwork* createCopy();
 
-		virtual void executeStep();
+		virtual void executeStep(int numberOfSteps = 1);
 		virtual void reset();
 
 		void validateSynapseConnections();

@@ -44,6 +44,7 @@
 
 #include "TestMath.h"
 #include "Math/Math.h"
+#include <Core/Core.h>
 #include <iostream>
 
 using namespace std;
@@ -146,6 +147,44 @@ void TestMath::testDistance() {
 	QVERIFY(Math::compareDoubles((double) Math::distance(QPoint(-2, -3), QPoint(-2, -3)), 0.0, 0.001));
 	QVERIFY(Math::compareDoubles((double) Math::distance(QPoint(0, 2), QPoint(0, 5)), 3.0, 0.001));
 	QVERIFY(Math::compareDoubles((double) Math::distance(QPoint(0, 2), QPoint(1001, 2)), 1001.0, 0.001));
+}
+
+
+//Chris
+void TestMath::testFactorial() {
+	Core::resetCore();
+	
+	Math::mFactorials.clear();
+	
+	QVERIFY(Math::mFactorials.size() == 0);
+	QCOMPARE(Math::factorial(0),  (long long) 0);
+	QVERIFY(Math::mFactorials.size() == 2);
+	QCOMPARE(Math::factorial(1),  (long long) 1);
+	QVERIFY(Math::mFactorials.size() == 2);
+	QCOMPARE(Math::factorial(3),  (long long) 6);
+	QVERIFY(Math::mFactorials.size() == 4);
+	QCOMPARE(Math::factorial(1), (long long) 1);
+	QVERIFY(Math::mFactorials.size() == 4);
+	QCOMPARE(Math::factorial(8), (long long) 40320);
+	QVERIFY(Math::mFactorials.size() == 9);
+	QCOMPARE(Math::factorial(8), (long long) 40320);
+	QVERIFY(Math::mFactorials.size() == 9);
+	QCOMPARE(Math::factorial(0), (long long) 0);
+	QVERIFY(Math::mFactorials.size() == 9);
+	QCOMPARE(Math::factorial(-1), (long long) 0); //only positive ints defined...
+	QVERIFY(Math::mFactorials.size() == 9);
+	QCOMPARE(Math::factorial(-100), (long long) 0); //only positive
+	QVERIFY(Math::mFactorials.size() == 9);
+	QCOMPARE(Math::factorial(1),  (long long) 1);
+	QVERIFY(Math::mFactorials.size() == 9);
+	QCOMPARE(Math::factorial(10),  3628800LL);
+	QVERIFY(Math::mFactorials.size() == 11);
+	QCOMPARE(Math::factorial(12),  479001600LL);
+	QVERIFY(Math::mFactorials.size() == 13);
+	QCOMPARE(Math::factorial(50),  479001600LL); //is truncated to 12!
+	QVERIFY(Math::mFactorials.size() == 13);
+
+	Core::resetCore();
 }
 
 }
