@@ -224,7 +224,7 @@ void TestBasinPlotter::testParameterSettings() {
 	QCOMPARE(v_StepsToCheck->get(), 100);
 	QVERIFY(v_ResetNetworkActivation->get() == true);
 	QVERIFY(v_RestoreNetworkConfiguration->get() == true);
-	QVERIFY(v_ResetSimulator->get() == true);
+	QVERIFY(v_ResetSimulator->get() == false);
 	
 	//... (seems to be all that are necessary, the others are unimportant.
 	
