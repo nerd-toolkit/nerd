@@ -130,8 +130,6 @@ void TestFirstReturnMap::testParameterSettings() {
 	StringValue *v_ObservedRanges = dynamic_cast<StringValue*>(plotter->getParameter("Config/ObservedRanges"));
 	IntValue *v_ObservedResolution = dynamic_cast<IntValue*>(plotter->getParameter("Config/ObservedResolution"));
 
-	DoubleValue *v_Accuracy = dynamic_cast<DoubleValue*>(plotter->getParameter("Config/Accuracy"));
-
 	IntValue *v_StepsToRun = dynamic_cast<IntValue*>(plotter->getParameter("Config/StepsToRun"));
 	IntValue *v_StepsToPlot = dynamic_cast<IntValue*>(plotter->getParameter("Config/StepsToPlot"));
 	
@@ -142,7 +140,6 @@ void TestFirstReturnMap::testParameterSettings() {
 	QVERIFY(v_ObservedElems != 0);
 	QVERIFY(v_ObservedRanges != 0);
 	QVERIFY(v_ObservedResolution != 0);
-	QVERIFY(v_Accuracy != 0);
 	QVERIFY(v_StepsToRun != 0);
 	QVERIFY(v_StepsToPlot != 0);
 	QVERIFY(v_ResetNetworkActivation != 0);
@@ -172,7 +169,6 @@ void TestFirstReturnMap::testParameterSettings() {
 	// check default parameter settings
 	QVERIFY(v_ObservedRanges->get() == "-1,1");
 	QVERIFY(v_ObservedResolution->get() == 200);
-	QVERIFY(v_Accuracy->get() == 0.001);
 	QVERIFY(v_StepsToRun->get() == 300);
 	QVERIFY(v_StepsToPlot->get() == 100);
 	QVERIFY(v_ResetNetworkActivation->get() == true);

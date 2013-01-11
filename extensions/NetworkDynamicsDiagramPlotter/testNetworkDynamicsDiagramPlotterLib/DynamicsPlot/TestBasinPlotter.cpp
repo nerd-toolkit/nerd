@@ -218,7 +218,7 @@ void TestBasinPlotter::testParameterSettings() {
 	QVERIFY(v_FilePrefix->get() == "BasinOfAttraction");
 	QVERIFY(v_AxisNames->get() == "x, y");
 	QVERIFY(v_TitleNames->get() == "Basins of Attraction|Periods|Attractor");
-	QCOMPARE(v_Accuracy->get(), 0.001);
+	QCOMPARE(v_Accuracy->get(), 0.0001);
 	QCOMPARE(v_RoundDigits->get(), -1);
 	QCOMPARE(v_StepsToRunPreCheck->get(), 2000);
 	QCOMPARE(v_StepsToCheck->get(), 100);

@@ -357,6 +357,7 @@ namespace nerd {
 			mXMinLabel->setText(QString::number(Math::round(mMatrix->get(1, 0, mIndex), 4)));
 			mXMaxLabel->setText(QString::number(Math::round(mMatrix->get(mMatrix->getMatrixWidth() - 1, 0, mIndex), 4)));
 			
+			MatrixValue* labelMatrix = mMatrix;
 			QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
 			image.fill(qRgb(255, 255, 255));
 			

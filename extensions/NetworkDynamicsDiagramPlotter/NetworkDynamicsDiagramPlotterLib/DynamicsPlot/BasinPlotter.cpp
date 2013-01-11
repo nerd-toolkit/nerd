@@ -83,7 +83,7 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	mProjectionRangesY = new StringValue("0");
 	mProjectionRangesY->setDescription("Ranges for additional Y axis projections");
 	
-	mAccuracy = new DoubleValue(0.001);
+	mAccuracy = new DoubleValue(0.0001);
 	mAccuracy->setDescription("Accuracy for network state comparison");
 	mRoundDigits = new IntValue(-1);
 	mRoundDigits->setDescription("Defines how many digits are preserved, "
