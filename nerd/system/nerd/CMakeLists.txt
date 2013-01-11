@@ -167,4 +167,5 @@ ADD_DEFINITIONS(-D'VER="${SUBVERSION_REVISION}"')
 add_library(nerd STATIC ${nerd_nerd_SRCS} ${nerd_nerd_MOC_SRCS} ${nerd_nerd_RC_SRCS} ${nerd_nerd_UI_HDRS})
 
 add_definitions(-Wall)
+add_definitions(-Wextra)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

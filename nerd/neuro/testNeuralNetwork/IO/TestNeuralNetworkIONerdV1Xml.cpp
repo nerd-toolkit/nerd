@@ -8,7 +8,7 @@
  *                                                                         *
  *   Project homepage: nerd.x-bot.org                                      *
  *                                                                         *
- *   Copyright (C) 2008 - 2012 by the Neurocybernetics Group Osnabrück    *
+ *   Copyright (C) 2008 - 2013 by the Neurocybernetics Group Osnabrück     *
  *   Contact: Christian Rempis                                             *
  *   christian.rempis@uni-osnabrueck.de                                    *
  *   Contributors: see contributors.txt in the nerd main directory.        *
@@ -159,24 +159,26 @@ void TestNeuralNetworkIONerdV1Xml::testCreateXmlFromNetwork() {
 
 	QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
 
-	int i = 0; 
-	while(!file.atEnd() && i < xmlLines.size()) {
-		QString line = file.readLine();
-		while(line.trimmed() == "" && !file.atEnd()) {
-			line = file.readLine();
-		}
-		QString xmlLine = xmlLines.at(i);
-		while(line.trimmed() == "" && i < (xmlLines.size() + 1)) {
+	{
+		int i = 0; 
+		while(!file.atEnd() && i < xmlLines.size()) {
+			QString line = file.readLine();
+			while(line.trimmed() == "" && !file.atEnd()) {
+				line = file.readLine();
+			}
+			QString xmlLine = xmlLines.at(i);
+			while(line.trimmed() == "" && i < (xmlLines.size() + 1)) {
+				++i;
+				xmlLine = xmlLines.at(i);
+			}
+
+			//cout << line.toStdString().c_str();
+			//cout << xmlLine.toStdString().c_str() << endl;;
+
+			QVERIFY(line.trimmed() == xmlLine.trimmed());
+
 			++i;
-			xmlLine = xmlLines.at(i);
 		}
-
-		//cout << line.toStdString().c_str();
-		//cout << xmlLine.toStdString().c_str() << endl;;
-
-		QVERIFY(line.trimmed() == xmlLine.trimmed());
-
-		++i;
 	}
 	
 	QString errorMessage;

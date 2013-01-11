@@ -12,7 +12,7 @@
  *                                                                         *
  *   Project homepage: nerd.x-bot.org                                      *
  *                                                                         *
- *   Copyright (C) 2008 - 2012 by the Neurocybernetics Group Osnabrück    *
+ *   Copyright (C) 2008 - 2013 by the Neurocybernetics Group Osnabrück     *
  *   Contact: Christian Rempis                                             *
  *   christian.rempis@uni-osnabrueck.de                                    *
  *   Contributors: see contributors.txt in the nerd main directory.        *

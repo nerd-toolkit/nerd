@@ -8,7 +8,7 @@
  *                                                                         *
  *   Project homepage: nerd.x-bot.org                                      *
  *                                                                         *
- *   Copyright (C) 2008 - 2012 by the Neurocybernetics Group Osnabrück    *
+ *   Copyright (C) 2008 - 2013 by the Neurocybernetics Group Osnabrück     *
  *   Contact: Christian Rempis                                             *
  *   christian.rempis@uni-osnabrueck.de                                    *
  *   Contributors: see contributors.txt in the nerd main directory.        *
@@ -102,9 +102,9 @@ QString ShowElementPairTool::getStatusMessage() {
 }
 
 void ShowElementPairTool::mouseButtonPressed(NetworkVisualization *source, 
-					QMouseEvent *event, const QPointF&)
+					QMouseEvent *e, const QPointF&)
 {
-	if(mVisuContext == 0 || mVisuContext != source || !(event->buttons() & Qt::RightButton)) {
+	if(mVisuContext == 0 || mVisuContext != source || !(e->buttons() & Qt::RightButton)) {
 		return;
 	}
 

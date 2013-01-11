@@ -8,7 +8,7 @@
  *                                                                         *
  *   Project homepage: nerd.x-bot.org                                      *
  *                                                                         *
- *   Copyright (C) 2008 - 2012 by the Neurocybernetics Group Osnabrück    *
+ *   Copyright (C) 2008 - 2013 by the Neurocybernetics Group Osnabrück     *
  *   Contact: Christian Rempis                                             *
  *   christian.rempis@uni-osnabrueck.de                                    *
  *   Contributors: see contributors.txt in the nerd main directory.        *
@@ -419,12 +419,12 @@ QMenu* GuiMainWindow::addMenu(const QString &menuName, QWidget *newControlWindow
 }
 
 void GuiMainWindow::addWidget(QWidget *newView) {
- 	int size = mViewList.size();
-	mWidgetLayout->addWidget(newView, size + 1, 0);
-	mWidgetLayout->setRowStretch(size + 1, 0);
+ 	int listSize = mViewList.size();
+	mWidgetLayout->addWidget(newView, listSize + 1, 0);
+	mWidgetLayout->setRowStretch(listSize + 1, 0);
 	mViewList.push_back(newView);
 	newView->setParent(this);
-	//resize((size+1)*400,400);
+	//resize((listSize+1)*400,400);
 }
 
 void GuiMainWindow::showWindow() {
