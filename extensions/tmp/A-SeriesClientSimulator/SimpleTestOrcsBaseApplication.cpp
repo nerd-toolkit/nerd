@@ -1,5 +1,5 @@
 /***************************************************************************
- *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
+ *   NERD - Neurodynamics and Evolutionary Robotics Development Toolkit    *
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the nerd homepage and the nerd overview paper.      *
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
 

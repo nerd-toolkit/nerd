@@ -12,7 +12,7 @@
  *                                                                         *
  *                                                                         *
  *   Acknowledgments:                                                      *
- *   The NERD Kit is part of the EU project ALEAR                          *
+ *   The NERD Toolkit is part of the EU project ALEAR                      *
  *   (Artificial Language Evolution on Autonomous Robots) www.ALEAR.eu     *
  *   This work was funded (2008 - 2011) by EU-Project Number ICT 214856    *
  *                                                                         *

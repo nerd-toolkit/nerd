@@ -1,5 +1,5 @@
 /***************************************************************************
- *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
+ *   NERD - Neurodynamics and Evolutionary Robotics Development Toolkit    *
  *                                                                         *
  *   OrcsModelOptimizer by Chris Reinke (creinke@uni-osnabrueck.de         *
  *                                                                         *
@@ -17,7 +17,7 @@
  *                                                                         *
  *                                                                         *
  *   Acknowledgments:                                                      *
- *   The NERD Kit is part of the EU project ALEAR                          *
+ *   The NERD Toolkit is part of the EU project ALEAR                      *
  *   (Artificial Language Evolution on Autonomous Robots) www.ALEAR.eu     *
  *   This work was funded (2008 - 2011) by EU-Project Number ICT 214856    *
  *                                                                         *
@@ -40,7 +40,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the nerd homepage and the nerd overview paper.      *
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
 #ifndef NERD_MUSLASHRHOLAMBDAES_H

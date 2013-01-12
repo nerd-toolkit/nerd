@@ -1,5 +1,5 @@
 /***************************************************************************
- *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
+ *   NERD - Neurodynamics and Evolutionary Robotics Development Toolkit    *
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
@@ -15,7 +15,7 @@
  *                                                                         *
  *                                                                         *
  *   Acknowledgments:                                                      *
- *   The NERD Kit is part of the EU project ALEAR                          *
+ *   The NERD Toolkit is part of the EU project ALEAR                      *
  *   (Artificial Language Evolution on Autonomous Robots) www.ALEAR.eu     *
  *   This work was funded (2008 - 2011) by EU-Project Number ICT 214856    *
  *                                                                         *
@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the nerd homepage and the nerd overview paper.      *
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
 
@@ -511,10 +511,15 @@ void EvolutionParameterPanel::previewIndividual() {
 	QStringList args;
 	args << startScript << QString::number(indNumber) << "-test" << "-gui";
 	if(mTogglePreview) {
-		args << "-toggle";
+		//args << "-toggle";
 	}
-	args << QString("-setTitle Preview Gen: ").append(mCurrentGenerationValue->getValueAsString())
-			.append(" Ind: ").append(QString::number(indNumber));
+// 	args << QString("-setTitle Preview Gen: ").append(mCurrentGenerationValue->getValueAsString())
+// 			.append(" Ind: ").append(QString::number(indNumber));
+	QString titleString = QString("Preview_Gen:_").append(mCurrentGenerationValue->getValueAsString())
+							.append("_Ind:_").append(QString::number(indNumber));
+	args << QString("-setTitle ").append(titleString);
+	
+// 	cerr << args.join(" ").toStdString().c_str() << endl;
 
 // 	QString command = "/bin/bash";
 // 	for(QListIterator<QString> i(args); i.hasNext();) { command.append(" ").append(i.next()); }
@@ -532,7 +537,6 @@ void EvolutionParameterPanel::previewFinished(int state) {
 	if(state != 0) {
 		Core::log("ERR: " + QString(mPreviewProcess->readAllStandardError()), true);
 	}
-	//Core::log("COUT: " + QString(mPreviewProcess->readAllStandardOutput()), true);
 	if(mPreviewProcess != 0) {
 		mPreviewProcess->close();
 	}
