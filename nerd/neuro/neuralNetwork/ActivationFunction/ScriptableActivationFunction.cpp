@@ -165,14 +165,13 @@ void ScriptableActivationFunction::resetScriptContext() {
 
 
 void ScriptableActivationFunction::reset(Neuron *neuron) {
-	NeuroModulatorActivationFunction::reset(neuron);
 	mOwner = neuron;
 	ModularNeuralNetwork *network = dynamic_cast<ModularNeuralNetwork*>(neuron->getOwnerNetwork());
 	if(mNetworkManipulator != 0) {
 		mNetworkManipulator->setNeuralNetwork(network);
 		mNetworkManipulator->setOwnerHint(neuron);
 	}
-	
+	NeuroModulatorActivationFunction::reset(neuron);
 	resetScriptContext();
 	executeScriptFunction("reset();");
 	

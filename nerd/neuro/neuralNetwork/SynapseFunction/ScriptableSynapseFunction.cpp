@@ -174,6 +174,7 @@ void ScriptableSynapseFunction::reset(Synapse *owner) {
 		mNetworkManipulator->setOwnerHint(owner);
 	}
 
+	NeuroModulatorSynapseFunction::reset(owner);
 	resetScriptContext();
 	executeScriptFunction("reset();");
 }

@@ -106,6 +106,7 @@ void NeuroModulator::reset(NeuralNetworkElement *owner) {
 	mUpdateModiVariables.clear();
 	
 	mResetPending = true;
+	
 }
 
 void NeuroModulator::update(NeuralNetworkElement *owner) {
@@ -166,7 +167,7 @@ double NeuroModulator::getConcentrationAt(int type, Vector3D position, NeuralNet
 	}
 	
 	if(!mDistributionModi.keys().contains(type)) {
-		return 0.0;
+		mDistributionModi.insert(type, mDefaultDistributionModus);
 	}
 	
 	//TODO check what to do with default stuff (is that necessary?)
@@ -224,6 +225,8 @@ double NeuroModulator::getConcentrationAt(int type, Vector3D position, NeuralNet
 // 	if(mDistributionModi == 3) {
 // 		
 // 	}
+
+	Core::log("NeuroModulator: (" + QString::number(owner->getId()) + ") Unsupported disribution modus: " + QString(modus), true);
 	
 	//return 0 if there is no supported modus.
 	return 0.0;
@@ -318,12 +321,17 @@ int NeuroModulator::getDistributionModus(int type) const {
 	return mDistributionModi.value(type, mDefaultDistributionModus);
 }
 
+//check if this should be rewritten more clean...
 void NeuroModulator::setUpdateModus(int type, int modus) {
 	if(type == -1) {
 		mUpdateModi.clear();
 		mDefaultUpdateModus = modus;
 	}
 	QList<int> types = mConcentrations.keys();
+	if(!types.contains(type)) {
+		mConcentrations.insert(type, 0.0);
+		types = mConcentrations.keys();
+	}
 	for(int i = 0; i < types.size(); ++i) {
 		int t = types.at(i);
 		int currentModus = mUpdateModi.value(t);
@@ -357,6 +365,8 @@ bool NeuroModulator::setUpdateModusParameters(int modus, const QList<double> &pa
 	QList<double> oldParams = mUpdateModiParameters.value(modus, QList<double>());
 	if(parameters.size() != oldParams.size()) {
 		//length has to match!
+		Core::log(QString("NeuroModulator: Number of modus parameters do not match. Required are ") 
+				+ QString::number(oldParams.size()) + " parameters", true);
 		return false;
 	}
 	mUpdateModiParameters.insert(modus, parameters);
@@ -393,6 +403,7 @@ bool NeuroModulator::equals(NeuroModulator *modulator) const {
 
 
 double NeuroModulator::getConcentrationInNetworkAt(int type, const Vector3D &position, NeuralNetwork *network) {
+
 	if(network == 0) {
 		return 0.0;
 	}
@@ -414,7 +425,7 @@ double NeuroModulator::getConcentrationInNetworkAt(int type, const Vector3D &pos
 }
 
 /**
- * Requires the following parameters:
+ * Requires the following parameters: UpdateMode 1
  *  activationGain: [0, 1] the duration the activation threshold has to be violated before reaction.
  *  activationDrop: [0, 1] the desensibilization time after a violation.
  *  activationThreshold: [0, 1] the threshold at which increase of decrease are triggered.
@@ -460,7 +471,7 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		paramNames.append("modus");
 		parameters.append(0); //modus
 	
-		mUpdateModiParameters.insert(type, parameters);
+		mUpdateModiParameters.insert(1, parameters);
 		mUpdateModiParameterNames.insert(1, paramNames);
 	}
 	
@@ -474,7 +485,7 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		variables.append(0.0);
 		
 		mUpdateModiVariableNames.insert(1, variableNames);
-		mUpdateModiVariables.insert(type, variables);
+		mUpdateModiVariables.insert(1, variables);
 	}
 	
 	if(reset) {
