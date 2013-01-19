@@ -130,6 +130,7 @@ bool ChangeActivationFunctionCommand::doCommand() {
 			}
 			mOldActivationFunctions.append(neuron->getActivationFunction());
 			neuron->setActivationFunction(mNewActivationFunction->createCopy());
+			neuron->getActivationFunction()->reset(neuron);
 		}
 		mNewActivationFunctions.clear();
 	}
@@ -176,6 +177,7 @@ bool ChangeActivationFunctionCommand::undoCommand() {
 		}
 		mNewActivationFunctions.append(neuron->getActivationFunction());
 		neuron->setActivationFunction(af);
+		neuron->getActivationFunction()->reset(neuron);
 	}
 	
 	mOldActivationFunctions.clear();

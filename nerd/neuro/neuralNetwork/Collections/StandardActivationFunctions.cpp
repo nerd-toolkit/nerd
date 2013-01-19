@@ -54,6 +54,7 @@
 #include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
 #include "ActivationFunction/ScriptableActivationFunction.h"
 #include "ActivationFunction/Izhikevitch2003SpikingActivationFunction.h"
+#include "ActivationFunction/AdditiveTimeDiscreteNeuroModulatorActivationFunction.h"
 
 namespace nerd {
 
@@ -93,6 +94,9 @@ StandardActivationFunctions::StandardActivationFunctions()
 	
 	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
 		Izhikevitch2003SpikingActivationFunction());
+	
+	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
+		AdditiveTimeDiscreteNeuroModulatorActivationFunction());
 
 }
 

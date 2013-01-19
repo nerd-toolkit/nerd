@@ -75,7 +75,6 @@ namespace nerd {
 		virtual bool equals(ActivationFunction *activationFunction) const;
 		
 	protected:
-		NeuroModulator *mNeuroModulator;
 
 	};
 

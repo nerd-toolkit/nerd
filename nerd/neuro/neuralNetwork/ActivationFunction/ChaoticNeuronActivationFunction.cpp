@@ -102,6 +102,7 @@ void ChaoticNeuronActivationFunction::reset(Neuron*) {
 }
 
 double ChaoticNeuronActivationFunction::calculateActivation(Neuron *owner) {
+	ActivationFunction::calculateActivation(owner);
 	if(owner == 0) {
 		return 0.0;
 	}

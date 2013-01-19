@@ -70,7 +70,7 @@ void NeuroModulatorActivationFunction::reset(Neuron *owner) {
  * Returns 0.0, but executes the NeuroModulator if available!
  */
 double NeuroModulatorActivationFunction::calculateActivation(Neuron *owner) {
-	
+	ActivationFunction::calculateActivation(owner);
 	return updateNeuroModulators(owner);
 }
 		

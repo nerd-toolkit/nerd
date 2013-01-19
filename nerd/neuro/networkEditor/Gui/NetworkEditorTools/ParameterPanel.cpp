@@ -208,6 +208,7 @@ void ParameterPanel::parameterContentChanged() {
 	if(mParameter->getValueAsString() == newContent) {
 		return;
 	}
+	mParameterContent->setText(mParameter->getValueAsString());
 
 	emit markAsValueUpdated();
 	emit parameterChanged(mParameter, mParameterName, newContent);

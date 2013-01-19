@@ -64,10 +64,12 @@ namespace nerd {
 
 		virtual ActivationFunction* createCopy() const = 0;
 		virtual void reset(Neuron *owner) = 0;
-		virtual double calculateActivation(Neuron *owner) = 0;
+		virtual double calculateActivation(Neuron *owner);
 		
 		virtual bool equals(ActivationFunction *activationFunction) const;
 
+	private:
+		bool mInitialized;
 	};
 
 }

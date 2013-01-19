@@ -181,14 +181,16 @@ void ScriptableSynapseFunction::reset(Synapse *owner) {
 
 
 double ScriptableSynapseFunction::calculate(Synapse *owner) {
+	SynapseFunction::calculate(owner);
 	if(owner == 0) {
 		return 0.0;
 	}
 
-	if(mFirstExecution) {
-		reset(owner);
-		mFirstExecution = false;
-	}
+	//Is now done in SynapseFunction.
+// 	if(mFirstExecution) {
+// 		reset(owner);
+// 		mFirstExecution = false;
+// 	}
 
 	executeScriptFunction("call_calc();");
 

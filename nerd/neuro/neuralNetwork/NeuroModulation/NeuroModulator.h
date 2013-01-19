@@ -81,6 +81,9 @@ class NeuralNetworkManager;
 		virtual double getConcentrationAt(int type, Vector3D position, NeuralNetworkElement *owner);
 		virtual QList<int> getModulatorTypes() const;
 		
+		virtual void setMaxConcentration(int type, double concentration);
+		virtual double getMaxConcentration(int type);
+		
 		virtual void setLocalAreaRect(int type, double width, double height, const Vector3D &offset, bool isCircle);
 		virtual void setAreaReferenceModule(int type, NeuroModule *module);
 		virtual QRectF getLocalRect(int type);
@@ -95,12 +98,14 @@ class NeuralNetworkManager;
 		virtual QList<QString> getUpdateModusParameterNames(int type) const;
 		virtual QList<double> getUpdateModusVariables(int type) const;
 		virtual QList<QString> getUpdateModusVariableNames(int type) const;
+		virtual QHash<int, QString> getUpdateModusDocumentations() const;
 		
 		virtual bool equals(NeuroModulator *modulator) const;
 		
 		static double getConcentrationInNetworkAt(int type, const Vector3D &position, NeuralNetwork *network);
 		
 	protected:
+		virtual QString getModulatorDefaultDoc();
 		virtual void updateModulatorDefault(int type, NeuralNetworkElement *owner, bool reset = false);
 		
 	protected:
@@ -108,12 +113,14 @@ class NeuralNetworkManager;
 		QHash<int, QRectF> mAreas;
 		QHash<int, NeuroModule*> mReferenceModules;
 		QHash<int, bool> mIsCircle;
+		QHash<int, double> mMaxConcentrations;
 		QHash<int, int> mDistributionModi;
 		QHash<int, int> mUpdateModi;
 		QHash<int, QList<double> > mUpdateModiParameters;
 		QHash<int, QList<double> > mUpdateModiVariables;
 		QHash<int, QList<QString> > mUpdateModiParameterNames;
 		QHash<int, QList<QString> > mUpdateModiVariableNames;
+		QHash<int, QString> mUpdateModiDocumentations;
 		int mDefaultDistributionModus;
 		int mDefaultUpdateModus;
 		bool mResetPending;

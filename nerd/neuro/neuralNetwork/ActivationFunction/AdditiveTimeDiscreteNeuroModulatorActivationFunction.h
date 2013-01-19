@@ -42,100 +42,63 @@
  ***************************************************************************/
 
 
+#ifndef NERDAdditiveTimeDiscreteNeuroModulatorActivationFunction_H
+#define NERDAdditiveTimeDiscreteNeuroModulatorActivationFunction_H
 
-#include "DelayLineActivationFunction.h"
-#include <iostream>
-#include <QList>
-#include "Core/Core.h"
-#include "Network/Synapse.h"
-#include "Network/Neuron.h"
-
-using namespace std;
+#include "ActivationFunction/NeuroModulatorActivationFunction.h"
+#include "Value/StringValue.h"
+#include "Value/DoubleValue.h"
+#include "Value/RangeValue.h"
+#include "Value/ULongLongValue.h"
+#include "Value/IntValue.h"
 
 namespace nerd {
 
 
-/**
- * Constructs a new DelayLineActivationFunction.
- */
-DelayLineActivationFunction::DelayLineActivationFunction()
-	: ActivationFunction("DelayLine")
-{
-	mDelay = new IntValue(2);
+	/**
+	 * AdditiveTimeDiscreteNeuroModulatorActivationFunction
+	 */
+	class AdditiveTimeDiscreteNeuroModulatorActivationFunction : public NeuroModulatorActivationFunction 
+	{
+	public:
+		AdditiveTimeDiscreteNeuroModulatorActivationFunction();
+		AdditiveTimeDiscreteNeuroModulatorActivationFunction(const AdditiveTimeDiscreteNeuroModulatorActivationFunction &other);
+		virtual ~AdditiveTimeDiscreteNeuroModulatorActivationFunction();
 
-	addParameter("Delay", mDelay);
-}
+		virtual ActivationFunction* createCopy() const;
+		virtual QString getName() const;
+		virtual void valueChanged(Value *value);
 
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
 
-/**
- * Copy constructor. 
- * 
- * @param other the DelayLineActivationFunction object to copy.
- */
-DelayLineActivationFunction::DelayLineActivationFunction(const DelayLineActivationFunction &other)
-	: Object(), ValueChangedListener(), ObservableNetworkElement(other), ActivationFunction(other)
-{
-	mDelay = dynamic_cast<IntValue*>(getParameter("Delay"));
-}
-
-/**
- * Destructor.
- */
-DelayLineActivationFunction::~DelayLineActivationFunction() {
-}
-
-ActivationFunction* DelayLineActivationFunction::createCopy() const {
-	return new DelayLineActivationFunction(*this);
-}
-
-void DelayLineActivationFunction::reset(Neuron*) {
-	mDelayedActivations.clear();
-}
-
-
-double DelayLineActivationFunction::calculateActivation(Neuron *owner) {
-	ActivationFunction::calculateActivation(owner);
-	if(owner == 0) {
-		return 0.0;
-	}
-	double activation = owner->getBiasValue().get();
-
-	QList<Synapse*> synapses = owner->getSynapses();
-	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
-		activation += i.next()->calculateActivation();
-	}
-
-	int delay = mDelay->get();
-
-	mDelayedActivations.append(activation);
-	while(mDelayedActivations.size() > delay + 1) {
-		mDelayedActivations.takeFirst();
-	}
-	if(mDelayedActivations.size() == delay + 1) {
-		return mDelayedActivations.takeFirst();
-	}
-	return 0.0;
-}
-
-bool DelayLineActivationFunction::equals(ActivationFunction *activationFunction) const {
-	if(ActivationFunction::equals(activationFunction) == false) {
-		return false;
-	}
-	DelayLineActivationFunction *af =
- 			dynamic_cast<DelayLineActivationFunction*>(activationFunction);
-
-	if(af == 0) {
-		return false;
-	}
-	if(af->mDelay->get() != mDelay->get()) {
-		return false;
-	}
-	return true;
-}
-
-
+		virtual bool equals(ActivationFunction *activationFunction) const;
+		
+	protected:
+		virtual void configureNeuroModulation();
+		virtual void updateObservables();
+		
+	private:
+		
+		DoubleValue *mStimulationState;
+		DoubleValue *mCurrentConcentration;
+		
+		IntValue *mModulatorType;
+		IntValue *mDiffusionModus;
+		DoubleValue *mMaxConcentration;
+		RangeValue *mTriggerRange;
+		RangeValue *mStimulationIncrements;
+		DoubleValue *mStimulationThreshold;
+		RangeValue *mConcentrationIncrements;
+		RangeValue *mAreaIncrements;
+		DoubleValue *mAreaRadius;
+		ULongLongValue *mReferenceModule;
+		
+		Neuron *mOwner;
+	};
 
 }
 
+#endif
 
 

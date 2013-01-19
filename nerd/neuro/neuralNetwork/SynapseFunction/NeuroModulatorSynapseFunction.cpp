@@ -69,7 +69,7 @@ void NeuroModulatorSynapseFunction::reset(Synapse *owner) {
  * Returns 0.0, but executes the NeuroModulator if available!
  */
 double NeuroModulatorSynapseFunction::calculate(Synapse *owner) {
-	
+	SynapseFunction::calculate(owner);
 	return updateNeuroModulators(owner);
 }
 

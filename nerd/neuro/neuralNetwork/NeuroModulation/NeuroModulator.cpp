@@ -53,6 +53,7 @@
 #include "Core/Core.h"
 #include "Value/BoolValue.h"
 #include "NeuroModulatorManager.h"
+#include <sstream>
 
 using namespace std;
 
@@ -66,13 +67,15 @@ NeuroModulator::NeuroModulator()
 	mEnableConcentrationCalculation = NeuroModulatorManager::getInstance()->getEnableModulatorConcentrationLevelsValue();
 	
 	mNetworkManager = Neuro::getNeuralNetworkManager();
+	
+	//build up documentation
+	mUpdateModiDocumentations.insert(1, getModulatorDefaultDoc());
 }
 
 
 NeuroModulator::NeuroModulator(const NeuroModulator &other) 
-	: mDefaultDistributionModus(other.mDefaultDistributionModus),
-		mDefaultUpdateModus(other.mDefaultUpdateModus), mResetPending(true),
-		mEnableUpdate(0), mEnableConcentrationCalculation(0)
+	: mUpdateModiDocumentations(other.mUpdateModiDocumentations), mDefaultDistributionModus(other.mDefaultDistributionModus),
+		mDefaultUpdateModus(other.mDefaultUpdateModus), mResetPending(true), mEnableUpdate(0), mEnableConcentrationCalculation(0)
 {
 	mEnableUpdate = NeuroModulatorManager::getInstance()->getEnableModulatorUpdateValue();
 	mEnableConcentrationCalculation = NeuroModulatorManager::getInstance()->getEnableModulatorConcentrationLevelsValue();
@@ -91,7 +94,7 @@ NeuroModulator* NeuroModulator::createCopy() {
 	return new NeuroModulator(*this);
 }
 
-void NeuroModulator::reset(NeuralNetworkElement *owner) {
+void NeuroModulator::reset(NeuralNetworkElement*) {
 // 	QList<int> types = getModulatorTypes();
 // 	for(int i = 0; i < types.size(); ++i) {
 // 		int type = types.at(i);
@@ -147,7 +150,7 @@ void NeuroModulator::setConcentration(int type, double concentration, NeuralNetw
 	}
 }
 
-double NeuroModulator::getConcentration(int type, NeuralNetworkElement *owner) {
+double NeuroModulator::getConcentration(int type, NeuralNetworkElement*) {
 	return mConcentrations.value(type, 0.0);
 }
 
@@ -234,6 +237,28 @@ double NeuroModulator::getConcentrationAt(int type, Vector3D position, NeuralNet
 
 QList<int> NeuroModulator::getModulatorTypes() const {
 	return mConcentrations.keys();
+}
+
+/**
+ * Sets the maximal concentration of the specified modulator type.
+ * that can be produced by this modulator cell.
+ */
+void NeuroModulator::setMaxConcentration(int type, double concentration) {
+	mMaxConcentrations.insert(type, concentration);
+}
+
+
+/**
+ * Returns the maximal possible concentration of the specified modulator type
+ * that can be produced by this modulator cell.
+ * If no maximum is given for the specified type, the 1.0 is assigned as default.
+ */
+double NeuroModulator::getMaxConcentration(int type) {
+	if(mMaxConcentrations.keys().contains(type)) {
+		return mMaxConcentrations.value(type);
+	}
+	mMaxConcentrations.insert(type, 1.0);
+	return 1.0;
 }
 
 
@@ -363,10 +388,12 @@ int NeuroModulator::getUpdateModus(int type) const {
 
 bool NeuroModulator::setUpdateModusParameters(int modus, const QList<double> &parameters) {
 	QList<double> oldParams = mUpdateModiParameters.value(modus, QList<double>());
-	if(parameters.size() != oldParams.size()) {
+	if(oldParams.size() != 0 && parameters.size() != oldParams.size()) { 
+		//TODO this is a temp solution: detection of a parameter set before an update call should be solved in different way.
 		//length has to match!
 		Core::log(QString("NeuroModulator: Number of modus parameters do not match. Required are ") 
-				+ QString::number(oldParams.size()) + " parameters", true);
+				+ QString::number(oldParams.size()) + " parameters, but got only " 
+				+ QString::number(parameters.size()), true);
 		return false;
 	}
 	mUpdateModiParameters.insert(modus, parameters);
@@ -393,6 +420,9 @@ QList<QString> NeuroModulator::getUpdateModusVariableNames(int type) const {
 	return mUpdateModiVariableNames.value(getUpdateModus(type), QList<QString>());
 }
 
+QHash<int, QString> NeuroModulator::getUpdateModusDocumentations() const {
+	return mUpdateModiDocumentations;
+}
 
 bool NeuroModulator::equals(NeuroModulator *modulator) const {
 	//TODO
@@ -424,6 +454,29 @@ double NeuroModulator::getConcentrationInNetworkAt(int type, const Vector3D &pos
 	return concentration;
 }
 
+
+QString NeuroModulator::getModulatorDefaultDoc() {
+	stringstream doc;
+	doc << "Simple model of a modulator cell. Modulator production starts only if the cell was stimulated "
+		<< "beyond an internal activation threshold (range [0,1]) and stopps production when this activation "
+		<< "drops beyond that threshold again. Gains and Drops are both given with positive numbers.\n"
+		<< "Params:\n"
+		<< "StimGain: Increment for a single stimulation to increase the internal activation.\n"
+		<< "StimDrop: Decrement for a single step without stimulation to decrease the internal activation\n"
+		<< "StimThreshold: The threshold that separates the modulator production or reduction modes\n"
+		<< "ConGain:  Increment of the modulator concentration during each update step in production mode\n"
+		<< "ConDrop:  Decrement of the modulator concentration during each update step in reductio mode\n"
+		<< "AreaGain: Increment of the modulator area during each update step in production mode\n"
+		<< "AreaDrop: Decrement of the modulator area during each update step in reduction mode\n"
+		<< "LowerTriggerBound: Lower boundary of the neuron activation range leading to a cell stimulation\n"
+		<< "UpperTriggerBound: Upper boundary of the neuron activation range leading to a cell stimulation\n"
+		<< "MaxWidth: Maximal width (or radius) of the modulator area\n"
+		<< "MaxHeight: Maximal height of the modulator area\n";
+		//TODO add modus when useful
+	
+	return QString(doc.str().c_str());
+}
+
 /**
  * Requires the following parameters: UpdateMode 1
  *  activationGain: [0, 1] the duration the activation threshold has to be violated before reaction.
@@ -442,33 +495,33 @@ double NeuroModulator::getConcentrationInNetworkAt(int type, const Vector3D &pos
  */
 void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owner, bool reset) {
 	
-	QList<double> parameters = mUpdateModiParameters.value(type);
+	QList<double> parameters = mUpdateModiParameters.value(type); 
 	if(parameters.size() != 12) {
 		QList<QString> paramNames;
 		//provide default values;
-		paramNames.append("actGain");
+		paramNames.append("StimGain");
 		parameters.append(1.0); //activation state
-		paramNames.append("actDrop");
+		paramNames.append("StimDrop");
 		parameters.append(1.0);
-		paramNames.append("actThreshold");
+		paramNames.append("StimThreshold");
 		parameters.append(0.5);
-		paramNames.append("concGain");
+		paramNames.append("ConGain");
 		parameters.append(0.001); //concentration 
-		paramNames.append("concDrop");
+		paramNames.append("ConDrop");
 		parameters.append(0.005);
-		paramNames.append("areaGain");
+		paramNames.append("AreaGain");
 		parameters.append(0.01); //area
-		paramNames.append("areaDrop");
+		paramNames.append("AreaDrop");
 		parameters.append(0.01);
-		paramNames.append("lowerTrigger");
+		paramNames.append("LowerTriggerBound");
 		parameters.append(0.9); //triggers
-		paramNames.append("upperTrigger");
+		paramNames.append("UpperTriggerBound");
 		parameters.append(1.0);
-		paramNames.append("maxWidth");
+		paramNames.append("MaxWidth");
 		parameters.append(200); //max area
-		paramNames.append("maxHeight");
+		paramNames.append("MaxHeight");
 		parameters.append(200);
-		paramNames.append("modus");
+		paramNames.append("Modus");
 		parameters.append(0); //modus
 	
 		mUpdateModiParameters.insert(1, parameters);
@@ -476,7 +529,7 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 	}
 	
 
-	QList<double> variables = mUpdateModiVariables.value(type);
+	QList<double> variables = mUpdateModiVariables.value(type); //here use the 
 	if(variables.empty() || reset) {
 		variables.clear();
 		QList<QString> variableNames;
@@ -504,6 +557,15 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 	double maxWidth = parameters.at(9);
 	double maxHeight = parameters.at(10);
 	double innerModus = parameters.at(11);
+	
+	double maxConcentration = 1.0;
+	if(!mMaxConcentrations.keys().contains(type)) {
+		mMaxConcentrations.insert(type, 1.0);
+	}
+	else {
+		maxConcentration = mMaxConcentrations.value(type, 1.0);
+	}
+	
 	
 	double currentActivation = 0.0;
 	
@@ -581,7 +643,7 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		if(modActivationState >= activationThreshold) {
 			
 			//change concentration
-			concentration = Math::min(1.0, concentration + concentrationGain);
+			concentration = Math::min(maxConcentration, concentration + concentrationGain);
 			setConcentration(type, concentration, owner);
 			
 			//change area

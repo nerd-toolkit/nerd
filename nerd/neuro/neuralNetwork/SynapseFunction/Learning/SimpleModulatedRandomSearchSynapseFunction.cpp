@@ -62,7 +62,7 @@ namespace nerd {
 		: NeuroModulatorSynapseFunction("MRS1"), mOwner(0), 
 		  mCurrentNetwork(0), mNumberOfStepsWithoutModulators(0)
 	{
-		mTypeParameters = new StringValue("1, 1.0, 0.2, 0");
+		mTypeParameters = new StringValue("1, 1.0, 0.2, 0, 3.0, -1.5, 1.5");
 		mTypeParameters->setDescription("Parameter Settings: NM-type, change probability, "
 						"disable probability, mode, opt1, opt2, opt3, ...|<second entry>|<third>|..."
 						"\nModes: 0 pure random"

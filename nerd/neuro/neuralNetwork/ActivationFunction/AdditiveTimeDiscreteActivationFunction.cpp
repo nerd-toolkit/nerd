@@ -74,6 +74,7 @@ void AdditiveTimeDiscreteActivationFunction::reset(Neuron*) {
 
 
 double AdditiveTimeDiscreteActivationFunction::calculateActivation(Neuron *owner) {
+	ActivationFunction::calculateActivation(owner);
 	if(owner == 0) {
 		return 0.0;
 	}

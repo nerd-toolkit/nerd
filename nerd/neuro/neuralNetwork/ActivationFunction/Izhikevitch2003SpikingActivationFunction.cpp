@@ -134,6 +134,7 @@ void Izhikevitch2003SpikingActivationFunction::reset(Neuron*) {
 
 
 double Izhikevitch2003SpikingActivationFunction::calculateActivation(Neuron *owner) {
+	ActivationFunction::calculateActivation(owner);
 	if(owner == 0) {
 		return 0.0;
 	}

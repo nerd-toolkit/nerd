@@ -127,6 +127,7 @@ namespace nerd {
 	 * @return the strength of the owner.
 	 */
 	double TesauroSynapseFunction::calculate(Synapse *owner) {
+		SynapseFunction::calculate(owner);
 		if(owner == 0) {
 			return 0.0;
 		}

@@ -159,6 +159,8 @@ class NeuroModulator;
  		void setModulatorArea(qulonglong elementId, int type, double width, double height, bool circle = true);
 		void setModulatorAreaReferenceModule(qulonglong elementId, int type, qulonglong moduleId);
 		QVariantList getModulatorArea(qulonglong elementId, int type);
+		void setMaxConcentration(qulonglong elementId, int type, double maxConcentration);
+		double getMaxConcentration(qulonglong elementId, int type);
 		void setModulatorConcentration(qulonglong elementId, int type, double concentration);
 		double getModulatorConcentration(qulonglong elementId, int type);
 		double getModulatorConcentrationAt(qulonglong elementId, int type, double x, double y, double z);

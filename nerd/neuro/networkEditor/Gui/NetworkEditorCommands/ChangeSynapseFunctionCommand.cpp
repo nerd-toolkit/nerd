@@ -107,6 +107,7 @@ bool ChangeSynapseFunctionCommand::doCommand() {
 			}
 			mOldSynapseFunctions.append(synapse->getSynapseFunction());
 			synapse->setSynapseFunction(sf);
+			synapse->getSynapseFunction()->reset(synapse);
 		}
 		mNewSynapseFunctions.clear();
 	}
@@ -128,6 +129,7 @@ bool ChangeSynapseFunctionCommand::doCommand() {
 			}
 			mOldSynapseFunctions.append(synapse->getSynapseFunction());
 			synapse->setSynapseFunction(mNewSynapseFunction->createCopy());
+			synapse->getSynapseFunction()->reset(synapse);
 		}
 		mNewSynapseFunctions.clear();
 	}
@@ -173,6 +175,7 @@ bool ChangeSynapseFunctionCommand::undoCommand() {
 		}
 		mNewSynapseFunctions.append(synapse->getSynapseFunction());
 		synapse->setSynapseFunction(sf);
+		synapse->getSynapseFunction()->reset(synapse);
 	}
 	
 	mOldSynapseFunctions.clear();

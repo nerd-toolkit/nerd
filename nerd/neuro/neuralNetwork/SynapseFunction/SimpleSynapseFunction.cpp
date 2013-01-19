@@ -92,6 +92,7 @@ void SimpleSynapseFunction::reset(Synapse*) {
  * @return the strength of the owner.
  */
 double SimpleSynapseFunction::calculate(Synapse *owner) {
+	SynapseFunction::calculate(owner);
 	if(owner == 0) {
 		return 0.0;
 	}

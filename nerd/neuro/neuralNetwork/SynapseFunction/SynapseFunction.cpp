@@ -46,16 +46,25 @@
 namespace nerd {
 
 SynapseFunction::SynapseFunction(const QString &name)
-	: ParameterizedObject(name), ObservableNetworkElement()
+	: ParameterizedObject(name), ObservableNetworkElement(), mInitialized(false)
 {
 }
 
 SynapseFunction::SynapseFunction(const SynapseFunction &other) : Object(), 
-	ValueChangedListener(), ParameterizedObject(other), ObservableNetworkElement(other)
+	ValueChangedListener(), ParameterizedObject(other), ObservableNetworkElement(other),
+	mInitialized(false)
 {
 }
 
 SynapseFunction::~SynapseFunction() {
+}
+
+double SynapseFunction::calculate(Synapse *owner) {
+	if(!mInitialized) {
+		mInitialized = true;
+		reset(owner);
+	}
+	return 0.0;
 }
 
 

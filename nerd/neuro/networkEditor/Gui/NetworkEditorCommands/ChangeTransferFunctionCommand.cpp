@@ -110,6 +110,7 @@ bool ChangeTransferFunctionCommand::doCommand() {
 			}
 			mOldTransferFunctions.append(neuron->getTransferFunction());
 			neuron->setTransferFunction(tf);
+			neuron->getTransferFunction()->reset(neuron);
 		}
 		mNewTransferFunctions.clear();
 	}
@@ -131,6 +132,7 @@ bool ChangeTransferFunctionCommand::doCommand() {
 			}
 			mOldTransferFunctions.append(neuron->getTransferFunction());
 			neuron->setTransferFunction(mNewTransferFunction->createCopy());
+			neuron->getTransferFunction()->reset(neuron);
 		}
 		mNewTransferFunctions.clear();
 	}
@@ -160,6 +162,7 @@ bool ChangeTransferFunctionCommand::undoCommand() {
 		}
 		mNewTransferFunctions.append(neuron->getTransferFunction());
 		neuron->setTransferFunction(tf);
+		neuron->getTransferFunction()->reset(neuron);
 	}
 	
 	mOldTransferFunctions.clear();

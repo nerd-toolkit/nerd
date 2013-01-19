@@ -64,12 +64,12 @@ namespace nerd {
 		virtual SynapseFunction* createCopy() const = 0;
 		
 		virtual void reset(Synapse *owner) = 0;
-		virtual double calculate(Synapse *owner) = 0;
+		virtual double calculate(Synapse *owner);
 
 		bool equals(SynapseFunction *synapseFunction) const;
 		
 	private:
-		
+		bool mInitialized;
 	};
 
 }

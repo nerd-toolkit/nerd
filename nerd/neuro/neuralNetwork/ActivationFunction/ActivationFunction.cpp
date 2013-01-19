@@ -46,16 +46,25 @@
 namespace nerd {
 
 ActivationFunction::ActivationFunction(const QString &name)
-: ObservableNetworkElement(), ParameterizedObject(name)
+	: ObservableNetworkElement(), ParameterizedObject(name), mInitialized(false)
 {
 }
 
 ActivationFunction::ActivationFunction(const ActivationFunction &other)
-: Object(), ValueChangedListener(), ObservableNetworkElement(other), ParameterizedObject(other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), ParameterizedObject(other),
+		mInitialized(false)
 {
 }
 
 ActivationFunction::~ActivationFunction() {
+}
+
+double ActivationFunction::calculateActivation(Neuron *owner) {
+	if(!mInitialized) {
+		mInitialized = true;
+		reset(owner);
+	}
+	return 0.0;
 }
 
 bool ActivationFunction::equals(ActivationFunction *activationFunction) const {

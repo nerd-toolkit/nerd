@@ -47,11 +47,11 @@
 
 namespace nerd {
 	
-	RangeValue::RangeValue() : Value("Range", false) {
+	RangeValue::RangeValue(bool validateRange) : Value("Range", false), mValidateRange(validateRange) {
 	}
 	
-	RangeValue::RangeValue(double min, double max) : Value("Range", false) {
-		if(min > max) {
+	RangeValue::RangeValue(double min, double max, bool validateRange) : Value("Range", false), mValidateRange(validateRange) {
+		if(validateRange && (min > max)) {
 			//make sure the range is valid.
 			mValue.set(max, min);
 		}
@@ -61,7 +61,7 @@ namespace nerd {
 	}
 	
 	
-	RangeValue::RangeValue(const RangeValue& other) : Object(), Value(other) {
+	RangeValue::RangeValue(const RangeValue& other) : Object(), Value(other), mValidateRange(other.mValidateRange) {
 		mValue.set(other.getMin(), other.getMax());
 	}
 	
@@ -74,7 +74,7 @@ namespace nerd {
 	
 	void RangeValue::set(double min, double max) {
 		//do not change if min > max.
-		if(min > max) {
+		if(mValidateRange && (min > max)) {
 			return;
 		}
 		if(mNotifyAllSetAttempts || mValue.getMin() != min || mValue.getMax() != max) {
@@ -100,7 +100,6 @@ namespace nerd {
 	
 	
 	QString RangeValue::getValueAsString() const {
-		//return "[" + QString::number(mValue.getMin()) + "," + QString::number(mValue.getMax()) + "]";
 		if(mValue.getMin() == mValue.getMax()) {
 			return QString::number(mValue.getMin());
 		}
@@ -129,7 +128,7 @@ namespace nerd {
 		if(!ok) {
 			return false;
 		}
-		if(min > max) {
+		if(mValidateRange && (min > max)) {
 			return false;
 		}
 		set(min, max);

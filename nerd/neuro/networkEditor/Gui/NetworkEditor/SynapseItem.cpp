@@ -66,7 +66,7 @@ namespace nerd {
  */
 SynapseItem::SynapseItem(NetworkVisualization *owner)
 	: PaintItem(800), mOwner(owner), mHideWeight(false), mUseSynapseTypeSymbols(true),
-		mLocalHideWeight(false), mHighlightWeightChanges(false)
+		mLocalHideWeight(false), mHighlightWeightChanges(true)
 {
 }
 

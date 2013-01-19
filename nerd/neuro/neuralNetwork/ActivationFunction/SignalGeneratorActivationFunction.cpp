@@ -172,7 +172,8 @@ void SignalGeneratorActivationFunction::reset(Neuron*) {
 }
 
 
-double SignalGeneratorActivationFunction::calculateActivation(Neuron*) {
+double SignalGeneratorActivationFunction::calculateActivation(Neuron *owner) {
+	ActivationFunction::calculateActivation(owner);
 	if(mCurrentStep >= mCurrentDuration) {
 		//determine new target values.
 		if(mRandomizeDuration->get()) {

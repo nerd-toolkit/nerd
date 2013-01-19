@@ -55,12 +55,14 @@ namespace nerd {
 	
 	/**
 	 * RangeValue.
+	 * If validateRange is true, then min <= max must always be true when setting the boundries.
+	 * Otherwise, min > max is also valid, e.g. to specify inverse ranges.
 	 */
 	class RangeValue : public Value {
 		
 	public:
-		RangeValue();
-		RangeValue(double min, double max);
+		RangeValue(bool validateRange = true);
+		RangeValue(double min, double max, bool validateRange = true);
 		RangeValue(const RangeValue& other);
 		virtual ~RangeValue();
 		
@@ -78,7 +80,7 @@ namespace nerd {
 		
 	private:
 		Range mValue;
-		
+		bool mValidateRange;
 	};
 }
 #endif 
