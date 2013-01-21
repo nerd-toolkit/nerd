@@ -88,7 +88,7 @@ namespace nerd {
 		DoubleValue *mMaxConcentration;
 		RangeValue *mTriggerRange;
 		RangeValue *mStimulationIncrements;
-		DoubleValue *mStimulationThreshold;
+		RangeValue *mStimulationThresholds;
 		RangeValue *mConcentrationIncrements;
 		RangeValue *mAreaIncrements;
 		DoubleValue *mAreaRadius;

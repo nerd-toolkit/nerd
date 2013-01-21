@@ -45,4 +45,4 @@
  * Major change: Mutexes in Properties (Fall 2012)
  */
 
-#define NERD_VERSION "4.2"
+#define NERD_VERSION "4.3"

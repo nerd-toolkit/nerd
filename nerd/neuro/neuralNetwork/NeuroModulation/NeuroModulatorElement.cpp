@@ -63,6 +63,9 @@ namespace nerd {
 	}
 	
 	NeuroModulatorElement::~NeuroModulatorElement() {
+		if(mNeuroModulator != 0) {
+			delete mNeuroModulator;
+		}
 	}
 	
 	

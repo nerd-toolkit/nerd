@@ -496,14 +496,16 @@ QString NeuroModulator::getModulatorDefaultDoc() {
 void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owner, bool reset) {
 	
 	QList<double> parameters = mUpdateModiParameters.value(type); 
-	if(parameters.size() != 12) {
+	if(parameters.size() != 13) {
 		QList<QString> paramNames;
 		//provide default values;
 		paramNames.append("StimGain");
 		parameters.append(1.0); //activation state
 		paramNames.append("StimDrop");
 		parameters.append(1.0);
-		paramNames.append("StimThreshold");
+		paramNames.append("StimProductionThreshold");
+		parameters.append(0.5);
+		paramNames.append("StimReductionThreshold");
 		parameters.append(0.5);
 		paramNames.append("ConGain");
 		parameters.append(0.001); //concentration 
@@ -547,16 +549,17 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 	
 	double activationGain = parameters.at(0);
 	double activationDrop = parameters.at(1);
-	double activationThreshold = parameters.at(2);
-	double concentrationGain = parameters.at(3);
-	double concentrationDrop = parameters.at(4);
-	double areaGain = parameters.at(5);
-	double areaDrop = parameters.at(6);
-	double lowerTrigger = parameters.at(7);
-	double upperTrigger = parameters.at(8);
-	double maxWidth = parameters.at(9);
-	double maxHeight = parameters.at(10);
-	double innerModus = parameters.at(11);
+	double activationProductionThreshold = parameters.at(2);
+	double activationReductionThreshold = parameters.at(3);
+	double concentrationGain = parameters.at(4);
+	double concentrationDrop = parameters.at(5);
+	double areaGain = parameters.at(6);
+	double areaDrop = parameters.at(7);
+	double lowerTrigger = parameters.at(8);
+	double upperTrigger = parameters.at(9);
+	double maxWidth = parameters.at(10);
+	double maxHeight = parameters.at(11);
+	double innerModus = parameters.at(12);
 	
 	double maxConcentration = 1.0;
 	if(!mMaxConcentrations.keys().contains(type)) {
@@ -569,8 +572,8 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 	
 	double currentActivation = 0.0;
 	
-	if(lowerTrigger == upperTrigger) {
-		Core::log("Warning: NeuroModulator lower and upper trigger are the same! [Disabling Update]", true);
+	if(lowerTrigger >= upperTrigger) {
+		Core::log("Warning: NeuroModulator lower and upper trigger are the same or lower > upper! [Disabling Update]", true);
 		return;
 	}
 	
@@ -603,7 +606,7 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		modActivationState = Math::max(0.0, modActivationState - activationDrop);
 		variables.replace(0, modActivationState);
 		
-		if(modActivationState <= activationThreshold) {
+		if(modActivationState <= activationReductionThreshold) {
 			
 			//change concentration
 			double concentration = getConcentration(type, owner);
@@ -632,15 +635,15 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		
 		double modActivationState = variables.at(0);
 		
-		if(concentration > 0.0) {
-			modActivationState = 1.0;
-		}
-		else {
+// 		if(concentration > 0.0) {
+// 			modActivationState = 1.0;
+// 		}
+// 		else {
 			modActivationState = Math::min(1.0, modActivationState + activationGain);
-		}
+// 		}
 		variables.replace(0, modActivationState);
 		
-		if(modActivationState >= activationThreshold) {
+		if(modActivationState >= activationProductionThreshold) {
 			
 			//change concentration
 			concentration = Math::min(maxConcentration, concentration + concentrationGain);

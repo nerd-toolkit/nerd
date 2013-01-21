@@ -60,6 +60,10 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	: NeuroModulatorActivationFunction("ModulatorCell"), mOwner(0)
 {
 	
+	if(mNeuroModulator == 0) {
+		setNeuroModulator(new NeuroModulator());
+	}
+	
 	mStimulationState = new DoubleValue();
 	mCurrentConcentration = new DoubleValue();
 	
@@ -78,8 +82,8 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	mTriggerRange->setDescription("The neuron activation range in which the modulator cell is stimulated.");
 	mStimulationIncrements = new RangeValue(0.001, 0.01, false);
 	mStimulationIncrements->setDescription("Gain (Drop) of the activation state per step when the cell is simulated (not stimulated).");
-	mStimulationThreshold = new DoubleValue(0.95);
-	mStimulationThreshold->setDescription("Separates the cell activation state into a reduction (< threshold) and a production (>= threshold) modus.");
+	mStimulationThresholds = new RangeValue(0.95, 0.95, false);
+	mStimulationThresholds->setDescription("Separates the cell activation state into a reduction (< threshold) and a production (>= threshold) modus.");
 	mConcentrationIncrements = new RangeValue(0.001, 0.01, false);
 	mConcentrationIncrements->setDescription("Gain (Drop) of the modulator concentration per step when the cell is in production (reduction) mode.");
 	mAreaIncrements = new RangeValue(1.0, 0.0, false);
@@ -94,7 +98,7 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	addParameter("MaxConcentration", mMaxConcentration);
 	addParameter("TriggerRange", mTriggerRange);
 	addParameter("StimGainDrop", mStimulationIncrements);
-	addParameter("StimThreshold", mStimulationThreshold);
+	addParameter("StimThresholds", mStimulationThresholds);
 	addParameter("ConGainDrop", mConcentrationIncrements);
 	addParameter("AreaGainDrop", mAreaIncrements);
 	addParameter("AreaRadius", mAreaRadius);
@@ -106,6 +110,9 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	: Object(), ValueChangedListener(), ObservableNetworkElement(other), NeuroModulatorElement(other), 
 		NeuroModulatorActivationFunction(other), mOwner(0)
 {
+	if(mNeuroModulator == 0) {
+		setNeuroModulator(new NeuroModulator());
+	}
 	
 	mStimulationState = new DoubleValue();
 	mCurrentConcentration = new DoubleValue();
@@ -118,7 +125,7 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	mMaxConcentration = dynamic_cast<DoubleValue*>(getParameter("MaxConcentration"));
 	mTriggerRange = dynamic_cast<RangeValue*>(getParameter("TriggerRange"));
 	mStimulationIncrements = dynamic_cast<RangeValue*>(getParameter("StimGainDrop"));
-	mStimulationThreshold = dynamic_cast<DoubleValue*>(getParameter("StimThreshold"));
+	mStimulationThresholds = dynamic_cast<RangeValue*>(getParameter("StimThresholds"));
 	mConcentrationIncrements = dynamic_cast<RangeValue*>(getParameter("ConGainDrop"));
 	mAreaIncrements = dynamic_cast<RangeValue*>(getParameter("AreaGainDrop"));
 	mAreaRadius = dynamic_cast<DoubleValue*>(getParameter("AreaRadius"));
@@ -139,7 +146,7 @@ QString AdditiveTimeDiscreteNeuroModulatorActivationFunction::getName() const {
 void AdditiveTimeDiscreteNeuroModulatorActivationFunction::valueChanged(Value *value) {
 	NeuroModulatorActivationFunction::valueChanged(value);
 	
-	if(value == mModulatorType) {
+	if(value == mModulatorType && mNeuroModulator != 0) {
 		mNeuroModulator->reset(mOwner);
 		configureNeuroModulation();
 	}
@@ -147,7 +154,7 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::valueChanged(Value *v
 		|| value == mMaxConcentration
 		|| value == mTriggerRange
 		|| value == mStimulationIncrements
-		|| value == mStimulationThreshold
+		|| value == mStimulationThresholds
 		|| value == mConcentrationIncrements
 		|| value == mAreaIncrements
 		|| value == mAreaRadius
@@ -160,9 +167,6 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::valueChanged(Value *v
 
 
 void AdditiveTimeDiscreteNeuroModulatorActivationFunction::reset(Neuron *neuron) {
-	if(mNeuroModulator == 0) {
-		setNeuroModulator(new NeuroModulator());
-	}
 	mOwner = neuron;
 	NeuroModulatorActivationFunction::reset(neuron);
 	configureNeuroModulation();
@@ -202,8 +206,8 @@ bool AdditiveTimeDiscreteNeuroModulatorActivationFunction::equals(ActivationFunc
 		|| mDiffusionModus->get() != af->mDiffusionModus->get()
 		|| Math::compareDoubles(mMaxConcentration->get(), 0.0000001) == false
 		|| mTriggerRange->get().equals(af->mTriggerRange->get(), 8) == false
-		|| mStimulationIncrements->get().equals(af->mStimulationIncrements->get(), 8), false
-		|| mStimulationThreshold->get() != af->mStimulationThreshold->get()
+		|| mStimulationIncrements->get().equals(af->mStimulationIncrements->get(), 8) == false
+		|| mStimulationThresholds->get().equals(af->mStimulationThresholds->get(), 8) == false
 		|| mConcentrationIncrements->get().equals(af->mConcentrationIncrements->get(), 8) == false
 		|| mAreaIncrements->get().equals(af->mAreaIncrements->get(), 8) == false
 		|| mAreaRadius->get() != af->mAreaRadius->get()
@@ -245,7 +249,8 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::configureNeuroModulat
 	QList<double> parameters;
 	parameters.append(mStimulationIncrements->getMin());  //stimulation gain
 	parameters.append(mStimulationIncrements->getMax());  //stimulation drop
-	parameters.append(mStimulationThreshold->get());
+	parameters.append(mStimulationThresholds->getMin());
+	parameters.append(mStimulationThresholds->getMax());
 	parameters.append(mConcentrationIncrements->getMin()); //concentration  gain
 	parameters.append(mConcentrationIncrements->getMax()); //concentration  drop
 	parameters.append(mAreaIncrements->getMin());  //area gain
