@@ -465,12 +465,9 @@ void ODE_CollisionHandler::collisionCallback(void *data, dGeomID o1, dGeomID o2)
 				odeHost1->getJointFeedbackList().insertMulti(contactGeom.g2, feedbackStructure);
 			}
 			if(odeHost2 != 0 && odeHost2->isFeedbackEnabled()) {
-				if(feedbackStructure == 0) {
-					feedbackStructure = new dJointFeedback();
-					dJointSetFeedback(contactJoint, feedbackStructure);
-					odeHost2->getOwnedJointFeedbackList().append(feedbackStructure);
-					
-				}
+				feedbackStructure = new dJointFeedback();
+				dJointSetFeedback(contactJoint, feedbackStructure);
+				odeHost2->getOwnedJointFeedbackList().append(feedbackStructure);
 				odeHost2->getJointFeedbackList().insertMulti(contactGeom.g1, feedbackStructure);
 				odeHost2->getJointFeedbackList().insertMulti(contactGeom.g2, feedbackStructure);
 			}

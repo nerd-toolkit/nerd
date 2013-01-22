@@ -481,7 +481,7 @@ QString NeuroModulator::getModulatorDefaultDoc() {
  * Requires the following parameters: UpdateMode 1
  *  activationGain: [0, 1] the duration the activation threshold has to be violated before reaction.
  *  activationDrop: [0, 1] the desensibilization time after a violation.
- *  activationThreshold: [0, 1] the threshold at which increase of decrease are triggered.
+ *  activationThresholds: [0, 1] the thresholds at which increase or decrease are triggered.
  *  concentrationGain: the increment rate for the modulator concentration
  *  concentrationDrop: the rate at which the modulator is depleted
  *  areaGain: the increment rate for the area

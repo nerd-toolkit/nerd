@@ -445,7 +445,7 @@ namespace nerd {
 				mNotifiedErrors = true;
 				
 				Core::log(QString("SimpleModulatedRandomSearchSynapseFunction: ")
-				+ "Mode 1 requires exactly 4 optional parameters: " 
+				+ "Mode 1 requires exactly 2 optional parameters: " 
 				  + "stepsBeforeMemo, backtracking_mode. Found " 
 					+ QString::number(params.mParams.size()) 
 					+ " instead!", true);

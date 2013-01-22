@@ -71,6 +71,7 @@ ODE_ForceSensor::ODE_ForceSensor(const QString &name, double minForce, double ma
 	mCollisionObjectIndices = new StringValue("0");
 	mLocalSensorAxis = new Vector3DValue(1.0, 0.0, 0.0);
 	mMaxOverSteps = new IntValue(2);
+	mSumAllAxes = new BoolValue(false);
 
 	addParameter("Force", mForceSensorValue);
 	addParameter("MinForce", mMinForce);
@@ -79,6 +80,7 @@ ODE_ForceSensor::ODE_ForceSensor(const QString &name, double minForce, double ma
 	addParameter("CollisionObjectIndices", mCollisionObjectIndices);
 	addParameter("LocalSensorAxis", mLocalSensorAxis);
 	addParameter("MaxOverSteps", mMaxOverSteps);
+	addParameter("SumAllAxes", mSumAllAxes);
 
 	mOutputValues.append(mForceSensorValue);
 }
@@ -100,6 +102,7 @@ ODE_ForceSensor::ODE_ForceSensor(const ODE_ForceSensor &other)
 	mCollisionObjectIndices = dynamic_cast<StringValue*>(getParameter("CollisionObjectIndices"));
 	mLocalSensorAxis = dynamic_cast<Vector3DValue*>(getParameter("LocalSensorAxis"));
 	mMaxOverSteps = dynamic_cast<IntValue*>(getParameter("MaxOverSteps"));
+	mSumAllAxes = dynamic_cast<BoolValue*>(getParameter("SumAllAxes"));
 
 	mOutputValues.append(mForceSensorValue);
 }
@@ -213,25 +216,35 @@ void ODE_ForceSensor::updateSensorValues() {
 		return;
 	}
 
-	Quaternion bodyRotation = hostSimBody->getQuaternionOrientationValue()->get();
-	bodyRotation.normalize();
-	Quaternion bodyRotationInverse = bodyRotation.getInverse();
-	bodyRotationInverse.normalize();
+	
+	double sensorValue = 0.0;
+	
+	if(mSumAllAxes->get()) {
+		sensorValue = forceSum.getX() + forceSum.getY() + forceSum.getZ();
+	}
+	else {
+		Quaternion bodyRotation = hostSimBody->getQuaternionOrientationValue()->get();
+		bodyRotation.normalize();
+		Quaternion bodyRotationInverse = bodyRotation.getInverse();
+		bodyRotationInverse.normalize();
 
-	Quaternion axisQuat(0.0, 
-						mLocalSensorAxis->getX(), 
-						mLocalSensorAxis->getY(), 
-						mLocalSensorAxis->getZ());
-	Quaternion axisRotatedQuat = bodyRotation * axisQuat * bodyRotationInverse;
+		Quaternion axisQuat(0.0, 
+							mLocalSensorAxis->getX(), 
+							mLocalSensorAxis->getY(), 
+							mLocalSensorAxis->getZ());
+		Quaternion axisRotatedQuat = bodyRotation * axisQuat * bodyRotationInverse;
 
-	Vector3D rotatedAxis(axisRotatedQuat.getX(), 
-							  axisRotatedQuat.getY(),
-							  axisRotatedQuat.getZ());
-
-
-	double sensorValue = forceSum.getX() * axisRotatedQuat.getX() 
-		+ forceSum.getY() * axisRotatedQuat.getY() 
-		+ forceSum.getZ() * axisRotatedQuat.getZ();
+		Vector3D rotatedAxis(axisRotatedQuat.getX(), 
+								axisRotatedQuat.getY(),
+								axisRotatedQuat.getZ());
+		
+		sensorValue = forceSum.getX() * axisRotatedQuat.getX() 
+			+ forceSum.getY() * axisRotatedQuat.getY() 
+			+ forceSum.getZ() * axisRotatedQuat.getZ();
+	}
+	
+	
+	
 
 	double maxSensorValue = sensorValue;
 	if(mMaxOverSteps->get() > 1 && !mPreviousSensorValues.isEmpty()) {
