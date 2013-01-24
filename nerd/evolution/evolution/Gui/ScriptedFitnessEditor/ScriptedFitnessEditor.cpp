@@ -66,7 +66,7 @@ namespace nerd {
  * Constructs a new ScriptedFitnessEditor.
  */
 ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
-	: mScriptModified(false)
+	: mScriptModified(false), mResetScriptingContext(0)
 {
 
 	QVBoxLayout *layout = new QVBoxLayout();
@@ -97,6 +97,9 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 	
 	QHBoxLayout *buttonLayout = new QHBoxLayout();
 	
+	mReInitButton = new QPushButton("Reinit");
+	buttonLayout->addWidget(mReInitButton);
+	
 	mApplyButton = new QPushButton("Apply");
 	buttonLayout->addWidget(mApplyButton);
 
@@ -118,6 +121,8 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 	layout->addLayout(buttonLayout);
 
 	//Connect gui elements.
+	connect(mReInitButton, SIGNAL(pressed()),
+			this, SLOT(reinitButtonPressed()));
 	connect(mApplyButton, SIGNAL(pressed()),
 			this, SLOT(applyButtonPressed()));
 	connect(mReloadFitnessCodeButton, SIGNAL(pressed()),
@@ -142,6 +147,7 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 	ValueManager *vm = Core::getInstance()->getValueManager();
 
 	mFitnessCode = dynamic_cast<CodeValue*>(vm->getValue(fitnessFunctionName + "/Code"));
+	mResetScriptingContext = dynamic_cast<BoolValue*>(vm->getValue(fitnessFunctionName + "/ResetScriptingContext"));
 	mErrorValue = vm->getStringValue(fitnessFunctionName + "/Config/ErrorState");
 	mCurrentFileName = dynamic_cast<FileNameValue*>(vm->getValue(fitnessFunctionName + "/FileName"));
 	//mCurrentFileName->useAsFileName(true);
@@ -154,6 +160,10 @@ ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
 	else {
 		mFitnessCode->addValueChangedListener(this);
 		setCodeFromValue();
+	}
+	if(mResetScriptingContext == 0) {
+		Core::log("ScriptedFitnessEditor: Could not find required value ["
+				+ fitnessFunctionName + "/ResetScriptingContext]", true);
 	}
 	if(mErrorValue == 0) {
 		Core::log("ScriptedFitnessEditor: Could not find required value ["
@@ -260,7 +270,14 @@ void ScriptedFitnessEditor::valueChanged(Value *value) {
 }
 
 
-
+void ScriptedFitnessEditor::reinitButtonPressed() {
+	QString code = mCodeArea->document()->toPlainText();
+	code = code.replace("\n", "/**/");
+	if(mFitnessCode != 0 && mResetScriptingContext != 0) {
+		Core::getInstance()->scheduleTask(new ChangeValueTask(mFitnessCode, code));
+		Core::getInstance()->scheduleTask(new ChangeValueTask(mResetScriptingContext, "T"));
+	}
+}
 
 
 void ScriptedFitnessEditor::applyButtonPressed() {

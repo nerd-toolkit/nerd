@@ -100,9 +100,12 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const QString &name)
 					+ " {/**/  return fitness + 1;/**/};");
 	
 	mScriptCode->setErrorValue(mErrorState);
+	
+	mResetScriptContext = new BoolValue(false);
 
 	addParameter("Code", mScriptCode);
 	addParameter("FileName", mScriptFileName);
+	addParameter("ResetScriptingContext", mResetScriptContext);
 }
 
 
@@ -124,6 +127,7 @@ ScriptedFitnessFunction::ScriptedFitnessFunction(const ScriptedFitnessFunction &
 	mScriptCode->addValueChangedListener(this);
 	mScriptFileName = dynamic_cast<FileNameValue*>(getParameter("FileName"));
 	//mScriptFileName->useAsFileName(true);
+	mResetScriptContext = dynamic_cast<BoolValue*>(getParameter("ResetScriptingContext"));
 	
 	mScriptCode->setErrorValue(mErrorState);
 
@@ -218,6 +222,12 @@ void ScriptedFitnessFunction::valueChanged(Value *value) {
 	ScriptingContext::valueChanged(value);
 	if(value == 0) {
 		return;
+	}
+	else if(value == mResetScriptContext) {
+		if(mResetScriptContext->get()) {
+			resetScriptContext();
+		}
+		mResetScriptContext->set(false);
 	}
 }
 

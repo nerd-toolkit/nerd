@@ -67,7 +67,7 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	mStimulationState = new DoubleValue();
 	mCurrentConcentration = new DoubleValue();
 	
-	addObserableOutput("Activation", mStimulationState);
+	addObserableOutput("Stimulation", mStimulationState);
 	addObserableOutput("Concentration", mCurrentConcentration);
 	
 	mModulatorType = new IntValue(1);
@@ -117,7 +117,7 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	mStimulationState = new DoubleValue();
 	mCurrentConcentration = new DoubleValue();
 	
-	addObserableOutput("Activation", mStimulationState);
+	addObserableOutput("Stimulation", mStimulationState);
 	addObserableOutput("Concentration", mCurrentConcentration);
 	
 	mModulatorType = dynamic_cast<IntValue*>(getParameter("ModType"));

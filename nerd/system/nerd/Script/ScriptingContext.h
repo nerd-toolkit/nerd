@@ -56,10 +56,22 @@
 #include <QFile>
 #include "Value/FileNameValue.h"
 #include "Value/CodeValue.h"
-
+#include "Core/Task.h"
 
 
 namespace nerd {
+
+	class ScriptingContext;
+	
+	class ResetScriptingContextTask : public Task {
+		public:
+			ResetScriptingContextTask(ScriptingContext *context);
+			virtual ~ResetScriptingContextTask();
+
+			virtual bool runTask() = 0;
+		private:
+			ScriptingContext *mContext;
+	};
 
 	/**
 	 * ScriptingContext.

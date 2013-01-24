@@ -86,6 +86,7 @@ namespace nerd {
 		void markAsUnmodified();
 
 	public slots:
+		void reinitButtonPressed();
 		void applyButtonPressed();
 		void reloadButtonPressed();
 		void loadButtonPressed();
@@ -106,6 +107,7 @@ namespace nerd {
 
 	private:
 		CodeValue *mFitnessCode;
+		BoolValue *mResetScriptingContext;
 		StringValue *mErrorValue;
 		FileNameValue *mCurrentFileName;
 		IntValue *mCalculationModeValue;
@@ -119,6 +121,7 @@ namespace nerd {
 		QPushButton *mLoadFitnessCodeButton;
 		QPushButton *mStoreFitnessCodeButton;
 		QPushButton *mApplyButton;
+		QPushButton *mReInitButton;
 		QTextEdit *mCodeArea;
 		QTextEdit *mErrorMessageField;
 		QComboBox *mCalculationModeSelector;

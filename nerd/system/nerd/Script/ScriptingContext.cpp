@@ -71,6 +71,19 @@ using namespace std;
 
 namespace nerd {
 
+ResetScriptingContextTask::ResetScriptingContextTask(ScriptingContext *context) : mContext(context) {
+}
+
+ResetScriptingContextTask::~ResetScriptingContextTask() {
+}
+
+bool ResetScriptingContextTask::runTask() {
+	if(mContext != 0) {
+		mContext->resetScriptContext();
+	}
+	return true;
+}
+
 
 /**
  * Constructs a new ScriptingContext.

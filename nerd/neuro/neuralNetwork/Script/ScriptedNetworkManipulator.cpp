@@ -57,6 +57,7 @@
 #include "ModularNeuralNetwork/NeuronGroup.h"
 #include "ModularNeuralNetwork/NeuroModule.h"
 #include "Constraints/GroupConstraint.h"
+#include <IO/NeuralNetworkIO.h>
 
 
 using namespace std;
@@ -103,6 +104,33 @@ void ScriptedNetworkManipulator::setOwnerHint(NeuralNetworkElement *owner) {
 
 NeuralNetworkElement* ScriptedNetworkManipulator::getOwnerHint() const {
 	return mOwner;
+}
+
+
+/**
+ * If the file name is not ending with .onn, then this postfix is added!
+ */
+bool ScriptedNetworkManipulator::saveNetwork(const QString &name) {
+	if(mNetwork == 0) {
+		return false;
+	}
+	QString fileName = name;
+	if(!fileName.endsWith(".onn")) {
+		fileName = fileName + ".onn";
+	}
+	if(NeuralNetworkIO::createFileFromNetwork(fileName, mNetwork, 0, 0)) {
+		return true;
+	}
+	return false;
+}
+
+
+/**
+ * If the file name is not ending with .onn, then this postfix is added!
+ */
+bool ScriptedNetworkManipulator::loadNetwork(const QString &name) {
+	Core::log("ScriptedNetworkManipulator::loadNetwork(): This method is not implemented yet!", true);
+	return false;
 }
 
 

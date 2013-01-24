@@ -153,7 +153,8 @@ SynapseSet NetworkConnectivityUtil::connectElementsUnidirectional(NeuralNetwork 
 			if(!ignoreProperties) {
 				
 				if(target->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_PROTECTED)
-					|| target->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_NO_SYNAPSE_TARGET)) 
+					|| target->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_NO_SYNAPSE_TARGET)
+					|| target->hasProperty(NeuralNetworkConstants::TAG_INPUT_NEURON)) 
 				{
 					continue;
 				}

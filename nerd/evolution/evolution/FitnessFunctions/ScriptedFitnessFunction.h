@@ -53,6 +53,7 @@
 #include "PlugIns/CommandLineArgument.h"
 #include <QVariantList>
 #include "Script/ScriptingContext.h"
+#include <Value/BoolValue.h>
 #include "Fitness/ControllerFitnessFunction.h"
 
 
@@ -107,6 +108,7 @@ namespace nerd {
 		CommandLineArgument *mScriptFileNameArg;
 		Event *mSimEnvironmentChangedEvent;
 		Event *mBindPhaseEvent;
+		BoolValue *mResetScriptContext;
 	};
 
 }

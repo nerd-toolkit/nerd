@@ -76,6 +76,9 @@ class NeuroModulator;
 		
 		void setOwnerHint(NeuralNetworkElement *owner);
 		NeuralNetworkElement* getOwnerHint() const;
+		
+		bool saveNetwork(const QString &name);
+		bool loadNetwork(const QString &name);
 
 		qulonglong getNeuron(const QString &name);
 		qulonglong getNeuroModule(const QString &name);
@@ -155,6 +158,7 @@ class NeuroModulator;
 		//insert module from library
 		//resize of modules
 		
+		//Neuromodulator Framework
 		void enableNeuroModulators(qulonglong elementId, bool enable);
  		void setModulatorArea(qulonglong elementId, int type, double width, double height, bool circle = true);
 		void setModulatorAreaReferenceModule(qulonglong elementId, int type, qulonglong moduleId);
