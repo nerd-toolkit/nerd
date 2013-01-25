@@ -607,11 +607,13 @@ namespace nerd {
 			if(ok) {
 				owner->getStrengthValue().set(oldWeight);
 			}
+			owner->removeProperty("HideWeight");
 		}
 		else {
 			double currentWeight = owner->getStrengthValue().get();
 			owner->getStrengthValue().set(0.0);
 			owner->setProperty("_SMRS_w", QString::number(currentWeight));
+			owner->setProperty("HideWeight");
 		}
 	}
 	
