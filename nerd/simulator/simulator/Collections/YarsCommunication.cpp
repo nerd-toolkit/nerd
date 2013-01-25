@@ -49,6 +49,9 @@
 #include "Core/Core.h"
 #include "Communication/YarsComSimulationAlgorithm.h"
 #include "Physics/Physics.h"
+#include "Util/SetSnapshotValueTaskFactory.h"
+#include "Core/Core.h"
+#include "NerdConstants.h"
 
 using namespace std;
 
@@ -60,6 +63,10 @@ namespace nerd {
  */
 YarsCommunication::YarsCommunication()
 {
+	//allow SetInit of values (simulation snapshot)
+	Core::getInstance()->addGlobalObject(
+		NerdConstants::OBJECT_SET_INIT_VALUE_TASK_FACTORY, new SetSnapshotValueTaskFactory());
+	
 	YarsComSimulationAlgorithm *yarsCom = new YarsComSimulationAlgorithm();
 	Physics::getPhysicsManager()->setPhysicalSimulationAlgorithm(yarsCom);
 	Physics::getCollisionManager()->setCollisionHandler(yarsCom);

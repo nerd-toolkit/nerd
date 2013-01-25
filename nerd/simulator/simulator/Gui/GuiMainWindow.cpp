@@ -246,7 +246,7 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	QMenu *helpMenu = getMenu(tr("Help"));
 
 	//Add object property panel.
-	mParameterLists = new MultipleParameterWindowWidget("MainParameterWindow", new SetSnapshotValueTask(0, ""));
+	mParameterLists = new MultipleParameterWindowWidget("MainParameterWindow");
 	QAction *parameterListAction = toolMenu->addAction(tr("&Object Properties"));
 	parameterListAction->setShortcut(tr("Ctrl+o"));
 	connect(parameterListAction, SIGNAL(triggered()), mParameterLists, SLOT(show()));

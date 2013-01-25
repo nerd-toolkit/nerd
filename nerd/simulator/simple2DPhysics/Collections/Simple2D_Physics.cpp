@@ -56,6 +56,9 @@
 #include "Physics/Simple2D_FixedJoint.h"
 #include "Physics/Simple2D_SliderMotor.h"
 #include "Physics/Simple2D_DifferentialDrive.h"
+#include "Util/SetSnapshotValueTaskFactory.h"
+#include "Core/Core.h"
+#include "NerdConstants.h"
 
 using namespace std;
 
@@ -67,6 +70,10 @@ namespace nerd {
  */
 Simple2D_Physics::Simple2D_Physics()
 {
+	//allow SetInit of values (simulation snapshot)
+	Core::getInstance()->addGlobalObject(
+		NerdConstants::OBJECT_SET_INIT_VALUE_TASK_FACTORY, new SetSnapshotValueTaskFactory());
+	
 	PhysicsManager *pm = Physics::getPhysicsManager();
 	pm->setPhysicalSimulationAlgorithm(new Simple2D_SimulationAlgorithm());
 

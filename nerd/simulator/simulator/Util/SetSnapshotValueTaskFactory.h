@@ -43,66 +43,41 @@
 
 
 
-#ifndef NERDMultipleParameterWindowWidget_H
-#define NERDMultipleParameterWindowWidget_H
+#ifndef NERDSetSnapshotValueTaskFactory_H
+#define NERDSetSnapshotValueTaskFactory_H
 
-#include "Gui/MultipleWindowWidget.h"
-#include "Event/Event.h"
-#include "Event/EventListener.h"
 #include <QString>
-#include "Gui/Parameter/ParameterVisualizationWindow.h"
+#include <QHash>
+#include "Core/Task.h"
+#include "Core/SystemObject.h"
+#include "Gui/Parameter/SetInitValueTaskFactory.h"
+
 
 namespace nerd {
 
+
 	/**
-	 * MultipleParameterWindowWidget
+	 * SetSnapshotValueTaskFactory.
+	 *
 	 */
-	class MultipleParameterWindowWidget : public MultipleWindowWidget {
-	Q_OBJECT
+	class SetSnapshotValueTaskFactory : public SetInitValueTaskFactory {
 	public:
-		MultipleParameterWindowWidget(const QString &name, QWidget *parent = 0);
-		virtual ~MultipleParameterWindowWidget();
-
-		virtual void addTab();
-		virtual ParameterVisualizationWindow* addNewVisualizationTab();
-
-		virtual void eventOccured(Event *event);
-
-	signals:
-		void initPhaseCompleted();
-		void shutDownPhaseStarted();
-
-	public slots:
-		void handleInitPhase();
-		void handleShutDownPhase();
-		void saveAllPanelsToFile();
-		void saveSinglePanelToFile();
-		void loadAllPanelsFromFile();
-		void loadSinglePanelFromFile();
-		void addPanelsFromFile();
-		void applyAllProperties();
-		void applyAndSelectAllProperties();
-		void selectAllProperties();
-		void deselectAllProperties();
-		void copyFirstValueToAllOtherValues();
-		void setInitToAllValues();
-		void applySinglePanel();
-		void selectSinglePanel();
-		void clearSinglePanel();
-		void activateHistoryPlotter();
-		void activateXYPlotter();
+		SetSnapshotValueTaskFactory() {}
+		virtual ~SetSnapshotValueTaskFactory() {}
 		
+		virtual QString getName() const;
 
-	protected:
-		virtual void timerEvent(QTimerEvent * event);
-		
-	private:		
-		int mCounter;
+		virtual bool init();
+		virtual bool bind();
+		virtual bool cleanUp();
+
+		virtual Task* create(Value *value, const QString &content);
+
+	private:
 	};
 
 }
 
 #endif
-
 
 

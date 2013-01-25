@@ -57,6 +57,7 @@
 #include "Value/FileNameValue.h"
 #include "Value/CodeValue.h"
 #include "Core/Task.h"
+#include "Gui/Parameter/SetInitValueTaskFactory.h"
 
 
 namespace nerd {
@@ -119,6 +120,7 @@ namespace nerd {
 		bool setProperty(const QString &fullPropertyName, const QString &value);
 		QString getProperty(const QString &fullPropertyName);
 		QScriptValue getPropertyAsArray(const QString fullPropertyName);
+		bool storePersistently(const QString &variableName, const QString &content);
 
 		bool createGlobalStringProperty(const QString &propertyName, const QString &content = "");
 		bool createGlobalDoubleProperty(const QString &propertyName, double content = 0.0);
@@ -168,6 +170,7 @@ namespace nerd {
 		int mFileIdCounter;
 		QHash<int, QFile*> mOpenFiles;
 		bool mRestrictToMainExecutionThread;
+		SetInitValueTaskFactory *mSetInitValueTaskFactory;
 	};
 
 }

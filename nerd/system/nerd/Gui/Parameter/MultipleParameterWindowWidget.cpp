@@ -65,10 +65,8 @@ using namespace std;
 
 namespace nerd {
 
-MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name,
-					SetInitValueTask *setInitValueTaskPrototpye, QWidget *parent)
-		: MultipleWindowWidget(name, parent), mCounter(1),
-		  mSetInitValueTaskPrototype(setInitValueTaskPrototpye)
+MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name, QWidget *parent)
+		: MultipleWindowWidget(name, parent), mCounter(1)
 {
 	setWindowTitle("Object Properties");
 
@@ -161,7 +159,6 @@ MultipleParameterWindowWidget::MultipleParameterWindowWidget(const QString &name
 }
 
 MultipleParameterWindowWidget::~MultipleParameterWindowWidget() {
-	delete mSetInitValueTaskPrototype;
 }
 
 void MultipleParameterWindowWidget::addTab() {
@@ -172,7 +169,7 @@ ParameterVisualizationWindow* MultipleParameterWindowWidget::addNewVisualization
 	QString name = QString("Properties [")
 						.append(QString::number(mCounter++))
 						.append("]");
-	ParameterVisualizationWindow *pvw = new ParameterVisualizationWindow(name, mSetInitValueTaskPrototype);
+	ParameterVisualizationWindow *pvw = new ParameterVisualizationWindow(name);
 	getTabWidget()->addTab(pvw, name);
 
 	updateButtons();

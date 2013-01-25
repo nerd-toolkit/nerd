@@ -43,61 +43,30 @@
 
 
 
-#ifndef NERDMultipleParameterWindowWidget_H
-#define NERDMultipleParameterWindowWidget_H
+#ifndef NERDSetInitValueTaskFactory_H
+#define NERDSetInitValueTaskFactory_H
 
-#include "Gui/MultipleWindowWidget.h"
-#include "Event/Event.h"
-#include "Event/EventListener.h"
 #include <QString>
-#include "Gui/Parameter/ParameterVisualizationWindow.h"
+#include <QHash>
+#include "Core/Task.h"
+#include "Core/SystemObject.h"
+#include "Value/Value.h"
 
 namespace nerd {
 
+
 	/**
-	 * MultipleParameterWindowWidget
+	 * SetInitValueTask.
+	 *
 	 */
-	class MultipleParameterWindowWidget : public MultipleWindowWidget {
-	Q_OBJECT
+	class SetInitValueTaskFactory : public SystemObject {
 	public:
-		MultipleParameterWindowWidget(const QString &name, QWidget *parent = 0);
-		virtual ~MultipleParameterWindowWidget();
+		SetInitValueTaskFactory() {};
+		virtual ~SetInitValueTaskFactory() {};
 
-		virtual void addTab();
-		virtual ParameterVisualizationWindow* addNewVisualizationTab();
+		virtual Task* create(Value*, const QString&) = 0;
 
-		virtual void eventOccured(Event *event);
-
-	signals:
-		void initPhaseCompleted();
-		void shutDownPhaseStarted();
-
-	public slots:
-		void handleInitPhase();
-		void handleShutDownPhase();
-		void saveAllPanelsToFile();
-		void saveSinglePanelToFile();
-		void loadAllPanelsFromFile();
-		void loadSinglePanelFromFile();
-		void addPanelsFromFile();
-		void applyAllProperties();
-		void applyAndSelectAllProperties();
-		void selectAllProperties();
-		void deselectAllProperties();
-		void copyFirstValueToAllOtherValues();
-		void setInitToAllValues();
-		void applySinglePanel();
-		void selectSinglePanel();
-		void clearSinglePanel();
-		void activateHistoryPlotter();
-		void activateXYPlotter();
-		
-
-	protected:
-		virtual void timerEvent(QTimerEvent * event);
-		
-	private:		
-		int mCounter;
+	private:
 	};
 
 }

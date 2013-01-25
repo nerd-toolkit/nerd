@@ -89,9 +89,9 @@ class ChangeValue : public Task {
 
 
 ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *list,
-				Value *value, QString name, SetInitValueTask *setInitValueTaskPrototype)
+				Value *value, QString name)
 	: QFrame(), mValueField(0), mValueBox(0),
-	  mUpdateSnapshotButton(0), mSetInitValueTaskPrototype(setInitValueTaskPrototype),
+	  mUpdateSnapshotButton(0), mSetInitValueTaskFactory(0),
 	  mScriptEditor(0)
 {
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -105,6 +105,9 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mNameLabel->setFocusPolicy(Qt::NoFocus);
 	mValueBox = new QComboBox(this);
 	mValueBox->setEditable(true);
+	
+	mSetInitValueTaskFactory = dynamic_cast<SetInitValueTaskFactory*>(
+					Core::getInstance()->getGlobalObject(NerdConstants::OBJECT_SET_INIT_VALUE_TASK_FACTORY));
 
 	if(mValue != 0) {
 
@@ -197,7 +200,7 @@ ParameterVisualization::ParameterVisualization(ParameterVisualizationWindow *lis
 	mFrameLayout->setMargin(1);
 	mFrameLayout->addWidget(mUpdateValue);
 	mFrameLayout->addWidget(mValueBox);
-	if(mSetInitValueTaskPrototype != 0 && name.startsWith("/Sim/")) {
+	if(mSetInitValueTaskFactory != 0 && name.startsWith("/Sim/")) {
 		mFrameLayout->addWidget(mUpdateSnapshotButton);
 	}
 	if(dynamic_cast<CodeValue*>(mValue) != 0) {
@@ -269,10 +272,10 @@ void ParameterVisualization::setDoUpdateValue(int doUpdate)  {
 void ParameterVisualization::updateValueInEnvironmentManager() {
 
 
-	if(mValue == 0 || mSetInitValueTaskPrototype == 0 || !mValueName.startsWith("/Sim/")) {
+	if(mValue == 0 || mSetInitValueTaskFactory == 0 || !mValueName.startsWith("/Sim/")) {
 		return;
 	}
-	Core::getInstance()->scheduleTask(mSetInitValueTaskPrototype->create(mValue, mValueBox->currentText()));
+	Core::getInstance()->scheduleTask(mSetInitValueTaskFactory->create(mValue, mValueBox->currentText()));
 
 }
 

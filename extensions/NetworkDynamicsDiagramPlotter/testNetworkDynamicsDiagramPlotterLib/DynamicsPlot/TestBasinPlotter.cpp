@@ -97,6 +97,16 @@ void TestBasinPlotter::testParameterSettings() {
 	Event *e_ResetFinalizedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET_COMPLETED, true);
 	Event *e_EvaluateNetworkEvent = em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_STARTED, true);
 	
+	if(e_ClearAllEditorSelections == 0
+		|| e_NextStepEvent == 0
+		|| e_StepCompletedEvent == 0
+		|| e_ResetEvent == 0
+		|| e_ResetFinalizedEvent == 0
+		|| e_EvaluateNetworkEvent == 0)
+	{
+		cerr << "Warning, not all required events could be created properly!" << endl;
+	}
+	
 	BoolValue *v_StasisValue = new BoolValue(false);
 	vm->addValue(NeuralNetworkConstants::VALUE_EVO_STASIS_MODE, v_StasisValue);
 	
@@ -189,7 +199,7 @@ void TestBasinPlotter::testParameterSettings() {
 	//Neuron *n3 = new Neuron("Neuron3", *ramp, *af);
 	//network->addNeuron(n3);
 	
-	Synapse *s1 = Synapse::createSynapse(n1, n1, 1.02, *sf);
+	//Synapse *s1 = Synapse::createSynapse(n1, n1, 1.02, *sf);
 	//Synapse *s2 = Synapse::createSynapse(n3, n3, -1.5, *sf);
 	
 	

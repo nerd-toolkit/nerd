@@ -58,11 +58,13 @@
 #include <QFile>
 #include <QTextStream>
 #include "Value/MultiPartValue.h"
+#include <Value/ChangeValueTask.h>
 #include "Util/Tracer.h"
 #include <QDir>
 #include <QTextStream>
 #include "Math/Random.h"
 #include <Math/Math.h>
+#include <NerdConstants.h>
 #include <iostream>
 #include <QDate>
 #include <QTime>
@@ -91,7 +93,8 @@ bool ResetScriptingContextTask::runTask() {
 ScriptingContext::ScriptingContext(const QString &name, const QString &mainContextName)
 	: mName(name), mScript(0), mScriptCode(0), mScriptFileName(0), mMainContextName(mainContextName),
 	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false),
-	  mMaxNumberOfTriesToResolveDefinitions(5), mFileIdCounter(0), mRestrictToMainExecutionThread(true)
+	  mMaxNumberOfTriesToResolveDefinitions(5), mFileIdCounter(0), mRestrictToMainExecutionThread(true),
+	  mSetInitValueTaskFactory(0)
 {
 	mScriptCode = new CodeValue();
 	mScriptCode->addValueChangedListener(this);
@@ -113,7 +116,8 @@ ScriptingContext::ScriptingContext(const ScriptingContext &other)
 	  mMainContextName(other.mMainContextName),
 	  mHasUnresolvedValueDefinitions(false), mHasUnresolvedEventDefinitions(false),
 	  mMaxNumberOfTriesToResolveDefinitions(other.mMaxNumberOfTriesToResolveDefinitions),
-	  mFileIdCounter(0), mRestrictToMainExecutionThread(other.mRestrictToMainExecutionThread)
+	  mFileIdCounter(0), mRestrictToMainExecutionThread(other.mRestrictToMainExecutionThread),
+	  mSetInitValueTaskFactory(0)
 {
 	mScriptCode = new CodeValue(other.mScriptCode->get());
 	mScriptCode->addValueChangedListener(this);
@@ -667,19 +671,54 @@ QScriptValue ScriptingContext::getPropertyAsArray(const QString fullPropertyName
 	QScriptValue array = mScript->newArray(3);
 	QString vector3DString = getProperty(fullPropertyName);
 	if(!vector3DString.startsWith("(") || !vector3DString.endsWith(")")) {
-		Core::log("ScriptedModel::getVectorElement: Could not parse [" + vector3DString + "]", true);
+		Core::log("ScriptingContext::getVectorElement: Could not parse [" + vector3DString + "]", true);
 		return array;
 	}
 	QString content = vector3DString;
 	QStringList elements = content.mid(1, content.length() - 2).split(",");
 	if(elements.size() <= 0 || elements.size() > 3) {
-		Core::log("ScriptedModel::getVectorElement: Property was not a valid Vetor3D.", true);
+		Core::log("ScriptingContext::getVectorElement: Property was not a valid Vetor3D.", true);
 		return array;
 	}
 	for(int i = 0; i < elements.size(); ++i) {
 		array.setProperty(i, elements.at(i).toDouble());
 	}
 	return array;
+}
+
+/**
+ * Stores the given content to the global repository variable persitently, i.e. in the environment manager.
+ * Additionally, the variable's actual content is changed as well, so both, the simulation snapshot 
+ * and the variable content are changed to the desired content. 
+ * The content is given as a string and set with the variables setValueFromString() method. 
+ * If the content is not valid, then it is still stored in the variable repository!
+ */
+bool ScriptingContext::storePersistently(const QString &variableName, const QString &content) {
+	if(!variableName.startsWith("/Sim/")) {
+		Core::log("ScriptingContext: storePersistently() only supports variables that start with /Sim/", true);
+		return false;
+	}
+	if(mSetInitValueTaskFactory == 0) {
+		mSetInitValueTaskFactory = dynamic_cast<SetInitValueTaskFactory*>(
+					Core::getInstance()->getGlobalObject(NerdConstants::OBJECT_SET_INIT_VALUE_TASK_FACTORY));
+	}
+	if(mSetInitValueTaskFactory == 0) {
+		return false;
+	}
+	
+	Value *value = Core::getInstance()->getValueManager()->getValue(variableName);
+	if(value == 0) {
+		Core::log("ScriptingContext: storePersistently() could not find value [" + variableName + "]" , true);
+		return false;
+	}
+	Core::getInstance()->scheduleTask(new ChangeValueTask(value, content));
+	Core::getInstance()->scheduleTask(mSetInitValueTaskFactory->create(value, content));
+	
+	//if this is the main execution thread, then flush the new tasks immediately!
+	if(Core::getInstance()->isMainExecutionThread()) {
+		Core::getInstance()->executePendingTasks();
+	}
+	return true;
 }
 
 bool ScriptingContext::createGlobalStringProperty(const QString &propertyName, const QString &content) {

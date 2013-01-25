@@ -49,7 +49,7 @@
 #include <QString>
 #include <QHash>
 #include "Value/Value.h"
-#include "Gui/Parameter/SetInitValueTask.h"
+#include "Core/Task.h"
 
 namespace nerd {
 
@@ -57,14 +57,14 @@ namespace nerd {
 	 * SetSnapshotValueTask.
 	 *
 	 */
-	class SetSnapshotValueTask : public SetInitValueTask {
+	class SetSnapshotValueTask : public Task {
 	public:
 		SetSnapshotValueTask(Value *snapshotValue, const QString &newValue);
 		SetSnapshotValueTask(const SetSnapshotValueTask &other);
 		virtual ~SetSnapshotValueTask();
 
 		SetSnapshotValueTask* createCopy();
-		Task* create(Value *snapshotValue, const QString &newValue);
+// 		Task* create(Value *snapshotValue, const QString &newValue);
 
 		virtual bool runTask();
 

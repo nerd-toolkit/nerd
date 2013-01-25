@@ -86,9 +86,9 @@ SetSnapshotValueTask* SetSnapshotValueTask::createCopy() {
 	return new SetSnapshotValueTask(*this);
 }
 
-Task* SetSnapshotValueTask::create(Value *snapshotValue, const QString &newValue) {
-	return new SetSnapshotValueTask(snapshotValue, newValue);
-}
+// Task* SetSnapshotValueTask::create(Value *snapshotValue, const QString &newValue) {
+// 	return new SetSnapshotValueTask(snapshotValue, newValue);
+// }
 
 bool SetSnapshotValueTask::runTask() {
 	if(mSnapshotValue == 0) {

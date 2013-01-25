@@ -73,7 +73,7 @@
 #include <iostream>
 #include "Event/EventManager.h"
 #include "Event/Event.h"
-#include "Gui/Parameter/SetInitValueTask.h"
+#include "Gui/Parameter/SetInitValueTaskFactory.h"
 
 namespace nerd{
 
@@ -90,7 +90,7 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 	Q_OBJECT
 
 	public:
-		ParameterVisualizationWindow(const QString &name, SetInitValueTask *setInitValueTaskPrototype = 0);
+		ParameterVisualizationWindow(const QString &name);
 		virtual ~ParameterVisualizationWindow();
 
 		QList<ParameterVisualization*> getParameterVisualizations() const;
@@ -169,7 +169,6 @@ class ParameterVisualizationWindow : public QWidget, public virtual ValueProvide
 		QPushButton *mPlotterButton;
 		Event *mPhysicsEnvironmentChangedEvent;
 		Event *mValueRepositoryChangedEvent;
-		SetInitValueTask *mSetInitValueTaskPrototype;
 };
 
 

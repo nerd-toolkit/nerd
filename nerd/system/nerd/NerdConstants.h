@@ -67,6 +67,7 @@ namespace nerd {
 
 		static const QString OBJECT_STATISTICS_MANAGER;
 		static const QString OBJECT_GUI_MANAGER;
+		static const QString OBJECT_SET_INIT_VALUE_TASK_FACTORY;
 
 	//**************************************************************************
 	//GUI Element Names

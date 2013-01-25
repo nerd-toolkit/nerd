@@ -95,6 +95,16 @@ void TestFirstReturnMap::testParameterSettings() {
 	Event *e_ResetFinalizedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET_COMPLETED, true);
 	Event *e_EvaluateNetworkEvent = em->getEvent(NeuralNetworkConstants::EVENT_NNM_NETWORK_EXECUTION_STARTED, true);
 	
+	if(e_ClearAllEditorSelections == 0
+		|| e_NextStepEvent == 0
+		|| e_StepCompletedEvent == 0
+		|| e_ResetEvent == 0
+		|| e_ResetFinalizedEvent == 0
+		|| e_EvaluateNetworkEvent == 0)
+	{
+		cerr << "Warning, not all required events could be created properly!" << endl;
+	}
+	
 	BoolValue *v_StasisValue = new BoolValue(false);
 	vm->addValue(NeuralNetworkConstants::VALUE_EVO_STASIS_MODE, v_StasisValue);
 

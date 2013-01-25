@@ -66,6 +66,9 @@ const QString NerdConstants::OBJECT_STATISTICS_MANAGER
 
 const QString NerdConstants::OBJECT_GUI_MANAGER
 		= "GuiManager";
+		
+const QString NerdConstants::OBJECT_SET_INIT_VALUE_TASK_FACTORY
+		= "SetInitTaskFactory";
 
 //**************************************************************************
 //GUI Element Names

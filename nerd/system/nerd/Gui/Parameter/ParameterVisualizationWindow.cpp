@@ -63,14 +63,12 @@ using namespace std;
 namespace nerd {
 
 
-ParameterVisualizationWindow::ParameterVisualizationWindow(const QString &name,
-							SetInitValueTask *setInitValueTaskPrototype)
+ParameterVisualizationWindow::ParameterVisualizationWindow(const QString &name)
 		: QWidget(0), mName(name),
  			mValueListArea(0), mValueList(0), mListLayout(0),
 			mRemoveAll(0), mAction(0),
 			mLoggerButton(0), mParameterLoggerWidget(0), mFillingComboBox(false),
-			mPhysicsEnvironmentChangedEvent(0), mValueRepositoryChangedEvent(0),
-			mSetInitValueTaskPrototype(setInitValueTaskPrototype)
+			mPhysicsEnvironmentChangedEvent(0), mValueRepositoryChangedEvent(0)
 {
 
 	setAttribute(Qt::WA_QuitOnClose, false);
@@ -742,7 +740,7 @@ ParameterVisualization* ParameterVisualizationWindow::showSelectedValue(const QS
 
 	//CHANGED: by chris, Values are read from the ValueManager instead of the PhysicsManager.
 	ParameterVisualization *newVis = new ParameterVisualization(this,
-			Core::getInstance()->getValueManager()->getValue(text), text, mSetInitValueTaskPrototype);
+			Core::getInstance()->getValueManager()->getValue(text), text);
 	mValues[text] = newVis;
 	newVis->setDoUpdateValue(!startDeselected);
 	mListLayout->addWidget(newVis);

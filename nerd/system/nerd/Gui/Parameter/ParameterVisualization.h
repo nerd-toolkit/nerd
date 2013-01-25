@@ -56,7 +56,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include "Core/Task.h"
-#include "Gui/Parameter/SetInitValueTask.h"
+#include "Gui/Parameter/SetInitValueTaskFactory.h"
 #include "Gui/ScriptEditor/ScriptEditor.h"
 
 
@@ -72,8 +72,7 @@ class ParameterVisualization : public QFrame, public virtual ValueChangedListene
 	Q_OBJECT
 
 	public:
-		ParameterVisualization(ParameterVisualizationWindow *list, Value *value, QString name,
-								SetInitValueTask *setInitValueTaskPrototype = 0);
+		ParameterVisualization(ParameterVisualizationWindow *list, Value *value, QString name);
 		virtual ~ParameterVisualization();
 
 		virtual void valueChanged(Value *value);
@@ -128,7 +127,7 @@ class ParameterVisualization : public QFrame, public virtual ValueChangedListene
 		QCheckBox *mUpdateValue;
 		bool mDoUpdateValue;
 		bool mValueModified;
-		SetInitValueTask *mSetInitValueTaskPrototype;
+		SetInitValueTaskFactory *mSetInitValueTaskFactory;
 		ScriptEditor *mScriptEditor;
 };
 

@@ -76,11 +76,18 @@
 #include "MotorModels/ODE_PID_PassiveActuatorModel.h"
 #include "Physics/ODE_UniversalJoint.h"
 #include <Physics/ODE_BallAndSocketJoint.h>
+#include "Util/SetSnapshotValueTaskFactory.h"
+#include "Core/Core.h"
+#include "NerdConstants.h"
 
 namespace nerd {
 
 ODE_Physics::ODE_Physics()
 {
+	//allow SetInit of values (simulation snapshot)
+	Core::getInstance()->addGlobalObject(
+		NerdConstants::OBJECT_SET_INIT_VALUE_TASK_FACTORY, new SetSnapshotValueTaskFactory());
+	
 	PhysicsManager *pm = Physics::getPhysicsManager();
 	pm->setPhysicalSimulationAlgorithm(new ODE_SimulationAlgorithm());
 

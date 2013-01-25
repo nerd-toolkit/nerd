@@ -133,6 +133,7 @@ bool NerdNeuroSimApplication::setupGui() {
 
 bool NerdNeuroSimApplication::setupApplication()
 {
+	
 	//install simulation recorder
 	new NetworkSimulationRecorder();
 	

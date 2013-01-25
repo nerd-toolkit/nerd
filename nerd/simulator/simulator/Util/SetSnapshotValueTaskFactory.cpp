@@ -43,34 +43,47 @@
 
 
 
-#ifndef NERDSetInitValueTask_H
-#define NERDSetInitValueTask_H
+#include "SetSnapshotValueTaskFactory.h"
+#include "Util/SetSnapshotValueTask.h"
+#include <iostream>
+#include <QList>
+#include "Core/Core.h"
+#include "Physics/SimulationEnvironmentManager.h"
+#include "Physics/PhysicsManager.h"
+#include "Physics/Physics.h"
 
-#include <QString>
-#include <QHash>
-#include "Core/Task.h"
+using namespace std;
 
 namespace nerd {
 
-	/**
-	 * SetInitValueTask.
-	 *
-	 */
-	class SetInitValueTask : public Task {
-	public:
-		SetInitValueTask() {}
-		virtual ~SetInitValueTask() {}
-
-		virtual Task* create(Value*, const QString&) { return 0; }
 	
-		virtual bool runTask() { return true; }
-
-	private:
-	};
-
+QString SetSnapshotValueTaskFactory::getName() const {
+		return "SetInitValueTaskFactory";
 }
 
-#endif
+bool SetSnapshotValueTaskFactory::init() {
+	return true;
+}
+
+
+bool SetSnapshotValueTaskFactory::bind() {
+	return true;
+}
+
+
+bool SetSnapshotValueTaskFactory::cleanUp() {
+	return true;
+}
+
+
+
+Task* SetSnapshotValueTaskFactory::create(Value *snapshotValue, const QString &newValue) {
+	return new SetSnapshotValueTask(snapshotValue, newValue);
+}
+
+
+
+}
 
 
 
