@@ -94,6 +94,7 @@ namespace nerd {
 		bool mUseSynapseTypeSymbols;
 		bool mLocalHideWeight;
 		bool mHighlightWeightChanges;
+		bool mDrawAsDisabled;
 	};
 
 }

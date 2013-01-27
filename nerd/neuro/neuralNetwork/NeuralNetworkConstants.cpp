@@ -174,6 +174,9 @@ const QString NeuralNetworkConstants::TAG_ELEMENT_PROTECTED
 
 const QString NeuralNetworkConstants::TAG_ELEMENT_PROTECT_EXISTENCE
 		= "ProtectExistence";
+		
+const QString NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED
+		= "DrawAsDisabled";
 
 const QString NeuralNetworkConstants::TAG_ELEMENT_LOCATION
 		= "_LOCATION";

@@ -47,6 +47,7 @@
 #include <Math/Random.h>
 #include "Network/Neuron.h"
 #include <Network/Neuro.h>
+#include <NeuralNetworkConstants.h>
 #include <QStringList>
 #include <Core/Core.h>
 
@@ -607,13 +608,13 @@ namespace nerd {
 			if(ok) {
 				owner->getStrengthValue().set(oldWeight);
 			}
-			owner->removeProperty("HideWeight");
+			owner->removeProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED);
 		}
 		else {
 			double currentWeight = owner->getStrengthValue().get();
 			owner->getStrengthValue().set(0.0);
 			owner->setProperty("_SMRS_w", QString::number(currentWeight));
-			owner->setProperty("HideWeight");
+			owner->setProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED);
 		}
 	}
 	

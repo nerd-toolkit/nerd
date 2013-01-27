@@ -117,6 +117,7 @@ namespace nerd {
 		static const QString TAG_ELEMENT_LOCATION;
 		static const QString TAG_ELEMENT_PROTECTED;
 		static const QString TAG_ELEMENT_PROTECT_EXISTENCE;
+		static const QString TAG_ELEMENT_DRAW_AS_DISABLED;
 		static const QString TAG_MODULE_SIZE;
 		static const QString TAG_MODULE_INPUT;
 		static const QString TAG_MODULE_OUTPUT;

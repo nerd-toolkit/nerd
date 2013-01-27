@@ -887,7 +887,7 @@ void ScriptedModel::importVariables() {
 void ScriptedModel::addCustomScriptContextStructures() {
 	ScriptingContext::addCustomScriptContextStructures();
 	
-	//make the global object available under the additional name "nerd" (default name).
+	//make the global "model" object available under the additional name "nerd" (default name).
 	QScriptValue nerdObj = mScript->globalObject().property(mMainContextName);
 	mScript->globalObject().setProperty("nerd", nerdObj);
 

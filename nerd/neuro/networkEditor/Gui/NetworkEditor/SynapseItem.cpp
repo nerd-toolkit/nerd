@@ -66,7 +66,7 @@ namespace nerd {
  */
 SynapseItem::SynapseItem(NetworkVisualization *owner)
 	: PaintItem(800), mOwner(owner), mHideWeight(false), mUseSynapseTypeSymbols(true),
-		mLocalHideWeight(false), mHighlightWeightChanges(true)
+		mLocalHideWeight(false), mHighlightWeightChanges(true), mDrawAsDisabled(false)
 {
 }
 
@@ -79,7 +79,7 @@ SynapseItem::SynapseItem(NetworkVisualization *owner)
 SynapseItem::SynapseItem(const SynapseItem &other) 
 	: PaintItem(other), mOwner(other.mOwner), mSynapse(0), 
 	mHideWeight(other.mHideWeight), mUseSynapseTypeSymbols(other.mUseSynapseTypeSymbols),
-	mHighlightWeightChanges(other.mHighlightWeightChanges)
+	mHighlightWeightChanges(other.mHighlightWeightChanges), mDrawAsDisabled(other.mDrawAsDisabled)
 {
 }
 
@@ -103,6 +103,7 @@ bool SynapseItem::setSynapse(Synapse *synapse) {
 	mSynapse = synapse;
 	mPositionOffset.set(0.0, 0.0, 0.0);
 	mLocalHideWeight = false;
+	mDrawAsDisabled = false;
 
 	if(synapse == 0) {
 		mSourceNeuron = 0;
@@ -127,6 +128,9 @@ bool SynapseItem::setSynapse(Synapse *synapse) {
 					mSynapse->getProperty(NeuralNetworkConstants::TAG_SYNAPSE_LOCATION_OFFSET));
 		if(mSynapse->hasProperty(NeuralNetworkConstants::TAG_SYNAPSE_HIDE_WEIGHT)) {
 			mLocalHideWeight = true;
+		}
+		if(mSynapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED)) {
+			mDrawAsDisabled = true;
 		}
 	}
 	if(mSynapse == 0 || mSourceNeuron == 0 || mTarget == 0  ) {
@@ -164,6 +168,14 @@ void SynapseItem::propertyChanged(Properties *owner, const QString &property) {
 		}
 		else {
 			mLocalHideWeight = false;
+		}
+	}
+	else if(property == NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED) {
+		if(mSynapse->hasProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED)) {
+			mDrawAsDisabled = true;
+		}
+		else {
+			mDrawAsDisabled = false;
 		}
 	}
 }

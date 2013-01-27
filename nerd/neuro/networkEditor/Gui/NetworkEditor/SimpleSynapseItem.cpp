@@ -211,6 +211,9 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 			}
 		}
 	}
+	else if(mDrawAsDisabled) {
+		currentColor = QColor(200,200,200, 100);
+	}
 	newPen.setColor(currentColor);
 	painter->setPen(newPen);
 
@@ -272,7 +275,7 @@ void SimpleSynapseItem::paintSelf(QPainter *painter) {
 		painter->fillRect(boundingBox, QColor(255, 0, 0, 50));
 	}
 
-	if(!mHideWeight && !mLocalHideWeight) {
+	if(!mHideWeight && !mLocalHideWeight && !mDrawAsDisabled) {
 		QString strength = mSynapse->getStrengthValue().getValueAsString();
 		if(strength.contains("e-")) {
 			strength = "0.000x";
