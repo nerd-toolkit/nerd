@@ -53,6 +53,7 @@
 #include "Physics/SimBody.h"
 #include "Physics/LightSource.h"
 #include <QPointF> 
+#include "Value/RangeValue.h"
 
 namespace nerd {
 
@@ -89,13 +90,12 @@ namespace nerd {
 		BoolValue *mUseAsAmbientLightSensor;
 		Vector3DValue *mLocalOrientation;
 		Vector3DValue *mAngleDifferences;
-		Vector3DValue *mTmpOrienations;
-		Vector3DValue *mTmpPosition;
 		StringValue *mDetectableLightSourceTypes;	
 		CollisionObject *mSensorObject;
 		BoolValue *mSwitchYZAxes;
 		BoolValue *mRestrictToHorizontalDirection;
 		DoubleValue *mMaxDetectionAngle;
+		RangeValue *mDetectableRange;
 	};
 
 }

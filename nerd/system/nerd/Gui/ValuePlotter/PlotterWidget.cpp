@@ -547,6 +547,10 @@ void PlotterWidget::drawCoordinateSystem(QPainter &painter) {
 						w, (int) (2 * scale) + 10);
 	}
 	
+	//avoid division by zero
+	if(mHistorySize == 0 || mMinorTickInterval == 0 || mMajorTickInterval < mMinorTickInterval) {
+		return;
+	}
 	
 	double tickScaling = ((double) mDrawableWidth) / ((double) mHistorySize);
 	

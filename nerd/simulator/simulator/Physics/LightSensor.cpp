@@ -69,20 +69,22 @@ LightSensor::LightSensor(const QString &name)
 	: SimSensor(), SimBody(name), mHostBody(0), mSensorNoise(0), mBrightness(0), mLocalPosition(0),
 	  mUseAsAmbientLightSensor(0), mLocalOrientation(0), mDetectableLightSourceTypes(0), mSensorObject(0)
 {
+	double minDetectBrightness = 0.0;
+	double maxDetectBrightness = 1.0;
+	
 	mDetectableLightTypes.append(0);
 
 	mHostBodyName = new StringValue("");
 	mSensorNoise = new DoubleValue(0.0);
-	mBrightness = new InterfaceValue("", "Brightness", 0.0, 0.0, 1.0);
+	mBrightness = new InterfaceValue("", "Brightness", minDetectBrightness, minDetectBrightness, maxDetectBrightness);
 	mLocalPosition = new Vector3DValue();
 	mUseAsAmbientLightSensor = new BoolValue(false);
 	mAngleDifferences = new Vector3DValue();
 	mLocalOrientation = new Vector3DValue(0,0,0);
-	mTmpPosition = new Vector3DValue();
-	mTmpOrienations = new Vector3DValue();
 	mDetectableLightSourceTypes = new StringValue("0");
 	mRestrictToHorizontalDirection = new BoolValue(true);
 	mMaxDetectionAngle = new DoubleValue(180.0);
+	mDetectableRange = new RangeValue(minDetectBrightness, maxDetectBrightness);
 	
 	mHostBodyName->setDescription("The full name of the body this light sensor is attached to.");
 	mBrightness->setDescription("The measured brightness");
@@ -96,6 +98,7 @@ LightSensor::LightSensor(const QString &name)
 											  "the brightness calculation in directed light sensor mode");
 	mMaxDetectionAngle->setDescription("If true, then a directed light sensor does not sense any light "
 											  "if the given angular offset is exceeded.");
+	mDetectableRange->setDescription("The minimal and maximal brightness detectable by this sensor");
 
 	addParameter("HostBody", mHostBodyName);
 	addParameter("Noise", mSensorNoise);
@@ -108,8 +111,7 @@ LightSensor::LightSensor(const QString &name)
 	addParameter("RestrictToHorizontalDirection", mRestrictToHorizontalDirection);
 	addParameter("MaxDetectionAngle", mMaxDetectionAngle);
 
-	addParameter("Tmp_pos", mTmpPosition);
-	addParameter("Tmp_ori", mTmpOrienations);
+	addParameter("DetectableRange", mDetectableRange);
 
 	mOutputValues.append(mBrightness);
 
@@ -143,10 +145,7 @@ LightSensor::LightSensor(const LightSensor &other)
 	mDetectableLightSourceTypes = dynamic_cast<StringValue*>(getParameter("DetectableLightTypes"));
 	mRestrictToHorizontalDirection = dynamic_cast<BoolValue*>(getParameter("RestrictToHorizontalDirection"));
 	mMaxDetectionAngle = dynamic_cast<DoubleValue*>(getParameter("MaxDetectionAngle"));
-	
-
-	mTmpPosition = dynamic_cast<Vector3DValue*>(getParameter("Tmp_pos"));
-	mTmpOrienations = dynamic_cast<Vector3DValue*>(getParameter("Tmp_ori"));
+	mDetectableRange = dynamic_cast<RangeValue*>(getParameter("DetectableRange"));
 
 	mLightSources.clear();
 	mOutputValues.append(mBrightness);
@@ -314,6 +313,10 @@ void LightSensor::valueChanged(Value *value) {
 			mMaxDetectionAngle->set(180.0);
 		}
 	}
+	else if(value == mDetectableRange) {
+		mBrightness->setMin(mDetectableRange->getMin());
+		mBrightness->setMax(mDetectableRange->getMax());
+	}
 }
 
 
@@ -353,9 +356,6 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 
 		Vector3D sensorPosition = globalPosition;
 		Vector3D sensorOrientation = mHostBody->getOrientationValue()->get() + mLocalOrientation->get();
-
-		mTmpPosition->set(sensorPosition);
-		mTmpOrienations->set(sensorOrientation);
 
 		Vector3D anglesToLightSource;
 
