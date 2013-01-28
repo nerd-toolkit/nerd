@@ -564,7 +564,10 @@ SimObject* PhysicsManager::getSimObject(const QString &name) {
  */
 QList<SimObject*> PhysicsManager::getSimObjects(const QString &namePattern) {
 	QList<SimObject*> objects;
-	QRegExp expr(namePattern);
+	QString pattern = namePattern;
+	pattern = pattern.replace("**", ".*");
+	
+	QRegExp expr(pattern);
 
 	for(QListIterator<SimObject*> i(mSimObjects); i.hasNext();) {
 		SimObject *simObject = i.next();
