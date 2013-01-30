@@ -350,13 +350,13 @@ namespace nerd {
 		if(owner == 0) {
 			return;
 		}
-		if(params.mParams.size() != 3) {
+		if(params.mParams.size() < 3 && params.mParams.size() > 4) {
 			if(mNotifiedErrors == false) {
 				mNotifiedErrors = true;
 				
 				Core::log(QString("SimpleModulatedRandomSearchSynapseFunction: ")
-						  + "Mode 0 requires exactly 3 optional parameters: " 
-						  + "variance, min, max. Found " 
+						  + "Mode 0 requires 3 or 4 optional parameters: " 
+						  + "variance, min, max, (maxLevel). Found " 
 						  + QString::number(params.mParams.size()) 
 						  + " instead!", true);
 			}
@@ -366,6 +366,11 @@ namespace nerd {
 		double concentration = NeuroModulator::getConcentrationInNetworkAt(
 						params.mType, owner->getPosition(), mCurrentNetwork);
 		
+		//If the maxConcentration parameter is given, cut the concentration level!
+		if(params.mParams.size() > 3) {
+			concentration = Math::min(params.mParams.at(3), concentration);
+		}
+			
 		if(params.mObservable != 0) {
 			params.mObservable->set(concentration); 
 		}
@@ -375,8 +380,6 @@ namespace nerd {
 		
 		double changeProbability = Math::max(0.0, Math::min(1.0, 
 						concentration * params.mChangeProbability * mProbabilityForChange->get()));
-		
-		//cerr << "Got: " << disableProbability << " and " << changeProbability << " of " << params.mType << endl;
 		
 		if(Random::nextDouble() < disableProbability) {
 			mInactive->set(!mInactive->get());
@@ -391,7 +394,7 @@ namespace nerd {
 			double variance = params.mParams.at(0);
 			double min = params.mParams.at(1);
 			double max = params.mParams.at(2);
-			
+
 // 			double newWeight = Math::max(min, Math::min(max, 
 // 								owner->getStrengthValue().get() 
 // 									+ (Random::nextDoubleBetween(-variance, variance))));
