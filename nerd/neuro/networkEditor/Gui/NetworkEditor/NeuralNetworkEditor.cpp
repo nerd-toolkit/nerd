@@ -1934,7 +1934,7 @@ void NeuralNetworkEditor::setupTools() {
 	addDockWidget(widgetPositions.value("t"), networkDock);
 	mEditorToolWidgets.append(networkDock);
 
-	QDockWidget *propertiesDock = new QDockWidget("Properties", this);
+	QDockWidget *propertiesDock = new QDockWidget("Network Tags", this);
 	propertiesDock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 	propertiesDock->setWidget(new PropertyDialog(this));
 	addDockWidget(widgetPositions.value("p"), propertiesDock);
