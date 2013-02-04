@@ -369,9 +369,17 @@ bool ScriptedModel::setP(const QString &propertyName, const QString &value) {
 	}
 	Value *prop = mCurrentSimObject->getParameter(propertyName);
 	if(prop == 0) {
+		Core::log(QString("ScriptedModel: Could not set property [") + propertyName + "] to [" + value + "] "
+			+ "for SimObject [" + mCurrentSimObject->getName() + "]!", true);
 		return false;
 	}
-	return prop->setValueFromString(value);
+	bool ok = prop->setValueFromString(value);
+	if(!ok) {
+		Core::log(QString("ScriptedModel: Value rejected! Could not set property [") 
+			+ propertyName + "] to [" + value + "] "
+			+ "for SimObject [" + mCurrentSimObject->getName() + "]!", true);
+	}
+	return ok;
 }
 
 
