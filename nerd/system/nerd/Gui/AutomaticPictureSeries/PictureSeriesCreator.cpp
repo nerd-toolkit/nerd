@@ -57,6 +57,7 @@
 #include <QProcess>
 #include <QStringList>
 #include <QDir>
+#include <QDate>
 #include "Gui/GuiManager.h"
 #include <QCoreApplication>
 #include "Value/ChangeValueTask.h"
@@ -71,7 +72,7 @@ namespace nerd {
  */
 PictureSeriesCreator::PictureSeriesCreator()
 	: mTriggerEvent(0), mPictureCounter(0), mScreenshotInProgress(false), mCurrentIteration(0),
-		mCurrentWorkingDirectory(""), mFirstFrame(false), mInitialized(false)
+		mCurrentWorkingDirectory(""), mFirstFrame(false), mInitialized(false), mTimestampPrefix("")
 {
 	mScreenShotDelay = new IntValue(100);
 	mRunCreator = new BoolValue(false);
@@ -91,6 +92,8 @@ PictureSeriesCreator::PictureSeriesCreator()
 	mPlayBackCommand = new StringValue("mplayer <name> -loop 0");
 	mPlayVideoBackAfterCreation = new BoolValue(true);
 	mAutoGrabSimulationWindow = new BoolValue(true);
+	mPreserveVideos = new BoolValue(false);
+	mKeepImages = new BoolValue(false);
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/ScreenRecorder/Config/ScreenShotDelay", mScreenShotDelay);
@@ -109,6 +112,8 @@ PictureSeriesCreator::PictureSeriesCreator()
 	vm->addValue("/ScreenRecorder/Playback/PlayBackAfterCreation", mPlayVideoBackAfterCreation);
 	vm->addValue("/ScreenRecorder/Playback/PlayBackCommand", mPlayBackCommand);
 	vm->addValue("/ScreenRecorder/Config/AutoGrabSimulationWindowAsRect", mAutoGrabSimulationWindow);
+	vm->addValue("/ScreenRecorder/Video/PreserveVideos", mPreserveVideos);
+	vm->addValue("/ScreenRecorder/Video/KeepImages", mKeepImages);
 
 	mRunCreator->addValueChangedListener(this);
 
@@ -202,6 +207,14 @@ void PictureSeriesCreator::eventOccured(Event *event) {
 void PictureSeriesCreator::createScreenshot() {
 
 	if(mFirstFrame) {
+		if(mPreserveVideos->get()) {
+			mTimestampPrefix = (QDate::currentDate().toString("yyMMdd")).append("_")
+									.append(QTime::currentTime().toString("hhmmss"));
+		}
+		else {
+			mTimestampPrefix = "main";
+		}
+		Core::getInstance()->enforceDirectoryPath(mCurrentWorkingDirectory + "/" + mTimestampPrefix);
 		guessMainSimulationWindowRectangle();
 		mFirstFrame = false;
 	}
@@ -219,8 +232,11 @@ void PictureSeriesCreator::createScreenshot() {
 		numberString.prepend("0");
 	}
 
-	QString fileName =  mCurrentWorkingDirectory + "/" + mFileNamePrefix->get() 
-						+ numberString + ".png";
+	QString fileName =  mCurrentWorkingDirectory + "/";
+	if(mTimestampPrefix != "") {
+		fileName = fileName + mTimestampPrefix + "/";
+	}
+	fileName = fileName + mFileNamePrefix->get() + numberString + ".png";
 
 	originalPixmap.save(fileName, QString("png").toAscii());
 
@@ -249,6 +265,8 @@ void PictureSeriesCreator::deactivate() {
 	if(mTriggerEvent != 0) {
 		mTriggerEvent->removeEventListener(this);
 	}
+	
+	QString workingDir = mCurrentWorkingDirectory + "/" + mTimestampPrefix;
 
 	mTriggerEvent = 0;
 
@@ -257,9 +275,16 @@ void PictureSeriesCreator::deactivate() {
 		int framePerSecond = mFramePerSecond->get();
 		
 		QProcess encoderProc;
-		encoderProc.setWorkingDirectory(mCurrentWorkingDirectory);
+		encoderProc.setWorkingDirectory(workingDir);
+		
+		QString fileName = mOutputFileName->get();
+		if(mPreserveVideos->get()) {
+			fileName = mTimestampPrefix + "_" + fileName;
+		}
 
 		if(mVideoCreationCommand->get().trimmed() == "") {
+			
+			
 			QStringList args;
 			// old arguments
 			args << "mf://*.png"
@@ -269,7 +294,7 @@ void PictureSeriesCreator::deactivate() {
 				<< "-ovc" << "lavc"
 				<< "-lavcopts" << "vcodec=mpeg4:mbd=2:trell"
 				<< "-oac" << "copy"
-				<< "-o" << mOutputFileName->get();
+				<< "-o" << fileName;
 			
 // 			//new arguments should have a better quality?
 // 			args << "mf://*.png"
@@ -308,20 +333,31 @@ void PictureSeriesCreator::deactivate() {
 	
 		//check for autoclear
 		if(encoderProc.exitCode() == 0) {
-			QString fileName =  QString(mCurrentWorkingDirectory + "/" + mOutputFileName->get());
-		
 			cerr << "Video [" << fileName.toStdString().c_str() 
 				 << "] created successfully!" << endl;
 				 
-				 cerr << "Deleting screenshots... Please wait!" << endl;
-	
-			QDir dir(mCurrentWorkingDirectory);
-	
-			QStringList files = dir.entryList();
-			for(QListIterator<QString> i(files); i.hasNext();) {
-				QString fileName = i.next();
-				if(fileName.endsWith(".png")) {
-					dir.remove(fileName);
+			QDir wdir(mCurrentWorkingDirectory);
+			QFile outputFile(mCurrentWorkingDirectory + "/" + fileName);
+			if(outputFile.exists()) {
+				outputFile.remove();
+			}
+			wdir.rename(mTimestampPrefix + "/" + fileName, fileName);
+			
+			if(mKeepImages->get()) {	 
+				cerr << "All raw images are preserved in folder [" 
+					 << workingDir.toStdString().c_str() << "]" << endl;
+			}
+			else {
+				cerr << "Deleting screenshots... Please wait!" << endl;
+		
+				QDir dir(workingDir);
+		
+				QStringList files = dir.entryList();
+				for(QListIterator<QString> i(files); i.hasNext();) {
+					QString fileName = i.next();
+					if(fileName.endsWith(".png")) {
+						dir.remove(fileName);
+					}
 				}
 			}
 			

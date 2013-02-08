@@ -56,6 +56,7 @@
 #include "Value/StringValue.h"
 #include <QObject>
 #include <QRect>
+#include <qdir.h>
 #include "Value/FileNameValue.h"
 
 namespace nerd {
@@ -109,6 +110,8 @@ namespace nerd {
 		StringValue *mPlayBackCommand;
 		BoolValue *mPlayVideoBackAfterCreation;
 		BoolValue *mAutoGrabSimulationWindow;
+		BoolValue *mPreserveVideos;
+		BoolValue *mKeepImages;
 		Event *mTriggerEvent;
 		int mPictureCounter;
 		bool mScreenshotInProgress;
@@ -118,6 +121,7 @@ namespace nerd {
 		bool mFirstFrame;
 		Event *mShutDownEvent;
 		bool mInitialized;
+		QString mTimestampPrefix;
 	};
 
 }
