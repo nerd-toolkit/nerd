@@ -115,7 +115,6 @@ namespace nerd {
 			QVBoxLayout *mMainLayout;
 			QGridLayout *mOuterLayout;
 			QGridLayout *mInnerLayout;
-			int mDots;
 			int mHeight;
 			int mWidth;
 			int mWidgetWidth;

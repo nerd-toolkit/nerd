@@ -158,7 +158,9 @@ void FirstReturnMap::calculateData() {
 		return;
 	}
 	
+	bool resetNetworkActivation = mResetNetworkActivation->get();
 	storeCurrentNetworkActivities();
+	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
 	storeNetworkConfiguration();
 	
 	//This is important when the physical simulator is activated!
@@ -215,6 +217,15 @@ void FirstReturnMap::calculateData() {
 	
 	QList<double> oldActs;
 	for(int k = 0; k <= stepsPlot && mActiveValue->get(); ++k) {
+
+		if(restoreNetConfiguration) {
+			restoreNetworkConfiguration();
+		}
+		
+		if(resetNetworkActivation) {
+			restoreCurrentNetworkActivites();
+		}
+
 		triggerNetworkStep();
 		
 		for(int i = 0; i < observedValues.size(); ++i) {

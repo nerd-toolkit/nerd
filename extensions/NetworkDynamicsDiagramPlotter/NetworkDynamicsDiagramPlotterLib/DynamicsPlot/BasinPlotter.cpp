@@ -423,7 +423,7 @@ void BasinPlotter::calculateData() {
 				mData->set(attrNo, x, y, 0);
 				mData->set(attrPeriod, x, y, 1);
 
-				// calculate and plot attractor position(s)
+				// calculate and plot attractor position
 				int nrPositions = variedPositions.size();
 				for(int periodPos = 1; periodPos <= attrPeriod; ++periodPos) {
 					int currPosition = nrPositions - periodPos;
@@ -447,8 +447,8 @@ void BasinPlotter::calculateData() {
 						double pEndY = projectionRangesY.at(currProj*2 + 1);
 						double pStepY = (pEndY - pStartY) / (double) (resolutionY - 1);
 						
-						int xPos = ceil((xVal - pStartX) / pStepX + 1);
-						int yPos = ceil((yVal - pStartY) / pStepY + 1);
+						int xPos = floor((xVal - pStartX) / pStepX + 1);
+						int yPos = floor((yVal - pStartY) / pStepY + 1);
 
 						mData->set(attrNo, xPos, yPos, 3+currProj);
 					}

@@ -112,8 +112,8 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 			
 			// DO NOT CHANGE THIS! If you do, plots will be borken (probably)
 			// TODO why seem the two basin plots different from each other
-			double x = ceil((pos.x() + 1) / xFactor);
-			double y = matrixHeight - ceil((pos.y() + 1) / yFactor);
+			double x = floor(pos.x() / xFactor);
+			double y = matrixHeight - floor(pos.y() / yFactor);
 			
 			// get values from matrix
 			double xValue = mMatrix->get(x, 0, mIndex);
@@ -121,11 +121,10 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 			
 			// show ToolTip
 			QToolTip::showText(absPos, 
-				QString("[" + QString::number(xValue)
-							+ " (" + QString::number(x) + ") , "
+				QString("(" + QString::number(xValue)
+							+ ", "
 							+ QString::number(yValue) 
-							+ " (" + QString::number(y) + ")"
-							+ "] -> "
+							+ "): "
 							+ QString::number(mMatrix->get(x, y, mIndex))),
 				this);
 		}

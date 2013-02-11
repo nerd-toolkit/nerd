@@ -84,7 +84,6 @@ namespace nerd {
 		mForceUpdate = false;
 		moveToThread(QCoreApplication::instance()->thread());	
 		setupGUI();		
-		mDots = 0;
 		mHeight = 1;
 		mWidth = 1;
 		
@@ -247,7 +246,6 @@ namespace nerd {
 		mMainLayout->setStretch(2, 0);
 		setLayout(mMainLayout);
 		
-		mDots = 3;//number of dots in "updating..."
 	}
 
 	/**
@@ -312,19 +310,7 @@ namespace nerd {
 		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
 		mIsSetUp = false;
 		if(mPlotterOnlineValue->get() == false && mForceUpdate == false){
-			if(mDots == 0){
-				mMessageLabel->setText("<font color='red'>Please wait! Calculating</font>");			
-				mDots = 1;
-			}else if(mDots == 1){
-				mMessageLabel->setText("<font color='red'>Please wait! Calculating.</font>");
-				mDots = 2;
-			}else if(mDots == 2){
-				mMessageLabel->setText("<font color='red'>Please wait! Calculating..</font>");			
-				mDots = 3;
-			}else{
-				mMessageLabel->setText("<font color='red'>Please wait! Calculating...</font>");
-				mDots = 0;
-			}
+			mMessageLabel->setText("<font color='red'>Please wait! Calculating.</font>");
 			mWidth = mMatrix->getMatrixWidth();
 			mHeight = mMatrix->getMatrixHeight();
 			return;
@@ -332,25 +318,7 @@ namespace nerd {
 			mForceUpdate = false;
 			mWidth = mMatrix->getMatrixWidth();
 			mHeight = mMatrix->getMatrixHeight();
-	
-			if(mDots == 0){
-				mMessageLabel->setText("<font color='red'>Updating</font>");
-				mDots = 1;
-			}else if(mDots == 1){
-				mMessageLabel->setText("<font color='red'>Updating.</font>");
-				mDots = 2;
-			}else if(mDots == 2){
-				mMessageLabel->setText("<font color='red'>Updating..</font>");
-				mDots = 3;
-			}else{
-				mMessageLabel->setText("<font color='red'>Updating...</font>");	
-				mDots = 0;
-			}
-// 			mYMaxLabel->setText("yMax: ... ");
-// 			mYMinLabel->setText("yMin: ... ");
-// 			mXMinLabel->setText("xMin: ... ");
-// 			mXMaxLabel->setText("xMax: ... ");
-
+			mMessageLabel->setText("<font color='red'>Updating.</font>");
 
 			mYMaxLabel->setText(QString::number(Math::round(mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex), 4)));
 			mYMinLabel->setText(QString::number(Math::round(mMatrix->get(0, 1, mIndex), 4)));
@@ -379,12 +347,13 @@ namespace nerd {
 					
 					for(int s = -pixelSize; s <= pixelSize; ++s) {
 						for(int t = -pixelSize; t <= pixelSize; ++t) {
-							int xpos = Math::max(0, Math::min(mWidth - 2, j - 1 + s));
-							int ypos = Math::max(0, Math::min(mHeight - 2,  mHeight - k - 1 + t));
+							int xpos = Math::max(0, Math::min(mWidth - 1, j - 1 + s));
+							int ypos = Math::max(0, Math::min(mHeight - 1,  mHeight - k - 1 + t));
+
 							image.setPixel(xpos, ypos, mColors.at(colorId));
 							
-							int yposL = Math::max(0, Math::min(mHeight -2, k - 1 + t));
-							mLabel->getMatrix()->set((double)value, xpos, yposL, mIndex);
+							//int yposL = Math::max(0, Math::min(mHeight -2, k - 1 + t));
+							//mLabel->getMatrix()->set((double)value, xpos, yposL, mIndex);
 						}
 					}
 				} 
@@ -423,12 +392,7 @@ namespace nerd {
 		
 		mForceUpdate = true; // makes using the updateData() function once possible
 		updateData();
-		mMessageLabel->setText("<font color='red'>Done!</font>");
-		
-// 		cerr << "W Matrix size: " << mMatrix->getMatrixWidth() << " " << mMatrix->getMatrixHeight()
-// 				<< " " << mMatrix->getMatrixDepth() << endl;
-// 		cerr << "GG " << mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex) 
-// 			<< " " << mMatrix->get(0, 1, mIndex) << endl;
+		mMessageLabel->setText("");
 		
 		mYMaxLabel->setText(QString::number(Math::round(mMatrix->get(0, mMatrix->getMatrixHeight() - 1, mIndex), 4)));
 		mYMinLabel->setText(QString::number(Math::round(mMatrix->get(0, 1, mIndex), 4)));
@@ -459,7 +423,7 @@ namespace nerd {
 			return;
 		}
 		mIsSetUp = false;
-		mMessageLabel->setText("<font color='red'>Working...</font>");
+		mMessageLabel->setText("<font color='red'>Processing...</font>");
 		mMessageLabel->show();
 	
 	}

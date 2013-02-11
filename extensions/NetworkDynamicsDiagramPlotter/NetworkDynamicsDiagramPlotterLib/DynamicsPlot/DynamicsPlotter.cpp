@@ -236,11 +236,6 @@ void DynamicsPlotter::execute() {
 		mStasisValue->set(previousStasisSetting);
 	}
 	
-	//****Till***//
-	//set calculator inactive after every run:
-	
-	//QString path = QString("/DynamicsPlotters/") + mValueManager->getValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER)->getValueAsString() + QString("/Config/Activate");
-	//mValueManager->getValue(path)->setValueFromString("F"); 
 	getActiveValue()->set(false);
 	
 	if(activeValue != 0) {

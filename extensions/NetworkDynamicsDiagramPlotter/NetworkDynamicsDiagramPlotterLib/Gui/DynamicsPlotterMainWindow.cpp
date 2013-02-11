@@ -90,7 +90,7 @@ QMenu* DynamicsPlotterMainWindow::getMenu(const QString &name) {
 void DynamicsPlotterMainWindow::setup(bool enableSimulator, bool enableDebugging) {
 
 	setAttribute(Qt::WA_QuitOnClose, false);
-	setWindowTitle("Neural Network Dynamics Plotter");
+	setWindowTitle("NERD Dynamics Analyzer");
 	
 	if(enableSimulator) {
 		resize(400,400);

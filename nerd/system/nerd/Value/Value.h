@@ -100,8 +100,8 @@ class Value : public virtual Object
 
 	private:
 		int mNotifyCount;
-		QString mTypeName;
 		QMutex mMutex;
+		QString mTypeName;
 		QList<ValueChangedListener*> mValueChangedListeners;
 		QList<ValueChangedListener*> mChangedListenerBufferVector;
         QString mDescription;
