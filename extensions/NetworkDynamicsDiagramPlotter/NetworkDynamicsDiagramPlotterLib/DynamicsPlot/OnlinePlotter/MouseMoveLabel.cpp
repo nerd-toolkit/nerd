@@ -90,9 +90,10 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 	void MouseMoveLabel::mouseMoveEvent ( QMouseEvent * event ){
 		QPoint pos = event->pos(); 
 		QPoint absPos = pos + this->pos() + mPar->pos(); //add position of cursor to position of widget to position of mParent window
+		QPoint gloPos = event->globalPos();
 
 		if(mMatrix == 0 || mMatrix->getMatrixDepth() <= mIndex) {
-			QToolTip::showText(absPos, QString("[" + QString::number(pos.x()) + ", " + QString::number(pos.y()) + "]"), this);
+			QToolTip::showText(gloPos, QString("[" + QString::number(pos.x()) + ", " + QString::number(pos.y()) + "]"), this);
 			
 		} else {
 			// get some values
@@ -110,17 +111,16 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 			double xFactor = static_cast<double>(labelWidth) / (static_cast<double>(matrixWidth - 1));
 			double yFactor = static_cast<double>(labelHeight) / (static_cast<double>(matrixHeight - 1));
 			
-			// DO NOT CHANGE THIS! If you do, plots will be borken (probably)
-			// TODO why seem the two basin plots different from each other
-			double x = floor(pos.x() / xFactor);
-			double y = matrixHeight - floor(pos.y() / yFactor);
+			// DO NOT CHANGE THIS! If you do, plots will be broken (most certainly)
+			double x = ceil(pos.x() / xFactor) + 1;
+			double y = matrixHeight - ceil(pos.y() / yFactor) - 1;
 			
 			// get values from matrix
 			double xValue = mMatrix->get(x, 0, mIndex);
 			double yValue = mMatrix->get(0, y, mIndex);
 			
 			// show ToolTip
-			QToolTip::showText(absPos, 
+			QToolTip::showText(gloPos, 
 				QString("(" + QString::number(xValue)
 							+ ", "
 							+ QString::number(yValue) 

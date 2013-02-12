@@ -408,11 +408,11 @@ void BasinPlotter::calculateData() {
 				
 				// check for past attractors
 				bool attrMatch = false;
-				int attrNo = 0;
+				int attrNo = 1;
 				while(attrNo < attractors.size() && !attrMatch) {
 					for(int state = 1; state <= attrPeriod && !attrMatch; ++state) {
 						attrMatch = DynamicsPlotterUtil::compareNetworkStates(
-								attractors.at(attrNo),
+								attractors.at(attrNo-1),
 								networkStates.at(networkStates.size()-1-state),
 								accuracy);
 					}
@@ -431,8 +431,8 @@ void BasinPlotter::calculateData() {
 					double currValX = variedPositions.at(currPosition).first;
 					double currValY = variedPositions.at(currPosition).second;
 				
-					int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
-					int attrPosY = ceil((currValY - yStart) / yStepSize + 1);
+					int attrPosX = floor((currValX - xStart) / xStepSize + 1);
+					int attrPosY = floor((currValY - yStart) / yStepSize + 1);
 				
 					mData->set(attrNo, attrPosX, attrPosY, 2);
 

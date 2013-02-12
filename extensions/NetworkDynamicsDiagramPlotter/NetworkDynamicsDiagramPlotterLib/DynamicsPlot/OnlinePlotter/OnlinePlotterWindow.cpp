@@ -325,7 +325,7 @@ namespace nerd {
 			mXMinLabel->setText(QString::number(Math::round(mMatrix->get(1, 0, mIndex), 4)));
 			mXMaxLabel->setText(QString::number(Math::round(mMatrix->get(mMatrix->getMatrixWidth() - 1, 0, mIndex), 4)));
 			
-			MatrixValue* labelMatrix = mMatrix;
+			//MatrixValue* labelMatrix = mMatrix;
 			QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
 			image.fill(qRgb(255, 255, 255));
 			
@@ -347,8 +347,8 @@ namespace nerd {
 					
 					for(int s = -pixelSize; s <= pixelSize; ++s) {
 						for(int t = -pixelSize; t <= pixelSize; ++t) {
-							int xpos = Math::max(0, Math::min(mWidth - 1, j - 1 + s));
-							int ypos = Math::max(0, Math::min(mHeight - 1,  mHeight - k - 1 + t));
+							int xpos = Math::max(0, Math::min(mWidth - 2, j - 1 + s));
+							int ypos = Math::max(0, Math::min(mHeight - 2,  mHeight - k - 1 + t));
 
 							image.setPixel(xpos, ypos, mColors.at(colorId));
 							
