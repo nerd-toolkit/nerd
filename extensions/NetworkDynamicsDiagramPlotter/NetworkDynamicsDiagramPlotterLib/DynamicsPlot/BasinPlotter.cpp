@@ -409,7 +409,7 @@ void BasinPlotter::calculateData() {
 				// check for past attractors
 				bool attrMatch = false;
 				int attrNo = 1;
-				while(attrNo < attractors.size() && !attrMatch) {
+				while(attrNo <= attractors.size() && !attrMatch) {
 					for(int state = 1; state <= attrPeriod && !attrMatch; ++state) {
 						attrMatch = DynamicsPlotterUtil::compareNetworkStates(
 								attractors.at(attrNo-1),
