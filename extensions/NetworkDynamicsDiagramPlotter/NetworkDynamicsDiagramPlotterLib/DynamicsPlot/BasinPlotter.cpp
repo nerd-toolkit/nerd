@@ -431,8 +431,8 @@ void BasinPlotter::calculateData() {
 					double currValX = variedPositions.at(currPosition).first;
 					double currValY = variedPositions.at(currPosition).second;
 				
-					int attrPosX = floor((currValX - xStart) / xStepSize + 1);
-					int attrPosY = floor((currValY - yStart) / yStepSize + 1);
+					int attrPosX = ceil((currValX - xStart) / xStepSize + 1);
+					int attrPosY = ceil((currValY - yStart) / yStepSize + 1);
 				
 					mData->set(attrNo, attrPosX, attrPosY, 2);
 

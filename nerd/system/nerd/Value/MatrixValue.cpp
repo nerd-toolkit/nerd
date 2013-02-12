@@ -92,7 +92,7 @@ Value* MatrixValue::createCopy() {
 }
 
 void MatrixValue::resize(int w, int h, int d) {
-	//QMutexLocker guard(&mAccessLock);
+	QMutexLocker guard(&mAccessLock);
 	mValue.resize(w, h, d);
 	fill(0);
 }
@@ -111,13 +111,13 @@ int MatrixValue::getMatrixDepth() const {
 
 
 void MatrixValue::set(const Matrix &matrix) {
-	//QMutexLocker guard(&mAccessLock);
+	QMutexLocker guard(&mAccessLock);
 	mValue = matrix;
 	notifyValueChanged();
 }
 
 void MatrixValue::set(double value, int w, int h, int d) {
-	//QMutexLocker guard(&mAccessLock);
+	QMutexLocker guard(&mAccessLock);
 	mValue.set(value, w, h, d);
 	notifyValueChanged();
 }
