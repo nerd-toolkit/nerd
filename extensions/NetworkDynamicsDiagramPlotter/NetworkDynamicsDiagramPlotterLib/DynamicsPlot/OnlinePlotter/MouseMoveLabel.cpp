@@ -88,42 +88,27 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 	 * Prints coordinates (of cursor respective to label) to cursor position when mouse hovers over the label.
  */
 	void MouseMoveLabel::mouseMoveEvent ( QMouseEvent * event ){
-		QPoint pos = event->pos(); 
-		QPoint absPos = pos + this->pos() + mPar->pos(); //add position of cursor to position of widget to position of mParent window
+		QPoint curPos = event->pos(); 
 		QPoint gloPos = event->globalPos();
 
 		if(mMatrix == 0 || mMatrix->getMatrixDepth() <= mIndex) {
-			QToolTip::showText(gloPos, QString("[" + QString::number(pos.x()) + ", " + QString::number(pos.y()) + "]"), this);
+			QToolTip::showText(gloPos,
+					QString("[" + QString::number(curPos.x())
+								+ ", "
+								+ QString::number(curPos.y())
+								+ "]"), this);
 			
 		} else {
-			// get some values
-			int matrixWidth = mMatrix->getMatrixWidth(); //matrix width without axes descriptions
 			int matrixHeight = mMatrix->getMatrixHeight();
-			int labelWidth = width();
-			int labelHeight = height();
 			
-			if(matrixWidth < 2 || matrixHeight < 2) {
-				Core::log("MouseMoveLabel: Division by zero detected and prevented. Thank me later!", true);
-				return;
-			}
+			double x = curPos.x() + 1; // Position in current Widget plus on for matrix
+			double y = matrixHeight - curPos.y() - 1; // same reversed
 			
-			// calculate size of buckets
-			double xFactor = static_cast<double>(labelWidth) / (static_cast<double>(matrixWidth - 1));
-			double yFactor = static_cast<double>(labelHeight) / (static_cast<double>(matrixHeight - 1));
-			
-			// DO NOT CHANGE THIS! If you do, plots will be broken (most certainly)
-			double x = ceil(pos.x() / xFactor) + 1;
-			double y = matrixHeight - ceil(pos.y() / yFactor) - 1;
-			
-			// get values from matrix
-			double xValue = mMatrix->get(x, 0, mIndex);
-			double yValue = mMatrix->get(0, y, mIndex);
-			
-			// show ToolTip
+			// show tool tip
 			QToolTip::showText(gloPos, 
-				QString("(" + QString::number(xValue)
+				QString("(" + QString::number(mMatrix->get(x, 0, mIndex))
 							+ ", "
-							+ QString::number(yValue) 
+							+ QString::number(mMatrix->get(0, y, mIndex))
 							+ "): "
 							+ QString::number(mMatrix->get(x, y, mIndex))),
 				this);
@@ -143,10 +128,15 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 			Core::log("MouseMoveLabel: No Matrix given. Aborting:", true);
 			return;
 		}
-		mMatrix->set(matrix->get());
+		mMatrix = (MatrixValue*)matrix->createCopy();
+	}
+
+	void MouseMoveLabel::setMatrixValue(double v, int w, int h, int d) {
+		if(mMatrix == 0) {
+			Core::log("MouseMoveLabel: Matrix is NULL object", true);
+			return;
+		}
+		mMatrix->set(v, w, h, d);
 	}	
 	
 }
-
-
-

@@ -329,6 +329,7 @@ namespace nerd {
 			QImage image(mWidth - 1, mHeight - 1, QImage::Format_RGB32);
 			image.fill(qRgb(255, 255, 255));
 			
+			mLabel->clear();
 			mLabel->setMatrix(mMatrix);
 			
 			for(int j = 1; j < mWidth; j++){
@@ -351,15 +352,14 @@ namespace nerd {
 							int ypos = Math::max(0, Math::min(mHeight - 2,  mHeight - k - 1 + t));
 
 							image.setPixel(xpos, ypos, mColors.at(colorId));
-							
-							//int yposL = Math::max(0, Math::min(mHeight -2, k - 1 + t));
-							//mLabel->getMatrix()->set((double)value, xpos, yposL, mIndex);
+
+							int yposL = Math::max(1, Math::min(mHeight - 1, k + t));
+							mLabel->setMatrixValue((double)value, xpos+1, yposL, mIndex);
 						}
 					}
 				} 
 			}
 
-			mLabel->clear();
 			mPixmap = QPixmap::fromImage(image);
 			mLabel->setFixedSize(mPixmap.width(), mPixmap.height());
 			mLabel->setPixmap(mPixmap); //print QImage on label

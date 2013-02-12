@@ -69,6 +69,7 @@ namespace nerd {
 			virtual ~MouseMoveLabel();
 			MatrixValue* getMatrix();
 			void setMatrix(MatrixValue *matrix);
+			void setMatrixValue(double v, int w, int h, int d);
 		protected:
 			void mouseMoveEvent(QMouseEvent *event);
 		private:
