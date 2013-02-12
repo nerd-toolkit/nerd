@@ -70,7 +70,7 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 			Core::log("MouseMoveLabel: Must have have a parent window!", true);
 			return;
 		}else{
-			mPar = parent;
+			mParent = parent;
 		}
 		mMatrix = new MatrixValue();
 	}
@@ -101,7 +101,7 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 		} else {
 			int matrixHeight = mMatrix->getMatrixHeight();
 			
-			double x = curPos.x() + 1; // Position in current Widget plus on for matrix
+			double x = curPos.x() + 1; // Position in current widget plus on for matrix
 			double y = matrixHeight - curPos.y() - 1; // same reversed
 			
 			// show tool tip
@@ -113,14 +113,6 @@ MouseMoveLabel::MouseMoveLabel(int index, QWidget * parent) : QLabel(parent), mM
 							+ QString::number(mMatrix->get(x, y, mIndex))),
 				this);
 		}
-	}
-	
-	MatrixValue* MouseMoveLabel::getMatrix() {
-		if(mMatrix == 0){
-			Core::log("MouseMoveLabel: No matrix found!", true);
-			return 0;
-		}
-		return mMatrix;
 	}
 	
 	void MouseMoveLabel::setMatrix(MatrixValue* matrix) {
