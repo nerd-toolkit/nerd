@@ -193,6 +193,13 @@ Quaternion operator*(const Quaternion& lhs, const Quaternion& rhs) {
 		lhs.getW()*rhs.getX()+lhs.getX()*rhs.getW()+lhs.getY()*rhs.getZ()-lhs.getZ()*rhs.getY(),
 		lhs.getW()*rhs.getY()-lhs.getX()*rhs.getZ()+lhs.getY()*rhs.getW()+lhs.getZ()*rhs.getX(),
 		lhs.getW()*rhs.getZ()+lhs.getX()*rhs.getY()-lhs.getY()*rhs.getX()+lhs.getZ()*rhs.getW());
+
+// Alternative writing.
+// return Quaternion(
+// 	lhs.getW()*rhs.getW()-lhs.getX()*rhs.getX()-lhs.getY()*rhs.getY()-lhs.getZ()*rhs.getZ(),
+// 	lhs.getX()*rhs.getW()+lhs.getW()*rhs.getX()-lhs.getZ()*rhs.getY()+lhs.getY()*rhs.getZ(),
+// 	lhs.getY()*rhs.getW()+lhs.getZ()*rhs.getX()+lhs.getW()*rhs.getY()-lhs.getX()*rhs.getZ(),
+// 	lhs.getZ()*rhs.getW()-lhs.getY()*rhs.getX()+lhs.getX()*rhs.getY()+lhs.getW()*rhs.getZ());
 }
 
 

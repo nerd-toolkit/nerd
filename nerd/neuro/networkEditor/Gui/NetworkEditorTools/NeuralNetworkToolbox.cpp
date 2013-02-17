@@ -241,8 +241,19 @@ void NeuralNetworkToolbox::selectSynapsesOfMarkedNeurons() {
 	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
 		NeuronItem *neuronItem = dynamic_cast<NeuronItem*>(i.next());
 		if(neuronItem != 0 && neuronItem->getNeuron() != 0) {
-			Util::addWithoutDuplicates(selectedSynapses, neuronItem->getNeuron()->getSynapses());
-			Util::addWithoutDuplicates(selectedSynapses, neuronItem->getNeuron()->getOutgoingSynapses());
+			QList<Synapse*> allSyn = neuronItem->getNeuron()->getSynapses();
+			allSyn.append(neuronItem->getNeuron()->getOutgoingSynapses());
+			QList<Synapse*> visibleSyn;
+			for(int i = 0; i < allSyn.size(); ++i) {
+				Synapse *s = allSyn.at(i);
+				SynapseItem *si = handler->getSynapseItem(s);
+				if(si != 0 && si->isInHiddenLayer() == false) {
+					visibleSyn.append(s);
+				}
+			}
+			
+			
+			Util::addWithoutDuplicates(selectedSynapses, visibleSyn);
 		}
 	}
 	QList<PaintItem*> newSelectedSynapseItems;

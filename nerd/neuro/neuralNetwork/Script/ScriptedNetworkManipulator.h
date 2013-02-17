@@ -74,6 +74,9 @@ class NeuroModulator;
 	public slots:
 		void setNeuralNetwork(ModularNeuralNetwork *network);
 		
+		//TODO provide a method to setNeuralNetwork in the script, e.g. using a name or an index of the available networks.
+		//TODO provide a method to communicate with the NetworkManager (getNumberOfNetworks, etc.)
+		
 		void setOwnerHint(NeuralNetworkElement *owner);
 		NeuralNetworkElement* getOwnerHint() const;
 		

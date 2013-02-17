@@ -66,7 +66,7 @@ namespace nerd {
  * Constructs a new ScriptedFitnessEditor.
  */
 ScriptedFitnessEditor::ScriptedFitnessEditor(const QString &fitnessFunctionName)
-	: mScriptModified(false), mResetScriptingContext(0)
+: mResetScriptingContext(0), mScriptModified(false)
 {
 
 	QVBoxLayout *layout = new QVBoxLayout();

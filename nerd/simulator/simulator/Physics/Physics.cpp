@@ -167,6 +167,27 @@ void Physics::translateSimObjects(QList<SimObject*> simObjects, Vector3D offset)
  */
 void Physics::rotateSimObjects(QList<SimObject*> simObjects, Vector3D orientationOffset) {
 	Quaternion orientation;
+	
+// 	while(orientationOffset.getX() > 180.0) {
+// 		orientationOffset.setX(orientationOffset.getX() - 360.0);
+// 	}
+// 	while(orientationOffset.getX() < -180.0) {
+// 		orientationOffset.setX(orientationOffset.getX() + 360.0);
+// 	}
+// 	while(orientationOffset.getY() > 180.0) {
+// 		orientationOffset.setY(orientationOffset.getY() - 360.0);
+// 	}
+// 	while(orientationOffset.getY() < -180.0) {
+// 		orientationOffset.setY(orientationOffset.getY() + 360.0);
+// 	}
+// 	while(orientationOffset.getZ() > 180.0) {
+// 		orientationOffset.setZ(orientationOffset.getZ() - 360.0);
+// 	}
+// 	while(orientationOffset.getZ() < -180.0) {
+// 		orientationOffset.setZ(orientationOffset.getZ() + 360.0);
+// 	}
+// 	cerr << "Got: " << orientationOffset.getX() << " " << orientationOffset.getY() << " " << orientationOffset.getZ() << endl;
+	
 	orientation.setFromAngles(orientationOffset.getX(), orientationOffset.getY(),
 			 				  orientationOffset.getZ());
 	Quaternion inverse = orientation.getInverse();
@@ -186,6 +207,14 @@ void Physics::rotateSimObjects(QList<SimObject*> simObjects, Vector3D orientatio
 
 			QuaternionValue *currentOrientation = obj->getQuaternionOrientationValue();
 			Quaternion newOrientation = orientation * currentOrientation->get(); 
+			
+// 			Vector3D ori1 = newOrientation.toAngles();
+// 			
+// 			cerr << "Got2: " << currentOrientation->getX() << " " << currentOrientation->getY() << " " << currentOrientation->getZ() << " " << currentOrientation->getW() << endl;
+// 			
+// 			cerr << "Got3: " << newOrientation.getX() << " " << newOrientation.getY() << " " << newOrientation.getZ() << " " << newOrientation.getW() << endl;
+// 			
+// 			cerr << "Got4: " << ori1.getX() << " " << ori1.getY() << " " << ori1.getZ() <<  endl;
 			
 			obj->getQuaternionOrientationValue()->set(newOrientation);
 
