@@ -44,6 +44,7 @@
 
 
 #include "SelfRegulatingNeuronActivationFunction.h"
+#include <ActivationFunction/BiasActivationFunction.h>
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
@@ -423,6 +424,7 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 	//Calculate new activation of the neuron.
 	
 	double inputSum = 0.0;
+	double inputBias = 0.0;
 
 	QList<Synapse*> synapses = mOwner->getSynapses();
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
@@ -430,13 +432,21 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 		if(synapse == 0 || synapse->getSource() == 0 || !synapse->getEnabledValue().get()) {
 			continue;
 		}
+		Neuron *sourceNeuron = synapse->getSource();
+		
+		//check if this is a bias (comes from a neuron with BiasActivationFunction).
+		if(dynamic_cast<BiasActivationFunction*>(sourceNeuron->getActivationFunction()) != 0) {
+			inputBias += synapse->calculateActivation();
+			continue;
+		}
+		
+		//this is a standard synapse that can be adapted by the SRN.
 		
 		//update synapse to guarantee that the synapse is executed (e.g. for local learning rules)
 		synapse->calculateActivation();
 		//weight only used to get the sign of the synapse (-1, 0, 1)
 		double weight = synapse->getStrengthValue().get();
 		
-		Neuron *sourceNeuron = synapse->getSource();
 		SelfRegulatingNeuronActivationFunction *af = 
 				dynamic_cast<SelfRegulatingNeuronActivationFunction*>(
 						sourceNeuron->getActivationFunction());
@@ -448,8 +458,8 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 			eta = af->mEta->get();
 		}
 		
-		bool isLink = true;
 		
+		bool isLink = true;
 		if(mRestrictToLinks) {
 			//consider only weights that 
 			if(dynamic_cast<SimpleLinkSynapseFunction*>(synapse->getSynapseFunction()) == 0) {
@@ -486,7 +496,7 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 	}
 
 	//a_i(t+1) = theta_i + xi_i(t) * I_i(t)
-	double activation = mOwner->getBiasValue().get() + mXi->get() * inputSum;
+	double activation = (mOwner->getBiasValue().get() + inputBias) + mXi->get() * inputSum;
 	return activation;
 }
 

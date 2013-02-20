@@ -41,67 +41,59 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
-#include "ActivationFunction/ScriptableActivationFunction.h"
-#include "ActivationFunction/Izhikevitch2003SpikingActivationFunction.h"
-#include "ActivationFunction/AdditiveTimeDiscreteNeuroModulatorActivationFunction.h"
-#include "ActivationFunction/BiasActivationFunction.h"
+#include "BiasActivationFunction.h"
+#include <QListIterator>
+#include "Network/Synapse.h"
+#include "Network/Neuron.h"
+#include <iostream>
+
+using namespace std;
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
+BiasActivationFunction::BiasActivationFunction()
+	: ActivationFunction("Bias")
 {
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
-
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
-		
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronV2ActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		Izhikevitch2003SpikingActivationFunction());
-	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteNeuroModulatorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		BiasActivationFunction());
 }
+
+BiasActivationFunction::BiasActivationFunction(
+			const BiasActivationFunction &other)
+	: Object(), ValueChangedListener(), ObservableNetworkElement(other), ActivationFunction(other)
+{
+}
+
+BiasActivationFunction::~BiasActivationFunction() {
+}
+
+ActivationFunction* BiasActivationFunction::createCopy() const {
+	return new BiasActivationFunction(*this);
+}
+
+void BiasActivationFunction::reset(Neuron *owner) {
+	if(owner != 0 && owner->getNameValue().get() == "") {
+		owner->getNameValue().set("Bias");
+	}
+}
+
+
+double BiasActivationFunction::calculateActivation(Neuron *owner) {
+	ActivationFunction::calculateActivation(owner);
+	return 20.0;
+}
+
+bool BiasActivationFunction::equals(ActivationFunction *activationFunction) const {
+	if(ActivationFunction::equals(activationFunction) == false) {
+		return false;
+	}
+	BiasActivationFunction *af =
+ 			dynamic_cast<BiasActivationFunction*>(activationFunction);
+
+	if(af == 0) {
+		return false;
+	}
+	return true;
+}
+
 
 }
 

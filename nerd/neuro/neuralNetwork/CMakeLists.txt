@@ -105,6 +105,7 @@ set(nerd_neuralNetwork_SRCS
 	TransferFunction/TransferFunctionThreshold.cpp
 	SynapseFunction/Learning/SimpleModulatedRandomSearchSynapseFunction.cpp
 	ActivationFunction/AdditiveTimeDiscreteNeuroModulatorActivationFunction.cpp
+	ActivationFunction/BiasActivationFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
