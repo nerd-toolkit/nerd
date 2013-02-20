@@ -198,9 +198,9 @@ namespace nerd {
 			}
 		}
 		
-		//if(mInactive->get()) {
-		//	return 0.0;
-		//}
+		if(mInactive->get()) {
+			return 0.0;
+		}
 		
 		return owner->getStrengthValue().get();
 	}
@@ -389,7 +389,9 @@ namespace nerd {
 			
 			incrementDisableChangeCounter(owner);
 		}
-		if(!mInactive->get() && (Random::nextDouble() < changeProbability)) {
+		
+		//change the weight by chance or when the synapse is set to 0.0.
+		if(!mInactive->get() && ((Random::nextDouble() < changeProbability) || (owner->getStrengthValue().get() == 0.0))) {
 			
 			double variance = params.mParams.at(0);
 			double min = params.mParams.at(1);

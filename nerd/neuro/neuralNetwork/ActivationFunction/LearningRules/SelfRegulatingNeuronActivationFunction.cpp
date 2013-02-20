@@ -431,6 +431,8 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 			continue;
 		}
 		
+		//update synapse to guarantee that the synapse is executed (e.g. for local learning rules)
+		synapse->calculateActivation();
 		//weight only used to get the sign of the synapse (-1, 0, 1)
 		double weight = synapse->getStrengthValue().get();
 		
@@ -458,7 +460,7 @@ double SelfRegulatingNeuronActivationFunction::updateActivity() {
 		double act = 0.0;
 		
 		if(isLink) {
-			double sign = Math::sign(weight); //zero is treated as positive value.
+			double sign = Math::sign(weight, true); //zero is treated as positive value.
 			
 			if(mAdjustWeights) {
 				double newWeight = sign * eta * mXi->get();
