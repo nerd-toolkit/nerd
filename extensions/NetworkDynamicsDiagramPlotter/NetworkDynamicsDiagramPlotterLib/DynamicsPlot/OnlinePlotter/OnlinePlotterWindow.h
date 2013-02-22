@@ -55,6 +55,7 @@
 #include <DynamicsPlot/OnlinePlotter/MouseMoveLabel.h>
 #include "Core/SystemObject.h"
 #include "Value/MatrixValue.h"
+#include "Value/BoolValue.h"
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QColor>
@@ -79,7 +80,8 @@ namespace nerd {
 			virtual QString getName() const;
 			
 		public slots:
-			void printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr);
+			void printData(QString name, MatrixValue *dataMatrix, bool 
+offlinePlot);
 			void updateData();
 			void finishedProcessing();
 			void processing();
@@ -119,7 +121,7 @@ namespace nerd {
 			int mWidth;
 			int mWidgetWidth;
 			int mWidgetHeight;
-			BoolValue *mPlotterOnlineValue;			
+			BoolValue *mOfflinePlotValue;
 			bool mIsSetUp;
 			bool mForceUpdate;
 			MatrixValue *mMatrix;

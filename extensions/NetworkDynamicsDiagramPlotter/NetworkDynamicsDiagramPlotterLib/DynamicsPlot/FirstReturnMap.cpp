@@ -241,8 +241,8 @@ void FirstReturnMap::calculateData() {
 			if(k > 0) {
 				//x-axis: t-1
 				//y-axis: t
-				int x = (oldActs.at(i) - rangeStart.at(i)) / rangeStep.at(i) + 1;
-				int y = (act - rangeStart.at(i)) / rangeStep.at(i) + 1;
+				int x = ceil(oldActs.at(i) - rangeStart.at(i)) / rangeStep.at(i) + 1;
+				int y = ceil(act - rangeStart.at(i)) / rangeStep.at(i) + 1;
 				mData->set(mCurrentMarker, x, y, i);
 				oldActs.replace(i, act);
 			} else {

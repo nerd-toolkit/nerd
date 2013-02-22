@@ -84,8 +84,6 @@ namespace nerd {
 
 		virtual bool equals(const Value *value) const;
 
-	private:
-		QMutex mAccessLock;
 	protected:
 		Matrix mValue;
 	};

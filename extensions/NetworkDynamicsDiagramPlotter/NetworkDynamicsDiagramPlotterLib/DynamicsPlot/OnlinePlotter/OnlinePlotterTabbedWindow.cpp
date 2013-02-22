@@ -142,10 +142,11 @@ namespace nerd {
 	 * @param dataMatrix Matrix with data from active calculator
 	 * 
 	*/
-	void OnlinePlotterTabbedWindow::printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr){
+	void OnlinePlotterTabbedWindow::printData(QString name, MatrixValue 
+*dataMatrix, bool offlinePlot){
 		//notify tabs
 		for(int i = 0; i < mPlotterWindows.size(); ++i) {
-			mPlotterWindows.at(i)->printData(name, dataMatrix, xDescr, yDescr);
+			mPlotterWindows.at(i)->printData(name, dataMatrix, offlinePlot);
 		}
 	}
 	

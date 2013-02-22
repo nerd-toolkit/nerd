@@ -152,7 +152,8 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 		
 		OnlinePlotterWindow *opw = new OnlinePlotterWindow(i);
 		
-		connect(op, SIGNAL(dataPrepared(QString, MatrixValue*, QString, QString)), opw, SLOT(printData(QString, MatrixValue*, QString, QString)));
+		connect(op, SIGNAL(dataPrepared(QString, MatrixValue*, bool)), opw, 
+SLOT(printData(QString, MatrixValue*, bool)));
 		connect(mTimer, SIGNAL(timeout()), opw, SLOT(updateData()));
 		connect(opw, SIGNAL(timerStart()), mTimer, SLOT(start()));
 		connect(op, SIGNAL(startProcessing()), opw, SLOT(processing()));

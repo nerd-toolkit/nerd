@@ -161,7 +161,7 @@ if(Subversion_FOUND)
   Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} ER)
   set(SUBVERSION_REVISION ${ER_WC_REVISION})
 endif(Subversion_FOUND)
-ADD_DEFINITIONS(-D'VER="${SUBVERSION_REVISION}"')
+ADD_DEFINITIONS(-DVER="${SUBVERSION_REVISION}")
 
 #Create library.
 add_library(nerd STATIC ${nerd_nerd_SRCS} ${nerd_nerd_MOC_SRCS} ${nerd_nerd_RC_SRCS} ${nerd_nerd_UI_HDRS})

@@ -93,7 +93,8 @@ namespace nerd {
 		mVM = Core::getInstance()->getValueManager();
 		mActiveCalculatorValue = mVM->getStringValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER);
 		mPlotterProgramValue = mVM->getStringValue(DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT);		
-		mPlotterOnlineValue = mVM->getBoolValue("/DynamicsPlotters/InbuiltPlotterOnline");
+		mPlotterOnlineValue = 
+mVM->getBoolValue("/DynamicsPlotters/OfflinePlot");
 
 		if(mStartEvent == 0 
 			|| mFinishEvent == 0 
@@ -169,7 +170,8 @@ namespace nerd {
 			Core::log("OnlinePlotter: Couldn't find data Matrix or x/y label values.", true);
 		}
 		else {
-			emit dataPrepared(pathToValues, dataMatrixValue, "", "");//calls OnlinePlotterWindow::printData(...)
+			emit dataPrepared(pathToValues, dataMatrixValue, 
+					mPlotterOnlineValue->get());
 		}
 
 

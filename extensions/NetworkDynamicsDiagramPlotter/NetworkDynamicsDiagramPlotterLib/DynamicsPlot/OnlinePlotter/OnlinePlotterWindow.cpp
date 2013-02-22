@@ -255,14 +255,17 @@ namespace nerd {
 	 * @param dataMatrix Matrix with data from active calculator
 	 * 
 	*/
-	void OnlinePlotterWindow::printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr){
+	void OnlinePlotterWindow::printData(QString name, MatrixValue *dataMatrix, 
+bool offlinePlot){
 
 		if(dataMatrix == 0 || name == 0){
 			Core::log("OnlinePlotterWindow: Couldn't find data Matrix or Name");
 			return;
 		}
 		mMatrix = dataMatrix;
-		emit timerStart();
+		//if(!offlinePlot) {
+			emit timerStart();
+		//}
 		
 		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
@@ -276,10 +279,6 @@ namespace nerd {
 		mIsSetUp = false;
 		mWidth = mMatrix->getMatrixWidth();
 		mHeight = mMatrix->getMatrixHeight();
-		//mTitleLabel->setText(QString("<b><big>") + name + QString("<\big><\b>"));
-		
-		//mYLabel->setText(yDescr);
-		//mXLabel->setText(xDescr);
 		
 		updateGeometry();
 		QTimer::singleShot(0, this, SLOT(minimizeWidgetSize()));
@@ -307,9 +306,11 @@ namespace nerd {
 // 				<< " " << mMatrix->getMatrixDepth() << endl;
 		
 		mVM = Core::getInstance()->getValueManager();
-		mPlotterOnlineValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/InbuiltPlotterOnline"));
+		mOfflinePlotValue = 
+static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/OfflinePlot"))
+;
 		mIsSetUp = false;
-		if(mPlotterOnlineValue->get() == false && mForceUpdate == false){
+		if(mOfflinePlotValue->get() == true && mForceUpdate == false){
 			mMessageLabel->setText("<font color='red'>Please wait! Calculating.</font>");
 			mWidth = mMatrix->getMatrixWidth();
 			mHeight = mMatrix->getMatrixHeight();

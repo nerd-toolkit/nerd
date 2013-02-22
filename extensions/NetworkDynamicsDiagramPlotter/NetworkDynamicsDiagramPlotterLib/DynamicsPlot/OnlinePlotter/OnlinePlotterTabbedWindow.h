@@ -79,7 +79,8 @@ class OnlinePlotterWindow;
 			virtual QString getName() const;
 			
 		public slots:
-			void printData(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr);
+			void printData(QString name, MatrixValue *dataMatrix, bool 
+offlinePlot);
 			void updateData();
 			void finishedProcessing();
 			void processing();

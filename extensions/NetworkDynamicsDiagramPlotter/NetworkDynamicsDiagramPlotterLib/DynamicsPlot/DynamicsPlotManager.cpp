@@ -68,9 +68,10 @@ DynamicsPlotManager::DynamicsPlotManager()
 	mValueManager = Core::getInstance()->getValueManager();
 	mPlotterProgram = new StringValue();
 	mActivePlotter = new StringValue();
-	mInbuiltPlotterOnline = new BoolValue(true);
+	mOfflinePlot = new BoolValue(true);
 	
-	mInbuiltPlotterOnline->setDescription("If TRUE, the inbuilt diagram is updated during calculation.");
+	mOfflinePlot->setDescription("If TRUE, the online plotter "
+								"windows is not updated during calculation.");
 	mPlotterProgram->setDescription("Specifies the output program, for example the internal plotter or external ones like Matlab");
 	mPlotterProgram->getOptionList().append("Internal,matlab");
 	mPlotterProgram->getOptionList().append("Matlab");
@@ -78,7 +79,8 @@ DynamicsPlotManager::DynamicsPlotManager()
 	
 	mValueManager->addValue(DynamicsPlotConstants::VALUE_PLOTTER_OUTPUT_FORMAT, mPlotterProgram);
 	mValueManager->addValue(DynamicsPlotConstants::VALUE_PLOTTER_ACTIVE_PLOTTER, mActivePlotter);
-	mValueManager->addValue("/DynamicsPlotters/InbuiltPlotterOnline", mInbuiltPlotterOnline);
+	mValueManager->addValue("/DynamicsPlotters/OfflinePlot", 
+mOfflinePlot);
 	
 	//**************/Till**************c//
 	

@@ -77,7 +77,8 @@ namespace nerd {
 			virtual void eventOccured(Event *event);
 
 		signals:
-			void dataPrepared(QString name, MatrixValue *dataMatrix, QString xDescr, QString yDescr);
+			void dataPrepared(QString name, MatrixValue *dataMatrix, bool 
+offlinePlot);
 			void finishedProcessing();
 			void startProcessing();
 			

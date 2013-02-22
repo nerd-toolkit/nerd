@@ -66,10 +66,10 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	mVariedRangeY = new StringValue("-1,1");
 	mVariedRangeY->setDescription("Min and Max for Y axis parameter change");
 	
-	mResolutionX = new IntValue(200);
+	mResolutionX = new IntValue(400);
 	mResolutionX->setDescription("How many data points to generate for "
 								 "X axis parameter(s)");
-	mResolutionY = new IntValue(200);
+	mResolutionY = new IntValue(400);
 	mResolutionY->setDescription("How many data points to generate for "
 								 "Y axis parameter(s)");
 
@@ -83,13 +83,13 @@ BasinPlotter::BasinPlotter() : DynamicsPlotter("BasinOfAttraction") {
 	mProjectionRangesY = new StringValue("0");
 	mProjectionRangesY->setDescription("Ranges for additional Y axis projections");
 	
-	mAccuracy = new DoubleValue(0.0001);
+	mAccuracy = new DoubleValue(0.001);
 	mAccuracy->setDescription("Accuracy for network state comparison");
 	mRoundDigits = new IntValue(-1);
 	mRoundDigits->setDescription("Defines how many digits are preserved, "
 								"when rounding values, -1 preserves all");
 
-	mStepsToRun = new IntValue(2000);
+	mStepsToRun = new IntValue(1000);
 	mStepsToRun->setDescription("Number of simulation steps that are computed "
 								"before checking for attractors");
 	mStepsToCheck = new IntValue(100);
@@ -413,7 +413,8 @@ void BasinPlotter::calculateData() {
 					for(int state = 1; state <= attrPeriod && !attrMatch; ++state) {
 						attrMatch = DynamicsPlotterUtil::compareNetworkStates(
 								attractors.at(attrNo-1),
-								networkStates.at(networkStates.size()-1-state),
+								networkStates.at(networkStates.size()-state),
+									// was: size()-1-state
 								accuracy);
 					}
 					attrNo++;

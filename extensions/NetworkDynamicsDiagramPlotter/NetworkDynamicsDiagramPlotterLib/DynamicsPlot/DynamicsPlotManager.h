@@ -87,7 +87,7 @@ namespace nerd {
 		QList<DynamicsPlotter*> mDynamicsPlotters;
 		StringValue *mPlotterProgram;
 		StringValue *mActivePlotter;
-		BoolValue *mInbuiltPlotterOnline;
+		BoolValue *mOfflinePlot;
 	};
 
 }
