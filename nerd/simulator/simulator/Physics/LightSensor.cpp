@@ -399,8 +399,6 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 
 		mAngleDifferences->set(anglesToLightSource);
 
-		ambientLight = ambientLight / 180.0;
-
 		double maxDifference = 0.0;
 		
 		if(mRestrictToHorizontalDirection->get()) {
@@ -418,6 +416,7 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 		}
 		maxDifference = Math::min(mMaxDetectionAngle->get(), maxDifference);
 
+		ambientLight = ambientLight / mMaxDetectionAngle->get();
 		brightness = (mMaxDetectionAngle->get() - maxDifference) * ambientLight;
 
 
