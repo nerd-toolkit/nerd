@@ -124,7 +124,7 @@ bool PlugInManager::loadPlugIns(const QString plugInDirName) {
 			}
 			else {
 				Core::log(QString("PlugInManager: File [")
-					.append(fileName).append("] was not a PlugIn!"));
+					.append(fileName).append("] was not a valid PlugIn!"));
 				ok = false;
 			}
 		}

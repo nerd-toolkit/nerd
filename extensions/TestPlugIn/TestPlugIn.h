@@ -2,12 +2,16 @@
 
 
 
-#ifndef ORCSTestPlugIn_H
-#define ORCSTestPlugIn_H
+#ifndef NERDTestPlugIn_H
+#define NERDTestPlugIn_H
 
 #include <QtPlugin>
-#include "PlugIns/PlugIn.h"
 #include <QObject>
+#include "../../nerd/system/nerd/PlugIns/PlugIn.h"
+
+/*
+ * Important: The include path here must be relative to the PlugIn.h file. 
+ */
 
 namespace nerd {
 
@@ -18,9 +22,6 @@ namespace nerd {
 	Q_OBJECT
 	Q_INTERFACES(nerd::PlugIn);
 	public:
-		TestPlugIn();
-		virtual ~TestPlugIn();
-
 		virtual QString getName();
 		virtual bool install();
 		

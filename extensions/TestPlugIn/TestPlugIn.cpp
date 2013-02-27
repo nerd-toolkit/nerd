@@ -3,6 +3,7 @@
 
 
 #include "TestPlugIn.h"
+#include "PlugIns/PlugIn.h"
 #include "Value/ValueManager.h"
 #include "Value/StringValue.h"
 #include "Core/Core.h"
@@ -14,14 +15,6 @@ using namespace nerd;
 
 
 
-TestPlugIn::TestPlugIn()
-{
-	cerr << "Create Plugin" << endl;
-}
-
-TestPlugIn::~TestPlugIn() {
-	cerr << "Delete plugin" << endl;
-}
 
 QString TestPlugIn::getName() {
 	return "TestPlugIn";
@@ -29,10 +22,12 @@ QString TestPlugIn::getName() {
 
 
 bool TestPlugIn::install() {
-	Core::getInstance()->getValueManager()->addValue("/PlugIn/TestPlugIn", new StringValue("hi"));
-	cerr << "install " << this << endl;
+	Core::getInstance()->getValueManager()->addValue("/PlugIn/TestPlugIn/Param", new StringValue("Test Value"));
+	cerr << "installed " << this << endl;
 	return true;
 }
 
-Q_EXPORT_PLUGIN2(pTestPlugIn, TestPlugIn)
 
+QT_BEGIN_NAMESPACE
+Q_EXPORT_PLUGIN2(TestPlugIn, TestPlugIn)
+QT_END_NAMESPACE
