@@ -137,6 +137,9 @@ const QString NeuralNetworkConstants::VALUE_DISABLE_NEURAL_PLASTICITY
 		
 const QString NeuralNetworkConstants::VALUE_DISABLE_NETWORK_UPDATE
 		= "/NeuralNetwork/DisableNetworkUpdate";
+		
+const QString NeuralNetworkConstants::VALUE_DISABLE_NETWORK_RESET
+		= "/NeuralNetwork/EnforceExplicitNetworkReset";
 
 //**************************************************************************
 //Tag Names

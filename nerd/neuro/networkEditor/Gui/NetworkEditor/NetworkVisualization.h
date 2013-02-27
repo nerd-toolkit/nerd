@@ -71,6 +71,8 @@
 
 namespace nerd {
 
+class NeuroModulatorItem;
+
 	class NetworkVisualizationHandler;
 	class NeuralNetworkEditor;
 
@@ -97,7 +99,7 @@ namespace nerd {
 		virtual ModularNeuralNetwork* getNeuralNetwork() const;
 
 		bool setVisualizationHandler(NetworkVisualizationHandler *handler);
-		NetworkVisualizationHandler* getVisualizationHander() const;
+		NetworkVisualizationHandler* getVisualizationHandler() const;
 
 		void invalidateItems();
 
@@ -241,6 +243,7 @@ namespace nerd {
 		bool mActivationVisualiationMode;
 		bool mInteractionMode;
 		QString mCurrentNetworkFile;
+		NeuroModulatorItem *mNeuroModulatorItem;
 	};
 
 }

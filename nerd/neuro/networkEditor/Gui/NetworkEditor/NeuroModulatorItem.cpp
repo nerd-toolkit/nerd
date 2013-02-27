@@ -43,22 +43,14 @@
 
 
 
-#include "RemoveObjectsNetworkTool.h"
+#include "NeuroModulatorItem.h"
+#include "NetworkVisualization.h"
 #include <iostream>
 #include <QList>
 #include "Core/Core.h"
-#include "Gui/NetworkEditor/ModuleItem.h"
-#include "Gui/NetworkEditor/NetworkVisualizationHandler.h"
-#include "Gui/NetworkEditorCommands/RemoveNetworkObjectsCommand.h"
-#include "Util/Tracer.h"
-#include "Network/Neuro.h"
-#include "Network/NeuralNetworkManager.h"
-#include <QMutexLocker>
-
-
-#define TRACE(message)
-//#define TRACE(message) Tracer _ttt_(QString(message) + "[" + QString::number((long) QThread::currentThread()) + "]");
-
+#include "Math/Math.h"
+#include "Util/NetworkEditorUtil.h"
+#include "NeuralNetworkConstants.h"
 
 using namespace std;
 
@@ -66,108 +58,69 @@ namespace nerd {
 
 
 /**
- * Constructs a new RemoveObjectsNetworkTool.
+ * Constructs a new NeuroModulatorItem.
  */
-RemoveObjectsNetworkTool::RemoveObjectsNetworkTool(QObject *owner)
-	: NetworkManipulationTool(owner)
+NeuroModulatorItem::NeuroModulatorItem(NetworkVisualization *owner)
+	: PaintItem(0), mOwner(owner), mShowNeuroModulators(true)
 {
-	TRACE("RemoveObjectsNetworkTool::RemoveObjectsNetworkTool");
 }
 
 
+NeuroModulatorItem::NeuroModulatorItem(const NeuroModulatorItem &other) 
+	: PaintItem(other), mOwner(other.mOwner), mShowNeuroModulators(other.mShowNeuroModulators)
+{
+
+}
 
 /**
  * Destructor.
  */
-RemoveObjectsNetworkTool::~RemoveObjectsNetworkTool() {
-	TRACE("RemoveObjectsNetworkTool::~RemoveObjectsNetworkTool");
-}
-
-void RemoveObjectsNetworkTool::clear() {
-	TRACE("RemoveObjectsNetworkTool::clear");
-
-	if(mVisuContext != 0) {
-		mVisuContext->removeMouseListener(this);
-	}
-
-	NetworkManipulationTool::clear();
+NeuroModulatorItem::~NeuroModulatorItem() {
 }
 
 
-void RemoveObjectsNetworkTool::activate(NetworkVisualization *visu) {
-	TRACE("RemoveObjectsNetworkTool::activate");
-
-	NetworkManipulationTool::activate(visu);
-
-	if(mVisuContext != 0) {
-		mVisuContext->addMouseListener(this);
-	}
+NeuralNetworkElement* NeuroModulatorItem::getNetworkElement() const {
+	return 0;
 }
 
-QString RemoveObjectsNetworkTool::getStatusMessage() {
-	TRACE("RemoveObjectsNetworkTool::getStatusMessage");
 
-	return "Remove Object";
+bool NeuroModulatorItem::isHit(const QPointF &point, Qt::MouseButtons mouseButton, double scaling) {
+	return false;
 }
 
-void RemoveObjectsNetworkTool::mouseButtonPressed(NetworkVisualization *source, 
-					QMouseEvent *event, const QPointF &globalPosition)
-{
-	TRACE("RemoveObjectsNetworkTool::mouseButtonPressed");
 
-	if(mVisuContext == 0 || mVisuContext != source || !(event->buttons() & Qt::LeftButton)) {
+void NeuroModulatorItem::mouseMoved(const QPointF &distance, Qt::MouseButtons mouseButton) {
+}
+
+
+void NeuroModulatorItem::paintSelf(QPainter *painter) {
+	if(!mShowNeuroModulators || painter == 0) {
 		return;
 	}
+}
 
-	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
-	NetworkVisualizationHandler *handler = mVisuContext->getVisualizationHandler();
-	if(handler == 0) {
-		return;
+void NeuroModulatorItem::setViewMode(int mode, bool enabled) {
+	if(mode == PaintItem::SHOW_NEURO_MODULATORS) {
+		mShowNeuroModulators = enabled;
 	}
-
-	QList<PaintItem*> removedItems;
-
-	QList<PaintItem*> items = mVisuContext->getPaintItems();
-	for(int i = items.size() -1; i >= 0; --i) {
-		PaintItem *item = items.at(i);
-		if(item != 0 && item->isHit(globalPosition, event->buttons(), mVisuContext->getScaling())) {
-			removedItems.append(item); //can only be a single object here.
-			break;
-		}
+	else {
+		PaintItem::setViewMode(mode, enabled);
 	}
+}
 
-
-	if(!removedItems.empty()) {
-		RemoveNetworkObjectsCommand *command = 
-				new RemoveNetworkObjectsCommand(mVisuContext, removedItems);
-
-		mVisuContext->getCommandExecutor()->executeCommand(command);
+bool NeuroModulatorItem::isViewModeEnabled(int mode) {
+	if(mode == PaintItem::SHOW_NEURO_MODULATORS) {
+		return mShowNeuroModulators;
 	}
-
-	emit done();
+	else {
+		return PaintItem::isViewModeEnabled(mode);
+	}
 }
 
-
-void RemoveObjectsNetworkTool::mouseButtonReleased(NetworkVisualization*, 
-					QMouseEvent*, const QPointF&) 
-{
-	TRACE("RemoveObjectsNetworkTool::mouseButtonReleased");
+Properties* NeuroModulatorItem::getEncapsulatedProperties() const {
+	return 0;
 }
-
-
-void RemoveObjectsNetworkTool::mouseDoubleClicked(NetworkVisualization*,
-					QMouseEvent*, const QPointF&)
-{
-}
-
-void RemoveObjectsNetworkTool::mouseDragged(NetworkVisualization*, 
-					QMouseEvent*, const QPointF&)
-{
-	TRACE("RemoveObjectsNetworkTool::mouseDragged");
-}
-
-
 
 }
 

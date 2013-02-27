@@ -142,7 +142,7 @@ void ChangeViewModeTool::enableViewMode() {
 	}
 
 	SimpleNetworkVisualizationHandler *handler = 	
-			dynamic_cast<SimpleNetworkVisualizationHandler*>(visu->getVisualizationHander());
+			dynamic_cast<SimpleNetworkVisualizationHandler*>(visu->getVisualizationHandler());
 
 	if(handler == 0) {
 		return;
@@ -173,7 +173,7 @@ void ChangeViewModeTool::disableViewMode() {
 		}
 
 		SimpleNetworkVisualizationHandler *handler = 	
-				dynamic_cast<SimpleNetworkVisualizationHandler*>(visu->getVisualizationHander());
+				dynamic_cast<SimpleNetworkVisualizationHandler*>(visu->getVisualizationHandler());
 	
 		if(handler == 0) {
 			return;

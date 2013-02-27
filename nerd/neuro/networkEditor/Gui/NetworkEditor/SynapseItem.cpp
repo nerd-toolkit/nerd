@@ -110,8 +110,8 @@ bool SynapseItem::setSynapse(Synapse *synapse) {
 		mTarget = 0;
 	}
 	else {
-		if(mOwner != 0 && mOwner->getVisualizationHander() != 0) {
-			NetworkVisualizationHandler *handler = mOwner->getVisualizationHander();
+		if(mOwner != 0 && mOwner->getVisualizationHandler() != 0) {
+			NetworkVisualizationHandler *handler = mOwner->getVisualizationHandler();
 			mSourceNeuron = handler->getNeuronItem(synapse->getSource());
 			if(dynamic_cast<Neuron*>(synapse->getTarget()) != 0) {
 				mTarget = handler->getNeuronItem(dynamic_cast<Neuron*>(synapse->getTarget()));

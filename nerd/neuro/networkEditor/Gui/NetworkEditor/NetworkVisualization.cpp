@@ -65,6 +65,7 @@
 #include "Gui/NetworkEditor/GroupItem.h"
 #include "Network/Neuro.h"
 #include "Gui/NetworkEditor/NeuralNetworkEditor.h"
+#include "SimpleNeuroModulatorItem.h"
 
 
 using namespace std;
@@ -96,6 +97,9 @@ NetworkVisualization::NetworkVisualization(const QString &name, NeuralNetworkEdi
 	TRACE("NetworkVisualization::NetworkVisualization");
 	mSelectionRectangle = new SelectionRectItem();
 	addPaintItem(mSelectionRectangle);
+	
+	mNeuroModulatorItem = new SimpleNeuroModulatorItem(this);
+	addPaintItem(mNeuroModulatorItem);
 
 	mElementPairVisualization = new ElementPairVisualization(2000);
 	mElementPairVisualization->setOwner(this);
@@ -282,8 +286,8 @@ bool NetworkVisualization::setVisualizationHandler(NetworkVisualizationHandler *
 }
 
 
-NetworkVisualizationHandler* NetworkVisualization::getVisualizationHander() const {
-	TRACE("NetworkVisualization::getVisualizationHander");
+NetworkVisualizationHandler* NetworkVisualization::getVisualizationHandler() const {
+	TRACE("NetworkVisualization::getVisualizationHandler");
 	return mVisuHandler;
 }
 

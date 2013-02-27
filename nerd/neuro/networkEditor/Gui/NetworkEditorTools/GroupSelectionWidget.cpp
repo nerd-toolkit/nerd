@@ -219,7 +219,7 @@ void GroupSelectionWidget::mouseDoubleClicked(NetworkVisualization *source,
 
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
-	NetworkVisualizationHandler *handler = source->getVisualizationHander();
+	NetworkVisualizationHandler *handler = source->getVisualizationHandler();
 	if(handler == 0) {
 		return;
 	}
@@ -379,7 +379,7 @@ void GroupSelectionWidget::removeButtonPressed() {
 	if(visu == 0) {
 		return;
 	}
-	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 	if(handler == 0) {
 		return;
 	}
@@ -431,7 +431,7 @@ void GroupSelectionWidget::renameButtonPressed() {
 	if(visu == 0) {
 		return;
 	}
-	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 	if(handler == 0) {
 		return;
 	}
@@ -507,7 +507,7 @@ void GroupSelectionWidget::showMembersButtonPressed() {
 		return;
 	}
 
-	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 	if(handler == 0) {
 		return;
 	}
@@ -596,7 +596,7 @@ void GroupSelectionWidget::addAndRemoveItems(bool addToTarget) {
 	if(visu == 0) {
 		return;
 	}
-	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 	ModularNeuralNetwork *network = visu->getNeuralNetwork();
 	if(handler == 0 || network == 0) {
 		return;

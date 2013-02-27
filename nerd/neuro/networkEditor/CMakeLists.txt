@@ -81,6 +81,8 @@ set(nerd_networkEditor_SRCS
 	NetworkEditorConstants.cpp
 	Gui/NetworkEditorCommands/AlignModuleSizeCommand.cpp
 	Gui/NetworkEditorTools/ConnectNeuronsWithSynapsesTool.cpp
+	Gui/NetworkEditor/NeuroModulatorItem.cpp
+	Gui/NetworkEditor/SimpleNeuroModulatorItem.cpp
 )
 
 set(nerd_networkEditor_MOC_HDRS

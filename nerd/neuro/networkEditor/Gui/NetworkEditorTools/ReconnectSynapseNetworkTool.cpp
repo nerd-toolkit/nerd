@@ -128,7 +128,7 @@ void ReconnectSynapseNetworkTool::mouseButtonPressed(NetworkVisualization *sourc
 
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
-	NetworkVisualizationHandler *handler = mVisuContext->getVisualizationHander();
+	NetworkVisualizationHandler *handler = mVisuContext->getVisualizationHandler();
 	if(handler == 0) {
 		emit done();
 		return;

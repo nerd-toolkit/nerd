@@ -132,7 +132,7 @@ void NetworkSearchDialog::selectMatchingElements() {
 		QMutexLocker guard2(visu->getSelectionMutex());
 	
 		ModularNeuralNetwork *net = visu->getNeuralNetwork();
-		NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+		NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 	
 		if(net == 0 || handler == 0) {
 			return;

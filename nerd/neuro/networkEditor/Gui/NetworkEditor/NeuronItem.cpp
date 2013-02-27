@@ -63,7 +63,7 @@ NeuronItem::NeuronItem(NetworkVisualization *owner)
 	: PaintItem(1000), mOwner(owner), mNeuron(0), 
 	  mShowName(true), mShowInputOutputMarker(false), mShowBias(false),
 	  mShowActivationFlipped(false), mShowBiasAsString(false),
-	  mShowModuleInputOutputMarker(true), mShowNeuroModulators(true)
+	  mShowModuleInputOutputMarker(true)
 {
 }
 
@@ -73,8 +73,7 @@ NeuronItem::NeuronItem(const NeuronItem &other)
 	  mShowName(other.mShowName), mShowInputOutputMarker(other.mShowInputOutputMarker),
 	  mShowBias(other.mShowBias), mShowActivationFlipped(other.mShowActivationFlipped),
 	  mShowBiasAsString(other.mShowBiasAsString),
-	  mShowModuleInputOutputMarker(other.mShowModuleInputOutputMarker),
-	  mShowNeuroModulators(other.mShowNeuroModulators)
+	  mShowModuleInputOutputMarker(other.mShowModuleInputOutputMarker)
 {
 
 }
@@ -132,9 +131,6 @@ void NeuronItem::setViewMode(int mode, bool enabled) {
 	else if(mode == PaintItem::SHOW_NEURON_MODULE_INPUT_OUTPUT) {
 		mShowModuleInputOutputMarker = enabled;
 	}
-	else if(mode == PaintItem::SHOW_NEURO_MODULATORS) {
-		mShowNeuroModulators = enabled;
-	}
 	else {
 		PaintItem::setViewMode(mode, enabled);
 	}
@@ -149,6 +145,12 @@ bool NeuronItem::isViewModeEnabled(int mode) {
 	}
 	else if(mode == PaintItem::SHOW_NEURON_BIAS) {
 		return mShowBias;
+	}
+	else if(mode == PaintItem::SHOW_NEURON_ACTIVATION_FLIPPED) {
+		return mShowActivationFlipped;
+	}
+	else if(mode == PaintItem::SHOW_NEURON_BIAS_AS_NUMBER) {
+		return mShowBiasAsString;
 	}
 	else if(mode == PaintItem::SHOW_NEURON_MODULE_INPUT_OUTPUT) {
 		return mShowModuleInputOutputMarker;

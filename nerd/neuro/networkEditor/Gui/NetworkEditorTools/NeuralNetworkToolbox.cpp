@@ -230,10 +230,10 @@ void NeuralNetworkToolbox::selectSynapsesOfMarkedNeurons() {
 		return;
 	}
 	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
-	if(visu == 0 && visu->getVisualizationHander() != 0) {
+	if(visu == 0 && visu->getVisualizationHandler() != 0) {
 		return;
 	}
-	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QList<Synapse*> selectedSynapses;

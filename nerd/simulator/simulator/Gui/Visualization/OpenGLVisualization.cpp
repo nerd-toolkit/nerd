@@ -232,6 +232,10 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	mShowCoordinateSystemLines->setDescription("Enables/Disables the coordinate system lines.");
 	mShowStepsPerSecond = new BoolValue(true);
 	mShowStepsPerSecond->setDescription("Displays the number of steps per second.");
+	mCoordinateSystemShortLinesColor = new ColorValue(255, 255, 255, 100);
+	mCoordinateSystemShortLinesColor->setDescription("The color of the coordinate system lines (of distance 1)");
+	mCoordinateSystemLongLinesColor = new ColorValue(0, 0, 0, 100);
+	mCoordinateSystemLongLinesColor->setDescription("The color of the coordinate system lines (of distance 5)");
 
 	mOpeningAngleValue = new DoubleValue(getDefaultOpeningAngle());
 	mOpeningAngleValue->setDescription("The opening angle of the camera.");
@@ -276,6 +280,8 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 	addParameter("CurrentPosition", mCurrentPosition, publishValues);
 	addParameter("CurrentOrientation", mCurrentOrientation, publishValues);
 	addParameter("ShowHelperCoordinates", mShowCoordinateSystemLines, publishValues);
+	addParameter("HelperCoordinatesColor1", mCoordinateSystemShortLinesColor, publishValues);
+	addParameter("HelperCoordinateColor2", mCoordinateSystemLongLinesColor, publishValues);
 	addParameter("ShowStepsPerSecond", mShowStepsPerSecond, publishValues);
 	addParameter("OpeningAngle", mOpeningAngleValue, publishValues);
 	addParameter("MinCutoff", mMinDistanceCutoffValue, publishValues);
@@ -928,11 +934,15 @@ void OpenGLVisualization::drawAxis() {
 		for(int k = 0; k < 1; k++) {
 			for(int i = -PLANE_SIZE; i < PLANE_SIZE; i++) {
 				int mod = i % 5;
+				
+				Color c;
 				if(mod == 0) {
-					glColor4f(0, 0, 0, 100);
+					c = mCoordinateSystemLongLinesColor->get();
+					glColor4f(c.red(), c.green(), c.blue(), c.alpha());
 				}
 				else {
-					glColor4f(255,  255,255, 100);
+					c = mCoordinateSystemShortLinesColor->get();
+					glColor4f(c.red(), c.green(), c.blue(), c.alpha());
 				}
 				glPushMatrix();
 				if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
@@ -941,16 +951,18 @@ void OpenGLVisualization::drawAxis() {
 				else {
 					glTranslatef(i, 0, k+off);
 				}
-				glBegin(GL_LINES);
-					if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
-						glVertex3d(0, 0, -axisLength / 2.0);
-						glVertex3d(0, 0, axisLength / 2.0);
-					}
-					else {
-						glVertex3d(0, -axisLength / 2.0, 0.0);
-						glVertex3d(0, axisLength / 2.0, 0.0);
-					}
-				glEnd();
+				if(c.alpha() > 0) {
+					glBegin(GL_LINES);
+						if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+							glVertex3d(0, 0, -axisLength / 2.0);
+							glVertex3d(0, 0, axisLength / 2.0);
+						}
+						else {
+							glVertex3d(0, -axisLength / 2.0, 0.0);
+							glVertex3d(0, axisLength / 2.0, 0.0);
+						}
+					glEnd();
+				}
 
 				glPopMatrix();
 				glPushMatrix();
@@ -960,10 +972,12 @@ void OpenGLVisualization::drawAxis() {
 				else {
 					glTranslatef(0, i, k + off);
 				}
-				glBegin(GL_LINES);
-				glVertex3d(-axisLength / 2.0, 0, 0);
-				glVertex3d(axisLength / 2.0, 0, 0);
-				glEnd();
+				if(c.alpha() > 0) {
+					glBegin(GL_LINES);
+					glVertex3d(-axisLength / 2.0, 0, 0);
+					glVertex3d(axisLength / 2.0, 0, 0);
+					glEnd();
+				}
 				glPopMatrix();
 			}
 		}

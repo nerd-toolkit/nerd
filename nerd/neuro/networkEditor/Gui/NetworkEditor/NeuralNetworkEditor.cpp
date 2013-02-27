@@ -566,9 +566,9 @@ void NeuralNetworkEditor::saveNetwork(const QString &fileName, ModularNeuralNetw
 
 	NetworkVisualization *visu = getCurrentNetworkVisualization();
 	if(visu != 0 
-		&& visu->getVisualizationHander() != 0) 
+		&& visu->getVisualizationHandler() != 0) 
 	{
-		handler = getCurrentNetworkVisualization()->getVisualizationHander();
+		handler = getCurrentNetworkVisualization()->getVisualizationHandler();
 		if(network == 0 && handler != 0) {
 			network = handler->getNeuralNetwork();
 
@@ -658,7 +658,7 @@ void NeuralNetworkEditor::saveSubNetwork(const QString &fileName) {
 
 	if(visu != 0) 
 	{
-		handler = visu->getVisualizationHander();
+		handler = visu->getVisualizationHandler();
 		if(handler != 0) {
 			network = handler->getNeuralNetwork();
 		}
@@ -742,7 +742,7 @@ void NeuralNetworkEditor::loadNetwork(const QString &fileName, bool addToNetwork
 		}
 		return;
 	}
-	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 	if(handler == 0) {
 		if(pauseValue != 0) {
 			pauseValue->set(paused);
@@ -915,7 +915,7 @@ void NeuralNetworkEditor::loadNetwork(const QString &fileName, bool addToNetwork
 // 				}
 // 			}
 
-			visu->getVisualizationHander()->rebuildView();
+			visu->getVisualizationHandler()->rebuildView();
 			nnm->triggerNetworkStructureChangedEvent();
 			visu->notifyNeuralNetworkModified();
 			nnm->triggerCurrentNetworksReplacedEvent();
@@ -980,9 +980,9 @@ void NeuralNetworkEditor::saveLayout(const QString &fileName, bool clearMessageA
 	NetworkVisualizationHandler *handler = 0;
 
 	if(getCurrentNetworkVisualization() != 0 
-		&& getCurrentNetworkVisualization()->getVisualizationHander() != 0) 
+		&& getCurrentNetworkVisualization()->getVisualizationHandler() != 0) 
 	{
-		handler = getCurrentNetworkVisualization()->getVisualizationHander();
+		handler = getCurrentNetworkVisualization()->getVisualizationHandler();
 		if(network == 0  && handler != 0) {
 			network = handler->getNeuralNetwork();
 		}
@@ -1074,9 +1074,9 @@ void NeuralNetworkEditor::loadLayout(const QString &fileName, bool clearMessageA
 	NetworkVisualizationHandler *handler = 0;
 
 	if(getCurrentNetworkVisualization() != 0 
-		&& getCurrentNetworkVisualization()->getVisualizationHander() != 0) 
+		&& getCurrentNetworkVisualization()->getVisualizationHandler() != 0) 
 	{
-		handler = getCurrentNetworkVisualization()->getVisualizationHander();
+		handler = getCurrentNetworkVisualization()->getVisualizationHandler();
 		if(handler != 0) {
 			network = handler->getNeuralNetwork();
 		}
@@ -1202,7 +1202,7 @@ void NeuralNetworkEditor::createMinimalNetwork() {
 	if(visu == 0) {
 		return;
 	}
-	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 	if(handler == 0) {
 		return;
 	}
@@ -1253,7 +1253,7 @@ void NeuralNetworkEditor::createMinimalNetwork() {
 		//update visualization
 		visu->setNeuralNetwork(currentNetwork); 
 
-		visu->getVisualizationHander()->rebuildView();
+		visu->getVisualizationHandler()->rebuildView();
 		nnm->triggerNetworkStructureChangedEvent();
 		visu->notifyNeuralNetworkModified();
 
@@ -1286,9 +1286,9 @@ void NeuralNetworkEditor::exportByteCode(const QString &fileName) {
 	NetworkVisualizationHandler *handler = 0;
 
 	if(getCurrentNetworkVisualization() != 0 
-		&& getCurrentNetworkVisualization()->getVisualizationHander() != 0) 
+		&& getCurrentNetworkVisualization()->getVisualizationHandler() != 0) 
 	{
-		handler = getCurrentNetworkVisualization()->getVisualizationHander();
+		handler = getCurrentNetworkVisualization()->getVisualizationHandler();
 		if(handler != 0) {
 			network = handler->getNeuralNetwork();
 		}
@@ -1335,9 +1335,9 @@ void NeuralNetworkEditor::exportASeriesBDN(const QString &fileName) {
 	NetworkVisualizationHandler *handler = 0;
 
 	if(getCurrentNetworkVisualization() != 0 
-			&& getCurrentNetworkVisualization()->getVisualizationHander() != 0) 
+			&& getCurrentNetworkVisualization()->getVisualizationHandler() != 0) 
 	{
-		handler = getCurrentNetworkVisualization()->getVisualizationHander();
+		handler = getCurrentNetworkVisualization()->getVisualizationHandler();
 		if(handler != 0) {
 			network = handler->getNeuralNetwork();
 		}
@@ -1382,9 +1382,9 @@ void NeuralNetworkEditor::exportMSeriesBDN(const QString &fileName) {
 	NetworkVisualizationHandler *handler = 0;
 
 	if(getCurrentNetworkVisualization() != 0 
-			&& getCurrentNetworkVisualization()->getVisualizationHander() != 0) 
+			&& getCurrentNetworkVisualization()->getVisualizationHandler() != 0) 
 	{
-		handler = getCurrentNetworkVisualization()->getVisualizationHander();
+		handler = getCurrentNetworkVisualization()->getVisualizationHandler();
 		if(handler != 0) {
 			network = handler->getNeuralNetwork();
 		}
@@ -1445,9 +1445,9 @@ void NeuralNetworkEditor::exportDebugMSeriesComponentsBDN(const QString &fileNam
 	NetworkVisualizationHandler *handler = 0;
 
 	if(getCurrentNetworkVisualization() != 0 
-			&& getCurrentNetworkVisualization()->getVisualizationHander() != 0) 
+			&& getCurrentNetworkVisualization()->getVisualizationHandler() != 0) 
 	{
-		handler = getCurrentNetworkVisualization()->getVisualizationHander();
+		handler = getCurrentNetworkVisualization()->getVisualizationHandler();
 		if(handler != 0) {
 			network = handler->getNeuralNetwork();
 		}
@@ -1505,9 +1505,9 @@ void NeuralNetworkEditor::saveNetworkAsSvgGraphics(const QString &fileName) {
 	NetworkVisualizationHandler *handler = 0;
 
 	if(visu != 0 
-		&& visu->getVisualizationHander() != 0) 
+		&& visu->getVisualizationHandler() != 0) 
 	{
-		handler = visu->getVisualizationHander();
+		handler = visu->getVisualizationHandler();
 		if(handler != 0) {
 			network = handler->getNeuralNetwork();
 		}

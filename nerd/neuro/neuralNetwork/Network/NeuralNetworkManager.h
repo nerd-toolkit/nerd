@@ -133,6 +133,7 @@ namespace nerd {
 		IntValue *mNumberOfNetworkUpdatesPerStep;
 		BoolValue *mDisablePlasticity;
 		BoolValue *mDisableNetworkUpdate;
+		BoolValue *mDisableMainReset;
 
 	};
 

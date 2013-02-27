@@ -103,7 +103,7 @@ void RunConstraintsAction::runConstraints() {
 		return;
 	}
 
-	NetworkVisualizationHandler *handler = visu->getVisualizationHander();
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 
 	if(handler == 0) {
 		return;

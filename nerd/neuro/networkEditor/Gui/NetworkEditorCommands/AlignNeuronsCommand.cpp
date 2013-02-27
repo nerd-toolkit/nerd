@@ -121,7 +121,7 @@ bool AlignNeuronsCommand::doCommand() {
 		return false;
 	}	
 	SimpleNetworkVisualizationHandler *handler = dynamic_cast<SimpleNetworkVisualizationHandler*>(
-			mVisualizationContext->getVisualizationHander());
+			mVisualizationContext->getVisualizationHandler());
 
 	if(handler == 0) {
 		return false;
@@ -333,7 +333,7 @@ bool AlignNeuronsCommand::undoCommand() {
 		return false;
 	}	
 	SimpleNetworkVisualizationHandler *handler = dynamic_cast<SimpleNetworkVisualizationHandler*>(
-			mVisualizationContext->getVisualizationHander());
+			mVisualizationContext->getVisualizationHandler());
 
 	if(handler == 0) {
 		return false;

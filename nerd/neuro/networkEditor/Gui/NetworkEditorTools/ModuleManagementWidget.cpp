@@ -168,7 +168,7 @@ void ModuleManagementWidget::invalidateView() {
 void ModuleManagementWidget::mouseButtonPressed(NetworkVisualization *source, 
 					QMouseEvent *event, const QPointF &globalPosition)
 {
-	if(source == 0 || source->getVisualizationHander() == 0 || event == 0) {
+	if(source == 0 || source->getVisualizationHandler() == 0 || event == 0) {
 		return;
 	}
 	if(mAddButton->isChecked() && (event->buttons() & Qt::RightButton)) {
@@ -250,7 +250,7 @@ void ModuleManagementWidget::createModule() {
 	if(mEditor != 0) {
 		visu = mEditor->getCurrentNetworkVisualization();
 		if(visu != 0) {
-			handler = visu->getVisualizationHander();
+			handler = visu->getVisualizationHandler();
 			if(handler != 0) {
 				network = handler->getNeuralNetwork();
 			}

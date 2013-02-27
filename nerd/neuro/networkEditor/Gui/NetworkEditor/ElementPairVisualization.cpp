@@ -103,8 +103,8 @@ void ElementPairVisualization::setElementPairString(const QString &elementPairs)
 
 	mElementPairs.clear();
 
-	if(mOwner != 0 && mOwner->getVisualizationHander() != 0) {
-		NetworkVisualizationHandler *handler = mOwner->getVisualizationHander();
+	if(mOwner != 0 && mOwner->getVisualizationHandler() != 0) {
+		NetworkVisualizationHandler *handler = mOwner->getVisualizationHandler();
 		ModularNeuralNetwork *net = mOwner->getNeuralNetwork();
 // 		mSourceNeuron = handler->getNeuronItem(synapse->getSource());
 // 		if(dynamic_cast<Neuron*>(synapse->getTarget()) != 0) {

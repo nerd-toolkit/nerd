@@ -91,7 +91,6 @@ namespace nerd {
 		bool mShowActivationFlipped;
 		bool mShowBiasAsString;
 		bool mShowModuleInputOutputMarker;
-		bool mShowNeuroModulators;
 	};
 
 }

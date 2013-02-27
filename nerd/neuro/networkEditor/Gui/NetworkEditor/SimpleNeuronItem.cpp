@@ -173,43 +173,43 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 		painter->fillPath(p, QColor(255, 0, 0, 100));
 	}
 
-	//Move this to an own PaintItem type (NeuroModulatorItem) to choose the painting level.
-	if(mShowNeuroModulators) {
-		NeuroModulatorElement *nme = dynamic_cast<NeuroModulatorElement*>(mNeuron->getActivationFunction());
-
-		if(nme != 0) {
-			NeuroModulator *modulator = nme->getNeuroModulator();
-			
-			if(modulator != 0) {
-				QList<int> types = modulator->getModulatorTypes();
-				
-				for(int i = 0; i < types.size(); ++i) {
-					int type = types.at(i);
-					QRectF rect = modulator->getLocalRect(type);
-					bool isCircle = modulator->isCircularArea(type);
-					double concentration = modulator->getConcentration(type, mNeuron);
-					
-					Color color = Color::getColor((type * 2) % 7);
-					color.setAlpha(150 * Math::min(1.0, Math::max(0.0, concentration)));
-					
-					if(concentration > 0.0 && rect.width() > 0.0 && rect.height() > 0.0) {
-						if(isCircle) {
-							QPainterPath p;
-							p.addEllipse(getGlobalPosition() + QPointF(rect.x(), rect.y()), rect.width() / 2.0, rect.height() / 2.0);
-							painter->fillPath(p, QColor(color.red(), color.green(), color.blue(), color.alpha()));
-						}
-						else {
-							QPointF pos = getGlobalPosition();
-							painter->fillRect(pos.x() + rect.x() - (rect.width() / 2.0), 
-											  pos.y() + rect.y() - (rect.height() / 2.0),
-											  rect.width(), 
-											  rect.height(),
-											  QColor(color.red(), color.green(), color.blue(), color.alpha()));
-						}
-					}
-				}
-			}
-		}
+// 	//Move this to an own PaintItem type (NeuroModulatorItem) to choose the painting level.
+// 	if(mShowNeuroModulators) {
+// 		NeuroModulatorElement *nme = dynamic_cast<NeuroModulatorElement*>(mNeuron->getActivationFunction());
+// 
+// 		if(nme != 0) {
+// 			NeuroModulator *modulator = nme->getNeuroModulator();
+// 			
+// 			if(modulator != 0) {
+// 				QList<int> types = modulator->getModulatorTypes();
+// 				
+// 				for(int i = 0; i < types.size(); ++i) {
+// 					int type = types.at(i);
+// 					QRectF rect = modulator->getLocalRect(type);
+// 					bool isCircle = modulator->isCircularArea(type);
+// 					double concentration = modulator->getConcentration(type, mNeuron);
+// 					
+// 					Color color = Color::getColor((type * 2) % 7);
+// 					color.setAlpha(150 * Math::min(1.0, Math::max(0.0, concentration)));
+// 					
+// 					if(concentration > 0.0 && rect.width() > 0.0 && rect.height() > 0.0) {
+// 						if(isCircle) {
+// 							QPainterPath p;
+// 							p.addEllipse(getGlobalPosition() + QPointF(rect.x(), rect.y()), rect.width() / 2.0, rect.height() / 2.0);
+// 							painter->fillPath(p, QColor(color.red(), color.green(), color.blue(), color.alpha()));
+// 						}
+// 						else {
+// 							QPointF pos = getGlobalPosition();
+// 							painter->fillRect(pos.x() + rect.x() - (rect.width() / 2.0), 
+// 											  pos.y() + rect.y() - (rect.height() / 2.0),
+// 											  rect.width(), 
+// 											  rect.height(),
+// 											  QColor(color.red(), color.green(), color.blue(), color.alpha()));
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
 		
 // 		QStringList propNames = mNeuron->getPropertyNames();
 // 		for(QListIterator<QString> i(propNames); i.hasNext();) {
@@ -233,7 +233,7 @@ void SimpleNeuronItem::paintSelf(QPainter *painter) {
 // 				}
 // 			}
 // 		}
-	}
+// 	}
 	
 
 	QColor outlineColor(0, 0, 0, 255);

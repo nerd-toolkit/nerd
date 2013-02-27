@@ -178,7 +178,7 @@ namespace nerd {
 		
 		QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 		
-		NetworkVisualizationHandler *handler = mVisuContext->getVisualizationHander();
+		NetworkVisualizationHandler *handler = mVisuContext->getVisualizationHandler();
 		if(handler == 0) {
 			return;
 		}

@@ -136,6 +136,11 @@ NeuralNetworkManager::NeuralNetworkManager()
 	Core::getInstance()->getValueManager()->addValue(
 				NeuralNetworkConstants::VALUE_DISABLE_NETWORK_UPDATE, mDisableNetworkUpdate);
 	
+	mDisableMainReset = new BoolValue(false);
+	mDisableMainReset->setDescription("If true, the neural networks are not reset at major simulation resets, only at explicit network resets.");
+	Core::getInstance()->getValueManager()->addValue(
+				NeuralNetworkConstants::VALUE_DISABLE_NETWORK_RESET, mDisableMainReset);
+	
 	//add default tags
 	NeuroTagManager *ntm = NeuroTagManager::getInstance();
 	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_FLIP_NEURON_ACTIVITY, 
@@ -318,7 +323,7 @@ void NeuralNetworkManager::eventOccured(Event *event) {
 	else if(event == mNetworkEvaluationStarted) {
 		executeNeuralNetworks();
 	}
-	else if(event == mResetEvent || event == mResetNetworksEvent) {
+	else if((event == mResetEvent && ! mDisableMainReset->get()) || event == mResetNetworksEvent) {
 		resetNeuralNetworks();
 	}
 }

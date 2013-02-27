@@ -227,7 +227,7 @@ void SynapseDetailWidget::mouseDoubleClicked(NetworkVisualization *source,
 
 	QMutexLocker locker(Neuro::getNeuralNetworkManager()->getNetworkExecutionMutex());
 
-	NetworkVisualizationHandler *handler = source->getVisualizationHander();
+	NetworkVisualizationHandler *handler = source->getVisualizationHandler();
 	if(handler == 0) {
 		return;
 	}

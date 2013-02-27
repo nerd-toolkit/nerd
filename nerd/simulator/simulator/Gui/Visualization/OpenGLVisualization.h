@@ -55,6 +55,7 @@
 #include <QAction>
 #include "Event/EventListener.h"
 #include "Value/ValueChangedListener.h"
+#include <Value/ColorValue.h>
 #include "Math/Quaternion.h"
 #include "Gui/ControlWindow.h"
 #include <QFocusEvent>
@@ -225,6 +226,8 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		BoolValue *mShowStepsPerSecond;
 		BoolValue *mRealTimeRecorderRunning;
 		BoolValue *mHideRecordSymbol;
+		ColorValue *mCoordinateSystemShortLinesColor;
+		ColorValue *mCoordinateSystemLongLinesColor;
 
 		BoolValue *mIsTranslationalValue;
 		BoolValue *mIgnoreHeightAxisInTranslationalMode;

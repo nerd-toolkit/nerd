@@ -438,6 +438,9 @@ namespace nerd {
 	 * 
 	 * 0: If backtracking becomes active, the last known state is directly and completely restored.
 	 */
+	
+	//TODO Add an option to occassionally flip back to previous value (local search). Probability for 
+	//     flip-back should decrease with higher level, with a full backtracking above a threshold.
 	void SimpleModulatedRandomSearchSynapseFunction::randomSearchModeBacktracking(
 		Synapse *owner, SimpleModulatedRandomSearchParameters &params) 
 	{
