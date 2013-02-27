@@ -72,9 +72,13 @@ namespace nerd {
 							  "3: Barto & Sutton: epsilon * Vi(t-1) * (Vj(t) - Vj(t-1))\n"
 							  "4: GHT: epsilon * Vi(t) * (Vj(t) - Vj(t-1))\n");
 		
+		mExtraParam = new DoubleValue(0.1);
+		mExtraParam->setDescription("Parameter depends on the chosen mode.\nIn (2) and (1) this is Eta in the expectation function f.");
+		
 		addParameter("Init", mInitialValue);
 		addParameter("Rate", mLearningRate);
 		addParameter("Mode", mMode);
+		addParameter("Extra", mExtraParam);
 	}
 	
 	
@@ -90,6 +94,7 @@ namespace nerd {
 		mInitialValue = dynamic_cast<RangeValue*>(getParameter("Init"));
 		mLearningRate = dynamic_cast<DoubleValue*>(getParameter("Rate"));
 		mMode = dynamic_cast<IntValue*>(getParameter("Mode"));
+		mExtraParam = dynamic_cast<DoubleValue*>(getParameter("Extra"));
 	}
 	
 	
@@ -156,10 +161,10 @@ namespace nerd {
 		}
 		else if(mMode->get() == 2) {
 			
-			//2: tesauro-d: sigma * (Vi(t-1) - Vi(t-2)) * (Vj(t) - f(Vj(t-1))
+			//2: tesauro-d: epsilon * sigma(Vi(t-1) - Vi(t-2)) * (Vj(t) - f(Vj(t-1))
 			//sigma has to be adjusted as part of the leraning rate 
 			change = mLearningRate->get()
-					* (mPreviousPresynapticActivity - mPrevPrevPresynapticActivity) 
+					* Math::max(0.0, (mPreviousPresynapticActivity - mPrevPrevPresynapticActivity))
 					* (postSynapticNeuron->getLastOutputActivation() 
 							- applyExpectationFunction(mPreviousPostSynapticActivity));
 		}
@@ -213,7 +218,7 @@ namespace nerd {
 	
 	double TesauroSynapseFunction::applyExpectationFunction(double x) {
 		
-		return Math::min(1.0, x + 0.1);  //tessauro: f(x) = x + ny (with ny = 0.1)
+		return Math::min(1.0, x + mExtraParam->get());  //tessauro: f(x) = x + ny (with ny = 0.1)
 	}
 	
 	

@@ -74,6 +74,7 @@ namespace nerd {
 	private:
 		RangeValue *mInitialValue;
 		DoubleValue *mLearningRate;
+		DoubleValue *mExtraParam;
 		IntValue *mMode;
 		
 		double mPreviousPresynapticActivity;
