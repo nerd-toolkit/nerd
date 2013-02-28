@@ -54,6 +54,7 @@
 #include "NerdConstants.h"
 #include <QFile>
 #include <QDir>
+#include <QString>
 
 
 using namespace std;
@@ -72,6 +73,8 @@ SimulationRecorder::SimulationRecorder()
 	mPlaybackFile = new FileNameValue("");
 	mIncludeSimulation = new BoolValue(true);
 	mRecordingInterval = new IntValue(1);
+	mObservedValues = new CodeValue("[Interfaces]\n/Sim/**/Position\n/Sim/**/OrientationQuaternion");
+	mRecordedValueNameList = new CodeValue();
 	
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/DataRecorder/ActivateRecording", mActivateRecording);
@@ -81,6 +84,8 @@ SimulationRecorder::SimulationRecorder()
 	//vm->addValue("/DataRecorder/IncludeSimulation", mIncludeSimulation);
 	vm->addValue("/DataRecorder/RecordingDirectory", mRecordingDirectory);
 	vm->addValue("/DataRecorder/RecordingInterval", mRecordingInterval);
+	vm->addValue("/DataRecorder/RecordedValues", mObservedValues);
+	vm->addValue("/DataRecorder/RecordedValueNameList", mRecordedValueNameList);
 	
 	mActivateRecording->addValueChangedListener(this);
 	mActivatePlayback->addValueChangedListener(this);
@@ -194,6 +199,8 @@ void SimulationRecorder::valueChanged(Value *value) {
 
 
 void SimulationRecorder::startRecording() {
+	cerr << "startreco" << endl;
+	
 	if(mExecutionMode == -1) {
 		stopPlayback();
 	}
@@ -234,11 +241,14 @@ void SimulationRecorder::startRecording() {
 	//get all values to record...
 	updateListOfRecordedValues();
 	
+	//update the string list of value names.
+	updateRecordedValueNameList();
+	
 	mData.reserve(5000);
 	mFileDataStream.setDevice(mFile);
 	
 	//write data file format version number
-	mFileDataStream << ((uint) 1);
+	mFileDataStream << ((uint) 2);
 	
 	mExecutionMode = 1;
 	mStepCounter = 0;
@@ -347,12 +357,20 @@ bool SimulationRecorder::startPlayback() {
 	mReachedAndOfFile = false;
 	
 	//read out data file format version number
-	uint version = 0;
-	mFileDataStream >> version;
-	Core::log("Starting data playback from file [" + mFile->fileName() + "]! Data Format: " + QString::number(version), true);
+	uint mVersion = 0;
+	mFileDataStream >> mVersion;
+	
+	if(mVersion != 2) {
+		Core::log("SimulationRecorder: Wrong data version. This NERD release only accepts data recordings of data format 2", true);
+		stopPlayback();
+		return false;
+	}
+	else {
+		Core::log("Starting data playback from file [" + mFile->fileName() + "]! Data Format: " + QString::number(mVersion), true);
+	}
 	
 	mFirstPlaybackStep = true;
-	readStepNumber = false;
+	mReadStepNumber = false;
 	
 	return true;
 }
@@ -402,22 +420,26 @@ void SimulationRecorder::playbackData() {
 		mFile->reset();
 		mFileDataStream.setDevice(mFile);
 		mReachedAndOfFile = false;
-		uint version = 0;
-		mFileDataStream >> version;
-		readStepNumber = false;
+		mVersion = 0;
+		mFileDataStream >> mVersion;
+		mReadStepNumber = false;
+	}
+	
+	if(mVersion != 2) {
+		return;
 	}
 	
 	//check if the new frame should be applied...
-	if(!readStepNumber) {
+	if(!mReadStepNumber) {
 		mFileDataStream >> mStepCounter;
-		readStepNumber = true;
+		mReadStepNumber = true;
 	}
 	
 	if(!mFirstPlaybackStep && (mStepCounter > mCurrentStep->get())) {
 		return;
 	}
 	mFirstPlaybackStep = false;
-	readStepNumber = false;
+	mReadStepNumber = false;
 	
 	mCurrentStep->set(mStepCounter);
 	
@@ -443,11 +465,74 @@ void SimulationRecorder::playbackData() {
 }
 
 
+void SimulationRecorder::updateRecordedValueNameList() {
+	mRecordedValueNameList->set("Number of Values: " 
+					+ QString::number(mRecordedValueNames.size()) 
+					+ "\n\n" + mRecordedValueNames.join("\n"));
+}
+
+
 
 void SimulationRecorder::updateListOfRecordedValues() {
 	
-	
 	mRecordedValues.clear();
+	mRecordedValueNames.clear();
+	
+	ValueManager *vm = Core::getInstance()->getValueManager();
+
+	QStringList entries = mObservedValues->get().split("\n");
+	
+	for(QStringListIterator i(entries); i.hasNext();) {
+		QString entry = i.next();
+		
+		
+		//Add all input and output neurons (Interface Values) if requested.
+		if(entry.trimmed() == "[Interfaces]") {
+			
+			QList<Value*> allValues = vm->getValuesMatchingPattern("/Sim/.*");
+			for(QListIterator<Value*> i(allValues); i.hasNext();) {
+				InterfaceValue *iv = dynamic_cast<InterfaceValue*>(i.next());
+				if(iv != 0) {
+					QString name = vm->getNamesOfValue(iv).first();
+					if(!mRecordedValues.contains(iv)) {
+						mRecordedValues.append(iv);
+						mRecordedValueNames.append(name);
+					}
+				}
+			}
+			continue;
+		}
+		
+		
+		entry = entry.replace("**", ".*");
+		QList<QString> valueNames = vm->getValueNamesMatchingPattern(entry);
+
+		for(QListIterator<QString> j(valueNames); j.hasNext();) {
+			QString name = j.next();
+			Value* v = vm->getValue(name);
+			
+			MultiPartValue *mv = dynamic_cast<MultiPartValue*>(v);
+			if(mv != 0) {
+				for(int k = 0; k < mv->getNumberOfValueParts(); ++k) {
+					Value *mpv = mv->getValuePart(k);
+					if(!mRecordedValues.contains(mpv)) {
+						mRecordedValues.append(mpv);
+						mRecordedValueNames.append(name + ":" + mv->getValuePartName(k));
+					}
+				}
+			}
+			else {
+				if(!mRecordedValues.contains(v)) {
+					mRecordedValues.append(v);
+					mRecordedValueNames.append(name);
+				}
+			}
+		}
+	}
+	
+	
+	
+	/*
 	
 	PhysicsManager *pm = Physics::getPhysicsManager();
 	QList<SimObject*> objects = pm->getSimObjects();
@@ -483,6 +568,7 @@ void SimulationRecorder::updateListOfRecordedValues() {
 			mRecordedValues.append(j.next());
 		}
 	}
+	*/
 	
 	
 }
@@ -496,11 +582,14 @@ void SimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 	
 	QString s;
 	
-	for(QListIterator<DoubleValue*> i(mRecordedValues); i.hasNext();) {
-		double value = i.next()->get();
-		dataStream << value;
-		
-		//s += QString::number(value) + ",";
+	for(QListIterator<Value*> i(mRecordedValues); i.hasNext();) {
+		Value *v = i.next();
+		if(dynamic_cast<DoubleValue*>(v) != 0) {
+			dataStream << dynamic_cast<DoubleValue*>(v)->get();
+		}
+		else if(dynamic_cast<IntValue*>(v) != 0) {
+			dataStream << ((qint32) dynamic_cast<IntValue*>(v)->get());
+		}
 	}
 	
 	//Core::log("Wrote: " + s, true);
@@ -516,16 +605,25 @@ void SimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 	
 	//QString s;
 	
-	double val = 0.0;
 	int counter = 0;
-	for(QListIterator<DoubleValue*> i(mRecordedValues); i.hasNext() && (counter < numberOfValues);) {
-		dataStream >> val;
-		i.next()->set(val);
+	for(QListIterator<Value*> i(mRecordedValues); i.hasNext() && (counter < numberOfValues);) {
+		Value *v = i.next();
+		if(dynamic_cast<DoubleValue*>(v) != 0) {
+			double val = 0;
+			dataStream >> val;
+			dynamic_cast<DoubleValue*>(v)->set(val);
+		}
+		else if(dynamic_cast<IntValue*>(v) != 0) {
+			qint32 val = 0;
+			dataStream >> val;
+			dynamic_cast<IntValue*>(v)->set(val);
+		}
 		counter++;
 		
 		//s += QString::number(val) + ",";
 	}
 	//make sure that the network information can be read afterwards, even when objects are missing.
+	double val = 0;
 	for(; counter < numberOfValues; ++counter) {
 		dataStream >> val;
 	}

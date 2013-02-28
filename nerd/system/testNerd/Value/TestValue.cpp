@@ -1550,13 +1550,13 @@ void TestValue::testCodeValue() {
 	
 	//set and get (and handling of newline characters)
 	QVERIFY(v1.get() == "");
-	v1.set("Hallo Welt\nThis is a\nmulti-line string");
-	QVERIFY(v1.get() == "Hallo Welt\nThis is a\nmulti-line string");
-	QVERIFY(v1.getValueAsString() == "Hallo Welt/**/This is a/**/multi-line string");
+	v1.set("Hallo Welt\nThis is a\nmulti-line string with a value description /Sim/**/Hello");
+	QVERIFY(v1.get() == "Hallo Welt\nThis is a\nmulti-line string with a value description /Sim/**/Hello");
+	QVERIFY(v1.getValueAsString() == "Hallo Welt/**/This is a/**/multi-line string with a value description /Sim/***/Hello");
 	
-	QVERIFY(v1.setValueFromString("Here/**/Another Twoliner") == true);
-	QVERIFY(v1.getValueAsString() == "Here/**/Another Twoliner");
-	QVERIFY(v1.get() == "Here\nAnother Twoliner");
+	QVERIFY(v1.setValueFromString("Here/**/Another Twoliner with value /Sim/***/Steps") == true);
+	QVERIFY(v1.getValueAsString() == "Here/**/Another Twoliner with value /Sim/***/Steps");
+	QVERIFY(v1.get() == "Here\nAnother Twoliner with value /Sim/**/Steps");
 	
 	//constructor with string initializer
 	CodeValue v2("This is a code fragment\nWith newline characters!");
@@ -1566,8 +1566,8 @@ void TestValue::testCodeValue() {
 	
 	//copy constructor
 	CodeValue v3(v1);
-	QVERIFY(v3.getValueAsString() == "Here/**/Another Twoliner");
-	QVERIFY(v3.get() == "Here\nAnother Twoliner");
+	QVERIFY(v3.getValueAsString() == "Here/**/Another Twoliner with value /Sim/***/Steps");
+	QVERIFY(v3.get() == "Here\nAnother Twoliner with value /Sim/**/Steps");
 }
 
 

@@ -258,7 +258,8 @@ bool ScriptEditor::attachToCodeBase(CodeValue *code) {
 void ScriptEditor::applyButtonPressed() {
 	QString code = mCodeArea->document()->toPlainText();
 	if(mScriptCode != 0 && mAutoHandleChanges) {
-		Core::getInstance()->scheduleTask(new ChangeValueTask(mScriptCode, code));
+		CodeValue cv(code);
+		Core::getInstance()->scheduleTask(new ChangeValueTask(mScriptCode, cv.getValueAsString()));
 	}
 	emit handleChangedContent(code);
 	emit markAsUnmodified();

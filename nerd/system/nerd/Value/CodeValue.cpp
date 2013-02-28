@@ -80,6 +80,7 @@ QString CodeValue::get() const {
 
 QString CodeValue::getValueAsString() const {
 	QString singleLine = mValue;
+	singleLine = singleLine.replace("/**/", "/***/");
 	singleLine = singleLine.replace("\n", "/**/");
 	return singleLine;
 }
@@ -87,6 +88,7 @@ QString CodeValue::getValueAsString() const {
 bool CodeValue::setValueFromString(const QString &value) {
 	QString multiLine = value;
 	multiLine = multiLine.replace("/**/", "\n");
+	multiLine = multiLine.replace("/***/", "/**/");
 	set(multiLine);
 	return true;
 }

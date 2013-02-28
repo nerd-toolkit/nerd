@@ -57,8 +57,10 @@
 #include "Value/StringValue.h"
 #include "Value/FileNameValue.h"
 #include "Value/BoolValue.h"
+#include <Value/CodeValue.h>
 #include <QFile>
 #include <QVarLengthArray>
+#include <qstringlist.h>
 
 namespace nerd {
 
@@ -90,6 +92,9 @@ namespace nerd {
 		virtual bool stopPlayback();
 		virtual void playbackData();
 		
+		virtual void updateRecordedValueNameList();
+
+		
 	protected:
 		
 		virtual void updateListOfRecordedValues();
@@ -112,22 +117,29 @@ namespace nerd {
 		BoolValue *mIncludeSimulation;
 		IntValue *mRecordingInterval;
 		
-		QList<DoubleValue*> mRecordedValues;
+		
 		
 		bool mPhysicsWasDisabled;
 		
 	protected:
+		QList<Value*> mRecordedValues;
+		QStringList mRecordedValueNames;
+		
 		QFile *mFile;
 		QByteArray mData;
 		QDataStream *mDataStream;
 		QDataStream mFileDataStream;
+		
+		CodeValue *mObservedValues;
+		CodeValue *mRecordedValueNameList;
 		
 		int mExecutionMode;
 		bool mReachedAndOfFile;
 		
 		int mStepCounter;
 		bool mFirstPlaybackStep;
-		bool readStepNumber;
+		bool mReadStepNumber;
+		uint mVersion;
 	};
 
 }

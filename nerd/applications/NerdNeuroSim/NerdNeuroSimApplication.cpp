@@ -85,7 +85,7 @@
 #include "Logging/SimpleFitnessLogger.h"
 #include <NerdConstants.h>
 #include <NeuroModulation/NeuroModulatorManager.h>
-#include "PlugIns/NetworkSimulationRecorder/NetworkSimulationRecorder.h"
+#include "Gui/NetworkSimulationRecorder/NetworkSimulationRecorder.h"
 
 using namespace std;
 

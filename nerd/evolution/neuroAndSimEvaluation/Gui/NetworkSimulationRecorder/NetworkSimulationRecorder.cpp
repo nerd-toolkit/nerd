@@ -189,8 +189,8 @@ void NetworkSimulationRecorder::updateListOfRecordedValues() {
 void NetworkSimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 	
 	
-	SimulationRecorder::updateListOfRecordedValues();
 	if(mNetworksChanged) {
+		//TODO check for missing neurons from required set!
 		updateListOfRecordedValues();
 	}
 	
@@ -251,9 +251,9 @@ void NetworkSimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 
 
 void NetworkSimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
-	SimulationRecorder::updateListOfRecordedValues();
 	
 	if(mNetworksChanged) {
+		//TODO check for missing neurons etc.
 		updateListOfRecordedValues();
 	}
 	

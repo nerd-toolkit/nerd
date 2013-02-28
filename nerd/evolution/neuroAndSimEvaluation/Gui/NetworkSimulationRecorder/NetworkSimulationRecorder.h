@@ -58,7 +58,7 @@
 #include "Value/StringValue.h"
 #include "Value/FileNameValue.h"
 #include "Value/BoolValue.h"
-#include "PlugIns/SimulationRecorder/SimulationRecorder.h"
+#include "Gui/SimulationRecorder/SimulationRecorder.h"
 #include "Network/NeuralNetworkManager.h"
 
 namespace nerd {
