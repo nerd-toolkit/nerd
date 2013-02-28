@@ -144,7 +144,7 @@ set(nerd_simulator_SRCS
 	Physics/InternalStateValue.cpp
 	Physics/ExternalSensorAdapter.cpp
 	Physics/SphericLightSource.cpp
-	PlugIns/SimulationRecorder/SimulationRecorder.cpp
+	Gui/SimulationRecorder/SimulationRecorder.cpp
 	Physics/BallAndSocketJoint.cpp
 	Util/SetSnapshotValueTaskFactory.cpp
 )
