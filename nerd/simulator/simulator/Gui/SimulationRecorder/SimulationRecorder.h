@@ -61,6 +61,8 @@
 #include <QFile>
 #include <QVarLengthArray>
 #include <qstringlist.h>
+#include <qtextstream.h>
+#include "Value/RangeValue.h"
 
 namespace nerd {
 
@@ -98,8 +100,10 @@ namespace nerd {
 	protected:
 		
 		virtual void updateListOfRecordedValues();
+		virtual void syncWithListOfRecordedValues();
 		virtual void updateRecordedData(QDataStream &dataStream);
 		virtual void updatePlaybackData(QDataStream &dataStream);
+		virtual void writeInfoFile(QTextStream &dataStream);
 
 	private:	
 		Event *mResetEvent;
@@ -114,12 +118,15 @@ namespace nerd {
 		FileNameValue *mRecordingDirectory;
 		StringValue *mFileNamePrefix;
 		FileNameValue *mPlaybackFile;
-		BoolValue *mIncludeSimulation;
 		IntValue *mRecordingInterval;
-		
+		RangeValue *mStartEndFrameValue;
+		IntValue *mNumberOfFramesValue;
 		
 		
 		bool mPhysicsWasDisabled;
+		Range mStartEndFrameRange;
+		int mNumberOfFrames;
+		uint mFrameNumber;
 		
 	protected:
 		QList<Value*> mRecordedValues;

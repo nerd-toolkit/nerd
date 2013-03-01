@@ -86,7 +86,7 @@ QString NetworkSimulationRecorder::getName() const {
 
 
 bool NetworkSimulationRecorder::init() {
-	return SimulationRecorder::init();
+	return SimulationRecorder::init(); 
 }
 
 
@@ -168,6 +168,7 @@ bool NetworkSimulationRecorder::stopPlayback() {
 void NetworkSimulationRecorder::updateListOfRecordedValues() {
 	SimulationRecorder::updateListOfRecordedValues();
 	
+	/*
 	QMutexLocker locker(mNetworkManager->getNetworkExecutionMutex());
 	
 	mNeurons.clear();
@@ -182,7 +183,7 @@ void NetworkSimulationRecorder::updateListOfRecordedValues() {
 	}
 	
 	mNetworksChanged = false;
-	
+	*/
 }
 
 
@@ -195,7 +196,7 @@ void NetworkSimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 	}
 	
 	SimulationRecorder::updateRecordedData(dataStream);
-	
+	/*
 	if(mIncludeNetworks->get() == false) {
 		return;
 	}
@@ -245,7 +246,7 @@ void NetworkSimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 		
 		dataStream << synapse->getId() << synapse->getStrengthValue().get();
 	}
-	
+	*/
 	
 }
 
@@ -259,6 +260,7 @@ void NetworkSimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 	
 	SimulationRecorder::updatePlaybackData(dataStream);
 	
+	/*
 	if(mIncludeNetworks->get() == false) {
 		return;
 	}
@@ -332,6 +334,7 @@ void NetworkSimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 		}
 		synapse->getStrengthValue().set(weight);
 	}
+	*/
 	
 }
 
