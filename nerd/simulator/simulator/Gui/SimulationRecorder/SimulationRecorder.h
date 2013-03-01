@@ -117,10 +117,11 @@ namespace nerd {
 		BoolValue *mActivatePlayback;
 		FileNameValue *mRecordingDirectory;
 		StringValue *mFileNamePrefix;
-		FileNameValue *mPlaybackFile;
 		IntValue *mRecordingInterval;
 		RangeValue *mStartEndFrameValue;
 		IntValue *mNumberOfFramesValue;
+		IntValue *mDesiredFrameValue;
+		IntValue *mCurrentFrameValue;
 		
 		
 		bool mPhysicsWasDisabled;
@@ -129,6 +130,7 @@ namespace nerd {
 		uint mFrameNumber;
 		
 	protected:
+		FileNameValue *mPlaybackFile;
 		QList<Value*> mRecordedValues;
 		QStringList mRecordedValueNames;
 		

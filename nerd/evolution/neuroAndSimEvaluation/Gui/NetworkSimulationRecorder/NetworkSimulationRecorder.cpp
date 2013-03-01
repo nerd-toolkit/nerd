@@ -168,22 +168,163 @@ bool NetworkSimulationRecorder::stopPlayback() {
 void NetworkSimulationRecorder::updateListOfRecordedValues() {
 	SimulationRecorder::updateListOfRecordedValues();
 	
-	/*
+	QStringList entries = mObservedValues->get().split("\n");
+	
 	QMutexLocker locker(mNetworkManager->getNetworkExecutionMutex());
 	
-	mNeurons.clear();
-	mSynapses.clear();
-	
-	QList<NeuralNetwork*> networks = mNetworkManager->getNeuralNetworks();
-	for(QListIterator<NeuralNetwork*> i(networks); i.hasNext();) {
-		NeuralNetwork *network = i.next();
+	for(QStringListIterator i(entries); i.hasNext();) {
+		QString entry = i.next();
 		
-		mNeurons << network->getNeurons();
-		mSynapses << network->getSynapses();
+		
+		//Add all input and output neurons (Interface Values) if requested.
+		if(entry.trimmed() == "[Neurons,O]") {
+			QList<NeuralNetwork*> nets = mNetworkManager->getNeuralNetworks();
+			//TODO Later allow multiple networks.
+			//for(QListIterator<NeuralNetwork*> n(nets); i.hasNext();) {
+			//	NeuralNetwork *net = n.next();
+			if(!nets.empty()) {
+				NeuralNetwork *net = nets.at(0);
+				
+				QList<Neuron*> neurons = net->getNeurons();
+				for(QListIterator<Neuron*> j(neurons); j.hasNext();) {
+					Neuron *neuron = j.next();
+					mRecordedValues.append(&neuron->getOutputActivationValue());
+					mRecordedValueNames.append("[NO]" + QString::number(neuron->getId()));
+				}
+			}
+		}
+		else if(entry.trimmed() == "[Neurons,AF]") {
+			QList<NeuralNetwork*> nets = mNetworkManager->getNeuralNetworks();
+
+			if(!nets.empty()) {
+				NeuralNetwork *net = nets.at(0);
+				
+				QList<Neuron*> neurons = net->getNeurons();
+				for(QListIterator<Neuron*> j(neurons); j.hasNext();) {
+					Neuron *neuron = j.next();
+					ObservableNetworkElement *one = dynamic_cast<ObservableNetworkElement*>(neuron->getActivationFunction());
+					if(one != 0) {
+						QList<QString> oneNames = one->getObservableOutputNames();
+						for(QListIterator<QString> j(oneNames); j.hasNext();) {
+							QString oneName = j.next();
+							mRecordedValues.append(one->getObservableOutput(oneName));
+							mRecordedValueNames.append("[NAF]" + QString::number(neuron->getId()) + "[" + oneName + "]");
+						}
+					}
+				}
+			}
+		}
+		else if(entry.trimmed() == "[Synapses,W]") {
+			QList<NeuralNetwork*> nets = mNetworkManager->getNeuralNetworks();
+			
+			if(!nets.empty()) {
+				NeuralNetwork *net = nets.at(0);
+				
+				QList<Synapse*> synapses = net->getSynapses();
+				for(QListIterator<Synapse*> j(synapses); j.hasNext();) {
+					Synapse *synapse = j.next();
+					mRecordedValues.append(&synapse->getStrengthValue());
+					mRecordedValueNames.append("[SW]" + QString::number(synapse->getId()));
+				}
+			}
+		}
+		else if(entry.trimmed() == "[Synapses,SF]") {
+			QList<NeuralNetwork*> nets = mNetworkManager->getNeuralNetworks();
+
+			if(!nets.empty()) {
+				NeuralNetwork *net = nets.at(0);
+				
+				QList<Synapse*> synapses = net->getSynapses();
+				for(QListIterator<Synapse*> j(synapses); j.hasNext();) {
+					Synapse *synapse = j.next();
+					ObservableNetworkElement *one = dynamic_cast<ObservableNetworkElement*>(synapse->getSynapseFunction());
+					if(one != 0) {
+						QList<QString> oneNames = one->getObservableOutputNames();
+						for(QListIterator<QString> j(oneNames); j.hasNext();) {
+							QString oneName = j.next();
+							mRecordedValues.append(one->getObservableOutput(oneName));
+							mRecordedValueNames.append("[SSF]" + QString::number(synapse->getId()) + "[" + oneName + "]");
+						}
+					}
+				}
+			}
+		}
+		
 	}
-	
+
 	mNetworksChanged = false;
-	*/
+}
+
+
+void NetworkSimulationRecorder::syncWithListOfRecordedValues() {
+	QFile *infoFile = new QFile(mPlaybackFile->get() + "_info.txt");
+
+	if(!infoFile->open(QIODevice::ReadOnly)) {
+		Core::log(QString("Could not open file ").append(mFile->fileName()).append(" to record the simulation data."), true);
+		infoFile->close();
+		delete infoFile;
+		infoFile = 0;
+		return;
+	}	
+	
+	QMutexLocker locker(mNetworkManager->getNetworkExecutionMutex());
+	
+	if(!mNetworkManager->getNeuralNetworks().empty()) {
+		
+		NeuralNetwork *net = mNetworkManager->getNeuralNetworks().at(0);
+		QList<Neuron*> allNeurons = net->getNeurons();
+		QList<Synapse*> allSynapses = net->getSynapses();
+	
+		QTextStream dataStream(infoFile);
+		bool ok = true;
+		
+		while(!dataStream.atEnd()) {
+			
+			QString line = dataStream.readLine().trimmed();
+
+			if(line.startsWith("[NO]")) {
+				
+				qulonglong id = line.mid(4).toULongLong(&ok);
+				if(!ok) {
+					Core::log("NetworkSimulationRecorder: Could not parse neuron id [" + line + "]", true);
+					continue;
+				}
+				Neuron *neuron = net->selectNeuronById(id, allNeurons);
+				if(neuron == 0) {
+					Core::log("NetworkSimulationRecorder: Could not find neuron with id [" + QString::number(id) + "]", true);
+					continue;
+				}
+				mRecordedValues.append(&neuron->getOutputActivationValue());
+				mRecordedValueNames.append("[NO]" + QString::number(id));
+			}
+			else if(line.startsWith("[NAF]") && line.endsWith("]")) {
+				QString name = line.mid(5);
+				int s = name.lastIndexOf("[");
+				if(s <= 0) {
+					continue;
+				}
+				QString postfix = name.mid(s + 1, name.size() - 2 - s);
+				name = name.mid(0, s);
+				qulonglong id = name.toULongLong(&ok);
+				if(!ok) {
+					Core::log("NetworkSimulationRecorder: Could not parse neuron id [" + line + "]", true);
+					continue;
+				}
+				Neuron *neuron = net->selectNeuronById(id, allNeurons);
+				if(neuron == 0 || neuron->getTransferFunction() == 0) {
+					Core::log("NetworkSimulationRecorder: Could not find neuron with id [" + QString::number(id) + "]", true);
+					continue;
+				}
+				Value *obsParam = neuron->getTransferFunction()->getObservableOutput(postfix);
+				if(obsParam != 0) {
+					mRecordedValues.append(obsParam);
+					mRecordedValueNames.append("[NAF]" + QString::number(id) + "[" + postfix + "]");
+				}
+			}
+		}
+	}
+	infoFile->close();
+	delete infoFile;
 }
 
 

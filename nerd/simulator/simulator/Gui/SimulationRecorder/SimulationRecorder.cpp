@@ -79,6 +79,8 @@ SimulationRecorder::SimulationRecorder()
 	mRecordedValueNameList = new CodeValue();
 	mStartEndFrameValue = new RangeValue(0, 0);
 	mNumberOfFramesValue = new IntValue(0);
+	mDesiredFrameValue = new IntValue(-1);
+	mCurrentFrameValue = new IntValue(0);
 	
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/DataRecorder/ActivateRecording", mActivateRecording);
@@ -91,6 +93,8 @@ SimulationRecorder::SimulationRecorder()
 	vm->addValue("/DataRecorder/Record/RecordedValueNameList", mRecordedValueNameList);
 	vm->addValue("/DataRecorder/Playback/Range", mStartEndFrameValue);
 	vm->addValue("/DataRecorder/Playback/NumberOfFrames", mNumberOfFramesValue);
+	vm->addValue("/DataRecorder/Playback/DesiredFrame", mDesiredFrameValue);
+	vm->addValue("/DataRecorder/Playback/CurrentFrame", mCurrentFrameValue);
 	
 	mActivateRecording->addValueChangedListener(this);
 	mActivatePlayback->addValueChangedListener(this);
@@ -401,8 +405,7 @@ bool SimulationRecorder::startPlayback() {
 			mFileDataStream >> end;
 		}
 	}
-	cerr << "Has " << frameNumber << " frames: " << endl;
-	
+
 	mStartEndFrameValue->set(start, end);
 	mStartEndFrameRange.set(start, end);
 	mNumberOfFramesValue->set(mNumberOfFrames);
@@ -487,6 +490,43 @@ void SimulationRecorder::playbackData() {
 		mReadStepNumber = false;
 	}
 	
+	if(mDesiredFrameValue->get() >= mNumberOfFrames) {
+		mDesiredFrameValue->set(-1);
+	}
+	
+	//If a special frame is seeked, then try to find the matching frame in the file.
+	if(mDesiredFrameValue->get() >= 0) {
+		
+		mFile->reset();
+		uint tokenUInt = 0;
+		qint32 step = 0;
+		qint32 size = 0;
+		mFileDataStream >> tokenUInt;
+		
+		uint frameNumber = 0;
+		mFileDataStream >> frameNumber;
+		mFileDataStream >> step; //step number
+		while(((int) frameNumber) != mDesiredFrameValue->get() && !mFileDataStream.atEnd()) {
+			mFileDataStream >> size; //size
+			mFileDataStream.skipRawData(size);
+			mFileDataStream >> size; //second size
+			mFileDataStream >> frameNumber;
+			mFileDataStream >> step; //step number
+		}
+		
+		mDesiredFrameValue->set(-1);
+		
+		if(mFileDataStream.atEnd()) {
+			mReachedAndOfFile = true;
+			Core::log("Seeked frame is the end of the data stream!", true);
+			return;
+		}
+		mReadStepNumber = true;
+		mStepCounter = step;
+		mFrameNumber = frameNumber;
+		mCurrentStep->set(mStepCounter);
+	}
+	
 	//check if the new frame should be applied...
 	if(!mReadStepNumber) {
 		mFileDataStream >> mFrameNumber;
@@ -504,6 +544,7 @@ void SimulationRecorder::playbackData() {
 	mReadStepNumber = false;
 	
 	mCurrentStep->set(mStepCounter);
+	mCurrentFrameValue->set(mFrameNumber);
 	
 	uint size = 0;
 	mFileDataStream >> size;
@@ -655,6 +696,8 @@ void SimulationRecorder::syncWithListOfRecordedValues() {
 			}
 		}
 	}
+	infoFile->close();
+	delete infoFile;
 	
 }
 

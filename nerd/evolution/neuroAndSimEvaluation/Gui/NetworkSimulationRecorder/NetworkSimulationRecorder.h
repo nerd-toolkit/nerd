@@ -86,6 +86,7 @@ namespace nerd {
 		
 	protected:
 		virtual void updateListOfRecordedValues();
+		virtual void syncWithListOfRecordedValues();
 		virtual void updateRecordedData(QDataStream &dataStream);
 		virtual void updatePlaybackData(QDataStream &dataStream);
 		
