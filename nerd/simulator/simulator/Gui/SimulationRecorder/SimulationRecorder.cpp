@@ -71,6 +71,7 @@ SimulationRecorder::SimulationRecorder()
 
 	mActivateRecording = new BoolValue(false);
 	mActivatePlayback = new BoolValue(false);
+	mPlaybackSafeMode = new BoolValue(false);
 	mRecordingDirectory = new FileNameValue(Core::getInstance()->getConfigDirectoryPath() + "/" + "dataRecording/");
 	mFileNamePrefix = new StringValue("rec");
 	mPlaybackFile = new FileNameValue("");
@@ -82,6 +83,27 @@ SimulationRecorder::SimulationRecorder()
 	mDesiredFrameValue = new IntValue(-1);
 	mCurrentFrameValue = new IntValue(0);
 	
+	
+	mPlaybackSafeMode->setDescription("Is slower, but works with corrupt files, e.g. after "
+										"a crash of if the harddrive was full.");
+	mRecordingDirectory->setDescription("The directory in which all files are stored");
+	mFileNamePrefix->setDescription("The file name prefix. The recorder makes sure that the "
+										"final file name is unique, using numbers as postfix.");
+	mPlaybackFile->setDescription("The DATA file to play back. This is the file without .onn, .js or _info.txt");
+	mRecordingInterval->setDescription("The interval at which frames are recorded. "
+										"\nOnly every nth simulation step is recorded."
+										"\nThis is important to reduce the file size");
+	mObservedValues->setDescription("Describes the values to record in terms of regular expressions."
+										"\nPredefined values are: "
+										"\n- [Interfaces] All interface values (motors and sensors) of the simluation.");
+	mRecordedValueNameList->setDescription("Do not change this data. Gives an overview on the actually recorded values"
+										"\nafter applying the regular expressions of RecordedValues.");
+	mStartEndFrameValue->setDescription("The range of simulation steps covered by the currently playing data file.");
+	mNumberOfFramesValue->setDescription("The number of data frames contained in the playing data file.");
+	mDesiredFrameValue->setDescription("Can be used to jump to a desired frame number during playback."
+										"\nFrames < 0 and > NumberOfFrames have no effect. Note that seeking over large"
+										"\ndistances can take some time!");
+	
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/DataRecorder/ActivateRecording", mActivateRecording);
 	vm->addValue("/DataRecorder/ActivatePlayback", mActivatePlayback);
@@ -91,6 +113,7 @@ SimulationRecorder::SimulationRecorder()
 	vm->addValue("/DataRecorder/RecordingInterval", mRecordingInterval);
 	vm->addValue("/DataRecorder/RecordedValues", mObservedValues);
 	vm->addValue("/DataRecorder/Record/RecordedValueNameList", mRecordedValueNameList);
+	vm->addValue("/DataRecorder/Playback/SafeMode", mPlaybackSafeMode);
 	vm->addValue("/DataRecorder/Playback/Range", mStartEndFrameValue);
 	vm->addValue("/DataRecorder/Playback/NumberOfFrames", mNumberOfFramesValue);
 	vm->addValue("/DataRecorder/Playback/DesiredFrame", mDesiredFrameValue);
@@ -371,8 +394,6 @@ bool SimulationRecorder::startPlayback() {
 	
 	mFileDataStream.setDevice(mFile);
 	
-	
-	
 	//determine start, end and number of frames.
 	mNumberOfFrames = 0;
 	if(mFileDataStream.atEnd()) {
@@ -391,24 +412,43 @@ bool SimulationRecorder::startPlayback() {
 	mFileDataStream >> start;
 	qint32 end = start;
 	
-	uint size = 0;
-	while(!mFileDataStream.atEnd()) {
-		++mNumberOfFrames;
+	if(!mPlaybackSafeMode->get()) {
+		uint size = 0;
+		qint64 fileSize = mFile->size();
+		mFile->seek(fileSize - sizeof(uint));
+		mFileDataStream >> size;
+		mFile->seek(mFile->pos() - size - (2 * sizeof(uint)) - (2 * sizeof(qint32)));
+		mFileDataStream >> frameNumber;
+		mFileDataStream >> end;
 		
-		mFileDataStream >> size;
-		mFileDataStream.skipRawData(size);
-		mFileDataStream >> size;
-		if(!mFileDataStream.atEnd()) {
-			mFileDataStream >> frameNumber;
-		}
-		if(!mFileDataStream.atEnd()) {
-			mFileDataStream >> end;
-		}
+		mNumberOfFrames = frameNumber + 1;
+		
+		mStartEndFrameValue->set(start, end);
+		mStartEndFrameRange.set(start, end);
+		mNumberOfFramesValue->set(mNumberOfFrames);
 	}
+	else {
+		//this is much slower, but it also works with corrupt files that 
+		//may occur when no space is left on a defice during writing.
+		uint size = 0;
+		while(!mFileDataStream.atEnd()) {
+			++mNumberOfFrames;
+			
+			mFileDataStream >> size;
+			mFileDataStream.skipRawData(size);
+			mFileDataStream >> size;
+			if(!mFileDataStream.atEnd()) {
+				mFileDataStream >> frameNumber;
+			}
+			if(!mFileDataStream.atEnd()) {
+				mFileDataStream >> end;
+			}
+		}
 
-	mStartEndFrameValue->set(start, end);
-	mStartEndFrameRange.set(start, end);
-	mNumberOfFramesValue->set(mNumberOfFrames);
+		mStartEndFrameValue->set(start, end);
+		mStartEndFrameRange.set(start, end);
+		mNumberOfFramesValue->set(mNumberOfFrames);
+	}
 	
 	mFrameNumber = 0;
 	
@@ -490,28 +530,66 @@ void SimulationRecorder::playbackData() {
 		mReadStepNumber = false;
 	}
 	
-	if(mDesiredFrameValue->get() >= mNumberOfFrames) {
+	if(mDesiredFrameValue->get() >= mNumberOfFrames || mDesiredFrameValue->get() == ((int) mFrameNumber)) {
 		mDesiredFrameValue->set(-1);
 	}
 	
 	//If a special frame is seeked, then try to find the matching frame in the file.
 	if(mDesiredFrameValue->get() >= 0) {
 		
-		mFile->reset();
-		uint tokenUInt = 0;
+		bool fwd = true;
+		if(mDesiredFrameValue->get() < ((int)  mFrameNumber)) {
+			fwd = false;
+		}
+		
 		qint32 step = 0;
 		qint32 size = 0;
-		mFileDataStream >> tokenUInt;
-		
 		uint frameNumber = 0;
-		mFileDataStream >> frameNumber;
-		mFileDataStream >> step; //step number
-		while(((int) frameNumber) != mDesiredFrameValue->get() && !mFileDataStream.atEnd()) {
-			mFileDataStream >> size; //size
-			mFileDataStream.skipRawData(size);
-			mFileDataStream >> size; //second size
-			mFileDataStream >> frameNumber;
-			mFileDataStream >> step; //step number
+		
+		//determine where to start to speed up seeking
+		if(!mPlaybackSafeMode->get() && fwd && (mDesiredFrameValue->get() - ((int) mFrameNumber) > (mNumberOfFrames - mDesiredFrameValue->get()))) {
+			fwd = false;
+			mFile->seek(mFile->size() - sizeof(uint));
+			mFileDataStream >> size;
+			mFile->seek(mFile->pos() - size - (2 * sizeof(uint)) - (2 * sizeof(qint32)));
+			mReadStepNumber = false;
+		}
+		else if(!fwd && (((int) mFrameNumber - mDesiredFrameValue->get()) > mDesiredFrameValue->get())) {
+			uint version = 0;
+			fwd = true;
+			mFile->reset();
+			mFileDataStream >> version;
+			mReadStepNumber = false;
+		}
+		
+		if(fwd) {
+			if(!mReadStepNumber) {
+				mFileDataStream >> frameNumber;
+				mFileDataStream >> step; //step number
+			}
+			while(((int) frameNumber) != mDesiredFrameValue->get() && !mFileDataStream.atEnd()) {
+				mFileDataStream >> size; //size
+				mFileDataStream.skipRawData(size);
+				mFileDataStream >> size; //second size
+				mFileDataStream >> frameNumber;
+				mFileDataStream >> step; //step number
+			}
+		}
+		else {
+			if(!mReadStepNumber) {
+				mFileDataStream >> frameNumber;
+				mFileDataStream >> step; //step number
+			}
+			do {
+				mFile->seek(mFile->pos() - sizeof(size) - sizeof(step) - sizeof(frameNumber));
+				mFileDataStream >> size;
+				cerr << "Size: " << size << " | ";
+				mFile->seek(mFile->pos() - size - sizeof(step) - (2 * sizeof(size)) - sizeof(frameNumber));
+				mFileDataStream >> frameNumber;
+				mFileDataStream >> step; //step number
+				cerr << "FrameNo: " << frameNumber << " step " << step << endl;
+				
+			} while(((int) frameNumber) != mDesiredFrameValue->get() && !mFileDataStream.atEnd());
 		}
 		
 		mDesiredFrameValue->set(-1);
@@ -525,6 +603,35 @@ void SimulationRecorder::playbackData() {
 		mStepCounter = step;
 		mFrameNumber = frameNumber;
 		mCurrentStep->set(mStepCounter);
+		
+// 		mFile->reset();
+// 		uint tokenUInt = 0;
+// 		qint32 step = 0;
+// 		qint32 size = 0;
+// 		mFileDataStream >> tokenUInt;
+// 		
+// 		uint frameNumber = 0;
+// 		mFileDataStream >> frameNumber;
+// 		mFileDataStream >> step; //step number
+// 		while(((int) frameNumber) != mDesiredFrameValue->get() && !mFileDataStream.atEnd()) {
+// 			mFileDataStream >> size; //size
+// 			mFileDataStream.skipRawData(size);
+// 			mFileDataStream >> size; //second size
+// 			mFileDataStream >> frameNumber;
+// 			mFileDataStream >> step; //step number
+// 		}
+// 		
+// 		mDesiredFrameValue->set(-1);
+// 		
+// 		if(mFileDataStream.atEnd()) {
+// 			mReachedAndOfFile = true;
+// 			Core::log("Seeked frame is the end of the data stream!", true);
+// 			return;
+// 		}
+// 		mReadStepNumber = true;
+// 		mStepCounter = step;
+// 		mFrameNumber = frameNumber;
+// 		mCurrentStep->set(mStepCounter);
 	}
 	
 	//check if the new frame should be applied...
@@ -582,6 +689,8 @@ void SimulationRecorder::updateRecordedValueNameList() {
 
 
 void SimulationRecorder::updateListOfRecordedValues() {
+	
+	
 	
 	mRecordedValues.clear();
 	mRecordedValueNames.clear();
@@ -751,8 +860,7 @@ void SimulationRecorder::writeInfoFile(QTextStream &dataStream) {
 	
 	dataStream << QString("Date: " + QDate::currentDate().toString("yy-MM-dd") + " at "
 			+ QTime::currentTime().toString("hh-mm-ss") + "\n\n");
-	dataStream << QString("Data File: " + mPlaybackFile->get() + "\n\n");
-			
+	dataStream << QString("Data File: " + mPlaybackFile->get() + "\n\n");	
 	dataStream << QString("Parameter Search Pattern:\n\n" + mObservedValues->get() + "\n\n");
 	dataStream << QString("Parameters: \n\n[Params]\n" + mRecordedValueNameList->get() + "\n[/Params]\n\n");
 }

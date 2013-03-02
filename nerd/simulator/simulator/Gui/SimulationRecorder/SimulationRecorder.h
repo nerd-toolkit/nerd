@@ -115,6 +115,7 @@ namespace nerd {
 		
 		BoolValue *mActivateRecording;
 		BoolValue *mActivatePlayback;
+		BoolValue *mPlaybackSafeMode;
 		FileNameValue *mRecordingDirectory;
 		StringValue *mFileNamePrefix;
 		IntValue *mRecordingInterval;
