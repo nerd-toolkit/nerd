@@ -73,6 +73,8 @@ namespace nerd {
 							public virtual ValueChangedListener 
 	{
 	public:
+		enum {SIMREC_OFF, SIMREC_RECORDING, SIMREC_PLAYBACK};
+	public:
 		SimulationRecorder();
 		virtual ~SimulationRecorder();
 
@@ -112,6 +114,7 @@ namespace nerd {
 		
 		IntValue *mCurrentStep;
 		BoolValue *mPhysicsDisabled;
+		BoolValue *mSimulationPaused;
 		
 		BoolValue *mActivateRecording;
 		BoolValue *mActivatePlayback;
@@ -129,6 +132,7 @@ namespace nerd {
 		Range mStartEndFrameRange;
 		int mNumberOfFrames;
 		uint mFrameNumber;
+		bool mWasPaused;
 		
 	protected:
 		FileNameValue *mPlaybackFile;

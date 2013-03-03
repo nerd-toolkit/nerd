@@ -64,7 +64,7 @@ namespace nerd {
 
 SimulationRecorder::SimulationRecorder()
 	: mResetEvent(0), mStepCompletedEvent(0), mPhysicsWasDisabled(false), mStartEndFrameRange(0, 0), 
-		mNumberOfFrames(0), mFrameNumber(0), mFile(0), mDataStream(0), mExecutionMode(0)
+		mNumberOfFrames(0), mFrameNumber(0), mWasPaused(false),  mFile(0), mDataStream(0), mExecutionMode(SIMREC_OFF)
 		
 {
 	Core::getInstance()->addSystemObject(this);
@@ -103,6 +103,8 @@ SimulationRecorder::SimulationRecorder()
 	mDesiredFrameValue->setDescription("Can be used to jump to a desired frame number during playback."
 										"\nFrames < 0 and > NumberOfFrames have no effect. Note that seeking over large"
 										"\ndistances can take some time!");
+	
+	mDesiredFrameValue->addValueChangedListener(this);
 	
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/DataRecorder/ActivateRecording", mActivateRecording);
@@ -159,6 +161,7 @@ bool SimulationRecorder::bind() {
 	
 	mCurrentStep = vm->getIntValue(SimulationConstants::VALUE_EXECUTION_CURRENT_STEP);
 	mPhysicsDisabled = vm->getBoolValue(SimulationConstants::VALUE_DISABLE_PHYSICS);
+	mSimulationPaused = vm->getBoolValue(SimulationConstants::VALUE_EXECUTION_PAUSE);
 
 	if(mResetEvent == 0) {
 		Core::log("SimulationRecorder: Could not find Event [" + NerdConstants::EVENT_EXECUTION_RESET + "]", true);
@@ -174,16 +177,20 @@ bool SimulationRecorder::bind() {
 	if(mPhysicsDisabled == 0) {
 		Core::log("SimulationRecorder: Could not find Value [" + SimulationConstants::VALUE_DISABLE_PHYSICS  + "]", true);
 	}
+	if(mSimulationPaused == 0) {
+		Core::log("SimulationRecorder: Could not find Value [" + SimulationConstants::VALUE_EXECUTION_PAUSE  + "]", true);
+	}
+	
 
 	return ok;
 }
 
 
 bool SimulationRecorder::cleanUp() {
-	if(mExecutionMode == 1) {
+	if(mExecutionMode == SIMREC_RECORDING) {
 		stopRecording();
 	}
-	else if(mExecutionMode == -1) {
+	else if(mExecutionMode == SIMREC_PLAYBACK) {
 		stopPlayback();
 	}
 	mActivateRecording->removeValueChangedListener(this);
@@ -201,6 +208,18 @@ void SimulationRecorder::eventOccured(Event *event) {
 	}
 	else if(event == mStepCompletedEvent) {
 		recordData();
+		
+		//If the step was executed after a one-step trigger during pause mode, then recover pause mode.
+		if(mSimulationPaused != 0 && !mSimulationPaused->get() && mWasPaused) {
+			mSimulationPaused->set(mWasPaused);
+
+			if(mExecutionMode == SIMREC_PLAYBACK) {
+				mStepCompletedEvent->removeEventListener(this);
+			}
+			
+			mWasPaused = false;
+		}
+		
 	}
 	else if(event == mStepStartedEvent) {
 		playbackData();
@@ -227,12 +246,35 @@ void SimulationRecorder::valueChanged(Value *value) {
 			stopPlayback();
 		}
 	}
+	else if(value == mDesiredFrameValue && mDesiredFrameValue->get() > 0) {
+		
+		//If the simulation is paused, execute a single step only to apply the settings
+		//of the recovered data frame (see eventOccured() for pause recovery).
+		
+		if((mExecutionMode == SIMREC_PLAYBACK) && mSimulationPaused != 0) {
+			mWasPaused = mWasPaused | mSimulationPaused->get();
+			mSimulationPaused->set(false);
+			mStepCompletedEvent->addEventListener(this);
+		}
+	}
 }
 
 
+/**
+ * Prepares the recorder for recording.
+ * If the recorder is in playback mode, then playback is stopped.
+ * Prior to the recording, several files are stored to allow a recovery of the recording conditions.
+ * This includes the environment files, the executed network, etc.
+ * Also, a _info file is created that contains information about the content of the data file. 
+ * DO NOT CHANGE THAT FILE if you're not sure what you're doing as it is also used to assign values during playback.
+ * For the data, a new, unique file is opened and initialized with a version id. You can only load data files with 
+ * the proper version number (so you need a matching NERD release with the correct data format. This may change over time!
+ * 
+ * The actual recording is then done with recordData() at every simulation step.
+ */
 void SimulationRecorder::startRecording() {
 
-	if(mExecutionMode == -1) {
+	if(mExecutionMode == SIMREC_PLAYBACK) {
 		stopPlayback();
 	}
 	if(mStepCompletedEvent == 0) {
@@ -249,7 +291,7 @@ void SimulationRecorder::startRecording() {
 	
 	Core::getInstance()->enforceDirectoryPath(mRecordingDirectory->get());
 	
-	//create file
+	//create file (find a unique name with the desired prefix)
 	int counter = 1;
 	QFile file;
 	do {
@@ -264,6 +306,7 @@ void SimulationRecorder::startRecording() {
 		mFile->close();
 		delete mFile;
 		mFile = 0;
+		stopRecording();
 		return;
 	}
 	
@@ -277,10 +320,12 @@ void SimulationRecorder::startRecording() {
 	//update the string list of value names.
 	updateRecordedValueNameList();
 	
+	//write the info file that contains the information on the value mapping!
 	QFile infoFile(file.fileName().append("_info.txt"));
 	if(!infoFile.open(QIODevice::WriteOnly)) {
 		Core::log(QString("Could not open infor file ").append(infoFile.fileName()).append("."), true);
 		infoFile.close();
+		stopRecording();
 		return;
 	}
 	
@@ -297,11 +342,15 @@ void SimulationRecorder::startRecording() {
 	//write data file format version number
 	mFileDataStream << ((uint) 2);
 	
-	mExecutionMode = 1;
+	mExecutionMode = SIMREC_RECORDING;
 	mStepCounter = 0;
 	
 }
 
+
+/**
+ * Stops the recording and finalizes the data file.
+ */
 void SimulationRecorder::stopRecording() {
 	if(mStepCompletedEvent == 0 || mFile == 0) {
 		return;
@@ -326,16 +375,18 @@ void SimulationRecorder::stopRecording() {
 		mActivateRecording->set(false);
 	}
 	
-	mExecutionMode = 0;
+	mExecutionMode = SIMREC_OFF;
 }
 
 
 /**
  * Records a full data frame of the simulation. If forceRecording is true, then the frame is definively recorded. 
  * Otherwise, a recodring takes only place according to the recording policy, e.g. every nth time frame.
+ * Data format: frameNumber | currentStep | frameSize | data... | frameSize
+ * See the dataformat description for the full format.
  */
 void SimulationRecorder::recordData(bool forceRecording) {
-	if(mExecutionMode != 1) {
+	if(mExecutionMode != SIMREC_RECORDING) {
 		return;
 	}
 	
@@ -356,7 +407,7 @@ void SimulationRecorder::recordData(bool forceRecording) {
 	
 	updateRecordedData(*mDataStream);
 	
-	//write the number of bytes before and after the block to allow a backseeking.
+	//write the number of bytes before and after the block to allow seeking backwards.
 	mFileDataStream << ((uint) mFrameNumber);
 	mFileDataStream << ((qint32) mCurrentStep->get());
 	mFileDataStream << ((uint) mData.size());
@@ -370,9 +421,19 @@ void SimulationRecorder::recordData(bool forceRecording) {
 }
 
 
-
+/**
+ * Starts to playback a data file.
+ * If the recorder is still in recording mode, then that mode is switched off first.
+ * 
+ * To playback a data file, you need the exact same configuration of the NERD experiment
+ * (network, environment, scripts, etc.) and you require the _info file next to the data file.
+ * The needed objects in the system are listed in _info. 
+ * 
+ * Before showing the first frame, the number of frames and the range of the simulation time
+ * are summarized. If this makes problems, try to use the slower PlaybackSafeMode (for currupt files).
+ */
 bool SimulationRecorder::startPlayback() {
-	if(mExecutionMode == 1) {
+	if(mExecutionMode == SIMREC_RECORDING) {
 		stopRecording();
 	}
 	
@@ -461,7 +522,7 @@ bool SimulationRecorder::startPlayback() {
 	
 	updateRecordedValueNameList();
 	
-	mExecutionMode = -1;
+	mExecutionMode = SIMREC_PLAYBACK;
 	
 	mReachedAndOfFile = true;
 	
@@ -471,7 +532,10 @@ bool SimulationRecorder::startPlayback() {
 	return true;
 }
 
-
+/**
+ * Stops the playback mode. 
+ * The simulation continues as before, continuing with the last simulation step count of the playback.
+ */
 bool SimulationRecorder::stopPlayback() {
 	
 	mStepStartedEvent->removeEventListener(this);
@@ -495,14 +559,19 @@ bool SimulationRecorder::stopPlayback() {
 	
 	mFileDataStream.setDevice(0);
 	
-	mExecutionMode = 0;
+	mExecutionMode = SIMREC_OFF;
 	
 	return true;
 }
 
 
+/**
+ * Plays back a single data frame.
+ * To allow simulations in real-time, the 'missing' simulation steps between two recorded data frames
+ * are still executed as normal, hereby NOT updating the data until the next valid frame is required.
+ */
 void SimulationRecorder::playbackData() {
-	if(mExecutionMode != -1) {
+	if(mExecutionMode != SIMREC_PLAYBACK) {
 		return;
 	}
 	
@@ -562,6 +631,7 @@ void SimulationRecorder::playbackData() {
 			mReadStepNumber = false;
 		}
 		
+		//seek forwards or backwards to find the correct frame.
 		if(fwd) {
 			if(!mReadStepNumber) {
 				mFileDataStream >> frameNumber;
@@ -583,11 +653,9 @@ void SimulationRecorder::playbackData() {
 			do {
 				mFile->seek(mFile->pos() - sizeof(size) - sizeof(step) - sizeof(frameNumber));
 				mFileDataStream >> size;
-				cerr << "Size: " << size << " | ";
 				mFile->seek(mFile->pos() - size - sizeof(step) - (2 * sizeof(size)) - sizeof(frameNumber));
 				mFileDataStream >> frameNumber;
 				mFileDataStream >> step; //step number
-				cerr << "FrameNo: " << frameNumber << " step " << step << endl;
 				
 			} while(((int) frameNumber) != mDesiredFrameValue->get() && !mFileDataStream.atEnd());
 		}
@@ -599,39 +667,12 @@ void SimulationRecorder::playbackData() {
 			Core::log("Seeked frame is the end of the data stream!", true);
 			return;
 		}
+		
+		//mark this frame / step as already read.
 		mReadStepNumber = true;
 		mStepCounter = step;
 		mFrameNumber = frameNumber;
 		mCurrentStep->set(mStepCounter);
-		
-// 		mFile->reset();
-// 		uint tokenUInt = 0;
-// 		qint32 step = 0;
-// 		qint32 size = 0;
-// 		mFileDataStream >> tokenUInt;
-// 		
-// 		uint frameNumber = 0;
-// 		mFileDataStream >> frameNumber;
-// 		mFileDataStream >> step; //step number
-// 		while(((int) frameNumber) != mDesiredFrameValue->get() && !mFileDataStream.atEnd()) {
-// 			mFileDataStream >> size; //size
-// 			mFileDataStream.skipRawData(size);
-// 			mFileDataStream >> size; //second size
-// 			mFileDataStream >> frameNumber;
-// 			mFileDataStream >> step; //step number
-// 		}
-// 		
-// 		mDesiredFrameValue->set(-1);
-// 		
-// 		if(mFileDataStream.atEnd()) {
-// 			mReachedAndOfFile = true;
-// 			Core::log("Seeked frame is the end of the data stream!", true);
-// 			return;
-// 		}
-// 		mReadStepNumber = true;
-// 		mStepCounter = step;
-// 		mFrameNumber = frameNumber;
-// 		mCurrentStep->set(mStepCounter);
 	}
 	
 	//check if the new frame should be applied...
@@ -644,9 +685,13 @@ void SimulationRecorder::playbackData() {
 		mReadStepNumber = true;
 	}
 	
+	//ckeck if we have to wait for the currect step to come...
 	if(!mFirstPlaybackStep && (mStepCounter > mCurrentStep->get())) {
 		return;
 	}
+	
+	
+	//Read and apply the next frame
 	mFirstPlaybackStep = false;
 	mReadStepNumber = false;
 	
@@ -670,7 +715,7 @@ void SimulationRecorder::playbackData() {
 	mDataStream = new QDataStream(&data, QIODevice::ReadOnly);
 	
 	
-	
+	//recover the data of the single frame
 	updatePlaybackData(*mDataStream);
 	
 	delete mDataStream;
@@ -680,6 +725,10 @@ void SimulationRecorder::playbackData() {
 }
 
 
+/**
+ * Creates the a list with all matching (found) values to record and stores this
+ * in mRecordedValueNameList, that can be viewed in the graphical PropertyPanel.
+ * */
 void SimulationRecorder::updateRecordedValueNameList() {
 	mRecordedValueNameList->set("Number of Values: " 
 					+ QString::number(mRecordedValueNames.size()) 
@@ -687,10 +736,18 @@ void SimulationRecorder::updateRecordedValueNameList() {
 }
 
 
-
+/**
+ * Interprets the regular expressions and keywords in mObservedValues and derives all
+ * matching values from this info. Each subclass of SimulationRecorder can contribute
+ * own keywords and descriptions to specify the values to record.
+ * The SimulationRecorder handles all values that can be represented in the GVR (PropertyPanel).
+ * 
+ * In addition to classical regular expressions, this method also accepts then following keywords:
+ * - [Interfaces] Selects all inputs and outputs of all AgentInterfaces (motors and sensors).
+ * 
+ * If a value is a MultiPartValue, then each part of the value is added separately.
+ */
 void SimulationRecorder::updateListOfRecordedValues() {
-	
-	
 	
 	mRecordedValues.clear();
 	mRecordedValueNames.clear();
@@ -750,11 +807,21 @@ void SimulationRecorder::updateListOfRecordedValues() {
 }
 
 
+/**
+ * Matches the value names given in the _info file with the available data values.
+ * This function is used during playback to map the recovered data to actual values.
+ * 
+ * Subclasses of SimulationRecorder have to extend this when they also extend method
+ * updateListOfRecordedValues() to allow a proper identification of the values found in 
+ * that method.
+ */
 void SimulationRecorder::syncWithListOfRecordedValues() {
 	
 	mRecordedValueNames.clear();
 	mRecordedValues.clear();
 	
+	
+	//Open the _info file
 	QFile *infoFile = new QFile(mPlaybackFile->get() + "_info.txt");
 
 	if(!infoFile->open(QIODevice::ReadOnly)) {
@@ -768,6 +835,8 @@ void SimulationRecorder::syncWithListOfRecordedValues() {
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	
 	QTextStream dataStream(infoFile);
+	
+	//Interpret all lines that start with a [P] (property) or [M] (multi-part value)
 	while(!dataStream.atEnd()) {
 		
 		QString line = dataStream.readLine().trimmed();
@@ -811,6 +880,14 @@ void SimulationRecorder::syncWithListOfRecordedValues() {
 }
 
 
+/**
+ * Write the data for the current data frame to a file.
+ * Dataformat: numberOfDoubleValues | data...
+ * 
+ * Subclasses of the SimulationRecorder can extend this with custom data acquisitions.
+ * 
+ * See the dataformat description for the full format.
+ */
 void SimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 	
 	dataStream << ((qint32) mRecordedValues.size());
@@ -828,7 +905,13 @@ void SimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 	}
 }
 
-
+/**
+ * Recovers the data from the current data frame.
+ * The format and values have to correspond to the data stored in updateRecordedData().
+ * 
+ * Subclasses of the SimulationRecorder have to provide a matching mapping to
+ * fit the added data in updateRecordedData().
+ */
 void SimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 	
 	qint32 numberOfValues = 0;
@@ -856,6 +939,12 @@ void SimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 	}
 }
 
+
+/**
+ * Writes the current _info file, containing information on the recorded data.
+ * Most importantly, this file contains a list with all recorded value objects
+ * with markers of their type.
+ */
 void SimulationRecorder::writeInfoFile(QTextStream &dataStream) {
 	
 	dataStream << QString("Date: " + QDate::currentDate().toString("yy-MM-dd") + " at "
