@@ -128,7 +128,7 @@ bool ScriptedNetworkManipulator::saveNetwork(const QString &name) {
 /**
  * If the file name is not ending with .onn, then this postfix is added!
  */
-bool ScriptedNetworkManipulator::loadNetwork(const QString &name) {
+bool ScriptedNetworkManipulator::loadNetwork(const QString&) {
 	Core::log("ScriptedNetworkManipulator::loadNetwork(): This method is not implemented yet!", true);
 	return false;
 }

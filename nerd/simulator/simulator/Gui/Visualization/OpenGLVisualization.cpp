@@ -1251,7 +1251,7 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 	Vector3D first = points.at(0);
 	Vector3D second = points.at(1);
 	Vector3D third = points.at(2);
-	Vector3D fourth = points.at(3);
+	//Vector3D fourth = points.at(3);
 	Vector3D fifth = points.at(4);
 	Vector3D sixth = points.at(5);
 	Vector3D seventh = points.at(6);

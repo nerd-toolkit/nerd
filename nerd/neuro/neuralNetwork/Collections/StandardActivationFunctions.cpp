@@ -87,8 +87,8 @@ StandardActivationFunctions::StandardActivationFunctions()
 	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
 		ScriptableSelfRegulatingNeuronActivationFunction());
 	
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronV2ActivationFunction());
+// 	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
+// 		SelfRegulatingNeuronV2ActivationFunction());
 	
 	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
 		ScriptableActivationFunction());

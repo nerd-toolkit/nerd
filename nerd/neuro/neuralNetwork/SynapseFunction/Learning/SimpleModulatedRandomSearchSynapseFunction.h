@@ -101,6 +101,8 @@ namespace nerd {
 		StringValue *mTypeParameters;
 		DoubleValue *mProbabilityForChange;
 		BoolValue *mInactive;
+		
+		DoubleValue *mInactivationObservable;
 
 		QList<DoubleValue*> mObservables;
 		QList<SimpleModulatedRandomSearchParameters> mParameters;

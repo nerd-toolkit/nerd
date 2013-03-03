@@ -167,6 +167,7 @@ bool NetworkSimulationRecorder::stopPlayback() {
 //TODO entire mechanism: make sure that networks with similar ids can be used together!
 //This will not work in the current implementation.
 void NetworkSimulationRecorder::updateListOfRecordedValues() {
+	
 	SimulationRecorder::updateListOfRecordedValues();
 	
 	QStringList entries = mObservedValues->get().split("\n");
@@ -243,7 +244,7 @@ void NetworkSimulationRecorder::updateListOfRecordedValues() {
 
 void NetworkSimulationRecorder::syncWithListOfRecordedValues() {
 	QFile *infoFile = new QFile(mPlaybackFile->get() + "_info.txt");
-
+	
 	if(!infoFile->open(QIODevice::ReadOnly)) {
 		Core::log(QString("Could not open file ").append(mFile->fileName()).append(" to record the simulation data."), true);
 		infoFile->close();
@@ -347,6 +348,8 @@ void NetworkSimulationRecorder::syncWithListOfRecordedValues() {
 	}
 	infoFile->close();
 	delete infoFile;
+	
+	mNetworksChanged = false;
 }
 
 
@@ -418,7 +421,7 @@ void NetworkSimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 	
 	if(mNetworksChanged) {
 		//TODO check for missing neurons etc.
-		updateListOfRecordedValues();
+		syncWithListOfRecordedValues();
 	}
 	
 	SimulationRecorder::updatePlaybackData(dataStream);

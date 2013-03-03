@@ -351,7 +351,7 @@ double SelfRegulatingNeuronActivationFunction::getTransmitterStrengthUpdate(doub
 
 
 
-void SelfRegulatingNeuronActivationFunction::updateXi(double activation) {
+void SelfRegulatingNeuronActivationFunction::updateXi(double) {
 	//update learning parameter Xi
 	//xi_i(t+1) = xi_i(t) * (1 + (beta * g(a(t)))
 	mXi->set(Math::min(100.0, Math::max(-100.0,
@@ -359,7 +359,7 @@ void SelfRegulatingNeuronActivationFunction::updateXi(double activation) {
 }
 
 
-void SelfRegulatingNeuronActivationFunction::updateEta(double activation) {
+void SelfRegulatingNeuronActivationFunction::updateEta(double) {
 	//update learning parameter Eta
 	//eta_i(t+1) = ((1 - gamma) * eta_i(t)) + (delta * h(a(t)))
 	mEta->set(Math::min(100.0, Math::max(-100.0,

@@ -382,7 +382,7 @@ void SelfRegulatingNeuronV2ActivationFunction::updateXi(double activation) {
 }
 
 
-void SelfRegulatingNeuronV2ActivationFunction::updateEta(double activation) {
+void SelfRegulatingNeuronV2ActivationFunction::updateEta(double) {
 	//update learning parameter Eta
 	//eta_i(t+1) = ((1 - gamma) * eta_i(t)) + (delta * h(a(t)))
 // 	mEta->set(Math::min(100.0, Math::max(-100.0,

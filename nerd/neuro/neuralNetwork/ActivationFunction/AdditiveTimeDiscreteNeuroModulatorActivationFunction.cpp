@@ -57,7 +57,7 @@ using namespace std;
 namespace nerd {
 
 AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroModulatorActivationFunction()
-	: NeuroModulatorActivationFunction("ModulatorCell"), mOwner(0)
+	: NeuroModulatorActivationFunction("ModulatorCell"), mOwner(0), mUpdatingObservables(false)
 {
 	
 	if(mNeuroModulator == 0) {
@@ -69,6 +69,9 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	
 	addObserableOutput("Stimulation", mStimulationState);
 	addObserableOutput("Concentration", mCurrentConcentration);
+	
+	mStimulationState->addValueChangedListener(this);
+	mCurrentConcentration->addValueChangedListener(this);
 	
 	mModulatorType = new IntValue(1);
 	mModulatorType->setDescription("The moduator type produced by this modulator cell (an id)");
@@ -108,7 +111,7 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroModulatorActivationFunction(
 			const AdditiveTimeDiscreteNeuroModulatorActivationFunction &other)
 	: Object(), ValueChangedListener(), ObservableNetworkElement(other), NeuroModulatorElement(other), 
-		NeuroModulatorActivationFunction(other), mOwner(0)
+		NeuroModulatorActivationFunction(other), mOwner(0), mUpdatingObservables(false)
 {
 	if(mNeuroModulator == 0) {
 		setNeuroModulator(new NeuroModulator());
@@ -119,6 +122,9 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	
 	addObserableOutput("Stimulation", mStimulationState);
 	addObserableOutput("Concentration", mCurrentConcentration);
+	
+	mStimulationState->addValueChangedListener(this);
+	mCurrentConcentration->addValueChangedListener(this);
 	
 	mModulatorType = dynamic_cast<IntValue*>(getParameter("ModType"));
 	mDiffusionModus = dynamic_cast<IntValue*>(getParameter("DiffusionModus"));
@@ -161,6 +167,12 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::valueChanged(Value *v
 		|| value == mReferenceModule)
 	{
 		configureNeuroModulation();
+	}
+	else if(!mUpdatingObservables
+		&& (value == mStimulationState
+		    || value == mCurrentConcentration))
+	{
+		applyObservables();
 	}
 }
 
@@ -270,6 +282,7 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::updateObservables() {
 		mStimulationState->set(0.0);
 		return;
 	}
+	mUpdatingObservables = true;
 
 	mCurrentConcentration->set(mNeuroModulator->getConcentration(mModulatorType->get(), mOwner));
 	
@@ -283,6 +296,33 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::updateObservables() {
 		}
 	}
 	mStimulationState->set(stimulation);
+	
+	mUpdatingObservables = false;
+}
+
+/**
+ * Sets the  concentration and stimulation of the internal model to the 
+ * current state of the observables (allows playback mode with data recorder)
+ */
+void AdditiveTimeDiscreteNeuroModulatorActivationFunction::applyObservables() {
+	
+	if(mNeuroModulator == 0) {
+		mCurrentConcentration->set(0.0);
+		mStimulationState->set(0.0);
+		return;
+	}
+
+	mNeuroModulator->setConcentration(mModulatorType->get(), mCurrentConcentration->get(), mOwner);
+	
+	double stimulation = mStimulationState->get();
+	
+	int modus = mNeuroModulator->getUpdateModus(mModulatorType->get());
+	if(modus == 1) {
+		QList<double> vars = mNeuroModulator->getUpdateModusVariables(mModulatorType->get());
+		if(vars.size() > 0) {
+			vars[0] = stimulation;
+		}
+	}
 }
 
 

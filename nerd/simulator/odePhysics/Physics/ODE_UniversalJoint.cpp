@@ -117,7 +117,7 @@ void ODE_UniversalJoint::clear() {
 		
 
 
-void ODE_UniversalJoint::synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm *psa) {
+void ODE_UniversalJoint::synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm*) {
 
 }
 

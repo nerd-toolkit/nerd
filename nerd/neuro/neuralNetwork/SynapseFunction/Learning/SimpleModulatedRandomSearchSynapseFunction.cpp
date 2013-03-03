@@ -74,6 +74,11 @@ namespace nerd {
 		
 		mInactive = new BoolValue(false);
 		mInactive->setDescription("If true, then the synapse has no effect and does also not change.");
+		
+		mInactivationObservable = new DoubleValue(0);
+		mInactivationObservable->addValueChangedListener(this);
+		
+		addObserableOutput("Inactive", mInactivationObservable);
 
 		addParameter("Settings", mTypeParameters);
 		addParameter("Probability", mProbabilityForChange);
@@ -98,12 +103,18 @@ namespace nerd {
 		mTypeParameters = dynamic_cast<StringValue*>(getParameter("Settings"));
 		mProbabilityForChange = dynamic_cast<DoubleValue*>(getParameter("Probability"));
 		mInactive = dynamic_cast<BoolValue*>(getParameter("Inactive"));
+		
+		mInactivationObservable = new DoubleValue(mInactive->get() ? 1.0 : 0.0);
+		mInactivationObservable->addValueChangedListener(this);
+		addObserableOutput("Inactive", mInactivationObservable);
 
 		for(QHashIterator<QString, Value*> i(other.mObservableOutputs); i.hasNext();) {
 			i.next();
-			DoubleValue *obs = dynamic_cast<DoubleValue*>(i.value()->createCopy());  
-			addObserableOutput(i.key(), obs);
-			mObservables.append(obs);
+			if(i.key() != "Inactive") {
+				DoubleValue *obs = dynamic_cast<DoubleValue*>(i.value()->createCopy());  
+				addObserableOutput(i.key(), obs);
+				mObservables.append(obs);
+			}
 		}
 		
 		mNetworkManager = Neuro::getNeuralNetworkManager();
@@ -123,6 +134,7 @@ namespace nerd {
 			mObservables.removeAll(observable);
 			delete observable;
 		}
+		delete mInactivationObservable;
 	}
 
 
@@ -147,7 +159,11 @@ namespace nerd {
 			updateSettings();
 		}
 		else if(value == mInactive) {
-			enableWeight(mOwner, !mInactive->get());
+			//enableWeight(mOwner, !mInactive->get());
+			mInactivationObservable->set(mInactive->get() ? 1.0 : 0.0);
+		}
+		else if(value == mInactivationObservable) {
+			enableWeight(mOwner, !(mInactivationObservable->get() > 0.5));
 		}
 	}
 
@@ -180,6 +196,15 @@ namespace nerd {
 		if(mCurrentNetwork == 0) {
 			return owner->getStrengthValue().get();
 		}
+		
+		
+		if(mInactivationObservable->get() < 0.5 && mInactive->get()) {
+			mInactive->set(false);
+		}
+		else if(mInactivationObservable->get() > 0.5 && !mInactive->get()) {
+			mInactive->set(true);
+		}
+		
 		
 		if(mNetworkManager->getDisablePlasticityValue()->get() == false) {
 			//only execute modulation if the global plasticity hint allows it.
@@ -624,6 +649,7 @@ namespace nerd {
 			owner->setProperty("_SMRS_w", QString::number(currentWeight));
 			owner->setProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED);
 		}
+		mInactive->set(enable);
 	}
 	
 	

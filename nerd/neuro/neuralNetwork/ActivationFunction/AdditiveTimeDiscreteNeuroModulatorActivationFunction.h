@@ -58,7 +58,7 @@ namespace nerd {
 	/**
 	 * AdditiveTimeDiscreteNeuroModulatorActivationFunction
 	 */
-	class AdditiveTimeDiscreteNeuroModulatorActivationFunction : public NeuroModulatorActivationFunction 
+	class AdditiveTimeDiscreteNeuroModulatorActivationFunction : public NeuroModulatorActivationFunction
 	{
 	public:
 		AdditiveTimeDiscreteNeuroModulatorActivationFunction();
@@ -77,6 +77,7 @@ namespace nerd {
 	protected:
 		virtual void configureNeuroModulation();
 		virtual void updateObservables();
+		virtual void applyObservables();
 		
 	private:
 		
@@ -95,6 +96,10 @@ namespace nerd {
 		ULongLongValue *mReferenceModule;
 		
 		Neuron *mOwner;
+		
+		bool mUpdatingObservables;
+		
+		
 	};
 
 }

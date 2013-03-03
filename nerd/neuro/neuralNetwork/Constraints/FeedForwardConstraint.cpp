@@ -106,12 +106,12 @@ bool FeedForwardConstraint::applyConstraint(NeuronGroup *owner,
 
 	ModularNeuralNetwork *net = owner->getOwnerNetwork();
 
-	IntValue *currentGenerationValue = Core::getInstance()->getValueManager()->getIntValue(
-								NeuralNetworkConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
-	int currentGeneration = 0;
-	if(currentGenerationValue != 0) {
-		currentGeneration = currentGenerationValue->get();
-	}
+// 	IntValue *currentGenerationValue = Core::getInstance()->getValueManager()->getIntValue(
+// 								NeuralNetworkConstants::VALUE_EVO_CURRENT_GENERATION_NUMBER);
+// 	int currentGeneration = 0;
+// 	if(currentGenerationValue != 0) {
+// 		currentGeneration = currentGenerationValue->get();
+// 	}
 
 	QList<Neuron*> neurons = owner->getNeurons();
 	for(QListIterator<Neuron*> i(neurons); i.hasNext();) {

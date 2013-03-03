@@ -398,7 +398,7 @@ QString NeuralNetworkBDNExporter::exportNetwork(QString networkName, ModularNeur
 /**
  * Fills Hashtable m_xmlIdTable with all neuron and synapse id's from the given network.
  */
-bool NeuralNetworkBDNExporter::updateXmlIdTable(ModularNeuralNetwork *net, QString *errorMsg)
+bool NeuralNetworkBDNExporter::updateXmlIdTable(ModularNeuralNetwork *net, QString*)
 {
 	m_xmlIdTable.clear();
 
@@ -435,7 +435,7 @@ bool NeuralNetworkBDNExporter::updateXmlIdTable(ModularNeuralNetwork *net, QStri
  * Needed because the braindesigner has only limited drawing area which is defined in
  * BDN_DRAWING_AREA_X_LENGTH and BDN_DRAWING_AREA_Y_LENGTH. 
  */
-bool NeuralNetworkBDNExporter::calcNeuronPositionValues(ModularNeuralNetwork *net, QString *errorMsg)
+bool NeuralNetworkBDNExporter::calcNeuronPositionValues(ModularNeuralNetwork *net, QString*)
 {
 	int minX = std::numeric_limits<int>::max(); 
 	int minY = std::numeric_limits<int>::max();
@@ -1411,7 +1411,7 @@ bool NeuralNetworkBDNExporter::addBDNSynapseInfo(int synapseID, int source, int 
 	return true;
 }
 
-QList<int> NeuralNetworkBDNExporter::getBDNInSynapseInformation(Neuron *netNeuron, QString *errorMsg)
+QList<int> NeuralNetworkBDNExporter::getBDNInSynapseInformation(Neuron *netNeuron, QString*)
 {
 	QList<int> inSynapseInformation = QList<int>();
 	
@@ -1433,7 +1433,7 @@ QList<int> NeuralNetworkBDNExporter::getBDNInSynapseInformation(Neuron *netNeuro
 	return inSynapseInformation;
 }
 
-QList<int> NeuralNetworkBDNExporter::getBDNOutSynapseInformation(Neuron *netNeuron, QString *errorMsg)
+QList<int> NeuralNetworkBDNExporter::getBDNOutSynapseInformation(Neuron *netNeuron, QString*)
 {
 	QList<int> outSynapseInformation = QList<int>();
 	

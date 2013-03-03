@@ -204,13 +204,13 @@ bool BackpropagationConstraint::detachFromGroup(NeuronGroup *group) {
 	return ok;
 }
 
-bool BackpropagationConstraint::isValid(NeuronGroup *owner) {
+bool BackpropagationConstraint::isValid(NeuronGroup*) {
 	return true;
 }
 
 
-bool BackpropagationConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor *executor, 
-									 QList<NeuralNetworkElement*> &trashcan)
+bool BackpropagationConstraint::applyConstraint(NeuronGroup*, CommandExecutor*, 
+									 QList<NeuralNetworkElement*>&)
 {
 	return true;
 }

@@ -329,7 +329,7 @@ void ScriptableSelfRegulatingNeuronActivationFunction::updateEta(double activati
 	}
 }
 
-void ScriptableSelfRegulatingNeuronActivationFunction::updateTheta(double activation) {
+void ScriptableSelfRegulatingNeuronActivationFunction::updateTheta(double) {
 	if(mThetaEquation->get() != "") {
 		mEquationScript->evaluate("nerd.stringBuffer = " + mThetaEquation->get());
 		if(mEquationScript->hasUncaughtException()) {
