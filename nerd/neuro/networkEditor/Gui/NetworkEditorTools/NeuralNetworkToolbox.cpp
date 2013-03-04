@@ -49,6 +49,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
+#include <qapplication.h>
 #include "Gui/NetworkEditor/NetworkVisualization.h"
 #include "Gui/NetworkEditorTools/InsertNeuronNetworkTool.h"
 #include "Gui/NetworkEditorTools/RunConstraintsAction.h"
@@ -69,6 +70,7 @@
 #include "Gui/NetworkEditorCommands/AlignNeuronsCommand.h"
 #include "Gui/NetworkEditorCommands/AlignModuleSizeCommand.h"
 #include <qvarlengtharray.h>
+#include <QClipboard>
 
 using namespace std;
 
@@ -502,6 +504,31 @@ void NeuralNetworkToolbox::fullyConnectTargetToSelectedElements() {
 	setTool(mConnectNeuronsWithSynapsesTool);
 }
 
+void NeuralNetworkToolbox::grabIdsOfSelectedElements() {
+	if(mOwner == 0) {
+		return;
+	}
+	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
+	if(visu == 0 && visu->getVisualizationHandler() != 0) {
+		return;
+	}
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
+
+	QList<PaintItem*> selectedItems = visu->getSelectedItems();
+	QString idsList;
+	
+	for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
+		NeuralNetworkElement *elem = i.next()->getNetworkElement();
+		if(elem != 0) {
+			if(idsList != "") {
+				idsList.append(",");
+			}
+			idsList.append(QString::number(elem->getId()));
+		}
+	}
+	QApplication::clipboard()->setText(idsList);
+}
+
 void NeuralNetworkToolbox::addNetworkMenu() {
 	if(mOwner == 0) {
 		return;
@@ -761,6 +788,10 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	QAction *guessGroupIdsByPositionAction = mToolsMenu->addAction("Guess Group Ids By Location");
 	connect(guessGroupIdsByPositionAction, SIGNAL(triggered()),
 			this, SLOT(useGuessGroupIdsByPositionTool()));
+	
+	QAction *grabIdsOfSelectedElementsAction = mToolsMenu->addAction("Grab Ids of Selected");
+	connect(grabIdsOfSelectedElementsAction, SIGNAL(triggered()),
+			this, SLOT(grabIdsOfSelectedElements()));
 
 	mToolsMenu->addSeparator();
 

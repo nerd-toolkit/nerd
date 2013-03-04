@@ -90,6 +90,11 @@ namespace nerd {
 		virtual void updateRecordedData(QDataStream &dataStream);
 		virtual void updatePlaybackData(QDataStream &dataStream);
 		
+	private:
+		NeuralNetwork* getNetworkByIdString(QList<NeuralNetwork*> networks, const QString &netId);
+		QList<Neuron*> getNeurons(NeuralNetwork *net, const QString &neuronIds);
+		QList<Synapse*> getSynapses(NeuralNetwork *net, const QString &synapseIds);
+		
 	protected:
 		Event *mNetworksReplacedEvent;
 		Event *mNetworkStructureChangedEvent;

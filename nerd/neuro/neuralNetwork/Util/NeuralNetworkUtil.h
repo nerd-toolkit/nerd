@@ -82,6 +82,8 @@ namespace nerd {
 		static void moveNeuroModuleTo(NeuroModule *module, double x, double y, double z);
 		
 		static QList<NeuronGroup*> getGroupsFromIdList(ModularNeuralNetwork *network, const QString &idList);
+		static QList<Neuron*> getNeuronsFromIdList(NeuralNetwork *network, const QString &idList);
+		static QList<Synapse*> getSynapsesFromIdList(NeuralNetwork *network, const QString &idList);
 		
 		
 	private:

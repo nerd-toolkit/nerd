@@ -130,6 +130,7 @@ namespace nerd {
 		void fullyConnectSingleGroup();
 		void fullyConnectSelectedNeuronsToTarget();
 		void fullyConnectTargetToSelectedElements();
+		void grabIdsOfSelectedElements();
 
 	protected:
 		virtual void addNetworkMenu();

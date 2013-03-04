@@ -312,6 +312,64 @@ QList<NeuronGroup*> NeuralNetworkUtil::getGroupsFromIdList(ModularNeuralNetwork 
 	return groups;
 }
 
+
+QList<Neuron*> NeuralNetworkUtil::getNeuronsFromIdList(NeuralNetwork *network, const QString &idList) {
+	QList<Neuron*> neurons;
+	
+	if(network == 0 || idList.trimmed() == "") {
+		return neurons;
+	}
+	
+	QString unifiedList = idList;
+	unifiedList.replace("|", ",");
+	
+	QList<Neuron*> allNeurons = network->getNeurons();
+	
+	QStringList ids = unifiedList.split(",");
+	for(QListIterator<QString> i(ids); i.hasNext();) {
+		bool ok = true;
+		qulonglong id = i.next().toULongLong(&ok);
+		if(ok) {
+			Neuron *neuron = NeuralNetwork::selectNeuronById(id, allNeurons);
+			if(neuron != 0) {
+				neurons.append(neuron);
+			}
+		}
+	}
+	
+	return neurons;
+}
+
+
+QList<Synapse*> NeuralNetworkUtil::getSynapsesFromIdList(NeuralNetwork *network, const QString &idList) {
+	QList<Synapse*> synapses;
+	
+	if(network == 0 || idList.trimmed() == "") {
+		return synapses;
+	}
+	
+	QString unifiedList = idList;
+	unifiedList.replace("|", ",");
+	
+	QList<Synapse*> allSynapses = network->getSynapses();
+	
+	QStringList ids = unifiedList.split(",");
+	for(QListIterator<QString> i(ids); i.hasNext();) {
+		bool ok = true;
+		qulonglong id = i.next().toULongLong(&ok);
+		if(ok) {
+			Synapse *synapse = NeuralNetwork::selectSynapseById(id, allSynapses);
+			if(synapse != 0) {
+				synapses.append(synapse);
+			}
+		}
+	}
+	
+	return synapses;
+}
+
+
+
 }
 
 
