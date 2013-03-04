@@ -53,9 +53,11 @@
 #include <QStringList>
 #include "NerdConstants.h"
 #include <Math/Math.h>
+#include <Util/Util.h>
 #include <QFile>
 #include <QDir>
 #include <QString>
+#include <qcoreapplication.h>
 
 
 using namespace std;
@@ -749,6 +751,14 @@ void SimulationRecorder::updateRecordedValueNameList() {
  */
 void SimulationRecorder::updateListOfRecordedValues() {
 	
+	//Store environment files.
+	StringValue *args = Core::getInstance()->getValueManager()->getStringValue("/CommandLineArguments/installScriptedModel");
+	QStringList environmentFiles = Util::getItemsFromCurlyBraceSeparatedString(args->get());
+	for(int i = 0; i < environmentFiles.size(); ++i) {
+		QFile envFile("./" + environmentFiles.at(i));
+		envFile.copy(mFile->fileName().append("_").append(environmentFiles.at(i)));
+	}
+	
 	mRecordedValues.clear();
 	mRecordedValueNames.clear();
 	
@@ -950,6 +960,7 @@ void SimulationRecorder::writeInfoFile(QTextStream &dataStream) {
 	dataStream << QString("Date: " + QDate::currentDate().toString("yy-MM-dd") + " at "
 			+ QTime::currentTime().toString("hh-mm-ss") + "\n\n");
 	dataStream << QString("Data File: " + mPlaybackFile->get() + "\n\n");	
+	dataStream << QString("Command: " + QCoreApplication::arguments().join(" ") + "\n\n");
 	dataStream << QString("Parameter Search Pattern:\n\n" + mObservedValues->get() + "\n\n");
 	dataStream << QString("Parameters: \n\n[Params]\n" + mRecordedValueNameList->get() + "\n[/Params]\n\n");
 }
