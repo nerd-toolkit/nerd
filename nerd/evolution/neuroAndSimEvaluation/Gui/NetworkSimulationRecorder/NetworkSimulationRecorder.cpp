@@ -61,10 +61,13 @@
 #include <IO/NeuralNetworkIO.h>
 #include <Util/NeuralNetworkUtil.h>
 
-
 using namespace std;
 
 namespace nerd {
+	
+
+	
+	
 
 NetworkSimulationRecorder::NetworkSimulationRecorder()
 	: SimulationRecorder(), mDisablePlasticityValue(0), mNetworksChanged(true)

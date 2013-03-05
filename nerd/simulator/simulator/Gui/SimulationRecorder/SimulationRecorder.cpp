@@ -60,9 +60,49 @@
 #include <qcoreapplication.h>
 
 
+
+
 using namespace std;
 
 namespace nerd {
+	
+//Helper class to start recording via task object.
+
+class StartRecordingTask : public Task {
+	public:
+		StartRecordingTask(SimulationRecorder *recorder, bool record, bool start) 
+					: mRecorder(recorder), mRecord(record), mStart(start) {}
+		
+		virtual bool runTask() { 
+			if(mRecorder == 0) { 
+				return true; 
+			}
+			else if(mRecord) {
+				if(mStart) {
+					mRecorder->startRecording();
+				}
+				else {
+					mRecorder->stopRecording();
+				}
+			}
+			else {
+				if(mStart) {
+					mRecorder->startPlayback();
+				}
+				else {
+					mRecorder->stopPlayback();
+				}
+			}
+			return true; 
+		};
+	
+	private:
+		SimulationRecorder *mRecorder;
+		bool mRecord;
+		bool mStart;
+};
+
+
 
 SimulationRecorder::SimulationRecorder()
 	: mResetEvent(0), mStepCompletedEvent(0), mPhysicsWasDisabled(false), mStartEndFrameRange(0, 0), 
@@ -146,7 +186,7 @@ bool SimulationRecorder::init() {
 bool SimulationRecorder::bind() {
 	bool ok = true;
 	
-	mRecordingDirectory->set(Core::getInstance()->getConfigDirectoryPath() + "/" + "dataRecording/");
+	//mRecordingDirectory->set(Core::getInstance()->getConfigDirectoryPath() + "/" + "dataRecording/");
 	
 	EventManager *em = Core::getInstance()->getEventManager();
 
@@ -158,6 +198,7 @@ bool SimulationRecorder::bind() {
 	}
 	
 	mStepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, this);
+	mInitializationCompleted = em->registerForEvent(NerdConstants::EVENT_NERD_SYSTEM_INIT_COMPLETED, this);
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	
@@ -182,6 +223,7 @@ bool SimulationRecorder::bind() {
 	if(mSimulationPaused == 0) {
 		Core::log("SimulationRecorder: Could not find Value [" + SimulationConstants::VALUE_EXECUTION_PAUSE  + "]", true);
 	}
+	
 	
 
 	return ok;
@@ -226,6 +268,12 @@ void SimulationRecorder::eventOccured(Event *event) {
 	else if(event == mStepStartedEvent) {
 		playbackData();
 	}
+	else if(event == mInitializationCompleted) {
+		//Make sure that an activation of the recording is not done before the initialization phase is competed.
+		if(mActivateRecording->get()) {
+			//startRecording();
+		}
+	}
 }
 
 void SimulationRecorder::valueChanged(Value *value) {
@@ -233,19 +281,25 @@ void SimulationRecorder::valueChanged(Value *value) {
 		return;
 	}
 	else if(value == mActivateRecording) {
-		if(mActivateRecording->get() == true) {
-			startRecording();
-		}
-		else {
-			stopRecording();
+		if(Core::getInstance()->isInitialized()) {
+			if(mActivateRecording->get() == true) {
+				//startRecording();
+				Core::getInstance()->scheduleTask(new StartRecordingTask(this, true, true));
+			}
+			else {
+				//stopRecording();
+				Core::getInstance()->scheduleTask(new StartRecordingTask(this, true, false));
+			}
 		}
 	}
 	else if(value == mActivatePlayback) {
 		if(mActivatePlayback->get() == true) {
-			startPlayback();
+			//startPlayback();
+			Core::getInstance()->scheduleTask(new StartRecordingTask(this, false, true));
 		}
 		else {
-			stopPlayback();
+			//stopPlayback();
+			Core::getInstance()->scheduleTask(new StartRecordingTask(this, false, false));
 		}
 	}
 	else if(value == mDesiredFrameValue && mDesiredFrameValue->get() > 0) {

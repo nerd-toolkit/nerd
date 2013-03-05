@@ -111,6 +111,7 @@ namespace nerd {
 		Event *mResetEvent;
 		Event *mStepStartedEvent;
 		Event *mStepCompletedEvent;
+		Event *mInitializationCompleted;
 		
 		IntValue *mCurrentStep;
 		BoolValue *mPhysicsDisabled;
