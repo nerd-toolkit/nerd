@@ -149,14 +149,14 @@ SimulationRecorder::SimulationRecorder()
 	mDesiredFrameValue->addValueChangedListener(this);
 	
 	ValueManager *vm = Core::getInstance()->getValueManager();
-	vm->addValue("/DataRecorder/ActivateRecording", mActivateRecording);
-	vm->addValue("/DataRecorder/ActivatePlayback", mActivatePlayback);
-	vm->addValue("/DataRecorder/FileName", mFileNamePrefix);
-	vm->addValue("/DataRecorder/PlaybackFile", mPlaybackFile);
-	vm->addValue("/DataRecorder/RecordingDirectory", mRecordingDirectory);
-	vm->addValue("/DataRecorder/RecordingInterval", mRecordingInterval);
-	vm->addValue("/DataRecorder/RecordedValues", mObservedValues);
-	vm->addValue("/DataRecorder/Record/RecordedValueNameList", mRecordedValueNameList);
+	vm->addValue("/DataRecorder/Control/ActivateRecording", mActivateRecording);
+	vm->addValue("/DataRecorder/Control/ActivatePlayback", mActivatePlayback);
+	vm->addValue("/DataRecorder/Recording/FileName", mFileNamePrefix);
+	vm->addValue("/DataRecorder/Recording/RecordingDirectory", mRecordingDirectory);
+	vm->addValue("/DataRecorder/Recording/RecordingInterval", mRecordingInterval);
+	vm->addValue("/DataRecorder/Recording/RecordedValues", mObservedValues);
+	vm->addValue("/DataRecorder/Recording/RecordedValueNameList", mRecordedValueNameList);
+	vm->addValue("/DataRecorder/Playback/PlaybackFile", mPlaybackFile);
 	vm->addValue("/DataRecorder/Playback/SafeMode", mPlaybackSafeMode);
 	vm->addValue("/DataRecorder/Playback/Range", mStartEndFrameValue);
 	vm->addValue("/DataRecorder/Playback/NumberOfFrames", mNumberOfFramesValue);
