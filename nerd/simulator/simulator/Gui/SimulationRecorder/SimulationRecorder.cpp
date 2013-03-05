@@ -198,7 +198,6 @@ bool SimulationRecorder::bind() {
 	}
 	
 	mStepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, this);
-	mInitializationCompleted = em->registerForEvent(NerdConstants::EVENT_NERD_SYSTEM_INIT_COMPLETED, this);
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	
@@ -267,12 +266,6 @@ void SimulationRecorder::eventOccured(Event *event) {
 	}
 	else if(event == mStepStartedEvent) {
 		playbackData();
-	}
-	else if(event == mInitializationCompleted) {
-		//Make sure that an activation of the recording is not done before the initialization phase is competed.
-		if(mActivateRecording->get()) {
-			//startRecording();
-		}
 	}
 }
 
