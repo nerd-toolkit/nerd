@@ -224,6 +224,22 @@ void NetworkSimulationRecorder::updateListOfRecordedValues() {
 									+ neuron->getNameValue().get());
 			}
 		}
+		else if(entry.trimmed().startsWith("[Neurons,B]")) { //Neuron Bias
+			QStringList majorParts = entry.trimmed().mid(11).split(":");
+			if(majorParts.size() != 2) {
+				Core::log("NetworkSimulationRecorder: Could not read line: ["
+						+ entry.trimmed() + "]. Format: [Neurons,B]netId:neuronId,...", true);
+				continue;
+			}
+			QList<Neuron*> neurons = getNeurons(getNetworkByIdString(nets, majorParts.at(0)), majorParts.at(1));
+			for(QListIterator<Neuron*> j(neurons); j.hasNext();) {
+				Neuron *neuron = j.next();
+				mRecordedValues.append(&neuron->getBiasValue());
+				mRecordedValueNames.append("[NB]" + majorParts.at(0) + ":" 
+									+ QString::number(neuron->getId()) + "|" 
+									+ neuron->getNameValue().get());
+			}
+		}
 		else if(entry.trimmed().startsWith("[Neurons,AF]")) { //Neuron ActivationFunction Observables
 			QStringList majorParts = entry.trimmed().mid(12).split(":");
 			if(majorParts.size() != 3) {
@@ -415,6 +431,40 @@ void NetworkSimulationRecorder::syncWithListOfRecordedValues() {
 				}
 				mRecordedValues.append(&neuron->getActivationValue());
 				mRecordedValueNames.append("[NA]" + majorParts.at(0) + ":" + QString::number(id) + "|" 
+									+ neuron->getNameValue().get());
+			}
+			else if(line.startsWith("[NB]")) {
+				QStringList majorParts = line.mid(4).split(":");
+				if(majorParts.size() != 2) {
+					Core::log("NetworkSimulationRecorder: Could not read line: ["
+							+ line.trimmed() + "]. Format: [NB]netId:neuronId", true);
+					continue;
+				}
+				
+				NeuralNetwork *net = getNetworkByIdString(nets, majorParts.at(0));
+				if(net == 0) {
+					Core::log("NetworkSimulationRecorder: Could not find network id in [" + line + "]", true);
+					continue;
+				}
+				
+				QStringList parts = majorParts.at(1).split("|");
+				if(parts.size() < 1) {
+					Core::log("NetworkSimulationRecorder: Could not read neuron id [" + line + "]", true);
+					continue;
+				}
+				qulonglong id = parts.at(0).toULongLong(&ok);
+				if(!ok) {
+					Core::log("NetworkSimulationRecorder: Could not parse neuron id [" + line + "]", true);
+					continue;
+				}
+				
+				Neuron *neuron = net->selectNeuronById(id, net->getNeurons());
+				if(neuron == 0) {
+					Core::log("NetworkSimulationRecorder: Could not find neuron with id [" + QString::number(id) + "]", true);
+					continue;
+				}
+				mRecordedValues.append(&neuron->getBiasValue());
+				mRecordedValueNames.append("[NB]" + majorParts.at(0) + ":" + QString::number(id) + "|" 
 									+ neuron->getNameValue().get());
 			}
 			else if(line.startsWith("[NAF]")) {
