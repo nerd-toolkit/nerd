@@ -83,6 +83,7 @@ namespace nerd {
 		
 		DoubleValue *mStimulationState;
 		DoubleValue *mCurrentConcentration;
+		DoubleValue *mCurrentArea;
 		
 		IntValue *mModulatorType;
 		IntValue *mDiffusionModus;

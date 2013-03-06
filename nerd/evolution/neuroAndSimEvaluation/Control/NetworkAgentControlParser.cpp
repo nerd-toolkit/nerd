@@ -236,6 +236,8 @@ void NetworkAgentControlParser::connectNetworksToInterfaces() {
 		
 		nnm->addNeuralNetwork(net); 
 		addedNetwork = true;
+		
+		net->reset();
 
 		Core::log(QString("NetworkAgentControlParser: Loaded network from file [")
 					.append(networkFile).append("] to control agent [")

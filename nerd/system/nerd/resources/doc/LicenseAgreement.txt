@@ -11,7 +11,7 @@
 
 <pre>
 /***************************************************************************
- *   NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit    *
+ *   NERD - Neurodynamics and Evolutionary Robotics Development Toolkit    *
  *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
@@ -20,14 +20,14 @@
  *                                                                         *
  *   Project homepage: nerd.x-bot.org                                      *
  *                                                                         *
- *   Copyright (C) 2008 - 2012 by the Neurocybernetics Group Osnabrück    *
+ *   Copyright (C) 2008 - 2013 by the Neurocybernetics Group Osnabrück     *
  *   Contact: Christian Rempis                                             *
  *   christian.rempis@uni-osnabrueck.de                                    *
  *   Contributors: see contributors.txt in the nerd main directory.        *
  *                                                                         *
  *                                                                         *
  *   Acknowledgments:                                                      *
- *   The NERD Kit is part of the EU project ALEAR                          *
+ *   The NERD Toolkit is part of the EU project ALEAR                      *
  *   (Artificial Language Evolution on Autonomous Robots) www.ALEAR.eu     *
  *   This work was funded (2008 - 2011) by EU-Project Number ICT 214856    *
  *                                                                         *
@@ -50,7 +50,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the nerd homepage and the nerd overview paper.      *
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 </pre>
 

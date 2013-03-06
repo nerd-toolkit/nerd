@@ -225,7 +225,7 @@ void AboutInfoWidget::createAboutTab() {
 	aboutText->setText("NERD Kit - Neurodynamics and Evolutionary Robotics Development Kit<br><br>"
 		"This program is part of the <a href=\"http://www.alear.eu/\">ALEAR</a>"
 		"-project.<br> (Artificial Language Evolution on Autonomous Robots)<br>"
-		"<br><br>Copyright (C) 2008-2010 Neurocybernetics Group<br>University of Osnabrueck, Germany"
+		"<br><br>Copyright (C) 2008-2013 Neurocybernetics Group<br>University of Osnabrueck, Germany"
 		"<br><br>Contact:<br>Christian Rempis (christian.rempis@uni-osnabrueck.de)");
 	aboutText->setTextFormat(Qt::RichText);
 	aboutText->setAlignment(Qt::AlignCenter);

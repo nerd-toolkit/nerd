@@ -932,6 +932,8 @@ void NeuralNetworkEditor::loadNetwork(const QString &fileName, bool addToNetwork
 		renameCurrentNetwork(nameOfFile);
 		updateRecentNetworkMenu(nameOfFile);
 	}
+	
+	currentNetwork->reset();
 
 	mMessageWidget->addMessage("Successfully loaded network from file [" + nameOfFile + "]!");
 

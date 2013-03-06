@@ -190,14 +190,14 @@ bool SimulationRecorder::bind() {
 	
 	EventManager *em = Core::getInstance()->getEventManager();
 
-	mResetEvent = em->registerForEvent(NerdConstants::EVENT_EXECUTION_RESET, this);
-	Event *nextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, this);
+	mResetEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_RESET);
+	Event *nextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP);
 	mStepStartedEvent = em->createEvent("TriggerPlaybackEvent", "Triggered right before a new step is executed...");
 	if(nextStepEvent != 0) {
 		nextStepEvent->addUpstreamEvent(mStepStartedEvent);
 	}
 	
-	mStepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED, this);
+	mStepCompletedEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_STEP_COMPLETED);
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	
@@ -331,6 +331,7 @@ void SimulationRecorder::startRecording() {
 		return;
 	}
 	mStepCompletedEvent->addEventListener(this);
+	mResetEvent->addEventListener(this);
 	
 	if(mFile != 0) {
 		stopRecording();
@@ -410,6 +411,7 @@ void SimulationRecorder::stopRecording() {
 	}
 	
 	mStepCompletedEvent->removeEventListener(this);
+	mResetEvent->removeEventListener(this);
 	
 	mFileDataStream.setDevice(0);
 	

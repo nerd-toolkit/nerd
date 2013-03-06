@@ -66,12 +66,15 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	
 	mStimulationState = new DoubleValue();
 	mCurrentConcentration = new DoubleValue();
+	mCurrentArea = new DoubleValue();
 	
 	addObserableOutput("Stimulation", mStimulationState);
 	addObserableOutput("Concentration", mCurrentConcentration);
+	addObserableOutput("Area", mCurrentArea);
 	
 	mStimulationState->addValueChangedListener(this);
 	mCurrentConcentration->addValueChangedListener(this);
+	mCurrentArea->addValueChangedListener(this);
 	
 	mModulatorType = new IntValue(1);
 	mModulatorType->setDescription("The moduator type produced by this modulator cell (an id)");
@@ -119,12 +122,15 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	
 	mStimulationState = new DoubleValue();
 	mCurrentConcentration = new DoubleValue();
+	mCurrentArea = new DoubleValue();
 	
 	addObserableOutput("Stimulation", mStimulationState);
 	addObserableOutput("Concentration", mCurrentConcentration);
+	addObserableOutput("Area", mCurrentArea);
 	
 	mStimulationState->addValueChangedListener(this);
 	mCurrentConcentration->addValueChangedListener(this);
+	mCurrentArea->addValueChangedListener(this);
 	
 	mModulatorType = dynamic_cast<IntValue*>(getParameter("ModType"));
 	mDiffusionModus = dynamic_cast<IntValue*>(getParameter("DiffusionModus"));
@@ -170,7 +176,8 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::valueChanged(Value *v
 	}
 	else if(!mUpdatingObservables
 		&& (value == mStimulationState
-		    || value == mCurrentConcentration))
+		    || value == mCurrentConcentration
+			|| value == mCurrentArea))
 	{
 		applyObservables();
 	}
@@ -280,6 +287,7 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::updateObservables() {
 	if(mNeuroModulator == 0) {
 		mCurrentConcentration->set(0.0);
 		mStimulationState->set(0.0);
+		mCurrentArea->set(0.0);
 		return;
 	}
 	mUpdatingObservables = true;
@@ -297,6 +305,18 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::updateObservables() {
 	}
 	mStimulationState->set(stimulation);
 	
+	double radius = 0.0;
+	QRectF area = mNeuroModulator->getLocalRect(mModulatorType->get());
+	
+	//TODO currently, only the radius is observable (requires circular area), otherwise its value is 0.
+	if(area.width() > 0.0 && area.height() > 0.0) {
+		bool isCircle = mNeuroModulator->isCircularArea(mModulatorType->get());
+		if(isCircle) {
+			radius = area.width() / 2.0;
+		}
+	}
+	mCurrentArea->set(radius);
+	
 	mUpdatingObservables = false;
 }
 
@@ -309,6 +329,7 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::applyObservables() {
 	if(mNeuroModulator == 0) {
 		mCurrentConcentration->set(0.0);
 		mStimulationState->set(0.0);
+		mCurrentArea->set(0.0);
 		return;
 	}
 
@@ -322,6 +343,15 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::applyObservables() {
 		if(vars.size() > 0) {
 			vars[0] = stimulation;
 		}
+	}
+	
+	//TODO also allow for rectangular areas?
+	double radius = mCurrentArea->get();
+	QRectF area = mNeuroModulator->getLocalRect(mModulatorType->get());
+	
+	bool isCircle = mNeuroModulator->isCircularArea(mModulatorType->get());
+	if(isCircle) {
+		mNeuroModulator->setLocalAreaRect(mModulatorType->get(), radius * 2.0, radius * 2.0, Vector3D(0,0,0), true);
 	}
 }
 
