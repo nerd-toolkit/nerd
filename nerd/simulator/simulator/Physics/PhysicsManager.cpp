@@ -103,7 +103,7 @@ PhysicsManager::PhysicsManager() : mPhysicalSimulationAlgorithm(0), mCollisionMa
 	Core::getInstance()->getValueManager()->addValue(SimulationConstants::VALUE_SWITCH_YZ_AXES, mSwitchYZAxes);
 	
 	mDisablePhysics = new BoolValue(false);
-	mDisablePhysics->setDescription("If true, then the physical simulation is skipped and no update of the physics takes place.");
+	mDisablePhysics->setDescription("If true, then the physical simulation is skipped and no update or resets of the physics takes place.");
 	Core::getInstance()->getValueManager()->addValue(SimulationConstants::VALUE_DISABLE_PHYSICS, mDisablePhysics);
 }
 
@@ -235,6 +235,14 @@ bool PhysicsManager::cleanUp() {
  */
 bool PhysicsManager::resetSimulation() {
 	TRACE("PhysicsManager::resetSimulation");
+	
+	if(mDisablePhysics->get()) {
+		//keep simulation time
+		
+		//reset current time
+		mCurrentRealTime->set(0.0);
+		return true;
+	}
 
 	bool measurePerformance = Core::getInstance()->isPerformanceMeasuringEnabled();
 

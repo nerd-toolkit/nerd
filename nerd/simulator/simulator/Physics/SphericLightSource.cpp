@@ -68,6 +68,7 @@ namespace nerd {
 	{
 		mRange = new DoubleValue(range);
 		mBrightnessSensor = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
+		mBrightnessSensor->setNotifyAllSetAttempts(true);
 		mBrightnessControl = new InterfaceValue("", "DesiredBrightness", brightness, 0.0, 1.0);
 		mLightColor = new ColorValue("yellow");
 		mHideLightCone = new BoolValue(false);
@@ -211,6 +212,9 @@ namespace nerd {
 		if(value == 0) {
 			return;
 		}
+		else if(value == mBrightnessSensor) {
+			updateLightColor();
+		}
 		else if(value == mRange) {
 			if(mUseSphereAsLightCone->get()) {
 				SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
@@ -260,7 +264,9 @@ namespace nerd {
 	
 	void SphericLightSource::updateSensorValues() {
 		mBrightnessSensor->set(mBrightnessControl->get());
-		
+	}
+	
+	void SphericLightSource::updateLightColor() {
 		//Set transparency to a value between 0 and 80, depending on the current brightness.
 		//80 is about 30 percent of full opacity (255) at max.
 		Color color = mBodyCollisionObject->getGeometry()->getColor();
@@ -270,7 +276,7 @@ namespace nerd {
 		else {
 			color.setAlpha((int) (Math::abs(mBrightnessSensor->get()) * 80.0)); 
 		}
-		mBodyCollisionObject->getGeometry()->setColor(color);
+		mBodyCollisionObject->getGeometry()->setColor(color);	
 	}
 	
 	double SphericLightSource::getRange() const {

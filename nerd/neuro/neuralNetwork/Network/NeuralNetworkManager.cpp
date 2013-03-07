@@ -323,7 +323,7 @@ void NeuralNetworkManager::eventOccured(Event *event) {
 	else if(event == mNetworkEvaluationStarted) {
 		executeNeuralNetworks();
 	}
-	else if((event == mResetEvent && ! mDisableMainReset->get()) || event == mResetNetworksEvent) {
+	else if((event == mResetEvent && !mDisableMainReset->get()) || event == mResetNetworksEvent) {
 		resetNeuralNetworks();
 	}
 }

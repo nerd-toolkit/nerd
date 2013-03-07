@@ -72,6 +72,8 @@ namespace nerd {
 		virtual void valueChanged(Value *value);
 		virtual void updateSensorValues();
 		
+		void updateLightColor();
+		
 		int getType() const;
 		void setType(int type);
 		

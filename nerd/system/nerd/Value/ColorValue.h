@@ -55,7 +55,7 @@ namespace nerd {
 	/**
 	 * ColorValue
 	 */
-	class ColorValue : public Value, public ValueChangedListener /*, public virtual MultiPartValue*/ {
+	class ColorValue : public Value, public virtual MultiPartValue {
 	public:
 		ColorValue();
 		ColorValue(const QString &color);

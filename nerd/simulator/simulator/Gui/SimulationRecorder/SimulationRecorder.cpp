@@ -48,6 +48,7 @@
 #include "Core/Core.h"
 #include <iostream>
 #include "Value/ValueManager.h"
+#include <Value/ChangeValueTask.h>
 #include "Physics/PhysicsManager.h"
 #include "Physics/Physics.h"
 #include <QStringList>
@@ -247,7 +248,12 @@ void SimulationRecorder::eventOccured(Event *event) {
 		return;
 	}
 	else if(event == mResetEvent) {
-		recordData(true);
+		if(mExecutionMode == SIMREC_RECORDING) {
+			recordData(true);
+		}
+		else if(mExecutionMode == SIMREC_PLAYBACK) {
+			Core::getInstance()->scheduleTask(new ChangeValueTask(mCurrentStep, QString::number(mStepCounter)));
+		}
 	}
 	else if(event == mStepCompletedEvent) {
 		recordData();
@@ -493,6 +499,7 @@ bool SimulationRecorder::startPlayback() {
 	}
 	
 	mStepStartedEvent->addEventListener(this);
+	mResetEvent->addEventListener(this);
 	
 	mFile = new QFile(mPlaybackFile->get());
 	
@@ -590,6 +597,7 @@ bool SimulationRecorder::startPlayback() {
 bool SimulationRecorder::stopPlayback() {
 	
 	mStepStartedEvent->removeEventListener(this);
+	mResetEvent->removeEventListener(this);
 	
 	if(mFile != 0) {
 		Core::log("Stopping data playback! ", true);
