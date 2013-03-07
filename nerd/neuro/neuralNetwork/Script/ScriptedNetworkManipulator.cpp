@@ -2150,6 +2150,25 @@ void ScriptedNetworkManipulator::enableNeuroModulators(qulonglong elementId, boo
 }
 
 
+/**
+ * Returns true if the selected network element provides a neuromodulator cell (NeuroModulator object).
+ */
+bool ScriptedNetworkManipulator::isNeuroModulationEnabled(qulonglong elementId) {
+	if(mNetwork == 0) {
+		return false;
+	}
+
+	NeuralNetworkElement *object = 0;
+	NeuroModulatorElement *nModElem = 0;
+	getNeuroModulator(elementId, &object, &nModElem);
+	
+	if(object == 0 || nModElem == 0) {
+		return false;
+	}
+	return (nModElem->getNeuroModulator() != 0);
+}
+
+
 
 /**
  * Sets the current concentration level of a specific neuromodulator type spread by the given element.
@@ -2330,6 +2349,36 @@ double ScriptedNetworkManipulator::getModulatorConcentrationAt(int type, double 
 	
 	return NeuroModulator::getConcentrationInNetworkAt(type, Vector3D(x, y, z), mNetwork);
 }
+
+
+/**
+ * Returns the sum of all currently maintained concentrations (as produced by the moduator cells)
+ * of all neuromodulator cells. This can be used to determin whether a specific modulator type
+ * is currently available in the entire network, independently of the location in the network.
+ */
+double ScriptedNetworkManipulator::getModulatorConcentrationInNetwork(int type) {
+	if(mNetwork == 0) {
+		return 0.0;
+	}
+	
+	QList<NeuralNetworkElement*> all;
+	mNetwork->getNetworkElements(all);
+	
+	double sum = 0.0;
+	
+	for(QListIterator<NeuralNetworkElement*> i(all); i.hasNext();) {
+		NeuralNetworkElement *elem = i.next();
+		NeuroModulatorElement *nme = getNeuroModulatorElement(elem);
+		if(nme != 0) {
+			NeuroModulator *mod = nme->getNeuroModulator();
+			if(mod != 0) {
+				sum += mod->getConcentration(type, elem);
+			}
+		}
+	}
+	return sum;
+}
+
 
 /**
  * Sets the concentration calculation modus for a specific type of the given element.
@@ -2530,29 +2579,7 @@ NeuroModulator* ScriptedNetworkManipulator::getNeuroModulator(qulonglong element
 	if(object == 0) {
 		return 0;
 	}
-	NeuroModulatorElement *nModElem = 0;
-	
-	Neuron *neuron = dynamic_cast<Neuron*>(object);
-	Synapse *synapse = dynamic_cast<Synapse*>(object);
-	NeuroModule *module = dynamic_cast<NeuroModule*>(object);
-	if(neuron != 0) {
-		nModElem = dynamic_cast<NeuroModulatorElement*>(dynamic_cast<Neuron*>(object)->getActivationFunction());
-	}
-	else if(synapse != 0) {
-		nModElem = dynamic_cast<NeuroModulatorElement*>(dynamic_cast<Synapse*>(object)->getSynapseFunction());
-	}
-	else if(module != 0) {
-		//use the first NeuroModulator constaint (ignore all others)
-		QList<GroupConstraint*> constraints = dynamic_cast<NeuroModule*>(object)->getConstraints();
-		for(QListIterator<GroupConstraint*> j(constraints); j.hasNext();) {
-			GroupConstraint *group = j.next();
-			nModElem = dynamic_cast<NeuroModulatorElement*>(group);
-			
-			if(nModElem != 0) {
-				break;
-			}
-		}
-	}
+	NeuroModulatorElement *nModElem = getNeuroModulatorElement(object);
 	
 	if(nModElem == 0) {
 		return 0;
@@ -2565,6 +2592,41 @@ NeuroModulator* ScriptedNetworkManipulator::getNeuroModulator(qulonglong element
 		(*modElem) = nModElem;
 	}
 	return nModElem->getNeuroModulator();
+}
+
+
+/**
+ * Returns the NeuroModulatorElement of a given NeuralNetworkElement (e.g. the transfer function, activation functiion, etc).
+ */
+NeuroModulatorElement* ScriptedNetworkManipulator::getNeuroModulatorElement(NeuralNetworkElement *elem) {
+	if(elem == 0) {
+		return 0;
+	}
+	NeuroModulatorElement *nModElem = 0;
+	
+	Neuron *neuron = dynamic_cast<Neuron*>(elem);
+	Synapse *synapse = dynamic_cast<Synapse*>(elem);
+	NeuroModule *module = dynamic_cast<NeuroModule*>(elem);
+	if(neuron != 0) {
+		nModElem = dynamic_cast<NeuroModulatorElement*>(dynamic_cast<Neuron*>(elem)->getActivationFunction());
+	}
+	else if(synapse != 0) {
+		nModElem = dynamic_cast<NeuroModulatorElement*>(dynamic_cast<Synapse*>(elem)->getSynapseFunction());
+	}
+	else if(module != 0) {
+		//use the first NeuroModulator constaint (ignore all others)
+		QList<GroupConstraint*> constraints = dynamic_cast<NeuroModule*>(elem)->getConstraints();
+		for(QListIterator<GroupConstraint*> j(constraints); j.hasNext();) {
+			GroupConstraint *group = j.next();
+			nModElem = dynamic_cast<NeuroModulatorElement*>(group);
+			
+			if(nModElem != 0) {
+				break;
+			}
+		}
+	}
+	
+	return nModElem;
 }
 
 

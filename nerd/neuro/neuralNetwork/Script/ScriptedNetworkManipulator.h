@@ -163,6 +163,7 @@ class NeuroModulator;
 		
 		//Neuromodulator Framework
 		void enableNeuroModulators(qulonglong elementId, bool enable);
+		bool isNeuroModulationEnabled(qulonglong elementId);
  		void setModulatorArea(qulonglong elementId, int type, double width, double height, bool circle = true);
 		void setModulatorAreaReferenceModule(qulonglong elementId, int type, qulonglong moduleId);
 		QVariantList getModulatorArea(qulonglong elementId, int type);
@@ -172,6 +173,7 @@ class NeuroModulator;
 		double getModulatorConcentration(qulonglong elementId, int type);
 		double getModulatorConcentrationAt(qulonglong elementId, int type, double x, double y, double z);
 		double getModulatorConcentrationAt(int type, double x, double y, double z);
+		double getModulatorConcentrationInNetwork(int type);
 		void setModulatorDistributionModus(qulonglong elementId, int type, int modus);
 		int getModulatorDistributionModus(qulonglong elementId, int type = -1);
 		void setModulatorUpdateModus(qulonglong elementId, int type, int modus);
@@ -185,6 +187,7 @@ class NeuroModulator;
 	protected:
 		NeuroModulator* getNeuroModulator(qulonglong elementId, NeuralNetworkElement **element = 0, 
 										  NeuroModulatorElement **modElem = 0);
+		NeuroModulatorElement* getNeuroModulatorElement(NeuralNetworkElement *elem);
 
 	private:
 		ModularNeuralNetwork *mNetwork;
