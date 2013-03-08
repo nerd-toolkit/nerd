@@ -175,6 +175,8 @@ namespace nerd {
 		mOwner = synapse;
 		mCurrentNetwork = 0;
 		updateSettings();
+		mInactivationObservable->set(mInactive->get() ? 1.0 : 0.0);
+		enableWeight(mOwner, !(mInactive->get()));
 	}
 
 
@@ -634,6 +636,7 @@ namespace nerd {
 			return ;
 		}
 		
+		mInactive->set(!enable);
 		if(enable) {
 			bool ok = true;
 			double oldWeight = owner->getProperty("_SMRS_w").toDouble(&ok);
@@ -649,7 +652,7 @@ namespace nerd {
 			owner->setProperty("_SMRS_w", QString::number(currentWeight));
 			owner->setProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED);
 		}
-		mInactive->set(enable);
+		
 	}
 	
 	
