@@ -306,7 +306,7 @@ void EvaluationLoop::valueChanged(Value *value) {
 			}
 		}
 		if(value == mNumberOfStepsValue) {
-			mNumberOfSteps = Math::max(mNumberOfStepsValue->get(), 1);
+			mNumberOfSteps = mNumberOfStepsValue->get();
 		}
 	}
 }
@@ -318,11 +318,6 @@ void EvaluationLoop::executeEvaluationLoop() {
 	bool unboundedNumberOfTries = false;
 	if(mNumberOfTries == -1) {
 		unboundedNumberOfTries = true;
-	}
-
-	bool unboundedNumberOfSteps = false;
-	if(mNumberOfSteps <= 0) {
-		unboundedNumberOfSteps = true;
 	}	
 
 	int currentTry = 0;
@@ -346,7 +341,7 @@ void EvaluationLoop::executeEvaluationLoop() {
 		Core::getInstance()->executePendingTasks();
 		mResetFinalizedEvent->trigger();
 
-		while((mCurrentStep->get() < mNumberOfSteps || unboundedNumberOfSteps) && !mDoShutDown) {
+		while(((mCurrentStep->get() < mNumberOfSteps) || (mNumberOfSteps <= 0)) && !mDoShutDown) {
 
 			while(mPauseSimulation->get() && !mDoShutDown) {
 				Core::getInstance()->executePendingTasks();

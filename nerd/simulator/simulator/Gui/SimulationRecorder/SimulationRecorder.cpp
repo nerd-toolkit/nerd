@@ -107,7 +107,8 @@ class StartRecordingTask : public Task {
 
 SimulationRecorder::SimulationRecorder()
 	: mResetEvent(0), mStepCompletedEvent(0), mPhysicsWasDisabled(false), mStartEndFrameRange(0, 0), 
-		mNumberOfFrames(0), mFrameNumber(0), mWasPaused(false),  mFile(0), mDataStream(0), mExecutionMode(SIMREC_OFF)
+		mNumberOfFrames(0), mFrameNumber(0), mWasPaused(false), mPreviousNumberOfStepsSetting(0),
+		mFile(0), mDataStream(0), mExecutionMode(SIMREC_OFF)
 		
 {
 	Core::getInstance()->addSystemObject(this);
@@ -202,10 +203,15 @@ bool SimulationRecorder::bind() {
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	
+	mNumberOfSteps = vm->getIntValue("/Control/NumberOfSteps");
 	mCurrentStep = vm->getIntValue(SimulationConstants::VALUE_EXECUTION_CURRENT_STEP);
 	mPhysicsDisabled = vm->getBoolValue(SimulationConstants::VALUE_DISABLE_PHYSICS);
 	mSimulationPaused = vm->getBoolValue(SimulationConstants::VALUE_EXECUTION_PAUSE);
 
+	if(mNumberOfSteps == 0) {
+		Core::log("SimulationRecorder: Could not find Event [/Control/NumberOfSteps]", true);
+		ok = false;
+	}
 	if(mResetEvent == 0) {
 		Core::log("SimulationRecorder: Could not find Event [" + NerdConstants::EVENT_EXECUTION_RESET + "]", true);
 		ok = false;
@@ -549,6 +555,7 @@ bool SimulationRecorder::startPlayback() {
 	else {
 		//this is much slower, but it also works with corrupt files that 
 		//may occur when no space is left on a defice during writing.
+		int updateCounter = 0;
 		uint size = 0;
 		while(!mFileDataStream.atEnd()) {
 			++mNumberOfFrames;
@@ -562,6 +569,19 @@ bool SimulationRecorder::startPlayback() {
 			if(!mFileDataStream.atEnd()) {
 				mFileDataStream >> end;
 			}
+			
+			if(updateCounter++ > 500) {
+				updateCounter = 0;
+				
+				//execute core scheduler
+				Core::getInstance()->executePendingTasks();
+				
+				//do not continue, if the playback has been canceled.
+				if(!mActivatePlayback->get()) {
+					stopPlayback();
+					return false;
+				}
+			}
 		}
 
 		mStartEndFrameValue->set(start, end);
@@ -570,6 +590,11 @@ bool SimulationRecorder::startPlayback() {
 	}
 	
 	mFrameNumber = 0;
+	
+	//set the number of steps per try to unlimited to avoid automatic resets 
+	//during the playback. 
+	mPreviousNumberOfStepsSetting = mNumberOfSteps->get();
+	mNumberOfSteps->set(-1);
 	
 	
 	mPhysicsWasDisabled = mPhysicsDisabled->get();
@@ -615,6 +640,9 @@ bool SimulationRecorder::stopPlayback() {
 	if(mPhysicsDisabled->get() != mPhysicsWasDisabled) {
 		mPhysicsDisabled->set(mPhysicsWasDisabled);
 	}
+	
+	//set the number of steps back to the original setting
+	mNumberOfSteps->set(mPreviousNumberOfStepsSetting);
 	
 	mFileDataStream.setDevice(0);
 	
@@ -691,6 +719,7 @@ void SimulationRecorder::playbackData() {
 		}
 		
 		//seek forwards or backwards to find the correct frame.
+		int updateCounter = 0;
 		if(fwd) {
 			if(!mReadStepNumber) {
 				mFileDataStream >> frameNumber;
@@ -702,6 +731,19 @@ void SimulationRecorder::playbackData() {
 				mFileDataStream >> size; //second size
 				mFileDataStream >> frameNumber;
 				mFileDataStream >> step; //step number
+				
+				if(updateCounter++ > 500) {
+					updateCounter = 0;
+					
+					//execute core scheduler
+					Core::getInstance()->executePendingTasks();
+					
+					//do not continue, if the playback has been canceled.
+					if(!mActivatePlayback->get()) {
+						stopPlayback();
+						return;
+					}
+				}
 			}
 		}
 		else {
@@ -715,6 +757,19 @@ void SimulationRecorder::playbackData() {
 				mFile->seek(mFile->pos() - size - sizeof(step) - (2 * sizeof(size)) - sizeof(frameNumber));
 				mFileDataStream >> frameNumber;
 				mFileDataStream >> step; //step number
+				
+				if(updateCounter++ > 500) {
+					updateCounter = 0;
+					
+					//execute core scheduler
+					Core::getInstance()->executePendingTasks();
+					
+					//do not continue, if the playback has been canceled.
+					if(!mActivatePlayback->get()) {
+						stopPlayback();
+						return;
+					}
+				}
 				
 			} while(((int) frameNumber) != mDesiredFrameValue->get() && !mFileDataStream.atEnd());
 		}

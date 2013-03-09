@@ -112,6 +112,7 @@ namespace nerd {
 		Event *mStepStartedEvent;
 		Event *mStepCompletedEvent;
 		
+		IntValue *mNumberOfSteps;
 		IntValue *mCurrentStep;
 		BoolValue *mPhysicsDisabled;
 		BoolValue *mSimulationPaused;
@@ -133,6 +134,7 @@ namespace nerd {
 		int mNumberOfFrames;
 		uint mFrameNumber;
 		bool mWasPaused;
+		int mPreviousNumberOfStepsSetting;
 		
 	protected:
 		FileNameValue *mPlaybackFile;

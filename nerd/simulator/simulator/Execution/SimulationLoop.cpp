@@ -151,7 +151,7 @@ void SimulationLoop::run() {
 			if(mDoShutDown) {
 				break;
 			}
-			//wait delay ms (in small intercals of at max 100 ms to preserve reactivity.
+			//wait delay ms (in small intervals of at max 100 ms to preserve reactivity.
 			int waitedDelayTime = 0;
 			int pendingDelay = mSimulationDelay->get();
 			if(pendingDelay > 100) {
