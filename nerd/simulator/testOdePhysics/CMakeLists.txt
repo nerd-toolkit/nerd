@@ -44,8 +44,8 @@ QT4_WRAP_UI(nerd_testOdePhysics_UI_HDRS ${nerd_testOdePhysics_UIS})
 
 
 
-set(ODE_INCLUDE_PATH ../../../ode-0.12/include)
-set(ODE_LIBRARY_PATH ../../../ode-0.12/ode/src/.libs/libode.a)
+#set(ODE_INCLUDE_PATH ../../../ode-0.12/include)
+#set(ODE_LIBRARY_PATH ../../../ode-0.12/ode/src/.libs/libode.a)
 #set(ODE_INCLUDE_PATH ../../../ode-0.9/include)
 #set(ODE_LIBRARY_PATH ../../../ode-0.9/ode/src/libode.a)
 
@@ -59,15 +59,16 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simulator)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/odePhysics)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/testOdePhysics)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/${ODE_INCLUDE_PATH})
+#include_directories(${CMAKE_CURRENT_BINARY_DIR}/${ODE_INCLUDE_PATH})
 
 
 TARGET_LINK_LIBRARIES(testOdePhysics
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/odePhysics/libodePhysics.a
-	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}
+	#${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
 	${QT_LIBRARIES}
+	-lode
 )
 
 
