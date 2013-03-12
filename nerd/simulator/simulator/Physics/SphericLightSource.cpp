@@ -304,10 +304,21 @@ namespace nerd {
 	}
 	
 	
-	double SphericLightSource::getBrightness(const Vector3D &globalPosition) {
+	double SphericLightSource::getBrightness(const Vector3D &globalPosition, const bool &restrictToHorizontal) {
 		double brightness = 0.0;
+		double distance = 0.0;
 		
-		double distance = Math::distance(globalPosition, getPositionValue()->get());
+		if(restrictToHorizontal) {
+			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+				distance = Math::abs(globalPosition.getZ() - getPositionValue()->getZ());
+			}
+			else {
+				distance = Math::abs(globalPosition.getY() - getPositionValue()->getY());
+			}
+		}
+		else {
+			distance = Math::distance(globalPosition, getPositionValue()->get());
+		}
 		
 		double range = getRange();
 		

@@ -346,7 +346,7 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 // 	double ambientLight = (range - distance) / range * lightSource->getCurrentBrightness();
 
 	//let the light source calculate its current brightness at the desired global position.
-	double ambientLight = lightSource->getBrightness(globalPosition);
+	double ambientLight = lightSource->getBrightness(globalPosition, mRestrictToHorizontalDirection->get());
 
 	if(mUseAsAmbientLightSensor->get()) {
 		brightness = ambientLight;
@@ -409,13 +409,13 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 				maxDifference = Math::abs(anglesToLightSource.getZ());
 			}
 		}
-		else {
+		else { // TODO: REPAIR! (delete division by 3?)
 			maxDifference = (Math::abs(anglesToLightSource.getX()) / 3.0)
 								+ (Math::abs(anglesToLightSource.getY()) / 3.0)
 								+ (Math::abs(anglesToLightSource.getZ()) / 3.0);
 		}
+		
 		maxDifference = Math::min(mMaxDetectionAngle->get(), maxDifference);
-
 		ambientLight = ambientLight / mMaxDetectionAngle->get();
 		brightness = (mMaxDetectionAngle->get() - maxDifference) * ambientLight;
 

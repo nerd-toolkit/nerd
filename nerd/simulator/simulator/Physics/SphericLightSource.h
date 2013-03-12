@@ -84,7 +84,7 @@ namespace nerd {
 		double getDesiredBrightness() const;
 		void setDesiredBrightness(double brightness);
 		
-		virtual double getBrightness(const Vector3D &globalPosition);
+		virtual double getBrightness(const Vector3D &globalPosition, const bool &restrictToHorizontal);
 		
 	private:
 		void createCollisionObject();
