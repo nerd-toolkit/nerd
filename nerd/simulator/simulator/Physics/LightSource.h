@@ -75,7 +75,7 @@ namespace nerd {
 		int getType() const;
 		void setType(int type);
 		
-		virtual double getBrightness(const Vector3D &globalPosition, const bool &restrictToHorizontal = false) = 0;
+		virtual double getBrightness(const Vector3D &globalPosition, const bool &restrictToHorizontal) = 0;
 
 	private:
 		IntValue *mType;

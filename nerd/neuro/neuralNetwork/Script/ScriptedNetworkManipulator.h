@@ -95,7 +95,7 @@ class NeuroModulator;
 		QVariantList getSubModules(qulonglong groupId);
 		qulonglong getParentModule(qulonglong elementId);
 
-		QVariantList getSynapses(QVariantList targetIds, bool includeFromExternals = false, 
+		QVariantList getSynapses(QVariantList elementIds, bool includeFromExternals = false, 
 								 bool includeToExternals = false, bool excludeDisabledSynapses = true);
 		QVariantList getInSynapses(qulonglong targetId, bool excludeDisabledSynapses = true);
 		QVariantList getOutSynapses(qulonglong neuronId, bool excludeDisabledSynapses = true);
@@ -115,6 +115,8 @@ class NeuroModulator;
 		QVariantList getPosition(qulonglong objectId);
 		QVariantList getProperties(qulonglong objectId);
 		QString getProperty(qulonglong objectId, const QString &name);
+		QVariantList getNetworkTagNames(qulonglong objectId);
+		QString getNetworkTag(qulonglong objectId, const QString &name);
 		QString getName(qulonglong neuronId);
 
 		bool setBias(qulonglong neuronId, double bias);
@@ -123,6 +125,7 @@ class NeuroModulator;
 		bool setWeight(qulonglong synapseId, double weight);
 		bool setPosition(qulonglong objectId, double x, double y, double z);
 		bool setProperty(qulonglong objectId, const QString &propName, const QString &content, bool severeChange = false);
+		bool setNetworkTag(qulonglong objectId, const QString &tagName, const QString &content, bool severeChange = false);
 		bool setName(qulonglong neuronId, const QString &name);
 
 		bool addToGroup(qulonglong elementId, qulonglong groupId);
@@ -137,6 +140,7 @@ class NeuroModulator;
 		bool removeSynapse(qulonglong synapseId);
 		bool removeNeuronGroup(qulonglong groupId);
 		bool removeProperty(qulonglong objectId, const QString &propertyName, bool severeChange = false);
+		bool removeNetworkTag(qulonglong objectId, const QString &tagName, bool severeChange = false);
 		
 		bool setTransferFunction(qulonglong neuronId, const QString &transferFunctionName);
 		QString getTransferFunctionName(qulonglong neuronId);

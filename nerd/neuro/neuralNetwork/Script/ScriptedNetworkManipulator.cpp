@@ -474,7 +474,28 @@ QVariantList ScriptedNetworkManipulator::getOutSynapses(qulonglong neuronId, boo
 }
 
 
-QVariantList ScriptedNetworkManipulator::getSynapses(QVariantList targetIds, bool includeFromExternals, 
+/**
+ * Returns an array with the ids of all synapses of a set of given network elements, 
+ * i.e. all synapses goint to or coming from the network element specified with <i>elementIds</i>. 
+ * The array with <i>elementIds</i> may contain the ids of neurons or that of synapses. The latter 
+ * case only works for higher-order synapses with incoming synapses. The returned array of synapse 
+ * ids can be further filtered to obtain only a subset: If <i>includeFromExternals</i> and 
+ * <i>includeToExternals</i> are both false, then the returned array only contains ids of synapses that
+ * exist <i>between</i> the targets given with the <i>elementIds</i> array, so only the local subnetwork 
+ * is considered. If one of the two parameters is true, then synapses coming from or going to other 
+ * neurons and synapses are considered, if they originate from one of the chosen network elements, 
+ * or if they have one of these elements as target. The last parameter <i>excludeDisabledSynapses</i> 
+ * determins whether disabled synapses are included or not. In many cases, disabled synapses should be 
+ * ignored during processing, so this parameter makes it easy to filter the disabled synapses out without
+ * a local check in the script.
+ * 
+ * @param elementIds an array with the ids of the network elements the synapses should be collected from.
+ * @param includeFromExternals If true, synapses coming from elements not in the elementsIds list are incldued.
+ * @param includeToExternals If true, synapses going to elements not in the elementsIds list are included.
+ * @param excludeDisabledSynapses If true, disabled synapses are included, otherwise they are ignored.
+ * @return a list with the ids of all synapses that match the above conditions.
+ * */
+QVariantList ScriptedNetworkManipulator::getSynapses(QVariantList elementIds, bool includeFromExternals, 
 								 bool includeToExternals, bool excludeDisabledSynapses)
 {
 	QVariantList synapseIds;
@@ -488,7 +509,7 @@ QVariantList ScriptedNetworkManipulator::getSynapses(QVariantList targetIds, boo
 	QList<SynapseTarget*> targets;
 	
 	bool ok = false;
-	for(QListIterator<QVariant> i(targetIds); i.hasNext();) {
+	for(QListIterator<QVariant> i(elementIds); i.hasNext();) {
 		
 		qulonglong id = i.next().toLongLong(&ok);
 		if(!ok) {
@@ -551,6 +572,14 @@ QVariantList ScriptedNetworkManipulator::getSynapses(QVariantList targetIds, boo
 	return synapseIds;
 }
 
+
+
+/**
+ * Returns an array with the ids of all synapses that <i>end</i> in the network element specified 
+ * by <i>targetId</i>. If <i>excludeDisabledSynapes</i> is true, then only enabled synapses are 
+ * considered, otherwise all incoming synapses are returned. The target element can be a neuron 
+ * or a (higher-order) synapse.
+ */
 QVariantList ScriptedNetworkManipulator::getInSynapses(QVariantList targetIds, 
 				bool includeFromExternals, bool excludeDisabledSynapses)
 {
@@ -609,6 +638,12 @@ QVariantList ScriptedNetworkManipulator::getInSynapses(QVariantList targetIds,
 }
 
 
+
+/**
+ * Returns an array with the ids of all synapses that <i>start</i> in the neuron specified by 
+ * <i>neuronId</i>. If <i>excludeDisabledSynapes</i> is true, then only enabled synapses are 
+ * considered, otherwise all outgoing synapses are returned. 
+ */
 QVariantList ScriptedNetworkManipulator::getOutSynapses(QVariantList neuronIds, 
 				bool includeToExternals, bool excludeDisabledSynapses)
 {
@@ -662,6 +697,8 @@ QVariantList ScriptedNetworkManipulator::getOutSynapses(QVariantList neuronIds,
 	return synapseIds;
 }
 
+
+
 /**
  * Returns the id of the source neuron of the synapse specified by its synapseId.
  * Will return 0 in case of failure.
@@ -692,6 +729,7 @@ qulonglong ScriptedNetworkManipulator::getSource(qulonglong synapseId) {
 	}
 	return neuron->getId();
 }
+
 
 /**
  * Returns the id of the synapse target (neuron or synpse) of the synapse specified by its synapseId.
@@ -751,9 +789,12 @@ double ScriptedNetworkManipulator::getBias(qulonglong neuronId) {
 	return neuron->getBiasValue().get();
 }
 
+
 /**
- * Returns the weight of the synapse with the given synapseId.
- * Will return 0 in case of failure.
+ * Returns the weight of the synapse with id <i>synapseId</i>. This weight is the 
+ * <i>nominal</i> weight, i.e. the weight term of the synapse that can be set and 
+ * observed in the network editor. The <i>effect</i> of that weight may differ 
+ * between neuron models.
  */
 double ScriptedNetworkManipulator::getWeight(qulonglong synapseId) {
 	if(mNetwork == 0) {
@@ -780,7 +821,7 @@ double ScriptedNetworkManipulator::getWeight(qulonglong synapseId) {
 
 
 /**
- * Executes the calculateActivation() funciton of a synapses and returns its result.
+ * Executes the calculateActivation() function of a synapses and returns its result.
  * Will return 0 in case of a failure...
  */
 double ScriptedNetworkManipulator::getSynapseOutput(qulonglong synapseId) {
@@ -991,8 +1032,27 @@ QVariantList ScriptedNetworkManipulator::getPosition(qulonglong objectId) {
 /**
  * Returns a list with the property names available of the network element with the given objectId.
  * Will return an empty list in case of failure.
+ * This is an alias for getNetworkTagNames(). (backwards compatibility, deprecated!)
  */
 QVariantList ScriptedNetworkManipulator::getProperties(qulonglong objectId) {
+	return getNetworkTagNames(objectId);
+}
+
+/**
+ * Returns the content of the specified property (name) of the network element with the given objectId. 
+ * In case of failure or in case there is no such property, the string "~" is returned.
+ * This is an alias for getNetworkTag(). (backwards compatibility, deprecated!)
+ */
+QString ScriptedNetworkManipulator::getProperty(qulonglong objectId, const QString &name) {
+	return getNetworkTag(objectId, name);
+}
+
+
+/**
+ * Returns a list with the property names available of the network element with the given objectId.
+ * Will return an empty list in case of failure.
+ */
+QVariantList ScriptedNetworkManipulator::getNetworkTagNames(qulonglong objectId) {
 	QVariantList properties;
 
 	if(mNetwork == 0) {
@@ -1029,12 +1089,11 @@ QVariantList ScriptedNetworkManipulator::getProperties(qulonglong objectId) {
 	return properties;
 }
 
-/**
- * Returns the content of the specified property (name) of the network element with the given objectId. 
- * In case of failure or in case there is no such property, the string "~" is returned.
- */
-QString ScriptedNetworkManipulator::getProperty(qulonglong objectId, const QString &name) {
 
+/**
+ * Returns the content of the network tag given by its name.
+ */
+QString ScriptedNetworkManipulator::getNetworkTag(qulonglong objectId, const QString &name) {
 	if(mNetwork == 0) {
 		return "~";
 	}
@@ -1066,6 +1125,9 @@ QString ScriptedNetworkManipulator::getProperty(qulonglong objectId, const QStri
 	return "~";
 }
 
+/**
+ * Returns the name of the neuron.
+ */
 QString ScriptedNetworkManipulator::getName(qulonglong neuronId) {
 	if(mNetwork == 0) {
 		return "Unknown";
@@ -1252,11 +1314,19 @@ bool ScriptedNetworkManipulator::setPosition(qulonglong objectId, double x, doub
 }
 
 /**
- * Sets the property "propName" of the network element "objectId" to the new "content". 
+ * This is an alias for setNetworkTag. This function here is deprecated.
+ */
+bool ScriptedNetworkManipulator::setProperty(qulonglong objectId, const QString &propName, const QString &content, bool severeChange) {
+	setNetworkTag(objectId, propName, content, severeChange);
+}
+
+
+/**
+ * Sets the network tag "tagName" of the network element "objectId" to the new "content". 
  * The content may also be ommited, then it is replaced by "".
  * Will return false in case of failure, otherwise true.
  */
-bool ScriptedNetworkManipulator::setProperty(qulonglong objectId, const QString &propName, const QString &content, bool severeChange) {
+bool ScriptedNetworkManipulator::setNetworkTag(qulonglong objectId, const QString &tagName, const QString &content, bool severeChange) {
 	if(mNetwork == 0) {
 		return false;
 	}
@@ -1282,7 +1352,7 @@ bool ScriptedNetworkManipulator::setProperty(qulonglong objectId, const QString 
 	if(props == 0) {
 		return false;
 	}
-	props->setProperty(propName, content);
+	props->setProperty(tagName, content);
 	
 	if(severeChange) {
 		nmm->triggerNetworkStructureChangedEvent();
@@ -1682,8 +1752,20 @@ bool ScriptedNetworkManipulator::removeNeuronGroup(qulonglong groupId) {
 	return ok;
 }
 
-
+/**
+ * Alias for removeNetworkTag(). This function is deprecated!
+ */
 bool ScriptedNetworkManipulator::removeProperty(qulonglong objectId, const QString &propertyName, bool severeChange) {
+	return removeNetworkTag(objectId, propertyName, severeChange);
+}
+
+
+/**
+ * Removes the given network tag from the specified network element. 
+ * If the change is severe, then the last parameter should be true to trigger a notification
+ * of network listeners to allow their readjustment.
+ */
+bool ScriptedNetworkManipulator::removeNetworkTag(qulonglong objectId, const QString &tagName, bool severeChange) {
 	if(mNetwork == 0) {
 		return false;
 	}
@@ -1709,10 +1791,10 @@ bool ScriptedNetworkManipulator::removeProperty(qulonglong objectId, const QStri
 	if(props == 0) {
 		return false;
 	}
-	if(!props->hasProperty(propertyName)) {
+	if(!props->hasProperty(tagName)) {
 		return true;
 	}
-	props->removeProperty(propertyName);
+	props->removeProperty(tagName);
 	
 	if(severeChange) {
 		nmm->triggerNetworkStructureChangedEvent();
@@ -1900,7 +1982,7 @@ bool ScriptedNetworkManipulator::setTransferFunctionParameter(
 				qulonglong neuronId, const QString &parameterName, const QString &value)
 {
 	if(mNetwork == 0) {
-		return "";
+		return false;
 	}
 	
 	Neuron *neuron = 0;
@@ -1916,11 +1998,11 @@ bool ScriptedNetworkManipulator::setTransferFunctionParameter(
 	}
 	
 	if(neuron == 0 || neuron->getTransferFunction() == 0) {
-		return "";
+		return false;
 	}
 	Value *param = neuron->getTransferFunction()->getParameter(parameterName);
 	if(param == 0) {
-		return "";
+		return false;
 	}
 	return param->setValueFromString(value);
 }
@@ -1930,7 +2012,7 @@ QString ScriptedNetworkManipulator::getTransferFunctionParameter(
 				qulonglong neuronId, const QString &parameterName)
 {
 	if(mNetwork == 0) {
-		return "";
+		return "~";
 	}
 	
 	Neuron *neuron = 0;
@@ -1946,11 +2028,11 @@ QString ScriptedNetworkManipulator::getTransferFunctionParameter(
 	}
 	
 	if(neuron == 0 || neuron->getTransferFunction() == 0) {
-		return "";
+		return "~";
 	}
 	Value *param = neuron->getTransferFunction()->getParameter(parameterName);
 	if(param == 0) {
-		return "";
+		return "~";
 	}
 	return param->getValueAsString();
 }
@@ -1990,7 +2072,7 @@ QString ScriptedNetworkManipulator::getActivationFunctionParameter(
 				qulonglong neuronId, const QString &parameterName)
 {
 	if(mNetwork == 0) {
-		return "";
+		return "~";
 	}
 	
 	Neuron *neuron = 0;
@@ -2006,11 +2088,11 @@ QString ScriptedNetworkManipulator::getActivationFunctionParameter(
 	}
 
 	if(neuron == 0 || neuron->getActivationFunction() == 0) {
-		return "";
+		return "~";
 	}
 	Value *param = neuron->getActivationFunction()->getParameter(parameterName);
 	if(param == 0) {
-		return "";
+		return "~";
 	}
 	return param->getValueAsString();
 }
@@ -2020,7 +2102,7 @@ bool ScriptedNetworkManipulator::setSynapseFunctionParameter(
 				qulonglong synapseId, const QString &parameterName, const QString &value)
 {
 	if(mNetwork == 0) {
-		return "";
+		return false;
 	}
 	
 	Synapse *synapse = 0;
@@ -2036,7 +2118,7 @@ bool ScriptedNetworkManipulator::setSynapseFunctionParameter(
 	}
 
 	if(synapse == 0 || synapse->getSynapseFunction() == 0) {
-		return "";
+		return false;
 	}
 	Value *param = synapse->getSynapseFunction()->getParameter(parameterName);
 	if(param == 0) {
@@ -2050,7 +2132,7 @@ QString ScriptedNetworkManipulator::getSynapseFunctionParameter(
 				qulonglong synapseId, const QString &parameterName)
 {
 	if(mNetwork == 0) {
-		return "";
+		return "~";
 	}
 	
 	Synapse *synapse = 0;
@@ -2066,11 +2148,11 @@ QString ScriptedNetworkManipulator::getSynapseFunctionParameter(
 	}
 
 	if(synapse == 0 || synapse->getSynapseFunction() == 0) {
-		return "";
+		return "~";
 	}
 	Value *param = synapse->getSynapseFunction()->getParameter(parameterName);
 	if(param == 0) {
-		return "";
+		return "~";
 	}
 	return param->getValueAsString();
 }
