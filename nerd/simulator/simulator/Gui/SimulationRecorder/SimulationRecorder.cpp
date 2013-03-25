@@ -989,7 +989,10 @@ void SimulationRecorder::syncWithListOfRecordedValues() {
 			QString name = line.mid(3);
 			Value *v = vm->getValue(name);
 			
-			if(dynamic_cast<DoubleValue*>(v) != 0 || dynamic_cast<IntValue*>(v) != 0) {
+			if(dynamic_cast<DoubleValue*>(v) != 0 
+				|| dynamic_cast<IntValue*>(v) != 0 
+				|| dynamic_cast<ULongLongValue*>(v) != 0) 
+			{
 				mRecordedValues.append(v);
 				mRecordedValueNames.append("[P]" + name);
 			}
@@ -1046,6 +1049,9 @@ void SimulationRecorder::updateRecordedData(QDataStream &dataStream) {
 		else if(dynamic_cast<IntValue*>(v) != 0) {
 			dataStream << ((double) dynamic_cast<IntValue*>(v)->get());
 		}
+		else if(dynamic_cast<ULongLongValue*>(v) != 0) {
+			dataStream << ((double) dynamic_cast<ULongLongValue*>(v)->get());
+		}
 	}
 }
 
@@ -1073,6 +1079,11 @@ void SimulationRecorder::updatePlaybackData(QDataStream &dataStream) {
 			double val = 0;
 			dataStream >> val;
 			dynamic_cast<IntValue*>(v)->set((int) (val + (Math::sign(val) * 0.5)));
+		}
+		else if(dynamic_cast<ULongLongValue*>(v) != 0) {
+			double val = 0;
+			dataStream >> val;
+			dynamic_cast<ULongLongValue*>(v)->set((qulonglong) val);
 		}
 		counter++;
 	}
