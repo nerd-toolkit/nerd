@@ -106,9 +106,9 @@ class StartRecordingTask : public Task {
 
 
 SimulationRecorder::SimulationRecorder()
-	: mResetEvent(0), mStepCompletedEvent(0), mPhysicsWasDisabled(false), mStartEndFrameRange(0, 0), 
-		mNumberOfFrames(0), mFrameNumber(0), mWasPaused(false), mPreviousNumberOfStepsSetting(0),
-		mFile(0), mDataStream(0), mExecutionMode(SIMREC_OFF)
+	: mResetEvent(0), mStepCompletedEvent(0), mResetTotalStepsCounter(0), mTotalStepsCounters(0),
+		mPhysicsWasDisabled(false), mStartEndFrameRange(0, 0), 	mNumberOfFrames(0), mFrameNumber(0), 
+		mWasPaused(false), 	mPreviousNumberOfStepsSetting(0), mFile(0), mDataStream(0), mExecutionMode(SIMREC_OFF)
 		
 {
 	Core::getInstance()->addSystemObject(this);
@@ -126,6 +126,7 @@ SimulationRecorder::SimulationRecorder()
 	mNumberOfFramesValue = new IntValue(0);
 	mDesiredFrameValue = new IntValue(-1);
 	mCurrentFrameValue = new IntValue(0);
+	mResetTotalStepsCounter = new BoolValue(true);
 	
 	
 	mPlaybackSafeMode->setDescription("Is slower, but works with corrupt files, e.g. after "
@@ -147,8 +148,12 @@ SimulationRecorder::SimulationRecorder()
 	mDesiredFrameValue->setDescription("Can be used to jump to a desired frame number during playback."
 										"\nFrames < 0 and > NumberOfFrames have no effect. Note that seeking over large"
 										"\ndistances can take some time!");
+	mResetTotalStepsCounter->setDescription("Sets the total number of steps back to zero when recording or playback starts."
+										"\nThe total number of steps can serve as a continuous time measurement even in "
+										"combination with intermediate reset() calls.");
 	
 	mDesiredFrameValue->addValueChangedListener(this);
+	
 	
 	ValueManager *vm = Core::getInstance()->getValueManager();
 	vm->addValue("/DataRecorder/Control/ActivateRecording", mActivateRecording);
@@ -158,6 +163,7 @@ SimulationRecorder::SimulationRecorder()
 	vm->addValue("/DataRecorder/Recording/RecordingInterval", mRecordingInterval);
 	vm->addValue("/DataRecorder/Recording/RecordedValues", mObservedValues);
 	vm->addValue("/DataRecorder/Recording/RecordedValueNameList", mRecordedValueNameList);
+	vm->addValue("/DataRecorder/Recording/ResetTotalStepCounter", mResetTotalStepsCounter);
 	vm->addValue("/DataRecorder/Playback/PlaybackFile", mPlaybackFile);
 	vm->addValue("/DataRecorder/Playback/SafeMode", mPlaybackSafeMode);
 	vm->addValue("/DataRecorder/Playback/Range", mStartEndFrameValue);
@@ -207,6 +213,7 @@ bool SimulationRecorder::bind() {
 	mCurrentStep = vm->getIntValue(SimulationConstants::VALUE_EXECUTION_CURRENT_STEP);
 	mPhysicsDisabled = vm->getBoolValue(SimulationConstants::VALUE_DISABLE_PHYSICS);
 	mSimulationPaused = vm->getBoolValue(SimulationConstants::VALUE_EXECUTION_PAUSE);
+	mTotalStepsCounters = dynamic_cast<ULongLongValue*>(vm->getValue(SimulationConstants::VALUE_TOTAL_STEP_COUNTER));
 
 	if(mNumberOfSteps == 0) {
 		Core::log("SimulationRecorder: Could not find Event [/Control/NumberOfSteps]", true);
@@ -228,6 +235,9 @@ bool SimulationRecorder::bind() {
 	}
 	if(mSimulationPaused == 0) {
 		Core::log("SimulationRecorder: Could not find Value [" + SimulationConstants::VALUE_EXECUTION_PAUSE  + "]", true);
+	}
+	if(mTotalStepsCounters == 0) {
+		Core::log("SimulationRecorder: Could not find Value [" + SimulationConstants::VALUE_TOTAL_STEP_COUNTER  + "]", true);
 	}
 	
 	
@@ -351,6 +361,12 @@ void SimulationRecorder::startRecording() {
 	
 	mFrameNumber = 0;
 	
+	//check if the total steps counter should start from 0
+	if(mResetTotalStepsCounter->get()) {
+		mTotalStepsCounters->set(0);
+	}
+	
+	
 	Core::getInstance()->enforceDirectoryPath(mRecordingDirectory->get());
 	
 	//create file (find a unique name with the desired prefix)
@@ -448,6 +464,7 @@ void SimulationRecorder::stopRecording() {
  * Data format: frameNumber | currentStep | frameSize | data... | frameSize
  * See the dataformat description for the full format.
  */
+ //TODO Add total step counter to frame!
 void SimulationRecorder::recordData(bool forceRecording) {
 	if(mExecutionMode != SIMREC_RECORDING) {
 		return;
@@ -590,6 +607,11 @@ bool SimulationRecorder::startPlayback() {
 	}
 	
 	mFrameNumber = 0;
+	
+	//Check if the total steps counter should start at zero.
+	if(mResetTotalStepsCounter->get()) {
+		mTotalStepsCounters->set(0);
+	}
 	
 	//set the number of steps per try to unlimited to avoid automatic resets 
 	//during the playback. 

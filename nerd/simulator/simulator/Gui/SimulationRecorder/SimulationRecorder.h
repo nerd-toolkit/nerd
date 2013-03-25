@@ -63,8 +63,10 @@
 #include <qstringlist.h>
 #include <qtextstream.h>
 #include "Value/RangeValue.h"
+#include "Value/ULongLongValue.h"
 
 namespace nerd {
+
 
 	/**
 	 * SimulationRecorder
@@ -127,6 +129,8 @@ namespace nerd {
 		IntValue *mNumberOfFramesValue;
 		IntValue *mDesiredFrameValue;
 		IntValue *mCurrentFrameValue;
+		BoolValue *mResetTotalStepsCounter;
+		ULongLongValue *mTotalStepsCounters;
 		
 		
 		bool mPhysicsWasDisabled;
