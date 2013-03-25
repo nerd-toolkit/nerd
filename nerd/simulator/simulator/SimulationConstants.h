@@ -75,6 +75,7 @@ namespace nerd {
 		static const QString VALUE_RUN_REAL_TIME_RECORDER;
 		static const QString VALUE_SWITCH_YZ_AXES;
 		static const QString VALUE_DISABLE_PHYSICS;
+		static const QString VALUE_TOTAL_STEP_COUNTER;
 
 	//**************************************************************************
 	//Event Names

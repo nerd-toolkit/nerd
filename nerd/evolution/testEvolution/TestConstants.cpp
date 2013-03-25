@@ -123,6 +123,10 @@ void TestConstants::testConstants() {
 	//TerminateTryRule
 	QVERIFY(SimulationConstants::OBJECT_TERMINATE_TRY_COLLISION_RULE
 		== EvolutionConstants::OBJECT_TERMINATE_TRY_COLLISION_RULE);
+	
+	//ResetStepCounterAtReset
+	QVERIFY(EvolutionConstants::VALUE_TOTAL_STEP_COUNTER
+		== SimulationConstants::VALUE_TOTAL_STEP_COUNTER);
 
 }
 

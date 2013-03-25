@@ -59,6 +59,7 @@
 #include "Util/Tracer.h"
 #include <iostream>
 #include "EvolutionConstants.h"
+#include "Value/ULongLongValue.h"
 
 
 #define TRACE(message)
@@ -71,7 +72,7 @@ namespace nerd {
 EvaluationLoop::EvaluationLoop(int numberOfSteps, int numberOfTries) 
 	: mNextTryEvent(0), mTryCompletedEvent(0), mNextStepEvent(0),
 		mStepCompletedEvent(0), mShutDownEvent(0), mResetEvent(0), mResetFinalizedEvent(0), 
-		mCurrentStep(0), mPauseSimulation(0), mNumberOfTries(0), mNumberOfSteps(0), 
+		mCurrentStep(0), mPauseSimulation(0), mTotalStepCounter(0), mNumberOfTries(0), mNumberOfSteps(0), 
 		mDoShutDown(false), mTerminateTry(false), mSimulationState(false), mCurrentTry(0), mRunInRealTime(0),
 		mIsEvolutionMode(true), mInitialNumberOfTries(numberOfTries),
 		mInitialNumberOfSteps(numberOfSteps), mVideoMode(false), mVideoModeNumberOfSteps(6000)
@@ -143,6 +144,7 @@ bool EvaluationLoop::init() {
 	mCurrentTry = new IntValue(0);
 	mCurrentStep = new IntValue(0);
 	mPauseSimulation = new BoolValue(false);
+	mTotalStepCounter = new ULongLongValue(0);
 	
 	if(mIsEvolutionMode) {
 		mNumberOfTries =  Math::max(mNumberOfTriesValue->get(), 1);
@@ -177,6 +179,7 @@ bool EvaluationLoop::init() {
 
 	vm->addValue(EvolutionConstants::VALUE_EXECUTION_CURRENT_TRY, mCurrentTry);
 	vm->addValue(EvolutionConstants::VALUE_EXECUTION_CURRENT_STEP, mCurrentStep);
+	vm->addValue(EvolutionConstants::VALUE_TOTAL_STEP_COUNTER, mTotalStepCounter);
 	
 	return true;
 }
@@ -351,6 +354,7 @@ void EvaluationLoop::executeEvaluationLoop() {
 				break;
 			}
 			mCurrentStep->set(mCurrentStep->get() + 1);
+			mTotalStepCounter->set(mTotalStepCounter->get() + 1);
 
 			mNextStepEvent->trigger();
 

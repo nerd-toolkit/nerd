@@ -84,6 +84,9 @@ const QString SimulationConstants::VALUE_SWITCH_YZ_AXES
 		
 const QString SimulationConstants::VALUE_DISABLE_PHYSICS
 		= "/Simulation/DisablePhysics";
+		
+const QString SimulationConstants::VALUE_TOTAL_STEP_COUNTER
+		= "/Simulation/TotalSteps";
 
 //**************************************************************************
 //Event names

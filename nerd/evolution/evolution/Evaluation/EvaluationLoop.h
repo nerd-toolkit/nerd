@@ -57,6 +57,8 @@
 
 namespace nerd {
 
+class ULongLongValue;
+
 class EvaluationLoop : public virtual SystemObject,
 		public virtual EventListener, public virtual ValueChangedListener
 {
@@ -95,11 +97,11 @@ class EvaluationLoop : public virtual SystemObject,
 		IntValue *mNumberOfStepsValue;
 		IntValue *mCurrentStep;
 		BoolValue *mPauseSimulation;
+		ULongLongValue *mTotalStepCounter;
 		int mNumberOfTries;
 		int mNumberOfSteps;
 		CommandLineArgument *mIsEvolutionModeArgument;
 
-	protected:
 		bool mDoShutDown;
 		bool mTerminateTry;
 		bool mSimulationState;

@@ -91,11 +91,6 @@ int main(int argc, char *argv[])
 			new NerdClusterNeuroEvoApplication();
 
 
-#ifdef _WIN32
-	Core::log("Cluster Evolution can not be used in Windows! Quitting execution!");
-	timeEndPeriod(1);
-	return 1;
-#else
 	nerd->startApplication();
 	
 	app->exec();
@@ -118,7 +113,6 @@ int main(int argc, char *argv[])
 
 	return 0;
 
-#endif
 
 
 

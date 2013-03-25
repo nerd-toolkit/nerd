@@ -216,6 +216,37 @@ void Physics::rotateSimObjects(QList<SimObject*> simObjects, Vector3D orientatio
 // 			
 // 			cerr << "Got4: " << ori1.getX() << " " << ori1.getY() << " " << ori1.getZ() <<  endl;
 			
+// 			Vector3D rot = orientationOffset;
+// 			Quaternion newOrientation = currentOrientation->get(); 
+// 			bool tooLong = false;
+// 			while(rot.getZ() != 0) {
+// 				double x = 0;
+// 				double y = 0;
+// 				double z = 0;
+// 				if(rot.getZ() > 90.0) {
+// 					rot.setZ(rot.getZ() - 90.0);
+// 					z = 90.0;
+// 					tooLong = true;
+// 				}
+// 				else if(rot.getZ() < -90.0) {
+// 					rot.setZ(rot.getZ() + 90.0);
+// 					z = -90.0;
+// 					tooLong = true;
+// 				}
+// 				else {
+// 					z = rot.getZ();
+// 					rot.setZ(0);
+// 					if(tooLong) {
+// 						z = -z;
+// 					}
+// 				}
+// 				Quaternion ori;
+// 				ori.setFromAngles(x, y, z);
+// 				
+// 				newOrientation = ori * newOrientation;
+// 				
+// 			}
+			
 			obj->getQuaternionOrientationValue()->set(newOrientation);
 
 			continue;
