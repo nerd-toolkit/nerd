@@ -59,6 +59,7 @@
 #include <QTextStream>
 #include "Value/MultiPartValue.h"
 #include <Value/ChangeValueTask.h>
+#include <Value/ULongLongValue.h>
 #include "Util/Tracer.h"
 #include <QDir>
 #include <QTextStream>
@@ -940,7 +941,8 @@ void ScriptingContext::importVariables() {
 			}
 
 			if(dynamic_cast<DoubleValue*>(v) != 0	
-				|| dynamic_cast<IntValue*>(v) != 0)
+				|| dynamic_cast<IntValue*>(v) != 0
+				|| dynamic_cast<ULongLongValue*>(v) != 0)
 			{
 				mScript->evaluate(i.key() + " = " + i.value()->getValueAsString() + ";");
 			}
@@ -1007,7 +1009,8 @@ void ScriptingContext::exportVariables() {
 			}
 
 			if(dynamic_cast<DoubleValue*>(v) != 0	
-				|| dynamic_cast<IntValue*>(v) != 0)
+				|| dynamic_cast<IntValue*>(v) != 0
+				|| dynamic_cast<ULongLongValue*>(v) != 0)
 			{
 				mScript->evaluate(mMainContextName + ".stringBuffer = " + i.key() + ".toString();");
 				v->setValueFromString(mVariableBuffer);
