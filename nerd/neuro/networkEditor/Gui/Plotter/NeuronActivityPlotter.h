@@ -89,6 +89,7 @@ namespace nerd {
 	private:
 		void removeAllNetworkElements();
 		QString getSynapseName(Synapse *synapse) const;
+		void addObservables(NeuralNetworkElement *element, ObservableNetworkElement *one, const QString &namePostfix);
 
 	private:
 		NeuralNetworkEditor *mEditor;

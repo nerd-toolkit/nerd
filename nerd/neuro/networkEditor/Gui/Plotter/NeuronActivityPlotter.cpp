@@ -222,34 +222,23 @@ void NeuronActivityPlotter::addPlottedNetworkElement(NeuralNetworkElement *eleme
 		Synapse *synapse = dynamic_cast<Synapse*>(element);
 		QString namePostfix = "";
 		
-		ObservableNetworkElement *one = 0;
 		if(neuron != 0) {
 			ActivationFunction *activationFunction = neuron->getActivationFunction();
-			one = activationFunction;
-			namePostfix = QString(" (").append(neuron->getNameValue().get()).append(",AF)");
+			if(activationFunction != 0) {
+				addObservables(element, activationFunction, QString(" (").append(neuron->getNameValue().get()).append(",AF)"));
+			}
+			TransferFunction *transferFunction = neuron->getTransferFunction();
+			if(transferFunction != 0) {
+				addObservables(element, transferFunction, QString(" (").append(neuron->getNameValue().get()).append(",TF)"));
+			}
 		}
 		else if(synapse != 0) {
 			SynapseFunction *synapseFunction = synapse->getSynapseFunction();
-			one = synapseFunction;
-			namePostfix = QString(" (").append(QString::number(synapse->getId())).append(",SF)");
-		}
-		if(one == 0) {
-			return;
-		}
-		QList<Value*> paramValues;
-		QList<QString> paramNames = one->getObservableOutputNames();
-		for(QListIterator<QString> i(paramNames); i.hasNext();) {
-			QString name = i.next();
-			Value *value = one->getObservableOutput(name);
-			if(value != 0) {
-				paramValues.append(value);
-				getValuePlotter()->addValue(name + namePostfix, value);
+			if(synapseFunction != 0) {
+				addObservables(element, synapseFunction, QString(" (").append(QString::number(synapse->getId())).append(",SF)"));
 			}
 		}
-		if(!paramValues.empty()) {
-			mPlottedParameters.insert(element, paramValues);
-			mPlottedNetworkElements.append(element);
-		}
+		
 	}
 	else {
 
@@ -459,6 +448,25 @@ QString NeuronActivityPlotter::getSynapseName(Synapse *synapse) const {
 	return QString("S ").append(QString::number(synapse->getId()));
 }
 
+void NeuronActivityPlotter::addObservables(NeuralNetworkElement *element, ObservableNetworkElement *one, const QString &namePostfix) {
+	if(one == 0) {
+		return;
+	}
+	QList<Value*> paramValues;
+	QList<QString> paramNames = one->getObservableOutputNames();
+	for(QListIterator<QString> i(paramNames); i.hasNext();) {
+		QString name = i.next();
+		Value *value = one->getObservableOutput(name);
+		if(value != 0) {
+			paramValues.append(value);
+			getValuePlotter()->addValue(name + namePostfix, value);
+		}
+	}
+	if(!paramValues.empty()) {
+		mPlottedParameters.insert(element, paramValues);
+		mPlottedNetworkElements.append(element);
+	}
+}
 
 void NeuronActivityPlotter::addSelectedNeuronsButtonPressed() {
 	TRACE("NeuronActivityPlotter::addSelectedNeuronsButtonPressed()");
