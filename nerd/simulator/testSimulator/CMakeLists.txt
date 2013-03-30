@@ -89,3 +89,5 @@ TARGET_LINK_LIBRARIES(testSimulator
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
 )
 
+add_dependencies(testSimulator simulator nerd)
+

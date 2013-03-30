@@ -59,3 +59,5 @@ TARGET_LINK_LIBRARIES(NerdNetworkEditor
 	-lGL
 )
 endif(WIN32)
+
+add_dependencies(NerdNetworkEditor nerd simulator evolution odePhysics neuroEvolution neuroAndSimEvaluation networkEditor)

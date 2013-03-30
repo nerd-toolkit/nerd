@@ -41,46 +41,109 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
+#include "ExternalMotorAdapter.h"
+#include "Value/InterfaceValue.h"
+#include "Event/Event.h"
+#include "Event/EventManager.h"
+#include "Core/Core.h"
+#include "SimBody.h"
+#include "Math/Math.h"
+#include "Math/Quaternion.h"
+#include <math.h>
+#include "Math/Math.h"
+#include "Value/Vector3DValue.h"
+#include "NerdConstants.h"
+#include "Value/NormalizedDoubleValue.h"
+#include "Value/StringValue.h"
+#include "Value/RangeValue.h"
+#include <QStringList>
 
-#ifndef ORCSNerdMultiCoreNeuroEvoApplication_H
-#define ORCSNerdMultiCoreNeuroEvoApplication_H
-
-#include <QString>
-#include <QHash>
-#include "Application/BaseApplication.h"
-#include "Execution/EvolutionRunner.h"
-#include "ClusterEvaluation/ClusterNetworkInSimEvaluationMethod.h"
-#include "Gui/SimpleEvolutionMainWindow/SimpleEvolutionMainWindow.h"
-#include "Evolution/Population.h"
 
 namespace nerd {
+	
+	
+	ExternalMotorAdapter::ExternalMotorAdapter(const QString &name) 
+		: SimObject(name), mControlledValue(0)
+	{
+		mMotorValue = new InterfaceValue(getName(), "Sensor", 0.0, 0.0, 1.0);
+		mControlledValueName = new StringValue();
+		mCustomMotorName = new StringValue("Sensor");
+		mMotorRange = new RangeValue(0.0, 1.0);
+		
+		addParameter("Motor", mMotorValue);
+		addParameter("ControlledValueName", mControlledValueName);
+		addParameter("CustomMotorName", mCustomMotorName);
+		addParameter("MotorRange", mMotorRange);
+		
+		
+		
+		mOutputValues.append(mMotorValue);
+	}
+	
+	
+	
+	
+	ExternalMotorAdapter::ExternalMotorAdapter(const ExternalMotorAdapter &sensor) 
+		: Object(), ValueChangedListener(), SimObject(sensor), mControlledValue(0)
+	{
+		mMotorValue = dynamic_cast<InterfaceValue*>(getParameter("Motor"));
+		mControlledValueName = dynamic_cast<StringValue*>(getParameter("ControlledValueName"));
+		mCustomMotorName = dynamic_cast<StringValue*>(getParameter("CustomMotorName"));
+		mMotorRange = dynamic_cast<RangeValue*>(getParameter("MotorRange"));
+		
+		mOutputValues.append(mMotorValue);
+	}
+	
+	ExternalMotorAdapter::~ExternalMotorAdapter() {
+	}
+	
+	SimObject* ExternalMotorAdapter::createCopy() const {
+		return new ExternalMotorAdapter(*this);
+	}
+	
+	
+	QString ExternalMotorAdapter::getName() const {
+		return SimObject::getName();
+	}
 
-	/**
-	 * NerdMultiCoreNeuroEvoApplication.
-	 *
-	 */
-	class NerdMultiCoreNeuroEvoApplication : public BaseApplication {
-	Q_OBJECT
-	public:
-		NerdMultiCoreNeuroEvoApplication();
-		virtual ~NerdMultiCoreNeuroEvoApplication();
 
-		virtual QString getName() const;
-
-	protected:
-		virtual bool setupGui();
-		virtual bool setupApplication();
-		virtual bool runApplication();
-		virtual bool buildEvolutionSystem();
-
-	private:		
-		EvolutionRunner *mRunner;
-		SimpleEvolutionMainWindow *mMainGui;
-	};
-
+	void ExternalMotorAdapter::valueChanged(Value *value) {
+		SimObject::valueChanged(value);
+		if(value == 0) {
+			return;
+		}
+		else if(value == mMotorRange) {
+			mMotorValue->setMin(mMotorRange->getMin());
+			mMotorValue->setMax(mMotorRange->getMax());
+		}
+		else if(value == mCustomMotorName) {
+			mMotorValue->setInterfaceName(mCustomMotorName->get());
+		}
+	}
+	
+	void ExternalMotorAdapter::setup() {
+		
+		ValueManager *vm = Core::getInstance()->getValueManager();
+		
+		mControlledValue = vm->getDoubleValue(mControlledValueName->get());
+		if(mControlledValue == 0) {
+			Core::log("ExternalMotorAdapter [" + getName() + "]: Could not find the "
+						"external value [" + mControlledValueName->get() + "] to monitor. Ignoring that value!", true);
+		}
+	}
+	
+	void ExternalMotorAdapter::clear() {
+		mControlledValue = 0;
+	}
+	
+	void ExternalMotorAdapter::updateActuators() {
+		
+		if(mControlledValue == 0) {
+			return;
+		}
+		
+		mControlledValue->set(mMotorValue->get());
+	}
+	
+	
 }
-
-#endif
-
-
-

@@ -66,3 +66,6 @@ TARGET_LINK_LIBRARIES(NerdClusterNeuroEvo
 	-lGL
 )
 endif(WIN32)
+
+
+add_dependencies(NerdClusterNeuroEvo nerd simulator evolution odePhysics neuroEvolution neuroAndSimEvaluation)

@@ -52,3 +52,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../nerd/evolution/evolution)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../nerd/evolution/neuroAndSimEvaluation)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../nerd/evolution/neuroEvolution)
 
+
+add_dependencies(TestPlugin nerd neuralNetwork networkEditor simulator evolution neuroAndSimEvaluation neuroEvolution)
+

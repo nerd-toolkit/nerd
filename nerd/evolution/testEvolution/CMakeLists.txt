@@ -74,3 +74,4 @@ TARGET_LINK_LIBRARIES(testEvolution
 	${QT_LIBRARIES}
 )
 
+add_dependencies(testEvolution evolution nerd neuralNetwork networkEditor)

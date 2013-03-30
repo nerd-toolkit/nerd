@@ -81,5 +81,6 @@ TARGET_LINK_LIBRARIES(testOdePhysics
 )
 endif(WIN32)
 
+add_dependencies(testOdePhysics odePhysics simulator nerd)
 
 

@@ -82,3 +82,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/neuralNetwork)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../evolution/evolution)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/networkEditor)
 
+add_dependencies(neuroEvolution evolution neuralNetwork nerd networkEditor)

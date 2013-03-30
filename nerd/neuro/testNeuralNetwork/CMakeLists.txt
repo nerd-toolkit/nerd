@@ -90,3 +90,5 @@ TARGET_LINK_LIBRARIES(testNeuralNetwork
 	${QT_LIBRARIES}
 )
 
+add_dependencies(testNeuralNetwork neuralNetwork nerd)
+

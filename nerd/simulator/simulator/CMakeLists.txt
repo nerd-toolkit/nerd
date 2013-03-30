@@ -147,6 +147,7 @@ set(nerd_simulator_SRCS
 	Gui/SimulationRecorder/SimulationRecorder.cpp
 	Physics/BallAndSocketJoint.cpp
 	Util/SetSnapshotValueTaskFactory.cpp
+	Physics/ExternalMotorAdapter.cpp
 )
 
 set(nerd_simulator_MOC_HDRS

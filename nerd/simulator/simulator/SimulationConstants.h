@@ -133,6 +133,7 @@ namespace nerd {
 		static const QString PROTOTYPE_AUTO_VALUE_TRANSFER_CONTROLLER;
 		static const QString PROTOTYPE_INTERNAL_STATE_VALUE;
 		static const QString PROTOTYPE_EXTERNAL_SENSOR_ADAPTER;
+		static const QString PROTOTYPE_EXTERNAL_MOTOR_ADAPTER;
 		static const QString PROTOTYPE_UNIVERSAL_JOINT;
 		static const QString PROTOTYPE_BALL_JOINT;
 

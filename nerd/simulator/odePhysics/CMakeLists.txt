@@ -70,3 +70,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simulator)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/odePhysics)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/${ODE_INCLUDE_PATH})
 
+add_dependencies(odePhysics simulator nerd)

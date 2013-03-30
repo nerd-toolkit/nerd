@@ -79,3 +79,12 @@ TARGET_LINK_LIBRARIES(NerdDynamicsAnalyzer
 
 endif(WIN32)
 
+add_dependencies(NerdDynamicsAnalyzer
+	nerd 
+	evolution 
+	neuralNetwork 
+	networkEditor 
+	NetworkDynamicsDiagramPlotterLib 
+	neuroAndSimEvaluation 
+	odePhysics 
+	simple2DPhysics)

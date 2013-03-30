@@ -44,3 +44,5 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simulator)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simple2DPhysics)
 
+
+add_dependencies(simple2DPhysics simulator nerd)

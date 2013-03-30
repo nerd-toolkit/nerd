@@ -69,6 +69,7 @@
 #include "Physics/ValueTransferController.h"
 #include "Physics/InternalStateValue.h"
 #include "Physics/ExternalSensorAdapter.h"
+#include "Physics/ExternalMotorAdapter.h"
 #include "Physics/SphericLightSource.h"
 
 
@@ -116,6 +117,8 @@ namespace nerd{
 		new InternalStateValue(SimulationConstants::PROTOTYPE_INTERNAL_STATE_VALUE));
 	pm->addPrototype(SimulationConstants::PROTOTYPE_EXTERNAL_SENSOR_ADAPTER,
 		new ExternalSensorAdapter(SimulationConstants::PROTOTYPE_EXTERNAL_SENSOR_ADAPTER));
+	pm->addPrototype(SimulationConstants::PROTOTYPE_EXTERNAL_MOTOR_ADAPTER,
+		new ExternalMotorAdapter(SimulationConstants::PROTOTYPE_EXTERNAL_MOTOR_ADAPTER));
 
     pm->addPrototype(SimulationConstants::PROTOTYPE_BOX_BODY_NO_PHYSICS, 
         new BoxBody(SimulationConstants::PROTOTYPE_BOX_BODY_NO_PHYSICS)); 

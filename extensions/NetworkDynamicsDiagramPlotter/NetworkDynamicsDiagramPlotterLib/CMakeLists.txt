@@ -69,3 +69,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/neuralNetwor
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/neuro/networkEditor)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../nerd/simulator/simulator)
 
+add_dependencies(NetworkDynamicsDiagramPlotterLib nerd evolution neuralNetwork networkEditor)

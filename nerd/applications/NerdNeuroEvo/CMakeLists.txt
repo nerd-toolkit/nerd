@@ -80,3 +80,4 @@ TARGET_LINK_LIBRARIES(NerdNeuroEvo
 )
 endif(WIN32)
 
+add_dependencies(NerdNeuroEvo nerd simulator evolution odePhysics neuroEvolution neuroAndSimEvaluation networkEditor)

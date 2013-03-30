@@ -8,7 +8,7 @@ add_subdirectory(NetworkDynamicsDiagramPlotterApplication)
 #add_subdirectory(NerdDynamicsAnalyzer)
 
 #add_dependencies(NetworkDynamicsDiagramPlotterApplication nerd evolution neuralNetwork networkEditor NetworkDynamicsDiagramPlotterLib)
-add_dependencies(NerdDynamicsAnalyzer nerd evolution neuralNetwork networkEditor NetworkDynamicsDiagramPlotterLib)
-add_dependencies(NetworkDynamicsDiagramPlotterLib nerd evolution neuralNetwork networkEditor)
-add_dependencies(testNetworkDynamicsDiagramPlotterLib nerd evolution neuralNetwork networkEditor NetworkDynamicsDiagramPlotterLib)
+
+
+
 

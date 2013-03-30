@@ -81,3 +81,7 @@ TARGET_LINK_LIBRARIES(testNerd
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
 )
 
+
+add_dependencies(testNerd nerd)
+
+

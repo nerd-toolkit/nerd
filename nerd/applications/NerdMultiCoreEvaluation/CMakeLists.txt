@@ -46,3 +46,4 @@ TARGET_LINK_LIBRARIES(NerdMultiCoreEvaluation
 	${QT_LIBRARIES}
 )
 
+add_dependencies(NerdMultiCoreEvaluation nerd)

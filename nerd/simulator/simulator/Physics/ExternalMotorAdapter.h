@@ -42,85 +42,45 @@
  ***************************************************************************/
 
 
+#ifndef ExternalMotorAdapter_H_
+#define ExternalMotorAdapter_H_
 
-#include "Core/Core.h"
-#include <QCoreApplication>
-#include <QApplication>
-#include "NerdMultiCoreNeuroEvoApplication.h"
-#include <iostream>
-#include "PlugIns/PlugInManager.h"
+#include "SimObject.h"
+#include "Physics/SimActuator.h"
+#include "Value/RangeValue.h"
 
-#ifdef _WIN32
-#include <Windows.h>
-#include <Mmsystem.h>
-#endif
+namespace nerd {
 
-using namespace std;
-using namespace nerd;
-
-int main(int argc, char *argv[])
-{
-#ifdef _WIN32
-	timeBeginPeriod(1);
-#endif
-
-	//initialize ressources (compiled images, etc.)
-	Q_INIT_RESOURCE(resources);
-
-	Core::resetCore();
-
-	//Start QApplication with or without GUI support.
-	bool useGui = true;
-	for(int i = 0; i < argc; ++i) {
-		if(QString(argv[i]) == "-nogui") {
-			useGui = false;
-		}
-		else if(QString(argv[i]) == "-gui") {
-			useGui = true;
-		}
-	}
-	QCoreApplication *app = 0;
-	if(useGui) {
-		app = new QApplication(argc, argv);
-	}
-	else {
-		app = new QCoreApplication(argc, argv); 
-	}
-
-	NerdMultiCoreNeuroEvoApplication *nerd = 
-			new NerdMultiCoreNeuroEvoApplication();
-
-
-#ifdef _WIN32
-	Core::log("Cluster Evolution can not be used in Windows! Quitting execution!");
-	timeEndPeriod(1);
-	return 1;
-#else
-	nerd->startApplication();
 	
-	app->exec();
+	class InterfaceValue;
+	class DoubleValue;
+	class NormalizedDoubleValue;
+	class StringValue;
+	
+	class ExternalMotorAdapter : public virtual SimActuator, public SimObject {
+		
+	public:
+		ExternalMotorAdapter(const QString &name);
+		ExternalMotorAdapter(const ExternalMotorAdapter &sensor);
+		virtual ~ExternalMotorAdapter();
+		
+		virtual SimObject* createCopy() const;	
 
-	Core::getInstance()->waitForAllThreadsToComplete(); 
-
-	bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
-
-	Core::resetCore();
-
-	delete app;
-
-	Q_CLEANUP_RESOURCE(resources);
-
-	//TODO This is to circumvent a problem with hanging applications when a plugin is loaded. 
-	//The reason for the hanging could not be found and solved yet!
-	if(hasPlugins) {
-		abort();
-	}
-
-	return 0;
-
-#endif
-
-
-
+		virtual QString getName() const;
+		virtual void valueChanged(Value *value);
+		
+		virtual void setup();
+		virtual void clear();
+		
+		virtual void updateActuators();
+		
+	private:
+		InterfaceValue *mMotorValue;
+		DoubleValue* mControlledValue;
+		StringValue *mControlledValueName;
+		StringValue *mCustomMotorName;
+		RangeValue *mMotorRange;
+	};
 }
+#endif
 
