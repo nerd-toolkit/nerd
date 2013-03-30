@@ -136,19 +136,15 @@ namespace nerd {
 		for(QListIterator<QString> i(monitoredValueNames); i.hasNext();) {
 			QString name = i.next();
 			DoubleValue *value = vm->getDoubleValue(name);
-			if(value == 0) {
-				Core::log("ExternalSensorAdapter [" + getName() + "]: Could not find the "
-							"external value [" + name + "] to monitor. Ignoring that value!", true);
+			if(name.trimmed() != "") {
+				if(value == 0) {
+					Core::log("ExternalSensorAdapter [" + getName() + "]: Could not find the "
+								"external value [" + name + "] to monitor. Ignoring that value!", true);
+				}
+				else {
+					mMonitoredValues.append(value);
+				}
 			}
-			else {
-				mMonitoredValues.append(value);
-			}
-		}
-		
-		if(mMonitoredValues.empty()) {
-			Core::log("ExternalSensorAdapter [" + getName() + "]: Could not find any valid "
-						"DoubleValue to monitor [" + mMonitoredValueNames->get() + "]. "
-					  "This sensor will be disabled!", true);
 		}
 	}
 	
@@ -157,10 +153,11 @@ namespace nerd {
 	}
 	
 	void ExternalSensorAdapter::updateSensorValues() {
-		
-		double sensorValue = 0.0;
-		
+				
+		//if monitored values is empty, then allow a change of the sensor value via the interface value.
 		if(!mMonitoredValues.empty()) {
+			double sensorValue = 0.0;
+			
 			switch(mCalculationMode->get()) {
 				case 0:
 					//mean
@@ -186,8 +183,8 @@ namespace nerd {
 				default:
 					;
 			}
+			mSensorValue->set(sensorValue);
 		}
-		mSensorValue->set(sensorValue);
 	}
 	
 	

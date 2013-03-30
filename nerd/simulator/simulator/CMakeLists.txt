@@ -199,3 +199,5 @@ add_definitions(-Wall)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../system/nerd)
 
+add_dependencies(simulator nerd)
+

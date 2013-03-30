@@ -65,7 +65,7 @@ namespace nerd {
 	ExternalMotorAdapter::ExternalMotorAdapter(const QString &name) 
 		: SimObject(name), mControlledValue(0)
 	{
-		mMotorValue = new InterfaceValue(getName(), "Sensor", 0.0, 0.0, 1.0);
+		mMotorValue = new InterfaceValue(getName(), "Motor", 0.0, 0.0, 1.0);
 		mControlledValueName = new StringValue();
 		mCustomMotorName = new StringValue("Sensor");
 		mMotorRange = new RangeValue(0.0, 1.0);
@@ -77,7 +77,7 @@ namespace nerd {
 		
 		
 		
-		mOutputValues.append(mMotorValue);
+		mInputValues.append(mMotorValue);
 	}
 	
 	
@@ -91,7 +91,7 @@ namespace nerd {
 		mCustomMotorName = dynamic_cast<StringValue*>(getParameter("CustomMotorName"));
 		mMotorRange = dynamic_cast<RangeValue*>(getParameter("MotorRange"));
 		
-		mOutputValues.append(mMotorValue);
+		mInputValues.append(mMotorValue);
 	}
 	
 	ExternalMotorAdapter::~ExternalMotorAdapter() {
@@ -126,10 +126,6 @@ namespace nerd {
 		ValueManager *vm = Core::getInstance()->getValueManager();
 		
 		mControlledValue = vm->getDoubleValue(mControlledValueName->get());
-		if(mControlledValue == 0) {
-			Core::log("ExternalMotorAdapter [" + getName() + "]: Could not find the "
-						"external value [" + mControlledValueName->get() + "] to monitor. Ignoring that value!", true);
-		}
 	}
 	
 	void ExternalMotorAdapter::clear() {

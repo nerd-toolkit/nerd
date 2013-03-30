@@ -54,5 +54,5 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../evolution/neuroEvolution)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simulator)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../neuro/neuralNetwork)
 
-add_dependencies(neuroAndSimEvaluation neuroEvolution evolution neuralNetwork simulator nerd networkEditor)
+add_dependencies(neuroAndSimEvaluation nerd evolution neuroEvolution simulator neuralNetwork networkEditor)
 
