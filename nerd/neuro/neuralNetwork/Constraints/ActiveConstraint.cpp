@@ -41,90 +41,106 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-
-
-#include "Core/Core.h"
-#include <QCoreApplication>
-#include <QApplication>
-#include "NerdNeuroEvoApplication.h"
+#include "ActiveConstraint.h"
+#include <QListIterator>
+#include "Network/Synapse.h"
+#include "Network/Neuron.h"
 #include <iostream>
-#include "PlugIns/PlugInManager.h"
-
-#ifdef _WIN32
-#include <Windows.h>
-#include <Mmsystem.h>
-#endif
-
-#ifdef Q_WS_X11
-#include <X11/Xlib.h>
-#endif
+#include "Value/CodeValue.h"
+#include "Core/Core.h"
+#include <NerdConstants.h>
 
 using namespace std;
-using namespace nerd;
 
-int main(int argc, char *argv[])
+namespace nerd {
+
+ActiveConstraint::ActiveConstraint(const QString &name)
+	: GroupConstraint(name), mOwner(0), mNextStepEvent(0)
 {
-#ifdef _WIN32
-	timeBeginPeriod(1);
-#endif
+}
 
-#ifdef Q_WS_X11
-	XInitThreads();
-#endif
+ActiveConstraint::ActiveConstraint(const ActiveConstraint &other)
+	:  Object(), EventListener(), ValueChangedListener(), GroupConstraint(other),
+	  mOwner(0), mNextStepEvent(0)
+{
+}
 
-	//initialize ressources (compiled images, etc.)
-	Q_INIT_RESOURCE(resources);
 
-	Core::resetCore();
+ActiveConstraint::~ActiveConstraint() {
+	if(mNextStepEvent != 0) {
+		mNextStepEvent->removeEventListener(this);
+		mNextStepEvent = 0;
+	}
+}
 
-	//Start QApplication with or without GUI support.
-	bool useGui = true;
-	for(int i = 0; i < argc; ++i) {
-		if(QString(argv[i]) == "-nogui") {
-			useGui = false;
+QString ActiveConstraint::getName() const {
+	return GroupConstraint::getName();
+}
+
+
+
+void ActiveConstraint::eventOccured(Event *event) {
+	if(event == 0) {
+		return;
+	}
+	if(event == mNextStepEvent) {
+		if(mOwner == 0) {
+			Core::log("ActiveConstraint: Please run Constraint Resolver to initialize the active constraint!");
 		}
-		else if(QString(argv[i]) == "-gui") {
-			useGui = true;
+		else {
+			applyActiveConstraint(mOwner, mOwner->getOwnerNetwork());
 		}
 	}
-	QCoreApplication *app = 0;
-	if(useGui) {
-		app = new QApplication(argc, argv);
-	}
-	else {
-		app = new QCoreApplication(argc, argv); 
-	}
+}
 
-	NerdNeuroEvoApplication *nerd = new NerdNeuroEvoApplication();
 
-	nerd->startApplication();
+void ActiveConstraint::reset() {
+}
+
+
+
+bool ActiveConstraint::isValid(NeuronGroup *owner) {
 	
-	app->exec();
-
-	Core::getInstance()->waitForAllThreadsToComplete();
-
-	//bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
-
-	Core::resetCore();
-
-	delete app;
+	mOwner = owner;
+	if(mOwner == 0) {
+		mErrorMessage = "ActiveConstraint: Did not find an owner group!";
+		return false;
+	}
+	return true;
+}
 
 
-#ifdef _WIN32
-	timeEndPeriod(1);
-#endif
+bool ActiveConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
+									 QList<NeuralNetworkElement*>&)
+{
+	mOwner = owner;
+	if(mOwner == 0) {
+		return false;
+	}
+	
+	return true;
+}
 
-	Q_CLEANUP_RESOURCE(resources);
 
-	//TODO This is to circumvent a problem with hanging applications when a plugin is loaded. 
-	//The reason for the hanging could not be found and solved yet!
-	//Update: Seems to be fixed in QT
-	//if(hasPlugins) {
-	//	abort();
-	//}
 
-	return 0;
+		
+bool ActiveConstraint::equals(GroupConstraint *constraint) const {
+	if(GroupConstraint::equals(constraint) == false) {
+		return false;
+	}
+	ActiveConstraint *af = dynamic_cast<ActiveConstraint*>(constraint);
+	if(af == 0) {
+		return false;
+	}
+
+	return true;
+}
+
+
+
+
 
 
 }
+
 

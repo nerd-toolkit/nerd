@@ -510,6 +510,13 @@ bool Core::init() {
 	}
 	mPlugInManager->loadPlugIns(plugInDir.absolutePath());
 	
+	QDir globalPlugInDir(QDir::home().absolutePath().append("/.nerd/plugins"));
+	if(!mIsUsingReducedFileWriting) {
+		logMessage("~Loading Global PlugIns.");
+		enforceDirectoryPath(globalPlugInDir.absolutePath());
+	}
+	mPlugInManager->loadPlugIns(globalPlugInDir.absolutePath());
+	
 	{
 		CommandLineArgument *optionalPlugInDirs = new CommandLineArgument("pluginDir", "pdir", "<directory",
 						"Loads all plugins in <directory>.", 1, 0, true, true);

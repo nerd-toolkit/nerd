@@ -42,89 +42,49 @@
  ***************************************************************************/
 
 
+#ifndef NERDActiveConstraint_H
+#define NERDActiveConstraint_H
 
-#include "Core/Core.h"
-#include <QCoreApplication>
-#include <QApplication>
-#include "NerdNeuroEvoApplication.h"
-#include <iostream>
-#include "PlugIns/PlugInManager.h"
-
-#ifdef _WIN32
-#include <Windows.h>
-#include <Mmsystem.h>
-#endif
-
-#ifdef Q_WS_X11
-#include <X11/Xlib.h>
-#endif
-
-using namespace std;
-using namespace nerd;
-
-int main(int argc, char *argv[])
-{
-#ifdef _WIN32
-	timeBeginPeriod(1);
-#endif
-
-#ifdef Q_WS_X11
-	XInitThreads();
-#endif
-
-	//initialize ressources (compiled images, etc.)
-	Q_INIT_RESOURCE(resources);
-
-	Core::resetCore();
-
-	//Start QApplication with or without GUI support.
-	bool useGui = true;
-	for(int i = 0; i < argc; ++i) {
-		if(QString(argv[i]) == "-nogui") {
-			useGui = false;
-		}
-		else if(QString(argv[i]) == "-gui") {
-			useGui = true;
-		}
-	}
-	QCoreApplication *app = 0;
-	if(useGui) {
-		app = new QApplication(argc, argv);
-	}
-	else {
-		app = new QCoreApplication(argc, argv); 
-	}
-
-	NerdNeuroEvoApplication *nerd = new NerdNeuroEvoApplication();
-
-	nerd->startApplication();
-	
-	app->exec();
-
-	Core::getInstance()->waitForAllThreadsToComplete();
-
-	//bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
-
-	Core::resetCore();
-
-	delete app;
+#include "Constraints/GroupConstraint.h"
+#include "ModularNeuralNetwork/NeuronGroup.h"
+#include "Event/Event.h"
 
 
-#ifdef _WIN32
-	timeEndPeriod(1);
-#endif
+namespace nerd {
 
-	Q_CLEANUP_RESOURCE(resources);
+	/**
+	 * ActiveConstraint
+	 */
+	class ActiveConstraint : public virtual EventListener, public GroupConstraint {
+	public:
+		ActiveConstraint(const QString &name);
+		ActiveConstraint(const ActiveConstraint &other);
+		virtual ~ActiveConstraint();
+		
+		virtual QString getName() const;
 
-	//TODO This is to circumvent a problem with hanging applications when a plugin is loaded. 
-	//The reason for the hanging could not be found and solved yet!
-	//Update: Seems to be fixed in QT
-	//if(hasPlugins) {
-	//	abort();
-	//}
+		virtual void eventOccured(Event *event);
+		
+		virtual void reset();
 
-	return 0;
-
+		virtual bool isValid(NeuronGroup *owner);
+		virtual bool applyConstraint(NeuronGroup *owner, CommandExecutor *executor, 
+									 QList<NeuralNetworkElement*> &trashcan);
+		
+		virtual bool applyActiveConstraint(NeuronGroup *owner, ModularNeuralNetwork *net) = 0;
+		
+		
+		virtual bool equals(GroupConstraint *constraint) const;
+		
+		
+	private:
+		NeuronGroup *mOwner;
+		
+		Event *mNextStepEvent;
+	};
 
 }
+
+#endif
+
 

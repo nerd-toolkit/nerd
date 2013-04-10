@@ -42,89 +42,38 @@
  ***************************************************************************/
 
 
+#ifndef NERDExampleActiveConstraint_H
+#define NERDExampleActiveConstraint_H
 
-#include "Core/Core.h"
-#include <QCoreApplication>
-#include <QApplication>
-#include "NerdNeuroEvoApplication.h"
-#include <iostream>
-#include "PlugIns/PlugInManager.h"
-
-#ifdef _WIN32
-#include <Windows.h>
-#include <Mmsystem.h>
-#endif
-
-#ifdef Q_WS_X11
-#include <X11/Xlib.h>
-#endif
-
-using namespace std;
-using namespace nerd;
-
-int main(int argc, char *argv[])
-{
-#ifdef _WIN32
-	timeBeginPeriod(1);
-#endif
-
-#ifdef Q_WS_X11
-	XInitThreads();
-#endif
-
-	//initialize ressources (compiled images, etc.)
-	Q_INIT_RESOURCE(resources);
-
-	Core::resetCore();
-
-	//Start QApplication with or without GUI support.
-	bool useGui = true;
-	for(int i = 0; i < argc; ++i) {
-		if(QString(argv[i]) == "-nogui") {
-			useGui = false;
-		}
-		else if(QString(argv[i]) == "-gui") {
-			useGui = true;
-		}
-	}
-	QCoreApplication *app = 0;
-	if(useGui) {
-		app = new QApplication(argc, argv);
-	}
-	else {
-		app = new QCoreApplication(argc, argv); 
-	}
-
-	NerdNeuroEvoApplication *nerd = new NerdNeuroEvoApplication();
-
-	nerd->startApplication();
-	
-	app->exec();
-
-	Core::getInstance()->waitForAllThreadsToComplete();
-
-	//bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
-
-	Core::resetCore();
-
-	delete app;
+#include "Constraints/ActiveConstraint.h"
 
 
-#ifdef _WIN32
-	timeEndPeriod(1);
-#endif
 
-	Q_CLEANUP_RESOURCE(resources);
+namespace nerd {
 
-	//TODO This is to circumvent a problem with hanging applications when a plugin is loaded. 
-	//The reason for the hanging could not be found and solved yet!
-	//Update: Seems to be fixed in QT
-	//if(hasPlugins) {
-	//	abort();
-	//}
+	/**
+	 * ExampleActiveConstraint
+	 */
+	class ExampleActiveConstraint : public ActiveConstraint {
+	public:
+		ExampleActiveConstraint();
+		ExampleActiveConstraint(const ExampleActiveConstraint &other);
+		virtual ~ExampleActiveConstraint();
+		
+		virtual QString getName() const;
 
-	return 0;
+		virtual GroupConstraint* createCopy() const;
+		
+		virtual void reset();
 
+		virtual bool applyActiveConstraint(NeuronGroup *owner, ModularNeuralNetwork *net);
+
+	private:
+
+	};
 
 }
+
+#endif
+
 

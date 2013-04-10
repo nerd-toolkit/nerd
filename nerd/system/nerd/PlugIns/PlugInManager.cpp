@@ -108,6 +108,8 @@ bool PlugInManager::loadPlugIns(const QString plugInDirName) {
 	for(QListIterator<QString> i(plugInFileNames); i.hasNext();) {
 		QString fileName = i.next();
 		QPluginLoader *loader = new QPluginLoader(plugInDir.absoluteFilePath(fileName));
+		Core::log("Trying to load plugin: " + fileName + " on " + plugInDir.absoluteFilePath(fileName));
+		
 		QObject *plugin = loader->instance();
 		bool ok = true;
 		if(plugin != 0) {

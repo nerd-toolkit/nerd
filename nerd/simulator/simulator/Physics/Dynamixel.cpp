@@ -377,7 +377,7 @@ void Dynamixel::updateActuators() {
 
 /**
  * Encapsulates the Dynamixel-specific calculations (PID-controller and motorfriction). 
- * After setting the current motor angle, this method is tu be used to update the motor.
+ * After setting the current motor angle, this method is to be used to update the motor.
  */
 void Dynamixel::calculateMotorFrictionAndVelocity() {
 

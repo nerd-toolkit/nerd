@@ -1317,7 +1317,7 @@ bool ScriptedNetworkManipulator::setPosition(qulonglong objectId, double x, doub
  * This is an alias for setNetworkTag. This function here is deprecated.
  */
 bool ScriptedNetworkManipulator::setProperty(qulonglong objectId, const QString &propName, const QString &content, bool severeChange) {
-	setNetworkTag(objectId, propName, content, severeChange);
+	return setNetworkTag(objectId, propName, content, severeChange);
 }
 
 

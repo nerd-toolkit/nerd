@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
 	Core::getInstance()->waitForAllThreadsToComplete(); 
 
-	bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
+	//bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
 
 	Core::resetCore();
 
@@ -107,9 +107,10 @@ int main(int argc, char *argv[])
 
 	//TODO This is to circumvent a problem with hanging applications when a plugin is loaded. 
 	//The reason for the hanging could not be found and solved yet!
-	if(hasPlugins) {
-		abort();
-	}
+	//Update: Seems to be fixed in QT
+	//if(hasPlugins) {
+	//	abort();
+	//}
 
 	return 0;
 

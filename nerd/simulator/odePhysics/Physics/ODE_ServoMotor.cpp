@@ -192,19 +192,19 @@ dJointID ODE_ServoMotor::createJoint(dBodyID body1, dBodyID body2) {
 
 void ODE_ServoMotor::updateActuators() {
 	TRACE("ODE_ServoMotor::updateActuators");
-		ServoMotor::updateActuators();
-		if(mJoint != 0) {
-			if(mControlMotorAngle->get() && mTimeStepSize != 0) {
-				mCurrentMotorAngle = dJointGetHingeAngle(mJoint);
-				mVelocity = (mCurrentMotorAngle - mLastMotorAngle)/ mTimeStepSize->get();
-				dJointAddHingeTorque(mJoint, mMaxTorque->get() * calculatedTorque(mVelocity, mCurrentMotorAngle));
-				mLastMotorAngle = mCurrentMotorAngle;
-			} 
-			else {	
-				// by modifying the parameter "MaxTorque" the speed of the motor is changed.
-				//dJointSetHingeParam(mJoint, dParamVel,  mMaxTorque->get() * mDesiredMotorSetting->get());	
-				dJointSetHingeParam(mJoint, dParamVel,  mMaxTorque->get() * calculatedTorque(mVelocity, mCurrentMotorAngle));	
-			}
+	ServoMotor::updateActuators();
+	if(mJoint != 0) {
+		if(mControlMotorAngle->get() && mTimeStepSize != 0) {
+			mCurrentMotorAngle = dJointGetHingeAngle(mJoint);
+			mVelocity = (mCurrentMotorAngle - mLastMotorAngle)/ mTimeStepSize->get();
+			dJointAddHingeTorque(mJoint, mMaxTorque->get() * calculatedTorque(mVelocity, mCurrentMotorAngle));
+			mLastMotorAngle = mCurrentMotorAngle;
+		} 
+		else {	
+			// by modifying the parameter "MaxTorque" the speed of the motor is changed.
+			//dJointSetHingeParam(mJoint, dParamVel,  mMaxTorque->get() * mDesiredMotorSetting->get());	
+			dJointSetHingeParam(mJoint, dParamVel,  mMaxTorque->get() * calculatedTorque(mVelocity, mCurrentMotorAngle));	
+		}
 	}
 }
 

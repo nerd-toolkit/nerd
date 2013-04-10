@@ -8,11 +8,13 @@
 #include "Value/StringValue.h"
 #include "Core/Core.h"
 #include <Network/Neuro.h>
+#include <Constraints/ConstraintManager.h>
 #include <iostream>
 
 
 #include "ExampleActivationFunction.h"
 #include "ExampleSynapseFunction.h"
+// #include "ExampleActiveConstraint.h"
 
 using namespace std;
 using namespace nerd;
@@ -37,7 +39,8 @@ bool NeuronModelPlugInExample::install() {
 	//Add a new SynapseFunction prototype
 	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(ExampleSynapseFunction());
 	
-	
+// 	//Add a new Cosntraint prototype.
+// 	ConstraintManager::getInstance()->addConstraintPrototype(new ExampleActiveConstraint());
 	
 	cerr << "installed plugin " << this << endl;
 	

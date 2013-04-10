@@ -41,90 +41,69 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-
-
-#include "Core/Core.h"
-#include <QCoreApplication>
-#include <QApplication>
-#include "NerdNeuroEvoApplication.h"
+#include "TestActiveConstraint.h"
+#include <QListIterator>
+#include "Network/Synapse.h"
+#include "Network/Neuron.h"
 #include <iostream>
-#include "PlugIns/PlugInManager.h"
-
-#ifdef _WIN32
-#include <Windows.h>
-#include <Mmsystem.h>
-#endif
-
-#ifdef Q_WS_X11
-#include <X11/Xlib.h>
-#endif
+#include "Value/CodeValue.h"
+#include "Core/Core.h"
+#include <NerdConstants.h>
 
 using namespace std;
-using namespace nerd;
 
-int main(int argc, char *argv[])
+namespace nerd {
+
+TestActiveConstraint::TestActiveConstraint()
+	: ActiveConstraint("TestPlasticityConstraint")
 {
-#ifdef _WIN32
-	timeBeginPeriod(1);
-#endif
+}
 
-#ifdef Q_WS_X11
-	XInitThreads();
-#endif
+TestActiveConstraint::TestActiveConstraint(const TestActiveConstraint &other)
+	: Object(), EventListener(), ValueChangedListener(), ActiveConstraint(other)
+{
+}
 
-	//initialize ressources (compiled images, etc.)
-	Q_INIT_RESOURCE(resources);
 
-	Core::resetCore();
+TestActiveConstraint::~TestActiveConstraint() {
+}
 
-	//Start QApplication with or without GUI support.
-	bool useGui = true;
-	for(int i = 0; i < argc; ++i) {
-		if(QString(argv[i]) == "-nogui") {
-			useGui = false;
-		}
-		else if(QString(argv[i]) == "-gui") {
-			useGui = true;
-		}
+
+QString TestActiveConstraint::getName() const {
+	return ActiveConstraint::getName();
+}
+
+/**
+ * This function must return a copy of the current object. 
+ * Use the CopyConstructor for this.
+ */
+GroupConstraint* TestActiveConstraint::createCopy() const {
+	return new TestActiveConstraint(*this);
+}
+
+
+/**
+ * Called to reset the constraint.
+ */
+void TestActiveConstraint::reset() {
+}
+
+
+/**
+ * This executes the actual active constraint.
+ * This method is called during each network update step.
+ */
+bool TestActiveConstraint::applyActiveConstraint(NeuronGroup *owner, ModularNeuralNetwork *net)
+{
+	if(owner == 0 || net == 0) {
+		return false;
 	}
-	QCoreApplication *app = 0;
-	if(useGui) {
-		app = new QApplication(argc, argv);
-	}
-	else {
-		app = new QCoreApplication(argc, argv); 
-	}
-
-	NerdNeuroEvoApplication *nerd = new NerdNeuroEvoApplication();
-
-	nerd->startApplication();
 	
-	app->exec();
+	return true;
+}
 
-	Core::getInstance()->waitForAllThreadsToComplete();
-
-	//bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
-
-	Core::resetCore();
-
-	delete app;
-
-
-#ifdef _WIN32
-	timeEndPeriod(1);
-#endif
-
-	Q_CLEANUP_RESOURCE(resources);
-
-	//TODO This is to circumvent a problem with hanging applications when a plugin is loaded. 
-	//The reason for the hanging could not be found and solved yet!
-	//Update: Seems to be fixed in QT
-	//if(hasPlugins) {
-	//	abort();
-	//}
-
-	return 0;
 
 
 }
+
 
