@@ -44,7 +44,7 @@
 
 #include "Math.h"
 #include <cmath>
-#include <sys/time.h>
+//#include <sys/time.h>
 #include <QString>
 #include "Core/Core.h"
 #include <iostream>

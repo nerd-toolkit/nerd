@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	}
 
 	NetworkDynamicsPlotterApplication *plotter = new NetworkDynamicsPlotterApplication();
-	
+	plotter->prepareApplication();
 	plotter->startApplication();
 
 	app->exec();

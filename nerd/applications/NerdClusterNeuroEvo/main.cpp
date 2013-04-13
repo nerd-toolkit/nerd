@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 	NerdClusterNeuroEvoApplication *nerd = 
 			new NerdClusterNeuroEvoApplication();
 
-
+	nerd->prepareApplication();
 	nerd->startApplication();
 	
 	app->exec();

@@ -59,18 +59,10 @@ namespace nerd {
 /**
  * Constructs a BaseApplication and parses the argument list.
  *
- * Note: a BaseApplication will be automatically registered at the
- * Core as SystemObject and therefore has to be created with new on the heap.
- * Since the Core will destroy all SystemObjects, this BaseApplication must
- * not be destroyed manually!
  */
 BaseApplication::BaseApplication()
 	: mSetUp(false), mShutDown(false), mName("BaseApplication")
 {
-	Core::getInstance()->addSystemObject(this);
-	Core::getInstance()->registerThread(this);
-	Core::getInstance()->registerThread(QThread::currentThread());
-
 	connect(this, SIGNAL(quitMainApplication()),
 			QCoreApplication::instance(), SLOT(quit()));
 
@@ -90,8 +82,6 @@ BaseApplication::BaseApplication()
 
 	//allow for setting of parameters via command line argument (-sv)
 	new ValueAtCommandLineHandler();
-
-	setupGui();
 }
 
 
@@ -101,6 +91,22 @@ BaseApplication::BaseApplication()
 BaseApplication::~BaseApplication() {
 }
 
+
+/**
+ * Called to prepare the general application once the appliation class has been
+ * constructed completely.
+ * 
+ * 
+ * Note: a BaseApplication will be automatically registered at the
+ * Core as SystemObject and therefore has to be created with new on the heap.
+ * Since the Core will destroy all SystemObjects, this BaseApplication must
+ * not be destroyed manually!
+ */
+void BaseApplication::prepareApplication() {
+	Core::getInstance()->addSystemObject(this);
+	Core::getInstance()->registerThread(this);
+	Core::getInstance()->registerThread(QThread::currentThread());
+}
 
 /**
  * Called during the initialization phase of the Core.
@@ -189,7 +195,12 @@ void BaseApplication::run() {
 }
 
 
-
+/**
+ * Starts the application.
+ * 
+ * This will also initiate the creation of the GUI elements, therefore this method
+ * should be called via the GUI thread!
+ */
 void BaseApplication::startApplication() {
 	setupGui();
 	start();

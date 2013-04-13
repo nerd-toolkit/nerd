@@ -1669,22 +1669,22 @@ void NeuralNetworkEditor::setVisible(bool visible) {
 
 
 void NeuralNetworkEditor::openNerdWebDocumentation() {
-	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org", QUrl::StrictMode));
+	QDesktopServices::openUrl(QUrl("http://www.ultopia.de/drupal/nerddoc/node/2", QUrl::StrictMode));
 }
 
 
 void NeuralNetworkEditor::openNerdWebDocuNetworkEditor() {
-	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org/wiki/Tutorials", QUrl::StrictMode));
+	QDesktopServices::openUrl(QUrl("http://www.ultopia.de/drupal/nerddoc/node/66", QUrl::StrictMode));
 }
 
 
 void NeuralNetworkEditor::openNerdWebDocuScripting() {
-	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org/wiki/Scripting_HowToWriteAScriptedFitnessFunction", QUrl::StrictMode));
+	QDesktopServices::openUrl(QUrl("http://www.ultopia.de/drupal/nerddoc/node/71", QUrl::StrictMode));
 }
 
 
 void NeuralNetworkEditor::openNerdWebDocuNetworkScripting() {
-	QDesktopServices::openUrl(QUrl("http://doc.x-bot.org/wiki/Scripting_HowToScriptNetworks", QUrl::StrictMode));
+	QDesktopServices::openUrl(QUrl("http://www.ultopia.de/drupal/nerddoc/node/78", QUrl::StrictMode));
 }
 
 

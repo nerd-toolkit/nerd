@@ -95,6 +95,7 @@ set(nerd_nerd_SRCS
 	Value/CodeValue.cpp
 	Value/FileNameValue.cpp
 	Gui/ScriptEditor/ScriptEditor.cpp
+	Core/RegisterAtCoreTask.cpp
 )
 
 set(nerd_nerd_MOC_HDRS

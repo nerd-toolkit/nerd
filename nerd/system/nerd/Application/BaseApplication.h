@@ -86,6 +86,8 @@ namespace nerd {
 	public:
 		BaseApplication();
 		virtual ~BaseApplication();
+		
+		virtual void prepareApplication();
 
 		virtual bool init();
 		virtual bool bind();

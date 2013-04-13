@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	}
 
 	NeuralNetworkEditorApplication *editor = new NeuralNetworkEditorApplication();
-	
+	editor->prepareApplication();
 	editor->startApplication();
 
 	app->exec();

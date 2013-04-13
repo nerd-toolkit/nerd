@@ -41,82 +41,32 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-
-
+#include "RegisterAtCoreTask.h"
 #include "Core/Core.h"
-#include <QCoreApplication>
-#include <QApplication>
-#include "NerdMultiCoreEvaluationApplication.h"
 #include <iostream>
-#include "PlugIns/PlugInManager.h"
 
-#ifdef _WIN32
-#include <Windows.h>
-#include <Mmsystem.h>
-#endif
 
 using namespace std;
-using namespace nerd;
 
-int main(int argc, char *argv[])
+namespace nerd {
+
+RegisterAtCoreTask::RegisterAtCoreTask(SystemObject *object) 
+	: mObject(object)
 {
-#ifdef _WIN32
-	timeBeginPeriod(1);
-#endif
-
-	//initialize ressources (compiled images, etc.)
-	Q_INIT_RESOURCE(resources);
-
-	Core::resetCore();
-
-	//Start QApplication with or without GUI support.
-	bool useGui = true;
-	for(int i = 0; i < argc; ++i) {
-		if(QString(argv[i]) == "-nogui") {
-			useGui = false;
-		}
-		else if(QString(argv[i]) == "-gui") {
-			useGui = true;
-		}
-	}
-	QCoreApplication *app = 0;
-	if(useGui) {
-		app = new QApplication(argc, argv);
-	}
-	else {
-		app = new QCoreApplication(argc, argv); 
-	}
-
-	NerdMultiCoreEvaluationApplication *nerd = 
-		new NerdMultiCoreEvaluationApplication();
-
-	nerd->prepareApplication();
-	nerd->startApplication();
-	
-	app->exec();
-
-	Core::getInstance()->waitForAllThreadsToComplete(); 
-
-	//bool hasPlugins = (Core::getInstance()->getPlugInManager()->getNumberOfLoadedPlugIns() > 0);
-
-	Core::resetCore();
-
-	delete app;
-
-	Q_CLEANUP_RESOURCE(resources);
-
-	//TODO This is to circumvent a problem with hanging applications when a plugin is loaded. 
-	//The reason for the hanging could not be found and solved yet!
-	//Update: Seems to be fixed in QT
-	//if(hasPlugins) {
-	//	abort();
-	//}
-
-	return 0;
-
-
-
-
-
 }
 
+
+RegisterAtCoreTask::~RegisterAtCoreTask() {
+} 
+
+bool RegisterAtCoreTask::runTask() {
+	if(mObject != 0) {
+		return false;
+	}
+	Core::getInstance()->addSystemObject(mObject);
+	
+	return true;
+}
+		
+
+}

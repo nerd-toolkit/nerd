@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
 	}
 
 	NerdSimApplication *nerd = new NerdSimApplication();
+	nerd->prepareApplication();
 	nerd->startApplication();
 	
 	app->exec();

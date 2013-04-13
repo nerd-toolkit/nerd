@@ -84,4 +84,11 @@ TARGET_LINK_LIBRARIES(testNetworkDynamicsDiagramPlotterLib
 endif(WIN32)
 
 
-add_dependencies(testNetworkDynamicsDiagramPlotterLib nerd evolution neuralNetwork networkEditor NetworkDynamicsDiagramPlotterLib)
+add_dependencies(testNetworkDynamicsDiagramPlotterLib 
+	nerd 
+	evolution 
+	neuralNetwork 
+	networkEditor 
+	neuroAndSimEvaluation 
+	odePhysics 
+	simple2DPhysics)

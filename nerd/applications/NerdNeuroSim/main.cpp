@@ -96,6 +96,7 @@ int main(int argc, char *argv[])
 	}
 
 	NerdNeuroSimApplication *base = new NerdNeuroSimApplication();
+	base->prepareApplication();
 	base->startApplication();
 	
 	app->exec();

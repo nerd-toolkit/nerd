@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 	}
 
 	NerdNeuroEvoApplication *nerd = new NerdNeuroEvoApplication();
-
+	nerd->prepareApplication();
 	nerd->startApplication();
 	
 	app->exec();
