@@ -60,14 +60,14 @@ class QSubRunner : public QThread {
 Q_OBJECT
 
 public:
-	QSubRunner(const QStringList &qSubCommand);
+	QSubRunner(const QStringList &qSubCommand, const QString &shell = "/bin/bash");
 
 protected:
 	virtual void run();
 
 private:
 	QStringList mQSubCommand;
-
+	QString mShell;
 };
 
 /**

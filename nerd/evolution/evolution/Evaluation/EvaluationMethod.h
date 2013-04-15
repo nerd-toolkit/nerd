@@ -46,6 +46,7 @@
 #define NERDEvaluationMethod_H
 
 #include "Core/ParameterizedObject.h"
+#include <Value/FileNameValue.h>
 #include "Evolution/Individual.h"
 #include "Evaluation/EvaluationGroupsBuilder.h"
 
@@ -77,6 +78,7 @@ namespace nerd {
 	protected:		
 		World *mOwnerWorld;
 		EvaluationGroupsBuilder *mEvaluationGroupsBuilder;
+		FileNameValue *mShellBinary;
 	};
 
 }

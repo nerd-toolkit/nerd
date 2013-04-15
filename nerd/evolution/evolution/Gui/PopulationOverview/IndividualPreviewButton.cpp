@@ -48,6 +48,8 @@
 #include <QList>
 #include "Core/Core.h"
 #include <QProcess>
+#include "Value/FileNameValue.h"
+#include "EvolutionConstants.h"
 
 using namespace std;
 
@@ -67,7 +69,7 @@ IndividualPreviewButton::IndividualPreviewButton(const QString &startScriptFullF
 	QString titleString = QString("Preview_Gen:_").append(QString::number(generation))
 							.append("_Ind:_").append(QString::number(id));
 	//Core::log("String: " + titleString, true);
-	mArguments <<  "-setTitle" << titleString << "-gui";
+	mArguments <<  "-setTitle" << titleString;
 
 	setToolTip("Preview Ind. " + QString::number(id));
 }
@@ -80,8 +82,16 @@ IndividualPreviewButton::~IndividualPreviewButton() {
 }
 
 void IndividualPreviewButton::previewIndividual() {
+	FileNameValue *shell = dynamic_cast<FileNameValue*>(
+			Core::getInstance()->getValueManager()->getValue(EvolutionConstants::VALUE_EVAL_SHELL_NAME));
+	QString shellName = "/bin/bash";
+	if(shell != 0 && shell->get().trimmed() != "") {
+		shellName = shell->get();
+	}
+	Core::log("Shell: " + shellName, true);
+	
 	QProcess *previewProcess = new QProcess();
-	previewProcess->startDetached("/bin/zsh", mArguments);
+	previewProcess->startDetached(shellName, mArguments);
 	delete previewProcess;
 }
 

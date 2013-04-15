@@ -60,13 +60,15 @@ using namespace std;
 namespace nerd {
 
 
-QSubRunner::QSubRunner(const QStringList &qSubCommand) {
+QSubRunner::QSubRunner(const QStringList &qSubCommand, const QString &shell) 
+	: mShell(shell) 
+{
 	mQSubCommand = qSubCommand;
 }
 
 void QSubRunner::run() {
 	QProcess *evalProcess = new QProcess();
-	evalProcess->start("/bin/bash", mQSubCommand);
+	evalProcess->start(mShell, mQSubCommand);
 	while(!evalProcess->waitForFinished(100)) {
 	}
 	if(evalProcess->exitCode() != 0) {
@@ -418,7 +420,7 @@ bool ClusterEvaluationMethod::submitJob(int startIndex, int endIndex) {
 		Core::log("GridEngine Submit: " + parameter.join(" "));
 	}
 	
-	QSubRunner submitJob(parameter);
+	QSubRunner submitJob(parameter, mShellBinary->get());
 
 	//register to ensure that the thread is not destroyed while running.
 	Core::getInstance()->registerThread(&submitJob);
@@ -544,7 +546,7 @@ bool ClusterEvaluationMethod::reSubmitJobs() {
 			Core::log("GridEngine Resubmit: " + parameter.join(" "));
 		}
 		
-		QSubRunner *submitJob = new QSubRunner(parameter);
+		QSubRunner *submitJob = new QSubRunner(parameter, mShellBinary->get());
 		submitJob->start();
 		runningThreads.push_back(submitJob);
 	}

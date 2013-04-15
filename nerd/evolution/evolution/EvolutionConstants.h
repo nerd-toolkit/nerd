@@ -120,6 +120,7 @@ namespace nerd {
 		static const QString VALUE_EXECUTION_NUMBER_OF_STEPS;
 		static const QString VALUE_NUMBER_OF_COMPLETED_INDIVIDUALS_EVO;
 		static const QString VALUE_NUMBER_OF_COMPLETED_INDIVIDUALS_EVAL;
+		static const QString VALUE_EVAL_SHELL_NAME;
 
 		static const QString VALUE_CURRENT_GENERATION_DIRECTORY;
 		static const QString VALUE_CURRENT_INDIVIDUAL_EVALUATION_START_SCRIPT;
@@ -134,6 +135,7 @@ namespace nerd {
 		static const QString VALUE_INCREMENTAL_LOGGER_COMMENT;
 		static const QString VALUE_RUN_SIMULATION_IN_REALTIME;
 		static const QString VALUE_TOTAL_STEP_COUNTER;
+		
 
 	//**************************************************************************
 	//Tag Names

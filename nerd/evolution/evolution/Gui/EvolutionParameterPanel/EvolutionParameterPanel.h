@@ -54,6 +54,7 @@
 #include <QPushButton>
 #include "Value/ValueChangedListener.h"
 #include "Value/BoolValue.h"
+#include <Value/FileNameValue.h>
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QProcess>
@@ -91,7 +92,6 @@ namespace nerd {
 		void loadSettings();
 		void saveSettings();
 		void previewIndividual();
-		void previewFinished(int);
 
 	protected:
 		
@@ -114,8 +114,8 @@ namespace nerd {
 		bool mIncludeStarterButtonToMainControlPanel;
 		QPushButton *mStartIndividualScriptButton;
 		QLineEdit *mIndividualSelectionEdit;
-		QProcess *mPreviewProcess;
 		bool mTogglePreview;
+		FileNameValue *mShellBinary;
 	};
 
 }

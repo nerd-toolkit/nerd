@@ -186,6 +186,9 @@ const QString EvolutionConstants::VALUE_NUMBER_OF_COMPLETED_INDIVIDUALS_EVO
 
 const QString EvolutionConstants::VALUE_NUMBER_OF_COMPLETED_INDIVIDUALS_EVAL
 		= "/Evolution/EvalCompletedIndividuals";
+		
+const QString EvolutionConstants::VALUE_EVAL_SHELL_NAME
+		= "/Evolution/Preview/Shell";
 
 
 const QString EvolutionConstants::VALUE_CURRENT_GENERATION_DIRECTORY

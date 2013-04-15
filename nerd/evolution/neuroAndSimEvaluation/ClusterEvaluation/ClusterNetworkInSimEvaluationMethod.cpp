@@ -440,7 +440,7 @@ bool ClusterNetworkInSimEvaluationMethod::createJobScript() {
 	applicationCall = applicationCall.replace("$HOME$", QDir::currentPath());
 	
 
-	script << "#!/bin/sh" << endl << endl;
+	script << "#!" << mShellBinary->get().toStdString().c_str() << endl << endl;
 	script << "TASK_ID=$1" << endl;
 	script << "ARGUMENT_POSTFIX=" << endl << endl;
 	script << "if [ \"${SGE_TASK_ID}\" != \"undefined\" -a \"x${SGE_TASK_ID}\" != \"x\" ]" << endl;

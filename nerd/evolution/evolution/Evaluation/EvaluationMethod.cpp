@@ -43,12 +43,21 @@
 
 #include "EvaluationMethod.h"
 #include "Evolution/World.h"
+#include <Core/Core.h>
+#include "Value/ValueManager.h"
 
 namespace nerd {
 
 EvaluationMethod::EvaluationMethod(const QString &name)
 	: ParameterizedObject(name), mOwnerWorld(0), mEvaluationGroupsBuilder(0)
 {
+	mShellBinary = new FileNameValue("/bin/bash");
+	mShellBinary->setDescription("The shell used to start the preview of individuals in.");
+	mShellBinary->getOptionList().append("/bin/bash");
+	mShellBinary->getOptionList().append("/bin/zsh");
+	mShellBinary->getOptionList().append("/bin/sh");
+	
+	Core::getInstance()->getValueManager()->addValue("/Evolution/Preview/Shell", mShellBinary);
 }
 
 EvaluationMethod::EvaluationMethod(const EvaluationMethod &other)
