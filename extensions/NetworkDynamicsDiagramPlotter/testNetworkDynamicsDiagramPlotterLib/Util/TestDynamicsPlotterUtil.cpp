@@ -82,9 +82,9 @@ void TestDynamicsPlotterUtil::testGetElementValue1() {
 	Neuron *n3 = new Neuron("Neuron3", ramp, af);
 	network->addNeuron(n3);
 
-	Synapse *s1 = Synapse::createSynapse(n1, n2, -1, sf);
-	Synapse *s2 = Synapse::createSynapse(n2, n2, 0.6, sf);
-	Synapse *s3 = Synapse::createSynapse(n2, n3, 0.2, sf);
+	//Synapse *s1 = Synapse::createSynapse(n1, n2, -1, sf);
+	//Synapse *s2 = Synapse::createSynapse(n2, n2, 0.6, sf);
+	//Synapse *s3 = Synapse::createSynapse(n2, n3, 0.2, sf);
 
 	QList<NeuralNetworkElement*> networkElements;
 	network->getNetworkElements(networkElements);

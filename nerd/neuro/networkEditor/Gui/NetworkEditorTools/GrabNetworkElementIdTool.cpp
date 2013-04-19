@@ -115,7 +115,6 @@ void GrabNetworkElementIdTool::mouseButtonPressed(NetworkVisualization *source,
 		return;
 	}
 
-	QPointF pos = globalPosition;
 	NeuralNetworkElement *netElem = 0;
 
 	QList<PaintItem*> items = mVisuContext->getPaintItems();

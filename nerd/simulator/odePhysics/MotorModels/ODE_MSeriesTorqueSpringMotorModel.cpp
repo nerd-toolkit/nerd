@@ -140,7 +140,9 @@ void ODE_H_MSeriesTorqueSpringMotorModel::updateOutputValues() {
 
 			//Note: The angle sensor offset has to be considered here to allow the
 			//adjustment of the joint angle sensor potis.
-			DoubleValue *mJointAngleSensorOffset = owner->getJointAngleOffsetValue();
+			
+			//TODO: Check whether the JointAngleSensorOffset is needed here!
+			//DoubleValue *mJointAngleSensorOffset = owner->getJointAngleOffsetValue();
 
 			// Read out joint angle from Physics and map to -180° +180°
 			double jointAngle = dJointGetHingeAngle(mJoint);

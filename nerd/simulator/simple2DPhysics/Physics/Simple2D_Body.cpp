@@ -71,7 +71,7 @@ Simple2D_Body::Simple2D_Body()
  * 
  * @param other the Simple2D_Body object to copy.
  */
-Simple2D_Body::Simple2D_Body(const Simple2D_Body &other) 
+Simple2D_Body::Simple2D_Body(const Simple2D_Body&) 
 	: mParent(0), mLocalPosition(0), mLocalOrientation(0)
 {
 	mLocalPosition = new Vector3DValue();

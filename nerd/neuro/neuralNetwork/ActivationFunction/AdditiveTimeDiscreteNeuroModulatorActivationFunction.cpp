@@ -347,7 +347,7 @@ void AdditiveTimeDiscreteNeuroModulatorActivationFunction::applyObservables() {
 	
 	//TODO also allow for rectangular areas?
 	double radius = mCurrentArea->get();
-	QRectF area = mNeuroModulator->getLocalRect(mModulatorType->get());
+	//QRectF area = mNeuroModulator->getLocalRect(mModulatorType->get());
 	
 	bool isCircle = mNeuroModulator->isCircularArea(mModulatorType->get());
 	if(isCircle) {

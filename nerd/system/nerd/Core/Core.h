@@ -42,6 +42,8 @@
  ***************************************************************************/
 
 
+//#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+
 
 #ifndef CORE_H_
 #define CORE_H_

@@ -64,7 +64,7 @@ class OpenGLVisualization;
 
 /**
  * SimpleEvolutionMainWindow
-**/
+ */
 
 class DynamicsPlotterMainWindow : public QWidget {
 

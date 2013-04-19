@@ -77,7 +77,7 @@ namespace nerd {
  * Constructs a new OnlinePlotterWindow.
  */
 	OnlinePlotterWindow::OnlinePlotterWindow(int index, QWidget *parent)
-		: mMatrix(0), mIndex(index)
+		: QWidget(parent), mMatrix(0), mIndex(index)
 	{
 		setMouseTracking(true);
 		mIsSetUp = false;
@@ -140,7 +140,7 @@ namespace nerd {
 	 * Resize the plot when window is resized 
 	 *
 	*/
-	void OnlinePlotterWindow::resizeEvent ( QResizeEvent * event ){
+	void OnlinePlotterWindow::resizeEvent(QResizeEvent*){
 // 		if(mIsSetUp){//only call has been created and process is finished
 // 			int oldHeight = event->oldSize().height();
 // 			int oldWidth = event->oldSize().width();
@@ -255,17 +255,17 @@ namespace nerd {
 	 * @param dataMatrix Matrix with data from active calculator
 	 * 
 	*/
-	void OnlinePlotterWindow::printData(QString name, MatrixValue *dataMatrix, 
-bool offlinePlot){
+	void OnlinePlotterWindow::printData(QString name, MatrixValue *dataMatrix, bool offlinePlot){
 
 		if(dataMatrix == 0 || name == 0){
 			Core::log("OnlinePlotterWindow: Couldn't find data Matrix or Name");
 			return;
 		}
 		mMatrix = dataMatrix;
-		//if(!offlinePlot) {
-			emit timerStart();
-		//}
+		if(!offlinePlot) {
+			//TODO: Check if timer should be started here, instead of the next line.
+		}
+		emit timerStart();
 		
 		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
@@ -302,20 +302,17 @@ bool offlinePlot){
 		}
 		show();
 		
-// 		cerr << "Matrix size: " << mMatrix->getMatrixWidth() << " " << mMatrix->getMatrixHeight()
-// 				<< " " << mMatrix->getMatrixDepth() << endl;
-		
 		mVM = Core::getInstance()->getValueManager();
-		mOfflinePlotValue = 
-static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/OfflinePlot"))
+		mOfflinePlotValue = static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/OfflinePlot"))
 ;
 		mIsSetUp = false;
-		if(mOfflinePlotValue->get() == true && mForceUpdate == false){
+		if((mOfflinePlotValue->get() == true) && (mForceUpdate == false)) {
 			mMessageLabel->setText("<font color='red'>Please wait! Calculating.</font>");
 			mWidth = mMatrix->getMatrixWidth();
 			mHeight = mMatrix->getMatrixHeight();
 			return;
-		}else{
+		}
+		else {
 			mForceUpdate = false;
 			mWidth = mMatrix->getMatrixWidth();
 			mHeight = mMatrix->getMatrixHeight();
@@ -370,8 +367,10 @@ static_cast<BoolValue*>(mVM->getValue("/DynamicsPlotters/OfflinePlot"))
 			QTimer::singleShot(0, this, SLOT(minimizeWidgetSize()));
 
 
-		}//if
-	}//updateData()
+		}
+	}
+	
+	
 	
 	/**
 	 * Sets message label to 'Done' when finished at set min and max labels 

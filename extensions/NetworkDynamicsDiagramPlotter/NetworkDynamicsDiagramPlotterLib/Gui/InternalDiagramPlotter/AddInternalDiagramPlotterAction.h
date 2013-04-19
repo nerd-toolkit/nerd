@@ -53,6 +53,8 @@ namespace nerd {
 
 	/**
 	 * AddInternalDiagramPlotterAction.
+	 * 
+	 * TODO: This class is under construction!
 	 *
 	 */
 	class AddInternalDiagramPlotterAction : public QAction {

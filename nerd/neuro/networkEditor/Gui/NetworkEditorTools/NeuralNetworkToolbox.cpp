@@ -512,7 +512,6 @@ void NeuralNetworkToolbox::grabIdsOfSelectedElements() {
 	if(visu == 0 && visu->getVisualizationHandler() != 0) {
 		return;
 	}
-	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
 
 	QList<PaintItem*> selectedItems = visu->getSelectedItems();
 	QString idsList;

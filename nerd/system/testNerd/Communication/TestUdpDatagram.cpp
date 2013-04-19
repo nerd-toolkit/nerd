@@ -63,7 +63,7 @@ void TestUdpDatagram::testConstructor() {
 	QCOMPARE(ud.getData().size(), 0);
 	QCOMPARE(ud.getDataSize(), 0);
 	
-	char bytes[] = {10, 255, 128, 0};
+	char bytes[] = {(char) 10, (char) 255, (char) 128, (char) 0};
 	QByteArray data(bytes, 4);
 	
 	ud.setData(data);

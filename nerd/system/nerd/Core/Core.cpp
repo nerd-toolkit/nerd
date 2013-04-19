@@ -769,7 +769,7 @@ SystemObject* Core::removeGlobalObject(const QString &objectName) {
  */
 SystemObject* Core::getGlobalObject(const QString &name) const {
 	if(!mGlobalObjects.keys().contains(name)) {
-		return false;
+		return 0;
 	}
 	return mGlobalObjects.value(name);
 }

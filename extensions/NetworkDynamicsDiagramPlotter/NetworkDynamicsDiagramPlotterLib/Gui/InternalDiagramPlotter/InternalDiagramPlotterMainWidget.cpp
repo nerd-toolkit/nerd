@@ -93,6 +93,9 @@ InternalDiagramPlotterMainWidget::InternalDiagramPlotterMainWidget(const QString
 	mControlArea->setMinimumSize(0, 0);
 	mControlArea->resize(50, 100);
 	
+	//TODO remove during refactoring, this only suppresses the warnings.
+	activeTab = activeTab;
+	
 	
 // 	QScrollArea *mainScrollArea = new QScrollArea(mSplitter);
 // 	mainScrollArea->setWidgetResizable(true);

@@ -62,6 +62,8 @@ namespace nerd {
 
 	/**
 	 * InternalDiagramPlotterWidget
+	 * 
+	 * TODO: This class is under construction!
 	 */
 	class InternalDiagramPlotterWidget : public QFrame {
 	Q_OBJECT

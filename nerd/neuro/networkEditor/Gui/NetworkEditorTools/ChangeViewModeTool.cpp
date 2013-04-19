@@ -203,7 +203,7 @@ void ChangeViewModeTool::updateKeyListenerRegistration(int) {
 	}
 }
 
-void ChangeViewModeTool::menuActionTriggered(bool checked) {
+void ChangeViewModeTool::menuActionTriggered(bool) {
 	if(mMenuAction->isChecked()) {
 		enableViewMode();
 	}

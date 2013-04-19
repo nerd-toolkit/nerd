@@ -164,7 +164,7 @@ void TestLyapunovExponent::testParameterSettings() {
 
 	Neuron *n1 = new Neuron("ChaosNeuron", *tf, *af);
 	network->addNeuron(n1);
-	Synapse *s1 = Synapse::createSynapse(n1, n1, -18.5, *sf);
+	//Synapse *s1 = Synapse::createSynapse(n1, n1, -18.5, *sf);
 
 	QVERIFY(Neuro::getNeuralNetworkManager()->addNeuralNetwork(network));
 	QVERIFY(Core::getInstance()->init());

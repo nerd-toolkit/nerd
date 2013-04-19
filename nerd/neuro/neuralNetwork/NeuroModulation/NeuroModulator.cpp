@@ -425,7 +425,26 @@ QHash<int, QString> NeuroModulator::getUpdateModusDocumentations() const {
 }
 
 bool NeuroModulator::equals(NeuroModulator *modulator) const {
-	//TODO
+	if(modulator == 0) {
+		return false;
+	}
+	if(mDefaultDistributionModus != modulator->mDefaultDistributionModus) {
+		return false;
+	}
+	if(mDefaultUpdateModus != modulator->mDefaultUpdateModus) {
+		return false;
+	}
+	if(mEnableUpdate != 0 && modulator->mEnableUpdate !=0 ) {
+		if(mEnableUpdate->get() != modulator->mEnableUpdate->get()) {
+			return false;
+		}
+	}
+	if(mEnableConcentrationCalculation != 0 && modulator->mEnableConcentrationCalculation != 0) {
+		if(mEnableConcentrationCalculation->get() != modulator->mEnableConcentrationCalculation->get()) {
+			return false;
+		}
+	}
+	//TODO compare all elements of the modulator settings here!
 	
 	return true;
 }
@@ -597,8 +616,6 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 	
 	double triggerActivation =  (currentActivation - lowerTrigger) / (upperTrigger - lowerTrigger);
 	
-	//cerr << "curr: " << currentActivation << " tri " << triggerActivation << endl;
-	
 	if(triggerActivation < 0.0 || triggerActivation > 1.0) {
 		//not triggered
 		
@@ -608,24 +625,26 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		
 		if(modActivationState <= activationReductionThreshold) {
 			
-			//change concentration
-			double concentration = getConcentration(type, owner);
-			concentration = Math::max(0.0, concentration - concentrationDrop);
-			setConcentration(type, concentration, owner);
-			
-			//change area
-			QRectF area = getLocalRect(type);
-			if(concentration > 0.0) {
-				area.setWidth(Math::max(0.0, area.width() - (maxWidth * areaDrop)));
-				area.setHeight(Math::max(0.0, area.height() - (maxHeight * areaDrop)));
+			if(innerModus == 0) {
+				//change concentration
+				double concentration = getConcentration(type, owner);
+				concentration = Math::max(0.0, concentration - concentrationDrop);
+				setConcentration(type, concentration, owner);
+				
+				//change area
+				QRectF area = getLocalRect(type);
+				if(concentration > 0.0) {
+					area.setWidth(Math::max(0.0, area.width() - (maxWidth * areaDrop)));
+					area.setHeight(Math::max(0.0, area.height() - (maxHeight * areaDrop)));
+				}
+				else {
+					//reset area if there is no modulator level left.
+					area.setWidth(0.0);
+					area.setHeight(0.0);
+				}
+				
+				mAreas.insert(type, QRectF(area.x(), area.y(), area.width(), area.height()));
 			}
-			else {
-				//reset area if there is no modulator level left.
-				area.setWidth(0.0);
-				area.setHeight(0.0);
-			}
-			
-			mAreas.insert(type, QRectF(area.x(), area.y(), area.width(), area.height()));
 		}
 	}
 	else {
@@ -635,26 +654,24 @@ void NeuroModulator::updateModulatorDefault(int type, NeuralNetworkElement *owne
 		
 		double modActivationState = variables.at(0);
 		
-// 		if(concentration > 0.0) {
-// 			modActivationState = 1.0;
-// 		}
-// 		else {
-			modActivationState = Math::min(1.0, modActivationState + activationGain);
-// 		}
+		modActivationState = Math::min(1.0, modActivationState + activationGain);
+
 		variables.replace(0, modActivationState);
 		
 		if(modActivationState >= activationProductionThreshold) {
 			
-			//change concentration
-			concentration = Math::min(maxConcentration, concentration + concentrationGain);
-			setConcentration(type, concentration, owner);
-			
-			//change area
-			QRectF area = getLocalRect(type);
-			area.setWidth(Math::min(maxWidth, area.width() + (maxWidth * areaGain)));
-			area.setHeight(Math::min(maxHeight, area.height() + (maxHeight * areaGain)));
-			
-			mAreas.insert(type, QRectF(area.x(), area.y(), area.width(), area.height()));
+			if(innerModus == 0) {
+				//change concentration
+				concentration = Math::min(maxConcentration, concentration + concentrationGain);
+				setConcentration(type, concentration, owner);
+				
+				//change area
+				QRectF area = getLocalRect(type);
+				area.setWidth(Math::min(maxWidth, area.width() + (maxWidth * areaGain)));
+				area.setHeight(Math::min(maxHeight, area.height() + (maxHeight * areaGain)));
+				
+				mAreas.insert(type, QRectF(area.x(), area.y(), area.width(), area.height()));
+			}
 		}
 	}
 	

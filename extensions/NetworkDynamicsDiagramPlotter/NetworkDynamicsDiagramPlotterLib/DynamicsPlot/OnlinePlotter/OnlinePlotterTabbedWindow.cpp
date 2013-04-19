@@ -80,7 +80,7 @@ namespace nerd {
 	{
 		moveToThread(QCoreApplication::instance()->thread());	
 		
-		QTabWidget *tabWidget = new QTabWidget(this);
+		//QTabWidget *tabWidget = new QTabWidget(this);
 		QHBoxLayout *layout = new QHBoxLayout(this);
 		setLayout(layout);
 		

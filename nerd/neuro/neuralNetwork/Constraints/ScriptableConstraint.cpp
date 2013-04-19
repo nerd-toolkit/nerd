@@ -224,8 +224,8 @@ bool ScriptableConstraint::isValid(NeuronGroup *owner) {
 }
 
 
-bool ScriptableConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor *executor,
-									 QList<NeuralNetworkElement*> &trashcan)
+bool ScriptableConstraint::applyConstraint(NeuronGroup *owner, CommandExecutor*,
+									 QList<NeuralNetworkElement*>&)
 {
 	mOwner = owner;
 	if(mOwner == 0) {

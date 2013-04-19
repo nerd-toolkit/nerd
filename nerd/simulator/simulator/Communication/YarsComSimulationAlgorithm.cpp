@@ -120,22 +120,8 @@ YarsComSimulationAlgorithm::~YarsComSimulationAlgorithm() {
 	if(mSocket != 0) {
 		delete mSocket;
 	}
-	//are deleted by ValueManager.
-// 	while(!mInputValues.empty()) {
-// 		InterfaceValue *i = mInputValues.first();
-// 		mInputValues.removeAll(i);
-// 		delete i;
-// 	}
-// 	while(!mOutputValues.empty()) {
-// 		InterfaceValue *i = mOutputValues.first();
-// 		mOutputValues.removeAll(i);
-// 		delete i;
-// 	}
-// 	while(!mInfoValues.empty()) {
-// 		InterfaceValue *i = mInfoValues.first();
-// 		mInfoValues.removeAll(i);
-// 		delete i;
-// 	}
+	
+	//Other values (Input, Output, Interface) are deleted by ValueManager.
 }
 
 
@@ -259,7 +245,6 @@ bool YarsComSimulationAlgorithm::executeSimulationStep(PhysicsManager*) {
 		return false;
 	}
   
-
 	if(mShutDown) {
 		disconnectFromYars();
 		return true;
@@ -959,8 +944,8 @@ bool YarsComSimulationAlgorithm::receiveSensorData() {
 	if(mDebug) std::cout << "receiveSensorData()\n";
 	// vector<double> *sensorCIData, vector<double> *sensorAUXData, int *robotState
 	int numItemInPacket = 0;
-	int packetIndex     = 0;
-	int sensorIndex     = 0;
+	//int packetIndex = 0;
+	int sensorIndex = 0;
 	int tmp = 0;
 	int robotNum = 0;
 	float tmpFloat = 0;
@@ -972,7 +957,7 @@ bool YarsComSimulationAlgorithm::receiveSensorData() {
 
 
 	// 1st receive (multiple) packets and insert sensor values into sorted array
-	for(int i=0; i < numDataAckPackets; i++)
+	for(int i = 0; i < numDataAckPackets; i++)
 	{
 		// every _MAX_SENSOR_ITEMS_PER_DATA_ACK we have to send a REQ
 		if((i != 0) && ((i % _MAX_NUM_PACKETS_WITHOUT_ACK) == 0))
@@ -1015,11 +1000,10 @@ bool YarsComSimulationAlgorithm::receiveSensorData() {
 		if(tmp == _STANDARD_ROBOT_STATE_ABORT)
 		{
 			mRobotStates = _STANDARD_ROBOT_STATE_ABORT;
-			std::cout <<"StandardYarsClient: robot state ABORT\n";
+			std::cout << "StandardYarsClient: Robot state ABORT\n";
 		}
 		else if(tmp == _STANDARD_ROBOT_STATE_OK)
 		{
-		// std:: cout <<"StandardYarsClient: robot state OK\n";
 		}
 		else
 		{
@@ -1038,8 +1022,8 @@ bool YarsComSimulationAlgorithm::receiveSensorData() {
 		else
 		{
 			numItemInPacket = 0;
-			packetIndex     = 0;
-			sensorIndex     = 0;
+			//packetIndex = 0;
+			sensorIndex = 0;
 			
 			if(tmp >= _MAX_SENSOR_ITEMS_PER_DATA_ACK)
 			{
@@ -1049,9 +1033,9 @@ bool YarsComSimulationAlgorithm::receiveSensorData() {
 			{
 				numItemInPacket = tmp;
 			}
-			sensorIndex     = (sensorCICount + sensorAUXCount) - tmp;
+			sensorIndex = (sensorCICount + sensorAUXCount) - tmp;
 			
-			for(int j=0; j<numItemInPacket; j++)
+			for(int j = 0; j < numItemInPacket; j++)
 			{
 				tmpFloat = mRecBuffer->readNextFloat();
 				tmpSensorValues[sensorIndex + j] = tmpFloat;
@@ -1169,18 +1153,18 @@ bool YarsComSimulationAlgorithm::newEnvironment() {
 bool YarsComSimulationAlgorithm::sendXML(QString *dataString, int sourceType, int
     selectionMask, int tryNumber, int indyNumber)
 {
-	int dataID            = Random::nextInt(); // number to identify follower packages
-	int totalDataSize     = (*dataString).size();
-	int dataSizePerPacket = PBUF_SIZE_USABLE - 4*4; 
+	int dataID = Random::nextInt(); // number to identify follower packages
+	int totalDataSize = (*dataString).size();
+	int dataSizePerPacket = PBUF_SIZE_USABLE - 4 * 4; 
 	
-	int lastPacketSize    = 0;
-	int numDataPackages   = 0;
+	int lastPacketSize = 0;
+	int numDataPackages = 0;
 	int actStringPosition = 0;
 	int actDataPerPackage = 0;
 	
 	if(mDebug) {
 		std::cout << "\nStandardYarsClient: doNewSim()...sendXML()\n";
-		std::cout<<"totalDataSize: "<<totalDataSize<<", dataSizePerPacket: "<<dataSizePerPacket<<"\n";
+		std::cout << "TotalDataSize: " << totalDataSize << ", dataSizePerPacket: " << dataSizePerPacket << "\n";
 	}	
 	if(dataString == NULL || totalDataSize == 0)
 	{
@@ -1193,7 +1177,7 @@ bool YarsComSimulationAlgorithm::sendXML(QString *dataString, int sourceType, in
 	}
 	
 	lastPacketSize  = totalDataSize % dataSizePerPacket;
-	if(mDebug) std::cout << "lastPacketSize: "<<lastPacketSize<<"\n";
+	if(mDebug) std::cout << "lastPacketSize: " << lastPacketSize << "\n";
 	if (lastPacketSize > 0)
 	{
 		numDataPackages = totalDataSize / dataSizePerPacket + 1;
@@ -1202,7 +1186,7 @@ bool YarsComSimulationAlgorithm::sendXML(QString *dataString, int sourceType, in
 	{
 		numDataPackages = totalDataSize / dataSizePerPacket;
 	}
-	if(mDebug) std::cout << "numDataPackages: "<<numDataPackages<<"\n";
+	if(mDebug) std::cout << "numDataPackages: " << numDataPackages << "\n";
 	// send newSim request
 	mSendBuffer->clear();
 	mSendBuffer->writeInt(_STANDARD_COM_ID_NEW_SIM_REQ);
@@ -1229,9 +1213,9 @@ bool YarsComSimulationAlgorithm::sendXML(QString *dataString, int sourceType, in
 	return false;
 	}
 	
-	std::cout << "\n\nTransmitting XML description to YARS-server. This may take a while..." <<"\n";
+	std::cout << "\n\nTransmitting XML description to YARS-server. This may take a while..." << "\n";
 	// send string data in (multiple) packets
-	for(int i=0; i<numDataPackages; i++)
+	for(int i = 0; i < numDataPackages; i++)
 	{
 		if((i != 1) && ((i % _MAX_NUM_PACKETS_WITHOUT_ACK) == 1))
 		{
@@ -1241,7 +1225,7 @@ bool YarsComSimulationAlgorithm::sendXML(QString *dataString, int sourceType, in
 				Core::log("YarsComSimulationAlgorithm: sendXML(): Correct acknowledgement of MAX_NUM_PACKETS_WITHOUT_ACK string data packets failed");
 			}
 		}
-		if(mDebug) std::cout << "looping through data Packet: "<<i+1<<"\n";
+		if(mDebug) std::cout << "looping through data Packet: " << (i + 1) << "\n";
 		mSendBuffer->clear();
 		mSendBuffer->writeInt(_STANDARD_COM_ID_NEW_SIM_REQ);
 		mSendBuffer->writeInt(dataID);
@@ -1255,14 +1239,14 @@ bool YarsComSimulationAlgorithm::sendXML(QString *dataString, int sourceType, in
 		{
 			actDataPerPackage = lastPacketSize;
 		}
-		if(mDebug) std::cout << "adding data of size "<<actDataPerPackage<<" to package\n";
+		if(mDebug) std::cout << "adding data of size " << actDataPerPackage << " to package\n";
 		for(int j=0; j<actDataPerPackage; j++)
 		{
 			mSendBuffer->writeByte((*dataString).toStdString()[actStringPosition++]);
 		}
 		if(mDebug) std::cout << "standard comend\n";
 		mSendBuffer->writeInt(_STANDARD_COMEND);
-		if(mDebug) std::cout << "transmitting datagram of package "<<i+1<<"\n";
+		if(mDebug) std::cout << "transmitting datagram of package " << (i + 1) << "\n";
 		if(mSocket->writeDatagram(mSendBuffer->getData(), *mAddress, mPort->get()) < 0) {
 			std::cerr << "Unable to send string data packets\n";
 			Core::log("YarsComSimulationAlgorithm: sendXML(): Unable to send string data packets");
@@ -1313,7 +1297,7 @@ bool YarsComSimulationAlgorithm::clearSim()
 
 bool YarsComSimulationAlgorithm::checkSimpleAcknowledge(int ack, QString ackName)
 {
-	if(mDebug) std::cout << "        checkSimpleAck() for "<<ackName.toStdString().c_str()<<"\n";
+	if(mDebug) std::cout << "        checkSimpleAck() for " << ackName.toStdString().c_str() << "\n";
 	int tmp = 0;
 	// check if first cmd package successful
 	mRecBuffer->clear();
@@ -1342,7 +1326,7 @@ bool YarsComSimulationAlgorithm::checkSimpleAcknowledge(int ack, QString ackName
 		return false;
 	}
 	mRecBuffer->clear();	
-	if(mDebug) std::cout << "received "<<tmp<<" as expected\n";
+	if(mDebug) std::cout << "received " << tmp << " as expected\n";
 	return true;
 }
 

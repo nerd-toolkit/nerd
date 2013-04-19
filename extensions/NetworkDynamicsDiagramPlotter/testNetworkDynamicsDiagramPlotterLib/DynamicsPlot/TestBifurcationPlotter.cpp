@@ -176,9 +176,9 @@ void TestBifurcationPlotter::testParameterSettings() {
 	network->addNeuron(n1);
 	Neuron *n2 = new Neuron("Neuron2", *ramp, *af);
 	network->addNeuron(n2);
-	Synapse *s1 = Synapse::createSynapse(n1, n1, 1.02, *sf);
-	Synapse *s2 = Synapse::createSynapse(n1, n2, -1.1, *sf);
-	Synapse *s3 = Synapse::createSynapse(n2, n1, 1.1, *sf);
+	//Synapse *s1 = Synapse::createSynapse(n1, n1, 1.02, *sf);
+	//Synapse *s2 = Synapse::createSynapse(n1, n2, -1.1, *sf);
+	//Synapse *s3 = Synapse::createSynapse(n2, n1, 1.1, *sf);
 
 	QVERIFY(Neuro::getNeuralNetworkManager()->addNeuralNetwork(network));
 	QVERIFY(Core::getInstance()->init());

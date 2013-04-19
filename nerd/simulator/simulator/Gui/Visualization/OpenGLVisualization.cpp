@@ -1164,12 +1164,14 @@ void OpenGLVisualization::resizeGL(int width, int height){
 	glViewport (0, 0, width, height);
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	mWindowRation = (GLfloat) width/(GLfloat) height;
-	if(width>height ) {
+	mWindowRation = (GLfloat) width / (GLfloat) height;
+	if(width > height ) {
 		glScalef(mWindowRation, mWindowRation, 1);
 	}
 
-	gluPerspective((GLfloat) mOpeningAngleValue->get(), mWindowRation, mMinDistanceCutoffValue->get(), mMaxDistanceCutoffValue->get());
+	gluPerspective((GLfloat) mOpeningAngleValue->get(), 
+					mWindowRation, mMinDistanceCutoffValue->get(), 
+					mMaxDistanceCutoffValue->get());
 
 	glMatrixMode (GL_MODELVIEW);
 }
@@ -1186,11 +1188,21 @@ void OpenGLVisualization::focusOutEvent(QFocusEvent*) {
 
 
 void OpenGLVisualization::createEnvironmentConditions() {
-	GLfloat pos[4] = {mPosition->getX(), mPosition->getY(), mPosition->getZ(), 1.0};
-	GLfloat white[4] = {mDiffuseLight->getX(), mDiffuseLight->getY(),
-		mDiffuseLight->getZ(), 1.0};
-	GLfloat black[4] = {mSpecularLight->getX(), mSpecularLight->getY(),
-		mSpecularLight->getZ(), 0.0};
+	
+	GLfloat pos[4] = {	(float) mPosition->getX(), 
+						(float) mPosition->getY(), 
+						(float) mPosition->getZ(), 
+						(float) 1.0};
+						
+	GLfloat white[4] = {(float) mDiffuseLight->getX(), 
+						(float) mDiffuseLight->getY(), 
+						(float) mDiffuseLight->getZ(), 
+						(float) 1.0};
+						
+	GLfloat black[4] = {(float) mSpecularLight->getX(), 
+						(float) mSpecularLight->getY(), 
+						(float) mSpecularLight->getZ(), 
+						(float) 0.0};
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT1);
@@ -1198,8 +1210,11 @@ void OpenGLVisualization::createEnvironmentConditions() {
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, black);
 
-	GLfloat LModelAmbient[4] ={mAmbientLight->getX(), mAmbientLight->getY(),
-		mAmbientLight->getZ(),1.0F};
+	GLfloat LModelAmbient[4] ={	(float) mAmbientLight->getX(), 
+								(float) mAmbientLight->getY(),
+								(float) mAmbientLight->getZ(),
+								(float) 1.0F};
+								
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,&LModelAmbient[0]);
 
 	glEnable (GL_COLOR_MATERIAL);
@@ -1215,11 +1230,21 @@ void OpenGLVisualization::createEnvironmentConditions() {
 }
 
 void OpenGLVisualization::changeLighting() {
-	GLfloat pos[4] = {mPosition->getX(), mPosition->getY(), mPosition->getZ(), 1.0};
- 	GLfloat white[4] = {mDiffuseLight->getX(), mDiffuseLight->getY(),
-		mDiffuseLight->getZ(), 1.0};
-	GLfloat black[4] = {mSpecularLight->getX(), mSpecularLight->getY(),
-		mSpecularLight->getZ(), 0.0};
+	
+	GLfloat pos[4] = {	(float) mPosition->getX(), 
+						(float) mPosition->getY(), 
+						(float) mPosition->getZ(), 
+						(float) 1.0};
+						
+ 	GLfloat white[4] = {(float) mDiffuseLight->getX(), 
+						(float) mDiffuseLight->getY(),
+						(float) mDiffuseLight->getZ(), 
+						(float) 1.0};
+						
+	GLfloat black[4] = {(float) mSpecularLight->getX(), 
+						(float) mSpecularLight->getY(),
+						(float) mSpecularLight->getZ(), 
+						(float) 0.0};
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT1);
@@ -1227,8 +1252,11 @@ void OpenGLVisualization::changeLighting() {
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, black);
 
-	GLfloat LModelAmbient[4] ={mAmbientLight->getX(), mAmbientLight->getY(),
-		mAmbientLight->getZ(),1.0F};
+	GLfloat LModelAmbient[4] ={	(float) mAmbientLight->getX(), 
+								(float) mAmbientLight->getY(),
+								(float) mAmbientLight->getZ(),
+								(float) 1.0F};
+								
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,&LModelAmbient[0]);
 
 	glEnable (GL_COLOR_MATERIAL);
@@ -1775,8 +1803,10 @@ void OpenGLVisualization::changeView() {
 		glMatrixMode (GL_PROJECTION);
 		glLoadIdentity ();
 
-		gluPerspective((GLfloat) mOpeningAngleValue->get(), mWindowRation,
-			mMinDistanceCutoffValue->get(), mMaxDistanceCutoffValue->get());
+		gluPerspective((GLfloat) mOpeningAngleValue->get(), 
+						mWindowRation,
+						mMinDistanceCutoffValue->get(), 
+						mMaxDistanceCutoffValue->get());
 
 		glMatrixMode (GL_MODELVIEW);
 		mViewChanged = false;
@@ -2026,7 +2056,8 @@ void OpenGLVisualization::wheelEvent(QWheelEvent *e) {
 
 
 /**
- * Enables the manipulation of the simulation by the user via keyboard. If the OpenGLVisualization is started with mCanManipulate being false, the manipulation is disabled.
+ * Enables the manipulation of the simulation by the user via keyboard. If the OpenGLVisualization 
+ * is started with mCanManipulate being false, the manipulation is disabled.
  * @param e
  */
 void OpenGLVisualization::keyPressEvent(QKeyEvent *e) {
@@ -2269,7 +2300,9 @@ void OpenGLVisualization::drawCylinder(CollisionObject *currentCollisionObject, 
 			glDisable(GL_TEXTURE_2D);
 		}
 		glBindTexture( GL_TEXTURE_2D, mTexture[0] );
-		glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(), mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 	mTextureImages.value(textureType).bits());
+		glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(), 
+					  mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+					  mTextureImages.value(textureType).bits());
 	}
 	else {
 		glDisable(GL_TEXTURE_2D);

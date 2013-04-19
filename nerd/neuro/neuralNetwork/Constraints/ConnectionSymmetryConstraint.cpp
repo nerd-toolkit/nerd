@@ -176,8 +176,6 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 									 QList<NeuralNetworkElement*> &trashcan)
 {
 
-	//cerr << "### Constraint ************************************************" << endl;
-	
 	if(!isValid(owner)) {
 		mErrorMessage.append("\nConstraint was not valid!");
 		return false;
@@ -272,8 +270,6 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			else if(oNeuron != 0 && rNeuron != 0) {
 				ownerNeurons.append(oNeuron);
 				referenceNeurons.append(rNeuron);
-// 				cerr << "Added to owner: " << oNeuron->getId() << endl;
-// 				cerr << "Added to ref  : " << rNeuron->getId() << endl;
 				//nothing to do?
 			}
 
@@ -299,34 +295,19 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 
 	for(QListIterator<Synapse*> i(allSynapses); i.hasNext();) {
 		Synapse *synapse = i.next();
-
-// 		cerr << "Check synapse " << synapse->getId() << endl;
-
-// 		Neuron *sourceN = synapse->getSource();
-// 		Neuron *targetN = dynamic_cast<Neuron*>(synapse->getTarget());
-// 		cerr << "Connected: " << sourceN->getId() << " to " << targetN->getId() << endl;
-
-// 		if(referenceNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))
-// 			&& ownerNeurons.contains(synapse->getSource()))
-// 		{
-// 			continue;
-// 		} 
-
 		
 		//determin what kind of connection this synapse represents
 		//(and which connectionMode should be used for this connection)
 		int synapseMode = 0;
-// 		cerr << "*******************MODE*******************" << endl;
 
-		bool mutualMode = false;
-		bool outputMode = false;
-		bool inputMode = false;
+// 		bool mutualMode = false;
+// 		bool outputMode = false;
+// 		bool inputMode = false;
 		if((referenceNeurons.contains(synapse->getSource())
 				&& referenceNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget())))
 			|| (ownerNeurons.contains(synapse->getSource())
 				&& ownerNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))))
 		{
-// 			cerr << "normal mode" << endl;
 			synapseMode = CONNECTION_MODE_NORMAL;
 		}	
 		else if((referenceNeurons.contains(synapse->getSource())
@@ -334,22 +315,19 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			|| (referenceNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))
 				&& ownerNeurons.contains(synapse->getSource())))
 		{
-// 			cerr << "mutual mode" << endl;
-			mutualMode = true;
+// 			mutualMode = true;
 			synapseMode = mutualConnectionMode;
 		}	
 		else if(referenceNeurons.contains(synapse->getSource())
 			&& !ownerNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget())))
 		{
-// 			cerr << "output mode" << endl;
-			outputMode = true;
+// 			outputMode = true;
 			synapseMode = outputConnectionMode;
 		}
 		else if(!ownerNeurons.contains(synapse->getSource())
 			&& referenceNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget())))
 		{
-// 			cerr << "input mode" << endl;
-			inputMode = true;
+// 			inputMode = true;
 			synapseMode = inputConnectionMode;
 		}
 
@@ -357,7 +335,6 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 		Synapse *refSynapse = getMatchingSynapse(synapse, synapseMode);
 
 		if(refSynapse == 0) {
-// 			cerr << "No synapse found and created." << endl;
 			continue;
 		}
 
@@ -403,9 +380,7 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 		//center __new__ synapses, give new ids and remove marker property.
 		if(refSynapse->hasProperty("__new__")) {
 			refSynapse->centerPosition();
-// 		}
-// 
-// 		if(refSynapse->hasProperty("__new__")) {
+
 			//TODO make sure that this here happens AFTER higher-order synapses are handled
 			//TODO when higher order synapses are supported.
 
@@ -438,7 +413,6 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 	while(!allRefSynapses.empty()) {
 		Synapse *synapse = allRefSynapses.at(0);
 		allRefSynapses.removeAll(synapse);
-		//cerr << "Size: " << allRefSynapses.size() << " syn: " << synapse << endl;
 
 		bool mutualMode = false;
 		bool inputMode = false;
@@ -449,7 +423,6 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			|| (ownerNeurons.contains(synapse->getSource())
 				&& ownerNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))))
 		{
-			//cerr << "R-normal" << endl;
 			connectionMode = CONNECTION_MODE_NORMAL;
 		}	
 		else if((referenceNeurons.contains(synapse->getSource()) 
@@ -457,7 +430,6 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			|| (referenceNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))
 				&& ownerNeurons.contains(synapse->getSource())))
 		{
-			//cerr << "R-mutual" << endl;
 			connectionMode = mutualConnectionMode;
 			mutualMode = true;
 		}	
@@ -466,7 +438,6 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			&& !referenceNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget()))
 			&& !ownerNeurons.contains(dynamic_cast<Neuron*>(synapse->getTarget())))
 		{
-			//cerr << "R-output" << endl;
 			connectionMode = outputConnectionMode;
 			outputMode = true;
 		}
@@ -475,7 +446,6 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 			&& !referenceNeurons.contains(synapse->getSource())
 			&& !ownerNeurons.contains(synapse->getSource()))
 		{
-			//cerr << "R-input" << endl;
 			connectionMode = inputConnectionMode;
 			inputMode = true;
 		}
@@ -495,9 +465,7 @@ bool ConnectionSymmetryConstraint::applyConstraint(NeuronGroup *owner, CommandEx
 		}
 
 		if(inputMode) {
-			//cerr << "input mode " << endl;
 			if((connectionMode & CONNECTION_MODE_INPUT) == 0) {
-				//cerr << "not input mode" << endl;
 // 				if(!allReferenceNeurons.contains(synapse->getSource())
 // 					&& !allOwnerNeurons.contains(synapse->getSource())) 
 // 				{

@@ -80,15 +80,15 @@ QList<Contact> Simple2D_CollisionHandler::getContacts() const {
 	return mCurrentContacts;
 }
 
-void Simple2D_CollisionHandler::disableCollisions(CollisionObject *firstCollisionPartner, 
-									CollisionObject *secondCollisionPartner, 
-									bool disable)
+void Simple2D_CollisionHandler::disableCollisions(CollisionObject*, 
+									CollisionObject*, 
+									bool)
 {
-
+	//TODO
 }
 
 
-void Simple2D_CollisionHandler::updateCollisionHandler(CollisionManager *cManager) {
+void Simple2D_CollisionHandler::updateCollisionHandler(CollisionManager*) {
 
 }
 

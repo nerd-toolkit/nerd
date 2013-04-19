@@ -84,12 +84,12 @@ NeuralNetworkElement* NeuroModulatorItem::getNetworkElement() const {
 }
 
 
-bool NeuroModulatorItem::isHit(const QPointF &point, Qt::MouseButtons mouseButton, double scaling) {
+bool NeuroModulatorItem::isHit(const QPointF&, Qt::MouseButtons, double) {
 	return false;
 }
 
 
-void NeuroModulatorItem::mouseMoved(const QPointF &distance, Qt::MouseButtons mouseButton) {
+void NeuroModulatorItem::mouseMoved(const QPointF&, Qt::MouseButtons) {
 }
 
 

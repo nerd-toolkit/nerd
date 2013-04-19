@@ -138,7 +138,6 @@ void GuessModulePairs::mouseButtonPressed(NetworkVisualization *source,
 
 	if(mGroup1 == 0 || mGroup2 == 0) {
 
-		QPointF pos = globalPosition;
 		NeuronGroup *selectedGroup = 0;
 
 		QList<PaintItem*> items = mVisuContext->getPaintItems();

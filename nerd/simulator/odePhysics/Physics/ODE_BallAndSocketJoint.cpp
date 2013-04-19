@@ -117,7 +117,7 @@ void ODE_BallAndSocketJoint::clear() {
 		
 
 
-void ODE_BallAndSocketJoint::synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm *psa) {
+void ODE_BallAndSocketJoint::synchronizeWithPhysicalModel(PhysicalSimulationAlgorithm*) {
 
 }
 

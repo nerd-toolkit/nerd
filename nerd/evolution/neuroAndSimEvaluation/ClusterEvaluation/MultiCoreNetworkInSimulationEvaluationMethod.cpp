@@ -82,6 +82,7 @@ EvaluationMethod* MultiCoreNetworkInSimulationEvaluationMethod::createCopy() {
 
 
 bool MultiCoreNetworkInSimulationEvaluationMethod::reset() {
+	return false;
 }
 
 
@@ -93,38 +94,44 @@ void MultiCoreNetworkInSimulationEvaluationMethod::stopEvaluation() {
 
 
 QString MultiCoreNetworkInSimulationEvaluationMethod::getName() const {
+	return "MultiCoreNetworkInSimulationEvaluationMethod";
 }
 
 
 
-void MultiCoreNetworkInSimulationEvaluationMethod::eventOccured(Event *event) {
+void MultiCoreNetworkInSimulationEvaluationMethod::eventOccured(Event*) {
 }
 
 
 
 
 bool MultiCoreNetworkInSimulationEvaluationMethod::readEvaluationResults() {
+	return false;
 }
 
 
 
 bool MultiCoreNetworkInSimulationEvaluationMethod::prepareEvaluation() {
+	return false;
 }
 
 
 
 bool MultiCoreNetworkInSimulationEvaluationMethod::createConfigList() {
+	return false;
 }
 
 
 
 bool MultiCoreNetworkInSimulationEvaluationMethod::createJobScript() {
+	return false;
 }
 
 
 
 
 bool MultiCoreNetworkInSimulationEvaluationMethod::createFitnessInformation() {
+	return false;
 }
 
 

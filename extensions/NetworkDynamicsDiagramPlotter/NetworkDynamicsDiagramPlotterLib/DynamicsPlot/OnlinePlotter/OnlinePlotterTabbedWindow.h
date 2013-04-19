@@ -66,6 +66,8 @@ class OnlinePlotterWindow;
 
 	/**
 	 * OnlinePlotterTabbedWindow.
+	 * 
+	 * TODO: This class is under construction.
 	 *
 	 */
 	class OnlinePlotterTabbedWindow : public QWidget, public virtual SystemObject  {

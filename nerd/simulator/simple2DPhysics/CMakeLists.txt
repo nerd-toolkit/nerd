@@ -6,7 +6,6 @@ set(nerd_simple2DPhysics_SRCS
 	Collision/Simple2D_CollisionHandler.cpp
 	Collections/Simple2D_Physics.cpp
 	Physics/Simple2D_BoxBody.cpp
-	Physics/Simple2D_Spherebody.cpp
 	Physics/Simple2D_FixedJoint.cpp
 	Physics/Simple2D_Body.cpp
 	Physics/Simple2D_SliderMotor.cpp

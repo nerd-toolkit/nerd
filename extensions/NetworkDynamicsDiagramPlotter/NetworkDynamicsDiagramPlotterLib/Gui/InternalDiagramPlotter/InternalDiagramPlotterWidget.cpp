@@ -180,7 +180,8 @@ void InternalDiagramPlotterWidget::setUserOffset(double offsetX, double offsetY)
 }
 
 
-bool InternalDiagramPlotterWidget::loadMatrixFromFile(const QString &fileName) {
+bool InternalDiagramPlotterWidget::loadMatrixFromFile(const QString&) {
+	//TODO
 	return false;
 }
 
@@ -194,8 +195,10 @@ bool InternalDiagramPlotterWidget::loadMatrixFromFile(const QString &fileName) {
  * @param fileName the name of the file to write the histories to.
  * @return true if successful, otherwise false.
  */
-bool InternalDiagramPlotterWidget::saveMatrixToFile(const QString &fileName) {
+bool InternalDiagramPlotterWidget::saveMatrixToFile(const QString&) {
 
+	//TODO
+	
 // 	QFile file(fileName);
 // 
 // 	if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -242,7 +245,9 @@ bool InternalDiagramPlotterWidget::saveMatrixToFile(const QString &fileName) {
 	return false;
 }
 
-void InternalDiagramPlotterWidget::saveDiagramToSvg(const QString &fileName) {
+void InternalDiagramPlotterWidget::saveDiagramToSvg(const QString&) {
+	
+	//TODO
 	
 // 	QSvgGenerator generator;
 // 	generator.setFileName(fileName);
@@ -604,7 +609,7 @@ void InternalDiagramPlotterWidget::drawMatrix(QPainter &painter) {
  *
  * @param painter the painter to use when drawing.
  */
-void InternalDiagramPlotterWidget::drawCoordinateRanges(QPainter &painter) {
+void InternalDiagramPlotterWidget::drawCoordinateRanges(QPainter&) {
 
 // 	//prevent division by zero
 // 	if(mUserScaleV == 0.0 || mUserScaleH == 0.0) {
@@ -663,7 +668,7 @@ void InternalDiagramPlotterWidget::drawCoordinateRanges(QPainter &painter) {
 // 			* (mDrawableHeight / 2.0)) + 10.0;
 // }
 
-void InternalDiagramPlotterWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+void InternalDiagramPlotterWidget::mouseDoubleClickEvent(QMouseEvent*) {
 // 	if(width() == 0) {
 // 		return;
 // 	}
@@ -675,28 +680,28 @@ const QColor& InternalDiagramPlotterWidget::getColor(int index) const {
 	return mPointColors.at(index % mPointColors.size());
 }
 
-void InternalDiagramPlotterWidget::hideEvent(QHideEvent *event) {
+void InternalDiagramPlotterWidget::hideEvent(QHideEvent*) {
 	
 }
 
 
-void InternalDiagramPlotterWidget::showEvent(QShowEvent *event) {
+void InternalDiagramPlotterWidget::showEvent(QShowEvent*) {
 		
 }
-void InternalDiagramPlotterWidget::keyPressEvent(QKeyEvent *event) {
-		
-}
-
-
-void InternalDiagramPlotterWidget::mouseMoveEvent(QMouseEvent *event) {
+void InternalDiagramPlotterWidget::keyPressEvent(QKeyEvent*) {
 		
 }
 
-void InternalDiagramPlotterWidget::mousePressEvent(QMouseEvent *event) {
+
+void InternalDiagramPlotterWidget::mouseMoveEvent(QMouseEvent*) {
 		
 }
 
-void InternalDiagramPlotterWidget::mouseReleaseEvent(QMouseEvent *event) {
+void InternalDiagramPlotterWidget::mousePressEvent(QMouseEvent*) {
+		
+}
+
+void InternalDiagramPlotterWidget::mouseReleaseEvent(QMouseEvent*) {
 		
 }
 
