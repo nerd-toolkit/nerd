@@ -43,6 +43,7 @@
 
 
 #include "LyapunovExponent.h"
+#include "DynamicsPlotManager.h"
 #include <Util/DynamicsPlotterUtil.h>
 #include "Core/Core.h"
 #include "math.h"
@@ -149,19 +150,27 @@ void LyapunovExponent::calculateData() {
 	// save original value
 	double originalValue = variedValue->get();
 
-	// prepare data matrix
-	mData->clear();
-	mData->resize(resolutionX + 1, resolutionY + 1, 1);
-	mData->fill(0);
-
+	
 	double valStep = (variedRange.at(1) - variedRange.at(0)) / (double) (resolutionX - 1);
 	QList<double> variedValues;
+	
+	// prepare data matrix
+	{
+		//Thread safety of matrix.
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
 
-	for(int x = 1; x <= resolutionX; ++x) {
-		double val = variedRange.at(0) + (x-1) * valStep;
-		variedValues.append(val);
+		mData->clear();
+		mData->resize(resolutionX + 1, resolutionY + 1, 1);
+		mData->fill(0);
+
 		
-		mData->set(val, x, 0, 0);
+
+		for(int x = 1; x <= resolutionX; ++x) {
+			double val = variedRange.at(0) + (x-1) * valStep;
+			variedValues.append(val);
+			
+			mData->set(val, x, 0, 0);
+		}
 	}
 	
 	int stepsPrePlot = mStepsPrePlot->get();
@@ -199,11 +208,11 @@ void LyapunovExponent::calculateData() {
 
 		double ljanum = 0;
 		int c = 0;
-		for(int i = 0; i < networkStates.size()-1; ++i) {
+		for(int i = 0; i < networkStates.size() - 1; ++i) {
 			double dy = 10000000, df = 100000000;
 			bool found = false;
 
-			for(int j = 0; j < networkStates.size()-1; ++j) {
+			for(int j = 0; j < networkStates.size() - 1; ++j) {
 
 				double d = DynamicsPlotterUtil::getDistance(
 								networkStates.at(i), networkStates.at(j));
@@ -211,21 +220,21 @@ void LyapunovExponent::calculateData() {
 				if(d < dy && d > eps) {
 					dy = d;
 					df = DynamicsPlotterUtil::getDistance(
-								networkStates.at(i+1), networkStates.at(j+1));
+								networkStates.at(i + 1), networkStates.at(j + 1));
 					found = true;
 				}
 				
 			}
 			
 			if(found && dy != 0 && df != 0) {
-				ljanum += log(df/dy);
+				ljanum += log(df / dy);
 				c++;
 			}
 
 		}
 
 		// save current hightest exponent
-		ynum.append(ljanum/c);
+		ynum.append(ljanum / c);
 
 		// find smallest and biggest exponent
 		double ymin = ynum.first(); double ymax = ynum.first();
@@ -245,33 +254,37 @@ void LyapunovExponent::calculateData() {
 			ymax = 1;
 		}
 
-		// clear data matrix
-		mData->fill(0);
+		{
+			//Thread safety of matrix.
+			QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+			
+			// clear data matrix
+			mData->fill(0);
 
-		// rescale
-		for(int y = 1; y <= resolutionY; ++y) {
-			double v = ymin + (y-1) * ystep;
-			mData->set(Math::round(v,5), 0, y, 0);
-		}
-		
-		// fill rescaled matrix again
-		for(int x = 1; x <= ynum.size(); ++x) {
-			double v = min(max(ymin,ynum.at(x-1)),ymax);
-			int y = ceil(((v-ymin)/ystep)+1);
-			mData->set(1, x, y, 0);
-		}
+			// rescale
+			for(int y = 1; y <= resolutionY; ++y) {
+				double v = ymin + (y-1) * ystep;
+				mData->set(Math::round(v, 5), 0, y, 0);
+			}
+			
+			// fill rescaled matrix again
+			for(int x = 1; x <= ynum.size(); ++x) {
+				double v = min(max(ymin, ynum.at(x - 1)), ymax);
+				int y = ceil(((v - ymin) / ystep) + 1);
+				mData->set(1, x, y, 0);
+			}
 
-		// find null position (if any)
-		int ny = ceil(((-ymin)/ystep)+1);
-		// and draw red line indicating y=0
-		if(drawNL && ny < resolutionY && ny > 0) {
-			for(int x = 0; x < resolutionX; ++x) {
-				if(mData->get(x, ny, 0) == 0) {
-					mData->set(2, x, ny, 0);
+			// find null position (if any)
+			int ny = ceil(((-ymin)/ystep)+1);
+			// and draw red line indicating y=0
+			if(drawNL && ny < resolutionY && ny > 0) {
+				for(int x = 0; x < resolutionX; ++x) {
+					if(mData->get(x, ny, 0) == 0) {
+						mData->set(2, x, ny, 0);
+					}
 				}
 			}
 		}
-
 
 		// runtime maintencance
 		if(core->isShuttingDown()) {

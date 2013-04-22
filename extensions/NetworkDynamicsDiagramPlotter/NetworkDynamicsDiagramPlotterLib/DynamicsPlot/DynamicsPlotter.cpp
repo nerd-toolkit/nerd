@@ -65,6 +65,8 @@
 #include "DynamicsPlotConstants.h"
 #include "NetworkEditorConstants.h"
 #include <Util/DynamicsPlotterUtil.h>
+#include "DynamicsPlotManager.h"
+
 
 using namespace std;
 
@@ -159,6 +161,7 @@ bool DynamicsPlotter::bind() {
 	bool ok = true;
 
 	EventManager *em = Core::getInstance()->getEventManager();
+	mDynamicsPlotManager = DynamicsPlotManager::getInstance();
 
 	mClearAllEditorSelections = em->getEvent(NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS);
 	mNextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, true);
@@ -174,6 +177,13 @@ bool DynamicsPlotter::bind() {
 		Core::log("DynamicsPlotter [" + getName() 
 				+ "]: Could not find next step / reset events of stasis value", true);
 		ok = false;
+	}
+	
+	//Terminate, if the DynamcisPlotManager could not be found: this would prevent a proper 
+	//synchonization of threads accessing the calculated matrix values!
+	if(mDynamicsPlotManager == 0) {
+		Core::log("DynamicsPlotter: Could not find the global DynamicsPlotManager!", true);
+		return false;
 	}
 
 	return ok;

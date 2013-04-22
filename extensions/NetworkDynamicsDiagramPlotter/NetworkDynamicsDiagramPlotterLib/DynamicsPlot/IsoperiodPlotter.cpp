@@ -43,6 +43,7 @@
 
 
 #include "IsoperiodPlotter.h"
+#include "DynamicsPlotManager.h"
 #include <Util/DynamicsPlotterUtil.h>
 #include "Core/Core.h"
 #include "math.h"
@@ -187,10 +188,6 @@ void IsoperiodPlotter::calculateData() {
 	bool resetSimulation = mResetSimulator->get();
 	triggerReset();
 	
-	// PREPARE data matrix
-	mData->clear();
-	mData->resize(resolutionX + 1, resolutionY + 1, 1);
-	mData->fill(0);
 	
 	// calculate values and draw axes
 	double xStart = variedRangeX.first();
@@ -200,15 +197,7 @@ void IsoperiodPlotter::calculateData() {
 	
 	double xVal;
 	QList<double> xValues;
-	for(int x = 1; x <= resolutionX; ++x) {
-		xVal = xStart+(x-1)*xStepSize;
-		mData->set(Math::round(xVal,5), x, 0, 0);
-		
-		if(roundDigits >= 0) {
-			xVal = Math::round(xVal, roundDigits);
-		}
-		xValues.append(xVal);
-	}
+	
 	
 	double yStart = variedRangeY.first();
 	double yEnd = variedRangeY.last();
@@ -216,14 +205,37 @@ void IsoperiodPlotter::calculateData() {
 	
 	double yVal;
 	QList<double> yValues;
-	for(int y = 1; y <= resolutionY; ++y) {
-		yVal = yStart+(y-1)*yStepSize;
-		mData->set(Math::round(yVal,5), 0, y, 0);
+	
+	
+	// PREPARE data matrix
+	{
+		//Thread safety of matrix.
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
 		
-		if(roundDigits >= 0) {
-			yVal = Math::round(yVal, roundDigits);
+		mData->clear();
+		mData->resize(resolutionX + 1, resolutionY + 1, 1);
+		mData->fill(0);
+		
+		for(int x = 1; x <= resolutionX; ++x) {
+			xVal = xStart+(x-1)*xStepSize;
+			mData->set(Math::round(xVal,5), x, 0, 0);
+			
+			if(roundDigits >= 0) {
+				xVal = Math::round(xVal, roundDigits);
+			}
+			xValues.append(xVal);
 		}
-		yValues.append(yVal);
+		
+		
+		for(int y = 1; y <= resolutionY; ++y) {
+			yVal = yStart+(y-1)*yStepSize;
+			mData->set(Math::round(yVal,5), 0, y, 0);
+			
+			if(roundDigits >= 0) {
+				yVal = Math::round(yVal, roundDigits);
+			}
+			yValues.append(yVal);
+		}
 	}
 
 	// MAIN LOOP over x parameter points
@@ -298,6 +310,8 @@ void IsoperiodPlotter::calculateData() {
 			
 			// at this point, either an attractor has been found
 			if(foundMatch && mActiveValue->get()) {
+				
+				QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
 				
 				// write matrix
 				mData->set(currPeriod, x, y, 0);

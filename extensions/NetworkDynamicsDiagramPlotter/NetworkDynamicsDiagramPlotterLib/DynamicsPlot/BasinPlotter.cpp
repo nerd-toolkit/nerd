@@ -48,6 +48,7 @@
 #include "math.h"
 #include <Math/Math.h>
 #include <iostream>
+#include "DynamicsPlotManager.h"
 
 using namespace std;
 
@@ -259,62 +260,66 @@ void BasinPlotter::calculateData() {
 	
 
 	// PREPARE data matrix
-	mData->clear();
-	mData->resize(resolutionX + 1, resolutionY + 1, 3 + nrProjections);
-	mData->fill(0);
-	
-
-	// calculate values and draw axes
 	double xStart = variedRangeX.first();
 	double xEnd = variedRangeX.last();
 	double xStepSize = (xEnd - xStart) / (double) (resolutionX - 1);
 	int roundDigits = mRoundDigits->get();
-	
 	double xVal;
 	QList<double> xValues;
-	for(int x = 1; x <= resolutionX; ++x) {
-		xVal = xStart+(x-1)*xStepSize;
-		mData->set(Math::round(xVal,5), x, 0, 0);
-		mData->set(Math::round(xVal,5), x, 0, 1);
-		mData->set(Math::round(xVal,5), x, 0, 2);
 		
-		if(roundDigits >= 0) {
-			xVal = Math::round(xVal, roundDigits);
-		}
-		xValues.append(xVal);
-	}
-	
 	double yStart = variedRangeY.first();
 	double yEnd = variedRangeY.last();
 	double yStepSize = (yEnd - yStart) / (double) (resolutionY - 1);
-	
 	double yVal;
 	QList<double> yValues;
-	for(int y = 1; y <= resolutionY; ++y) {
-		yVal = yStart+(y-1)*yStepSize;
-		mData->set(Math::round(yVal,5), 0, y, 0);
-		mData->set(Math::round(yVal,5), 0, y, 1);
-		mData->set(Math::round(yVal,5), 0, y, 2);
+	
+	{
+		//Thread safety of matrix.
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
 		
-		if(roundDigits >= 0) {
-			yVal = Math::round(yVal, roundDigits);
-		}
-		yValues.append(yVal);
-	}
+		mData->clear();
+		mData->resize(resolutionX + 1, resolutionY + 1, 3 + nrProjections);
+		mData->fill(0);
 
-	// same for additional projections
-	for(int currProj = 0; currProj < nrProjections; ++currProj) {
-		double pStartX = projectionRangesX.at(currProj*2);
-		double pEndX = projectionRangesX.at(currProj*2 + 1);
-		double pStepX = (pEndX - pStartX) / (double) (resolutionX - 1);
+		// calculate values and draw axes
 		for(int x = 1; x <= resolutionX; ++x) {
-			mData->set(Math::round((pStartX+(x-1)*pStepX),5), x, 0, 3+currProj);
+			xVal = xStart + (x - 1) * xStepSize;
+			mData->set(Math::round(xVal, 5), x, 0, 0);
+			mData->set(Math::round(xVal, 5), x, 0, 1);
+			mData->set(Math::round(xVal, 5), x, 0, 2);
+			
+			if(roundDigits >= 0) {
+				xVal = Math::round(xVal, roundDigits);
+			}
+			xValues.append(xVal);
 		}
-		double pStartY = projectionRangesY.at(currProj*2);
-		double pEndY = projectionRangesY.at(currProj*2 + 1);
-		double pStepY = (pEndY - pStartY) / (double) (resolutionY - 1);
+		
 		for(int y = 1; y <= resolutionY; ++y) {
-			mData->set(Math::round((pStartY+(y-1)*pStepY),5), 0, y, 3+currProj);
+			yVal = yStart + (y - 1) * yStepSize;
+			mData->set(Math::round(yVal, 5), 0, y, 0);
+			mData->set(Math::round(yVal, 5), 0, y, 1);
+			mData->set(Math::round(yVal, 5), 0, y, 2);
+			
+			if(roundDigits >= 0) {
+				yVal = Math::round(yVal, roundDigits);
+			}
+			yValues.append(yVal);
+		}
+
+		// same for additional projections
+		for(int currProj = 0; currProj < nrProjections; ++currProj) {
+			double pStartX = projectionRangesX.at(currProj * 2);
+			double pEndX = projectionRangesX.at(currProj * 2 + 1);
+			double pStepX = (pEndX - pStartX) / (double) (resolutionX - 1);
+			for(int x = 1; x <= resolutionX; ++x) {
+				mData->set(Math::round((pStartX + (x - 1) * pStepX), 5), x, 0, 3 + currProj);
+			}
+			double pStartY = projectionRangesY.at(currProj * 2);
+			double pEndY = projectionRangesY.at(currProj * 2 + 1);
+			double pStepY = (pEndY - pStartY) / (double) (resolutionY - 1);
+			for(int y = 1; y <= resolutionY; ++y) {
+				mData->set(Math::round((pStartY + (y - 1) * pStepY), 5), 0, y, 3 + currProj);
+			}
 		}
 	}
 
@@ -346,9 +351,9 @@ void BasinPlotter::calculateData() {
 			}
 			
 			// set x parameter
-			variedValX->set(xValues.at(x-1));
+			variedValX->set(xValues.at(x - 1));
 			// set y parameter
-			variedValY->set(yValues.at(y-1));
+			variedValY->set(yValues.at(y - 1));
 			
 			if(!notifyNetworkParametersChanged(network)) {
 				return;
@@ -420,6 +425,10 @@ void BasinPlotter::calculateData() {
 					attrNo++;
 				}
 				
+				
+				//Thread safety of matrix.
+				QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+				
 				// write matrix
 				mData->set(attrNo, x, y, 0);
 				mData->set(attrPeriod, x, y, 1);
@@ -441,17 +450,17 @@ void BasinPlotter::calculateData() {
 						double xVal = projectionPositions.at(currPosition).first.at(currProj);
 						double yVal = projectionPositions.at(currPosition).second.at(currProj);
 
-						double pStartX = projectionRangesX.at(currProj*2);
-						double pEndX = projectionRangesX.at(currProj*2 + 1);
+						double pStartX = projectionRangesX.at(currProj * 2);
+						double pEndX = projectionRangesX.at(currProj * 2 + 1);
 						double pStepX = (pEndX - pStartX) / (double) (resolutionX - 1);
-						double pStartY = projectionRangesY.at(currProj*2);
-						double pEndY = projectionRangesY.at(currProj*2 + 1);
+						double pStartY = projectionRangesY.at(currProj * 2);
+						double pEndY = projectionRangesY.at(currProj * 2 + 1);
 						double pStepY = (pEndY - pStartY) / (double) (resolutionY - 1);
 						
 						int xPos = floor((xVal - pStartX) / pStepX + 1);
 						int yPos = floor((yVal - pStartY) / pStepY + 1);
 
-						mData->set(attrNo, xPos, yPos, 3+currProj);
+						mData->set(attrNo, xPos, yPos, 3 + currProj);
 					}
 				}
 				

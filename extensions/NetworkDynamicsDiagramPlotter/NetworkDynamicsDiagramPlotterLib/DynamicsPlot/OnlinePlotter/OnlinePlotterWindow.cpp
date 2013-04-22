@@ -67,7 +67,6 @@
 #include "Math/Math.h"
 #include <QTimer>
 
-// #include "vector"
 using namespace std;
 
 namespace nerd {
@@ -77,7 +76,7 @@ namespace nerd {
  * Constructs a new OnlinePlotterWindow.
  */
 	OnlinePlotterWindow::OnlinePlotterWindow(int index, QWidget *parent)
-		: QWidget(parent), mMatrix(0), mIndex(index)
+		: QWidget(parent), mMatrix(0), mDynamicsPlotManager(0), mIndex(index)
 	{
 		setMouseTracking(true);
 		mIsSetUp = false;
@@ -104,6 +103,8 @@ namespace nerd {
 		mPixelSize = new IntValue(1);
 		
 		Core::getInstance()->getValueManager()->addValue("/OnlinePlotter" + QString::number(index) + "/PixelSize", mPixelSize);
+		
+		mDynamicsPlotManager = DynamicsPlotManager::getInstance();
 	}
 
 
@@ -123,6 +124,8 @@ namespace nerd {
 	bool OnlinePlotterWindow::bind() {
 		bool ok = true;
 		
+		mDynamicsPlotManager = DynamicsPlotManager::getInstance();
+		
 		return ok;
 	}
 
@@ -141,39 +144,12 @@ namespace nerd {
 	 *
 	*/
 	void OnlinePlotterWindow::resizeEvent(QResizeEvent*){
-// 		if(mIsSetUp){//only call has been created and process is finished
-// 			int oldHeight = event->oldSize().height();
-// 			int oldWidth = event->oldSize().width();
-// 			int currentHeight = event->size().height() - 2;
-// 			int currentWidth = event->size().width() - 2;
-// 			if((oldWidth * oldHeight) == 0){
-// 				Core::log("OnlinePlotterWindow::resizeEvent(): Something went wrong. oldWidth * oldHeight must not be equal to zero. ", true); 
-// 				return;
-// 			}
-// 			double xFactor = static_cast<double>(currentWidth)/static_cast<double>(oldWidth);
-// 			double yFactor = static_cast<double>(currentHeight)/static_cast<double>(oldHeight);
-// 			if(mPixmap.isNull()){
-// 				Core::log("OnlinePlotterWindow::resizeEvent(): Pixmap is null.", true); 
-// 				return;
-// 			}
-// 			mLabel->setFixedSize(static_cast<int>(static_cast<double>(mLabel->width()) * xFactor + 0.5), static_cast<int>(static_cast<double>(mLabel->height()) * yFactor + 0.5));
-// 			QPixmap tempPixmap = mPixmap.scaled(mLabel->width(), mLabel->height());
-// 
-// 			mLabel->clear();
-// 			mLabel->setPixmap(tempPixmap); //print QImage on label
-// 			mLabel->update();
-// 			mLabel->show();
-// 			
-// 			show();
-// 		}//if mIsSetUp
-
+		//TODO
 	}
 	
 	
 	/**
 	 *  Setup GUI, set attributes, create elements and layouts. 
-	 * 
-	 * 
 	 */
 	void OnlinePlotterWindow::setupGUI()
 	{
@@ -261,6 +237,13 @@ namespace nerd {
 			Core::log("OnlinePlotterWindow: Couldn't find data Matrix or Name");
 			return;
 		}
+		if(mDynamicsPlotManager == 0) {
+			Core::log("onlinePlotterWindow: Could not find the DynamicsPlotManager! Plotting skipped.");
+			return;
+		}
+		
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+				
 		mMatrix = dataMatrix;
 		if(!offlinePlot) {
 			//TODO: Check if timer should be started here, instead of the next line.
@@ -293,6 +276,9 @@ namespace nerd {
 		if(mMatrix == 0) {
 			return;
 		}
+		
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		
 		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
 		}
@@ -381,6 +367,9 @@ namespace nerd {
 		if(mMatrix == 0) {
 			return;
 		}
+		
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		
 		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
 		}
@@ -411,6 +400,9 @@ namespace nerd {
 		if(mMatrix == 0) {
 			return;
 		}
+		
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		
 		if(mMatrix->getMatrixWidth() <= 1 || mMatrix->getMatrixHeight() <= 1){
 			return;
 		}

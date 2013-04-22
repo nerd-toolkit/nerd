@@ -52,6 +52,7 @@
 #include "Value/MatrixValue.h"
 #include "Value/StringValue.h"
 #include "Core/SystemObject.h"
+#include <DynamicsPlot/DynamicsPlotManager.h>
 #include <QVector>
 #include <QString>
 #include <qtextstream.h>
@@ -88,6 +89,7 @@ namespace nerd {
 		StringValue *mActiveCalculatorValue;
 		
 		QString mActiveCalculatorName;
+		DynamicsPlotManager *mDynamicsPlotManager;
 		
 	};
 	

@@ -63,6 +63,8 @@
 
 namespace nerd {
 
+	class DynamicsPlotManager;
+	
 	/**
 	 * DynamicsPlotter.
 	 *
@@ -121,6 +123,7 @@ namespace nerd {
 		QHash<DoubleValue*, double> mNetworkConfigurationValues;
 		QList<Neuron*> mNeuronsWithActivationsToTransfer;
 		ConstraintManager *mConstraintManager;
+		DynamicsPlotManager *mDynamicsPlotManager;
 		
 		//****Till****//
 		MatrixValue *mData;

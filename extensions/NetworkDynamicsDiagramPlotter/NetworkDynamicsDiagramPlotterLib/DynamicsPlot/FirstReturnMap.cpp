@@ -48,6 +48,7 @@
 #include "math.h"
 #include <Math/Math.h>
 #include <iostream>
+#include "DynamicsPlotManager.h"
 
 using namespace std;
 
@@ -166,41 +167,50 @@ void FirstReturnMap::calculateData() {
 	//This is important when the physical simulator is activated!
 	triggerReset();
 	
+	
 	bool keepPreviousData = mKeepPreviousData->get();
-	if(keepPreviousData
-		&& (mData->getMatrixWidth() == (resolution + 1))
-		&& (mData->getMatrixHeight() == (resolution + 1))
-		&& (mData->getMatrixDepth() == observedValues.size()))
+	QList<double> rangeStart, rangeEnd, rangeStep;
+	
 	{
-		mCurrentMarker++;
-		if(mCurrentMarker > 10) {
+		//Thread safety of matrix.
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		
+	
+		if(keepPreviousData
+			&& (mData->getMatrixWidth() == (resolution + 1))
+			&& (mData->getMatrixHeight() == (resolution + 1))
+			&& (mData->getMatrixDepth() == observedValues.size()))
+		{
+			mCurrentMarker++;
+			if(mCurrentMarker > 10) {
+				mCurrentMarker = 1;
+			}
+		}
+		else {
+			//reset the marker color to 0
+			keepPreviousData = false;
 			mCurrentMarker = 1;
 		}
-	}
-	else {
-		//reset the marker color to 0
-		keepPreviousData = false;
-		mCurrentMarker = 1;
-	}
 	
-	if(!keepPreviousData) {
-		// PREPARE data matrix
-		mData->clear();
-		mData->resize(resolution + 1, resolution + 1, observedValues.size());
-		mData->fill(0);
-	}
+		if(!keepPreviousData) {
+			// PREPARE data matrix
+			mData->clear();
+			mData->resize(resolution + 1, resolution + 1, observedValues.size());
+			mData->fill(0);
+		}
 	
-	QList<double> rangeStart, rangeEnd, rangeStep;
-	// iterate through plots and write axes first
-	for(int i = 0; i * 2 + 1 < observedRanges.size(); ++i) {
-		rangeStart.append(observedRanges.at(2*i));
-		rangeEnd.append(observedRanges.at(2*i+1));
-		rangeStep.append((rangeEnd.at(i) - rangeStart.at(i)) / (double) (resolution - 1));
-		
-		for(int x = 1; x <= resolution; ++x) {
-			double val = rangeStart.at(i)+(x-1)*rangeStep.at(i);
-			mData->set(Math::round(val,5), x, 0, i); // x-axis
-			mData->set(Math::round(val,5), 0, x, i); // y-axis
+	
+		// iterate through plots and write axes first
+		for(int i = 0; i * 2 + 1 < observedRanges.size(); ++i) {
+			rangeStart.append(observedRanges.at(2*i));
+			rangeEnd.append(observedRanges.at(2*i+1));
+			rangeStep.append((rangeEnd.at(i) - rangeStart.at(i)) / (double) (resolution - 1));
+			
+			for(int x = 1; x <= resolution; ++x) {
+				double val = rangeStart.at(i)+(x-1)*rangeStep.at(i);
+				mData->set(Math::round(val,5), x, 0, i); // x-axis
+				mData->set(Math::round(val,5), 0, x, i); // y-axis
+			}
 		}
 	}
 
@@ -243,8 +253,13 @@ void FirstReturnMap::calculateData() {
 				//y-axis: t
 				int x = ceil(oldActs.at(i) - rangeStart.at(i)) / rangeStep.at(i) + 1;
 				int y = ceil(act - rangeStart.at(i)) / rangeStep.at(i) + 1;
+				
+				//Thread safety of matrix.
+				QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		
 				mData->set(mCurrentMarker, x, y, i);
 				oldActs.replace(i, act);
+				
 			} else {
 				oldActs.append(act);
 			}

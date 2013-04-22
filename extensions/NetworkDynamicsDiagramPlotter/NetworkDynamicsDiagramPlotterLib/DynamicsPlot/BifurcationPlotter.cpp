@@ -48,6 +48,7 @@
 #include "math.h"
 #include <Math/Math.h>
 #include <iostream>
+#include "DynamicsPlotManager.h"
 
 using namespace std;
 
@@ -200,30 +201,7 @@ void BifurcationPlotter::calculateData() {
 		return;
 	}
 	
-	// PREPARE data matrix
-	mData->clear();
-	mData->resize(resolutionX + 1, resolutionY + 1, observedValuesList.size());
-	mData->fill(0);
 	
-	// fill with observer range for each plot
-	QList< QList <double> > oParams;
-	
-	for(int i = 0; i < observedValuesList.size(); ++i) {
-		double oStart = observedRanges.at(i*2);
-		double oEnd = observedRanges.at(i*2+1);
-		double oStepSize = (oEnd - oStart) / (double) (resolutionY - 1);
-		
-		for(int y = 1; y <= resolutionY; ++y) {
-			mData->set(Math::round(oStart+(y-1)*oStepSize,5), 0, y, i);
-		}
-		
-		// store parameters for later
-		oParams.append(QList<double>() << oStart << oEnd << oStepSize);
-	}
-
-	// MAIN LOOP over parameter points
-
-	//check if the diagram also has to be drawn in backwards mode.
 	bool runBackwards = mRunBackwards->get();
 	int runSecondIteration = runBackwards ? 1 : 0;
 	
@@ -233,6 +211,36 @@ void BifurcationPlotter::calculateData() {
 		
 	int numberSteps = mStepsToRun->get();
 	int plottedSteps = mStepsToPlot->get();
+	
+	// fill with observer range for each plot
+	QList< QList <double> > oParams;
+	
+	// PREPARE data matrix
+	{
+		//Thread safety of matrix.
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		
+		mData->clear();
+		mData->resize(resolutionX + 1, resolutionY + 1, observedValuesList.size());
+		mData->fill(0);
+		
+		for(int i = 0; i < observedValuesList.size(); ++i) {
+			double oStart = observedRanges.at(i*2);
+			double oEnd = observedRanges.at(i*2+1);
+			double oStepSize = (oEnd - oStart) / (double) (resolutionY - 1);
+			
+			for(int y = 1; y <= resolutionY; ++y) {
+				mData->set(Math::round(oStart+(y-1)*oStepSize,5), 0, y, i);
+			}
+			
+			// store parameters for later
+			oParams.append(QList<double>() << oStart << oEnd << oStepSize);
+		}
+	}
+
+	// MAIN LOOP over parameter points
+
+	//check if the diagram also has to be drawn in backwards mode.
 	
 	// two runs if backward calculation is on
 	for(int phase = 0; phase <= runSecondIteration; ++phase) {
@@ -261,6 +269,9 @@ void BifurcationPlotter::calculateData() {
 			
 			//switch between forwards and backwards movement
 			if(phase == 0) { 	
+				//Thread safety of matrix.
+				QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		
 				// draw x axis values
 				for(int i = 0; i < observedValuesList.size(); ++i) {
 					mData->set(vVal, x, 0, i);
@@ -300,6 +311,9 @@ void BifurcationPlotter::calculateData() {
 						double oEnd = oParams.at(i).at(1);
 						double act = DynamicsPlotterUtil::getMeanValue(observedValues);
 						
+						//Thread safety of matrix.
+						QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		
 						int posX = (phase == 0) ? x : 
 									mData->getMatrixWidth() - x;
 

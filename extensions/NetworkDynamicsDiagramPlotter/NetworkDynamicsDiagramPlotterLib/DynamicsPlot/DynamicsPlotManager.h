@@ -52,6 +52,7 @@
 #include <QHash>
 #include "Core/SystemObject.h"
 #include "DynamicsPlot/DynamicsPlotter.h"
+#include <QMutex>
 
 
 namespace nerd {
@@ -79,6 +80,8 @@ namespace nerd {
 		bool addDynamicsPlotter(DynamicsPlotter *plotter);
 		bool removeDynamicsPlotter(DynamicsPlotter *plotter);
 		const QList<DynamicsPlotter*>& getDynamicsPlotters() const;
+		
+		QMutex* getMatrixLocker();
 
 	protected:
 		ValueManager *mValueManager;
@@ -88,6 +91,7 @@ namespace nerd {
 		StringValue *mPlotterProgram;
 		StringValue *mActivePlotter;
 		BoolValue *mOfflinePlot;
+		QMutex mMatrixLocker;
 	};
 
 }

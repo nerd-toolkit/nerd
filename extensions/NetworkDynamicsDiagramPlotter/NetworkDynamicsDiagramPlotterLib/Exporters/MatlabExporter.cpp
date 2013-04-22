@@ -66,7 +66,7 @@ namespace nerd {
 	 * Constructs a new MatlabExporter.
 	 */
 	MatlabExporter::MatlabExporter()
-	: SystemObject(), EventListener(), mExportFormatValue(0), mActiveCalculatorValue(0)
+	: SystemObject(), EventListener(), mExportFormatValue(0), mActiveCalculatorValue(0), mDynamicsPlotManager(0)
 	{
 		Core::getInstance()->addSystemObject(this);
 	}
@@ -123,6 +123,11 @@ namespace nerd {
 					  + "]. MatlabExporter disabled.");
 		}
 		
+		mDynamicsPlotManager = DynamicsPlotManager::getInstance();
+		if(mDynamicsPlotManager == 0) {
+			Core::log("MatlabExporter: Could not find DynamicsPlotManager. MatlabExporter disabled.", true);
+		}
+		
 		return ok;
 	}
 	
@@ -150,9 +155,15 @@ namespace nerd {
 	
 	bool MatlabExporter::exportMatrix(const QString diagramPlotterName, const QString &fileName) {
 		
+		if(mDynamicsPlotManager == 0) {
+			return false;
+		}
+		
 		ValueManager *vm = Core::getInstance()->getValueManager();
 		
 		Core::getInstance()->enforceDirectoryPath(QDir::currentPath() + "/matlab");
+		
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
 		
 		MatrixValue *matrix = dynamic_cast<MatrixValue*>(vm->getValue(
 			"/DynamicsPlotters/" + diagramPlotterName + "/Internal/Data"));
@@ -315,107 +326,6 @@ namespace nerd {
 			}
 		}
 	}
-	
-	
-// 	/**
-// 	 * Transfers the data from the 3dim matrix to a 2dim QString vector. The format is adjusted to the respective plotting program.
-// 	 * @param plotters String containing the names of the plotter programs that will be used.
-// 	 */
-// 	void MatlabExporter::prepareExport(QString plotters){
-// 		MatrixValue *matrix = dynamic_cast<MatrixValue*>(
-// 			vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("Internal/Data"))));
-// 			
-// 			if(matrix == 0) {
-// 				Core::log("MatlabExporter: Could not find matrix value.", true);
-// 			return;
-// 			}
-// 			int width = matrix->getMatrixWidth();
-// 			int height = matrix->getMatrixHeight();
-// 			int depth = matrix->getMatrixDepth();
-// 			
-// 			if(plotters.contains("matlab", Qt::CaseInsensitive)){
-// 			QString delimiter = " ";//seperates the entries in the file
-// 			
-// 			QVector<QVector<QString> > outV(height * depth);// matrix is mirrored along the diagonal and all layers of third dimension are appended
-// 			
-// 			for(int j = 0; j < height; j++){
-// 				
-// 				outV[j].resize(width);
-// 				
-// 				for(int l = 0; l < depth; l++){
-// 					
-// 					outV[l * height + j].resize(width);
-// 					
-// 					for(int k = 0; k < width; k++) {
-// 						outV[l * height + j][k] = QString::number(matrix->get(k, j, l)) + delimiter;
-// 					}
-// 				}
-// 			}
-// 			
-// 			// for every layer in third dimension add { and }:
-// 			for(int l = 0; l < depth; l++){
-// 				outV[l * height + 1][1] = QString("{") + outV[l * height + 1][1];
-// 				outV[l * height + height - 1][width - 1] = outV[l * height + height -1][width - 1].simplified() + QString("}");
-// 			}
-// 			
-// 			QString xDescr = vM->getValue(QString("/DynamicsPlotters/" 
-// 												  + mRunningCalculator + "/" 
-// 																		 + QString("Config/XAxisDescription")))
-// 																		 ->getValueAsString(); //Description for x-axis
-// 																		 
-// 																		 QString yDescr = vM->getValue(QString("/DynamicsPlotters/" 
-// 																											   + mRunningCalculator + "/" 
-// 																																	  + QString("Config/YAxisDescription")))
-// 																																	  ->getValueAsString();
-// 																																	  
-// 																																	  outV[0][0] = "\"" + mRunningCalculator + " ;; " 
-// 																																											   + xDescr + " ;; " 
-// 																																														  + yDescr + "\" "; // add name of calculator; add quotation marks to keep text together
-// 																																														  
-// 																																														  
-// 																																														  Value *mOutputPath = vM->getValue(QString("/DynamicsPlotters/" + mRunningCalculator + "/" + QString("OutputPath")));
-// 																																														  
-// 																																														  if(mOutputPath == 0 || mOutputPath->getValueAsString() == "")
-// 																																														  {
-// 																																															  writeToFile(outV, "matlabExport");
-// 																																														  }
-// 																																														  else {
-// 																																															  writeToFile(outV, mOutputPath->getValueAsString());
-// 																																														  }
-// 			}
-// 			
-// 	}
-// 	/**
-// 	 * Prints the 2-dimensional vector to a file. 
-// 	 * @param outV 2-dim QString vector containing the calculated data.
-// 	 * @param fileName QString with the name of the output file.
-// 	 */
-// 	void MatlabExporter::writeToFile(QVector<QVector<QString> > outV, QString fileName ) {
-// 		
-// 		QFile file(fileName);
-// 		
-// 		if(!file.open(QIODevice::WriteOnly)) {
-// 			Core::log("MatlabExporter: Cannot write to file. Please check the file path and make sure "
-// 					  "you have writing permission for the specified directory.", true);
-// 			return;
-// 		}
-// 		
-// 		QTextStream out(&file);
-// 		
-// 		for(int j = 0; j < outV.size(); j++) {
-// 			
-// 			QString strColumn;
-// 			
-// 			for(int k = 0; k < outV[j].size(); k++){
-// 				strColumn.append(outV[j][k]); //append all data from column
-// 			}
-// 			
-// 			if (!strColumn.isEmpty()){
-// 				out << strColumn << endl; // print next line
-// 			}
-// 		}
-// 		file.close();
-// 	}
 }
 
 

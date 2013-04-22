@@ -43,6 +43,7 @@
 
 
 #include "TransientPlotter.h"
+#include "DynamicsPlotManager.h"
 #include <Util/DynamicsPlotterUtil.h>
 #include "Core/Core.h"
 #include "math.h"
@@ -179,56 +180,59 @@ void TransientPlotter::calculateData() {
 	
 	
 	bool keepPreviousData = mKeepPreviousData->get();
-	if(keepPreviousData
-		&& (mData->getMatrixWidth() == (resolutionX + 1))
-		&& (mData->getMatrixHeight() == (resolutionY + 1))
-		&& (mData->getMatrixDepth() == nrPlots))
-	{
-		mCurrentMarker++;
-		if(mCurrentMarker > 10) {
-			mCurrentMarker = 1;
-		}
-	}
-	else {
-		//reset the marker color to 0
-		keepPreviousData = false;
-		mCurrentMarker = 1;
-	}
-	
-	if(!keepPreviousData) {
-		// PREPARE data matrix
-		mData->clear();
-		mData->resize(resolutionX + 1, resolutionY + 1, nrPlots);
-		mData->fill(0);
-	}
-
 	
 	// calculate values and draw axes
 	QList< QHash<QString, double> > memX;
 	QList< QHash<QString, double> > memY;
-
-	for(int i = 0; i < nrPlots; ++i) {
-		QHash<QString, double> mX;
-		QHash<QString, double> mY;
-
-		mX["start"] = observedRangesX.at(i*2);
-		mX["end"] = observedRangesX.at(i*2+1);
-		mX["step"] = (mX["end"] - mX["start"]) / (double)(resolutionX - 1);
-		for(int x = 1; x <= resolutionX; ++x) {
-			double valX = mX["start"] + (x-1) * mX["step"];
-			mData->set(valX, x, 0, i);
+	{
+		//Thread safety of matrix.
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+	
+		if(keepPreviousData
+			&& (mData->getMatrixWidth() == (resolutionX + 1))
+			&& (mData->getMatrixHeight() == (resolutionY + 1))
+			&& (mData->getMatrixDepth() == nrPlots))
+		{
+			mCurrentMarker++;
+			if(mCurrentMarker > 10) {
+				mCurrentMarker = 1;
+			}
 		}
-		memX.append(mX);
-
-		mY["start"] = observedRangesY.at(i*2);
-		mY["end"] = observedRangesY.at(i*2+1);
-		mY["step"] = (mY["end"] - mY["start"]) / (double)(resolutionY - 1);
-		for(int y = 1; y <= resolutionY; ++y) {
-			double valY = mY["start"] + (y-1) * mY["step"];
-			mData->set(valY, 0, y, i);
+		else {
+			//reset the marker color to 0
+			keepPreviousData = false;
+			mCurrentMarker = 1;
 		}
-		memY.append(mY);
+		
+		if(!keepPreviousData) {
+			// PREPARE data matrix
+			mData->clear();
+			mData->resize(resolutionX + 1, resolutionY + 1, nrPlots);
+			mData->fill(0);
+		}
 
+		for(int i = 0; i < nrPlots; ++i) {
+			QHash<QString, double> mX;
+			QHash<QString, double> mY;
+
+			mX["start"] = observedRangesX.at(i*2);
+			mX["end"] = observedRangesX.at(i*2+1);
+			mX["step"] = (mX["end"] - mX["start"]) / (double)(resolutionX - 1);
+			for(int x = 1; x <= resolutionX; ++x) {
+				double valX = mX["start"] + (x-1) * mX["step"];
+				mData->set(valX, x, 0, i);
+			}
+			memX.append(mX);
+
+			mY["start"] = observedRangesY.at(i*2);
+			mY["end"] = observedRangesY.at(i*2+1);
+			mY["step"] = (mY["end"] - mY["start"]) / (double)(resolutionY - 1);
+			for(int y = 1; y <= resolutionY; ++y) {
+				double valY = mY["start"] + (y-1) * mY["step"];
+				mData->set(valY, 0, y, i);
+			}
+			memY.append(mY);
+		}
 	}
 
 
@@ -268,6 +272,10 @@ void TransientPlotter::calculateData() {
 				
 			double pX = ceil((vX - mX["start"]) / mX["step"] + 1);
 			double pY = ceil((vY - mY["start"]) / mY["step"] + 1);
+			
+			
+			QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+			
 			mData->set(color, pX, pY, i);
 			
 		}

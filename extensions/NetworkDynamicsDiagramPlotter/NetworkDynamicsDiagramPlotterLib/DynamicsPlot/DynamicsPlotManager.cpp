@@ -62,7 +62,7 @@ namespace nerd {
 /**
  * Constructs a new DynamicsPlotManager.
  */
-DynamicsPlotManager::DynamicsPlotManager()
+DynamicsPlotManager::DynamicsPlotManager() : mMatrixLocker(QMutex::Recursive)
 {
 	//**************Till**************c//
 	mValueManager = Core::getInstance()->getValueManager();
@@ -191,6 +191,14 @@ const QList<DynamicsPlotter*>& DynamicsPlotManager::getDynamicsPlotters() const 
 	return mDynamicsPlotters;
 }
 
+
+/**
+ * Returns the global matrix locker. All access to matrix values within the DynamicsPlotter
+ * and all GUI elements have to be synchronized with this Mutex!
+ */
+QMutex* DynamicsPlotManager::getMatrixLocker() {
+	return &mMatrixLocker;
+}
 
 
 

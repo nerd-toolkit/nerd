@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
 #message(${CMAKE_CXX_FLAGS})
 endif()
 
-set(CMAKE_BUILD_TYPE debug)
+set(CMAKE_BUILD_TYPE Debug)
 
 add_subdirectory(nerd)
 add_subdirectory(extensions)

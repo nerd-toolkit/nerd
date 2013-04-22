@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 
-set(CMAKE_BUILD_TYPE debug)
-
 add_subdirectory(NetworkDynamicsDiagramPlotterLib)
 add_subdirectory(testNetworkDynamicsDiagramPlotterLib)
 add_subdirectory(NetworkDynamicsDiagramPlotterApplication)

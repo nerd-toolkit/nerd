@@ -53,6 +53,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <DynamicsPlot/OnlinePlotter/MouseMoveLabel.h>
+#include <DynamicsPlot/DynamicsPlotManager.h>
 #include "Core/SystemObject.h"
 #include "Value/MatrixValue.h"
 #include "Value/BoolValue.h"
@@ -61,6 +62,7 @@
 #include <QColor>
 #include <QList>
 #include "Value/IntValue.h"
+#include <QMutexLocker>
 
 
 namespace nerd {
@@ -128,6 +130,7 @@ offlinePlot);
 			
 			void setupGUI();
 			ValueManager *mVM;
+			DynamicsPlotManager *mDynamicsPlotManager;
 			int mIndex;
 			
 			QList<QRgb> mColors;

@@ -43,6 +43,7 @@
 
 
 #include "DummyPlotter.h"
+#include "DynamicsPlotManager.h"
 #include "Core/Core.h"
 #include <iostream>
 #include "Math/Math.h"
@@ -89,6 +90,9 @@ namespace nerd {
 		
 		// get network
 		//ModularNeuralNetwork *network = getCurrentNetwork();
+		
+		//Thread safety of matrix.
+		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
 		
 		// PREPARE data matrix
 		mData->clear();

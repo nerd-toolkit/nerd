@@ -65,8 +65,7 @@ MatrixValue::MatrixValue()
 
 MatrixValue::MatrixValue(int width, int height, int depth)
 	: Value("Matrix", false), mValue(width, height, depth)
-{
-
+{	
 }
 
 

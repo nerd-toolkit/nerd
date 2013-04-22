@@ -72,7 +72,21 @@ Matrix::Matrix(int width, int height, int depth)
 Matrix::Matrix(const Matrix &other) 
 	: mMatrix(other.mMatrix), mWidth(other.mWidth), mHeight(other.mHeight), mDepth(other.mDepth)
 {
+	//make sure the implicit sharing is not taking place!
+	if(mDepth > 0) {
+		for(int i = 0; i < mMatrix.size(); ++i) {
+			for(int j = 0; j < mMatrix[i].size(); ++j) {
+				//trigger a non-const operator on each of the internal QVectors to enforce a 
+				//deep copy.
+				if(!mMatrix[i][j].empty()) {
+					mMatrix[i][j][0] = mMatrix[i][j][0] + 1.0;
+					mMatrix[i][j][0] = mMatrix[i][j][0] - 1.0;
+				}
+			}
+		}
+	}
 }
+
 
 /**
  * Destructor.
