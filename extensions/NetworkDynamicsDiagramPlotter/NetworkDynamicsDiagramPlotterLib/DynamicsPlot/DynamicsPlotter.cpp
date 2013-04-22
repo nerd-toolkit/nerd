@@ -75,6 +75,28 @@ namespace nerd {
 
 /**
  * Constructs a new DynamicsPlotter.
+ * 
+ * This is the base class of all numeric plotters. 
+ * 
+ * Each plotter has its own data matris (mData) that can be resized and filled with the
+ * calculated content. The matrix, hereby, corresponds to the pixels of n equally sized
+ * pixmaps. The width w and height h of the picture map to a width of w + 1 and a height 
+ * of h + 1 in the matrix. The first row and the upper column are filled with the axis
+ * values to which a specific discrete location x/y corresponds, e.g. the bias or a neuron
+ * at x and the output of a neuron at y. The range has to chosen such, that the minial
+ * value of the range [min/max] is set as first element and the maximal value as last element.
+ * So, both, min and max are inclusive.
+ * 
+ * IMPORTANT: Whenever you read or write to the mData matrix, you have to lock the matrix
+ *            access mutex, that can be locally obtained without
+ *            mDynamicPlotManager->getMatrixLocker().
+ *            Variable mDynamicPlotManager is available and initialized in each subclass
+ *            of DynamcisPlotter.
+ * 
+ * The content of the matrix (int values) is interpreted as pixels in different colors.
+ * Each int value represents a different color value that is mapped dynamically. So, the
+ * choice of the color is up to the program that interprets and draws the matrix.
+ * 
  */
 DynamicsPlotter::DynamicsPlotter(const QString &name)
 : ParameterizedObject(name, "/DynamicsPlotters/" + name + "/"), mNextStepEvent(0), 
@@ -83,8 +105,12 @@ DynamicsPlotter::DynamicsPlotter(const QString &name)
 	mFinishEvent(0)
 {
 	Core::getInstance()->addSystemObject(this);
-	DynamicsPlotManager::getInstance()->addDynamicsPlotter(this);
-
+	
+	mDynamicsPlotManager = DynamicsPlotManager::getInstance();
+	if(mDynamicsPlotManager != 0) {
+		mDynamicsPlotManager->addDynamicsPlotter(this);
+	}
+	
 	mActiveValue = new BoolValue(false);
 	mExecutionTime = new IntValue(0);
 	mProgressPercentage = new DoubleValue(0);
@@ -161,7 +187,6 @@ bool DynamicsPlotter::bind() {
 	bool ok = true;
 
 	EventManager *em = Core::getInstance()->getEventManager();
-	mDynamicsPlotManager = DynamicsPlotManager::getInstance();
 
 	mClearAllEditorSelections = em->getEvent(NetworkEditorConstants::VALUE_EDITOR_CLEAR_ALL_SELECTIONS);
 	mNextStepEvent = em->getEvent(NerdConstants::EVENT_EXECUTION_NEXT_STEP, true);

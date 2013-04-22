@@ -215,20 +215,20 @@ void TransientPlotter::calculateData() {
 			QHash<QString, double> mX;
 			QHash<QString, double> mY;
 
-			mX["start"] = observedRangesX.at(i*2);
-			mX["end"] = observedRangesX.at(i*2+1);
+			mX["start"] = observedRangesX.at(i * 2);
+			mX["end"] = observedRangesX.at(i * 2 + 1);
 			mX["step"] = (mX["end"] - mX["start"]) / (double)(resolutionX - 1);
 			for(int x = 1; x <= resolutionX; ++x) {
-				double valX = mX["start"] + (x-1) * mX["step"];
+				double valX = mX["start"] + (x - 1) * mX["step"];
 				mData->set(valX, x, 0, i);
 			}
 			memX.append(mX);
 
-			mY["start"] = observedRangesY.at(i*2);
-			mY["end"] = observedRangesY.at(i*2+1);
+			mY["start"] = observedRangesY.at(i * 2);
+			mY["end"] = observedRangesY.at(i * 2 + 1);
 			mY["step"] = (mY["end"] - mY["start"]) / (double)(resolutionY - 1);
 			for(int y = 1; y <= resolutionY; ++y) {
-				double valY = mY["start"] + (y-1) * mY["step"];
+				double valY = mY["start"] + (y - 1) * mY["step"];
 				mData->set(valY, 0, y, i);
 			}
 			memY.append(mY);
