@@ -75,6 +75,7 @@ elseif(UNIX)
 TARGET_LINK_LIBRARIES(NerdDynamicsAnalyzer
 	-lGLU
 	-lGL
+	-lX11
 )
 
 endif(WIN32)
