@@ -636,22 +636,27 @@ namespace nerd {
 			return ;
 		}
 		
-		mInactive->set(!enable);
+		
 		if(enable) {
 			bool ok = true;
+			
 			double oldWeight = owner->getProperty("_SMRS_w").toDouble(&ok);
 			
 			if(ok) {
 				owner->getStrengthValue().set(oldWeight);
 			}
 			owner->removeProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED);
+			owner->removeProperty("_SMRS_w");
 		}
 		else {
-			double currentWeight = owner->getStrengthValue().get();
-			owner->getStrengthValue().set(0.0);
-			owner->setProperty("_SMRS_w", QString::number(currentWeight));
+			if(!owner->hasProperty("_SMRS_w")) {
+				double currentWeight = owner->getStrengthValue().get();
+				owner->getStrengthValue().set(0.0);
+				owner->setProperty("_SMRS_w", QString::number(currentWeight));
+			}
 			owner->setProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED);
 		}
+		mInactive->set(!enable);
 		
 	}
 	
