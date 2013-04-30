@@ -91,12 +91,14 @@ namespace nerd {
 		// get network
 		//ModularNeuralNetwork *network = getCurrentNetwork();
 		
-		//Thread safety of matrix.
-		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+		{
+			//Thread safety of matrix.
+			QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
 		
-		// PREPARE data matrix
-		mData->clear();
-		mData->resize(0, 0, 0);
+			// PREPARE data matrix
+			mData->clear();
+			mData->resize(0, 0, 0);
+		}
 		
 		int numberSteps = mNumberSteps->get();
 		int step = 0;
