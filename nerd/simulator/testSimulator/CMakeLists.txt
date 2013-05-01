@@ -25,6 +25,7 @@ set(nerd_testSimulator_SRCS
 	Signal/TestSignals.cpp  
 	TestSimulationConstants.cpp
 	Physics/TestValueTransferController.cpp
+	Physics/TestSphereGeom.cpp
 )
 
 
@@ -50,6 +51,7 @@ set(nerd_testSimulator_MOC_HDRS
 	Signal/TestSignals.h  
 	TestSimulationConstants.h
 	Physics/TestValueTransferController.h
+	Physics/TestSphereGeom.h
 )
 
 set(nerd_testSimulator_RCS
@@ -83,10 +85,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simulator)
 
+link_directories(${QT_LIBRARIES} 
+				${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd
+				${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator
+)
+
 TARGET_LINK_LIBRARIES(testSimulator
 	${QT_LIBRARIES}
-	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
-	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
+	#	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
+	#${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
+	nerd
+	simulator
 )
 
 add_dependencies(testSimulator nerd simulator)
