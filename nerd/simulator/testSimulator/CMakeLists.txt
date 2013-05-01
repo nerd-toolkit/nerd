@@ -92,10 +92,8 @@ link_directories(${QT_LIBRARIES}
 
 TARGET_LINK_LIBRARIES(testSimulator
 	${QT_LIBRARIES}
-	#	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
-	#${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
-	nerd
-	simulator
+	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
 )
 
 add_dependencies(testSimulator nerd simulator)

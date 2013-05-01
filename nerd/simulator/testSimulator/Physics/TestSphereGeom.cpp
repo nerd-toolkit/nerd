@@ -62,17 +62,21 @@ void TestSphereGeom::testConstruction() {
 	SphereGeom *sphereGeom_1 = new SphereGeom(simBody, 1.234);
 	QVERIFY(sphereGeom_1 != 0);
 
+	// check if radius has been set
 	double radius_1 = sphereGeom_1->getRadius();
 	QCOMPARE(radius_1, 1.234);
 
+	// construct second geom with a position
 	Vector3D *position = new Vector3D(1.1, 2.2, 3.3);
 	SphereGeom *sphereGeom_2 = new SphereGeom(simBody, 4.321, *position);
 	QVERIFY(sphereGeom_2 != 0);
 
+	// check for radius again and then the position value
 	double radius_2 = sphereGeom_2->getRadius();
 	QCOMPARE(radius_2, 4.321);
 	QVERIFY(sphereGeom_2->getLocalPosition() == *position);
 
+	// test copy constructor
 	SphereGeom *sphereGeom_3 = dynamic_cast<SphereGeom*>(sphereGeom_2->createCopy());
 	QVERIFY(sphereGeom_3 != 0);
 	QVERIFY(sphereGeom_3 != sphereGeom_2);
@@ -93,7 +97,6 @@ void TestSphereGeom::testMethods() {
 
 	// test radius setter method
 	sphereGeom_1->setRadius(4.321);
-
 	double radius_1 = sphereGeom_1->getRadius();
 	QCOMPARE(radius_1, 4.321);
 
