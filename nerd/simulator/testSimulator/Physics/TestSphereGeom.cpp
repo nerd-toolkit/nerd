@@ -60,12 +60,28 @@ void TestSphereGeom::testConstruction() {
 
 	// construct a SphereGeometry attached to the SimBody
 	SphereGeom *sphereGeom_1 = new SphereGeom(simBody, 1.234);
+	QVERIFY(sphereGeom_1 != 0);
 
 	double radius_1 = sphereGeom_1->getRadius();
 	QCOMPARE(radius_1, 1.234);
 
 	Vector3D *position = new Vector3D(1.1, 2.2, 3.3);
 	SphereGeom *sphereGeom_2 = new SphereGeom(simBody, 4.321, *position);
+	QVERIFY(sphereGeom_2 != 0);
+
+	double radius_2 = sphereGeom_2->getRadius();
+	QCOMPARE(radius_2, 4.321);
+	QVERIFY(sphereGeom_2->getLocalPosition() == *position);
+
+	SphereGeom *sphereGeom_3 = dynamic_cast<SphereGeom*>(sphereGeom_2->createCopy());
+	QVERIFY(sphereGeom_3 != 0);
+	QVERIFY(sphereGeom_3 != sphereGeom_2);
+	QVERIFY(sphereGeom_3->getRadius() == radius_2);
+
+	delete simBody;
+	delete sphereGeom_1;
+	delete sphereGeom_2;
+	delete sphereGeom_3;
 }
 
 void TestSphereGeom::testMethods() {
@@ -80,6 +96,9 @@ void TestSphereGeom::testMethods() {
 
 	double radius_1 = sphereGeom_1->getRadius();
 	QCOMPARE(radius_1, 4.321);
+
+	delete simBody;
+	delete sphereGeom_1;
 }
 
 };
