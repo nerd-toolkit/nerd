@@ -66,7 +66,7 @@ void TestLightSensor::testConstruction() {
 	core->getValueManager()->addValue("/Simulation/Gravitation", gravitation);
 
 	// construct default sensor
-	lightSensor_1 = new LightSensor("LightSensor_1");
+	LightSensor *lightSensor_1 = new LightSensor("LightSensor_1");
 	QVERIFY(lightSensor_1 != 0);
 
 	// check default parameters
@@ -83,7 +83,7 @@ void TestLightSensor::testConstruction() {
 	QVERIFY(localPosition_1->getY() == 0);
 	QVERIFY(localPosition_1->getZ() == 0);
 
-	QVERIFY(dynamic_cast<BoolValue*>(lightSensor_1->getParameter("UseAsAmbientSensor"))->get() == false);
+	QVERIFY(dynamic_cast<BoolValue*>(lightSensor_1->getParameter("UseAsAmbientLightSensor"))->get() == false);
 	// TODO angleDifferences
 	QVERIFY(dynamic_cast<StringValue*>(lightSensor_1->getParameter("DetectableLightTypes"))->get() == "0");
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_1->getParameter("MaxDetectionAngle"))->get() == 180.0);

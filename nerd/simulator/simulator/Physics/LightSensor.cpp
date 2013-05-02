@@ -420,6 +420,15 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 		brightness = (mMaxDetectionAngle->get() - maxDifference) * ambientLight;
 
 
+		/*
+		 * A better strategy could be: 
+		 * - Determine vector of view (3D axis of sensor view)
+		 * - Determine vector to light source (between sensor position and light source position)
+		 * - Take angle between the two vectors as error
+		 * - return (maxViewingAngle - (Math::min(Math::abs(error), maxViewingAngle))) / maxViewingAngle * brightness
+		 * 
+		 * And remove the entire quaterion rotation stuff and the 3D angle errors above
+		 */
 	}
 
 	return brightness;
