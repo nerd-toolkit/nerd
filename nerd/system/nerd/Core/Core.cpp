@@ -284,6 +284,8 @@ void Core::log(const QString &message, bool copyToCout) {
 
 /**
  * Creates all required objects for the Core.
+ * 
+ * This function creates all default managers and optionally loads the plugins.
  */
 void Core::setUpCore() {
 	TRACE("Core::setUpCore");
@@ -361,6 +363,40 @@ void Core::setUpCore() {
 	mTasksExecutedEvent = mEventManager->createEvent(
 			NerdConstants::EVENT_NERD_EXECUTE_PENDING_TASKS,
 			"Triggered when the pending tasks get executed.");
+	
+	
+	//Load plugins directly after setup to make sure that all relevant objects
+	//are loaded before they are potentially used by other components.
+	//Because the core is minimally setup at this point of time, all plugins
+	//should import their objects as SimObjects and their corresponding init()
+	//and bind() functions, if objects cannot be directly added to existing components.
+	QDir plugInDir(getConfigDirectoryPath().append("/plugins"));
+	if(!mIsUsingReducedFileWriting) {
+		logMessage("~Loading PlugIns.");
+		enforceDirectoryPath(plugInDir.absolutePath());
+	}
+	mPlugInManager->loadPlugIns(plugInDir.absolutePath());
+	
+	QDir globalPlugInDir(QDir::home().absolutePath().append("/.nerd/plugins"));
+	if(!mIsUsingReducedFileWriting) {
+		logMessage("~Loading Global PlugIns.");
+		enforceDirectoryPath(globalPlugInDir.absolutePath());
+	}
+	mPlugInManager->loadPlugIns(globalPlugInDir.absolutePath());
+	
+	{
+		CommandLineArgument *optionalPlugInDirs = new CommandLineArgument("pluginDir", "pdir", "<directory",
+						"Loads all plugins in <directory>.", 1, 0, true, true);
+						
+		int numberOfEntries = optionalPlugInDirs->getNumberOfEntries();
+		for(int i = 0; i < numberOfEntries; ++i) {
+			QStringList parameters = optionalPlugInDirs->getEntryParameters(i);
+				if(parameters.size() != 1) {
+					continue;
+				}
+				mPlugInManager->loadPlugIns(parameters[0]);
+			}
+	}
 
 	logMessage("~Setting up Core done.");
 }
@@ -502,34 +538,6 @@ bool Core::init() {
 	bool helpMessageRequest = false;
 	bool quitApplication = false;
 	mShutDownCompleted = false;
-
-	QDir plugInDir(getConfigDirectoryPath().append("/plugins"));
-	if(!mIsUsingReducedFileWriting) {
-		logMessage("~Loading PlugIns.");
-		enforceDirectoryPath(plugInDir.absolutePath());
-	}
-	mPlugInManager->loadPlugIns(plugInDir.absolutePath());
-	
-	QDir globalPlugInDir(QDir::home().absolutePath().append("/.nerd/plugins"));
-	if(!mIsUsingReducedFileWriting) {
-		logMessage("~Loading Global PlugIns.");
-		enforceDirectoryPath(globalPlugInDir.absolutePath());
-	}
-	mPlugInManager->loadPlugIns(globalPlugInDir.absolutePath());
-	
-	{
-		CommandLineArgument *optionalPlugInDirs = new CommandLineArgument("pluginDir", "pdir", "<directory",
-						"Loads all plugins in <directory>.", 1, 0, true, true);
-						
-		int numberOfEntries = optionalPlugInDirs->getNumberOfEntries();
-		for(int i = 0; i < numberOfEntries; ++i) {
-			QStringList parameters = optionalPlugInDirs->getEntryParameters(i);
-				if(parameters.size() != 1) {
-					continue;
-				}
-				mPlugInManager->loadPlugIns(parameters[0]);
-			}
-	}
 	
 	//check version request
 	CommandLineArgument *versionArgument = new CommandLineArgument("version", "", "",
