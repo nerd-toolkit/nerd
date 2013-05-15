@@ -155,14 +155,11 @@ QT4_WRAP_CPP(nerd_nerd_MOC_SRCS ${nerd_nerd_MOC_HDRS})
 QT4_ADD_RESOURCES(nerd_nerd_RC_SRCS ${nerd_nerd_RCS})
 QT4_WRAP_UI(nerd_nerd_UI_HDRS ${nerd_nerd_UIS})
 
-
-#Create subversion revision number for version string in Core.cpp.
-find_package(Subversion)
-if(Subversion_FOUND)
-  Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} ER)
-  set(SUBVERSION_REVISION ${ER_WC_REVISION})
-endif(Subversion_FOUND)
-ADD_DEFINITIONS(-DVER="${SUBVERSION_REVISION}")
+#Use git describe to annotate builds 
+#Builds are marked as dirty if the working tree has changes
+include(GetGitRevisionDescription)
+git_describe(VERSION --tags --dirt=dirty)
+ADD_DEFINITIONS(-DVER="${VERSION}")
 
 #Create library.
 add_library(nerd STATIC ${nerd_nerd_SRCS} ${nerd_nerd_MOC_SRCS} ${nerd_nerd_RC_SRCS} ${nerd_nerd_UI_HDRS})
