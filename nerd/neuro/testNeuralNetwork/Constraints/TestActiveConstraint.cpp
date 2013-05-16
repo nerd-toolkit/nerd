@@ -44,48 +44,58 @@
 
 
 
-#include "Util/UnitTestMacros.h"
-#include "TransferFunction/TestTransferFunction.h"
-#include "SynapseFunction/TestSynapseFunction.h"
-#include "ActivationFunction/TestActivationFunction.h"
-#include "Network/TestSynapse.h"
-#include "Network/TestNeuron.h"
-#include "Network/TestNeuralNetwork.h"
-#include "Network/TestNeuralNetworkManager.h"
-#include "IO/TestNeuralNetworkIO.h"
-#include "TestASeriesFunctions.h"
-#include "IO/TestNeuralNetworkIONerdV1Xml.h"
-#include "ModularNeuralNetwork/TestNeuronGroup.h"
-#include "ModularNeuralNetwork/TestNeuroModule.h"
-#include "ModularNeuralNetwork/TestModularNeuralNetwork.h"
-#include "TestNeuralNetworkConstants.h"
-#include "Util/TestNeuralNetworkUtil.h"
-#include "Constraints/TestSymmetryConstraint.h"
-#include "NeuroModulation/TestNeuroModulator.h"
-#include "Constraints/TestActiveConstraint.h"
+#include "TestActiveConstraint.h"
+#include <iostream>
+#include "Core/Core.h"
+#include "Constraints/ActiveConstraint.h"
+#include "Network/Neuron.h"
+#include "Network/Synapse.h"
+#include "TransferFunction/TransferFunctionAdapter.h"
+#include "ActivationFunction/ActivationFunctionAdapter.h"
+#include "SynapseFunction/SynapseFunctionAdapter.h"
+#include "ModularNeuralNetwork/NeuronGroup.h"
+#include "ModularNeuralNetwork/NeuroModule.h"
+#include "NeuralNetworkConstants.h"
+#include "ModularNeuralNetwork/ModularNeuralNetwork.h"
 
+#define QV QVERIFY
+#define QC QCOMPARE
 
-TEST_START("TestNeuralNetwork", 1, -1, 18);
- 
-	TEST(TestTransferFunction); 
-	TEST(TestSynapseFunction);
-	TEST(TestActivationFunction);
-	TEST(TestSynapse);
-	TEST(TestNeuron);
-	TEST(TestNeuralNetworkManager);
-	TEST(TestNeuralNetwork);
-	TEST(TestNeuralNetworkIO); //has still memory leaks
-	TEST(TestASeriesFunctions);
-	TEST(TestNeuralNetworkIONerdV1Xml); //has still memory leaks
-	TEST(TestNeuronGroup);
-	TEST(TestNeuroModule);
-	TEST(TestModularNeuralNetwork);
-	TEST(TestNeuralNetworkConstants);
-	TEST(TestNeuralNetworkUtil);
-	TEST(TestSymmetryConstraint);
-	TEST(TestNeuroModulator);
-	TEST(TestActiveConstraint);
+using namespace std;
+using namespace nerd;
 
-TEST_END;
+void TestActiveConstraint::initTestCase() {
+}
+
+void TestActiveConstraint::cleanUpTestCase() {
+}
+
+//chris
+void TestActiveConstraint::testConstruction() {
+// 	ActiveConstraint *ac = new ActiveConstraint("ActiveConstraint");
+// 	
+// 	NeuronGroup *group = 0;
+// 	CommandExecutor *executor = 0;
+// 	QList<NeuralNetworkElement*> trashcan;
+// 	
+// 	//TODO do real tests here.
+// 	ActiveConstraint *copy = dynamic_cast<ActiveConstraint*>(ac->createCopy());
+// 	ac->getName();
+// 
+// 	//ac->eventOccured(0);
+// 		
+// 	ac->reset();
+// 
+// 	ac->isValid(0);
+// 	ac->applyConstraint(group, executor, trashcan);
+// 		
+// 	ac->applyActiveConstraint(0, 0);
+// 		
+// 		
+// 	ac->equals(copy);
+// 		
+// 	delete ac;
+}
+
 
 

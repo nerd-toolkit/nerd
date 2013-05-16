@@ -42,50 +42,32 @@
  ***************************************************************************/
 
 
+#ifndef TESTTestActiveConstraint_H_
+#define TESTTestActiveConstraint_H_
+
+#include <QtTest/QtTest>
+
+namespace nerd {
+
+class TestActiveConstraint : public QObject {
+
+Q_OBJECT
+
+private slots:
+	
+	void cleanUpTestCase();
+	void initTestCase();
+
+	void testConstruction();
+
+private:
+	
+
+};
+
+}
 
 
-#include "Util/UnitTestMacros.h"
-#include "TransferFunction/TestTransferFunction.h"
-#include "SynapseFunction/TestSynapseFunction.h"
-#include "ActivationFunction/TestActivationFunction.h"
-#include "Network/TestSynapse.h"
-#include "Network/TestNeuron.h"
-#include "Network/TestNeuralNetwork.h"
-#include "Network/TestNeuralNetworkManager.h"
-#include "IO/TestNeuralNetworkIO.h"
-#include "TestASeriesFunctions.h"
-#include "IO/TestNeuralNetworkIONerdV1Xml.h"
-#include "ModularNeuralNetwork/TestNeuronGroup.h"
-#include "ModularNeuralNetwork/TestNeuroModule.h"
-#include "ModularNeuralNetwork/TestModularNeuralNetwork.h"
-#include "TestNeuralNetworkConstants.h"
-#include "Util/TestNeuralNetworkUtil.h"
-#include "Constraints/TestSymmetryConstraint.h"
-#include "NeuroModulation/TestNeuroModulator.h"
-#include "Constraints/TestActiveConstraint.h"
-
-
-TEST_START("TestNeuralNetwork", 1, -1, 18);
- 
-	TEST(TestTransferFunction); 
-	TEST(TestSynapseFunction);
-	TEST(TestActivationFunction);
-	TEST(TestSynapse);
-	TEST(TestNeuron);
-	TEST(TestNeuralNetworkManager);
-	TEST(TestNeuralNetwork);
-	TEST(TestNeuralNetworkIO); //has still memory leaks
-	TEST(TestASeriesFunctions);
-	TEST(TestNeuralNetworkIONerdV1Xml); //has still memory leaks
-	TEST(TestNeuronGroup);
-	TEST(TestNeuroModule);
-	TEST(TestModularNeuralNetwork);
-	TEST(TestNeuralNetworkConstants);
-	TEST(TestNeuralNetworkUtil);
-	TEST(TestSymmetryConstraint);
-	TEST(TestNeuroModulator);
-	TEST(TestActiveConstraint);
-
-TEST_END;
+#endif 
 
 

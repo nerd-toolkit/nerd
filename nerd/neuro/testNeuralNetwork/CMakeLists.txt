@@ -30,6 +30,7 @@ set(nerd_testNeuralNetwork_SRCS
 	Constraints/TestSymmetryConstraint.cpp  
 	IO/TestNeuralNetworkIONerdV1Xml.cpp
 	NeuroModulation/TestNeuroModulator.cpp
+	Constraints/TestActiveConstraint.cpp
 )
 
 
@@ -51,6 +52,7 @@ set(nerd_testNeuralNetwork_MOC_HDRS
 	Constraints/TestSymmetryConstraint.h  
 	IO/TestNeuralNetworkIONerdV1Xml.h
 	NeuroModulation/TestNeuroModulator.h
+	Constraints/TestActiveConstraint.h
 )
 
 set(nerd_testNeuralNetwork_RCS

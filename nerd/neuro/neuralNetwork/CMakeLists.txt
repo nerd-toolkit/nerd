@@ -107,7 +107,6 @@ set(nerd_neuralNetwork_SRCS
 	ActivationFunction/AdditiveTimeDiscreteNeuroModulatorActivationFunction.cpp
 	ActivationFunction/BiasActivationFunction.cpp
 	Constraints/ActiveConstraint.cpp
-	Constraints/TestActiveConstraint.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
