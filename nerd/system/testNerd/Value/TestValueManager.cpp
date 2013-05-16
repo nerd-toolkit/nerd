@@ -402,7 +402,7 @@ void TestValueManager::testRemoveValuesByList() {
 
 	ValueManager *vm = Core::getInstance()->getValueManager();
 
-	int defaultNumberOfValues = 6;
+	int defaultNumberOfValues = 7;
 	QCOMPARE(vm->getValues().size(), defaultNumberOfValues);
 
 	Value *v1 = new Value();
