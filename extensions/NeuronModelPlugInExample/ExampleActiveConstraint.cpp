@@ -60,7 +60,7 @@ ExampleActiveConstraint::ExampleActiveConstraint()
 }
 
 ExampleActiveConstraint::ExampleActiveConstraint(const ExampleActiveConstraint &other)
-	: Object(), ValueChangedListener(), EventListener(), ActiveConstraint(other)
+	: Object(), EventListener(), ValueChangedListener(), ActiveConstraint(other)
 {
 }
 

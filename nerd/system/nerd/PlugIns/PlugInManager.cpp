@@ -92,13 +92,42 @@ PlugInManager::~PlugInManager() {
 
 
 /** 
- * Loads all PlugIns from shared libraries that can be found in the directory plugInDirName.
+ * Loads all PlugIns as shared libraries that can be found in the directory plugInDirName
+ * AND in the directory plugInDirName/APPLICATION_NAME (a subfolder named after the current
+ * program name. The latter allows to provide application specific plugins to be loaded only
+ * together with a special application type.
+ * 
  * @param plugInDirName the name of the plugIn directory.
  * @return true if successful, otherwise false.
  */
 bool PlugInManager::loadPlugIns(const QString plugInDirName) {
+	
+	//load the desired plugin directory (general plugins)
+	bool ok = loadSinglePluginDir(plugInDirName);
+
+	//load the application specific plugins from the corresponding application specific
+	//subfolder of the plugin directory.
+	ok &= loadSinglePluginDir(plugInDirName + "/" + QCoreApplication::arguments().first());
+	
+	return ok;
+}
+
+
+/**
+ * Loads all PlugIns as shared libraries from the directoy plugInDirName. 
+ * 
+ * Currently, this method always returns true, but warnings will be logged in case of a failure.
+ * 
+ * @param plugInDirName the name of the plugIn directory.
+ * @return true if successful, otherwise false.
+ */
+bool PlugInManager::loadSinglePluginDir(const QString plugInDirName) {
 
 	QDir plugInDir(plugInDirName);
+	
+	if(!plugInDir.exists()) {
+		return true;
+	}
 
 	Core::log(QString("PlugInManager: Loading PlugIns from directory [")
 			.append(plugInDirName).append("]."));

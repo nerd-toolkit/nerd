@@ -18,8 +18,6 @@ set(nerd_pluginLib_MOC_HDRS
 
 
 
-
-
 set(nerd_pluginLib_RCS
 )
 
@@ -63,15 +61,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../nerd/evolution/evolution)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../nerd/evolution/neuroAndSimEvaluation)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../nerd/evolution/neuroEvolution)
 
-#TARGET_LINK_LIBRARIES(NeuronModelPlugInExample
-#	${CMAKE_CURRENT_BINARY_DIR}/../../nerd/neuro/neuralNetwork/libneuralNetwork.a
-#	${CMAKE_CURRENT_BINARY_DIR}/../../nerd/simulator/simulator/libsimulator.a
-#	${CMAKE_CURRENT_BINARY_DIR}/../../nerd/system/nerd/libnerd.a
-#	${QT_LIBRARIES}
-#)
 
 
-
-#NOTE: Set the library dependencies here. Usuually, it is sufficient to exchange the first project name with your project name.
+#NOTE: Set the library dependencies here. Usually, it is sufficient to exchange the first project name with your project name.
 add_dependencies(NeuronModelPlugInExample nerd neuralNetwork networkEditor simulator evolution neuroAndSimEvaluation neuroEvolution)
 

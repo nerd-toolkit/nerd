@@ -62,6 +62,7 @@ namespace nerd {
 		virtual ~PlugInManager();
 
 		bool loadPlugIns(const QString plugInDirName);
+		bool loadSinglePluginDir(const QString plugInDirName);
 		bool getNumberOfLoadedPlugIns() const;
 		bool checkHelpMessageRequest();
 
