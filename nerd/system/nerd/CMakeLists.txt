@@ -158,7 +158,7 @@ QT4_WRAP_UI(nerd_nerd_UI_HDRS ${nerd_nerd_UIS})
 #Use git describe to annotate builds 
 #Builds are marked as dirty if the working tree has changes
 include(GetGitRevisionDescription)
-git_describe(VERSION --tags --dirt=dirty)
+git_describe(VERSION --tags --dirty=dirty --always)
 ADD_DEFINITIONS(-DVER="${VERSION}")
 
 #Create library.
