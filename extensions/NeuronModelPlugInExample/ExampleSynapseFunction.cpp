@@ -72,7 +72,7 @@ ExampleSynapseFunction::ExampleSynapseFunction()
 	addParameter("DesiredRange", mDesiredActivationRange);
 	addParameter("ChangeRate", mChangeRate);
 	
-	addObserableOutput("CurrentAverage", mCurrentAverage);
+	addObservableOutput("CurrentAverage", mCurrentAverage);
 }
 
 
@@ -88,7 +88,7 @@ ExampleSynapseFunction::ExampleSynapseFunction(const ExampleSynapseFunction &oth
 	
 	mCurrentAverage = dynamic_cast<DoubleValue*>(other.mCurrentAverage->createCopy());
 	
-	addObserableOutput("CurrentAverage", mCurrentAverage);
+	addObservableOutput("CurrentAverage", mCurrentAverage);
 }
 
 
@@ -109,7 +109,7 @@ SynapseFunction* ExampleSynapseFunction::createCopy() const {
 void ExampleSynapseFunction::reset(Synapse*) {
 	
 	mHistory.clear();
-	mHistory.reserve(mHistorySize->get() + 1);
+	//mHistory.reserve(mHistorySize->get() + 1);
 	
 	mCurrentAverage->set(0.0);
 }

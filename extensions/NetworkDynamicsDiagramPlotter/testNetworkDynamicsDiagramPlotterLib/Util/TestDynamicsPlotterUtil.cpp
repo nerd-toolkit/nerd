@@ -201,7 +201,7 @@ void TestDynamicsPlotterUtil::testGetElementValue2() {
 
 	// TransferFunction: Observable
 	DoubleValue *testObservable = new DoubleValue(1.2345);
-	n2->getTransferFunction()->addObserableOutput("TestObservable", testObservable);
+	n2->getTransferFunction()->addObservableOutput("TestObservable", testObservable);
 
 	QString elem5Str = QString::number(idn2).append(":tf:TestObservable");
 	DoubleValue *v5 = DynamicsPlotterUtil::getElementValue(elem5Str, networkElements);
@@ -217,7 +217,7 @@ void TestDynamicsPlotterUtil::testGetElementValue2() {
 
 	// ActivationFunction: Observable
 	DoubleValue *testObservable2 = new DoubleValue(5.4321);
-	n1->getActivationFunction()->addObserableOutput("TestObservable2", testObservable2);
+	n1->getActivationFunction()->addObservableOutput("TestObservable2", testObservable2);
 	
 	QString elem7Str = QString::number(idn1).append(":af:TestObservable2");
 	DoubleValue *v7 = DynamicsPlotterUtil::getElementValue(elem7Str, networkElements);
@@ -242,7 +242,7 @@ void TestDynamicsPlotterUtil::testGetElementValue2() {
 	
 	// SynapseFunction: Observable
 	DoubleValue *testObservable3 = new DoubleValue(3.42);
-	s3->getSynapseFunction()->addObserableOutput("TestObservable3", testObservable3);
+	s3->getSynapseFunction()->addObservableOutput("TestObservable3", testObservable3);
 
 	QString elem10Str = QString::number(ids3).append(":sf:TestObservable3");
 	DoubleValue *v10 = DynamicsPlotterUtil::getElementValue(elem10Str, networkElements);
@@ -487,9 +487,9 @@ void TestDynamicsPlotterUtil::testGetNetworkValues() {
 	DoubleValue *observableOutput2 = new DoubleValue(2.324);
 	DoubleValue *observableOutput3 = new DoubleValue(3.243);
 
-	n1->getActivationFunction()->addObserableOutput("observableOutput1", observableOutput1);
-	n2->getTransferFunction()->addObserableOutput("observableOutput2", observableOutput2);
-	s1->getSynapseFunction()->addObserableOutput("observableOutput3", observableOutput3);
+	n1->getActivationFunction()->addObservableOutput("observableOutput1", observableOutput1);
+	n2->getTransferFunction()->addObservableOutput("observableOutput2", observableOutput2);
+	s1->getSynapseFunction()->addObservableOutput("observableOutput3", observableOutput3);
 
 	n1->getBiasValue().set(0.66);
 	n2->getBiasValue().set(0.55);
@@ -533,9 +533,9 @@ void TestDynamicsPlotterUtil::testGetNetworkState() {
 	DoubleValue *observableOutput2 = new DoubleValue(2.324);
 	DoubleValue *observableOutput3 = new DoubleValue(3.243);
 
-	n1->getActivationFunction()->addObserableOutput("observableOutput1", observableOutput1);
-	n2->getTransferFunction()->addObserableOutput("observableOutput2", observableOutput2);
-	s1->getSynapseFunction()->addObserableOutput("observableOutput3", observableOutput3);
+	n1->getActivationFunction()->addObservableOutput("observableOutput1", observableOutput1);
+	n2->getTransferFunction()->addObservableOutput("observableOutput2", observableOutput2);
+	s1->getSynapseFunction()->addObservableOutput("observableOutput3", observableOutput3);
 
 	n1->getBiasValue().set(0.66);
 	n2->getBiasValue().set(0.55);

@@ -80,7 +80,7 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 	addParameter("Theta-Eq", mThetaEquation);
 	addParameter("Tester", mEquationTester);
 	
-	addObserableOutput("TestOutput", mEquationTestOutput);
+	("TestOutput", mEquationTestOutput);
 	
 	mTransmitterEquation->setDescription("2. Equation"
 										 "\nVariables: alpha, beta, gamma, delta, theta, aStar, eta, xi, a, ap, x, y, z"
@@ -127,7 +127,7 @@ ScriptableSelfRegulatingNeuronActivationFunction::ScriptableSelfRegulatingNeuron
 	mEquationTester = dynamic_cast<StringValue*>(getParameter("Tester"));
 	
 	mEquationTestOutput = new DoubleValue();
-	addObserableOutput("TestOutput", mEquationTestOutput);
+	("TestOutput", mEquationTestOutput);
 }
 
 /**

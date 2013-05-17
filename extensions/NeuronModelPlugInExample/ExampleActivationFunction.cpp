@@ -73,7 +73,7 @@ ExampleActivationFunction::ExampleActivationFunction()
 	
 	
 	//add an observable that can be plotted with a ParameterPlotter in the editor.
-	addObserableOutput("InnerState", mInnerState);
+	addObservableOutput("InnerState", mInnerState);
 	
 }
 
@@ -98,7 +98,7 @@ ExampleActivationFunction::ExampleActivationFunction(
 	mInnerState = dynamic_cast<DoubleValue*>(other.mInnerState->createCopy());
 	
 	//explicitly add the observable again.
-	addObserableOutput("InnerState", mInnerState);
+	addObservableOutput("InnerState", mInnerState);
 }
 
 

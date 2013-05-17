@@ -64,7 +64,7 @@ ObservableNetworkElement::ObservableNetworkElement(const ObservableNetworkElemen
 ObservableNetworkElement::~ObservableNetworkElement() {
 }
 
-bool ObservableNetworkElement::addObserableOutput(const QString &name, Value *observableOutput) 
+bool ObservableNetworkElement::addObservableOutput(const QString &name, Value *observableOutput) 
 {
 	if(mObservableOutputs.keys().contains(name) || observableOutput == 0) {
 		cerr << "obs: " << observableOutput << " " << mObservableOutputs.size() << endl;

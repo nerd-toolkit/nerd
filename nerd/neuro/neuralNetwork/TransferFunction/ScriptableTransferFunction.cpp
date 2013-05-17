@@ -63,7 +63,7 @@ ScriptableTransferFunction::ScriptableTransferFunction()
 	
 	mVar1 = new DoubleValue();
 	
-	addObserableOutput("Eta", mVar1);
+	("Eta", mVar1);
 	
 	mScriptFileName->removeValueChangedListener(this);
 	
@@ -99,7 +99,7 @@ ScriptableTransferFunction::ScriptableTransferFunction(
 	mVar1 = dynamic_cast<DoubleValue*>(getParameter("Eta"));
 	mRange = dynamic_cast<RangeValue*>(getParameter("Bounds"));
 	
-	addObserableOutput("Eta", mVar1);
+	("Eta", mVar1);
 	
 	mScriptFileName->removeValueChangedListener(this);
 	

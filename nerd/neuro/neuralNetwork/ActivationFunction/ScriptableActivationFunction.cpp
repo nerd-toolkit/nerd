@@ -68,8 +68,8 @@ ScriptableActivationFunction::ScriptableActivationFunction()
 	mVar3 = new StringValue();
 	mVar4 = new StringValue();
 	
-	addObserableOutput("Eta", mVar1);
-	addObserableOutput("Xi", mVar2);
+	("Eta", mVar1);
+	("Xi", mVar2);
 	
 	
 	mScriptFileName->removeValueChangedListener(this);
@@ -110,8 +110,8 @@ ScriptableActivationFunction::ScriptableActivationFunction(
 	mVar4 = dynamic_cast<StringValue*>(getParameter("Lambda"));
 	
 	
-	addObserableOutput("Eta", mVar1);
-	addObserableOutput("Xi", mVar2);
+	("Eta", mVar1);
+	("Xi", mVar2);
 	
 	mScriptFileName->removeValueChangedListener(this);
 	

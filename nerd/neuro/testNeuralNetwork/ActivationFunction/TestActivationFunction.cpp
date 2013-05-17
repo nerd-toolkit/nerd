@@ -205,9 +205,9 @@ void TestActivationFunction::testObservableParameters() {
 	
 	QVERIFY(afa.getObservableOutputNames().empty());
 	Value v1, v2, v3;
-	QVERIFY(afa.addObserableOutput("Value1", &v1));
-	QVERIFY(afa.addObserableOutput("Value2", &v2));
-	QVERIFY(afa.addObserableOutput("Value3", &v3));
+	QVERIFY(afa.addObservableOutput("Value1", &v1));
+	QVERIFY(afa.addObservableOutput("Value2", &v2));
+	QVERIFY(afa.addObservableOutput("Value3", &v3));
 	
 	QVERIFY(afa.getObservableOutputNames().size() == 3);
 	QVERIFY(afa.getObservableOutputNames().contains("Value1"));
@@ -219,7 +219,7 @@ void TestActivationFunction::testObservableParameters() {
 	QVERIFY(afa.getObservableOutput("Value3") == &v3);
 
 	//same value with different name ok.
-	QVERIFY(afa.addObserableOutput("Value4", &v1));
+	QVERIFY(afa.addObservableOutput("Value4", &v1));
 	QVERIFY(afa.getObservableOutputNames().size() == 4);
 	QVERIFY(afa.getObservableOutput("Value4") == &v1);
 	
@@ -227,11 +227,11 @@ void TestActivationFunction::testObservableParameters() {
 	
 	//a value with existing name not ok.
 	Value v4;
-	QVERIFY(afa.addObserableOutput("Value1", &v4) == false);
+	QVERIFY(afa.addObservableOutput("Value1", &v4) == false);
 	QVERIFY(afa.getObservableOutputNames().size() == 4);
 	QVERIFY(afa.getObservableOutput("Value1") == &v1);
 	
-	QVERIFY(afa.addObserableOutput("Value5", 0) == 0);
+	QVERIFY(afa.addObservableOutput("Value5", 0) == 0);
 	QVERIFY(afa.getObservableOutputNames().size() == 4);
 	QVERIFY(afa.getObservableOutputNames().contains("Value5") == false);
 }

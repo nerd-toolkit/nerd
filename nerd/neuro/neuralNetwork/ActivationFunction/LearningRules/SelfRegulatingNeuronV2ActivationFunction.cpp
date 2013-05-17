@@ -111,11 +111,11 @@ SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFuncti
 	
 	addParameter("Options", mOptions);
 
-	addObserableOutput("Xi", mXi);
-	addObserableOutput("Eta", mEta);
+	("Xi", mXi);
+	("Eta", mEta);
 	
 	mCurrentTarget = new DoubleValue(0);
-	addObserableOutput("Target", mCurrentTarget);
+	("Target", mCurrentTarget);
 	
 	if(showModes) {
 		addParameter("ReceptorMode", mReceptorMode);
@@ -147,11 +147,11 @@ SelfRegulatingNeuronV2ActivationFunction::SelfRegulatingNeuronV2ActivationFuncti
 	mTransmitterMode = dynamic_cast<IntValue*>(getParameter("TransmitterMode"));
 	mBiasMode = dynamic_cast<IntValue*>(getParameter("ThetaMode"));
 	
-	addObserableOutput("Xi", mXi);
-	addObserableOutput("Eta", mEta);
+	("Xi", mXi);
+	("Eta", mEta);
 	
 	mCurrentTarget = new DoubleValue(0);
-	addObserableOutput("Target", mCurrentTarget);
+	("Target", mCurrentTarget);
 	
 	valueChanged(mTargetValues);
 	

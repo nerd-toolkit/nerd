@@ -68,9 +68,9 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	mCurrentConcentration = new DoubleValue();
 	mCurrentArea = new DoubleValue();
 	
-	addObserableOutput("Stimulation", mStimulationState);
-	addObserableOutput("Concentration", mCurrentConcentration);
-	addObserableOutput("Area", mCurrentArea);
+	("Stimulation", mStimulationState);
+	("Concentration", mCurrentConcentration);
+	("Area", mCurrentArea);
 	
 	mStimulationState->addValueChangedListener(this);
 	mCurrentConcentration->addValueChangedListener(this);
@@ -124,9 +124,9 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	mCurrentConcentration = new DoubleValue();
 	mCurrentArea = new DoubleValue();
 	
-	addObserableOutput("Stimulation", mStimulationState);
-	addObserableOutput("Concentration", mCurrentConcentration);
-	addObserableOutput("Area", mCurrentArea);
+	("Stimulation", mStimulationState);
+	("Concentration", mCurrentConcentration);
+	("Area", mCurrentArea);
 	
 	mStimulationState->addValueChangedListener(this);
 	mCurrentConcentration->addValueChangedListener(this);
