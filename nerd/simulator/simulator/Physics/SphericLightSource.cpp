@@ -70,7 +70,7 @@ namespace nerd {
 		mBrightnessSensor = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
 		mBrightnessSensor->setNotifyAllSetAttempts(true);
 		mBrightnessControl = new InterfaceValue("", "DesiredBrightness", brightness, 0.0, 1.0);
-		mLightColor = new ColorValue("yellow");
+		mLightColor = new ColorValue("yellow"); // does this even work? if not, why?
 		mHideLightCone = new BoolValue(false);
 		mUseSphereAsLightCone = new BoolValue(false);
 		mReferenceObjectName = new StringValue("");
@@ -349,7 +349,7 @@ namespace nerd {
 			mBodyCollisionObject = new CollisionObject(SphereGeom(this, mRange->get()));
 		}
 		else {
-			CylinderGeom geom(this, mRange->get(), 0.05);	
+			CylinderGeom geom(this, mRange->get(), 0.05); // why a length of 0.05 exactly?
 			Quaternion orientation;
 			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
 				orientation.setFromAngles(90.0, 0.0, 0.0);

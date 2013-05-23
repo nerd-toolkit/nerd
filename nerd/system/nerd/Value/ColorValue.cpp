@@ -158,7 +158,7 @@ const Color& ColorValue::get() const {
 
 QString ColorValue::getValueAsString() const {
 
-	if(mColor.equals(Color(Color(0,0,0,255)))) {
+	if(mColor.equals(Color(0,0,0,255))) {
 		return "black";
 	}
 	else if(mColor.equals(Color(255,255,255,255))) {
