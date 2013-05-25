@@ -308,6 +308,12 @@ namespace nerd {
 		double brightness = 0.0;
 		double distance = 0.0;
 		
+
+
+Tag Photo
+Options
+ShareSendLike
+Timeline Photos
 		if(restrictToHorizontal) {
 			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
 				distance = Math::abs(globalPosition.getZ() - getPositionValue()->getZ());
