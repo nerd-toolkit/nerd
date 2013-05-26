@@ -308,18 +308,16 @@ namespace nerd {
 		double brightness = 0.0;
 		double distance = 0.0;
 		
-
-
-Tag Photo
-Options
-ShareSendLike
-Timeline Photos
 		if(restrictToHorizontal) {
-			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
-				distance = Math::abs(globalPosition.getZ() - getPositionValue()->getZ());
+			if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
+				distance = Math::abs(Math::distance(QPointF(globalPosition.getX(), globalPosition.getZ()),
+													 QPointF(getPositionValue()->getX(), getPositionValue()->getZ())));
+				//distance = Math::abs(globalPosition.getZ() - getPositionValue()->getZ());
 			}
 			else {
-				distance = Math::abs(globalPosition.getY() - getPositionValue()->getY());
+				//distance = Math::abs(globalPosition.getY() - getPositionValue()->getY());
+				distance = Math::abs(Math::distance(QPointF(globalPosition.getX(), globalPosition.getY()),
+													 QPointF(getPositionValue()->getX(), getPositionValue()->getY())));
 			}
 		}
 		else {
@@ -357,7 +355,7 @@ Timeline Photos
 		else {
 			CylinderGeom geom(this, mRange->get(), 0.05); // why a length of 0.05 exactly?
 			Quaternion orientation;
-			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
+			if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
 				orientation.setFromAngles(90.0, 0.0, 0.0);
 			}
 			else {
