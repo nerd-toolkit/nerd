@@ -96,7 +96,7 @@ namespace nerd {
 		ColorValue *mLightColor;
 		IntValue *mType;
 		BoolValue *mHideLightCone;
-		BoolValue *mUseSphereAsLightCone;
+		BoolValue *mUseSphericLightCone;
 		StringValue *mReferenceObjectName;
 		Vector3DValue *mLocalPosition;
 		SimBody *mReferenceObject;

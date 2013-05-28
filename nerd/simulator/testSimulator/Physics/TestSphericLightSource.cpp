@@ -49,19 +49,15 @@
 #include "TestSphericLightSource.h"
 #include "Physics/SphereGeom.h"
 #include "Physics/CylinderGeom.h"
+#include <typeinfo>
 
 using namespace std;
 
 namespace nerd{
 
-// Josef WORK IN PROGRESS
+// Josef
 void TestSphericLightSource::testConstruction() {
 	Core::resetCore();
-	Core::getInstance();
-	
-	DoubleValue *timeStep = new DoubleValue(0.01);
-	Core::getInstance()->getValueManager()->addValue(
-			SimulationConstants::VALUE_TIME_STEP_SIZE, timeStep);
 
 	double brightness_set_1 = 0.564;
 	double range_set_1 = 4.2;
@@ -71,32 +67,54 @@ void TestSphericLightSource::testConstruction() {
 																range_set_1,
 																type_set_1);
 
+	QVERIFY(lightSource_1 != 0);
+
 	// check defaults and set initial values
-	QVERIFY(lightSource_1->getRange() == range_set_1);
- 	QCOMPARE(lightSource_1->getCurrentBrightness(), brightness_set_1);
- 	QCOMPARE(lightSource_1->getDesiredBrightness(), brightness_set_1);
- 
-	// default light color should be "yellow", but is "black" WHY? TODO
-	// ColorValue seems to be working ok on itself, Tests are running and
-	// seem sufficiently constructed (see TestValue.cpp)
+	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_1->
+				getParameter("Range"))->get() == range_set_1);
+
+	InterfaceValue* currentBrightness = 
+		dynamic_cast<InterfaceValue*>(lightSource_1->getParameter("Brightness"));
+
+	QVERIFY(currentBrightness->get() == brightness_set_1);
+
+	InterfaceValue* desiredBrightness = 
+		dynamic_cast<InterfaceValue*>(lightSource_1->
+				getParameter("DesiredBrightness"));
+
+	QVERIFY(desiredBrightness->get() == brightness_set_1);
+
+
 	ColorValue* color_1 = dynamic_cast<ColorValue*>(lightSource_1->
-											getParameter("Color"));
-	QWARN("LightColor: " + color_1->getValueAsString().toLocal8Bit());
-	//QVERIFY(color_1->get().equals(Color(255,255,0)));
-	//QVERIFY(dynamic_cast<ColorValue*>(lightSource_1->getParameter("Color"))->
-	//										getValueAsString() == "yellow");
-	//
- 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_1->getParameter("HideLightCone"))->get() == false);
- 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_1->getParameter("UseSphericLightCone"))->get() == false);
- 	QVERIFY(dynamic_cast<StringValue*>(lightSource_1->getParameter("ReferenceObject"))->get() == "");
-	Vector3DValue* localPosition_1 = dynamic_cast<Vector3DValue*>
-									(lightSource_1->getParameter("LocalPosition"));
+			getParameter("LightColor"));
+	QVERIFY(color_1 != 0);
+	QVERIFY(color_1->getValueAsString() == "yellow");
+	QVERIFY(color_1->get().equals(Color(255,255,0)));
+
+ 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_1->
+				getParameter("HideLightCone"))->get() == false);
+
+ 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_1->
+				getParameter("UseSphericLightCone"))->get() == false);
+
+ 	QVERIFY(dynamic_cast<StringValue*>(lightSource_1->
+				getParameter("ReferenceObject"))->get() == "");
+
+	Vector3DValue* localPosition_1 = 
+		dynamic_cast<Vector3DValue*>(lightSource_1->getParameter("LocalPosition"));
+
 	QVERIFY(localPosition_1->getX() == 0);
 	QVERIFY(localPosition_1->getY() == 0);
 	QVERIFY(localPosition_1->getZ() == 0);
- 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_1->getParameter("UniformLight"))->get() == false);
- 	QVERIFY(dynamic_cast<RangeValue*>(lightSource_1->getParameter("BrightnessRange"))->getMin() == 0);
- 	QVERIFY(dynamic_cast<RangeValue*>(lightSource_1->getParameter("BrightnessRange"))->getMax() == 1);
+
+ 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_1->
+				getParameter("UniformLight"))->get() == false);
+
+ 	QVERIFY(dynamic_cast<RangeValue*>(lightSource_1->
+				getParameter("BrightnessRange"))->getMin() == 0);
+
+ 	QVERIFY(dynamic_cast<RangeValue*>(lightSource_1->
+				getParameter("BrightnessRange"))->getMax() == 1);
  
  	QVERIFY(lightSource_1->getOutputValues().size() == 1);
  	QVERIFY(lightSource_1->getInputValues().size() == 1);
@@ -105,10 +123,129 @@ void TestSphericLightSource::testConstruction() {
 	QVERIFY(lightSource_1->getCollisionObjects().size() == 1);
 	CollisionObject* colObj_1 = lightSource_1->getCollisionObjects().first();
 	CylinderGeom* colGeom_1 = dynamic_cast<CylinderGeom*>(colObj_1->getGeometry());
-	QVERIFY(colGeom_1 != 0);
-	//QVERIFY(colObj_1->getMaterialType() == "Light");
 
-	// TODO lots!
+	QVERIFY(colGeom_1 != 0);
+	//QVERIFY(colGeom_1->getColor().equals(Color(255,255,0)));
+
+	delete lightSource_1;
+
+	// different object, other values
+	double brightness_set_2 = 4.56;
+	double range_set_2 = -5;
+	int type_set_2 = 2;
+	SphericLightSource *lightSource_2 = new SphericLightSource("LightSource_1",
+																brightness_set_2,
+																range_set_2,
+																type_set_2);
+	QVERIFY(lightSource_2 != 0);
+
+	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_2->
+				getParameter("Range"))->get() == range_set_2);
+
+	// no Brightness value below 0 or above 1 should be possible
+	QVERIFY(dynamic_cast<InterfaceValue*>(lightSource_2->
+				getParameter("Brightness"))->get() == 1);
+
+	QVERIFY(dynamic_cast<InterfaceValue*>(lightSource_2->
+				getParameter("DesiredBrightness"))->get() == 1);
+
+	delete lightSource_2;
 
 }
+
+// josef
+void TestSphericLightSource::testCopy() {
+	Core::resetCore();
+
+	double brightness_set_1 = 0.444;
+	double range_set_1 = 4.2;
+	int type_set_1 = 1;
+	SphericLightSource* lightSource_1 = new SphericLightSource("LightSource_1",
+																brightness_set_1,
+																range_set_1,
+																type_set_1);
+	QVERIFY(lightSource_1 != 0);
+
+	// change color
+	dynamic_cast<ColorValue*>(lightSource_1->
+			getParameter("LightColor"))->set(255,0,0);
+
+	QVERIFY(dynamic_cast<ColorValue*>(lightSource_1->
+				getParameter("LightColor"))->get().equals(Color(255,0,0)));
+
+	SphericLightSource* lightSource_2 = new SphericLightSource(*lightSource_1);
+	QVERIFY(lightSource_2 != 0);
+
+	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_2->
+				getParameter("Range"))->get() == range_set_1);
+
+	InterfaceValue* currentBrightness = 
+		dynamic_cast<InterfaceValue*>(lightSource_2->getParameter("Brightness"));
+
+	QVERIFY(currentBrightness->get() == brightness_set_1);
+
+	InterfaceValue* desiredBrightness = 
+		dynamic_cast<InterfaceValue*>(lightSource_2->
+				getParameter("DesiredBrightness"));
+
+	QVERIFY(desiredBrightness->get() == brightness_set_1);
+
+
+	ColorValue* color_2 = dynamic_cast<ColorValue*>(lightSource_2->
+			getParameter("LightColor"));
+
+	QVERIFY(color_2 != 0);
+	QVERIFY(color_2->getValueAsString() == "red");
+	QVERIFY(color_2->get().equals(Color(255,0,0)));
+
+ 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_2->
+				getParameter("HideLightCone"))->get() == false);
+
+ 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_2->
+				getParameter("UseSphericLightCone"))->get() == false);
+
+ 	QVERIFY(dynamic_cast<StringValue*>(lightSource_2->
+				getParameter("ReferenceObject"))->get() == "");
+
+	Vector3DValue* localPosition_2 = 
+		dynamic_cast<Vector3DValue*>(lightSource_2->
+				getParameter("LocalPosition"));
+
+	QVERIFY(localPosition_2->getX() == 0);
+	QVERIFY(localPosition_2->getY() == 0);
+	QVERIFY(localPosition_2->getZ() == 0);
+
+ 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_2->
+				getParameter("UniformLight"))->get() == false);
+
+ 	QVERIFY(dynamic_cast<RangeValue*>(lightSource_2->
+				getParameter("BrightnessRange"))->getMin() == 0);
+
+ 	QVERIFY(dynamic_cast<RangeValue*>(lightSource_2->
+				getParameter("BrightnessRange"))->getMax() == 1);
+ 
+ 	QVERIFY(lightSource_2->getOutputValues().size() == 1);
+ 	QVERIFY(lightSource_2->getInputValues().size() == 1);
+
+	// collisionObject
+	QVERIFY(lightSource_2->getCollisionObjects().size() == 1);
+
+	CollisionObject* colObj_2 = lightSource_2->getCollisionObjects().first();
+
+	CylinderGeom* colGeom_2 = 
+		dynamic_cast<CylinderGeom*>(colObj_2->getGeometry());
+
+	QVERIFY(colGeom_2 != 0);
+	//QVERIFY(colGeom_2->getColor().equals(Color(255,0,0)));
+
+	delete lightSource_1;
+	delete lightSource_2;
+
+}
+
+// josef
+void TestSphericLightSource::testMethods() {
+
+}
+
 };

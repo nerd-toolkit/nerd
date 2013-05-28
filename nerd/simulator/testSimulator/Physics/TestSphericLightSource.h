@@ -55,6 +55,8 @@ class TestSphericLightSource:public QObject {
 
 	private slots:
 		void testConstruction();
+		void testCopy();
+		void testMethods();
 
 	private:
 

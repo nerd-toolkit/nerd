@@ -62,7 +62,7 @@ namespace nerd {
 	 */
 	SphericLightSource::SphericLightSource(const QString &name, double brightness, double range, int type)
 	: LightSource(name, type), mRange(0), mBrightnessSensor(0), mBrightnessControl(0), 
-		mLightColor(0), mHideLightCone(0), mUseSphereAsLightCone(0), 
+		mLightColor(0), mHideLightCone(0), mUseSphericLightCone(0), 
 		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0),
 		mSwitchYZAxes(0)
 	{
@@ -70,9 +70,9 @@ namespace nerd {
 		mBrightnessSensor = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
 		mBrightnessSensor->setNotifyAllSetAttempts(true);
 		mBrightnessControl = new InterfaceValue("", "DesiredBrightness", brightness, 0.0, 1.0);
-		mLightColor = new ColorValue("yellow"); // does this even work? if not, why?
+		mLightColor = new ColorValue("yellow");
 		mHideLightCone = new BoolValue(false);
-		mUseSphereAsLightCone = new BoolValue(false);
+		mUseSphericLightCone = new BoolValue(false);
 		mReferenceObjectName = new StringValue("");
 		mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
 		mHomogeneousDistribution = new BoolValue(false);
@@ -81,9 +81,9 @@ namespace nerd {
 		addParameter("Range", mRange);
 		addParameter("Brightness", mBrightnessSensor);
 		addParameter("DesiredBrightness", mBrightnessControl);
-		addParameter("Color", mLightColor);
+		addParameter("LightColor", mLightColor);
 		addParameter("HideLightCone", mHideLightCone);
-		addParameter("UseSphericLightCone", mUseSphereAsLightCone);
+		addParameter("UseSphericLightCone", mUseSphericLightCone);
 		addParameter("ReferenceObject", mReferenceObjectName);
 		addParameter("LocalPosition", mLocalPosition);
 		addParameter("UniformLight", mHomogeneousDistribution);
@@ -120,7 +120,7 @@ namespace nerd {
 		mBrightnessControl = dynamic_cast<InterfaceValue*>(getParameter("DesiredBrightness"));
 		mLightColor = dynamic_cast<ColorValue*>(getParameter("Color"));
 		mHideLightCone = dynamic_cast<BoolValue*>(getParameter("HideLightCone"));
-		mUseSphereAsLightCone = dynamic_cast<BoolValue*>(getParameter("UseSphericLightCone"));
+		mUseSphericLightCone = dynamic_cast<BoolValue*>(getParameter("UseSphericLightCone"));
 		mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
 		mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
 		mHomogeneousDistribution = dynamic_cast<BoolValue*>(getParameter("UniformLight"));
@@ -179,7 +179,7 @@ namespace nerd {
 			mBodyCollisionObject->setOwner(this);
 			mBodyCollisionObject->setHostBody(this);
 			
-			if(mUseSphereAsLightCone->get()) {
+			if(mUseSphericLightCone->get()) {
 				SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
 				if(geom != 0) {
 					geom->setRadius(mRange->get());
@@ -216,7 +216,7 @@ namespace nerd {
 			updateLightColor();
 		}
 		else if(value == mRange) {
-			if(mUseSphereAsLightCone->get()) {
+			if(mUseSphericLightCone->get()) {
 				SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
 				if(geom != 0) {
 					geom->setRadius(mRange->get());
@@ -310,14 +310,16 @@ namespace nerd {
 		
 		if(restrictToHorizontal) {
 			if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
-				distance = Math::abs(Math::distance(QPointF(globalPosition.getX(), globalPosition.getZ()),
-													 QPointF(getPositionValue()->getX(), getPositionValue()->getZ())));
-				//distance = Math::abs(globalPosition.getZ() - getPositionValue()->getZ());
+				distance = Math::abs(Math::distance(
+							QPointF(globalPosition.getX(), globalPosition.getZ()),
+							QPointF(getPositionValue()->getX(), getPositionValue()->getZ()
+				)));
 			}
 			else {
-				//distance = Math::abs(globalPosition.getY() - getPositionValue()->getY());
-				distance = Math::abs(Math::distance(QPointF(globalPosition.getX(), globalPosition.getY()),
-													 QPointF(getPositionValue()->getX(), getPositionValue()->getY())));
+				distance = Math::abs(Math::distance(
+							QPointF(globalPosition.getX(), globalPosition.getY()),
+							QPointF(getPositionValue()->getX(), getPositionValue()->getY()
+				)));
 			}
 		}
 		else {
@@ -349,7 +351,7 @@ namespace nerd {
 			delete mBodyCollisionObject;
 		}
 		mBodyCollisionObject = 0;
-		if(mUseSphereAsLightCone->get()) {
+		if(mUseSphericLightCone->get()) {
 			mBodyCollisionObject = new CollisionObject(SphereGeom(this, mRange->get()));
 		}
 		else {
