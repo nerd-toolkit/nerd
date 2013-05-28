@@ -61,7 +61,7 @@ MultiplicativeSynapseFunction::MultiplicativeSynapseFunction()
 	: SynapseFunction("Multiplicative")
 {
 	mEffectiveWeight = new DoubleValue();
-	("EffectiveWeight", mEffectiveWeight);
+	addObservableOutput("EffectiveWeight", mEffectiveWeight);
 }
 
 
@@ -74,7 +74,7 @@ MultiplicativeSynapseFunction::MultiplicativeSynapseFunction(const Multiplicativ
 	: Object(), ValueChangedListener(), SynapseFunction(other) 
 {
 	mEffectiveWeight = new DoubleValue();
-	("EffectiveWeight", mEffectiveWeight);
+	addObservableOutput("EffectiveWeight", mEffectiveWeight);
 }
 
 /**

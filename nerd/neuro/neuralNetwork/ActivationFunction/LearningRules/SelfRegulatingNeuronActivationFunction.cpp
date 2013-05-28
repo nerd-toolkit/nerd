@@ -122,8 +122,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(c
 // 	addParameter("AdjustWeights", mAdjustWeights);
 // 	addParameter("RestrictToLinks", mRestrictToLinkSynapses);
 	
-	("Xi", mXi);
-	("Eta", mEta);
+	addObservableOutput("Xi", mXi);
+	addObservableOutput("Eta", mEta);
 	
 	if(showModes) {
 		addParameter("ReceptorMode", mReceptorMode);
@@ -159,8 +159,8 @@ SelfRegulatingNeuronActivationFunction::SelfRegulatingNeuronActivationFunction(
 	mTransmitterMode = dynamic_cast<IntValue*>(getParameter("TransmitterMode"));
 	mBiasMode = dynamic_cast<IntValue*>(getParameter("ThetaMode"));
 	
-	("Xi", mXi);
-	("Eta", mEta);
+	addObservableOutput("Xi", mXi);
+	addObservableOutput("Eta", mEta);
 }
 
 /**

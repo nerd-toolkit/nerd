@@ -78,7 +78,7 @@ namespace nerd {
 		mInactivationObservable = new DoubleValue(0);
 		mInactivationObservable->addValueChangedListener(this);
 		
-		("Inactive", mInactivationObservable);
+		addObservableOutput("Inactive", mInactivationObservable);
 
 		addParameter("Settings", mTypeParameters);
 		addParameter("Probability", mProbabilityForChange);
@@ -106,13 +106,13 @@ namespace nerd {
 		
 		mInactivationObservable = new DoubleValue(mInactive->get() ? 1.0 : 0.0);
 		mInactivationObservable->addValueChangedListener(this);
-		("Inactive", mInactivationObservable);
+		addObservableOutput("Inactive", mInactivationObservable);
 
 		for(QHashIterator<QString, Value*> i(other.mObservableOutputs); i.hasNext();) {
 			i.next();
 			if(i.key() != "Inactive") {
 				DoubleValue *obs = dynamic_cast<DoubleValue*>(i.value()->createCopy());  
-				(i.key(), obs);
+				addObservableOutput(i.key(), obs);
 				mObservables.append(obs);
 			}
 		}
@@ -351,7 +351,7 @@ namespace nerd {
 				DoubleValue *newObservable = new DoubleValue();
 				params.mObservable = newObservable;
 				
-				("Observable" + QString::number(i) + "_T" + QString::number(params.mType), newObservable);
+				addObservableOutput("Observable" + QString::number(i) + "_T" + QString::number(params.mType), newObservable);
 				
 				mObservables.append(newObservable);
 			}

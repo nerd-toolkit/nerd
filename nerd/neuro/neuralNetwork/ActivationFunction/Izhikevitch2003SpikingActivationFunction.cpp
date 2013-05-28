@@ -90,9 +90,9 @@ Izhikevitch2003SpikingActivationFunction::Izhikevitch2003SpikingActivationFuncti
 	mRecoveryUpdateMode_du->setDescription("Update modus for du:\n"
 					"0: du = a (b v - u)");
 	
-	("v", mMembranePotential_v);
-	("u", mMembraneRecovery_u);
-	("I", mInputCurrent);
+	addObservableOutput("v", mMembranePotential_v);
+	addObservableOutput("u", mMembraneRecovery_u);
+	addObservableOutput("I", mInputCurrent);
 	
 }
 
@@ -113,9 +113,9 @@ Izhikevitch2003SpikingActivationFunction::Izhikevitch2003SpikingActivationFuncti
 	
 	mInputCurrent = new DoubleValue(0.0);
 	
-	("v", mMembranePotential_v);
-	("u", mMembraneRecovery_u);
-	("I", mInputCurrent);
+	addObservableOutput("v", mMembranePotential_v);
+	addObservableOutput("u", mMembraneRecovery_u);
+	addObservableOutput("I", mInputCurrent);
 }
 
 Izhikevitch2003SpikingActivationFunction::~Izhikevitch2003SpikingActivationFunction() {
