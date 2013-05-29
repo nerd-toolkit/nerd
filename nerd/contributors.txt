@@ -62,11 +62,19 @@ Preliminary Version of NERD Dynamics Analyzer (now deprecated)
 Josef Behr
 03.2012 - now
 NERD Dynamics Analyzer (Helperfunctions, Diagramplotters: Bifurcation, Isoperiodic, First Return Map, Basin of Attraction)
+Maintenance (Testing, Refactoring)
 
 
 Florian Ziegler
 06.2012 - now
 NERD Dynamics Analyzer: Matlab Script to view and layout stored NERD dynamics diagrams.
+Testing
+
+
+Valentin Churavy
+03.2013 - now
+Infrastructure (transfer from SVN to Git)
+PlugIns (Virtual Vision)
 
 
 

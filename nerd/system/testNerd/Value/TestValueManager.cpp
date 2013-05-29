@@ -76,7 +76,7 @@ void TestValueManager::testConstructor() {
 	Core::resetCore();
 	
 	EventManager *em = new EventManager();
-	ValueManager *vm = new ValueManager(em);
+	ValueManager *vm = new ValueManager();
 
 	//test available prototypes
 	QList<Value*> prototypes = vm->getPrototypes();
@@ -193,7 +193,7 @@ void TestValueManager::testAddValue(){
 void TestValueManager::testFindValue(){
 	Core::resetCore();
 	EventManager *em = new EventManager();
-	ValueManager *manager = new ValueManager(em);
+	ValueManager *manager = new ValueManager();
 	
 	IntValue *iVal = new IntValue(100);
 	Value *testVal = new Value();
@@ -297,7 +297,7 @@ void TestValueManager::testNotificationStack() {
 	Core::resetCore();
 	
 	EventManager eManager;
-	ValueManager manager(&eManager);
+	ValueManager manager;
 	IntValue iVal1(10);
 	IntValue iVal2(20);
 	manager.pushToNotificationStack(&iVal1);

@@ -68,7 +68,7 @@ class DoubleValue;
 class ValueManager {
 
 	public:
-		ValueManager(EventManager *eventManager);
+		ValueManager();
 		~ValueManager();
 
 		bool nameExists(const QString &name);

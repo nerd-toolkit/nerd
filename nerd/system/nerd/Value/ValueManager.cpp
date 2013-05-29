@@ -87,11 +87,14 @@ namespace nerd {
  * The constructor automatically adds prototypes for all common value types.
  * Additional prototypes can be added manually with method addPrototype().
  */
-ValueManager::ValueManager(EventManager *eventManager) : mMutex(QMutex::Recursive), 
+ValueManager::ValueManager() : mMutex(QMutex::Recursive), 
 														 mRepositoryChangedCounter(0)
 {
-	mRepositoryChangedEvent = eventManager
-		->createEvent(NerdConstants::EVENT_VALUE_REPOSITORY_CHANGED);
+	mRepositoryChangedEvent = Core::getInstance()->getEventManager()
+			->createEvent(NerdConstants::EVENT_VALUE_REPOSITORY_CHANGED);
+	
+// 	mRepositoryChangedEvent = eventManager
+// 		->createEvent(NerdConstants::EVENT_VALUE_REPOSITORY_CHANGED);
 
 	mRepositoryChangedCounter = new IntValue(0);
 	addValue(NerdConstants::VALUE_NERD_REPOSITORY_CHANGED_COUNTER, 

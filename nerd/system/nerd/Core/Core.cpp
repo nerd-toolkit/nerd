@@ -110,7 +110,7 @@ Core::Core()
 		mShutDownEvent(0), mTasksExecutedEvent(0), mShutDownCompleted(false),
 		mIsShuttingDown(false)
 {
-	signal(SIGINT,terminationSignalCatcher);
+	signal(SIGINT, terminationSignalCatcher);
 
 	QStringList commandLineArguments = QCoreApplication::instance()->arguments();
 	mIsUsingReducedFileWriting = false;
@@ -184,7 +184,6 @@ Core::~Core() {
 	}
 
 	//destroy all system objects.
-// 	for(int i = mSystemObjects.size() - 1; i >= 0 ; --i) {
 	for(int i = 0; i < mSystemObjects.size(); ++i) {
 		if(sVerbose) {
 			cerr << "> " << flush;
@@ -216,7 +215,7 @@ Core::~Core() {
 	delete mEventManager;
 	delete mPlugInManager;
 
-	//Note: mCurrentLogMessage was destroyed together with the EventManager.
+	//Note: mCurrentLogMessage was destroyed together with the ValueManager.
 	mCurrentLogMessage = 0;
 
 	if(mLogFile != 0) {
@@ -295,7 +294,7 @@ void Core::setUpCore() {
 
 	//Core infrastructure managers
 	mEventManager = new EventManager();
-	mValueManager = new ValueManager(mEventManager);
+	mValueManager = new ValueManager();
 	mPlugInManager = new PlugInManager();
 
 	mValueManager->addValue(NerdConstants::VALUE_NERD_ENABLE_PERFORMANCE_MEASUREMENTS, 
