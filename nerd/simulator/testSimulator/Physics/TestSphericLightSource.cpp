@@ -49,7 +49,7 @@
 #include "TestSphericLightSource.h"
 #include "Physics/SphereGeom.h"
 #include "Physics/CylinderGeom.h"
-#include <typeinfo>
+#include "Math/Math.h"
 
 using namespace std;
 
@@ -122,12 +122,17 @@ void TestSphericLightSource::testConstruction() {
 	// collisionObject
 	QVERIFY(lightSource_1->getCollisionObjects().size() == 1);
 	CollisionObject* colObj_1 = lightSource_1->getCollisionObjects().first();
+	QVERIFY(colObj_1 != 0);
+	QVERIFY(colObj_1->getOwner() == 0);
 	CylinderGeom* colGeom_1 = dynamic_cast<CylinderGeom*>(colObj_1->getGeometry());
 
 	QVERIFY(colGeom_1 != 0);
-	//QVERIFY(colGeom_1->getColor().equals(Color(255,255,0)));
+	// method updateLightColor changes only geometry color alpha value
+	QVERIFY(colGeom_1->getColor().equals(
+				Color(255,255,0,Math::abs(brightness_set_1*80.0))));
 
 	delete lightSource_1;
+
 
 	// different object, other values
 	double brightness_set_2 = 4.56;
@@ -139,10 +144,12 @@ void TestSphericLightSource::testConstruction() {
 																type_set_2);
 	QVERIFY(lightSource_2 != 0);
 
+	// negative ranges are possible? no checks? TODO
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_2->
 				getParameter("Range"))->get() == range_set_2);
 
-	// no Brightness value below 0 or above 1 should be possible
+	// brightness range is restricted to (0,1) initially by default
+	// this is stupid and should probably be changed ... TODO
 	QVERIFY(dynamic_cast<InterfaceValue*>(lightSource_2->
 				getParameter("Brightness"))->get() == 1);
 
@@ -236,7 +243,8 @@ void TestSphericLightSource::testCopy() {
 		dynamic_cast<CylinderGeom*>(colObj_2->getGeometry());
 
 	QVERIFY(colGeom_2 != 0);
-	//QVERIFY(colGeom_2->getColor().equals(Color(255,0,0)));
+	QVERIFY(colGeom_2->getColor().equals(
+				Color(255,0,0,Math::abs(brightness_set_1*80.0))));
 
 	delete lightSource_1;
 	delete lightSource_2;
@@ -245,7 +253,56 @@ void TestSphericLightSource::testCopy() {
 
 // josef
 void TestSphericLightSource::testMethods() {
+	Core::resetCore();
+
+	double brightness_set_1 = 0.66645;
+	double range_set_1 = 2;
+	int type_set_1 = 3;
+	SphericLightSource *lightSource_1 = new SphericLightSource("LightSource_1",
+																brightness_set_1,
+																range_set_1,
+																type_set_1);
+
+	QVERIFY(lightSource_1 != 0);
+
+	// collisionObject defaults
+	QVERIFY(lightSource_1->getCollisionObjects().size() == 1);
+	CollisionObject* colObj_1 = lightSource_1->getCollisionObjects().first();
+
+	QVERIFY(colObj_1 != 0);
+	QVERIFY(colObj_1->getOwner() == 0);
+	QVERIFY(colObj_1->getHostBody() == lightSource_1); // set by addCollisionObject
+
+	CylinderGeom* colGeom_1 = dynamic_cast<CylinderGeom*>(colObj_1->getGeometry());
+	QVERIFY(colGeom_1 != 0);
+	QVERIFY(colGeom_1->getRadius() == range_set_1);
+	QVERIFY(colGeom_1->getColor().equals(
+				Color(255,255,0,Math::abs(brightness_set_1*80.0))));
+
+	// setup w/o reference object
+	lightSource_1->setup();
+
+	// owner of collisionObject should have changed
+	QVERIFY(colObj_1->getOwner() == lightSource_1);
+	// as well as radius of geometry
+	QVERIFY(colGeom_1->getRadius() == range_set_1);
+
+	// changing the ColorValue should change the geometry color as well
+	// relates to updateLightColor() method
+	ColorValue* color_1 = dynamic_cast<ColorValue*>(lightSource_1->
+			getParameter("LightColor"));
+	color_1->set(Color(255,0,0));
+	QVERIFY(colGeom_1->getColor().equals(
+				Color(255,0,0,Math::abs(brightness_set_1*80))));
+
+	RangeValue* desired_1 = dynamic_cast<RangeValue*>(lightSource_1->
+			getParameter("DesiredBrightness"));
+
+	delete lightSource_1;
+
+
+	// TODO test referenceObject
 
 }
 
-};
+}

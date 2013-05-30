@@ -49,7 +49,6 @@
 #include <QString>
 #include <QHash>
 #include "Physics/LightSource.h"
-#include "Physics/SimSensor.h"
 #include "Value/RangeValue.h"
 
 namespace nerd {
@@ -58,7 +57,7 @@ namespace nerd {
 	 * SphericLightSource.
 	 *
 	 */
-	class SphericLightSource : public LightSource, public virtual SimSensor {
+	class SphericLightSource : public LightSource {
 	public:
 		SphericLightSource(const QString &name, double brightness, double range, int type = 0); 
 		SphericLightSource(const SphericLightSource &other);
@@ -70,7 +69,7 @@ namespace nerd {
 		virtual void clear();
 		
 		virtual void valueChanged(Value *value);
-		virtual void updateSensorValues();
+		void updateBrightnessValue();
 		
 		void updateLightColor();
 		

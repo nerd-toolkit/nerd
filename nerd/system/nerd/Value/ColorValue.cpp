@@ -225,7 +225,6 @@ QString ColorValue::getValueAsString() const {
 
 
 bool ColorValue::setValueFromString(const QString &value) {
-	std::cout << "setting colorValue from string " << value.toStdString() << std::endl;
 	if(value.toLower().compare("black") == 0) {
 		set(0,0,0);
 	}

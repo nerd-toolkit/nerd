@@ -41,7 +41,7 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-
+// TODO refactor? remove mBrightnessSensor and mBrightnessRange?
 
 #include "SphericLightSource.h"
 #include <iostream>
@@ -98,10 +98,10 @@ namespace nerd {
 			mSwitchYZAxes = Core::getInstance()->getValueManager()->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
 		}
 		
-		
 		createCollisionObject();
 		
-		updateSensorValues();
+		updateBrightnessValue();
+		updateLightColor();
 	}
 	
 	
@@ -118,7 +118,7 @@ namespace nerd {
 		mRange = dynamic_cast<DoubleValue*>(getParameter("Range"));
 		mBrightnessSensor = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
 		mBrightnessControl = dynamic_cast<InterfaceValue*>(getParameter("DesiredBrightness"));
-		mLightColor = dynamic_cast<ColorValue*>(getParameter("Color"));
+		mLightColor = dynamic_cast<ColorValue*>(getParameter("LightColor"));
 		mHideLightCone = dynamic_cast<BoolValue*>(getParameter("HideLightCone"));
 		mUseSphericLightCone = dynamic_cast<BoolValue*>(getParameter("UseSphericLightCone"));
 		mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
@@ -134,14 +134,15 @@ namespace nerd {
 		
 		createCollisionObject();
 		
-		updateSensorValues();
+		updateBrightnessValue();
+		updateLightColor();
 	}
 	
 	/**
 	 * Destructor.
 	 */
 	SphericLightSource::~SphericLightSource() {
-		//TODO delete CollisionObjects?
+		removeCollisionObject(mBodyCollisionObject);
 		delete mBodyCollisionObject;
 	}
 	
@@ -177,8 +178,11 @@ namespace nerd {
 		
 		if(mBodyCollisionObject != 0) {
 			mBodyCollisionObject->setOwner(this);
-			mBodyCollisionObject->setHostBody(this);
-			
+
+			// is already done by addCollisionObject()
+			//mBodyCollisionObject->setHostBody(this);
+
+			/* radius is already handled/set by createCollisionObject, why again?
 			if(mUseSphericLightCone->get()) {
 				SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
 				if(geom != 0) {
@@ -191,7 +195,7 @@ namespace nerd {
 					geom->setRadius(mRange->get());
 				}
 			}
-			updateSensorValues();
+			*/
 		}
 	}
 	
@@ -212,8 +216,11 @@ namespace nerd {
 		if(value == 0) {
 			return;
 		}
-		else if(value == mBrightnessSensor) {
-			updateLightColor();
+		//else if(value == mBrightnessSensor) {
+		//	updateLightColor();
+		//}
+		else if(value == mBrightnessControl) {
+			updateBrightnessValue();
 		}
 		else if(value == mRange) {
 			if(mUseSphericLightCone->get()) {
@@ -230,10 +237,10 @@ namespace nerd {
 			}
 		}
 		else if(value == mHideLightCone) {
-			updateSensorValues();
+			updateLightColor();
 		}
 		else if(value == mLightColor) {
-			updateSensorValues();
+			updateLightColor();
 		}
 		else if(mReferenceObject != 0 
 			&& (value == mReferenceObject->getPositionValue() 
@@ -262,21 +269,25 @@ namespace nerd {
 	}
 	
 	
-	void SphericLightSource::updateSensorValues() {
+	void SphericLightSource::updateBrightnessValue() {
 		mBrightnessSensor->set(mBrightnessControl->get());
 	}
 	
 	void SphericLightSource::updateLightColor() {
+		Core::log("SphericLightSource: updateLightColor called!", true);
 		//Set transparency to a value between 0 and 80, depending on the current brightness.
 		//80 is about 30 percent of full opacity (255) at max.
-		Color color = mBodyCollisionObject->getGeometry()->getColor();
+
+		//Color color = mBodyCollisionObject->getGeometry()->getColor();
+		// light color should be updated from the LightColor parameter!
+		Color color = mLightColor->get();
 		if(mHideLightCone->get()) {
 			color.setAlpha(0); 
 		}
 		else {
 			color.setAlpha((int) (Math::abs(mBrightnessSensor->get()) * 80.0)); 
 		}
-		mBodyCollisionObject->getGeometry()->setColor(color);	
+		mBodyCollisionObject->getGeometry()->setColor(color);
 	}
 	
 	double SphericLightSource::getRange() const {

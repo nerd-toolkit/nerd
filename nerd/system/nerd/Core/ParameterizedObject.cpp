@@ -147,6 +147,8 @@ bool ParameterizedObject::addParameter(const QString &name, Value *value) {
  */
 bool ParameterizedObject::addParameter(const QString &name, Value *value, bool publish) {
 	if(value == 0 || mNames.contains(name)) {
+		Core::log("ParameterizedObject: Can not add requested parameter " + name +
+				" since it already exists. Please check corresponding code!", true);
 		return false;
 	}
 	mNames.append(name);
