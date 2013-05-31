@@ -78,8 +78,8 @@ void TestSphericLightSource::testConstruction() {
 
 	QVERIFY(currentBrightness->get() == brightness_set_1);
 
-	InterfaceValue* desiredBrightness = 
-		dynamic_cast<InterfaceValue*>(lightSource_1->
+	DoubleValue* desiredBrightness = 
+		dynamic_cast<DoubleValue*>(lightSource_1->
 				getParameter("DesiredBrightness"));
 
 	QVERIFY(desiredBrightness->get() == brightness_set_1);
@@ -95,7 +95,7 @@ void TestSphericLightSource::testConstruction() {
 				getParameter("HideLightCone"))->get() == false);
 
  	QVERIFY(dynamic_cast<BoolValue*>(lightSource_1->
-				getParameter("UseSphericLightCone"))->get() == false);
+				getParameter("SphericLightCone"))->get() == false);
 
  	QVERIFY(dynamic_cast<StringValue*>(lightSource_1->
 				getParameter("ReferenceObject"))->get() == "");
@@ -153,8 +153,15 @@ void TestSphericLightSource::testConstruction() {
 	QVERIFY(dynamic_cast<InterfaceValue*>(lightSource_2->
 				getParameter("Brightness"))->get() == 1);
 
+	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_2->
+				getParameter("DesiredBrightness"))->get() == brightness_set_2);
+
+	RangeValue* brightnessRange_2 = dynamic_cast<RangeValue*>(lightSource_2->
+			getParameter("BrightnessRange"));
+	brightnessRange_2->set(-5,5);
+
 	QVERIFY(dynamic_cast<InterfaceValue*>(lightSource_2->
-				getParameter("DesiredBrightness"))->get() == 1);
+				getParameter("Brightness"))->get() == brightness_set_2);
 
 	delete lightSource_2;
 
@@ -191,8 +198,8 @@ void TestSphericLightSource::testCopy() {
 
 	QVERIFY(currentBrightness->get() == brightness_set_1);
 
-	InterfaceValue* desiredBrightness = 
-		dynamic_cast<InterfaceValue*>(lightSource_2->
+	DoubleValue* desiredBrightness = 
+		dynamic_cast<DoubleValue*>(lightSource_2->
 				getParameter("DesiredBrightness"));
 
 	QVERIFY(desiredBrightness->get() == brightness_set_1);
@@ -209,7 +216,7 @@ void TestSphericLightSource::testCopy() {
 				getParameter("HideLightCone"))->get() == false);
 
  	QVERIFY(dynamic_cast<BoolValue*>(lightSource_2->
-				getParameter("UseSphericLightCone"))->get() == false);
+				getParameter("SphericLightCone"))->get() == false);
 
  	QVERIFY(dynamic_cast<StringValue*>(lightSource_2->
 				getParameter("ReferenceObject"))->get() == "");
@@ -284,8 +291,6 @@ void TestSphericLightSource::testMethods() {
 
 	// owner of collisionObject should have changed
 	QVERIFY(colObj_1->getOwner() == lightSource_1);
-	// as well as radius of geometry
-	QVERIFY(colGeom_1->getRadius() == range_set_1);
 
 	// changing the ColorValue should change the geometry color as well
 	// relates to updateLightColor() method
@@ -294,9 +299,6 @@ void TestSphericLightSource::testMethods() {
 	color_1->set(Color(255,0,0));
 	QVERIFY(colGeom_1->getColor().equals(
 				Color(255,0,0,Math::abs(brightness_set_1*80))));
-
-	RangeValue* desired_1 = dynamic_cast<RangeValue*>(lightSource_1->
-			getParameter("DesiredBrightness"));
 
 	delete lightSource_1;
 

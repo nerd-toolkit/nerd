@@ -69,9 +69,9 @@ namespace nerd {
 		virtual void clear();
 		
 		virtual void valueChanged(Value *value);
+
 		void updateBrightnessValue();
-		
-		void updateLightColor();
+		void updateLightCone();
 		
 		int getType() const;
 		void setType(int type);
@@ -90,16 +90,16 @@ namespace nerd {
 		
 	private:
 		DoubleValue *mRange;
-		InterfaceValue *mBrightnessSensor;
-		InterfaceValue *mBrightnessControl;
+		InterfaceValue *mBrightness;
+		DoubleValue *mDesiredBrightness;
 		ColorValue *mLightColor;
 		IntValue *mType;
 		BoolValue *mHideLightCone;
-		BoolValue *mUseSphericLightCone;
+		BoolValue *mSphericLightCone;
 		StringValue *mReferenceObjectName;
 		Vector3DValue *mLocalPosition;
 		SimBody *mReferenceObject;
-		BoolValue *mHomogeneousDistribution;
+		BoolValue *mUniformLight;
 		RangeValue *mBrightnessRange;
 		BoolValue *mSwitchYZAxes;
 	};

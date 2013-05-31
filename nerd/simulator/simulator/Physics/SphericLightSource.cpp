@@ -60,48 +60,50 @@ namespace nerd {
 	/**
 	 * Constructs a new SphericLightSource.
 	 */
-	SphericLightSource::SphericLightSource(const QString &name, double brightness, double range, int type)
-	: LightSource(name, type), mRange(0), mBrightnessSensor(0), mBrightnessControl(0), 
-		mLightColor(0), mHideLightCone(0), mUseSphericLightCone(0), 
-		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0),
+	SphericLightSource::SphericLightSource(
+			const QString &name, double brightness, double range, int type)
+	: LightSource(name, type), mRange(0), mBrightness(0), mLightColor(0),
+		mHideLightCone(0), mSphericLightCone(0), mReferenceObjectName(0),
+		mLocalPosition(0), mReferenceObject(0), mUniformLight(0),
 		mSwitchYZAxes(0)
 	{
 		mRange = new DoubleValue(range);
-		mBrightnessSensor = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
-		mBrightnessSensor->setNotifyAllSetAttempts(true);
-		mBrightnessControl = new InterfaceValue("", "DesiredBrightness", brightness, 0.0, 1.0);
+		mDesiredBrightness = new DoubleValue(brightness);
+		mBrightness = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
+		mBrightness->setNotifyAllSetAttempts(true);
+		mBrightnessRange = new RangeValue(0,1);
 		mLightColor = new ColorValue("yellow");
 		mHideLightCone = new BoolValue(false);
-		mUseSphericLightCone = new BoolValue(false);
+		mSphericLightCone = new BoolValue(false);
 		mReferenceObjectName = new StringValue("");
 		mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
-		mHomogeneousDistribution = new BoolValue(false);
-		mBrightnessRange = new RangeValue(0,1);
+		mUniformLight = new BoolValue(false);
 		
 		addParameter("Range", mRange);
-		addParameter("Brightness", mBrightnessSensor);
-		addParameter("DesiredBrightness", mBrightnessControl);
+		addParameter("DesiredBrightness", mDesiredBrightness);
+		addParameter("Brightness", mBrightness);
+		addParameter("BrightnessRange", mBrightnessRange);
 		addParameter("LightColor", mLightColor);
 		addParameter("HideLightCone", mHideLightCone);
-		addParameter("UseSphericLightCone", mUseSphericLightCone);
+		addParameter("SphericLightCone", mSphericLightCone);
 		addParameter("ReferenceObject", mReferenceObjectName);
 		addParameter("LocalPosition", mLocalPosition);
-		addParameter("UniformLight", mHomogeneousDistribution);
-		addParameter("BrightnessRange", mBrightnessRange);
+		addParameter("UniformLight", mUniformLight);
 		
-		mOutputValues.append(mBrightnessSensor);
-		mInputValues.append(mBrightnessControl);
+		mOutputValues.append(mBrightness);
+		mInputValues.append(mBrightness);
 		
 		Physics::getPhysicsManager();
 		
 		if(mSwitchYZAxes == 0) {
-			mSwitchYZAxes = Core::getInstance()->getValueManager()->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
+			mSwitchYZAxes = Core::getInstance()->getValueManager()->
+				getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
 		}
 		
 		createCollisionObject();
 		
 		updateBrightnessValue();
-		updateLightColor();
+		updateLightCone();
 	}
 	
 	
@@ -112,30 +114,30 @@ namespace nerd {
 	 */
 	SphericLightSource::SphericLightSource(const SphericLightSource &other) 
 	: Object(), ValueChangedListener(), LightSource(other), 
-		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mHomogeneousDistribution(0),
+		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mUniformLight(0),
 		mSwitchYZAxes(other.mSwitchYZAxes)
 	{
 		mRange = dynamic_cast<DoubleValue*>(getParameter("Range"));
-		mBrightnessSensor = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
-		mBrightnessControl = dynamic_cast<InterfaceValue*>(getParameter("DesiredBrightness"));
+		mBrightness = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
+		mDesiredBrightness = dynamic_cast<DoubleValue*>(getParameter("DesiredBrightness"));
 		mLightColor = dynamic_cast<ColorValue*>(getParameter("LightColor"));
 		mHideLightCone = dynamic_cast<BoolValue*>(getParameter("HideLightCone"));
-		mUseSphericLightCone = dynamic_cast<BoolValue*>(getParameter("UseSphericLightCone"));
+		mSphericLightCone = dynamic_cast<BoolValue*>(getParameter("SphericLightCone"));
 		mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
 		mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
-		mHomogeneousDistribution = dynamic_cast<BoolValue*>(getParameter("UniformLight"));
+		mUniformLight = dynamic_cast<BoolValue*>(getParameter("UniformLight"));
 		mBrightnessRange = dynamic_cast<RangeValue*>(getParameter("BrightnessRange"));
 		
 		mOutputValues.clear();
 		mInputValues.clear();
 		
-		mOutputValues.append(mBrightnessSensor);
-		mInputValues.append(mBrightnessControl);
+		mOutputValues.append(mBrightness);
+		mInputValues.append(mBrightness);
 		
 		createCollisionObject();
 		
 		updateBrightnessValue();
-		updateLightColor();
+		updateLightCone();
 	}
 	
 	/**
@@ -183,7 +185,7 @@ namespace nerd {
 			//mBodyCollisionObject->setHostBody(this);
 
 			/* radius is already handled/set by createCollisionObject, why again?
-			if(mUseSphericLightCone->get()) {
+			if(mSphericLightCone->get()) {
 				SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
 				if(geom != 0) {
 					geom->setRadius(mRange->get());
@@ -216,14 +218,11 @@ namespace nerd {
 		if(value == 0) {
 			return;
 		}
-		//else if(value == mBrightnessSensor) {
-		//	updateLightColor();
-		//}
-		else if(value == mBrightnessControl) {
+		else if(value == mDesiredBrightness) {
 			updateBrightnessValue();
 		}
 		else if(value == mRange) {
-			if(mUseSphericLightCone->get()) {
+			if(mSphericLightCone->get()) {
 				SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
 				if(geom != 0) {
 					geom->setRadius(mRange->get());
@@ -237,10 +236,10 @@ namespace nerd {
 			}
 		}
 		else if(value == mHideLightCone) {
-			updateLightColor();
+			updateLightCone();
 		}
 		else if(value == mLightColor) {
-			updateLightColor();
+			updateLightCone();
 		}
 		else if(mReferenceObject != 0 
 			&& (value == mReferenceObject->getPositionValue() 
@@ -261,20 +260,19 @@ namespace nerd {
 			mPositionValue->set(mReferenceObject->getPositionValue()->get() + rotatedLocalPos);
 		}
 		else if(value == mBrightnessRange) {
-			mBrightnessSensor->setMin(mBrightnessRange->getMin());
-			mBrightnessSensor->setMax(mBrightnessRange->getMax());
-			mBrightnessControl->setMin(mBrightnessRange->getMin());
-			mBrightnessControl->setMax(mBrightnessRange->getMax());
+			Core::log("SphericLightSource: mBrightnessRange has been changed!", true);
+			mBrightness->setMin(mBrightnessRange->getMin());
+			mBrightness->setMax(mBrightnessRange->getMax());
+			updateBrightnessValue();
 		}
 	}
 	
 	
 	void SphericLightSource::updateBrightnessValue() {
-		mBrightnessSensor->set(mBrightnessControl->get());
+		mBrightness->set(mDesiredBrightness->get());
 	}
 	
-	void SphericLightSource::updateLightColor() {
-		Core::log("SphericLightSource: updateLightColor called!", true);
+	void SphericLightSource::updateLightCone() {
 		//Set transparency to a value between 0 and 80, depending on the current brightness.
 		//80 is about 30 percent of full opacity (255) at max.
 
@@ -285,7 +283,7 @@ namespace nerd {
 			color.setAlpha(0); 
 		}
 		else {
-			color.setAlpha((int) (Math::abs(mBrightnessSensor->get()) * 80.0)); 
+			color.setAlpha((int) (Math::abs(mBrightness->get()) * 80.0)); 
 		}
 		mBodyCollisionObject->getGeometry()->setColor(color);
 	}
@@ -301,21 +299,23 @@ namespace nerd {
 	
 	
 	double SphericLightSource::getCurrentBrightness() const {
-		return mBrightnessSensor->get();
+		return mBrightness->get();
 	}
 	
 	
 	double SphericLightSource::getDesiredBrightness() const {
-		return mBrightnessControl->get();
+		return mDesiredBrightness->get();
 	}
 	
 	
 	void SphericLightSource::setDesiredBrightness(double brightness) {
-		mBrightnessControl->set(brightness);
+		mDesiredBrightness->set(brightness);
 	}
 	
 	
-	double SphericLightSource::getBrightness(const Vector3D &globalPosition, const bool &restrictToHorizontal) {
+	double SphericLightSource::getBrightness(
+			const Vector3D &globalPosition, const bool &restrictToHorizontal)
+	{
 		double brightness = 0.0;
 		double distance = 0.0;
 		
@@ -343,7 +343,7 @@ namespace nerd {
 			return brightness;
 		}
 		
-		if(mHomogeneousDistribution->get()) {
+		if(mUniformLight->get()) {
 			brightness = getCurrentBrightness();
 		}
 		else {
@@ -362,9 +362,12 @@ namespace nerd {
 			delete mBodyCollisionObject;
 		}
 		mBodyCollisionObject = 0;
-		if(mUseSphericLightCone->get()) {
+
+		// sphere
+		if(mSphericLightCone->get()) {
 			mBodyCollisionObject = new CollisionObject(SphereGeom(this, mRange->get()));
 		}
+		// cylinder
 		else {
 			CylinderGeom geom(this, mRange->get(), 0.05); // why a length of 0.05 exactly?
 			Quaternion orientation;
@@ -388,6 +391,3 @@ namespace nerd {
 	
 	
 }
-
-
-
