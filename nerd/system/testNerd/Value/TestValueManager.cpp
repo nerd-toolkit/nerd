@@ -75,8 +75,7 @@ using namespace nerd;
 void TestValueManager::testConstructor() {
 	Core::resetCore();
 	
-	EventManager *em = new EventManager();
-	ValueManager *vm = new ValueManager();
+	ValueManager *vm = Core::getInstance()->getValueManager();
 
 	//test available prototypes
 	QList<Value*> prototypes = vm->getPrototypes();
@@ -149,9 +148,8 @@ void TestValueManager::testConstructor() {
 	QVERIFY(quaternionCopy != 0);
 	QVERIFY(prototypes.contains(quaternionCopy) == false);
 	delete quaternionCopy;
-
-	delete em;
-	delete vm;
+	
+	Core::resetCore();
 }
 
 //verena
@@ -185,15 +183,14 @@ void TestValueManager::testAddValue(){
 
 	delete iVal2;
 
-
+	Core::resetCore();
 }
 
 
 //verena
 void TestValueManager::testFindValue(){
 	Core::resetCore();
-	EventManager *em = new EventManager();
-	ValueManager *manager = new ValueManager();
+	ValueManager *manager = Core::getInstance()->getValueManager();
 	
 	IntValue *iVal = new IntValue(100);
 	Value *testVal = new Value();
@@ -271,8 +268,8 @@ void TestValueManager::testFindValue(){
 	delete iVal2;
 	delete sVal;
 	delete testVal;
-	delete manager;
-	delete em;
+	
+	Core::resetCore();
 }
 
 
@@ -288,7 +285,7 @@ void TestValueManager::testNotification(){
 	manager->notifyRepositoryChangedListeners();
 	QCOMPARE(listener.getCount(), 1);
 	
-
+	Core::resetCore();
 }
 
 
@@ -296,8 +293,7 @@ void TestValueManager::testNotification(){
 void TestValueManager::testNotificationStack() {
 	Core::resetCore();
 	
-	EventManager eManager;
-	ValueManager manager;
+	ValueManager &manager = *(Core::getInstance()->getValueManager());
 	IntValue iVal1(10);
 	IntValue iVal2(20);
 	manager.pushToNotificationStack(&iVal1);
@@ -316,6 +312,7 @@ void TestValueManager::testNotificationStack() {
 	QVERIFY(firstStackObject == &iVal2);
 	QVERIFY(firstStackObject != &iVal1);
 
+	Core::resetCore();
 }
 
 
@@ -393,6 +390,8 @@ void TestValueManager::testPrototyping() {
 	QCOMPARE(dynamic_cast<DoubleValue*>(value)->get(), 2.3);
 	delete value;
 	value = 0;
+	
+	Core::resetCore();
 }
 
 
@@ -450,6 +449,8 @@ void TestValueManager::testRemoveValuesByList() {
 	delete l1;
 	delete l2;
 	delete l3;
+	
+	Core::resetCore();
 }
 
 //Chris
@@ -480,4 +481,6 @@ void TestValueManager::testGetMultiPartValue() {
 	QVERIFY(vm->getMultiPartValue("/TestValues/DoubleValue/Value") == d);
 	QVERIFY(vm->getMultiPartValue("/TestValues/DoubleValue/Value:y") == 0);
 	QVERIFY(vm->getMultiPartValue("/TestValues/DoubleValue/Value", "x") == 0);
+	
+	Core::resetCore();
 }

@@ -329,8 +329,7 @@ void Core::setUpCore() {
 
 	mCurrentLogMessage = new StringValue("");
 	mCurrentLogMessage->setNotifyAllSetAttempts(true);
-	mValueManager->addValue(NerdConstants::VALUE_NERD_RECENT_LOGGER_MESSAGE,
-					mCurrentLogMessage);
+	mValueManager->addValue(NerdConstants::VALUE_NERD_RECENT_LOGGER_MESSAGE, mCurrentLogMessage);
 
 	mInitializationDuration = new IntValue(0);
 	mBindingDuration = new IntValue(0);
