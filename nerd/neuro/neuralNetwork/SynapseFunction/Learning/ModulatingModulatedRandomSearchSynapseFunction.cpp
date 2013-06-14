@@ -41,7 +41,7 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-#include "SimpleModulatedRandomSearchSynapseFunction.h"
+#include "ModulatingModulatedRandomSearchSynapseFunction.h"
 #include <iostream>
 #include <Math/Math.h>
 #include <Math/Random.h>
@@ -59,8 +59,8 @@ namespace nerd {
 	/**
 	* Constructor.
 	*/
-	SimpleModulatedRandomSearchSynapseFunction::SimpleModulatedRandomSearchSynapseFunction()
-		: NeuroModulatorSynapseFunction("MRS1"), mOwner(0), 
+	ModulatingModulatedRandomSearchSynapseFunction::ModulatingModulatedRandomSearchSynapseFunction()
+		: NeuroModulatorSynapseFunction("MRS2"), mOwner(0), 
 		  mCurrentNetwork(0), mNumberOfStepsWithoutModulators(0)
 	{
 		mTypeParameters = new StringValue("1, 1.0, 0.2, 0, 3.0, -1.5, 1.5");
@@ -72,17 +72,17 @@ namespace nerd {
 		mProbabilityForChange = new DoubleValue(0.5);
 		mProbabilityForChange->setDescription("Reference probability for changes.");
 		
-		mInactive = new BoolValue(false);
-		mInactive->setDescription("If true, then the synapse has no effect and does also not change.");
+		mActive = new BoolValue(true);
+		mActive->setDescription("If false, then the synapse has no effect and does also not change.");
 		
-		mInactivationObservable = new DoubleValue(0);
-		mInactivationObservable->addValueChangedListener(this);
+		mActivationObservable = new DoubleValue(0);
+		mActivationObservable->addValueChangedListener(this);
 		
-		addObservableOutput("Inactive", mInactivationObservable);
+		addObservableOutput("Active", mActivationObservable);
 
 		addParameter("Settings", mTypeParameters);
 		addParameter("Probability", mProbabilityForChange);
-		addParameter("Inactive", mInactive);
+		addParameter("Active", mActive);
 		
 		mNetworkManager = Neuro::getNeuralNetworkManager();
 		
@@ -93,8 +93,8 @@ namespace nerd {
 	/**
 	* Copy constructor.
 	*/
-	SimpleModulatedRandomSearchSynapseFunction::SimpleModulatedRandomSearchSynapseFunction(
-											const SimpleModulatedRandomSearchSynapseFunction &other)
+	ModulatingModulatedRandomSearchSynapseFunction::ModulatingModulatedRandomSearchSynapseFunction(
+											const ModulatingModulatedRandomSearchSynapseFunction &other)
 		: Object(), ValueChangedListener(), NeuroModulatorElement(other), NeuroModulatorSynapseFunction(other), 
 		  mOwner(0), mCurrentNetwork(0), mNumberOfStepsWithoutModulators(0)
 	{
@@ -102,15 +102,15 @@ namespace nerd {
 		
 		mTypeParameters = dynamic_cast<StringValue*>(getParameter("Settings"));
 		mProbabilityForChange = dynamic_cast<DoubleValue*>(getParameter("Probability"));
-		mInactive = dynamic_cast<BoolValue*>(getParameter("Inactive"));
+		mActive = dynamic_cast<BoolValue*>(getParameter("Active"));
 		
-		mInactivationObservable = new DoubleValue(mInactive->get() ? 1.0 : 0.0);
-		mInactivationObservable->addValueChangedListener(this);
-		addObservableOutput("Inactive", mInactivationObservable);
+		mActivationObservable = new DoubleValue(mActive->get() ? 1.0 : 0.0);
+		mActivationObservable->addValueChangedListener(this);
+		addObservableOutput("Active", mActivationObservable);
 
 		for(QHashIterator<QString, Value*> i(other.mObservableOutputs); i.hasNext();) {
 			i.next();
-			if(i.key() != "Inactive") {
+			if(i.key() != "Active") {
 				DoubleValue *obs = dynamic_cast<DoubleValue*>(i.value()->createCopy());  
 				addObservableOutput(i.key(), obs);
 				mObservables.append(obs);
@@ -126,7 +126,7 @@ namespace nerd {
 	/**
 	* Destructor.
 	*/
-	SimpleModulatedRandomSearchSynapseFunction::~SimpleModulatedRandomSearchSynapseFunction() {
+	ModulatingModulatedRandomSearchSynapseFunction::~ModulatingModulatedRandomSearchSynapseFunction() {
 		mParameters.clear();
 		mObservableOutputs.clear();
 		while(!mObservables.empty()) {
@@ -134,15 +134,15 @@ namespace nerd {
 			mObservables.removeAll(observable);
 			delete observable;
 		}
-		delete mInactivationObservable;
+		delete mActivationObservable;
 	}
 
 
 	/**
 	 * Creates a copy of this SynapseFunction.
 	 */
-	SynapseFunction* SimpleModulatedRandomSearchSynapseFunction::createCopy() const {
-			return new SimpleModulatedRandomSearchSynapseFunction(*this);
+	SynapseFunction* ModulatingModulatedRandomSearchSynapseFunction::createCopy() const {
+			return new ModulatingModulatedRandomSearchSynapseFunction(*this);
 	}
 
 
@@ -150,7 +150,7 @@ namespace nerd {
 	 * If the main parameters have been changed, then the internal settings are updated
 	 * to fit the new settings.
 	 */
-	void SimpleModulatedRandomSearchSynapseFunction::valueChanged(Value *value) {
+	void ModulatingModulatedRandomSearchSynapseFunction::valueChanged(Value *value) {
 		NeuroModulatorSynapseFunction::valueChanged(value);
 		if(value == 0) {
 			return;
@@ -158,12 +158,12 @@ namespace nerd {
 		else if(value == mTypeParameters) {
 			updateSettings();
 		}
-		else if(value == mInactive) {
-			//enableWeight(mOwner, !mInactive->get());
-			mInactivationObservable->set(mInactive->get() ? 1.0 : 0.0);
+		else if(value == mActive) {
+			//enableWeight(mOwner, !mActive->get());
+			mActivationObservable->set(mActive->get() ? 1.0 : 0.0);
 		}
-		else if(value == mInactivationObservable) {
-			enableWeight(mOwner, !(mInactivationObservable->get() > 0.5));
+		else if(value == mActivationObservable) {
+			enableWeight(mOwner, mActivationObservable->get() > 0.5);
 		}
 	}
 
@@ -171,12 +171,12 @@ namespace nerd {
 	/**
 	* Updates the parameter settings by parsing the parameter string anew.
 	*/
-	void SimpleModulatedRandomSearchSynapseFunction::reset(Synapse *synapse) {
+	void ModulatingModulatedRandomSearchSynapseFunction::reset(Synapse *synapse) {
 		mOwner = synapse;
 		mCurrentNetwork = 0;
 		updateSettings();
-		mInactivationObservable->set(mInactive->get() ? 1.0 : 0.0);
-		enableWeight(mOwner, !(mInactive->get()));
+		mActivationObservable->set(mActive->get() ? 1.0 : 0.0);
+		enableWeight(mOwner, mActive->get());
 	}
 
 
@@ -187,7 +187,7 @@ namespace nerd {
 	* @param owner the owner of this SynapseFunction.
 	* @return the strength of the owner.
 	*/
-	double SimpleModulatedRandomSearchSynapseFunction::calculate(Synapse *owner) {
+	double ModulatingModulatedRandomSearchSynapseFunction::calculate(Synapse *owner) {
 		mOwner = owner;
 		mCurrentNetwork = 0;
 		if(owner == 0 || owner->getSource() == 0) {
@@ -200,32 +200,29 @@ namespace nerd {
 		}
 		
 		
-		if(mInactivationObservable->get() < 0.5 && mInactive->get()) {
-			mInactive->set(false);
+		if(mActivationObservable->get() < 0.5 && mActive->get()) {
+			mActive->set(false);
 		}
-		else if(mInactivationObservable->get() > 0.5 && !mInactive->get()) {
-			mInactive->set(true);
+		else if(mActivationObservable->get() > 0.5 && !mActive->get()) {
+			mActive->set(true);
 		}
 		
 		
+		//only execute modulation if the global plasticity hint allows it.
 		if(mNetworkManager->getDisablePlasticityValue()->get() == false) {
-			//only execute modulation if the global plasticity hint allows it.
 			for(int i = 0; i < mParameters.size(); ++i) {
 			
-				SimpleModulatedRandomSearchParameters &params = mParameters[i];
+				ModulatingModulatedRandomSearchParameters &params = mParameters[i];
 
 				switch(params.mMode) {
-					case 1:
-						randomSearchModeBacktracking(owner, params);
-						break;
 					case 0:
 					default:
-						randomSearchModeSimpleRandom(owner, params);
+						randomSearchModeMultiVariant(owner, params);
 				}
 			}
 		}
 		
-		if(mInactive->get()) {
+		if(!mActive->get()) {
 			return 0.0;
 		}
 		
@@ -233,13 +230,16 @@ namespace nerd {
 	}
 
 
-	bool SimpleModulatedRandomSearchSynapseFunction::equals(SynapseFunction *synapseFunction) const {
+	/**
+	 * TODO: not complete yet, but no function is using it right now.
+	 */
+	bool ModulatingModulatedRandomSearchSynapseFunction::equals(SynapseFunction *synapseFunction) const {
 		if(NeuroModulatorSynapseFunction::equals(synapseFunction) == false) {
 			return false;
 		}
 
-		SimpleModulatedRandomSearchSynapseFunction *sf = 
-					dynamic_cast<SimpleModulatedRandomSearchSynapseFunction*>(synapseFunction);
+		ModulatingModulatedRandomSearchSynapseFunction *sf = 
+					dynamic_cast<ModulatingModulatedRandomSearchSynapseFunction*>(synapseFunction);
 
 		if(sf == 0) {
 			return false;
@@ -276,7 +276,7 @@ namespace nerd {
 	 * and loggers. Also, the role of the observables can change, if the order of settings is changed.
 	 * This has to be considered when observing observables after setting changes.
 	 */
-	void SimpleModulatedRandomSearchSynapseFunction::updateSettings() {
+	void ModulatingModulatedRandomSearchSynapseFunction::updateSettings() {
 		
 
 		//enable one-shot error messages to prevent a flooding of the console / log file.
@@ -294,36 +294,36 @@ namespace nerd {
 			QStringList paramStrings = entry.split(",");
 			
 			if(paramStrings.length() < 4) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Too few "
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Too few "
 						  "parameters in [" + entry + "]", true);
 				continue;
 			}
 			
 			bool ok = true;
 			
-			SimpleModulatedRandomSearchParameters params;
+			ModulatingModulatedRandomSearchParameters params;
 			
 			params.mType = paramStrings.at(0).toInt(&ok);
 			if(!ok) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse "
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
 						  "type (1) in [" + entry + "]", true);
 				continue;
 			}
 			params.mChangeProbability = paramStrings.at(1).toDouble(&ok);
 			if(!ok) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse "
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
 						  "change probability (2) in [" + entry + "]", true);
 				continue;
 			}
 			params.mDisableProbability = paramStrings.at(2).toDouble(&ok);
 			if(!ok) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse "
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
 						  "disable probability (3) in [" + entry + "]", true);
 				continue;
 			}
 			params.mMode = paramStrings.at(3).toInt(&ok);
 			if(!ok) {
-				Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse "
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
 						  "mode (4) in [" + entry + "]", true);
 				continue;
 			}
@@ -332,7 +332,7 @@ namespace nerd {
 			for(int j = 4; j < paramStrings.size(); ++j) {
 				double param = paramStrings.at(j).toDouble(&ok);
 				if(!ok) {
-					Core::log("SimpleModulatedRandomSearchSynapseFunction: Could not parse optional parameter " 
+					Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse optional parameter " 
 							+ QString::number(j - 3) + "  (" + QString::number(j) + ") in ["
 							+ entry + "]", true);
 							continue;
@@ -359,20 +359,188 @@ namespace nerd {
 		}
 	}
 	
-	
+
 	/**
-	 * Simple Random Change Mode.
+	 * MultiVariant Mode.
 	 * 
-	 * This mode simply randomly changes the synapse in the presence of the 
-	 * given neuro-modulator. The variance of the changes, as well as the maximal
-	 * and minimal values for the weight are specified with the optional parameters.
+	 * This mode does combineseveral variants:
 	 * 
-	 * If a new value overshoots the range [min, max], then the value is moved to 
-	 * the other side of the range to prevent saturations at the maximum and
-	 * minimum. 
+	 * 
+	 * Random Walk:
+	 * ----------------------------------------------
+	 * 
+	 * Reduced Value Set (with noise):
+	 * ----------------------------------------------
+	 * 
+	 * Topology Search:
+	 * ----------------------------------------------
+	 * 
+	 * Connectivity Density Control:
+	 * ----------------------------------------------
+	 * 
+	 * Local Modulation with Types: inclusive
+	 * ----------------------------------------------
+	 * 
+	 * Synapse Protection (refraction phases):
+	 * ----------------------------------------------
+	 * 
+	 * Activity Dependent Change Probabilities:
+	 * ----------------------------------------------
+	 * 
+	 * Refinement with Backtracking:
+	 * ----------------------------------------------
+	 * 
+	 * 1) if ALL other neuro-modulators are not present for a given number of steps. 
+	 *   In this case, the current weight setting and disable/enable state are considerd
+	 *   well working and are stored for a later backtracking.
+	 * 
+	 * 2) if the given neuro-modulator type is active and there is backtracking information
+	 *   available, then that information is used to change the weight back towards its 
+	 *   previously known (well working?) way.
+	 * 
+	 * In case (2) the way the backtracking is performed can be adjusted with the backtracking-mode 
+	 * parameter of this operation. Currently, there are the following modes:
+	 * 
+	 * 0: If backtracking becomes active, the last known state is directly and completely restored.
 	 */
-	void SimpleModulatedRandomSearchSynapseFunction::randomSearchModeSimpleRandom(
-						Synapse *owner, SimpleModulatedRandomSearchParameters &params) 
+
+	//TODO Add an option to occassionally flip back to previous value (local search). Probability for 
+	//     flip-back should decrease with higher level, with a full backtracking above a threshold.
+	void ModulatingModulatedRandomSearchSynapseFunction::randomSearchModeMultiVariant(
+		Synapse *owner, ModulatingModulatedRandomSearchParameters &params) 
+	{
+		if(owner == 0) {
+			return;
+		}
+		
+		//check if the number of parameters is valid.
+		if(params.mParams.size() != 2) {
+			if(mNotifiedErrors == false) {
+				mNotifiedErrors = true;
+				
+				Core::log(QString("ModulatingModulatedRandomSearchSynapseFunction: ")
+				+ "Mode 1 requires exactly 2 optional parameters: " 
+				  + "stepsBeforeMemo, backtracking_mode. Found " 
+					+ QString::number(params.mParams.size()) 
+					+ " instead!", true);
+			}
+			return;
+		}
+		
+		//check if there is modulator of any relevant type:
+		bool noModulatorDetected = true;
+		for(int i = 0; i < mParameters.size(); ++i) {
+			
+			ModulatingModulatedRandomSearchParameters &paramSet = mParameters[i];
+			if(paramSet.mMode == 1) {
+				//this modulator is of a backtracking type... not a regular modulation.
+				continue;
+			}
+			
+			double concentration = NeuroModulator::getConcentrationInNetworkAt(
+					paramSet.mType, owner->getPosition(), mCurrentNetwork);
+			
+			if(concentration > 0.0) {
+				noModulatorDetected = false;
+				break;
+			}
+		}
+		
+		//udpate current modulator concentration.
+		double concentration = NeuroModulator::getConcentrationInNetworkAt(
+			params.mType, owner->getPosition(), mCurrentNetwork);
+		
+		if(params.mObservable != 0) {
+			params.mObservable->set(concentration);
+		}
+		
+		
+		if(noModulatorDetected) {
+			//check if we should memorize the setting as known working solution (in the broader context at least).
+			++mNumberOfStepsWithoutModulators;
+			
+			int numberOfWorkingStepsBeforeMemorization = params.mParams.at(0);
+			
+			if(mNumberOfStepsWithoutModulators >= numberOfWorkingStepsBeforeMemorization) {
+				mKnownPersistentActiveStates.clear();
+				mKnownPersistentActiveStates.append(mActive->get());
+				
+				mKnownPersistentSettings.clear();
+				mKnownPersistentSettings.append(owner->getStrengthValue().get());
+				
+				mNumberOfStepsWithoutModulators = 0;
+				
+				owner->setProperty("Memory:", QString::number(mKnownPersistentSettings.last()) 
+								+ "," + QString::number((int) mKnownPersistentActiveStates.last()));
+			}
+		}
+		else {
+			mNumberOfStepsWithoutModulators = 0;
+			
+			if(mKnownPersistentActiveStates.empty()) {
+				//cannot perform a backtracking if there are no previously memorized settings.
+				return;
+			}
+			
+			double changeProbability = Math::max(0.0, Math::min(1.0, 
+																concentration * params.mChangeProbability));
+			
+			int backtrackingMode = (int) params.mParams.at(1); //backtracking mode
+			
+			//cerr << "Got: " << disableProbability << " and " << changeProbability << " of " << params.mType << endl;
+			
+			if(Random::nextDouble() < changeProbability) {
+				
+				//simple, full backtracking to the last known state.
+				if(backtrackingMode == 0) {
+					//make sure the synapse is in the same enable/disable state as in the last known working configuration.
+					if(mActive->get() != mKnownPersistentActiveStates.last()) {
+						mActive->set(mKnownPersistentActiveStates.last());
+						
+						//don't do it twice. Changing mActive alreay calls this method!
+						//enableWeight(owner, !mActive->get());
+						
+						incrementDisableChangeCounter(owner);
+					}
+					if(owner->getStrengthValue().get() != mKnownPersistentSettings.last()) {
+						owner->getStrengthValue().set(mKnownPersistentSettings.last());
+					}
+				}
+			}
+		}
+	}
+	
+	void ModulatingModulatedRandomSearchSynapseFunction::performTopologySearch(
+						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
+	{
+		
+		
+	}
+	
+	void ModulatingModulatedRandomSearchSynapseFunction::performRandomWalkWeightChanges(
+						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
+	{
+		
+	}
+	
+	
+	void ModulatingModulatedRandomSearchSynapseFunction::performReducedRandomWalkWeightChanges(
+						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
+	{
+		
+	}
+	
+	
+	void ModulatingModulatedRandomSearchSynapseFunction::performBacktracking(
+						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
+	{
+		
+	}
+	
+	/*
+	void ModulatingModulatedRandomSearchSynapseFunction::ramdonizeWeightAndActiveState(
+						Synapse *owner, double concentration, double variance, double minValue, 
+						double maxValue, bool useValueSet, double maxConcentration) 
 	{
 		if(owner == 0) {
 			return;
@@ -444,140 +612,8 @@ namespace nerd {
 			incrementWeightChangeCounter(owner);
 		}
 	}
+	*/
 	
-	
-	/**
-	 * Backtracking Mode.
-	 * 
-	 * This mode does not simply randomly change the synapse in the presence of the 
-	 * given neuro-modulator. Instead, this modulator only becomes active
-	 * 
-	 * 1) if ALL other neuro-modulators are not present for a given number of steps. 
-	 *   In this case, the current weight setting and disable/enable state are considerd
-	 *   well working and are stored for a later backtracking.
-	 * 
-	 * 2) if the given neuro-modulator type is active and there is backtracking information
-	 *   available, then that information is used to change the weight back towards its 
-	 *   previously known (well working?) way.
-	 * 
-	 * In case (2) the way the backtracking is performed can be adjusted with the backtracking-mode 
-	 * parameter of this operation. Currently, there are the following modes:
-	 * 
-	 * 0: If backtracking becomes active, the last known state is directly and completely restored.
-	 */
-	
-	//TODO Add an option to occassionally flip back to previous value (local search). Probability for 
-	//     flip-back should decrease with higher level, with a full backtracking above a threshold.
-	void SimpleModulatedRandomSearchSynapseFunction::randomSearchModeBacktracking(
-		Synapse *owner, SimpleModulatedRandomSearchParameters &params) 
-	{
-		if(owner == 0) {
-			return;
-		}
-		
-		//check if the number of parameters is valid.
-		if(params.mParams.size() != 2) {
-			if(mNotifiedErrors == false) {
-				mNotifiedErrors = true;
-				
-				Core::log(QString("SimpleModulatedRandomSearchSynapseFunction: ")
-				+ "Mode 1 requires exactly 2 optional parameters: " 
-				  + "stepsBeforeMemo, backtracking_mode. Found " 
-					+ QString::number(params.mParams.size()) 
-					+ " instead!", true);
-			}
-			return;
-		}
-		
-		//check if there is modulator of any relevant type:
-		bool noModulatorDetected = true;
-		for(int i = 0; i < mParameters.size(); ++i) {
-			
-			SimpleModulatedRandomSearchParameters &paramSet = mParameters[i];
-			if(paramSet.mMode == 1) {
-				//this modulator is of a backtracking type... not a regular modulation.
-				continue;
-			}
-			
-			double concentration = NeuroModulator::getConcentrationInNetworkAt(
-					paramSet.mType, owner->getPosition(), mCurrentNetwork);
-			
-			if(concentration > 0.0) {
-				noModulatorDetected = false;
-				break;
-			}
-		}
-		
-		//udpate current modulator concentration.
-		double concentration = NeuroModulator::getConcentrationInNetworkAt(
-			params.mType, owner->getPosition(), mCurrentNetwork);
-		
-		if(params.mObservable != 0) {
-			params.mObservable->set(concentration);
-		}
-		
-		
-		if(noModulatorDetected) {
-			//check if we should memorize the setting as known working solution (in the broader context at least).
-			++mNumberOfStepsWithoutModulators;
-			
-			int numberOfWorkingStepsBeforeMemorization = params.mParams.at(0);
-			
-			if(mNumberOfStepsWithoutModulators >= numberOfWorkingStepsBeforeMemorization) {
-				mKnownPersistentDisableStates.clear();
-				mKnownPersistentDisableStates.append(mInactive->get());
-				
-				mKnownPersistentSettings.clear();
-				mKnownPersistentSettings.append(owner->getStrengthValue().get());
-				
-				mNumberOfStepsWithoutModulators = 0;
-				
-				owner->setProperty("Memory:", QString::number(mKnownPersistentSettings.last()) 
-								+ "," + QString::number((int) mKnownPersistentDisableStates.last()));
-			}
-		}
-		else {
-			mNumberOfStepsWithoutModulators = 0;
-			
-			if(mKnownPersistentDisableStates.empty()) {
-				//cannot perform a backtracking if there are no previously memorized settings.
-				return;
-			}
-			
-			//check if we should revert to a known (hopefully still) working solution...
-			
-			
-			
-			//double disableProbability = Math::max(0.0, Math::min(1.0, 
-			//													concentration * params.mDisableProbability * mProbabilityForChange->get()));
-			
-			double changeProbability = Math::max(0.0, Math::min(1.0, 
-																concentration * params.mChangeProbability));
-			
-			int backtrackingMode = (int) params.mParams.at(1); //backtracking mode
-			
-			//cerr << "Got: " << disableProbability << " and " << changeProbability << " of " << params.mType << endl;
-			
-			if(Random::nextDouble() < changeProbability) {
-				
-				//simple, full backtracking to the last known state.
-				if(backtrackingMode == 0) {
-					//make sure the synapse is in the same enable/disable state as in the last known working configuration.
-					if(mInactive->get() != mKnownPersistentDisableStates.last()) {
-						mInactive->set(mKnownPersistentDisableStates.last());
-						
-						//don't do it twice. Changing mInactive alreay calls this method!
-						//enableWeight(owner, !mInactive->get());
-						
-						incrementDisableChangeCounter(owner);
-					}
-					if(owner->getStrengthValue().get() != mKnownPersistentSettings.last()) {
-						owner->getStrengthValue().set(mKnownPersistentSettings.last());
-					}
-				}
-			}
-		}
-	}
 	
 	
 	/**
@@ -585,7 +621,7 @@ namespace nerd {
 	 * This property is used for debugging and network analysis to detect the more and less
 	 * plastic synapses.
 	 */
-	int SimpleModulatedRandomSearchSynapseFunction::incrementDisableChangeCounter(Synapse *owner) {
+	int ModulatingModulatedRandomSearchSynapseFunction::incrementDisableChangeCounter(Synapse *owner) {
 		if(owner == 0) {
 			return 0;
 		}
@@ -607,7 +643,7 @@ namespace nerd {
 	 * This property is used for debugging and network analysis to detect the more and less
 	 * plastic synapses.
 	 */
-	int SimpleModulatedRandomSearchSynapseFunction::incrementWeightChangeCounter(Synapse *owner) {
+	int ModulatingModulatedRandomSearchSynapseFunction::incrementWeightChangeCounter(Synapse *owner) {
 		if(owner == 0) {
 			return 0;
 		}
@@ -631,7 +667,7 @@ namespace nerd {
 	 * Note: Because of the conversions, the accuracy of the disabled synapse may change. But this is usually not
 	 * a problem. 
 	 */
-	void SimpleModulatedRandomSearchSynapseFunction::enableWeight(Synapse *owner, bool enable) {
+	void ModulatingModulatedRandomSearchSynapseFunction::enableWeight(Synapse *owner, bool enable) {
 		if(owner == 0) {
 			return ;
 		}
@@ -656,7 +692,7 @@ namespace nerd {
 			}
 			owner->setProperty(NeuralNetworkConstants::TAG_ELEMENT_DRAW_AS_DISABLED);
 		}
-		mInactive->set(!enable);
+		mActive->set(enable);
 		
 	}
 	

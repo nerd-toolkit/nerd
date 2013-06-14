@@ -56,6 +56,7 @@
 #include "SynapseFunction/ScriptableSynapseFunction.h"
 #include "SynapseFunction/CloneSimpleSynapseFunction.h"
 #include "SynapseFunction/Learning/SimpleModulatedRandomSearchSynapseFunction.h"
+#include "SynapseFunction/Learning/ModulatingModulatedRandomSearchSynapseFunction.h"
 
 namespace nerd {
 
@@ -104,6 +105,9 @@ StandardSynapseFunctions::StandardSynapseFunctions()
 	
 	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
 		SimpleModulatedRandomSearchSynapseFunction());
+	
+	Neuro::getNeuralNetworkManager()->addSynapseFunctionPrototype(
+		ModulatingModulatedRandomSearchSynapseFunction());
 	
 }
 

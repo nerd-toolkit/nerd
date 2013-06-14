@@ -56,7 +56,7 @@
 #include "DynamicsPlot/TestIsoperiodPlotter.h"
 #include "DynamicsPlot/TestLyapunovExponent.h"
 
-TEST_START("TestNetworkDiagramPlotterLib", 1, -1, 7);
+TEST_START("TestNetworkDiagramPlotterLib", 1, -1, 10);
  
 	TEST(TestDynamicsPlotterUtil);
 	TEST(TestMatlabExporter);
