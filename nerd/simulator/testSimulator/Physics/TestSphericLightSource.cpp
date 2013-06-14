@@ -60,23 +60,19 @@ void TestSphericLightSource::testConstruction() {
 	Core::resetCore();
 
 	double brightness_set_1 = 0.564;
-	double range_set_1 = 4.2;
+	double radius_set_1 = 4.2;
 	int type_set_1 = 1;
 	SphericLightSource *lightSource_1 = new SphericLightSource("LightSource_1",
 																brightness_set_1,
-																range_set_1,
+																radius_set_1,
 																type_set_1);
 
 	QVERIFY(lightSource_1 != 0);
 
 	// check defaults and set initial values
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_1->
-				getParameter("Range"))->get() == range_set_1);
+				getParameter("Radius"))->get() == radius_set_1);
 
-	InterfaceValue* currentBrightness = 
-		dynamic_cast<InterfaceValue*>(lightSource_1->getParameter("Brightness"));
-
-	QVERIFY(currentBrightness->get() == brightness_set_1);
 
 	DoubleValue* desiredBrightness = 
 		dynamic_cast<DoubleValue*>(lightSource_1->
@@ -107,14 +103,14 @@ void TestSphericLightSource::testConstruction() {
 	QVERIFY(localPosition_1->getY() == 0);
 	QVERIFY(localPosition_1->getZ() == 0);
 
- 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_1->
-				getParameter("UniformLight"))->get() == false);
+ 	QVERIFY(dynamic_cast<IntValue*>(lightSource_1->
+				getParameter("DistributionType"))->get() == 0);
 
  	QVERIFY(dynamic_cast<RangeValue*>(lightSource_1->
-				getParameter("BrightnessRange"))->getMin() == 0);
+				getParameter("Range"))->getMin() == 0);
 
  	QVERIFY(dynamic_cast<RangeValue*>(lightSource_1->
-				getParameter("BrightnessRange"))->getMax() == 1);
+				getParameter("Range"))->getMax() == 1);
  
  	QVERIFY(lightSource_1->getOutputValues().size() == 1);
  	QVERIFY(lightSource_1->getInputValues().size() == 1);
@@ -136,32 +132,27 @@ void TestSphericLightSource::testConstruction() {
 
 	// different object, other values
 	double brightness_set_2 = 4.56;
-	double range_set_2 = -5;
+	double radius_set_2 = -5;
 	int type_set_2 = 2;
 	SphericLightSource *lightSource_2 = new SphericLightSource("LightSource_1",
 																brightness_set_2,
-																range_set_2,
+																radius_set_2,
 																type_set_2);
 	QVERIFY(lightSource_2 != 0);
 
-	// negative ranges are possible? no checks? TODO
+	// TODO: Range below zero should be changed to zero
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_2->
-				getParameter("Range"))->get() == range_set_2);
-
-	// brightness range is restricted to (0,1) initially by default
-	// this is stupid and should probably be changed ... TODO
-	QVERIFY(dynamic_cast<InterfaceValue*>(lightSource_2->
-				getParameter("Brightness"))->get() == 1);
+				getParameter("Radius"))->get() == radius_set_2);
 
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_2->
 				getParameter("DesiredBrightness"))->get() == brightness_set_2);
 
-	RangeValue* brightnessRange_2 = dynamic_cast<RangeValue*>(lightSource_2->
-			getParameter("BrightnessRange"));
-	brightnessRange_2->set(-5,5);
+	// changing range re-sets the actual from the desired brightness
+	RangeValue* range_2 = dynamic_cast<RangeValue*>(lightSource_2->
+			getParameter("Range"));
+	range_2->set(-5,5);
 
-	QVERIFY(dynamic_cast<InterfaceValue*>(lightSource_2->
-				getParameter("Brightness"))->get() == brightness_set_2);
+	// TODO Test actual (private) brightness
 
 	delete lightSource_2;
 
@@ -172,11 +163,11 @@ void TestSphericLightSource::testCopy() {
 	Core::resetCore();
 
 	double brightness_set_1 = 0.444;
-	double range_set_1 = 4.2;
+	double radius_set_1 = 4.2;
 	int type_set_1 = 1;
 	SphericLightSource* lightSource_1 = new SphericLightSource("LightSource_1",
 																brightness_set_1,
-																range_set_1,
+																radius_set_1,
 																type_set_1);
 	QVERIFY(lightSource_1 != 0);
 
@@ -191,12 +182,8 @@ void TestSphericLightSource::testCopy() {
 	QVERIFY(lightSource_2 != 0);
 
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSource_2->
-				getParameter("Range"))->get() == range_set_1);
+				getParameter("Radius"))->get() == radius_set_1);
 
-	InterfaceValue* currentBrightness = 
-		dynamic_cast<InterfaceValue*>(lightSource_2->getParameter("Brightness"));
-
-	QVERIFY(currentBrightness->get() == brightness_set_1);
 
 	DoubleValue* desiredBrightness = 
 		dynamic_cast<DoubleValue*>(lightSource_2->
@@ -229,14 +216,14 @@ void TestSphericLightSource::testCopy() {
 	QVERIFY(localPosition_2->getY() == 0);
 	QVERIFY(localPosition_2->getZ() == 0);
 
- 	QVERIFY(dynamic_cast<BoolValue*>(lightSource_2->
-				getParameter("UniformLight"))->get() == false);
+ 	QVERIFY(dynamic_cast<IntValue*>(lightSource_2->
+				getParameter("DistributionType"))->get() == 0);
 
  	QVERIFY(dynamic_cast<RangeValue*>(lightSource_2->
-				getParameter("BrightnessRange"))->getMin() == 0);
+				getParameter("Range"))->getMin() == 0);
 
  	QVERIFY(dynamic_cast<RangeValue*>(lightSource_2->
-				getParameter("BrightnessRange"))->getMax() == 1);
+				getParameter("Range"))->getMax() == 1);
  
  	QVERIFY(lightSource_2->getOutputValues().size() == 1);
  	QVERIFY(lightSource_2->getInputValues().size() == 1);
@@ -263,11 +250,11 @@ void TestSphericLightSource::testMethods() {
 	Core::resetCore();
 
 	double brightness_set_1 = 0.66645;
-	double range_set_1 = 2;
+	double radius_set_1 = 2;
 	int type_set_1 = 3;
 	SphericLightSource *lightSource_1 = new SphericLightSource("LightSource_1",
 																brightness_set_1,
-																range_set_1,
+																radius_set_1,
 																type_set_1);
 
 	QVERIFY(lightSource_1 != 0);
@@ -282,7 +269,7 @@ void TestSphericLightSource::testMethods() {
 
 	CylinderGeom* colGeom_1 = dynamic_cast<CylinderGeom*>(colObj_1->getGeometry());
 	QVERIFY(colGeom_1 != 0);
-	QVERIFY(colGeom_1->getRadius() == range_set_1);
+	QVERIFY(colGeom_1->getRadius() == radius_set_1);
 	QVERIFY(colGeom_1->getColor().equals(
 				Color(255,255,0,Math::abs(brightness_set_1*80.0))));
 
@@ -299,6 +286,13 @@ void TestSphericLightSource::testMethods() {
 	color_1->set(Color(255,0,0));
 	QVERIFY(colGeom_1->getColor().equals(
 				Color(255,0,0,Math::abs(brightness_set_1*80))));
+
+	QVERIFY(lightSource_1->getDesiredBrightness() == brightness_set_1);
+	
+	// change brightness for easier comparison
+	lightSource_1->setDesiredBrightness(2.0);
+
+	QVERIFY(lightSource_1->getDesiredBrightness() == 2.0);
 
 	delete lightSource_1;
 

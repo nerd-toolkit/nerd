@@ -76,10 +76,11 @@ namespace nerd {
 		int getType() const;
 		void setType(int type);
 		
-		double getRange() const;
-		void setRange(double range);
+		double getRadius() const;
+		void setRadius(double radius);
+
+		void setRange(double min, double max);
 		
-		double getCurrentBrightness() const;
 		double getDesiredBrightness() const;
 		void setDesiredBrightness(double brightness);
 		
@@ -87,9 +88,10 @@ namespace nerd {
 		
 	private:
 		void createCollisionObject();
+		double getActualBrightness() const;
 		
 	private:
-		DoubleValue *mRange;
+		DoubleValue *mRadius;
 		InterfaceValue *mBrightness;
 		DoubleValue *mDesiredBrightness;
 		ColorValue *mLightColor;
@@ -99,8 +101,9 @@ namespace nerd {
 		StringValue *mReferenceObjectName;
 		Vector3DValue *mLocalPosition;
 		SimBody *mReferenceObject;
-		BoolValue *mUniformLight;
-		RangeValue *mBrightnessRange;
+		//BoolValue *mUniformLight;
+		IntValue *mDistributionType;
+		RangeValue *mRange;
 		BoolValue *mSwitchYZAxes;
 	};
 	

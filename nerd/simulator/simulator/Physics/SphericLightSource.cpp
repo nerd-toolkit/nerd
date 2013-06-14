@@ -41,8 +41,6 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-// TODO refactor? remove mBrightnessSensor and mBrightnessRange?
-
 #include "SphericLightSource.h"
 #include <iostream>
 #include <QList>
@@ -61,34 +59,36 @@ namespace nerd {
 	 * Constructs a new SphericLightSource.
 	 */
 	SphericLightSource::SphericLightSource(
-			const QString &name, double brightness, double range, int type)
-	: LightSource(name, type), mRange(0), mBrightness(0), mLightColor(0),
+			const QString &name, double brightness, double radius, int type)
+	: LightSource(name, type), mRadius(0), mBrightness(0), mLightColor(0),
 		mHideLightCone(0), mSphericLightCone(0), mReferenceObjectName(0),
-		mLocalPosition(0), mReferenceObject(0), mUniformLight(0),
-		mSwitchYZAxes(0)
+		mLocalPosition(0), mReferenceObject(0),
+		mDistributionType(0), mSwitchYZAxes(0)
 	{
-		mRange = new DoubleValue(range);
+		mRadius = new DoubleValue(radius);
 		mDesiredBrightness = new DoubleValue(brightness);
 		mBrightness = new InterfaceValue("", "Brightness", brightness, 0.0, 1.0);
 		mBrightness->setNotifyAllSetAttempts(true);
-		mBrightnessRange = new RangeValue(0,1);
+		mRange = new RangeValue(0,1);
 		mLightColor = new ColorValue("yellow");
 		mHideLightCone = new BoolValue(false);
 		mSphericLightCone = new BoolValue(false);
 		mReferenceObjectName = new StringValue("");
 		mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
-		mUniformLight = new BoolValue(false);
+		mDistributionType = new IntValue(0);
+		//mUniformLight = new BoolValue(false);
 		
-		addParameter("Range", mRange);
+		addParameter("Radius", mRadius);
 		addParameter("DesiredBrightness", mDesiredBrightness);
-		addParameter("Brightness", mBrightness);
-		addParameter("BrightnessRange", mBrightnessRange);
+		//addParameter("Brightness", mBrightness);
+		addParameter("Range", mRange);
 		addParameter("LightColor", mLightColor);
 		addParameter("HideLightCone", mHideLightCone);
 		addParameter("SphericLightCone", mSphericLightCone);
 		addParameter("ReferenceObject", mReferenceObjectName);
 		addParameter("LocalPosition", mLocalPosition);
-		addParameter("UniformLight", mUniformLight);
+		addParameter("DistributionType", mDistributionType);
+		//addParameter("UniformLight", mUniformLight);
 		
 		mOutputValues.append(mBrightness);
 		mInputValues.append(mBrightness);
@@ -114,19 +114,22 @@ namespace nerd {
 	 */
 	SphericLightSource::SphericLightSource(const SphericLightSource &other) 
 	: Object(), ValueChangedListener(), LightSource(other), 
-		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0), mUniformLight(0),
-		mSwitchYZAxes(other.mSwitchYZAxes)
+		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0),
+		mDistributionType(other.mDistributionType), mSwitchYZAxes(other.mSwitchYZAxes)
 	{
-		mRange = dynamic_cast<DoubleValue*>(getParameter("Range"));
-		mBrightness = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
+		mRadius = dynamic_cast<DoubleValue*>(getParameter("Radius"));
 		mDesiredBrightness = dynamic_cast<DoubleValue*>(getParameter("DesiredBrightness"));
+		//mBrightness = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
+		// Reconstruct brightness interface value (!)
+		mBrightness = new InterfaceValue("", "Brightness", mDesiredBrightness->get(), 0, 1);
 		mLightColor = dynamic_cast<ColorValue*>(getParameter("LightColor"));
 		mHideLightCone = dynamic_cast<BoolValue*>(getParameter("HideLightCone"));
 		mSphericLightCone = dynamic_cast<BoolValue*>(getParameter("SphericLightCone"));
 		mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
 		mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
-		mUniformLight = dynamic_cast<BoolValue*>(getParameter("UniformLight"));
-		mBrightnessRange = dynamic_cast<RangeValue*>(getParameter("BrightnessRange"));
+		//mUniformLight = dynamic_cast<BoolValue*>(getParameter("UniformLight"));
+		mDistributionType = dynamic_cast<IntValue*>(getParameter("DistributionType"));
+		mRange = dynamic_cast<RangeValue*>(getParameter("Range"));
 		
 		mOutputValues.clear();
 		mInputValues.clear();
@@ -219,19 +222,20 @@ namespace nerd {
 			return;
 		}
 		else if(value == mDesiredBrightness) {
+			//Core::log("SphericLightSource: DesiredBrightness has changed!", true);
 			updateBrightnessValue();
 		}
-		else if(value == mRange) {
+		else if(value == mRadius) {
 			if(mSphericLightCone->get()) {
 				SphereGeom *geom = dynamic_cast<SphereGeom*>(mBodyCollisionObject->getGeometry());
 				if(geom != 0) {
-					geom->setRadius(mRange->get());
+					geom->setRadius(mRadius->get());
 				}
 			}
 			else {
 				CylinderGeom *geom = dynamic_cast<CylinderGeom*>(mBodyCollisionObject->getGeometry());
 				if(geom != 0) {
-					geom->setRadius(mRange->get());
+					geom->setRadius(mRadius->get());
 				}
 			}
 		}
@@ -259,25 +263,26 @@ namespace nerd {
 				rotatedLocalPosQuat.getZ());
 			mPositionValue->set(mReferenceObject->getPositionValue()->get() + rotatedLocalPos);
 		}
-		else if(value == mBrightnessRange) {
-			Core::log("SphericLightSource: mBrightnessRange has been changed!", true);
-			mBrightness->setMin(mBrightnessRange->getMin());
-			mBrightness->setMax(mBrightnessRange->getMax());
+		else if(value == mRange) {
+			// Core::log("SphericLightSource: Range has been changed!", true);
+			mBrightness->setMin(mRange->getMin());
+			mBrightness->setMax(mRange->getMax());
 			updateBrightnessValue();
 		}
 	}
 	
 	
 	void SphericLightSource::updateBrightnessValue() {
+		//Core::log("SphericLightSource: updateBrightnessValue called!", true);
+		//cout << "old Desired Brightness: " << mDesiredBrightness->get() << endl;
+		//cout << "old Actual Brightness: " << mBrightness->get() << endl;
 		mBrightness->set(mDesiredBrightness->get());
+		//cout << "new Actual Brightness: " << mBrightness->get() << endl;
 	}
 	
 	void SphericLightSource::updateLightCone() {
 		//Set transparency to a value between 0 and 80, depending on the current brightness.
 		//80 is about 30 percent of full opacity (255) at max.
-
-		//Color color = mBodyCollisionObject->getGeometry()->getColor();
-		// light color should be updated from the LightColor parameter!
 		Color color = mLightColor->get();
 		if(mHideLightCone->get()) {
 			color.setAlpha(0); 
@@ -288,30 +293,32 @@ namespace nerd {
 		mBodyCollisionObject->getGeometry()->setColor(color);
 	}
 	
-	double SphericLightSource::getRange() const {
-		return mRange->get();
+	double SphericLightSource::getRadius() const {
+		return mRadius->get();
 	}
 	
-	
-	void SphericLightSource::setRange(double range) {
-		mRange->set(range);
+	void SphericLightSource::setRadius(double radius) {
+		if(radius < 0) {
+			radius = 0;
+		}
+		mRadius->set(radius);
+	}
+
+	void SphericLightSource::setRange(double min, double max) {
+		mRange->set(min, max);
 	}
 	
-	
-	double SphericLightSource::getCurrentBrightness() const {
+	double SphericLightSource::getActualBrightness() const {
 		return mBrightness->get();
 	}
-	
 	
 	double SphericLightSource::getDesiredBrightness() const {
 		return mDesiredBrightness->get();
 	}
 	
-	
 	void SphericLightSource::setDesiredBrightness(double brightness) {
 		mDesiredBrightness->set(brightness);
 	}
-	
 	
 	double SphericLightSource::getBrightness(
 			const Vector3D &globalPosition, const bool &restrictToHorizontal)
@@ -337,12 +344,13 @@ namespace nerd {
 			distance = Math::distance(globalPosition, getPositionValue()->get());
 		}
 		
-		double range = getRange();
+		double radius = getRadius();
 		
-		if(range == 0.0 || distance > range) {
+		if(radius == 0.0 || distance > radius) {
 			return brightness;
 		}
 		
+		/**
 		if(mUniformLight->get()) {
 			brightness = getCurrentBrightness();
 		}
@@ -350,6 +358,17 @@ namespace nerd {
 			//currently the light is assumed to decay linearly 
 			//TODO should be changed to 1/(r*r).
 			brightness = (range - distance) / range * getCurrentBrightness();
+		}
+		**/
+
+		switch(mDistributionType->get()) {
+			case 0:
+				brightness = getActualBrightness();
+				break;
+			case 1:
+				brightness = (radius - distance) / radius * getActualBrightness();
+				break;
+			// TODO add cubic decay
 		}
 		
 		return brightness;
@@ -365,11 +384,11 @@ namespace nerd {
 
 		// sphere
 		if(mSphericLightCone->get()) {
-			mBodyCollisionObject = new CollisionObject(SphereGeom(this, mRange->get()));
+			mBodyCollisionObject = new CollisionObject(SphereGeom(this, mRadius->get()));
 		}
 		// cylinder
 		else {
-			CylinderGeom geom(this, mRange->get(), 0.05); // why a length of 0.05 exactly?
+			CylinderGeom geom(this, mRadius->get(), 0.05); // why a length of 0.05 exactly?
 			Quaternion orientation;
 			if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
 				orientation.setFromAngles(90.0, 0.0, 0.0);
