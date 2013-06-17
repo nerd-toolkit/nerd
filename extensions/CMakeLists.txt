@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 add_subdirectory(VisionASeries)
+add_subdirectory(LTDPlugIn)
 add_subdirectory(NetworkDynamicsDiagramPlotter)
 add_subdirectory(TestPlugIn)
 #add_subdirectory(TestInheritancePlugin)
