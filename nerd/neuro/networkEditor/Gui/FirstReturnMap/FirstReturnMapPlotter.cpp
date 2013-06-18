@@ -465,6 +465,7 @@ void FirstReturnMapPlotter::plotterItemCollectionChanged() {
 	//destroy all superflous panels
 	for(int i = 0; i < currentPanels.size(); ++i) {
 		delete currentPanels.at(i);
+		//currentPanels.at(i).deleteLater();
 	}
 
 	//update the widget

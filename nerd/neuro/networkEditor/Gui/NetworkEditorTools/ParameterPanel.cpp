@@ -129,8 +129,12 @@ ParameterPanel::~ParameterPanel() {
 		delete mEditScriptButton;
 	}
 	delete mContentLayout;
+	
+	
+	
 	if(mScriptEditor != 0) {
-		delete mScriptEditor;
+		//delete mScriptEditor;
+		mScriptEditor->deleteLater();
 	}
 }
 

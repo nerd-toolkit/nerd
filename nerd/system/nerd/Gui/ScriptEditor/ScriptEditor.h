@@ -88,6 +88,9 @@ namespace nerd {
 		void markAsUnmodified();
 		
 		void handleChangedContent(const QString &newContent);
+		
+		void setCodeAreaText(const QString &message, bool enable);
+		void setErrorMessageAreaText(const QString &message, bool enable);
 
 	public slots:
 		void applyButtonPressed();
@@ -100,6 +103,9 @@ namespace nerd {
 		void setErrorMessageArea();
 		void markAsModified();
 		void markTitleAsUnmodified();
+		
+		void setCodeAreaTextSlot(const QString &message, bool enable);
+		void setErrorMessageAreaTextSlot(const QString &message, bool enable);
 
 	protected:
 		virtual void keyPressEvent(QKeyEvent *event);

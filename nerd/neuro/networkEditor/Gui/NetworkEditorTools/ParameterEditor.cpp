@@ -106,15 +106,6 @@ void ParameterEditor::setParameterizedObject(ParameterizedObject *obj,
 
 	mSlaveObjects = slaveObjects;
 
-// 	cerr << "obj: " << obj << " " << mParameterizedObject << endl;
-
-// 	if(obj != 0) {
-// 		cerr << "Name: " << obj->getName().toStdString().c_str() << endl;
-// 	}
-// 
-// 	if(obj == mParameterizedObject) {
-// 		return;
-// 	}
 	mParameterizedObject = obj;
 	updateParameterView();
 }
@@ -173,6 +164,7 @@ void ParameterEditor::updateParameterView() {
 					this, SLOT(parameterChanged(Value*, const QString&, const QString&)));
 			panel->removeFromLayout(mParameterLayout);
 			delete panel;
+			//panel->deleteLater();
 		}
 		mParameterPanels.clear();
 	

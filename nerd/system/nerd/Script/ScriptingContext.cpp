@@ -139,6 +139,15 @@ ScriptingContext::ScriptingContext(const ScriptingContext &other)
  * Destructor.
  */
 ScriptingContext::~ScriptingContext() {
+	//remove all known events
+	for(QHash<Event*, QString>::iterator i = mEventNames.begin(); i != mEventNames.end(); i++) {
+		Event *e = i.key();
+		if(e != 0) {
+			e->removeEventListener(this);
+		}
+	}
+	mEventNames.clear();
+	
 	if(mScript != 0) {
 		delete mScript;
 	}
@@ -460,12 +469,20 @@ bool ScriptingContext::loadScriptCode(bool replaceExistingCode) {
 		//TODO check if this should return true.
 		return false;
 	}
-
-	mWrittenVariables.clear();
-	mReadVariables.clear();
+	
+	//remove all known events
+	for(QHash<Event*, QString>::iterator i = mEventNames.begin(); i != mEventNames.end(); i++) {
+		Event *e = i.key();
+		if(e != 0) {
+			e->removeEventListener(this);
+		}
+	}
 	mEventNames.clear();
+	
 	mEventOccurences.clear();
 	mPersistentParameters.clear();
+	mWrittenVariables.clear();
+	mReadVariables.clear();
 
 	QFile file(mScriptFileName->get());
 

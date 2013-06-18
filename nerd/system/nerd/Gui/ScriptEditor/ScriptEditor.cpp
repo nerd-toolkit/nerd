@@ -133,6 +133,10 @@ ScriptEditor::ScriptEditor(const QString &scriptName, bool autoHandleChanges)
 			this, SLOT(markAsModified()));
 	connect(this, SIGNAL(markAsUnmodified()),
 			this, SLOT(markTitleAsUnmodified()));
+	connect(this, SIGNAL(setCodeAreaText(QString, bool)),
+			this, SLOT(setCodeAreaTextSlot(QString, bool)));
+	connect(this, SIGNAL(setErrorMessageAreaText(QString,bool)),
+			this, SLOT(setErrorMessageAreaTextSlot(QString,bool)));
 
 	
 	Properties &props = Core::getInstance()->getProperties();
@@ -164,6 +168,28 @@ ScriptEditor::ScriptEditor(const QString &scriptName, bool autoHandleChanges)
  * Destructor.
  */
 ScriptEditor::~ScriptEditor() { 
+	
+	disconnect(mApplyButton, SIGNAL(pressed()),
+			this, SLOT(applyButtonPressed()));
+	disconnect(mReloadScriptCodeButton, SIGNAL(pressed()),
+			this, SLOT(reloadButtonPressed()));
+	disconnect(mLoadScriptCodeButton, SIGNAL(pressed()),
+			this, SLOT(loadButtonPressed()));
+	disconnect(mStoreScriptCodeButton, SIGNAL(pressed()),
+			this, SLOT(saveButtonPressed()));
+	disconnect(this, SIGNAL(changeScriptCodeArea()),
+			this, SLOT(setScriptCodeArea()));
+	disconnect(this, SIGNAL(changeErrorMessageArea()),
+			this, SLOT(setErrorMessageArea()));
+	disconnect(mCodeArea, SIGNAL(textChanged()),
+			this, SLOT(markAsModified()));
+	disconnect(this, SIGNAL(markAsUnmodified()),
+			this, SLOT(markTitleAsUnmodified()));
+	disconnect(this, SIGNAL(setCodeAreaText(QString, bool)),
+			this, SLOT(setCodeAreaTextSlot(QString, bool)));
+	disconnect(this, SIGNAL(setErrorMessageAreaText(QString,bool)),
+			this, SLOT(setErrorMessageAreaTextSlot(QString,bool)));
+	
 	if(mErrorValue != 0) {
 		mErrorValue->removeValueChangedListener(this);
 	}
@@ -226,10 +252,8 @@ bool ScriptEditor::attachToCodeBase(CodeValue *code) {
 			mErrorValue->removeValueChangedListener(this);
 		}
 		mErrorValue = 0;
-		mCodeArea->setText("");
-		mCodeArea->setEnabled(false);
-		mErrorMessageField->setText("");
-		mErrorMessageField->setEnabled(false);
+		emit setCodeAreaText("", false);
+		emit setErrorMessageAreaText("", false);
 		
 		emit markAsUnmodified();
 	}
@@ -241,9 +265,8 @@ bool ScriptEditor::attachToCodeBase(CodeValue *code) {
 			mErrorValue->addValueChangedListener(this);
 		}
 		
-		mCodeArea->setText(mScriptCode->get());
-		mCodeArea->setEnabled(true);
-		mErrorMessageField->setEnabled(true);
+		emit setCodeAreaText(mScriptCode->get(), true);
+		emit setErrorMessageAreaText(mErrorValue->get(), true);
 		
 		setCodeFromValue();
 	}
@@ -307,7 +330,7 @@ bool ScriptEditor::loadScriptCode(const QString &fileName, bool replaceExistingC
 	
 	file.close();
 	
-	mCodeArea->setText(multiLineCode);
+	setCodeAreaText(multiLineCode, true);
 	
 	if(mAutoHandleChanges) {
 		Core::getInstance()->scheduleTask(new ChangeValueTask(mScriptCode, multiLineCode));
@@ -373,7 +396,7 @@ void ScriptEditor::setScriptCodeArea() {
 }
 
 void ScriptEditor::setErrorMessageArea() {
-	mErrorMessageField->setText(mErrorValue->get());
+	setErrorMessageAreaText(mErrorValue->get(), true);
 }
 
 
@@ -410,6 +433,19 @@ void ScriptEditor::markAsModified() {
 	}
 }
 
+
+
+void ScriptEditor::setCodeAreaTextSlot(const QString &message, bool enable) {
+	mCodeArea->setText(message);
+	mCodeArea->setEnabled(enable);
+}
+
+
+
+void ScriptEditor::setErrorMessageAreaTextSlot(const QString &message, bool enable) {
+	mErrorMessageField->setText(message);
+	mErrorMessageField->setEnabled(enable);
+}
 
 
 
