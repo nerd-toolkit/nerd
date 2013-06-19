@@ -122,7 +122,7 @@ SynapseFunction* LTD1Function::createCopy() const {
  * This method can be used to reset variables, such as internal states.
  */
 void LTD1Function::reset(Synapse *owner) {
-  owner->getStrengthValue().set(0.5*Random::nextDouble()*0.5); 
+  owner->getStrengthValue().set(0.5+Random::nextDouble()*0.5); 
 }
 
 
