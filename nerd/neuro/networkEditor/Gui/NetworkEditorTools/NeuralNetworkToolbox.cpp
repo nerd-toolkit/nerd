@@ -834,13 +834,13 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 
 	mNetworkMenu->addSeparator();
 	
-	QAction *setInitialOutputAction = mNetworkMenu->addAction("Update Init Output");
+	QAction *setInitialOutputAction = mNetworkMenu->addAction("Set Initial Output");
 	setInitialOutputAction->setToolTip("This tags all selected (or all) neurons to use\n"
 										"their current activation as initial output.");
 	connect(setInitialOutputAction, SIGNAL(triggered()),
 			this, SLOT(storeInitialOutput()));
 			
-	QAction *clearInitialOutputAction = mNetworkMenu->addAction("Clear Init Output");
+	QAction *clearInitialOutputAction = mNetworkMenu->addAction("Clear Initial Output");
 	clearInitialOutputAction->setToolTip("Removes all tags on initial activation and output.");
 	connect(clearInitialOutputAction, SIGNAL(triggered()),
 			this, SLOT(clearInitialOutput()));

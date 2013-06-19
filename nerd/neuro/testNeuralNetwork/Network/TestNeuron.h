@@ -62,6 +62,7 @@ private slots:
 	void addAndRemoveSynapses();
 	void testNeuronCalculation();
 	void testDuplication();
+	void testInitOutputAtReset();
 	
 
 private:

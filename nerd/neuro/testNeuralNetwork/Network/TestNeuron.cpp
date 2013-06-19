@@ -60,6 +60,7 @@
 #include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
 #include "Value/DoubleValue.h"
 #include "Math/Math.h"
+#include "NeuralNetworkConstants.h"
 
 
 using namespace std;
@@ -455,6 +456,101 @@ void TestNeuron::testDuplication() {
 
 
 	delete neuron2;
+}
+
+
+//Chris
+void TestNeuron::testInitOutputAtReset() {
+	Neuron sourceNeuron("Source", TransferFunctionAdapter("TF", -1.0, 1.0), AdditiveTimeDiscreteActivationFunction());
+	sourceNeuron.setId(15);
+	sourceNeuron.getBiasValue().set(0.5);
+	
+	sourceNeuron.reset();
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 0.0);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 0.0);
+	QCOMPARE(sourceNeuron.getLastActivation(), 0.0);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 0.0);
+	
+	sourceNeuron.getActivationValue().set(10.1);
+	sourceNeuron.getOutputActivationValue().set(50.1);
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 10.1);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 50.1);
+	QCOMPARE(sourceNeuron.getLastActivation(), 0.0);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 0.0);
+	
+	sourceNeuron.prepare();
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 10.1);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 50.1);
+	QCOMPARE(sourceNeuron.getLastActivation(), 10.1);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 50.1);
+	
+	sourceNeuron.reset();
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 0.0);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 0.0);
+	QCOMPARE(sourceNeuron.getLastActivation(), 0.0);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 0.0);
+	
+	sourceNeuron.getActivationValue().set(10.1);
+	sourceNeuron.getOutputActivationValue().set(50.1);
+	
+	sourceNeuron.prepare();
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 10.1);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 50.1);
+	QCOMPARE(sourceNeuron.getLastActivation(), 10.1);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 50.1);
+	
+	//now set an initial activation and an output tag.
+	sourceNeuron.setProperty(NeuralNetworkConstants::TAG_INITIAL_OUTPUT, "-0.5");
+	sourceNeuron.setProperty(NeuralNetworkConstants::TAG_INITIAL_ACTIVATION, "9.4");
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 10.1);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 50.1);
+	QCOMPARE(sourceNeuron.getLastActivation(), 10.1);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 50.1);
+	
+	sourceNeuron.updateActivation();
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 0.5);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 0.5);
+	QCOMPARE(sourceNeuron.getLastActivation(), 10.1);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 50.1);
+	
+	sourceNeuron.reset();
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 9.4);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), -0.5);
+	QCOMPARE(sourceNeuron.getLastActivation(), 9.4);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), -0.5);
+	
+	sourceNeuron.setProperty(NeuralNetworkConstants::TAG_INITIAL_OUTPUT, "5.5");
+	sourceNeuron.setProperty(NeuralNetworkConstants::TAG_INITIAL_ACTIVATION, "1.1");
+	
+	sourceNeuron.reset();
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 1.1);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 5.5);
+	QCOMPARE(sourceNeuron.getLastActivation(), 1.1);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 5.5);
+	
+	sourceNeuron.removeProperty(NeuralNetworkConstants::TAG_INITIAL_OUTPUT);
+	sourceNeuron.removeProperty(NeuralNetworkConstants::TAG_INITIAL_ACTIVATION);
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 1.1);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 5.5);
+	QCOMPARE(sourceNeuron.getLastActivation(), 1.1);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 5.5);
+	
+	sourceNeuron.reset();
+	
+	QCOMPARE(sourceNeuron.getActivationValue().get(), 0.0);
+	QCOMPARE(sourceNeuron.getOutputActivationValue().get(), 0.0);
+	QCOMPARE(sourceNeuron.getLastActivation(), 0.0);
+	QCOMPARE(sourceNeuron.getLastOutputActivation(), 0.0);
+	
 }
 
 
