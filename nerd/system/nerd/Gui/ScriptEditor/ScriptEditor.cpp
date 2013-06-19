@@ -264,9 +264,12 @@ bool ScriptEditor::attachToCodeBase(CodeValue *code) {
 		if(mErrorValue != 0) {
 			mErrorValue->addValueChangedListener(this);
 		}
-		
-		emit setCodeAreaText(mScriptCode->get(), true);
-		emit setErrorMessageAreaText(mErrorValue->get(), true);
+		if(mScriptCode != 0) {
+			emit setCodeAreaText(mScriptCode->get(), true);
+		}
+		if(mErrorValue != 0) {
+			emit setErrorMessageAreaText(mErrorValue->get(), true);
+		}
 		
 		setCodeFromValue();
 	}

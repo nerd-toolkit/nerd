@@ -107,6 +107,8 @@ namespace nerd {
 	//**************************************************************************
 
 		static const QString TAG_FLIP_NEURON_ACTIVITY;
+		static const QString TAG_INITIAL_OUTPUT;
+		static const QString TAG_INITIAL_ACTIVATION;
 		static const QString TAG_INPUT_NEURON;
 		static const QString TAG_OUTPUT_NEURON;
 		static const QString TAG_TYPE_NEURON;

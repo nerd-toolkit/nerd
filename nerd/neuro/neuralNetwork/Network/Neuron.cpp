@@ -131,11 +131,32 @@ void Neuron::reset() {
 	else {
 		mFlipActivation = false;
 	}
-
+	
 	mActivationValue.set(0.0);
 	mOutputActivationValue.set(0.0);
 	mLastActivation = 0.0;
 	mLastOutputActivation = 0.0;
+	
+	//support custom initial output activation
+	if(hasProperty(NeuralNetworkConstants::TAG_INITIAL_OUTPUT)) {
+		bool ok = true;
+		double output = getProperty(NeuralNetworkConstants::TAG_INITIAL_OUTPUT).toDouble(&ok);
+		if(ok) {
+			mOutputActivationValue.set(output);
+			mLastOutputActivation = output;
+		}
+	}
+	
+	//support custom initial output activation
+	if(hasProperty(NeuralNetworkConstants::TAG_INITIAL_ACTIVATION)) {
+		bool ok = true;
+		double activation = getProperty(NeuralNetworkConstants::TAG_INITIAL_ACTIVATION).toDouble(&ok);
+		if(ok) {
+			mActivationValue.set(activation);
+			mLastActivation = activation;
+		}
+	}
+	
 	if(mTransferFunction != 0) {
 		mTransferFunction->reset(this);
 	}

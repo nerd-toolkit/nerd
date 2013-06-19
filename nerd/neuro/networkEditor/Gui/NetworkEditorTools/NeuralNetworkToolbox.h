@@ -131,6 +131,8 @@ namespace nerd {
 		void fullyConnectSelectedNeuronsToTarget();
 		void fullyConnectTargetToSelectedElements();
 		void grabIdsOfSelectedElements();
+		void storeInitialOutput();
+		void clearInitialOutput();
 
 	protected:
 		virtual void addNetworkMenu();

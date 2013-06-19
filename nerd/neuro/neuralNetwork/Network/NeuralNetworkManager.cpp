@@ -170,6 +170,18 @@ NeuralNetworkManager::NeuralNetworkManager()
 						NeuralNetworkConstants::TAG_TYPE_NEURON,
 						"Splits the neuron into two new neurons and creates a spinal cord interface.\n"
 						"The tag requires a number that specifies the spinal cord adress to be used."));
+	
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_INITIAL_OUTPUT,
+						NeuralNetworkConstants::TAG_TYPE_NEURON,
+					    "If set, then the neuron provides this output during the initial simulation step\n"
+						"after a reset. This means that the lastOutputActivation is set to this initial\n"
+						"value during a reset. This can be used to start the network in a specific region of\n"
+						"the phase space"));
+	
+	ntm->addTag(NeuroTag(NeuralNetworkConstants::TAG_INITIAL_ACTIVATION,
+						NeuralNetworkConstants::TAG_TYPE_NEURON,
+						"If set, then the neuron provides this activation during the initial simulation step\n"
+						"after a reset. This means, that lastActivation is set to this initial value after a reset."));
 }
 
 /**

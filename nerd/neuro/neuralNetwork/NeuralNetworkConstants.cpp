@@ -147,6 +147,12 @@ const QString NeuralNetworkConstants::VALUE_DISABLE_NETWORK_RESET
 
 const QString NeuralNetworkConstants::TAG_FLIP_NEURON_ACTIVITY
 		= "FLIP_ACTIVITY";
+		
+const QString NeuralNetworkConstants::TAG_INITIAL_OUTPUT
+		= "INIT_OUTPUT";
+		
+const QString NeuralNetworkConstants::TAG_INITIAL_ACTIVATION
+		= "INIT_ACTIVATION";
 
 const QString NeuralNetworkConstants::TAG_INPUT_NEURON 
 		= "TYPE_INPUT";

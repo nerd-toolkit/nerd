@@ -528,6 +528,88 @@ void NeuralNetworkToolbox::grabIdsOfSelectedElements() {
 	QApplication::clipboard()->setText(idsList);
 }
 
+void NeuralNetworkToolbox::storeInitialOutput() {
+	if(mOwner == 0) {
+		return;
+	}
+	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
+	if(visu == 0 && visu->getVisualizationHandler() != 0) {
+		return;
+	}
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
+	
+	ModularNeuralNetwork *net = handler->getNeuralNetwork();
+	
+	if(net == 0) {
+		return;
+	}
+
+	QList<PaintItem*> selectedItems = visu->getSelectedItems();
+	
+	QList<Neuron*> selectedNeurons;
+	if(selectedItems.empty()) {
+		selectedNeurons = net->getNeurons();
+	}
+	else {
+		for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
+			NeuronItem *neuronItem = dynamic_cast<NeuronItem*>(i.next());
+			if(neuronItem != 0 && neuronItem->getNeuron() != 0) {
+				selectedNeurons.append(neuronItem->getNeuron());
+			}
+		}
+	}
+	
+	//TODO make undoable
+	for(QListIterator<Neuron*> i(selectedNeurons); i.hasNext();) {
+		Neuron *neuron = i.next();
+		neuron->setProperty(NeuralNetworkConstants::TAG_INITIAL_OUTPUT, 
+							QString::number(neuron->getOutputActivationValue().get()));
+		neuron->setProperty(NeuralNetworkConstants::TAG_INITIAL_ACTIVATION, 
+							QString::number(neuron->getActivationValue().get()));
+	}
+}
+
+
+void NeuralNetworkToolbox::clearInitialOutput() {
+	if(mOwner == 0) {
+		return;
+	}
+	NetworkVisualization *visu = mOwner->getCurrentNetworkVisualization();
+	if(visu == 0 && visu->getVisualizationHandler() != 0) {
+		return;
+	}
+	NetworkVisualizationHandler *handler = visu->getVisualizationHandler();
+	
+	ModularNeuralNetwork *net = handler->getNeuralNetwork();
+	
+	if(net == 0) {
+		return;
+	}
+
+	QList<PaintItem*> selectedItems = visu->getSelectedItems();
+	
+	QList<Neuron*> selectedNeurons;
+	if(selectedItems.empty()) {
+		selectedNeurons = net->getNeurons();
+	}
+	else {
+		for(QListIterator<PaintItem*> i(selectedItems); i.hasNext();) {
+			NeuronItem *neuronItem = dynamic_cast<NeuronItem*>(i.next());
+			if(neuronItem != 0 && neuronItem->getNeuron() != 0) {
+				selectedNeurons.append(neuronItem->getNeuron());
+			}
+		}
+	}
+	
+	//TODO make undoable
+	for(QListIterator<Neuron*> i(selectedNeurons); i.hasNext();) {
+		Neuron *neuron = i.next();
+		neuron->removeProperty(NeuralNetworkConstants::TAG_INITIAL_OUTPUT);
+		neuron->removeProperty(NeuralNetworkConstants::TAG_INITIAL_ACTIVATION);
+	}
+}
+
+
 void NeuralNetworkToolbox::addNetworkMenu() {
 	if(mOwner == 0) {
 		return;
@@ -750,6 +832,20 @@ void NeuralNetworkToolbox::addNetworkMenu() {
 	connect(replaceModuleAction, SIGNAL(triggered()),
 			this, SLOT(useReplaceModuleTool()));
 
+	mNetworkMenu->addSeparator();
+	
+	QAction *setInitialOutputAction = mNetworkMenu->addAction("Update Init Output");
+	setInitialOutputAction->setToolTip("This tags all selected (or all) neurons to use\n"
+										"their current activation as initial output.");
+	connect(setInitialOutputAction, SIGNAL(triggered()),
+			this, SLOT(storeInitialOutput()));
+			
+	QAction *clearInitialOutputAction = mNetworkMenu->addAction("Clear Init Output");
+	clearInitialOutputAction->setToolTip("Removes all tags on initial activation and output.");
+	connect(clearInitialOutputAction, SIGNAL(triggered()),
+			this, SLOT(clearInitialOutput()));
+	
+	
 	mNetworkMenu->addSeparator();
 	
 	QAction *resetNetworkAction = mNetworkMenu->addAction("&Reset Network");
