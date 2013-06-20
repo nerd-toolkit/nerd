@@ -144,6 +144,7 @@ bool PrototypeOverviewPrinter::bind() {
 							
 						QString desc = value->getDescription();
 						if(desc != "") {
+							desc = desc.replace("\n", "\n       ");
 							cout << endl << "      [" << desc.toStdString().c_str() << "]";
 						}
 						cout << endl;

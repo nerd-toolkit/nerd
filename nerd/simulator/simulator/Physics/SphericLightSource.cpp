@@ -78,6 +78,11 @@ namespace nerd {
 		mDistributionType = new IntValue(0);
 		//mUniformLight = new BoolValue(false);
 		
+		mDistributionType->setDescription("The type of light distribution:\n"
+										   "0: homogeneous distribution\n"
+										   "1: linear decay from center");
+		//TODO add other documentation strings
+		
 		addParameter("Radius", mRadius);
 		addParameter("DesiredBrightness", mDesiredBrightness);
 		//addParameter("Brightness", mBrightness);
