@@ -105,10 +105,11 @@ namespace nerd {
 				getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
 		}
 		
+		mGeometryColorValue->set(0, 0, 0, 0);
+		
 		createCollisionObject();
 		
 		updateBrightnessValue();
-		updateLightCone();
 	}
 	
 	
@@ -145,7 +146,6 @@ namespace nerd {
 		createCollisionObject();
 		
 		updateBrightnessValue();
-		updateLightCone();
 	}
 	
 	/**
@@ -283,6 +283,9 @@ namespace nerd {
 		//cout << "old Actual Brightness: " << mBrightness->get() << endl;
 		mBrightness->set(mDesiredBrightness->get());
 		//cout << "new Actual Brightness: " << mBrightness->get() << endl;
+		
+		updateLightCone();
+		
 	}
 	
 	void SphericLightSource::updateLightCone() {
@@ -295,6 +298,7 @@ namespace nerd {
 		else {
 			color.setAlpha((int) (Math::abs(mBrightness->get()) * 80.0)); 
 		}
+		mGeometryColorValue->set(color);
 		mBodyCollisionObject->getGeometry()->setColor(color);
 	}
 	
