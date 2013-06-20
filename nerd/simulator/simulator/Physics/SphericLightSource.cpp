@@ -207,6 +207,8 @@ namespace nerd {
 			}
 			*/
 		}
+		
+		updateBrightnessValue();
 	}
 	
 	
