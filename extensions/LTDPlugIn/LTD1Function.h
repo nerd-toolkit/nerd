@@ -46,6 +46,7 @@
 #define NERDLTD1Function_H
 
 #include "SynapseFunction/SimpleSynapseFunction.h"
+#include "Value/BoolValue.h"
 
 namespace nerd {
 
@@ -67,7 +68,8 @@ namespace nerd {
 		StringValue *mModTypes;
 		DoubleValue *mDelta;
 		DoubleValue *mRecoveryRate;
-	};
+    BoolValue *mResetWeights;
+  };
 
 }
 

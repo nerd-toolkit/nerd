@@ -200,7 +200,7 @@ void Event::trigger() {
 		for(int index = 0; index < mEventBuffer.size(); index++) {
 			EventListener *e = mEventBuffer.at(index);
 			if(mEventListeners.contains(e)) {
-				e->eventOccured(this);
+        e->eventOccured(this);
 			}
 		}
 	}

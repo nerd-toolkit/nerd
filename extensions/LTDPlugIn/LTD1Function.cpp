@@ -64,20 +64,23 @@ namespace nerd {
  * them (maybe additional) as Observable (addObservable).
  */
 LTD1Function::LTD1Function()
-	: SynapseFunction("LTD1Function")
+	: SynapseFunction("LTD1")
 {
   mModTypes = new StringValue("1");
 	mDelta = new DoubleValue(0.01);
 	mRecoveryRate = new DoubleValue(0.001);
-	
+  mResetWeights = new BoolValue(false);
+
 	mModTypes->setDescription("Please enter a space seperated list of Integers");
 	mDelta->setDescription("");	
 	mRecoveryRate->setDescription("Recovery rate");
+  mResetWeights->setDescription("If true the weights are reinitialized at each reset.");
 
 	//add a parameter that can be changed by the user in the network editor.
   addParameter("modTypes", mModTypes);
 	addParameter("delta",mDelta);
 	addParameter("recovery rate",mRecoveryRate);
+  addParameter("resetWeights",mResetWeights);
 }
 
 
@@ -98,6 +101,7 @@ LTD1Function::LTD1Function(
 	mModTypes = dynamic_cast<StringValue*>(getParameter("modTypes"));
 	mDelta = dynamic_cast<DoubleValue*>(getParameter("delta"));
 	mRecoveryRate = dynamic_cast<DoubleValue*>(getParameter("recovery rate"));
+  mResetWeights = dynamic_cast<BoolValue*>(getParameter("resetWeights"));
 }
 
 
@@ -122,7 +126,9 @@ SynapseFunction* LTD1Function::createCopy() const {
  * This method can be used to reset variables, such as internal states.
  */
 void LTD1Function::reset(Synapse *owner) {
-  owner->getStrengthValue().set(0.5+Random::nextDouble()*0.5); 
+  if(mResetWeights->get()){
+    owner->getStrengthValue().set(0.5+Random::nextDouble()*0.5); 
+  }
 }
 
 
