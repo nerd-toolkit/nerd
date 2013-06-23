@@ -97,7 +97,8 @@ namespace nerd {
 		mDistributionType->setDescription("The type of light distribution:\n"
 										   "0: homogeneous distribution\n"
 										   "1: linear decay from center\n"
-										   "2: cubic decay from center");
+										   "2: Quadratic decay from center\n"
+										   "3: Cubic decay from the center");
 		
 		addParameter("Radius", mRadius);
 		addParameter("DesiredBrightness", mDesiredBrightness);
@@ -139,15 +140,19 @@ namespace nerd {
 	{
 		mRadius = dynamic_cast<DoubleValue*>(getParameter("Radius"));
 		mDesiredBrightness = dynamic_cast<DoubleValue*>(getParameter("DesiredBrightness"));
-		// Reconstruct brightness interface value (!)
-		mBrightness = new InterfaceValue("", "Brightness", mDesiredBrightness->get(), 0, 1);
 		mLightColor = dynamic_cast<ColorValue*>(getParameter("LightColor"));
 		mHideLightCone = dynamic_cast<BoolValue*>(getParameter("HideLightCone"));
 		mSphericLightCone = dynamic_cast<BoolValue*>(getParameter("SphericLightCone"));
 		mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
 		mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
 		mDistributionType = dynamic_cast<IntValue*>(getParameter("DistributionType"));
+
 		mRange = dynamic_cast<RangeValue*>(getParameter("Range"));
+		// Reconstruct brightness interface value (!)
+		// has to include range, so it is already set after copying
+		mBrightness = new InterfaceValue("", "Brightness",
+				mDesiredBrightness->get(), mRange->getMin(), mRange->getMax());
+		mBrightness->setNotifyAllSetAttempts(true);
 		
 		mOutputValues.clear();
 		mInputValues.clear();
@@ -207,7 +212,6 @@ namespace nerd {
 	
 	
 	void SphericLightSource::clear() {
-		cout << "SphericLightSource: clear() called on object of name " << mNameValue->get().toStdString() << endl;
 		if(mReferenceObject != 0) {
 			mReferenceObject->getPositionValue()->removeValueChangedListener(this);
 			mReferenceObject->getQuaternionOrientationValue()->removeValueChangedListener(this);
@@ -245,30 +249,40 @@ namespace nerd {
 		else if(value == mLightColor) {
 			updateLightCone();
 		}
-		else if(mReferenceObject != 0 
-			&& (value == mReferenceObject->getPositionValue() 
-			|| value == mReferenceObject->getQuaternionOrientationValue()))
-		{
-			Quaternion localPos(0.0, 
-								mLocalPosition->getX(), 
-								mLocalPosition->getY(), 
-								mLocalPosition->getZ());
-			Quaternion bodyOrientationInverse = 
-			mReferenceObject->getQuaternionOrientationValue()->get().getInverse();
-			Quaternion rotatedLocalPosQuat = mReferenceObject->getQuaternionOrientationValue()->get() *
-												localPos * bodyOrientationInverse;
-
-			Vector3D rotatedLocalPos(rotatedLocalPosQuat.getX(), 
-				rotatedLocalPosQuat.getY(), 
-				rotatedLocalPosQuat.getZ());
-			mPositionValue->set(mReferenceObject->getPositionValue()->get() + rotatedLocalPos);
-		}
 		else if(value == mRange) {
 			// Core::log("SphericLightSource: Range has been changed!", true);
 			mBrightness->setMin(mRange->getMin());
 			mBrightness->setMax(mRange->getMax());
 			updateBrightnessValue();
 		}
+		else if(mReferenceObject != 0 
+			&& (value == mReferenceObject->getPositionValue() 
+			|| value == mReferenceObject->getQuaternionOrientationValue()))
+		{
+			Core::log("SphericLightSource: valueChanges() called on referenceObject", true);
+			// TODO change this? see Test line 247
+			//
+			Quaternion localPos(
+					0.0,
+					mLocalPosition->getX(),
+					mLocalPosition->getY(),
+					mLocalPosition->getZ()
+				);
+			Quaternion bodyOrientationInverse =	mReferenceObject->
+				getQuaternionOrientationValue()->get().getInverse();
+
+			Quaternion rotatedLocalPosQuat = mReferenceObject->
+				getQuaternionOrientationValue()->get() * localPos
+													* bodyOrientationInverse;
+
+			Vector3D rotatedLocalPos(
+					rotatedLocalPosQuat.getX(),
+					rotatedLocalPosQuat.getY(),
+					rotatedLocalPosQuat.getZ()
+				);
+			mPositionValue->set(mReferenceObject->getPositionValue()->get() + rotatedLocalPos);
+		}
+		// TODO add option to change geometry on-the-run?
 	}
 	
 	
@@ -303,14 +317,19 @@ namespace nerd {
 	}
 	
 	void SphericLightSource::setRadius(double radius) {
-		if(radius < 0) {
-			radius = 0;
-		}
-		mRadius->set(radius);
+		mRadius->set(Math::max(0.0, radius));
 	}
 
 	void SphericLightSource::setRange(double min, double max) {
 		mRange->set(min, max);
+	}
+
+	double SphericLightSource::getRangeMax() {
+		return mRange->getMax();
+	}
+
+	double SphericLightSource::getRangeMin() {
+		return mRange->getMin();
 	}
 	
 	double SphericLightSource::getActualBrightness() const {
@@ -330,7 +349,7 @@ namespace nerd {
 	{
 		double brightness = 0.0;
 		double distance = 0.0;
-		
+
 		if(restrictToHorizontal) {
 			if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
 				distance = Math::abs(Math::distance(
@@ -351,30 +370,24 @@ namespace nerd {
 		
 		double radius = getRadius();
 		
-		if(radius == 0.0 || distance > radius) {
+		if(radius == 0.0 || distance == 0.0 ||distance > radius) {
 			return brightness;
 		}
 		
-		/**
-		if(mUniformLight->get()) {
-			brightness = getCurrentBrightness();
-		}
-		else {
-			//currently the light is assumed to decay linearly 
-			//TODO should be changed to 1/(r*r).
-			brightness = (range - distance) / range * getCurrentBrightness();
-		}
-		**/
-
 		switch(mDistributionType->get()) {
-			case 0:
+			case 0: // uniform distribution
 				brightness = getActualBrightness();
 				break;
-			case 1:
-				brightness = (radius - distance) / radius * getActualBrightness();
+			case 1: // linear decay
+				brightness = distance / radius * getActualBrightness();
 				break;
-			case 2:
-				brightness = getActualBrightness() / (distance * distance);
+			case 2: // quadratic decay
+				brightness = distance / (radius * radius)
+					* getActualBrightness();
+				break;
+			case 3: // cubic decay
+				brightness = distance / (radius * radius * radius)
+					* getActualBrightness();
 				break;
 		}
 		return brightness;

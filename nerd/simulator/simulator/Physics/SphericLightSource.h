@@ -80,6 +80,8 @@ namespace nerd {
 		void setRadius(double radius);
 
 		void setRange(double min, double max);
+		double getRangeMax();
+		double getRangeMin();
 		
 		double getDesiredBrightness() const;
 		void setDesiredBrightness(double brightness);
