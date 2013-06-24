@@ -41,8 +41,5 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-/*
- * Major change: Mutexes in Properties (Fall 2012)
- */
 
-#define NERD_VERSION "4.3"
+#define NERD_VERSION "4.4"

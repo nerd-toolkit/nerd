@@ -44,3 +44,8 @@ qrc_*.cpp
 ui_*.h
 Makefile
 *-build-*
+
+# KDevelop Files
+.kdev4/
+build/
+*.kdev4

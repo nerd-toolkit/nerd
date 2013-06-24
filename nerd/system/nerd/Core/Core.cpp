@@ -1258,12 +1258,7 @@ void Core::waitForAllThreadsToComplete() {
 
 
 QString Core::getVersionString() {
-	QString version(NERD_VERSION);
-	//add SVN revision number (requires QMake to be configured to provide this macro (VER)!
-	QString buildNumber(VER);
-	//buildNumber = buildNumber.mid(0, buildNumber.size() - 1);
-	version = version.append(" Rev. ").append(buildNumber);
-	return version;
+	return VER;
 }
 
 bool Core::isUsingReducedFileWriting() const {
