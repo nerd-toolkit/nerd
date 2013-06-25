@@ -89,11 +89,18 @@ namespace nerd {
 		
 		virtual void randomSearchModeSimpleRandom(Synapse *owner, SimpleModulatedRandomSearchParameters &params);
 		virtual void randomSearchModeBacktracking(Synapse *owner, SimpleModulatedRandomSearchParameters &params);
+		///// KK
+		virtual void randomSearchNormDistribution(Synapse *owner, SimpleModulatedRandomSearchParameters &params);
+		/////
 		
 		int incrementDisableChangeCounter(Synapse *owner);
 		int incrementWeightChangeCounter(Synapse *owner);
 		
 		void enableWeight(Synapse *owner, bool enable = true);
+
+		///// KK
+		virtual double boxMullerMethod(double var);
+		/////
 
 	private:
 		Synapse *mOwner;
@@ -116,10 +123,13 @@ namespace nerd {
 		QList<double> mKnownPersistentSettings;
 		QList<bool> mKnownPersistentDisableStates;
 		int mNumberOfStepsWithoutModulators;
+
+		///// KK
+		bool mChangedThisStep;
+		/////
 	};
 	
 }
 
 #endif
-
 

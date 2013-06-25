@@ -67,7 +67,10 @@ namespace nerd {
 		mTypeParameters->setDescription("Parameter Settings: NM-type, change probability, "
 						"disable probability, mode, opt1, opt2, opt3, ...|<second entry>|<third>|..."
 						"\nModes: 0 pure random"
-						"\n       1 backtracking random");
+						"\n       1 backtracking random"
+						///// KK
+						"\n	  2 gaussian random (op1: Variance, opt2: Width(abs), opt3: Disable Bounds(abs))");
+						///// 
 
 		mProbabilityForChange = new DoubleValue(0.5);
 		mProbabilityForChange->setDescription("Reference probability for changes.");
@@ -207,14 +210,23 @@ namespace nerd {
 			mInactive->set(true);
 		}
 		
-		
+		mChangedThisStep = false;		
+
 		if(mNetworkManager->getDisablePlasticityValue()->get() == false) {
 			//only execute modulation if the global plasticity hint allows it.
 			for(int i = 0; i < mParameters.size(); ++i) {
-			
-				SimpleModulatedRandomSearchParameters &params = mParameters[i];
+				if (mChangedThisStep) {
+					break;
+				}			
 
+				SimpleModulatedRandomSearchParameters &params = mParameters[i];
+		
 				switch(params.mMode) {
+					///// KK
+					case 2:
+						randomSearchNormDistribution(owner, params);
+						break;
+					/////
 					case 1:
 						randomSearchModeBacktracking(owner, params);
 						break;
@@ -261,7 +273,7 @@ namespace nerd {
 	 * This method parses the configuration string according to the following format:
 	 * type, changeProb, disableProb, mode, opt1, op2, ...|type2, changeProb2, ...
 	 * 
-	 * So, multiple parameter sets can be configured to allow the reaction to different
+	 * So, mutliple parameter sets can be configured to allow the reaction to different
 	 * neuro-modulators with different modes and parameter settings.
 	 * 
 	 * The first four parameters are mandatory, all others (arbitrarily long list of double params)
@@ -578,7 +590,115 @@ namespace nerd {
 			}
 		}
 	}
+
 	
+	///// KK
+	/**
+	 * Normal Distribution Mode
+	 *
+	 * This mode changes the synapse in the presence of the given neuro-modulator.
+	 * The new value is calculated with probabilities according to a normal
+	 * distribution with the variance given by the 'variance'-parameter. 
+	 * This way small changes are favoured. The mean of the normal distribution
+	 * is the current weight.
+	 *
+	 * The 'width'-parameter defines the maximal and minimal weight parameters. If the
+	 * new value overshoots the range given by this parameter, it is simply re-
+	 * calculated.
+	 * 
+	 * If a probability for disabling synapses is given, a topological search of the
+	 * network is possible. However, disabling can only occur if the synapse weights
+	 * is within the bounds given by the 'disable bounds'-parameter.
+	 * If the synapse is re-enabled it doesn't take the last value before disabling,
+ 	 * but simply takes a new value with mean=0.0.
+	 */
+	void SimpleModulatedRandomSearchSynapseFunction::randomSearchNormDistribution(
+		Synapse *owner, SimpleModulatedRandomSearchParameters &params) 
+	{
+		if(owner == 0) {
+			return;
+		}
+		if(params.mParams.size() != 3) {
+			if(mNotifiedErrors == false) {
+				mNotifiedErrors = true;
+				
+				Core::log(QString("SimpleModulatedRandomSearchSynapseFunction: ")
+						  + "Mode 2 requires (exactly) 3 optional parameters: " 
+						  + "variance, width, disable bounds. Found " 
+						  + QString::number(params.mParams.size()) 
+						  + " instead!", true);
+			}
+			return;
+		}
+
+		double concentration = NeuroModulator::getConcentrationInNetworkAt(
+						params.mType, owner->getPosition(), mCurrentNetwork);
+			
+		if(params.mObservable != 0) {
+			params.mObservable->set(concentration); 
+		}
+
+		double disableProbability = Math::max(0.0, Math::min(1.0, 
+						concentration * params.mDisableProbability * mProbabilityForChange->get()));
+		
+		double changeProbability = Math::max(0.0, Math::min(1.0, 
+						concentration * params.mChangeProbability * mProbabilityForChange->get()));
+		
+		if(!mInactive->get()) {
+
+			if(Math::abs(owner->getStrengthValue().get()) < params.mParams.at(2) && Random::nextDouble() < disableProbability) {
+				mInactive->set(!mInactive->get());
+			
+				//don't do it twice!
+				//enableWeight(owner, !mInactive->get());
+			
+				incrementDisableChangeCounter(owner);
+				mChangedThisStep = true;
+			} else if(Random::nextDouble() < changeProbability) {
+			
+				double variance = params.mParams.at(0);
+				double min = -params.mParams.at(1);
+				double max = params.mParams.at(1);
+
+				double newWeight = 0.0;
+
+				do {
+					newWeight = owner->getStrengthValue().get() + boxMullerMethod(variance);
+				} while(newWeight > max || newWeight < min);
+			
+				owner->getStrengthValue().set(newWeight);
+			
+				incrementWeightChangeCounter(owner);
+				mChangedThisStep = true;
+			}
+		} else {
+			if(Random::nextDouble() < disableProbability) {
+				
+				double variance = params.mParams.at(0);
+				double min = -params.mParams.at(1);
+				double max = params.mParams.at(1);
+
+				double newWeight = 0.0;
+
+				mInactive->set(false);
+				
+				do {
+					newWeight = owner->getStrengthValue().get() + boxMullerMethod(variance);
+				} while(newWeight > max || newWeight < min);
+			
+				owner->getStrengthValue().set(newWeight);
+			
+				incrementWeightChangeCounter(owner);
+				mChangedThisStep = true;
+				
+				
+			}
+		}
+		
+		
+	}
+
+	/////
 	
 	/**
 	 * Increments the property of the synapse that holds the number of disable/enable changes.
@@ -660,7 +780,34 @@ namespace nerd {
 		
 	}
 	
+	///// KK
+	/**
+	 *	Box-Muller-Method
+	 *
+	 * 	Creates a normally distributed random value with the given variance var.
+	 */
+	double SimpleModulatedRandomSearchSynapseFunction::boxMullerMethod(double var) {
+
+		double weightChange = 0.0;
+
+		double util1 = Random::nextDouble();
+		double util2 = Random::nextDouble();
+
+		double z1 = sqrt(-2.0 * log(util1)) * Math::cos(2.0 * Math::PI * util2);
+		double z2 = sqrt(-2.0 * log(util1)) * Math::sin(2.0 * Math::PI * util2);
+
+		switch(Random::nextInt(1)) {
+			case 0:
+				weightChange = z1 * sqrt(var);
+				break;
+			case 1:
+				weightChange = z2 * sqrt(var);
+		}
+
+		return weightChange;
+	}
+	/////
+	
 	
 }
-
 
