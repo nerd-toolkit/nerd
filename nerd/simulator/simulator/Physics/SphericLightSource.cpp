@@ -370,23 +370,26 @@ namespace nerd {
 		
 		double radius = getRadius();
 		
-		if(radius == 0.0 || distance == 0.0 ||distance > radius) {
+		if(radius == 0.0 || distance > radius) {
 			return brightness;
 		}
 		
+		double relDis = radius - distance;
+
 		switch(mDistributionType->get()) {
 			case 0: // uniform distribution
 				brightness = getActualBrightness();
 				break;
 			case 1: // linear decay
-				brightness = distance / radius * getActualBrightness();
+				brightness = relDis / radius * getActualBrightness();
 				break;
 			case 2: // quadratic decay
-				brightness = distance / (radius * radius)
+				brightness = (relDis * relDis) / (radius * radius)
 					* getActualBrightness();
 				break;
 			case 3: // cubic decay
-				brightness = distance / (radius * radius * radius)
+				brightness = (relDis * relDis * relDis)
+					/ (radius * radius * radius)
 					* getActualBrightness();
 				break;
 		}

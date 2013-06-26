@@ -313,6 +313,9 @@ void TestSphericLightSource::testCopy() {
 	QVERIFY(colGeom_2->getColor().equals(
 				Color(255,0,0,Math::abs(brightness_set_1*80.0))));
 
+	QVERIFY(dynamic_cast<ColorValue*>(lightSource_2->getParameter("Color"))->
+			get().equals((colGeom_2->getColor())));
+
 	delete lightSource_2;
 	delete lightSource_1;
 }
@@ -321,56 +324,131 @@ void TestSphericLightSource::testCopy() {
 void TestSphericLightSource::testMethods() {
 	Core::resetCore();
 
-	double brightness_set_1 = 0.66645;
+	double brightness_set_1 = 1;
 	double radius_set_1 = 2;
 	int type_set_1 = 3;
 	SphericLightSource *lightSource_1 = new SphericLightSource("LightSource_1",
 																brightness_set_1,
 																radius_set_1,
 																type_set_1);
-
 	QVERIFY(lightSource_1 != 0);
 
-	// collisionObject defaults
-	QVERIFY(lightSource_1->getCollisionObjects().size() == 1);
-	CollisionObject* colObj_1 = lightSource_1->getCollisionObjects().first();
+	Vector3D* lp = new Vector3D();
+	bool rh = true;
+	double bs = brightness_set_1;
+	IntValue* distType = dynamic_cast<IntValue*>(lightSource_1->
+			getParameter("DistributionType"));
+	bool mSwitchYZAxes = Core::getInstance()->getValueManager()->
+		getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
 
-	QVERIFY(colObj_1 != 0);
-	QVERIFY(colObj_1->getOwner() == 0);
-	QVERIFY(colObj_1->getHostBody() == lightSource_1); // set by addCollisionObject
-
-	CylinderGeom* colGeom_1 = dynamic_cast<CylinderGeom*>(colObj_1->getGeometry());
-	QVERIFY(colGeom_1 != 0);
-	QVERIFY(colGeom_1->getRadius() == radius_set_1);
-	QVERIFY(colGeom_1->getColor().equals(
-				Color(255,255,0,Math::abs(brightness_set_1*80.0))));
-
-	// setup w/o reference object
-	//lightSource_1->setup();
-
-	// owner of collisionObject should have changed
-
-	// changing the ColorValue should change the geometry color as well
-	// relates to updateLightColor() method
-	ColorValue* color_1 = dynamic_cast<ColorValue*>(lightSource_1->
-			getParameter("LightColor"));
-	color_1->set(Color(255,0,0));
-	QVERIFY(colGeom_1->getColor().equals(
-				Color(255,0,0,Math::abs(brightness_set_1*80))));
-	QVERIFY(dynamic_cast<ColorValue*>(lightSource_1->
-				getParameter("Color"))->get().equals(colGeom_1->getColor()));
-
-	QVERIFY(lightSource_1->getDesiredBrightness() == brightness_set_1);
+	/*
+	QList< QList<double> >* testVals = new QList< QList<double> >();
+	testVals->append(QList<double>() << 0.0 << 0.0 << 0.0);
+	testVals->append(QList<double>() << 0.0 << 0.5 << 0.0);
+	testVals->append(QList<double>() << 0.0 << 1.0 << 0.0);
+	testVals->append(QList<double>() << 0.0 << 1.5 << 0.0);
+	testVals->append(QList<double>() << 1.0 << 0.0 << 0.0);
+	testVals->append(QList<double>() << 1.5 << 0.0 << 0.0);
+	testVals->append(QList<double>() << 0.0 << 0.0 << 0.0);
+	testVals->append(QList<double>() << 0.0 << 0.0 << 0.0);
+	testVals->append(QList<double>() << 0.0 << 0.0 << 0.0);
 	
-	// change brightness for easier comparison
-	lightSource_1->setDesiredBrightness(2.0);
+	for(int i = 0; i < testVals->size(); i++) {
+		QList<double> curVals = testVals->at(i);
+		lp->set(curVals.at(0), curVals.at(1), curVals.at(2));
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == curVals.at(3));
+	}
+	*/
 
-	QVERIFY(lightSource_1->getDesiredBrightness() == 2.0);
+	// uniform distribution
+	//
+	distType->set(0);
+	lp->set(0.0, 0.0, 0.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.2, -0.6, 1.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.0, 1.0, 0.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.8, 1.4, -1.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.0, 2.0, 0.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.0, 0.0, 8.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+	rh = false;
+	lp->set(0.0, 0.0, 0.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.2, -0.6, 1.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.0, 1.0, 0.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.8, 1.4, -1.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.0, 2.0, 0.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == bs);
+	lp->set(0.0, 0.0, 8.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
 
-	delete lightSource_1;
 
+	// linear decay
+	//
+	distType->set(1);
+	rh = true;
+	lp->set(0.0, 0.0, 0.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == 1.0);
+	if(mSwitchYZAxes) {
+		lp->set(0.0, 0.0, 1.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.5);
+		lp->set(0.0, 8.0, 1.5);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.25);
+		lp->set(1.0, -1.0, 0.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.5);
+		lp->set(0.0, 0.0, 2.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+		lp->set(0.0, 1.0, 8.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+	} else {
+		lp->set(0.0, 1.0, 0.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.5);
+		lp->set(0.0, 1.5, 6.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.25);
+		lp->set(1.0, 0.0, -1.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.5);
+		lp->set(0.0, 2.0, 0.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+		lp->set(0.0, 8.0, 1.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+	}
 
-	// TODO test referenceObject
+	// qudratic decay
+	//
+	distType->set(2);
+	lp->set(0.0, 0.0, 0.0);
+	QVERIFY(lightSource_1->getBrightness(*lp, rh) == 1.0);
+	if(mSwitchYZAxes) {
+		lp->set(0.0, 0.0, 1.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.25);
+		lp->set(0.0, 8.0, 1.5);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0625);
+		lp->set(-1.0, 0.0, -1.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) <= 0.25);
+		lp->set(0.0, 0.0, 2.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+		lp->set(0.0, 1.0, 8.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+	} else {
+		lp->set(0.0, 1.0, 0.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.25);
+		lp->set(0.0, 1.5, 6.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0625);
+		lp->set(-1.0, 1.0, 0.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) <= 0.25);
+		lp->set(0.0, 2.0, 0.0);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+		lp->set(1.4, 8.0, 1.1);
+		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
+	}
+	
 
 }
 
