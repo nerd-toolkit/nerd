@@ -63,11 +63,15 @@ namespace nerd {
 		: NeuroModulatorSynapseFunction("MRS2"), mOwner(0), 
 		  mCurrentNetwork(0), mNumberOfStepsWithoutModulators(0)
 	{
-		mTypeParameters = new StringValue("1, 1.0, 0.2, 0, 3.0, -1.5, 1.5");
-		mTypeParameters->setDescription("Parameter Settings: NM-type, change probability, "
-						"disable probability, mode, opt1, opt2, opt3, ...|<second entry>|<third>|..."
-						"\nModes: 0 pure random"
-						"\n       1 backtracking random");
+		mTypeParameters = new CodeValue("default");
+		mTypeParameters->setDescription("Parameter Settings (1 block per modulator):\n"
+						"Type <modulatorType>\n"
+						"<change probability>, <maxIndexChange>, <noiseStrength>, <deactivationProbability>, <desiredDensity>, <densityRange>\n"
+						"{w1,w2,w3,w4,...}\n"
+						"<mode>, <mode parameter1>, <mode parameter2>, ...\n\n"
+						"\nModes: 0 reduced weight set random walk"
+						"\n       1 backtracking random\n\n"
+						"\nEnter 'default' to get an example configuration.");
 
 		mProbabilityForChange = new DoubleValue(0.5);
 		mProbabilityForChange->setDescription("Reference probability for changes.");
@@ -86,7 +90,9 @@ namespace nerd {
 		
 		mNetworkManager = Neuro::getNeuralNetworkManager();
 		
-		updateSettings();
+		mTypeParameters->notifyValueChanged();
+		
+		updateSettings(true);
 	}
 
 
@@ -100,7 +106,7 @@ namespace nerd {
 	{
 		mObservables.clear();
 		
-		mTypeParameters = dynamic_cast<StringValue*>(getParameter("Settings"));
+		mTypeParameters = dynamic_cast<CodeValue*>(getParameter("Settings"));
 		mProbabilityForChange = dynamic_cast<DoubleValue*>(getParameter("Probability"));
 		mActive = dynamic_cast<BoolValue*>(getParameter("Active"));
 		
@@ -119,7 +125,7 @@ namespace nerd {
 		
 		mNetworkManager = Neuro::getNeuralNetworkManager();
 		
-		updateSettings();
+		updateSettings(true);
 	}
 
 
@@ -156,7 +162,15 @@ namespace nerd {
 			return;
 		}
 		else if(value == mTypeParameters) {
-			updateSettings();
+			if(mTypeParameters->get().trimmed() == "default") {
+				mTypeParameters->set("Type: 1\n1.0, 1, 0.5, 0.5, 0.5, 0.2\n"
+					"{-100,-5,-2.5,-1.5,-1.1,-1.0,-0.9,-0.7,-0.5,-0.2,-0.1,-0.05,-0.01,0,0.01,0.05,0.1,0.2,0.5,0.7,0.9,1.0,1.1,1.5,2.5,5,100}\n"
+					"1,0.5\n\n"
+					"Type: 1\n1.0, 1, 0.5, 0.5, 0.5, 0.2\n"
+					"{0.0,0.1,2.5}\n"
+					"2,0.1\n\n");
+			}
+			updateSettings(false);
 		}
 		else if(value == mActive) {
 			//enableWeight(mOwner, !mActive->get());
@@ -174,7 +188,7 @@ namespace nerd {
 	void ModulatingModulatedRandomSearchSynapseFunction::reset(Synapse *synapse) {
 		mOwner = synapse;
 		mCurrentNetwork = 0;
-		updateSettings();
+		updateSettings(true);
 		mActivationObservable->set(mActive->get() ? 1.0 : 0.0);
 		enableWeight(mOwner, mActive->get());
 	}
@@ -228,6 +242,10 @@ namespace nerd {
 		
 		return owner->getStrengthValue().get();
 	}
+	
+	bool ModulatingModulatedRandomSearchSynapseFunction::isActive() const {
+		return mActive->get();
+	}
 
 
 	/**
@@ -276,8 +294,16 @@ namespace nerd {
 	 * and loggers. Also, the role of the observables can change, if the order of settings is changed.
 	 * This has to be considered when observing observables after setting changes.
 	 */
-	void ModulatingModulatedRandomSearchSynapseFunction::updateSettings() {
+	void ModulatingModulatedRandomSearchSynapseFunction::updateSettings(bool resetCurrentIndices) {
 		
+		bool ok = true;
+		
+		QList<double> currentIndices;
+		if(!resetCurrentIndices) {
+			for(QListIterator<ModulatingModulatedRandomSearchParameters> i(mParameters); i.hasNext();) {
+				currentIndices.append(i.next().mCurrentValueListIndex);
+			}
+		}
 
 		//enable one-shot error messages to prevent a flooding of the console / log file.
 		mNotifiedErrors = false; 
@@ -287,58 +313,143 @@ namespace nerd {
 		}
 		mParameters.clear();
 		
-		QStringList entries = mTypeParameters->get().split("|");
+		QStringList entries = mTypeParameters->get().split("Type:");
+		entries.removeFirst();
 		
 		for(int i = 0; i < entries.size(); ++i) {
 			QString entry = entries.at(i);
-			QStringList paramStrings = entry.split(",");
 			
-			if(paramStrings.length() < 4) {
-				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Too few "
-						  "parameters in [" + entry + "]", true);
+			QStringList lines = entry.split("\n");
+			
+			lines.removeAll("");
+			if(lines.size() != 4) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Each entry must have 4 lines! "
+						  "[" + entry + "]", true);
+				continue;
+			}
+			int type = lines.at(0).toInt(&ok);
+			if(!ok) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Type must be an Integer! "
+						  "[" + entry + "]", true);
 				continue;
 			}
 			
-			bool ok = true;
+			QStringList paramStrings = lines.at(1).split(",");
+			
+			if(paramStrings.size() != 6) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: The first parameter list "
+						  "must contain 6 entries (got " + QString::number(paramStrings.size()) + ")! [" 
+						  + entry + "]", true);
+				continue;
+			}
 			
 			ModulatingModulatedRandomSearchParameters params;
 			
-			params.mType = paramStrings.at(0).toInt(&ok);
+			params.mType = type;
+
+			params.mChangeProbability = paramStrings.at(0).toDouble(&ok);
 			if(!ok) {
 				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
-						  "type (1) in [" + entry + "]", true);
+						  "change probability (0) in [" + entry + "]", true);
 				continue;
 			}
-			params.mChangeProbability = paramStrings.at(1).toDouble(&ok);
+			params.mMaximalIndexChange = paramStrings.at(1).toDouble(&ok);
 			if(!ok) {
 				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
-						  "change probability (2) in [" + entry + "]", true);
+						  "maximal index change (1) in [" + entry + "]", true);
 				continue;
 			}
-			params.mDisableProbability = paramStrings.at(2).toDouble(&ok);
+			params.mNoiseStrength = paramStrings.at(2).toDouble(&ok);
+			if(!ok) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
+						  "noise strength (2) in [" + entry + "]", true);
+				continue;
+			}
+			params.mDisableProbability = paramStrings.at(3).toDouble(&ok);
 			if(!ok) {
 				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
 						  "disable probability (3) in [" + entry + "]", true);
 				continue;
 			}
-			params.mMode = paramStrings.at(3).toInt(&ok);
+			params.mDesiredConnectivityDensity = paramStrings.at(4).toDouble(&ok);
 			if(!ok) {
 				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
-						  "mode (4) in [" + entry + "]", true);
+						  "connectivity density (4) in [" + entry + "]", true);
+				continue;
+			}
+			params.mDensityRange = paramStrings.at(5).toDouble(&ok);
+			if(!ok) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
+						  "density range (5) in [" + entry + "]", true);
+				continue;
+			}
+			
+			QString valueString = lines.at(2).trimmed();
+			if(!valueString.startsWith("{") || !valueString.endsWith("}")) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Weight list is not "
+						  "starting with { or ending with }! [" + valueString + "]", true);
+				continue;
+			}
+			
+			QStringList weights = valueString.mid(1, valueString.size() - 2).split(",");
+			
+			for(QListIterator<QString> k(weights); k.hasNext();) {
+				double weight = k.next().toDouble(&ok);
+				if(!ok) {
+					Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
+							  "weight [" + QString::number(weight) + "] from weight list! [" + valueString + "]", true);
+					continue;
+				}
+				params.mValueList.append(weight);
+			}
+			
+			QStringList modeParams = lines.at(3).trimmed().split(",");
+			if(modeParams.size() < 1) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
+							  "mode line (requires 2 doubles)! [" + lines.at(3) + "]", true);
+				continue;
+			}
+			params.mMode = modeParams.at(0).toInt(&ok);
+			if(!ok) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
+							  "mode type (first entry must be an integer)! [" + lines.at(3) + "]", true);
 				continue;
 			}
 			
 			//get the optional parameters (all have to be of type double)
-			for(int j = 4; j < paramStrings.size(); ++j) {
-				double param = paramStrings.at(j).toDouble(&ok);
+			for(int j = 1; j < modeParams.size(); ++j) {
+				double param = modeParams.at(j).toDouble(&ok);
 				if(!ok) {
-					Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse optional parameter " 
-							+ QString::number(j - 3) + "  (" + QString::number(j) + ") in ["
-							+ entry + "]", true);
+					Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse optional mode parameter " 
+							+ QString::number(j - 1) + "  (" + QString::number(j) + ") in ["
+							+ lines.at(3) + "]", true);
 							continue;
 				}
 				else {
 					params.mParams.append(param);
+				}
+			}
+			
+			//check if the current index should be preserved
+			if(!resetCurrentIndices && i < currentIndices.size()) {
+				params.mCurrentValueListIndex = currentIndices.at(i);
+			}
+			
+			//If the indes will be reset, then start with the index closest to one of the weights in the weight set!
+			//This allows to set a desired starting index by choosing an appropriate initial synapse weight.
+			if(resetCurrentIndices && params.mValueList.size() > 0) {
+				if(mOwner != 0) {
+					double currentWeight = mOwner->getStrengthValue().get();
+					params.mCurrentValueListIndex = 0;
+					
+					double min = Math::abs(params.mValueList.at(0) - currentWeight);
+					for(int k = 1; k < params.mValueList.size(); ++k) {
+						double diff = Math::abs(params.mValueList.at(k) - currentWeight);
+						if(diff < min) {
+							min = diff;
+							params.mCurrentValueListIndex = k;
+						}
+					}
 				}
 			}
 			
@@ -358,6 +469,60 @@ namespace nerd {
 			mParameters.append(params);
 		}
 	}
+	
+	
+	/**
+	 * Calculates the current modulator concentration of the modulator corresponding to the type
+	 * given in the parameter set. The current concentration is (optionally) bounded by a maximal
+	 * concentration level. The resulting concentration is then stored in the observable of the 
+	 * concentration level.
+	 * 
+	 * Currently, the position of the synapse determins the position at which the concentration is
+	 * measured. This method can be overwritten if the concentration is calculated in a custom way.
+	 */
+	double ModulatingModulatedRandomSearchSynapseFunction::updateConcentrationLevel(
+						Synapse *owner, ModulatingModulatedRandomSearchParameters &params) 
+	{
+		double concentration = NeuroModulator::getConcentrationInNetworkAt(
+									params.mType, owner->getPosition(), mCurrentNetwork);
+		
+		//If the maxConcentration parameter is given, cut the concentration level!
+		if(params.mParams.size() > 3) {
+			concentration = Math::min(params.mParams.at(3), concentration);
+		}
+			
+		if(params.mObservable != 0) {
+			params.mObservable->set(concentration); 
+		}
+		return concentration;
+	}
+	
+	/**
+	 * Returns true if changes are triggered.
+	 */
+	bool ModulatingModulatedRandomSearchSynapseFunction::isChangeTriggered(
+						Synapse *owner, ModulatingModulatedRandomSearchParameters &params) 
+	{
+		if(owner == 0 || owner->getSource() == 0) {
+			return false;
+		}
+		
+		double concentration = updateConcentrationLevel(owner, params);
+		double activityDependentProportion = 0.0;
+		if(params.mParams.size() > 4) {
+			activityDependentProportion = params.mParams.at(4);
+		}
+
+		double changeProbability = ((activityDependentProportion * Math::abs(owner->getSource()->getLastOutputActivation()))
+										+ (1 - activityDependentProportion))
+									* concentration 
+									* mProbabilityForChange->get();
+		
+		return (Random::nextDouble() < changeProbability);
+		
+	}
+	
+	
 	
 
 	/**
@@ -414,107 +579,80 @@ namespace nerd {
 		}
 		
 		//check if the number of parameters is valid.
-		if(params.mParams.size() != 2) {
+		if(params.mParams.size() != 1) {
 			if(mNotifiedErrors == false) {
 				mNotifiedErrors = true;
 				
 				Core::log(QString("ModulatingModulatedRandomSearchSynapseFunction: ")
-				+ "Mode 1 requires exactly 2 optional parameters: " 
+				+ "Mode 1 requires exactly 1 optional parameters: " 
 				  + "stepsBeforeMemo, backtracking_mode. Found " 
 					+ QString::number(params.mParams.size()) 
 					+ " instead!", true);
 			}
 			return;
 		}
+
+		updateConcentrationLevel(owner, params);
 		
-		//check if there is modulator of any relevant type:
-		bool noModulatorDetected = true;
-		for(int i = 0; i < mParameters.size(); ++i) {
-			
-			ModulatingModulatedRandomSearchParameters &paramSet = mParameters[i];
-			if(paramSet.mMode == 1) {
-				//this modulator is of a backtracking type... not a regular modulation.
-				continue;
-			}
-			
-			double concentration = NeuroModulator::getConcentrationInNetworkAt(
-					paramSet.mType, owner->getPosition(), mCurrentNetwork);
-			
-			if(concentration > 0.0) {
-				noModulatorDetected = false;
-				break;
-			}
-		}
+		if(isChangeTriggered(owner, params)) {
 		
-		//udpate current modulator concentration.
-		double concentration = NeuroModulator::getConcentrationInNetworkAt(
-			params.mType, owner->getPosition(), mCurrentNetwork);
-		
-		if(params.mObservable != 0) {
-			params.mObservable->set(concentration);
-		}
-		
-		
-		if(noModulatorDetected) {
-			//check if we should memorize the setting as known working solution (in the broader context at least).
-			++mNumberOfStepsWithoutModulators;
-			
-			int numberOfWorkingStepsBeforeMemorization = params.mParams.at(0);
-			
-			if(mNumberOfStepsWithoutModulators >= numberOfWorkingStepsBeforeMemorization) {
-				mKnownPersistentActiveStates.clear();
-				mKnownPersistentActiveStates.append(mActive->get());
-				
-				mKnownPersistentSettings.clear();
-				mKnownPersistentSettings.append(owner->getStrengthValue().get());
-				
-				mNumberOfStepsWithoutModulators = 0;
-				
-				owner->setProperty("Memory:", QString::number(mKnownPersistentSettings.last()) 
-								+ "," + QString::number((int) mKnownPersistentActiveStates.last()));
-			}
-		}
-		else {
-			mNumberOfStepsWithoutModulators = 0;
-			
-			if(mKnownPersistentActiveStates.empty()) {
-				//cannot perform a backtracking if there are no previously memorized settings.
-				return;
-			}
-			
-			double changeProbability = Math::max(0.0, Math::min(1.0, 
-																concentration * params.mChangeProbability));
-			
-			int backtrackingMode = (int) params.mParams.at(1); //backtracking mode
-			
-			//cerr << "Got: " << disableProbability << " and " << changeProbability << " of " << params.mType << endl;
-			
-			if(Random::nextDouble() < changeProbability) {
-				
-				//simple, full backtracking to the last known state.
-				if(backtrackingMode == 0) {
-					//make sure the synapse is in the same enable/disable state as in the last known working configuration.
-					if(mActive->get() != mKnownPersistentActiveStates.last()) {
-						mActive->set(mKnownPersistentActiveStates.last());
-						
-						//don't do it twice. Changing mActive alreay calls this method!
-						//enableWeight(owner, !mActive->get());
-						
-						incrementDisableChangeCounter(owner);
-					}
-					if(owner->getStrengthValue().get() != mKnownPersistentSettings.last()) {
-						owner->getStrengthValue().set(mKnownPersistentSettings.last());
-					}
-				}
-			}
+			performTopologySearch(owner, params);
+			performReducedRandomWalkWeightChanges(owner, params);
 		}
 	}
 	
 	void ModulatingModulatedRandomSearchSynapseFunction::performTopologySearch(
 						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
 	{
+		if(owner == 0 || owner->getTarget() == 0) {
+			return;
+		}
 		
+		double numberOfSynapses = 0;
+		double numberOfActiveSynapses = 0;
 		
+		//Count the number of active and the total number of synapses with this synapse function.
+		//Disabled synapses and other SynapseFunctions are ignored for this calculation.
+		QList<Synapse*> synapses = owner->getTarget()->getSynapses();
+		for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
+			Synapse *synapse = i.next();
+			
+			if(synapse != 0 && synapse->getEnabledValue().get()) {
+			
+				ModulatingModulatedRandomSearchSynapseFunction *mmrssf =
+						dynamic_cast<ModulatingModulatedRandomSearchSynapseFunction*>(synapse->getSynapseFunction());
+				if(mmrssf != 0) {
+					++numberOfSynapses;
+					if(mmrssf->isActive()) {
+						++numberOfActiveSynapses;
+					}
+				}
+			}
+		}
+		
+		if(numberOfSynapses == 0) {
+			return;
+		}
+		
+		double currentDensity = numberOfActiveSynapses / numberOfSynapses;
+		double changeProbability = params.mObservable->get() * params.mDisableProbability;
+		
+		if(isActive()) {
+			changeProbability *= Math::max(0.0, Math::min(1.0, 
+									(currentDensity 
+									- (params.mDensityRange * Random::nextDoubleBetween(-1.0, 1.0)) 
+									- params.mDesiredConnectivityDensity)));
+		}
+		else {
+			changeProbability *= Math::max(0.0, Math::min(1.0, 
+									((params.mDensityRange * Random::nextDoubleBetween(-1.0, 1.0)) 
+									+ params.mDesiredConnectivityDensity
+									- currentDensity)));
+		}
+		if(Random::nextDouble() < changeProbability) {
+			mActive->set(!mActive->get());
+			incrementDisableChangeCounter(owner);
+		}
 	}
 	
 	void ModulatingModulatedRandomSearchSynapseFunction::performRandomWalkWeightChanges(
@@ -527,7 +665,50 @@ namespace nerd {
 	void ModulatingModulatedRandomSearchSynapseFunction::performReducedRandomWalkWeightChanges(
 						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
 	{
+		if(owner == 0 || params.mValueList.empty()) {
+			return;
+		}
+		int k = Math::max(0, Math::min(params.mValueList.size() - 1, 
+					(int) Math::round((double) params.mCurrentValueListIndex + (Random::nextDoubleBetween(-1.0, 1.0) 
+										* ((double) params.mMaximalIndexChange)) + 0.5)
+				));
 		
+		
+		int size = params.mValueList.size();
+		
+		
+		//calculate the proportion of possible index changes to the left and the right.
+		double left = Math::min(Math::max(1, params.mMaximalIndexChange), params.mCurrentValueListIndex);
+		double right = Math::min(Math::max(1, params.mMaximalIndexChange), params.mValueList.size() - params.mCurrentValueListIndex - 1);
+		
+		double fraction = 0.5;
+		if((left + right) != 0) {
+			fraction = left / (left + right);
+		}
+		
+		double changeFactor = Random::nextDouble();
+		double noise = 0.0;
+		
+		if(changeFactor < fraction) {
+			//add negative noise
+			noise = (((params.mValueList.at(Math::max(0, k - 1)) - params.mValueList.at(k)) / 2.0) 
+						* params.mNoiseStrength) * Random::nextDouble() * Math::min(1.0, 2 * fraction);
+		}
+		else {
+			//add positive noise
+// 			noise = (((params.mValueList.at(Math::min(k + 1, params.mValueList.size() - 1)) - params.mValueList.at(k)) / 2.0) 
+// 						* params.mNoiseStrength) * Random::nextDouble();
+			noise = (((params.mValueList.at(Math::min(k + 1, params.mValueList.size() - 1)) - params.mValueList.at(k)) / 2.0) 
+						* params.mNoiseStrength) * Random::nextDouble() * Math::min(1.0, 2 * (1.0 - fraction));
+		}
+		
+		//cerr << "Change: k: " << k << " noise: " << noise << " change factor: " << changeFactor << " left: " << left << " right: " << right << " fraction " << fraction << endl;
+		
+		params.mCurrentValueListIndex = k;
+		owner->getStrengthValue().set(Math::min(params.mValueList.last(), 
+										Math::max(params.mValueList.first(), params.mValueList.at(k) + noise)));
+		
+		incrementWeightChangeCounter(owner);
 	}
 	
 	

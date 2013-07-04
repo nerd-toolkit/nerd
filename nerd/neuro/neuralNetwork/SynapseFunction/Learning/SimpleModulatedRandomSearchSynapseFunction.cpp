@@ -215,7 +215,7 @@ namespace nerd {
 		if(mNetworkManager->getDisablePlasticityValue()->get() == false) {
 			//only execute modulation if the global plasticity hint allows it.
 			for(int i = 0; i < mParameters.size(); ++i) {
-				if (mChangedThisStep) {
+				if(mChangedThisStep) {
 					break;
 				}			
 

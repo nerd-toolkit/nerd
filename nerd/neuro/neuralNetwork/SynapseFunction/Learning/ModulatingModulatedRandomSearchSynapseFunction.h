@@ -47,6 +47,7 @@
 
 #include "SynapseFunction/NeuroModulatorSynapseFunction.h"
 #include "Value/RangeValue.h"
+#include "Value/CodeValue.h"
 
 namespace nerd {
 	
@@ -69,14 +70,17 @@ namespace nerd {
 	 */
 	struct ModulatingModulatedRandomSearchParameters {
 	public:
-		ModulatingModulatedRandomSearchParameters() : mType(0), mChangeProbability(0), 
-			mDisableProbability(0), mDesiredConnectivityDensity(-1.0), 
+		ModulatingModulatedRandomSearchParameters() : mType(0), mChangeProbability(0), mMaximalIndexChange(1), 
+			mNoiseStrength(0.0), mDisableProbability(0), mDesiredConnectivityDensity(-1.0), mDensityRange(0.0),
 			mMode(0), mCurrentValueListIndex(-1), mObservable(0) {}
 			
 		int mType;
 		double mChangeProbability;
+		int mMaximalIndexChange;
+		double mNoiseStrength;
 		double mDisableProbability;
 		double mDesiredConnectivityDensity;
+		double mDensityRange;
 		int mMode;
 		QList<double> mValueList;
 		int mCurrentValueListIndex;
@@ -102,14 +106,18 @@ namespace nerd {
 
 		virtual void reset(Synapse *owner);
 		virtual double calculate(Synapse *owner);
+		
+		bool isActive() const;
 
 		bool equals(SynapseFunction *synapseFunction) const;
 
 	protected:
-		virtual void updateSettings();
+		virtual void updateSettings(bool resetCurrentIndices);
 		
 		virtual void randomSearchModeMultiVariant(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
 		
+		virtual double updateConcentrationLevel(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
+		virtual bool isChangeTriggered(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
 		virtual void performTopologySearch(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
 		virtual void performRandomWalkWeightChanges(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
 		virtual void performReducedRandomWalkWeightChanges(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
@@ -132,7 +140,7 @@ namespace nerd {
 		bool mNotifiedErrors;
 		
 		//general parameters
-		StringValue *mTypeParameters;
+		CodeValue *mTypeParameters;
 		DoubleValue *mProbabilityForChange;
 		
 		//topology search parameters
