@@ -71,13 +71,14 @@ namespace nerd {
 	struct ModulatingModulatedRandomSearchParameters {
 	public:
 		ModulatingModulatedRandomSearchParameters() : mType(0), mChangeProbability(0), mMaximalIndexChange(1), 
-			mNoiseStrength(0.0), mDisableProbability(0), mDesiredConnectivityDensity(-1.0), mDensityRange(0.0),
-			mMode(0), mCurrentValueListIndex(-1), mObservable(0) {}
+			mNoiseStrength(0.0), mProportionOfActivityDependentChanges(0.0), mDisableProbability(0), 
+			mDesiredConnectivityDensity(-1.0), mDensityRange(0.0), mMode(0), mCurrentValueListIndex(-1), mObservable(0) {}
 			
 		int mType;
 		double mChangeProbability;
 		int mMaximalIndexChange;
 		double mNoiseStrength;
+		double mProportionOfActivityDependentChanges;
 		double mDisableProbability;
 		double mDesiredConnectivityDensity;
 		double mDensityRange;
@@ -119,9 +120,8 @@ namespace nerd {
 		virtual double updateConcentrationLevel(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
 		virtual bool isChangeTriggered(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
 		virtual void performTopologySearch(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
-		virtual void performRandomWalkWeightChanges(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
 		virtual void performReducedRandomWalkWeightChanges(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
-		virtual void performBacktracking(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
+		//virtual void performBacktracking(Synapse *owner, ModulatingModulatedRandomSearchParameters &params);
 		
 		int incrementDisableChangeCounter(Synapse *owner);
 		int incrementWeightChangeCounter(Synapse *owner);

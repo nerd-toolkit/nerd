@@ -66,7 +66,7 @@ namespace nerd {
 		mTypeParameters = new CodeValue("default");
 		mTypeParameters->setDescription("Parameter Settings (1 block per modulator):\n"
 						"Type <modulatorType>\n"
-						"<change probability>, <maxIndexChange>, <noiseStrength>, <deactivationProbability>, <desiredDensity>, <densityRange>\n"
+						"<change probability>, <maxIndexChange>, <noiseStrength>, <proportionOfActivityDependentchanges>, <deactivationProbability>, <desiredDensity>, <densityRange>\n"
 						"{w1,w2,w3,w4,...}\n"
 						"<mode>, <mode parameter1>, <mode parameter2>, ...\n\n"
 						"\nModes: 0 reduced weight set random walk"
@@ -163,10 +163,10 @@ namespace nerd {
 		}
 		else if(value == mTypeParameters) {
 			if(mTypeParameters->get().trimmed() == "default") {
-				mTypeParameters->set("Type: 1\n1.0, 1, 0.5, 0.5, 0.5, 0.2\n"
+				mTypeParameters->set("Type: 1\n1.0, 1, 0.5, 0.0, 0.5, 0.5, 0.2\n"
 					"{-100,-5,-2.5,-1.5,-1.1,-1.0,-0.9,-0.7,-0.5,-0.2,-0.1,-0.05,-0.01,0,0.01,0.05,0.1,0.2,0.5,0.7,0.9,1.0,1.1,1.5,2.5,5,100}\n"
 					"1,0.5\n\n"
-					"Type: 1\n1.0, 1, 0.5, 0.5, 0.5, 0.2\n"
+					"Type: 1\n1.0, 1, 0.5, 0.0, 0.5, 0.5, 0.2\n"
 					"{0.0,0.1,2.5}\n"
 					"2,0.1\n\n");
 			}
@@ -230,6 +230,7 @@ namespace nerd {
 
 				switch(params.mMode) {
 					case 0:
+					case 1:
 					default:
 						randomSearchModeMultiVariant(owner, params);
 				}
@@ -336,7 +337,7 @@ namespace nerd {
 			
 			QStringList paramStrings = lines.at(1).split(",");
 			
-			if(paramStrings.size() != 6) {
+			if(paramStrings.size() != 7) {
 				Core::log("ModulatingModulatedRandomSearchSynapseFunction: The first parameter list "
 						  "must contain 6 entries (got " + QString::number(paramStrings.size()) + ")! [" 
 						  + entry + "]", true);
@@ -365,22 +366,28 @@ namespace nerd {
 						  "noise strength (2) in [" + entry + "]", true);
 				continue;
 			}
-			params.mDisableProbability = paramStrings.at(3).toDouble(&ok);
+			params.mProportionOfActivityDependentChanges = paramStrings.at(3).toDouble(&ok);
 			if(!ok) {
 				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
-						  "disable probability (3) in [" + entry + "]", true);
+						  "the proportion of activity dependent changes (3) in [" + entry + "]", true);
 				continue;
 			}
-			params.mDesiredConnectivityDensity = paramStrings.at(4).toDouble(&ok);
+			params.mDisableProbability = paramStrings.at(4).toDouble(&ok);
 			if(!ok) {
 				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
-						  "connectivity density (4) in [" + entry + "]", true);
+						  "disable probability (4) in [" + entry + "]", true);
 				continue;
 			}
-			params.mDensityRange = paramStrings.at(5).toDouble(&ok);
+			params.mDesiredConnectivityDensity = paramStrings.at(5).toDouble(&ok);
 			if(!ok) {
 				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
-						  "density range (5) in [" + entry + "]", true);
+						  "connectivity density (5) in [" + entry + "]", true);
+				continue;
+			}
+			params.mDensityRange = paramStrings.at(6).toDouble(&ok);
+			if(!ok) {
+				Core::log("ModulatingModulatedRandomSearchSynapseFunction: Could not parse "
+						  "density range (6) in [" + entry + "]", true);
 				continue;
 			}
 			
@@ -508,13 +515,9 @@ namespace nerd {
 		}
 		
 		double concentration = updateConcentrationLevel(owner, params);
-		double activityDependentProportion = 0.0;
-		if(params.mParams.size() > 4) {
-			activityDependentProportion = params.mParams.at(4);
-		}
 
-		double changeProbability = ((activityDependentProportion * Math::abs(owner->getSource()->getLastOutputActivation()))
-										+ (1 - activityDependentProportion))
+		double changeProbability = ((params.mProportionOfActivityDependentChanges * Math::abs(owner->getSource()->getLastOutputActivation()))
+										+ (1 - params.mProportionOfActivityDependentChanges))
 									* concentration 
 									* mProbabilityForChange->get();
 		
@@ -597,7 +600,10 @@ namespace nerd {
 		if(isChangeTriggered(owner, params)) {
 		
 			performTopologySearch(owner, params);
-			performReducedRandomWalkWeightChanges(owner, params);
+			
+			if(mActive->get()) {
+				performReducedRandomWalkWeightChanges(owner, params);
+			}
 		}
 	}
 	
@@ -637,6 +643,8 @@ namespace nerd {
 		double currentDensity = numberOfActiveSynapses / numberOfSynapses;
 		double changeProbability = params.mObservable->get() * params.mDisableProbability;
 		
+		//cerr << "nsyn: " << numberOfSynapses << " currden: " << currentDensity << " chprob: " << changeProbability << endl;
+		
 		if(isActive()) {
 			changeProbability *= Math::max(0.0, Math::min(1.0, 
 									(currentDensity 
@@ -655,12 +663,6 @@ namespace nerd {
 		}
 	}
 	
-	void ModulatingModulatedRandomSearchSynapseFunction::performRandomWalkWeightChanges(
-						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
-	{
-		
-	}
-	
 	
 	void ModulatingModulatedRandomSearchSynapseFunction::performReducedRandomWalkWeightChanges(
 						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
@@ -668,13 +670,27 @@ namespace nerd {
 		if(owner == 0 || params.mValueList.empty()) {
 			return;
 		}
-		int k = Math::max(0, Math::min(params.mValueList.size() - 1, 
+		if(Random::nextDouble() >= params.mChangeProbability) {
+			//don't change anything
+			return;
+		}
+		
+		
+		int k = params.mCurrentValueListIndex;
+		
+		//mType == 0: Random walk
+		//mType == 1: Random jumps
+		if(params.mType == 0) {
+			//Random walk within the reduced value set.
+			Math::max(0, Math::min(params.mValueList.size() - 1, 
 					(int) Math::round((double) params.mCurrentValueListIndex + (Random::nextDoubleBetween(-1.0, 1.0) 
 										* ((double) params.mMaximalIndexChange)) + 0.5)
-				));
-		
-		
-		int size = params.mValueList.size();
+					));
+		}
+		else {
+			//Pure random selection within reduced value set.
+			k = Random::nextInt(params.mValueList.size() - 1);
+		}
 		
 		
 		//calculate the proportion of possible index changes to the left and the right.
@@ -696,14 +712,10 @@ namespace nerd {
 		}
 		else {
 			//add positive noise
-// 			noise = (((params.mValueList.at(Math::min(k + 1, params.mValueList.size() - 1)) - params.mValueList.at(k)) / 2.0) 
-// 						* params.mNoiseStrength) * Random::nextDouble();
 			noise = (((params.mValueList.at(Math::min(k + 1, params.mValueList.size() - 1)) - params.mValueList.at(k)) / 2.0) 
 						* params.mNoiseStrength) * Random::nextDouble() * Math::min(1.0, 2 * (1.0 - fraction));
 		}
-		
-		//cerr << "Change: k: " << k << " noise: " << noise << " change factor: " << changeFactor << " left: " << left << " right: " << right << " fraction " << fraction << endl;
-		
+
 		params.mCurrentValueListIndex = k;
 		owner->getStrengthValue().set(Math::min(params.mValueList.last(), 
 										Math::max(params.mValueList.first(), params.mValueList.at(k) + noise)));
@@ -712,89 +724,13 @@ namespace nerd {
 	}
 	
 	
-	void ModulatingModulatedRandomSearchSynapseFunction::performBacktracking(
-						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
-	{
-		
-	}
+// 	void ModulatingModulatedRandomSearchSynapseFunction::performBacktracking(
+// 						Synapse *owner, ModulatingModulatedRandomSearchParameters &params)
+// 	{
+// 		
+// 	}
 	
-	/*
-	void ModulatingModulatedRandomSearchSynapseFunction::ramdonizeWeightAndActiveState(
-						Synapse *owner, double concentration, double variance, double minValue, 
-						double maxValue, bool useValueSet, double maxConcentration) 
-	{
-		if(owner == 0) {
-			return;
-		}
-		if(params.mParams.size() < 3 && params.mParams.size() > 4) {
-			if(mNotifiedErrors == false) {
-				mNotifiedErrors = true;
-				
-				Core::log(QString("SimpleModulatedRandomSearchSynapseFunction: ")
-						  + "Mode 0 requires 3 or 4 optional parameters: " 
-						  + "variance, min, max, (maxLevel). Found " 
-						  + QString::number(params.mParams.size()) 
-						  + " instead!", true);
-			}
-			return;
-		}
-		
-		double concentration = NeuroModulator::getConcentrationInNetworkAt(
-						params.mType, owner->getPosition(), mCurrentNetwork);
-		
-		//If the maxConcentration parameter is given, cut the concentration level!
-		if(params.mParams.size() > 3) {
-			concentration = Math::min(params.mParams.at(3), concentration);
-		}
-			
-		if(params.mObservable != 0) {
-			params.mObservable->set(concentration); 
-		}
-		
-		double disableProbability = Math::max(0.0, Math::min(1.0, 
-						concentration * params.mDisableProbability * mProbabilityForChange->get()));
-		
-		double changeProbability = Math::max(0.0, Math::min(1.0, 
-						concentration * params.mChangeProbability * mProbabilityForChange->get()));
-		
-		if(Random::nextDouble() < disableProbability) {
-			mInactive->set(!mInactive->get());
-			
-			//don't do it twice!
-			//enableWeight(owner, !mInactive->get());
-			
-			incrementDisableChangeCounter(owner);
-		}
-		
-		//change the weight by chance or when the synapse is set to 0.0.
-		if(!mInactive->get() && ((Random::nextDouble() < changeProbability) || (owner->getStrengthValue().get() == 0.0))) {
-			
-			double variance = params.mParams.at(0);
-			double min = params.mParams.at(1);
-			double max = params.mParams.at(2);
 
-// 			double newWeight = Math::max(min, Math::min(max, 
-// 								owner->getStrengthValue().get() 
-// 									+ (Random::nextDoubleBetween(-variance, variance))));
-			
-			//if the new weight is out of range, then do not saturate, but flip to the other side
-			//of the range. This should avoid that weights tend to be saturated at the max and min values.
-			double newWeight = owner->getStrengthValue().get() + (Random::nextDoubleBetween(-variance, variance));
-			
-			while(newWeight > max) {
-				newWeight -= (max - min);
-			}
-			while(newWeight < min) {
-				newWeight += (max - min);
-			}
-			
-			owner->getStrengthValue().set(newWeight);
-			
-			incrementWeightChangeCounter(owner);
-		}
-	}
-	*/
-	
 	
 	
 	/**
