@@ -89,7 +89,7 @@ AdditiveTimeDiscreteNeuroModulatorActivationFunction::AdditiveTimeDiscreteNeuroM
 	mStimulationIncrements = new RangeValue(0.001, 0.01, false);
 	mStimulationIncrements->setDescription("Gain (Drop) of the activation state per step when the cell is simulated (not stimulated).");
 	mStimulationThresholds = new RangeValue(0.95, 0.95, false);
-	mStimulationThresholds->setDescription("Separates the cell activation state into a reduction (< threshold) and a production (>= threshold) modus.");
+	mStimulationThresholds->setDescription("Separates the cell activation state into a production (>= threshold) and reduction (< threshold) modus.");
 	mConcentrationIncrements = new RangeValue(0.001, 0.01, false);
 	mConcentrationIncrements->setDescription("Gain (Drop) of the modulator concentration per step when the cell is in production (reduction) mode.");
 	mAreaIncrements = new RangeValue(1.0, 0.0, false);

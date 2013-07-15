@@ -181,7 +181,7 @@ namespace nerd {
 	
 	
 	void SphericLightSource::setup()  {
-		Core::log("SphericLightSource: setup() called!", true);
+		//Core::log("SphericLightSource: setup() called!", true);
 		LightSource::setup();
 
 		if(mReferenceObjectName->get() != "") {
@@ -259,7 +259,8 @@ namespace nerd {
 			&& (value == mReferenceObject->getPositionValue() 
 			|| value == mReferenceObject->getQuaternionOrientationValue()))
 		{
-			Core::log("SphericLightSource: valueChanges() called on referenceObject", true);
+			//Core::log("SphericLightSource: valueChanges() called on referenceObject", true);
+			
 			// TODO change this? see Test line 247
 			//
 			Quaternion localPos(

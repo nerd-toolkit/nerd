@@ -168,6 +168,7 @@ MotorControlGui::MotorControlGui(const QString &simObjectGroupName) {
 }
 
 MotorControlGui::~MotorControlGui() {
+	cleanUp();
 	while(mControlPanels.size() > 0) {
 		MotorControlPanel *tmp = mControlPanels.first();
 		mControlPanels.remove(0);
@@ -211,6 +212,9 @@ bool MotorControlGui::setUp() {
 bool MotorControlGui::cleanUp() {
 	if(mResetEvent != 0) {
 		mResetEvent->removeEventListener(this);
+	}
+	if(mPauseValue != 0) {
+		mPauseValue->removeValueChangedListener(this);
 	}
 	for(int i = 0; i < mControlPanels.size(); ++i) {
 		MotorControlPanel *tmp = mControlPanels.at(i);
