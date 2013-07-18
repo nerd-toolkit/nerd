@@ -45,6 +45,7 @@
 #include "MersenneTwister.h"
 #include <stdlib.h>
 #include <QTime>
+#include <qcoreapplication.h>
 
 namespace nerd {
 
@@ -112,7 +113,7 @@ double Random::mNextGaussian(double mean, double stdDev) {
 
 
 void Random::init() {
-	srand(QTime::currentTime().msec());
+	srand(QTime::currentTime().msec() + (QCoreApplication::applicationPid() * 131));
 	sInitialized = true;
 }
 
