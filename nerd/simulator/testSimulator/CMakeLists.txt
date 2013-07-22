@@ -28,6 +28,7 @@ set(nerd_testSimulator_SRCS
 	Physics/TestSphereGeom.cpp
 	Physics/TestLightSensor.cpp
 	Physics/TestSphericLightSource.cpp
+	Physics/TestSimpleLightSource.cpp
 )
 
 
@@ -56,6 +57,7 @@ set(nerd_testSimulator_MOC_HDRS
 	Physics/TestSphereGeom.h
 	Physics/TestLightSensor.h
 	Physics/TestSphericLightSource.h
+	Physics/TestSimpleLightSource.h
 )
 
 set(nerd_testSimulator_RCS

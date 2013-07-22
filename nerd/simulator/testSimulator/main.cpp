@@ -70,8 +70,9 @@
 #include "Physics/TestValueTransferController.h"
 #include "Physics/TestLightSensor.h"
 #include "Physics/TestSphericLightSource.h"
+#include "Physics/TestSimpleLightSource.h"
 
-TEST_START("TestSimulator", 1, -1, 23);
+TEST_START("TestSimulator", 1, -1, 24);
 
 	TEST(TestGeom); //tests all geoms.
 	TEST(TestCollisionObject);
@@ -100,6 +101,7 @@ TEST_START("TestSimulator", 1, -1, 23);
 	TEST(TestValueTransferController);
 	TEST(TestLightSensor);
 	TEST(TestSphericLightSource);
+	TEST(TestSimpleLightSource);
 
 TEST_END;
 

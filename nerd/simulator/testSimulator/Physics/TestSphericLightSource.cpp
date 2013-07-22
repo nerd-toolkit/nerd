@@ -448,7 +448,7 @@ void TestSphericLightSource::testMethods() {
 		lp->set(1.4, 8.0, 1.1);
 		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
 	}
-	
+
 
 }
 
