@@ -55,7 +55,8 @@ class TestLightSensor : public QObject {
 
 	private slots:
 		void testConstruction();
-	
+		void testCopy();
+		void testMethods();	
 		void testSensor();
 
 	private:

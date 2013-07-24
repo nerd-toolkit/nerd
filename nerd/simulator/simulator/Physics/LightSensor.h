@@ -82,18 +82,18 @@ namespace nerd {
 	private:
 		SimBody *mHostBody;
 		StringValue *mHostBodyName;
-		QList<int> mDetectableLightTypes;
+		QList<int> mDetectableTypesList;
 		QList<LightSource*> mLightSources;
-		DoubleValue *mSensorNoise;
+		DoubleValue *mNoise;
 		InterfaceValue *mBrightness;
 		Vector3DValue *mLocalPosition;
-		BoolValue *mUseAsAmbientLightSensor;
+		BoolValue *mAmbientSensor;
 		Vector3DValue *mLocalOrientation;
 		Vector3DValue *mAngleDifferences;
-		StringValue *mDetectableLightSourceTypes;	
+		StringValue *mDetectableTypes;
 		CollisionObject *mSensorObject;
 		BoolValue *mSwitchYZAxes;
-		BoolValue *mRestrictToHorizontalDirection;
+		BoolValue *mRestrictToPlane;
 		DoubleValue *mMaxDetectionAngle;
 		RangeValue *mDetectableRange;
 	};

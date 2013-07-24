@@ -49,53 +49,187 @@
 #include "Physics/Physics.h"
 #include "Physics/BoxBody.h"
 #include "Physics/LightSensor.h"
+#include "Physics/SimpleLightSource.h"
 #include "TestLightSensor.h"
 
 using namespace std;
 
 namespace nerd{
 
-// Josef WORK IN PROGRESS
+// josef
 void TestLightSensor::testConstruction() {
 	Core::resetCore();
-	Core *core = Core::getInstance();
-
-	DoubleValue *timeStep = new DoubleValue(0.01);
-	core->getValueManager()->addValue(SimulationConstants::VALUE_TIME_STEP_SIZE, timeStep);
-	DoubleValue *gravitation = new DoubleValue(9.81);
-	core->getValueManager()->addValue("/Simulation/Gravitation", gravitation);
 
 	// construct default sensor
 	LightSensor *lightSensor_1 = new LightSensor("LightSensor_1");
 	QVERIFY(lightSensor_1 != 0);
 
 	// check default parameters
-	QVERIFY(dynamic_cast<StringValue*>(lightSensor_1->getParameter("HostBody"))->get() == "");
-	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_1->getParameter("Noise"))->get() == 0.0);
+	QVERIFY(dynamic_cast<StringValue*>(lightSensor_1->
+				getParameter("HostBodyName"))->get() == "");
+	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_1->
+				getParameter("Noise"))->get() == 0.0);
 
-	InterfaceValue *brightness_1 = dynamic_cast<InterfaceValue*>(lightSensor_1->getParameter("Brightness"));
+	InterfaceValue *brightness_1 = dynamic_cast<InterfaceValue*>
+		(lightSensor_1->getParameter("Brightness"));
 	QVERIFY(brightness_1->getName() == "Brightness");
 	QVERIFY(brightness_1->getMin() == 0.0);
 	QVERIFY(brightness_1->getMax() == 1.0);
 
-	Vector3DValue *localPosition_1 = dynamic_cast<Vector3DValue*>(lightSensor_1->getParameter("LocalPosition"));
+	Vector3DValue *localPosition_1 = dynamic_cast<Vector3DValue*>
+		(lightSensor_1->getParameter("LocalPosition"));
 	QVERIFY(localPosition_1->getX() == 0);
 	QVERIFY(localPosition_1->getY() == 0);
 	QVERIFY(localPosition_1->getZ() == 0);
 
-	QVERIFY(dynamic_cast<BoolValue*>(lightSensor_1->getParameter("UseAsAmbientLightSensor"))->get() == false);
-	// TODO angleDifferences
-	QVERIFY(dynamic_cast<StringValue*>(lightSensor_1->getParameter("DetectableLightTypes"))->get() == "0");
-	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_1->getParameter("MaxDetectionAngle"))->get() == 180.0);
-	QVERIFY(dynamic_cast<RangeValue*>(lightSensor_1->getParameter("DetectableRange"))->getMin() == 0.0);
-	QVERIFY(dynamic_cast<RangeValue*>(lightSensor_1->getParameter("DetectableRange"))->getMax() == 1.0);
+	QVERIFY(dynamic_cast<BoolValue*>(lightSensor_1->
+				getParameter("AmbientSensor"))->get() == false);
 
-	// TODO collisionObject, outputValues, copy, setup, ...
+	Vector3DValue *angleDiff_1 = dynamic_cast<Vector3DValue*>
+		(lightSensor_1->getParameter("AngleDifferences"));
+	QVERIFY(angleDiff_1->equals(new Vector3DValue()));
 
+	Vector3DValue *localOrientation_1 = dynamic_cast<Vector3DValue*>
+		(lightSensor_1->getParameter("LocalOrientation"));
+	QVERIFY(localOrientation_1->equals(new Vector3DValue(0,0,0)));
+
+	QVERIFY(dynamic_cast<StringValue*>(lightSensor_1->
+				getParameter("DetectableTypes"))->get() == "0");
+
+	QVERIFY(dynamic_cast<BoolValue*>(lightSensor_1->
+				getParameter("RestrictToPlane"))->get() == true);
+
+	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_1->
+				getParameter("MaxDetectionAngle"))->get() == 180.0);
+
+	QVERIFY(dynamic_cast<RangeValue*>(lightSensor_1->
+				getParameter("DetectableRange"))->getMin() == 0.0);
+	QVERIFY(dynamic_cast<RangeValue*>(lightSensor_1->
+				getParameter("DetectableRange"))->getMax() == 1.0);
+
+	QList<InterfaceValue*> outputVals_1 = lightSensor_1->getOutputValues();
+	QVERIFY(outputVals_1.size() == 1);
+	QVERIFY(outputVals_1.at(0) == brightness_1);
+
+	QList<CollisionObject*> collObjs_1 = lightSensor_1->getCollisionObjects();
+	QVERIFY(collObjs_1.size() == 1);
+	CollisionObject* collObj_1 = 
+		dynamic_cast<CollisionObject*>(collObjs_1.first());
+	QVERIFY(collObj_1 != 0);
+	
+	BoxGeom *collGeom_1 = dynamic_cast<BoxGeom*>(collObj_1->getGeometry());
+	QVERIFY(collGeom_1 != 0);
+	QVERIFY(collGeom_1->getWidth() == 0.1);
+	QVERIFY(collGeom_1->getHeight() == 0.1);
+	QVERIFY(collGeom_1->getDepth() == 0.1);
+	QVERIFY(collGeom_1->getSimObject() == lightSensor_1);
+
+	delete lightSensor_1;
 }
+
+
+// josef
+void TestLightSensor::testCopy() {
+	Core::resetCore();
+
+	LightSensor *lightSensor_1 = new LightSensor("LightSensor_1");
+	QVERIFY(lightSensor_1 != 0);
+
+	dynamic_cast<StringValue*>(lightSensor_1->
+			getParameter("DetectableTypes"))->set("1,3");
+	dynamic_cast<Vector3DValue*>(lightSensor_1->
+			getParameter("LocalPosition"))->set(1,0.5,0);
+	dynamic_cast<BoolValue*>(lightSensor_1->
+			getParameter("AmbientSensor"))->set(true);
+	dynamic_cast<DoubleValue*>(lightSensor_1->
+			getParameter("MaxDetectionAngle"))->set(90.0);
+	
+	LightSensor *lightSensor_2 = dynamic_cast<LightSensor*>
+		(lightSensor_1->createCopy());
+	QVERIFY(lightSensor_2 != 0);
+
+	QVERIFY(lightSensor_1 != lightSensor_2);
+
+	QVERIFY(dynamic_cast<StringValue*>(lightSensor_2->
+				getParameter("HostBodyName"))->get() == "");
+	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_2->
+				getParameter("Noise"))->get() == 0.0);
+
+	InterfaceValue *brightness_2 = dynamic_cast<InterfaceValue*>
+		(lightSensor_2->getParameter("Brightness"));
+	QVERIFY(brightness_2->getName() == "Brightness");
+	QVERIFY(brightness_2->getMin() == 0.0);
+	QVERIFY(brightness_2->getMax() == 1.0);
+
+	Vector3DValue *localPosition_2 = dynamic_cast<Vector3DValue*>
+		(lightSensor_2->getParameter("LocalPosition"));
+	QVERIFY(localPosition_2->getX() == 1.0);
+	QVERIFY(localPosition_2->getY() == 0.5);
+	QVERIFY(localPosition_2->getZ() == 0.0);
+
+	QVERIFY(dynamic_cast<BoolValue*>(lightSensor_2->
+				getParameter("AmbientSensor"))->get() == true);
+
+	Vector3DValue *angleDiff_2 = dynamic_cast<Vector3DValue*>
+		(lightSensor_2->getParameter("AngleDifferences"));
+	QVERIFY(angleDiff_2->equals(new Vector3DValue()));
+
+	Vector3DValue *localOrientation_2 = dynamic_cast<Vector3DValue*>
+		(lightSensor_2->getParameter("LocalOrientation"));
+	QVERIFY(localOrientation_2->equals(new Vector3DValue(0,0,0)));
+
+	QVERIFY(dynamic_cast<StringValue*>(lightSensor_2->
+				getParameter("DetectableTypes"))->get() == "1,3");
+
+	QVERIFY(dynamic_cast<BoolValue*>(lightSensor_2->
+				getParameter("RestrictToPlane"))->get() == true);
+
+	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_2->
+				getParameter("MaxDetectionAngle"))->get() == 90.0);
+
+	QVERIFY(dynamic_cast<RangeValue*>(lightSensor_2->
+				getParameter("DetectableRange"))->getMin() == 0.0);
+	QVERIFY(dynamic_cast<RangeValue*>(lightSensor_2->
+				getParameter("DetectableRange"))->getMax() == 1.0);
+
+	QList<InterfaceValue*> outputVals_2 = lightSensor_2->getOutputValues();
+	QVERIFY(outputVals_2.size() == 1);
+	QVERIFY(outputVals_2.at(0) == brightness_2);
+
+	QList<CollisionObject*> collObjs_2 = lightSensor_2->getCollisionObjects();
+	QVERIFY(collObjs_2.size() == 1);
+	CollisionObject* collObj_2 = 
+		dynamic_cast<CollisionObject*>(collObjs_2.first());
+	QVERIFY(collObj_2 != 0);
+	
+	BoxGeom *collGeom_2 = dynamic_cast<BoxGeom*>(collObj_2->getGeometry());
+	QVERIFY(collGeom_2 != 0);
+	QVERIFY(collGeom_2->getWidth() == 0.1);
+	QVERIFY(collGeom_2->getHeight() == 0.1);
+	QVERIFY(collGeom_2->getDepth() == 0.1);
+	QVERIFY(collGeom_2->getSimObject() == lightSensor_2);
+
+	delete lightSensor_1;
+	delete lightSensor_2;
+}
+
+
+// josef
+void TestLightSensor::testMethods() {
+	Core::resetCore();
+	// TODO
+}
+
 
 // josef
 void TestLightSensor::testSensor() {
+	Core::resetCore();
+	Core *core = Core::getInstance();
+
+	DoubleValue *timeStep = new DoubleValue(0.01);
+	core->getValueManager()->addValue(
+			SimulationConstants::VALUE_TIME_STEP_SIZE, timeStep);
+
 	// TODO
 }
 

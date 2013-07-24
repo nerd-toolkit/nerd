@@ -45,7 +45,6 @@
 
 #include "LightSensor.h"
 #include "Core/Core.h"
-#include "Physics/DistanceSensor.h"
 #include "Physics/Physics.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/SimSensor.h"
@@ -66,49 +65,60 @@ namespace nerd {
  * Constructs a new LightSensor.
  */
 LightSensor::LightSensor(const QString &name)
-	: SimSensor(), SimBody(name), mHostBody(0), mSensorNoise(0), mBrightness(0), mLocalPosition(0),
-	  mUseAsAmbientLightSensor(0), mLocalOrientation(0), mDetectableLightSourceTypes(0), mSensorObject(0)
+	: SimSensor(), SimBody(name), mHostBody(0),
+	  mNoise(0), mBrightness(0), mLocalPosition(0),
+	  mAmbientSensor(0), mLocalOrientation(0),
+	  mDetectableTypes(0), mSensorObject(0)
 {
 	double minDetectBrightness = 0.0;
 	double maxDetectBrightness = 1.0;
 	
-	mDetectableLightTypes.append(0);
+	mDetectableTypesList.append(0);
 
 	mHostBodyName = new StringValue("");
-	mSensorNoise = new DoubleValue(0.0);
-	mBrightness = new InterfaceValue("", "Brightness", minDetectBrightness, minDetectBrightness, maxDetectBrightness);
+	mNoise = new DoubleValue(0.0);
+	mBrightness = new InterfaceValue("", "Brightness", minDetectBrightness,
+			minDetectBrightness, maxDetectBrightness);
 	mLocalPosition = new Vector3DValue();
-	mUseAsAmbientLightSensor = new BoolValue(false);
+	mAmbientSensor = new BoolValue(false);
 	mAngleDifferences = new Vector3DValue();
 	mLocalOrientation = new Vector3DValue(0,0,0);
-	mDetectableLightSourceTypes = new StringValue("0");
-	mRestrictToHorizontalDirection = new BoolValue(true);
+	mDetectableTypes = new StringValue("0");
+	mRestrictToPlane = new BoolValue(true);
 	mMaxDetectionAngle = new DoubleValue(180.0);
 	mDetectableRange = new RangeValue(minDetectBrightness, maxDetectBrightness);
 	
-	mHostBodyName->setDescription("The full name of the body this light sensor is attached to.");
+	mHostBodyName->setDescription(
+			"The full name of the body this light sensor is attached to.");
 	mBrightness->setDescription("The measured brightness");
-	mLocalPosition->setDescription("The local offset between the sensor and the host body position");
-	mLocalOrientation->setDescription("The local offset between the sensor and the host body orientation");
-	mUseAsAmbientLightSensor->setDescription("If true, then the measured brightness is orientation independent. "
-											 "Otherwise, the brightness is dependent on how the sensor is directed "
-											 "relative to the light sources. ");
-	mDetectableLightSourceTypes->setDescription("The ids of the light types that can be detected by this sensor.");
-	mRestrictToHorizontalDirection->setDescription("If true, then only the horizontal orientation is used for "
-											  "the brightness calculation in directed light sensor mode");
-	mMaxDetectionAngle->setDescription("If true, then a directed light sensor does not sense any light "
-											  "if the given angular offset is exceeded.");
-	mDetectableRange->setDescription("The minimal and maximal brightness detectable by this sensor");
+	mLocalPosition->setDescription(
+			"The position offset between the sensor and the host body");
+	mLocalOrientation->setDescription(
+			"The orientation offset between the sensor and the host body");
+	mAmbientSensor->setDescription(
+			"If true, then the measured brightness is orientation independent. "
+			"Otherwise, the brightness is dependent on how the sensor is directed "
+			"relative to the light sources. ");
+	mDetectableTypes->setDescription(
+			"The ids of the light types that can be detected by this sensor.");
+	mRestrictToPlane->setDescription(
+			"If true, then only the horizontal orientation is used for "
+			"the brightness calculation in directed light sensor mode");
+	mMaxDetectionAngle->setDescription(
+			"If true, then a directed light sensor does not sense any light "
+			"if the given angular offset is exceeded.");
+	mDetectableRange->setDescription(
+			"The minimal and maximal brightness detectable by this sensor");
 
-	addParameter("HostBody", mHostBodyName);
-	addParameter("Noise", mSensorNoise);
+	addParameter("HostBodyName", mHostBodyName);
+	addParameter("Noise", mNoise);
 	addParameter("Brightness", mBrightness);
 	addParameter("LocalPosition", mLocalPosition);
-	addParameter("UseAsAmbientLightSensor", mUseAsAmbientLightSensor);
-	addParameter("AngleDifferences", mAngleDifferences);
 	addParameter("LocalOrientation", mLocalOrientation);
-	addParameter("DetectableLightTypes", mDetectableLightSourceTypes);
-	addParameter("RestrictToHorizontalDirection", mRestrictToHorizontalDirection);
+	addParameter("AmbientSensor", mAmbientSensor);
+	addParameter("AngleDifferences", mAngleDifferences);
+	addParameter("DetectableTypes", mDetectableTypes);
+	addParameter("RestrictToPlane", mRestrictToPlane);
 	addParameter("MaxDetectionAngle", mMaxDetectionAngle);
 
 	addParameter("DetectableRange", mDetectableRange);
@@ -119,7 +129,8 @@ LightSensor::LightSensor(const QString &name)
 	addCollisionObject(mSensorObject);
 	
 	Physics::getPhysicsManager();
-	mSwitchYZAxes = Core::getInstance()->getValueManager()->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
+	mSwitchYZAxes = Core::getInstance()->getValueManager()->
+		getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
 }
 
 
@@ -129,32 +140,41 @@ LightSensor::LightSensor(const QString &name)
  * @param other the LightSensor object to copy.
  */
 LightSensor::LightSensor(const LightSensor &other) 
-	: Object(), ValueChangedListener(), SimSensor(), SimBody(other), mHostBody(0), 
-		mHostBodyName(0), mDetectableLightTypes(other.mDetectableLightTypes), mSensorNoise(0), 
-		mBrightness(0), mLocalPosition(0), mUseAsAmbientLightSensor(0), 
-		mLocalOrientation(0), mAngleDifferences(0), mDetectableLightSourceTypes(0),
-		 mSensorObject(0)
+	: Object(), ValueChangedListener(), SimSensor(), SimBody(other),
+	  mHostBody(0), mHostBodyName(0),
+	  mDetectableTypesList(other.mDetectableTypesList), mNoise(0),
+	  mBrightness(0), mLocalPosition(0), mAmbientSensor(0),
+	  mLocalOrientation(0), mAngleDifferences(0),
+	  mDetectableTypes(0), mSensorObject(0)
 {
-	mHostBodyName = dynamic_cast<StringValue*>(getParameter("HostBody"));
-	mSensorNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
+	mHostBodyName = dynamic_cast<StringValue*>(getParameter("HostBodyName"));
+	mNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
 	mBrightness = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
-	mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
-	mUseAsAmbientLightSensor = dynamic_cast<BoolValue*>(getParameter("UseAsAmbientLightSensor"));
-	mAngleDifferences = dynamic_cast<Vector3DValue*>(getParameter("AngleDifferences"));
-	mLocalOrientation = dynamic_cast<Vector3DValue*>(getParameter("LocalOrientation"));
-	mDetectableLightSourceTypes = dynamic_cast<StringValue*>(getParameter("DetectableLightTypes"));
-	mRestrictToHorizontalDirection = dynamic_cast<BoolValue*>(getParameter("RestrictToHorizontalDirection"));
-	mMaxDetectionAngle = dynamic_cast<DoubleValue*>(getParameter("MaxDetectionAngle"));
-	mDetectableRange = dynamic_cast<RangeValue*>(getParameter("DetectableRange"));
+	mLocalPosition =
+		dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
+	mAmbientSensor = 
+		dynamic_cast<BoolValue*>(getParameter("AmbientSensor"));
+	mAngleDifferences =
+		dynamic_cast<Vector3DValue*>(getParameter("AngleDifferences"));
+	mLocalOrientation =
+		dynamic_cast<Vector3DValue*>(getParameter("LocalOrientation"));
+	mDetectableTypes =
+		dynamic_cast<StringValue*>(getParameter("DetectableTypes"));
+	mRestrictToPlane =
+		dynamic_cast<BoolValue*>(getParameter("RestrictToPlane"));
+	mMaxDetectionAngle =
+		dynamic_cast<DoubleValue*>(getParameter("MaxDetectionAngle"));
+	mDetectableRange =
+		dynamic_cast<RangeValue*>(getParameter("DetectableRange"));
 
 	mLightSources.clear();
 	mOutputValues.append(mBrightness);
 	
 	mSwitchYZAxes = other.mSwitchYZAxes;
 
-	valueChanged(mDetectableLightSourceTypes);
+	valueChanged(mDetectableTypes);
 
-	mSensorObject = new CollisionObject(BoxGeom(this, 0.01, 0.01, 0.01), this, false);
+	mSensorObject = new CollisionObject(BoxGeom(this, 0.1, 0.1, 0.1), this, false);
 	addCollisionObject(mSensorObject);
 }
 
@@ -162,7 +182,7 @@ LightSensor::LightSensor(const LightSensor &other)
  * Destructor.
  */
 LightSensor::~LightSensor() {
-	//TODO destroy mSensorObject?
+	removeCollisionObject(mSensorObject);
 	delete mSensorObject;
 }
 
@@ -203,7 +223,7 @@ void LightSensor::setup() {
 		LightSource *lightSource = dynamic_cast<LightSource*>(i.next());
 
 		if(lightSource != 0 && !mLightSources.contains(lightSource)) {
-			if(mDetectableLightTypes.contains(lightSource->getType())) {
+			if(mDetectableTypesList.contains(lightSource->getType())) {
 				mLightSources.append(lightSource);
 			}
 		}
@@ -247,7 +267,7 @@ void LightSensor::updateSensorValues() {
 	for(QListIterator<LightSource*> i(mLightSources); i.hasNext();) {
 		brightness += calculateBrightness(i.next(), globalPos);
 	}
-	brightness = Math::calculateGaussian(brightness, mSensorNoise->get());
+	brightness = Math::calculateGaussian(brightness, mNoise->get());
 
 	mBrightness->set(brightness);
 }
@@ -258,14 +278,14 @@ void LightSensor::valueChanged(Value *value) {
 	if(value == 0) {
 		return;
 	}
-	else if(value == mDetectableLightSourceTypes) {
-		mDetectableLightTypes.clear();
-		QStringList entries = mDetectableLightSourceTypes->get().split(",");
+	else if(value == mDetectableTypes) {
+		mDetectableTypesList.clear();
+		QStringList entries = mDetectableTypes->get().split(",");
 		for(int i = 0; i < entries.size(); ++i) {
 			bool ok = true;
 			int type = entries.at(i).toInt(&ok);
 			if(ok) {
-				mDetectableLightTypes.append(type);
+				mDetectableTypesList.append(type);
 			}
 		}
 	}
@@ -346,9 +366,9 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 // 	double ambientLight = (range - distance) / range * lightSource->getCurrentBrightness();
 
 	//let the light source calculate its current brightness at the desired global position.
-	double ambientLight = lightSource->getBrightness(globalPosition, mRestrictToHorizontalDirection->get());
+	double ambientLight = lightSource->getBrightness(globalPosition, mRestrictToPlane->get());
 
-	if(mUseAsAmbientLightSensor->get()) {
+	if(mAmbientSensor->get()) {
 		brightness = ambientLight;
 	}
 	else {
@@ -401,7 +421,7 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 
 		double maxDifference = 0.0;
 		
-		if(mRestrictToHorizontalDirection->get()) {
+		if(mRestrictToPlane->get()) {
 			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
 				maxDifference = Math::abs(anglesToLightSource.getY());
 			}
