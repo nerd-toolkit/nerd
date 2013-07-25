@@ -55,6 +55,7 @@ using namespace std;
 
 namespace nerd{
 
+
 // Josef
 void TestSimpleLightSource::testConstruction() {
 
@@ -142,6 +143,7 @@ void TestSimpleLightSource::testConstruction() {
 	// don't delete, if registered at the PhysicsManager
 	// or a segmentation fault will happen at Core::resetCore()
 	lightSource_1->clear();
+	delete lightSource_1;
 
 
 	// different object, other values
@@ -203,10 +205,15 @@ void TestSimpleLightSource::testConstruction() {
 	QVERIFY(!dynamic_cast<Vector3DValue*>(lightSource_2->
 				getParameter("Position"))->get().equals(Vector3D(0,0,0)));
 
-	// clear is also called by PhysicsManager::cleanUp
 	lightSource_2->clear();
+	Physics::getPhysicsManager()->removeSimObject(lightSource_2);
+	delete lightSource_2;
 
+	referenceObject_2->clear();
+	Physics::getPhysicsManager()->removeSimObject(referenceObject_2);
+	delete referenceObject_2;
 }
+
 
 // josef
 void TestSimpleLightSource::testCopy() {
@@ -282,6 +289,7 @@ void TestSimpleLightSource::testCopy() {
 	delete lightSource_2;
 	delete lightSource_1;
 }
+
 
 // josef
 void TestSimpleLightSource::testMethods() {
@@ -393,6 +401,7 @@ void TestSimpleLightSource::testMethods() {
 		QVERIFY(lightSource_1->getBrightness(*lp, rh) == 0.0);
 	}
 
+	delete lightSource_1;
 
 }
 

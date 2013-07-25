@@ -57,9 +57,6 @@
 using namespace std;
 
 namespace nerd {
-	
-	//TODO add minimal angle factor parameter.
-
 
 /**
  * Constructs a new LightSensor.
@@ -77,8 +74,8 @@ LightSensor::LightSensor(const QString &name)
 
 	mHostBodyName = new StringValue("");
 	mNoise = new DoubleValue(0.0);
-	mBrightness = new InterfaceValue("", "Brightness", minDetectBrightness,
-			minDetectBrightness, maxDetectBrightness);
+	mBrightness = new InterfaceValue("", "Brightness",
+			minDetectBrightness, minDetectBrightness, maxDetectBrightness);
 	mLocalPosition = new Vector3DValue();
 	mAmbientSensor = new BoolValue(false);
 	mAngleDifferences = new Vector3DValue();
@@ -125,7 +122,8 @@ LightSensor::LightSensor(const QString &name)
 
 	mOutputValues.append(mBrightness);
 
-	mSensorObject = new CollisionObject(BoxGeom(this, 0.1, 0.1, 0.1), this, false);
+	mSensorObject = new CollisionObject(
+			BoxGeom(this, 0.1, 0.1, 0.1), this, false);
 	addCollisionObject(mSensorObject);
 	
 	Physics::getPhysicsManager();
@@ -174,7 +172,8 @@ LightSensor::LightSensor(const LightSensor &other)
 
 	valueChanged(mDetectableTypes);
 
-	mSensorObject = new CollisionObject(BoxGeom(this, 0.1, 0.1, 0.1), this, false);
+	mSensorObject = new CollisionObject(
+			BoxGeom(this, 0.1, 0.1, 0.1), this, false);
 	addCollisionObject(mSensorObject);
 }
 
@@ -195,30 +194,38 @@ SimObject* LightSensor::createCopy() const {
 void LightSensor::setup() {
 	SimBody::setup();
 	
+	// get host body object and its position
+	//
 	if(mHostBody != 0) {
-		mHostBody->getPositionValue()->removeValueChangedListener(this);
-		mHostBody->getQuaternionOrientationValue()->removeValueChangedListener(this);
+		mHostBody->getPositionValue()->
+			removeValueChangedListener(this);
+		mHostBody->getQuaternionOrientationValue()->
+			removeValueChangedListener(this);
 		mHostBody = 0;
 	}
 
-	mHostBody = Physics::getPhysicsManager()->getSimBody(mHostBodyName->get());
-
-	if(mHostBody != 0) {
-		mHostBody->getPositionValue()->addValueChangedListener(this);
-		mHostBody->getQuaternionOrientationValue()->addValueChangedListener(this);
-		valueChanged(mHostBody->getPositionValue());
-	}
+	mHostBody = Physics::getPhysicsManager()->
+		getSimBody(mHostBodyName->get());
 
 	if(mHostBody == 0) {
 		Core::log(QString("LightSensor [").append(getName())
 				.append("]::setup: Could not find host body [")
 				.append(mHostBodyName->get()).append("]!"), true);
 		return;
+	} else {
+		mHostBody->getPositionValue()->
+			addValueChangedListener(this);
+		mHostBody->getQuaternionOrientationValue()->
+			addValueChangedListener(this);
+		valueChanged(mHostBody->getPositionValue());
 	}
 
-	//update list of lightsources
+	// update list of light sources
+	//
 	mLightSources.clear();
-	QList<SimObject*> simObjects = Physics::getPhysicsManager()->getSimObjects();
+	QList<SimObject*> simObjects =
+		Physics::getPhysicsManager()->getSimObjects();
+
 	for(QListIterator<SimObject*> i(simObjects); i.hasNext();) {
 		LightSource *lightSource = dynamic_cast<LightSource*>(i.next());
 
@@ -235,8 +242,10 @@ void LightSensor::clear() {
 	SimBody::clear();
 
 	if(mHostBody != 0) {
-		mHostBody->getPositionValue()->removeValueChangedListener(this);
-		mHostBody->getQuaternionOrientationValue()->removeValueChangedListener(this);
+		mHostBody->getPositionValue()->
+			removeValueChangedListener(this);
+		mHostBody->getQuaternionOrientationValue()->
+			removeValueChangedListener(this);
 	}
 	mHostBody = 0;
 
@@ -244,24 +253,41 @@ void LightSensor::clear() {
 }
 
 
+// inherited method from SimSensor, called in every simulation step
+//
 void LightSensor::updateSensorValues() {
 
 	if(mHostBody == 0) {
 		return;
 	}
 
+	/*
 	Quaternion localPos(0.0, 
 						mLocalPosition->getX(), 
 						mLocalPosition->getY(), 
 						mLocalPosition->getZ());
+
 	Quaternion bodyOrientationInverse = 
 		mHostBody->getQuaternionOrientationValue()->get().getInverse();
-	Quaternion rotatedLocalPosQuat = mHostBody->getQuaternionOrientationValue()->get() 
-		* localPos * bodyOrientationInverse;
+
+	Quaternion rotatedLocalPosQuat = 
+		mHostBody->getQuaternionOrientationValue()->get() *
+		localPos * bodyOrientationInverse;
+
 	Vector3D rotatedLocalPos(rotatedLocalPosQuat.getX(), 
 							 rotatedLocalPosQuat.getY(), 
 							 rotatedLocalPosQuat.getZ());
-	Vector3D globalPos = mHostBody->getPositionValue()->get() + rotatedLocalPos;
+
+	Vector3D globalPos =
+		mHostBody->getPositionValue()->get() + rotatedLocalPos;
+	*/
+
+
+	// mPositionValue should be updated accordingly
+	// whenever the host body moves, no need to
+	// have the calculation here in ever step, too
+	//
+	Vector3D globalPos = mPositionValue->get();
 
 	double brightness = 0.0;
 	for(QListIterator<LightSource*> i(mLightSources); i.hasNext();) {
@@ -275,36 +301,52 @@ void LightSensor::updateSensorValues() {
 
 void LightSensor::valueChanged(Value *value) {
 	SimBody::valueChanged(value);
+
 	if(value == 0) {
 		return;
 	}
+
+	// String of detectable light types has changes, update list
 	else if(value == mDetectableTypes) {
 		mDetectableTypesList.clear();
 		QStringList entries = mDetectableTypes->get().split(",");
 		for(int i = 0; i < entries.size(); ++i) {
 			bool ok = true;
 			int type = entries.at(i).toInt(&ok);
-			if(ok) {
+			if(ok) { // only if it is an integer!
 				mDetectableTypesList.append(type);
 			}
 		}
 	}
-	else if(mHostBody != 0 
-			&& (value == mHostBody->getPositionValue() || value == mHostBody->getQuaternionOrientationValue()))
+
+	else if(mHostBody != 0 && 
+			(value == mHostBody->getPositionValue() ||
+			 value == mHostBody->getQuaternionOrientationValue()))
 	{
 		Quaternion localPos(0.0, 
 						mLocalPosition->getX(), 
 						mLocalPosition->getY(), 
 						mLocalPosition->getZ());
+
 		Quaternion bodyOrientationInverse = 
 			mHostBody->getQuaternionOrientationValue()->get().getInverse();
-		Quaternion rotatedLocalPosQuat = mHostBody->getQuaternionOrientationValue()->get() 
-			* localPos * bodyOrientationInverse;
+
+		Quaternion rotatedLocalPosQuat =
+			mHostBody->getQuaternionOrientationValue()->get() *
+			localPos * bodyOrientationInverse;
+
 		Vector3D rotatedLocalPos(rotatedLocalPosQuat.getX(), 
-								rotatedLocalPosQuat.getY(), 
-								rotatedLocalPosQuat.getZ());
-		mPositionValue->set(mHostBody->getPositionValue()->get() + rotatedLocalPos);
-		Vector3D angle = mHostBody->getOrientationValue()->get() + mLocalOrientation->get();
+								 rotatedLocalPosQuat.getY(), 
+								 rotatedLocalPosQuat.getZ());
+
+		mPositionValue->set(
+				mHostBody->getPositionValue()->get() +
+				rotatedLocalPos);
+
+		Vector3D angle =
+			mHostBody->getOrientationValue()->get() +
+			mLocalOrientation->get();
+
 		while(angle.getX() > 180.0) {
 			angle.setX(angle.getX() - 360.0);
 		}
@@ -325,6 +367,8 @@ void LightSensor::valueChanged(Value *value) {
 		}
 		mOrientationValue->set(angle);
 	}
+
+	// Sensor angle has changed (why the restrictions?)
 	else if(value == mMaxDetectionAngle) {
 		if(mMaxDetectionAngle->get() < 0.0) {
 			mMaxDetectionAngle->set(0.0);
@@ -333,12 +377,12 @@ void LightSensor::valueChanged(Value *value) {
 			mMaxDetectionAngle->set(180.0);
 		}
 	}
+
 	else if(value == mDetectableRange) {
 		mBrightness->setMin(mDetectableRange->getMin());
 		mBrightness->setMax(mDetectableRange->getMax());
 	}
 }
-
 
 
 SimBody* LightSensor::getHostBody() const {
@@ -352,18 +396,6 @@ double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D
 	if(mHostBody == 0) {
 		return brightness;
 	}
-
-// 	double distance = Math::distance(globalPosition, lightSource->getPositionValue()->get());
-// 
-// 	double range = lightSource->getRange();
-// 
-// 	if(range == 0.0 || distance > range) {
-// 		return brightness;
-// 	}
-// 
-// 	//currently the light is assumed to decay linearly 
-// 	//TODO should be changed to 1/(r*r).
-// 	double ambientLight = (range - distance) / range * lightSource->getCurrentBrightness();
 
 	//let the light source calculate its current brightness at the desired global position.
 	double ambientLight = lightSource->getBrightness(globalPosition, mRestrictToPlane->get());

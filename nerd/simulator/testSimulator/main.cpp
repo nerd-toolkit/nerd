@@ -68,9 +68,9 @@
 #include "Signal/TestSignals.h"
 #include "TestSimulationConstants.h"
 #include "Physics/TestValueTransferController.h"
-#include "Physics/TestLightSensor.h"
 #include "Physics/TestSphericLightSource.h"
 #include "Physics/TestSimpleLightSource.h"
+#include "Physics/TestLightSensor.h"
 
 TEST_START("TestSimulator", 1, -1, 24);
 
@@ -99,9 +99,9 @@ TEST_START("TestSimulator", 1, -1, 24);
 	TEST(TestSignals);
 	TEST(TestSimulationConstants);
 	TEST(TestValueTransferController);
-	TEST(TestLightSensor);
-	TEST(TestSphericLightSource);
 	TEST(TestSimpleLightSource);
+	TEST(TestSphericLightSource);
+	TEST(TestLightSensor);
 
 TEST_END;
 
