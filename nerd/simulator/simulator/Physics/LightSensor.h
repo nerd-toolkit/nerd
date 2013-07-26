@@ -77,7 +77,7 @@ namespace nerd {
 		SimBody* getHostBody() const;
 
 	private:
-		double calculateBrightness(LightSource *lightSource, const Vector3D &globalPosition);
+		double calculateBrightness(LightSource *lightSource);
 
 	private:
 		SimBody *mHostBody;
@@ -89,7 +89,6 @@ namespace nerd {
 		Vector3DValue *mLocalPosition;
 		BoolValue *mAmbientSensor;
 		Vector3DValue *mLocalOrientation;
-		Vector3DValue *mAngleDifferences;
 		StringValue *mDetectableTypes;
 		CollisionObject *mSensorObject;
 		BoolValue *mSwitchYZAxes;

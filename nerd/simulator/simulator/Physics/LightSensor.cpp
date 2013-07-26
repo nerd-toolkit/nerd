@@ -78,7 +78,6 @@ LightSensor::LightSensor(const QString &name)
 			minDetectBrightness, minDetectBrightness, maxDetectBrightness);
 	mLocalPosition = new Vector3DValue();
 	mAmbientSensor = new BoolValue(false);
-	mAngleDifferences = new Vector3DValue();
 	mLocalOrientation = new Vector3DValue(0,0,0);
 	mDetectableTypes = new StringValue("0");
 	mRestrictToPlane = new BoolValue(true);
@@ -113,7 +112,6 @@ LightSensor::LightSensor(const QString &name)
 	addParameter("LocalPosition", mLocalPosition);
 	addParameter("LocalOrientation", mLocalOrientation);
 	addParameter("AmbientSensor", mAmbientSensor);
-	addParameter("AngleDifferences", mAngleDifferences);
 	addParameter("DetectableTypes", mDetectableTypes);
 	addParameter("RestrictToPlane", mRestrictToPlane);
 	addParameter("MaxDetectionAngle", mMaxDetectionAngle);
@@ -142,8 +140,7 @@ LightSensor::LightSensor(const LightSensor &other)
 	  mHostBody(0), mHostBodyName(0),
 	  mDetectableTypesList(other.mDetectableTypesList), mNoise(0),
 	  mBrightness(0), mLocalPosition(0), mAmbientSensor(0),
-	  mLocalOrientation(0), mAngleDifferences(0),
-	  mDetectableTypes(0), mSensorObject(0)
+	  mLocalOrientation(0), mDetectableTypes(0), mSensorObject(0)
 {
 	mHostBodyName = dynamic_cast<StringValue*>(getParameter("HostBodyName"));
 	mNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
@@ -152,8 +149,6 @@ LightSensor::LightSensor(const LightSensor &other)
 		dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
 	mAmbientSensor = 
 		dynamic_cast<BoolValue*>(getParameter("AmbientSensor"));
-	mAngleDifferences =
-		dynamic_cast<Vector3DValue*>(getParameter("AngleDifferences"));
 	mLocalOrientation =
 		dynamic_cast<Vector3DValue*>(getParameter("LocalOrientation"));
 	mDetectableTypes =
@@ -261,37 +256,9 @@ void LightSensor::updateSensorValues() {
 		return;
 	}
 
-	/*
-	Quaternion localPos(0.0, 
-						mLocalPosition->getX(), 
-						mLocalPosition->getY(), 
-						mLocalPosition->getZ());
-
-	Quaternion bodyOrientationInverse = 
-		mHostBody->getQuaternionOrientationValue()->get().getInverse();
-
-	Quaternion rotatedLocalPosQuat = 
-		mHostBody->getQuaternionOrientationValue()->get() *
-		localPos * bodyOrientationInverse;
-
-	Vector3D rotatedLocalPos(rotatedLocalPosQuat.getX(), 
-							 rotatedLocalPosQuat.getY(), 
-							 rotatedLocalPosQuat.getZ());
-
-	Vector3D globalPos =
-		mHostBody->getPositionValue()->get() + rotatedLocalPos;
-	*/
-
-
-	// mPositionValue should be updated accordingly
-	// whenever the host body moves, no need to
-	// have the calculation here in ever step, too
-	//
-	Vector3D globalPos = mPositionValue->get();
-
 	double brightness = 0.0;
 	for(QListIterator<LightSource*> i(mLightSources); i.hasNext();) {
-		brightness += calculateBrightness(i.next(), globalPos);
+		brightness += calculateBrightness(i.next());
 	}
 	brightness = Math::calculateGaussian(brightness, mNoise->get());
 
@@ -306,7 +273,7 @@ void LightSensor::valueChanged(Value *value) {
 		return;
 	}
 
-	// String of detectable light types has changes, update list
+	// string of detectable light types has changed, update list
 	else if(value == mDetectableTypes) {
 		mDetectableTypesList.clear();
 		QStringList entries = mDetectableTypes->get().split(",");
@@ -347,6 +314,10 @@ void LightSensor::valueChanged(Value *value) {
 			mHostBody->getOrientationValue()->get() +
 			mLocalOrientation->get();
 
+		// TODO check if this has any impact?
+		// same range-reinforcement is done in
+		// calculateBrightness again, anyways
+		/*
 		while(angle.getX() > 180.0) {
 			angle.setX(angle.getX() - 360.0);
 		}
@@ -365,6 +336,11 @@ void LightSensor::valueChanged(Value *value) {
 		while(angle.getZ() < -180.0) {
 			angle.setZ(angle.getZ() + 360.0);
 		}
+		*/
+		angle.setX(Math::forceToDegreeRange(angle.getX()));
+		angle.setY(Math::forceToDegreeRange(angle.getY()));
+		angle.setZ(Math::forceToDegreeRange(angle.getZ()));
+
 		mOrientationValue->set(angle);
 	}
 
@@ -390,98 +366,94 @@ SimBody* LightSensor::getHostBody() const {
 }
 
 
-double LightSensor::calculateBrightness(LightSource *lightSource, const Vector3D &globalPosition) {
+double LightSensor::calculateBrightness(LightSource *lightSource) {
+
+	// if no host body is found, don't calculate anything
+	if(mHostBody == 0) {
+		return 0.0;
+	}
+
+	// get position value
+	Vector3D sensorPosition = mPositionValue->get();
+
+	// get brightness at current position from light source
+	double sourceBrightness =
+		lightSource->getBrightness(sensorPosition, mRestrictToPlane->get());
+
+	Core::log("sourceBrightness: " + QString::number(sourceBrightness), true);
+
+	// if ambient sensor, ignore directionality and opening angle
+	if(mAmbientSensor->get()) {
+		return sourceBrightness;
+	}
+
+	// Otherwise, take the directionality into account
+	//
+	// initialize return value
 	double brightness = 0.0;
 
-	if(mHostBody == 0) {
-		return brightness;
+	Vector3D sensorOrientation = mOrientationValue->get();
+	Vector3D anglesToLightSource;
+
+	anglesToLightSource.setX((atan2(
+			(lightSource->getPositionValue()->getZ() - sensorPosition.getZ()),
+			(lightSource->getPositionValue()->getY() - sensorPosition.getY())) 
+			/ Math::PI * 180.0) - sensorOrientation.getX());
+
+
+	anglesToLightSource.setY((atan2(
+			(lightSource->getPositionValue()->getX() - sensorPosition.getX()),
+			(lightSource->getPositionValue()->getZ() - sensorPosition.getZ())) 
+			/ Math::PI * 180.0) - sensorOrientation.getY());
+
+	
+	anglesToLightSource.setZ((atan2(
+			(lightSource->getPositionValue()->getY() - sensorPosition.getY()),
+			(lightSource->getPositionValue()->getX() - sensorPosition.getX())) 
+			/ Math::PI * 180.0) - sensorOrientation.getZ());
+
+
+
+	while(anglesToLightSource.getX() > 180.0) {
+		anglesToLightSource.setX(anglesToLightSource.getX() - 360.0);
+	}
+	while(anglesToLightSource.getX() < -180.0) {
+		anglesToLightSource.setX(anglesToLightSource.getX() + 360.0);
+	}
+	while(anglesToLightSource.getY() > 180.0) {
+		anglesToLightSource.setY(anglesToLightSource.getY() - 360.0);
+	}
+	while(anglesToLightSource.getY() < -180.0) {
+		anglesToLightSource.setY(anglesToLightSource.getY() + 360.0);
+	}
+	while(anglesToLightSource.getZ() > 180.0) {
+		anglesToLightSource.setZ(anglesToLightSource.getZ() - 360.0);
+	}
+	while(anglesToLightSource.getZ() < -180.0) {
+		anglesToLightSource.setZ(anglesToLightSource.getZ() + 360.0);
 	}
 
-	//let the light source calculate its current brightness at the desired global position.
-	double ambientLight = lightSource->getBrightness(globalPosition, mRestrictToPlane->get());
-
-	if(mAmbientSensor->get()) {
-		brightness = ambientLight;
+	double maxDifference = 0.0;
+	
+	if(mRestrictToPlane->get()) {
+		if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
+			maxDifference = Math::abs(anglesToLightSource.getY());
+		}
+		else { // XZ is the default plane
+			maxDifference = Math::abs(anglesToLightSource.getZ());
+		}
 	}
-	else {
-		//take orientation into account.
-
-		Vector3D sensorPosition = globalPosition;
-		Vector3D sensorOrientation = mHostBody->getOrientationValue()->get() + mLocalOrientation->get();
-
-		Vector3D anglesToLightSource;
-
-		anglesToLightSource.setX((atan2(
-				(lightSource->getPositionValue()->getZ() - sensorPosition.getZ()),
- 				(lightSource->getPositionValue()->getY() - sensorPosition.getY())) 
-				/ Math::PI * 180.0) - sensorOrientation.getX());
-
-
-		anglesToLightSource.setY((atan2(
-				(lightSource->getPositionValue()->getX() - sensorPosition.getX()),
- 				(lightSource->getPositionValue()->getZ() - sensorPosition.getZ())) 
-				/ Math::PI * 180.0) - sensorOrientation.getY());
-
-		
-		anglesToLightSource.setZ((atan2(
-				(lightSource->getPositionValue()->getY() - sensorPosition.getY()),
- 				(lightSource->getPositionValue()->getX() - sensorPosition.getX())) 
-				/ Math::PI * 180.0) - sensorOrientation.getZ());
-
-
-
-		while(anglesToLightSource.getX() > 180.0) {
-			anglesToLightSource.setX(anglesToLightSource.getX() - 360.0);
-		}
-		while(anglesToLightSource.getX() < -180.0) {
-			anglesToLightSource.setX(anglesToLightSource.getX() + 360.0);
-		}
-		while(anglesToLightSource.getY() > 180.0) {
-			anglesToLightSource.setY(anglesToLightSource.getY() - 360.0);
-		}
-		while(anglesToLightSource.getY() < -180.0) {
-			anglesToLightSource.setY(anglesToLightSource.getY() + 360.0);
-		}
-		while(anglesToLightSource.getZ() > 180.0) {
-			anglesToLightSource.setZ(anglesToLightSource.getZ() - 360.0);
-		}
-		while(anglesToLightSource.getZ() < -180.0) {
-			anglesToLightSource.setZ(anglesToLightSource.getZ() + 360.0);
-		}
-
-		mAngleDifferences->set(anglesToLightSource);
-
-		double maxDifference = 0.0;
-		
-		if(mRestrictToPlane->get()) {
-			if(mSwitchYZAxes == 0 || mSwitchYZAxes->get()) {
-				maxDifference = Math::abs(anglesToLightSource.getY());
-			}
-			else {
-				maxDifference = Math::abs(anglesToLightSource.getZ());
-			}
-		}
-		else { // TODO: REPAIR! (delete division by 3?)
-			maxDifference = (Math::abs(anglesToLightSource.getX()) / 3.0)
-								+ (Math::abs(anglesToLightSource.getY()) / 3.0)
-								+ (Math::abs(anglesToLightSource.getZ()) / 3.0);
-		}
-		
-		maxDifference = Math::min(mMaxDetectionAngle->get(), maxDifference);
-		ambientLight = ambientLight / mMaxDetectionAngle->get();
-		brightness = (mMaxDetectionAngle->get() - maxDifference) * ambientLight;
-
-
-		/*
-		 * A better strategy could be: 
-		 * - Determine vector of view (3D axis of sensor view)
-		 * - Determine vector to light source (between sensor position and light source position)
-		 * - Take angle between the two vectors as error
-		 * - return (maxViewingAngle - (Math::min(Math::abs(error), maxViewingAngle))) / maxViewingAngle * brightness
-		 * 
-		 * And remove the entire quaterion rotation stuff and the 3D angle errors above
-		 */
+	else { // TODO check this!
+		maxDifference = (Math::abs(anglesToLightSource.getX()) / 3.0)
+							+ (Math::abs(anglesToLightSource.getY()) / 3.0)
+							+ (Math::abs(anglesToLightSource.getZ()) / 3.0);
 	}
+	
+	// linear decay of measured light intensity
+	// from center of sensor axis to the edges
+	maxDifference = Math::min(mMaxDetectionAngle->get(), maxDifference);
+	sourceBrightness = sourceBrightness / mMaxDetectionAngle->get();
+	brightness = (mMaxDetectionAngle->get() - maxDifference) * sourceBrightness;
 
 	return brightness;
 }
