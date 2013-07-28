@@ -81,7 +81,7 @@ LightSensor::LightSensor(const QString &name)
 	mLocalOrientation = new Vector3DValue(0,0,0);
 	mDetectableTypes = new StringValue("0");
 	mRestrictToPlane = new BoolValue(true);
-	mMaxDetectionAngle = new DoubleValue(180.0);
+	mDetectionAngle = new DoubleValue(180.0);
 	mDetectableRange = new RangeValue(minDetectBrightness, maxDetectBrightness);
 	
 	mHostBodyName->setDescription(
@@ -100,7 +100,7 @@ LightSensor::LightSensor(const QString &name)
 	mRestrictToPlane->setDescription(
 			"If true, then only the horizontal orientation is used for "
 			"the brightness calculation in directed light sensor mode");
-	mMaxDetectionAngle->setDescription(
+	mDetectionAngle->setDescription(
 			"If true, then a directed light sensor does not sense any light "
 			"if the given angular offset is exceeded.");
 	mDetectableRange->setDescription(
@@ -114,7 +114,7 @@ LightSensor::LightSensor(const QString &name)
 	addParameter("AmbientSensor", mAmbientSensor);
 	addParameter("DetectableTypes", mDetectableTypes);
 	addParameter("RestrictToPlane", mRestrictToPlane);
-	addParameter("MaxDetectionAngle", mMaxDetectionAngle);
+	addParameter("DetectionAngle", mDetectionAngle);
 
 	addParameter("DetectableRange", mDetectableRange);
 
@@ -155,8 +155,8 @@ LightSensor::LightSensor(const LightSensor &other)
 		dynamic_cast<StringValue*>(getParameter("DetectableTypes"));
 	mRestrictToPlane =
 		dynamic_cast<BoolValue*>(getParameter("RestrictToPlane"));
-	mMaxDetectionAngle =
-		dynamic_cast<DoubleValue*>(getParameter("MaxDetectionAngle"));
+	mDetectionAngle =
+		dynamic_cast<DoubleValue*>(getParameter("DetectionAngle"));
 	mDetectableRange =
 		dynamic_cast<RangeValue*>(getParameter("DetectableRange"));
 
@@ -313,45 +313,18 @@ void LightSensor::valueChanged(Value *value) {
 		Vector3D angle =
 			mHostBody->getOrientationValue()->get() +
 			mLocalOrientation->get();
-
-		// TODO check if this has any impact?
-		// same range-reinforcement is done in
-		// calculateBrightness again, anyways
-		/*
-		while(angle.getX() > 180.0) {
-			angle.setX(angle.getX() - 360.0);
-		}
-		while(angle.getX() < -180.0) {
-			angle.setX(angle.getX() + 360.0);
-		}
-		while(angle.getY() > 180.0) {
-			angle.setY(angle.getY() - 360.0);
-		}
-		while(angle.getY() < -180.0) {
-			angle.setY(angle.getY() + 360.0);
-		}
-		while(angle.getZ() > 180.0) {
-			angle.setZ(angle.getZ() - 360.0);
-		}
-		while(angle.getZ() < -180.0) {
-			angle.setZ(angle.getZ() + 360.0);
-		}
-		*/
-		angle.setX(Math::forceToDegreeRange(angle.getX()));
-		angle.setY(Math::forceToDegreeRange(angle.getY()));
-		angle.setZ(Math::forceToDegreeRange(angle.getZ()));
-
+		
+		angle.setX(Math::forceToDegreeRange(angle.getX(), -180));
+		angle.setY(Math::forceToDegreeRange(angle.getY(), -180));
+		angle.setZ(Math::forceToDegreeRange(angle.getZ(), -180));
+		
 		mOrientationValue->set(angle);
 	}
 
-	// Sensor angle has changed (why the restrictions?)
-	else if(value == mMaxDetectionAngle) {
-		if(mMaxDetectionAngle->get() < 0.0) {
-			mMaxDetectionAngle->set(0.0);
-		}
-		else if(mMaxDetectionAngle->get() > 180.0) {
-			mMaxDetectionAngle->set(180.0);
-		}
+	// Sensor angle has changed
+	else if(value == mDetectionAngle) {
+		mDetectionAngle->set(
+				Math::forceToDegreeRange(mDetectionAngle->get()));
 	}
 
 	else if(value == mDetectableRange) {
@@ -389,73 +362,53 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 
 	// Otherwise, take the directionality into account
 	//
-	// initialize return value
-	double brightness = 0.0;
 
+	Vector3DValue *outVec = new Vector3DValue();
+	Core::log("---------------------------------------------------", true);
+	outVec->set(sensorPosition);
+	Core::log("SensorPosition: " + outVec->getValueAsString(), true);
+	outVec->set(mOrientationValue->get());
+	Core::log("SensorOrientation: " + outVec->getValueAsString(), true);
+
+	double angleDiff = 0.0;
+	Vector3D lightPosition = lightSource->getPositionValue()->get();
 	Vector3D sensorOrientation = mOrientationValue->get();
-	Vector3D anglesToLightSource;
 
-	anglesToLightSource.setX((atan2(
-			(lightSource->getPositionValue()->getZ() - sensorPosition.getZ()),
-			(lightSource->getPositionValue()->getY() - sensorPosition.getY())) 
-			/ Math::PI * 180.0) - sensorOrientation.getX());
-
-
-	anglesToLightSource.setY((atan2(
-			(lightSource->getPositionValue()->getX() - sensorPosition.getX()),
-			(lightSource->getPositionValue()->getZ() - sensorPosition.getZ())) 
-			/ Math::PI * 180.0) - sensorOrientation.getY());
-
-	
-	anglesToLightSource.setZ((atan2(
-			(lightSource->getPositionValue()->getY() - sensorPosition.getY()),
-			(lightSource->getPositionValue()->getX() - sensorPosition.getX())) 
-			/ Math::PI * 180.0) - sensorOrientation.getZ());
-
-
-
-	while(anglesToLightSource.getX() > 180.0) {
-		anglesToLightSource.setX(anglesToLightSource.getX() - 360.0);
-	}
-	while(anglesToLightSource.getX() < -180.0) {
-		anglesToLightSource.setX(anglesToLightSource.getX() + 360.0);
-	}
-	while(anglesToLightSource.getY() > 180.0) {
-		anglesToLightSource.setY(anglesToLightSource.getY() - 360.0);
-	}
-	while(anglesToLightSource.getY() < -180.0) {
-		anglesToLightSource.setY(anglesToLightSource.getY() + 360.0);
-	}
-	while(anglesToLightSource.getZ() > 180.0) {
-		anglesToLightSource.setZ(anglesToLightSource.getZ() - 360.0);
-	}
-	while(anglesToLightSource.getZ() < -180.0) {
-		anglesToLightSource.setZ(anglesToLightSource.getZ() + 360.0);
-	}
-
-	double maxDifference = 0.0;
-	
 	if(mRestrictToPlane->get()) {
+		// 2-D case
 		if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
-			maxDifference = Math::abs(anglesToLightSource.getY());
+			angleDiff = Math::abs(atan2(
+						lightPosition.getX() - sensorPosition.getX(),
+						lightPosition.getZ() - sensorPosition.getZ()) /
+						Math::PI * 180.0) + sensorOrientation.getY();
+
 		}
 		else { // XZ is the default plane
-			maxDifference = Math::abs(anglesToLightSource.getZ());
+			angleDiff = Math::abs(atan2(
+						lightPosition.getX() - sensorPosition.getX(),
+						lightPosition.getY() - sensorPosition.getY()) /
+						Math::PI * 180.0) + sensorOrientation.getZ();
 		}
 	}
-	else { // TODO check this!
-		maxDifference = (Math::abs(anglesToLightSource.getX()) / 3.0)
-							+ (Math::abs(anglesToLightSource.getY()) / 3.0)
-							+ (Math::abs(anglesToLightSource.getZ()) / 3.0);
+	else {
+		// 3-D case
+		// TODO
 	}
+
+	angleDiff = Math::abs(Math::forceToDegreeRange(angleDiff, -180));
+
+	Core::log("AngleDiff: " + QString::number(angleDiff), true);
 	
 	// linear decay of measured light intensity
 	// from center of sensor axis to the edges
-	maxDifference = Math::min(mMaxDetectionAngle->get(), maxDifference);
-	sourceBrightness = sourceBrightness / mMaxDetectionAngle->get();
-	brightness = (mMaxDetectionAngle->get() - maxDifference) * sourceBrightness;
+	//
+	// get whole detection angle, divide by two for sidedness
+	double detectionAngle = mDetectionAngle->get() / 2;
+	Core::log("DetectionAngle: " + QString::number(detectionAngle), true);
 
-	return brightness;
+	double factor = detectionAngle - Math::min(detectionAngle, angleDiff);
+	Core::log("Factor: " + QString::number(factor), true);
+	return factor * sourceBrightness / detectionAngle;
 }
 
 }

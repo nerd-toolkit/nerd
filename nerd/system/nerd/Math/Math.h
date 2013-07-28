@@ -69,7 +69,7 @@ namespace nerd {
 						double maxError);
 		static int forceToRange(int value, int min, int max);
 		static double forceToRangeDouble(double value, double min, double max);
-		static double forceToDegreeRange(double value);
+		static double forceToDegreeRange(double value, double shift = 0);
 		static double forceToRadRange(double value);
 
 		static int abs(int value);

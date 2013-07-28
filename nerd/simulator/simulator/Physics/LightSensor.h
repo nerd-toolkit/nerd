@@ -93,7 +93,7 @@ namespace nerd {
 		CollisionObject *mSensorObject;
 		BoolValue *mSwitchYZAxes;
 		BoolValue *mRestrictToPlane;
-		DoubleValue *mMaxDetectionAngle;
+		DoubleValue *mDetectionAngle;
 		RangeValue *mDetectableRange;
 	};
 

@@ -166,16 +166,17 @@ double Math::forceToRangeDouble(double value, double min, double max) {
 	return value;
 }
 
-double Math::forceToDegreeRange(double value) {
-	while(value < 0) {
+// changed from (value < shift) and (value >= 360) to current version
+// TODO check if the change has any negative impact!
+double Math::forceToDegreeRange(double value, double shift) {
+	while(value <= shift) {
 		value += 360.0;
 	}
-	while(value >= 360.0) {
+	while(value > 360.0 + shift) {
 		value -= 360.0;
 	}
 	return value;
 }
-
 
 double Math::forceToRadRange(double value) {
 	return forceToDegreeRange(value / Math::PI * 180.0) * Math::PI / 180.0;

@@ -98,7 +98,7 @@ void TestLightSensor::testConstruction() {
 				getParameter("RestrictToPlane"))->get() == true);
 
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_1->
-				getParameter("MaxDetectionAngle"))->get() == 180.0);
+				getParameter("DetectionAngle"))->get() == 180.0);
 
 	QVERIFY(dynamic_cast<RangeValue*>(lightSensor_1->
 				getParameter("DetectableRange"))->getMin() == 0.0);
@@ -140,7 +140,7 @@ void TestLightSensor::testCopy() {
 	dynamic_cast<BoolValue*>(lightSensor_1->
 			getParameter("AmbientSensor"))->set(true);
 	dynamic_cast<DoubleValue*>(lightSensor_1->
-			getParameter("MaxDetectionAngle"))->set(90.0);
+			getParameter("DetectionAngle"))->set(90.0);
 	
 	LightSensor *lightSensor_2 = dynamic_cast<LightSensor*>
 		(lightSensor_1->createCopy());
@@ -179,7 +179,7 @@ void TestLightSensor::testCopy() {
 				getParameter("RestrictToPlane"))->get() == true);
 
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_2->
-				getParameter("MaxDetectionAngle"))->get() == 90.0);
+				getParameter("DetectionAngle"))->get() == 90.0);
 
 	QVERIFY(dynamic_cast<RangeValue*>(lightSensor_2->
 				getParameter("DetectableRange"))->getMin() == 0.0);
@@ -280,6 +280,9 @@ void TestLightSensor::testSensor() {
 	IntValue *distType_1 = dynamic_cast<IntValue*>
 		(lightSource_1->getParameter("DistributionType"));
 	QVERIFY(distType_1->get() == 0);
+	Vector3DValue *lightPosition_1 = dynamic_cast<Vector3DValue*>
+		(lightSource_1->getParameter("Position"));
+	lightPosition_1->set(0,0,0);
 
 	// register with physics manager and setup
 	Physics::getPhysicsManager()->addSimObject(lightSource_1);
@@ -319,6 +322,8 @@ void TestLightSensor::testSensor() {
 		(lightSensor_1->getParameter("DetectableTypes"));
 	BoolValue *ambientSensor_1 = dynamic_cast<BoolValue*>
 		(lightSensor_1->getParameter("AmbientSensor"));
+	DoubleValue *detectionAngle_1 = dynamic_cast<DoubleValue*>
+		(lightSensor_1->getParameter("DetectionAngle"));
 
 	// setup in physics manager
 	Physics::getPhysicsManager()->addSimObject(lightSensor_1);
@@ -353,22 +358,40 @@ void TestLightSensor::testSensor() {
 
 	// turn off ambient and update
 	ambientSensor_1->set(false);
+	detectionAngle_1->set(360.0);
 	lightSensor_1->updateSensorValues();
 
 	double maxDiff = pow(10.0, -6);
 
 	// brightness should still be 1 as distType is set to the uniform default
+	// and sensor is directly aligned towards the light source
 	// QCOMPARE(brightness_1->get()+1, brightness_set_1+1); <-- FAILS!
-	QVERIFY(Math::compareDoubles(brightness_1->get(), brightness_set_1, maxDiff));
+	QVERIFY(Math::compareDoubles(
+				brightness_1->get(), brightness_set_1, maxDiff));
 
 	// change orientation
+	hostOrientation_1->set(0,180,0);
+	lightSensor_1->updateSensorValues();
+	QVERIFY(Math::compareDoubles(
+				brightness_1->get(), brightness_set_1/2, maxDiff));
+
+	// change orientation again
 	hostOrientation_1->set(0,45,0);
 	lightSensor_1->updateSensorValues();
-	Core::log("Position: " + 
-			lightSensor_1->getPositionValue()->getValueAsString(), true);
-	Core::log("Orientation: " + 
-			lightSensor_1->getOrientationValue()->getValueAsString(), true);
-	Core::log("Brightness: " + QString::number(brightness_1->get()), true);
+	QVERIFY(Math::compareDoubles(
+				brightness_1->get(), brightness_set_1/4, maxDiff));
+
+	// and again, now facing away from the light source
+	hostOrientation_1->set(0,90,0);
+	lightSensor_1->updateSensorValues();
+	QVERIFY(Math::compareDoubles(
+				brightness_1->get(), 0.0, maxDiff));
+
+	//Core::log("Position: " + 
+	//		lightSensor_1->getPositionValue()->getValueAsString(), true);
+	//Core::log("Orientation: " + 
+	//		lightSensor_1->getOrientationValue()->getValueAsString(), true);
+	//Core::log("Brightness: " + QString::number(brightness_1->get()), true);
 	//QVERIFY(Math::compareDoubles(brightness_1->get(), 0.0, maxDiff));
 
 	// at the edge of light source radius
@@ -382,6 +405,12 @@ void TestLightSensor::testSensor() {
 	hostOrientation_1->set(0,225,0);
 	lightSensor_1->updateSensorValues();
 	QVERIFY(Math::compareDoubles(brightness_1->get(), 0.0, maxDiff));
+
+	// out-of-range orientation value
+	hostPosition_1->set(0,0,1);
+	hostOrientation_1->set(0,-135,0);
+	lightSensor_1->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_1->get(), brightness_set_1/4*3, maxDiff));
 
 	// TODO
 	// * refactor calculateBrightness() of LightSensor?
