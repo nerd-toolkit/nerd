@@ -69,6 +69,7 @@ void TestLightSensor::testConstruction() {
 	// check default parameters
 	QVERIFY(dynamic_cast<StringValue*>(lightSensor_1->
 				getParameter("HostBodyName"))->get() == "");
+	QVERIFY(lightSensor_1->getHostBody() == 0);
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_1->
 				getParameter("Noise"))->get() == 0.0);
 
@@ -137,6 +138,8 @@ void TestLightSensor::testCopy() {
 			getParameter("DetectableTypes"))->set("1,3");
 	dynamic_cast<Vector3DValue*>(lightSensor_1->
 			getParameter("LocalPosition"))->set(1,0.5,0);
+	dynamic_cast<Vector3DValue*>(lightSensor_1->
+			getParameter("LocalOrientation"))->set(10,-90,3.4);
 	dynamic_cast<BoolValue*>(lightSensor_1->
 			getParameter("AmbientSensor"))->set(true);
 	dynamic_cast<DoubleValue*>(lightSensor_1->
@@ -170,7 +173,7 @@ void TestLightSensor::testCopy() {
 
 	Vector3DValue *localOrientation_2 = dynamic_cast<Vector3DValue*>
 		(lightSensor_2->getParameter("LocalOrientation"));
-	QVERIFY(localOrientation_2->equals(new Vector3DValue(0,0,0)));
+	QVERIFY(localOrientation_2->equals(new Vector3DValue(10,-90,3.4)));
 
 	QVERIFY(dynamic_cast<StringValue*>(lightSensor_2->
 				getParameter("DetectableTypes"))->get() == "1,3");
@@ -240,14 +243,22 @@ void TestLightSensor::testMethods() {
 	Physics::getPhysicsManager()->addSimObject(lightSensor_1);
 	lightSensor_1->setup();
 
+	QVERIFY(lightSensor_1->getHostBody() == hostBody_1);
+
 	// position and orientation should have changed
-	Vector3DValue *newPosition_1 = dynamic_cast<Vector3DValue*>
+	Vector3DValue *sensorPosition_1 = dynamic_cast<Vector3DValue*>
 		(lightSensor_1->getParameter("Position"));
-	Vector3DValue *newOrientation_1 = dynamic_cast<Vector3DValue*>
+	Vector3DValue *sensorOrientation_1 = dynamic_cast<Vector3DValue*>
 		(lightSensor_1->getParameter("Orientation"));
 
-	QVERIFY(newPosition_1->equals(hostPosition_1));
-	QVERIFY(newOrientation_1->equals(hostOrientation_1));
+	QVERIFY(sensorPosition_1->get() == hostPosition_1->get());
+	QVERIFY(sensorOrientation_1->get() == hostOrientation_1->get());
+
+	lightSensor_1->updateSensorValues();
+	// no light sources => no brightness (except noise, if set)
+	InterfaceValue *brightness_1 = dynamic_cast<InterfaceValue*>
+		(lightSensor_1->getParameter("Brightness"));
+	QVERIFY(brightness_1->get() == 0.0);
 
 	lightSensor_1->clear();
 	Physics::getPhysicsManager()->removeSimObject(lightSensor_1);
@@ -256,18 +267,44 @@ void TestLightSensor::testMethods() {
 
 	delete hostBody_1;
 	delete lightSensor_1;
+
+	// test without a host body
+	LightSensor *lightSensor_2 = new LightSensor("LightSensor_2");
+	Vector3DValue *localPosition_2 = dynamic_cast<Vector3DValue*>
+		(lightSensor_2->getParameter("LocalPosition"));
+	Vector3DValue *localOrientation_2 = dynamic_cast<Vector3DValue*>
+		(lightSensor_2->getParameter("LocalOrientation"));
+
+	Vector3DValue *sensorPosition_2 = dynamic_cast<Vector3DValue*>
+		(lightSensor_2->getParameter("Position"));
+	Vector3DValue *sensorOrientation_2 = dynamic_cast<Vector3DValue*>
+		(lightSensor_2->getParameter("Orientation"));
+
+	localPosition_2->set(0,0,1);
+	localOrientation_2->set(0,270,180);
+
+	Physics::getPhysicsManager()->addSimObject(lightSensor_2);
+	lightSensor_2->setup();
+
+	QVERIFY(sensorPosition_2->get() == localPosition_2->get());
+	QVERIFY(sensorOrientation_2->get() == localOrientation_2->get());
+
+	lightSensor_2->updateSensorValues();
+	InterfaceValue *brightness_2 = dynamic_cast<InterfaceValue*>
+		(lightSensor_2->getParameter("Brightness"));
+	QVERIFY(brightness_2->get() == 0.0);
+
+	lightSensor_2->clear();
+	Physics::getPhysicsManager()->removeSimObject(lightSensor_2);
+
+	delete lightSensor_2;
+
 }
 
 
 // josef
 void TestLightSensor::testSensor() {
 	Core::resetCore();
-	Core *core = Core::getInstance();
-
-	DoubleValue *timeStep = new DoubleValue(0.01);
-	core->getValueManager()->addValue(
-			SimulationConstants::VALUE_TIME_STEP_SIZE, timeStep);
-
 
 	// create one simple light source at the center
 	// type: 1
@@ -324,6 +361,10 @@ void TestLightSensor::testSensor() {
 		(lightSensor_1->getParameter("AmbientSensor"));
 	DoubleValue *detectionAngle_1 = dynamic_cast<DoubleValue*>
 		(lightSensor_1->getParameter("DetectionAngle"));
+	BoolValue *restrictToPlane_1 = dynamic_cast<BoolValue*>
+		(lightSensor_1->getParameter("RestrictToPlane"));
+	Vector3DValue *localOrientation_1 = dynamic_cast<Vector3DValue*>
+		(lightSensor_1->getParameter("LocalOrientation"));
 
 	// setup in physics manager
 	Physics::getPhysicsManager()->addSimObject(lightSensor_1);
@@ -361,11 +402,16 @@ void TestLightSensor::testSensor() {
 	detectionAngle_1->set(360.0);
 	lightSensor_1->updateSensorValues();
 
+	// helper value to compare the calculated
 	double maxDiff = pow(10.0, -6);
 
+
+	// position: (1,0,0)
+	// detectionAngle: 360
+	// restrictToPlane: true
+	//
 	// brightness should still be 1 as distType is set to the uniform default
 	// and sensor is directly aligned towards the light source
-	// QCOMPARE(brightness_1->get()+1, brightness_set_1+1); <-- FAILS!
 	QVERIFY(Math::compareDoubles(
 				brightness_1->get(), brightness_set_1, maxDiff));
 
@@ -387,13 +433,6 @@ void TestLightSensor::testSensor() {
 	QVERIFY(Math::compareDoubles(
 				brightness_1->get(), 0.0, maxDiff));
 
-	//Core::log("Position: " + 
-	//		lightSensor_1->getPositionValue()->getValueAsString(), true);
-	//Core::log("Orientation: " + 
-	//		lightSensor_1->getOrientationValue()->getValueAsString(), true);
-	//Core::log("Brightness: " + QString::number(brightness_1->get()), true);
-	//QVERIFY(Math::compareDoubles(brightness_1->get(), 0.0, maxDiff));
-
 	// at the edge of light source radius
 	hostPosition_1->set(2,0,0);
 	hostOrientation_1->set(0,270,0);
@@ -408,14 +447,63 @@ void TestLightSensor::testSensor() {
 
 	// out-of-range orientation value
 	hostPosition_1->set(0,0,1);
-	hostOrientation_1->set(0,-135,0);
+	hostOrientation_1->set(0,-495,0);
 	lightSensor_1->updateSensorValues();
 	QVERIFY(Math::compareDoubles(brightness_1->get(), brightness_set_1/4*3, maxDiff));
 
+
+	// change the detectionAngle
+	// hostBody above the light source
+	// oriented towards the right
+	detectionAngle_1->set(90); // 45 degree to either side
+	hostOrientation_1->set(0,-90,0);
+	lightSensor_1->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_1->get(), 0.0, maxDiff));
+
+	// see if change of local orientation has an effect
+	// by turning the sensor 90 degrees in direction of light
+	// such that it should now look at the source again
+	localOrientation_1->set(0,-90,0);
+	lightSensor_1->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_1->get(), brightness_set_1, maxDiff));
+
+	// change orientation once again
+	detectionAngle_1->set(180);
+	localOrientation_1->set(0,225,0); // facing south-west
+	lightSensor_1->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_1->get(), brightness_set_1/2, maxDiff));
+
+
+	// create a second light source of different type above the old one
+	// brightness: 1.0, radius: 3.0, type: 2
+	double brightness_set_2 = 1.0;
+	SimpleLightSource *lightSource_2 =
+		new SimpleLightSource("LightSource_2", brightness_set_2, 3.0, 2);
+	QVERIFY(lightSource_2 != 0);
+
+	Vector3DValue *lightPosition_2 = dynamic_cast<Vector3DValue*>
+		(lightSource_2->getParameter("Position"));
+	lightPosition_2->set(0,1,0);
+
+	IntValue *distType_2 = dynamic_cast<IntValue*>
+		(lightSource_2->getParameter("DistributionType"));
+	distType_2->set(0);
+
+	Physics::getPhysicsManager()->addSimObject(lightSource_2);
+	lightSource_2->setup();
+
+
+	// create a second light sensor w/o host body
+	LightSensor *lightSensor_2 = new LightSensor("LightSensor_2");
+	QVERIFY(lightSensor_2 != 0);
+
+	Physics::getPhysicsManager()->addSimObject(lightSensor_2);
+	lightSensor_2->setup();
+
+
 	// TODO
-	// * refactor calculateBrightness() of LightSensor?
 	// * extend sensor tests to include all(?) possible scenarios
-	// * verify results and adapt script to changed LightSensor parameters
+	// * verify results and adapt scripts to changed LightSensor parameters
 
 }
 

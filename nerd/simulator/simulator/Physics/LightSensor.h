@@ -77,6 +77,8 @@ namespace nerd {
 		SimBody* getHostBody() const;
 
 	private:
+		void collectLightSources();
+		void updatePositionAndOrientation();
 		double calculateBrightness(LightSource *lightSource);
 
 	private:

@@ -81,7 +81,8 @@ namespace nerd {
 		mHideLightCone->setDescription(
 				"If set to True, the light cone is hidden in the simulation");
 		mReferenceObjectName->setDescription(
-				"The name on another simulation object to attach the light source to");
+				"The name on another simulation object "
+				"to attach the light source to");
 		mLocalPosition->setDescription(
 				"Position of the light source in the simulation environment");
 		mDistributionType->setDescription("The type of light distribution:\n"
@@ -118,15 +119,23 @@ namespace nerd {
 	SimpleLightSource::SimpleLightSource(const SimpleLightSource &other) 
 	: Object(), ValueChangedListener(), LightSource(other), 
 		mReferenceObjectName(0), mLocalPosition(0), mReferenceObject(0),
-		mDistributionType(other.mDistributionType), mSwitchYZAxes(other.mSwitchYZAxes)
+		mDistributionType(other.mDistributionType),
+		mSwitchYZAxes(other.mSwitchYZAxes)
 	{
-		mRadius = dynamic_cast<DoubleValue*>(getParameter("Radius"));
-		mCenterBrightness = dynamic_cast<DoubleValue*>(getParameter("CenterBrightness"));
-		mLightColor = dynamic_cast<ColorValue*>(getParameter("LightColor"));
-		mHideLightCone = dynamic_cast<BoolValue*>(getParameter("HideLightCone"));
-		mReferenceObjectName = dynamic_cast<StringValue*>(getParameter("ReferenceObject"));
-		mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
-		mDistributionType = dynamic_cast<IntValue*>(getParameter("DistributionType"));
+		mRadius = dynamic_cast<DoubleValue*>
+			(getParameter("Radius"));
+		mCenterBrightness = dynamic_cast<DoubleValue*>
+			(getParameter("CenterBrightness"));
+		mLightColor = dynamic_cast<ColorValue*>
+			(getParameter("LightColor"));
+		mHideLightCone = dynamic_cast<BoolValue*>
+			(getParameter("HideLightCone"));
+		mReferenceObjectName = dynamic_cast<StringValue*>
+			(getParameter("ReferenceObject"));
+		mLocalPosition = dynamic_cast<Vector3DValue*>
+			(getParameter("LocalPosition"));
+		mDistributionType = dynamic_cast<IntValue*>
+			(getParameter("DistributionType"));
 
 		mOutputValues.clear();
 		mInputValues.clear();
@@ -152,22 +161,31 @@ namespace nerd {
 		//Core::log("SimpleLightSource: setup() called!", true);
 		LightSource::setup();
 
-		if(mReferenceObjectName->get() != "") {
-			if(mReferenceObject != 0) {
-				mReferenceObject->getPositionValue()->removeValueChangedListener(this);
-				mReferenceObject->getQuaternionOrientationValue()->removeValueChangedListener(this);
-				mReferenceObject = 0;
-			}
-			
-			mReferenceObject = Physics::getPhysicsManager()->getSimBody(mReferenceObjectName->get());
-			if(mReferenceObject != 0) {
-				mReferenceObject->getPositionValue()->addValueChangedListener(this);
-				mReferenceObject->getQuaternionOrientationValue()->addValueChangedListener(this);
+		if(mReferenceObject != 0) {
+			mReferenceObject->getPositionValue()->
+				removeValueChangedListener(this);
+			mReferenceObject->getQuaternionOrientationValue()->
+				removeValueChangedListener(this);
+			mReferenceObject = 0;
+		}
+
+		if(!mReferenceObjectName->get().isEmpty()) {
+		
+			mReferenceObject = Physics::getPhysicsManager()->
+				getSimBody(mReferenceObjectName->get());
+
+			if(mReferenceObject == 0) {
+				Core::log("SimpleLightSource: Could not find "
+						"reference object [" + 
+						mReferenceObjectName->get() +
+						"]! Ignoring!", true);
+				// TODO return here?
+			} else {
+				mReferenceObject->getPositionValue()->
+					addValueChangedListener(this);
+				mReferenceObject->getQuaternionOrientationValue()->
+					addValueChangedListener(this);
 				valueChanged(mReferenceObject->getPositionValue());
-			}
-			else if(mReferenceObjectName->get().trimmed() != "") {
-				Core::log("SimpleLightSource: Could not find reference object ["
-						  + mReferenceObjectName->get() + "]! Ignoring!", true);
 			}
 		}
 		
@@ -179,8 +197,10 @@ namespace nerd {
 	
 	void SimpleLightSource::clear() {
 		if(mReferenceObject != 0) {
-			mReferenceObject->getPositionValue()->removeValueChangedListener(this);
-			mReferenceObject->getQuaternionOrientationValue()->removeValueChangedListener(this);
+			mReferenceObject->getPositionValue()->
+				removeValueChangedListener(this);
+			mReferenceObject->getQuaternionOrientationValue()->
+				removeValueChangedListener(this);
 		}
 		mReferenceObject = 0;
 		LightSource::clear();
@@ -195,7 +215,8 @@ namespace nerd {
 			updateLightCone();
 		}
 		else if(value == mRadius) {
-			CylinderGeom *geom = dynamic_cast<CylinderGeom*>(mBodyCollisionObject->getGeometry());
+			CylinderGeom *geom = dynamic_cast<CylinderGeom*>
+				(mBodyCollisionObject->getGeometry());
 			if(geom != 0) {
 				geom->setRadius(mRadius->get());
 			}
@@ -210,8 +231,6 @@ namespace nerd {
 			&& (value == mReferenceObject->getPositionValue() 
 			|| value == mReferenceObject->getQuaternionOrientationValue()))
 		{
-			//Core::log("SimpleLightSource: valueChanges() called on referenceObject", true);
-			
 			// TODO change this? see Test line 247
 			//
 			Quaternion localPos(
@@ -224,28 +243,30 @@ namespace nerd {
 				getQuaternionOrientationValue()->get().getInverse();
 
 			Quaternion rotatedLocalPosQuat = mReferenceObject->
-				getQuaternionOrientationValue()->get() * localPos
-													* bodyOrientationInverse;
+				getQuaternionOrientationValue()->get() * localPos *
+				bodyOrientationInverse;
 
 			Vector3D rotatedLocalPos(
 					rotatedLocalPosQuat.getX(),
 					rotatedLocalPosQuat.getY(),
 					rotatedLocalPosQuat.getZ()
 				);
-			mPositionValue->set(mReferenceObject->getPositionValue()->get() + rotatedLocalPos);
+			mPositionValue->set(mReferenceObject->
+					getPositionValue()->get() + rotatedLocalPos);
 		}
 	}
 	
 	void SimpleLightSource::updateLightCone() {
-		//Core::log("SimpleLightSource: updateLightCone called!", true);
-		//Set transparency to a value between 0 and 80, depending on the current brightness.
-		//80 is about 30 percent of full opacity (255) at max.
+		// Set transparency to a value between 0 and 80,
+		// depending on the current brightness.
+		// 80 is about 30 percent of full opacity (255) at max.
 		Color color = mLightColor->get();
 		if(mHideLightCone->get()) {
 			color.setAlpha(0); 
 		}
 		else {
-			color.setAlpha((int) (Math::abs(mCenterBrightness->get()) * 80.0)); 
+			color.setAlpha((int)
+					(Math::abs(mCenterBrightness->get()) * 80.0));
 		}
 		mGeometryColorValue->set(color);
 		//mBodyCollisionObject->getGeometry()->setColor(color);
@@ -276,19 +297,24 @@ namespace nerd {
 		if(restrictToHorizontal) {
 			if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
 				distance = Math::abs(Math::distance(
-							QPointF(globalPosition.getX(), globalPosition.getZ()),
-							QPointF(getPositionValue()->getX(), getPositionValue()->getZ()
+							QPointF(globalPosition.getX(),
+								globalPosition.getZ()),
+							QPointF(getPositionValue()->getX(),
+								getPositionValue()->getZ()
 				)));
 			}
 			else {
 				distance = Math::abs(Math::distance(
-							QPointF(globalPosition.getX(), globalPosition.getY()),
-							QPointF(getPositionValue()->getX(), getPositionValue()->getY()
+							QPointF(globalPosition.getX(),
+								globalPosition.getY()),
+							QPointF(getPositionValue()->getX(),
+								getPositionValue()->getY()
 				)));
 			}
 		}
 		else {
-			distance = Math::distance(globalPosition, getPositionValue()->get());
+			distance = Math::distance(globalPosition,
+					getPositionValue()->get());
 		}
 		
 		double radius = getRadius();
@@ -314,7 +340,7 @@ namespace nerd {
 				brightness = (relDis * relDis * relDis)
 					/ (radius * radius * radius)
 					* getCenterBrightness();
-				break;
+				break;				
 		}
 		return brightness;
 	}

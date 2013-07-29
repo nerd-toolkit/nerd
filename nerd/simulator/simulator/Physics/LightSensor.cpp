@@ -165,8 +165,6 @@ LightSensor::LightSensor(const LightSensor &other)
 	
 	mSwitchYZAxes = other.mSwitchYZAxes;
 
-	valueChanged(mDetectableTypes);
-
 	mSensorObject = new CollisionObject(
 			BoxGeom(this, 0.1, 0.1, 0.1), this, false);
 	addCollisionObject(mSensorObject);
@@ -199,24 +197,31 @@ void LightSensor::setup() {
 		mHostBody = 0;
 	}
 
-	mHostBody = Physics::getPhysicsManager()->
-		getSimBody(mHostBodyName->get());
+	if(!mHostBodyName->get().isEmpty()) {
+		mHostBody = Physics::getPhysicsManager()->
+			getSimBody(mHostBodyName->get());
 
-	if(mHostBody == 0) {
-		Core::log(QString("LightSensor [").append(getName())
-				.append("]::setup: Could not find host body [")
-				.append(mHostBodyName->get()).append("]!"), true);
-		return;
-	} else {
-		mHostBody->getPositionValue()->
-			addValueChangedListener(this);
-		mHostBody->getQuaternionOrientationValue()->
-			addValueChangedListener(this);
-		valueChanged(mHostBody->getPositionValue());
+		if(mHostBody == 0) {
+			Core::log("LightSensor [" + getName() + 
+					"]::setup: Could not find host body [" +
+					mHostBodyName->get() + "]!", true);
+			return;
+		} else {
+			mHostBody->getPositionValue()->
+				addValueChangedListener(this);
+			mHostBody->getQuaternionOrientationValue()->
+				addValueChangedListener(this);
+		}
 	}
 
-	// update list of light sources
-	//
+	updatePositionAndOrientation();
+	collectLightSources();
+}
+
+
+// update list of detectable types
+// and collect corresponding light sources
+void LightSensor::collectLightSources() {
 	mLightSources.clear();
 	QList<SimObject*> simObjects =
 		Physics::getPhysicsManager()->getSimObjects();
@@ -245,17 +250,13 @@ void LightSensor::clear() {
 	mHostBody = 0;
 
 	mLightSources.clear();
+	mDetectableTypesList.clear();
 }
 
 
 // inherited method from SimSensor, called in every simulation step
 //
 void LightSensor::updateSensorValues() {
-
-	if(mHostBody == 0) {
-		return;
-	}
-
 	double brightness = 0.0;
 	for(QListIterator<LightSource*> i(mLightSources); i.hasNext();) {
 		brightness += calculateBrightness(i.next());
@@ -284,41 +285,23 @@ void LightSensor::valueChanged(Value *value) {
 				mDetectableTypesList.append(type);
 			}
 		}
+		// and collect the corresponding light sources
+		collectLightSources();
 	}
 
+	// position/orientation of host changed
 	else if(mHostBody != 0 && 
 			(value == mHostBody->getPositionValue() ||
 			 value == mHostBody->getQuaternionOrientationValue()))
 	{
-		Quaternion localPos(0.0, 
-						mLocalPosition->getX(), 
-						mLocalPosition->getY(), 
-						mLocalPosition->getZ());
+		updatePositionAndOrientation();
+	}
 
-		Quaternion bodyOrientationInverse = 
-			mHostBody->getQuaternionOrientationValue()->get().getInverse();
-
-		Quaternion rotatedLocalPosQuat =
-			mHostBody->getQuaternionOrientationValue()->get() *
-			localPos * bodyOrientationInverse;
-
-		Vector3D rotatedLocalPos(rotatedLocalPosQuat.getX(), 
-								 rotatedLocalPosQuat.getY(), 
-								 rotatedLocalPosQuat.getZ());
-
-		mPositionValue->set(
-				mHostBody->getPositionValue()->get() +
-				rotatedLocalPos);
-
-		Vector3D angle =
-			mHostBody->getOrientationValue()->get() +
-			mLocalOrientation->get();
-		
-		angle.setX(Math::forceToDegreeRange(angle.getX(), -180));
-		angle.setY(Math::forceToDegreeRange(angle.getY(), -180));
-		angle.setZ(Math::forceToDegreeRange(angle.getZ(), -180));
-		
-		mOrientationValue->set(angle);
+	// local orientation or position changed
+	else if(value == mLocalOrientation ||
+			value == mLocalPosition)
+	{
+		updatePositionAndOrientation();
 	}
 
 	// Sensor angle has changed
@@ -334,6 +317,42 @@ void LightSensor::valueChanged(Value *value) {
 }
 
 
+// update the combined position/orientation values
+// that are used in the calculations below
+void LightSensor::updatePositionAndOrientation() {
+	if(mHostBody == 0) {
+		mPositionValue->set(mLocalPosition->get());
+		mOrientationValue->set(mLocalOrientation->get());
+	} else {
+		Quaternion localPos(0.0, 
+						mLocalPosition->getX(), 
+						mLocalPosition->getY(), 
+						mLocalPosition->getZ());
+
+		Quaternion bodyOrientationInverse = 
+			mHostBody->getQuaternionOrientationValue()->get().getInverse();
+
+		Quaternion rotatedLocalPosQuat =
+			mHostBody->getQuaternionOrientationValue()->get() *
+			localPos * bodyOrientationInverse;
+
+		Vector3D rotatedLocalPos(rotatedLocalPosQuat.getX(),
+								 rotatedLocalPosQuat.getY(),
+								 rotatedLocalPosQuat.getZ());
+
+		mPositionValue->set(
+				mHostBody->getPositionValue()->get() +
+				rotatedLocalPos);
+
+		Vector3D angle =
+			mHostBody->getOrientationValue()->get() +
+			mLocalOrientation->get();
+		
+		mOrientationValue->set(angle);
+	}
+}		
+
+
 SimBody* LightSensor::getHostBody() const {
 	return mHostBody;
 }
@@ -341,19 +360,12 @@ SimBody* LightSensor::getHostBody() const {
 
 double LightSensor::calculateBrightness(LightSource *lightSource) {
 
-	// if no host body is found, don't calculate anything
-	if(mHostBody == 0) {
-		return 0.0;
-	}
-
 	// get position value
 	Vector3D sensorPosition = mPositionValue->get();
 
 	// get brightness at current position from light source
 	double sourceBrightness =
 		lightSource->getBrightness(sensorPosition, mRestrictToPlane->get());
-
-	Core::log("sourceBrightness: " + QString::number(sourceBrightness), true);
 
 	// if ambient sensor, ignore directionality and opening angle
 	if(mAmbientSensor->get()) {
@@ -365,6 +377,7 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 
 	Vector3DValue *outVec = new Vector3DValue();
 	Core::log("---------------------------------------------------", true);
+	Core::log("sourceBrightness: " + QString::number(sourceBrightness), true);
 	outVec->set(sensorPosition);
 	Core::log("SensorPosition: " + outVec->getValueAsString(), true);
 	outVec->set(mOrientationValue->get());
@@ -392,7 +405,9 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 	}
 	else {
 		// 3-D case
-		// TODO
+		// using: cos(angle) = dot(a,b)/(length(a)*length(b))
+		angleDiff = acos( (lightPosition * sensorPosition) /
+						lightPosition.length() * sensorPosition.length() );
 	}
 
 	angleDiff = Math::abs(Math::forceToDegreeRange(angleDiff, -180));
@@ -401,13 +416,13 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 	
 	// linear decay of measured light intensity
 	// from center of sensor axis to the edges
+	// TODO use quadratic decay instead?
 	//
 	// get whole detection angle, divide by two for sidedness
 	double detectionAngle = mDetectionAngle->get() / 2;
 	Core::log("DetectionAngle: " + QString::number(detectionAngle), true);
 
 	double factor = detectionAngle - Math::min(detectionAngle, angleDiff);
-	Core::log("Factor: " + QString::number(factor), true);
 	return factor * sourceBrightness / detectionAngle;
 }
 
