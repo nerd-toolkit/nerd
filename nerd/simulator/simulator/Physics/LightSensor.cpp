@@ -306,8 +306,12 @@ void LightSensor::valueChanged(Value *value) {
 
 	// Sensor angle has changed
 	else if(value == mDetectionAngle) {
-		mDetectionAngle->set(
-				Math::forceToDegreeRange(mDetectionAngle->get()));
+		// only positive values make sense
+		if(mDetectionAngle->get() > 0) {
+			// shift angle into range 1-360 (instead of 0-359)
+			mDetectionAngle->set(
+					Math::forceToDegreeRange(mDetectionAngle->get(), 1));
+		}
 	}
 
 	else if(value == mDetectableRange) {
@@ -348,7 +352,7 @@ void LightSensor::updatePositionAndOrientation() {
 			mHostBody->getOrientationValue()->get() +
 			mLocalOrientation->get();
 		
-		mOrientationValue->set(angle);
+		mOrientationValue->set(Math::forceToDegreeRange(angle));
 	}
 }		
 
@@ -375,14 +379,6 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 	// Otherwise, take the directionality into account
 	//
 
-	Vector3DValue *outVec = new Vector3DValue();
-	Core::log("---------------------------------------------------", true);
-	Core::log("sourceBrightness: " + QString::number(sourceBrightness), true);
-	outVec->set(sensorPosition);
-	Core::log("SensorPosition: " + outVec->getValueAsString(), true);
-	outVec->set(mOrientationValue->get());
-	Core::log("SensorOrientation: " + outVec->getValueAsString(), true);
-
 	double angleDiff = 0.0;
 	Vector3D lightPosition = lightSource->getPositionValue()->get();
 	Vector3D sensorOrientation = mOrientationValue->get();
@@ -390,43 +386,73 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 	if(mRestrictToPlane->get()) {
 		// 2-D case
 		if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
-			angleDiff = Math::abs(atan2(
+			angleDiff = atan2(
 						lightPosition.getX() - sensorPosition.getX(),
 						lightPosition.getZ() - sensorPosition.getZ()) /
-						Math::PI * 180.0) + sensorOrientation.getY();
-
+						Math::PI * 180.0 - sensorOrientation.getY();
 		}
 		else { // XZ is the default plane
-			angleDiff = Math::abs(atan2(
+			angleDiff = atan2(
 						lightPosition.getX() - sensorPosition.getX(),
 						lightPosition.getY() - sensorPosition.getY()) /
-						Math::PI * 180.0) + sensorOrientation.getZ();
+						Math::PI * 180.0 - sensorOrientation.getZ();
 		}
 	}
 	else {
 		// 3-D case
 		// using: cos(angle) = dot(a,b)/(length(a)*length(b))
-		angleDiff = acos( (lightPosition * sensorPosition) /
-						lightPosition.length() * sensorPosition.length() );
+		// TODO zero vector!!!
+		// TODO
+		// another idea: rotate (0,0,1) by orientation
+		// 				 (move to position and) normalize
+		// 				 then use the formula above
+		Core::log("---------------------- 3D ----------------------", true);
+		double dotP = lightPosition * sensorPosition;
+		Core::log("dotP: " + QString::number(dotP), true);
+		double vecL = lightPosition.length() * sensorPosition.length();
+		Core::log("vecL: " + QString::number(vecL), true);
+		angleDiff = acos( dotP / vecL ) / Math::PI * 180.0;
+		//angleDiff = acos( ( lightPosition * sensorPosition ) /
+		//				  ( lightPosition.length() * sensorPosition.length() )
+		//				);
+		//
 	}
 
 	angleDiff = Math::abs(Math::forceToDegreeRange(angleDiff, -180));
 
-	Core::log("AngleDiff: " + QString::number(angleDiff), true);
-	
 	// linear decay of measured light intensity
 	// from center of sensor axis to the edges
 	// TODO use quadratic decay instead?
 	//
 	// get whole detection angle, divide by two for sidedness
 	double detectionAngle = mDetectionAngle->get() / 2;
-	Core::log("DetectionAngle: " + QString::number(detectionAngle), true);
 
 	double factor = detectionAngle - Math::min(detectionAngle, angleDiff);
-	return factor * sourceBrightness / detectionAngle;
+	double brightness = factor * sourceBrightness / detectionAngle;
+
+
+	//
+	// DEBUG OUTPUT
+	//
+	Vector3DValue *outVec = new Vector3DValue();
+	Core::log("---------------------------------------------------", true);
+	Core::log("sourceBrightness: " + QString::number(sourceBrightness), true);
+	outVec->set(lightSource->getPositionValue()->get());
+	Core::log("sourcePosition: " + outVec->getValueAsString(), true);
+	outVec->set(sensorPosition);
+	Core::log("SensorPosition: " + outVec->getValueAsString(), true);
+	outVec->set(mOrientationValue->get());
+	Core::log("SensorOrientation: " + outVec->getValueAsString(), true);
+	Core::log("AngleDiff: " + QString::number(angleDiff), true);
+	Core::log("DetectionAngle: " + QString::number(mDetectionAngle->get()), true);
+	Core::log("Brightness: " + QString::number(brightness), true);
+	//
+	// END DEBUG OUTPUT
+	//
+
+
+	return brightness;
 }
 
 }
-
-
 

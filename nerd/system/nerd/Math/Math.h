@@ -70,6 +70,7 @@ namespace nerd {
 		static int forceToRange(int value, int min, int max);
 		static double forceToRangeDouble(double value, double min, double max);
 		static double forceToDegreeRange(double value, double shift = 0);
+		static Vector3D forceToDegreeRange(Vector3D vector, double shift = 0);
 		static double forceToRadRange(double value);
 
 		static int abs(int value);
