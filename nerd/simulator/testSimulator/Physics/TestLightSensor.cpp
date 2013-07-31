@@ -577,17 +577,49 @@ void TestLightSensor::testSensor() {
 	lightSensor_2->updateSensorValues();
 	QVERIFY(Math::compareDoubles(brightness_2->get(), 0.0, maxDiff));
 
-	// NOW TEST 3D
-	restrictToPlane_2->set(false);
-	sensorPosition_2->set(-1,1,0);
-	sensorOrientation_2->set(0,-90,0);
 
+	//
+	// NOW TEST 3D
+	//
+	restrictToPlane_2->set(false);
+
+	// 45 degree angle
+	lightPosition_2->set(0,1,0);
+	sensorPosition_2->set(-1,0,0);
+	sensorOrientation_2->set(0,90,0);
 	lightSensor_2->updateSensorValues();
-	QVERIFY(Math::compareDoubles(brightness_2->get(), 0.5, maxDiff));
+	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2/2, maxDiff));
+	
+	// again
+	sensorOrientation_2->set(-90,0,0);
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2/2, maxDiff));
+
+	// now directly towards source
+	sensorOrientation_2->set(-90,0,-45);
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2, maxDiff));
+
+
+	lightPosition_2->set(1,1,1);
+	sensorPosition_2->set(-1,1,1);
+	sensorOrientation_2->set(0,90,0);
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2, maxDiff));
+
+	sensorPosition_2->set(-1,0,-1);
+	sensorOrientation_2->set(0,45,0);
+	lightSensor_2->updateSensorValues();
+	
+	sensorPosition_2->set(-1,1,-1);
+	lightSensor_2->updateSensorValues();
+
+	// TODO can we catch this?
+	sensorOrientation_2->set(0,45,90);
+	lightSensor_2->updateSensorValues();
 
 
 	// TODO
-	// * extend 3D sensor tests, implement workaround if one is zero vector
 	// * adapt scripts to changed LightSensor parameters
 	// * write documentation
 

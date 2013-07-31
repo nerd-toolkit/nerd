@@ -166,8 +166,8 @@ double Math::forceToRangeDouble(double value, double min, double max) {
 	return value;
 }
 
-// changed from (value < shift) and (value >= 360) to current version
-// TODO check if the change has any negative impact!
+// changed from (value < 0) and (value >= 360) to current version
+// TODO check if the change has any negative impact! (run tests!)
 double Math::forceToDegreeRange(double value, double shift) {
 	while(value < shift) {
 		value += 360.0;

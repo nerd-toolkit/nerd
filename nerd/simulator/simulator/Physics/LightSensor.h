@@ -89,6 +89,7 @@ namespace nerd {
 		DoubleValue *mNoise;
 		InterfaceValue *mBrightness;
 		Vector3DValue *mLocalPosition;
+		//Vector3DValue *mOrientationVector;
 		BoolValue *mAmbientSensor;
 		Vector3DValue *mLocalOrientation;
 		StringValue *mDetectableTypes;
@@ -102,6 +103,4 @@ namespace nerd {
 }
 
 #endif
-
-
 
