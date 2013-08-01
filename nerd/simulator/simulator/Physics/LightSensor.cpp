@@ -388,26 +388,10 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 	// Otherwise, take the directionality into account
 	double angleDiff = 0.0;
 
-
-	// DEBUG >
-	Vector3DValue *outVec = new Vector3DValue();
-	Core::log("---------------------------------------------------", true);
-	Core::log("sourceBrightness: " + QString::number(sourceBrightness), true);
-	outVec->set(lightSource->getPositionValue()->get());
-	Core::log("sourcePosition: " + outVec->getValueAsString(), true);
-	outVec->set(sensorPosition);
-	Core::log("SensorPosition: " + outVec->getValueAsString(), true);
-	// DEBUG <
-
-
-		Vector3D sensorOrientation = mOrientationValue->get();
-		// DEBUG >
-		outVec->set(mOrientationValue->get());
-		Core::log("SensorOrientation: " + outVec->getValueAsString(), true);
-		// DEBUG <
-		//
 	// 2-D case
 	if(mRestrictToPlane->get()) {
+
+		Vector3D sensorOrientation = mOrientationValue->get();
 
 		if(mSwitchYZAxes != 0 && mSwitchYZAxes->get()) {
 			angleDiff = atan2(
@@ -432,10 +416,6 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 		// using: cos(angle) = dot(a,b)/(length(a)*length(b))
 		//
 
-		// DEBUG >
-		Core::log(">>> 3D <<<", true);
-		// DEBUG <
-
 		// create quaternion of default direction vector
 		Quaternion defDir(0,0,0,1);
 		if(mSwitchYZAxes == 0 || !mSwitchYZAxes->get()) {
@@ -450,27 +430,13 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 		Quaternion rotDir = orientQuat * defDir * orientQuatInv;
 		Vector3D rotVec(rotDir.getX(), rotDir.getY(), rotDir.getZ());
 		
-		// DEBUG >
-		outVec->set(rotVec);
-		Core::log("rotVec: " + outVec->getValueAsString(), true);
-		// DEBUG <
-
 		// get vector from sensor to light source
 		Vector3D sensorToSource = lightPosition - sensorPosition;
 
 		double dotP = sensorToSource * rotVec;
 		double vecL = sensorToSource.length() * rotVec.length();
 
-		// DEBUG >
-		Core::log("dotP: " + QString::number(dotP), true);
-		Core::log("vecL: " + QString::number(vecL), true);
-		// DEBUG <
-
 		angleDiff = acos( dotP / vecL ) / Math::PI * 180.0;
-
-		// DEBUG >
-		Core::log("<<< 3D >>>", true);
-		// DEBUG <
 	}
 
 	angleDiff = Math::abs(Math::forceToDegreeRange(angleDiff, -180));
@@ -484,12 +450,6 @@ double LightSensor::calculateBrightness(LightSource *lightSource) {
 
 	double factor = detectionAngle - Math::min(detectionAngle, angleDiff);
 	double brightness = factor * sourceBrightness / detectionAngle;
-
-	// DEBUG >
-	Core::log("AngleDiff: " + QString::number(angleDiff), true);
-	Core::log("DetectionAngle/2: " + QString::number(mDetectionAngle->get()/2), true);
-	Core::log("Brightness: " + QString::number(brightness), true);
-	// DEBUG <
 
 	return brightness;
 }

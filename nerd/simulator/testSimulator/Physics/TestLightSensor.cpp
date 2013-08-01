@@ -384,9 +384,7 @@ void TestLightSensor::testSensor() {
 	QVERIFY(brightness_1->get() == 0.0);
 
 	// light type according to source
-	lightSensor_1->clear();
 	detectableType_1->set("1");
-	lightSensor_1->setup();
 
 	// check the ambience function first
 	ambientSensor_1->set(true);
@@ -540,6 +538,8 @@ void TestLightSensor::testSensor() {
 		(lightSensor_2->getParameter("AmbientSensor"));
 	StringValue *detectableTypes_2 = dynamic_cast<StringValue*>
 		(lightSensor_2->getParameter("DetectableTypes"));
+	DoubleValue *detectionAngle_2 = dynamic_cast<DoubleValue*>
+		(lightSensor_2->getParameter("DetectionAngle"));
 
 	InterfaceValue *brightness_2 = dynamic_cast<InterfaceValue*>
 		(lightSensor_2->getParameter("Brightness"));
@@ -600,29 +600,106 @@ void TestLightSensor::testSensor() {
 	lightSensor_2->updateSensorValues();
 	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2, maxDiff));
 
-
+	// position somewhere in the 3D space
 	lightPosition_2->set(1,1,1);
 	sensorPosition_2->set(-1,1,1);
 	sensorOrientation_2->set(0,90,0);
 	lightSensor_2->updateSensorValues();
 	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2, maxDiff));
 
-	sensorPosition_2->set(-1,0,-1);
+	sensorPosition_2->set(-1,1,-1);
 	sensorOrientation_2->set(0,45,0);
 	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2, maxDiff));
 	
-	sensorPosition_2->set(-1,1,-1);
+	sensorPosition_2->set(1,2,1);
+	sensorOrientation_2->set(90,90,0);
 	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2, maxDiff));
 
-	// TODO can we catch this?
-	sensorOrientation_2->set(0,45,90);
+	lightPosition_2->set(0,0,1);
+	sensorPosition_2->set(0,0,-1);
+	sensorOrientation_2->set(0,0,180);
 	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2, maxDiff));
+
+	detectionAngle_2->set(360);
+	sensorOrientation_2->set(-90,0,0);
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), brightness_set_2/2, maxDiff));
+
+	// a simple fail test
+	detectableTypes_2->set("3");
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), 0.0, maxDiff));
 
 
-	// TODO
-	// * adapt scripts to changed LightSensor parameters
-	// * write documentation
+	// shortly test distribution of light with new source
+	SimpleLightSource *lightSource_3 = new SimpleLightSource("LightSource_3",
+															 4.0,
+															 4.0,
+															 4);
+	QVERIFY(lightSource_3 != 0);
 
+	IntValue *distType_3 = dynamic_cast<IntValue*>
+		(lightSource_3->getParameter("DistributionType"));
+
+	Physics::getPhysicsManager()->addSimObject(lightSource_3);
+	lightSource_3->setup();
+	detectableTypes_2->set("4");
+
+	// still uniform light
+	detectionAngle_2->set(180);
+	sensorPosition_2->set(-2,0,0);
+	sensorOrientation_2->set(0,90,0);
+	lightSensor_2->updateSensorValues();
+	// detectableRange is (0,1) by default
+	QVERIFY(Math::compareDoubles(brightness_2->get(), 1.0, maxDiff));
+
+	RangeValue *detectableRange_2 = dynamic_cast<RangeValue*>
+		(lightSensor_2->getParameter("DetectableRange"));
+	detectableRange_2->set(0,4.0);
+
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), 4.0, maxDiff));
+
+	distType_3->set(1);
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), 2.0, maxDiff));
+
+	sensorOrientation_2->set(0,45,0);
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), 1.0, maxDiff));
+
+	sensorPosition_2->set(-3,0,0);
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), 0.5, maxDiff));
+
+	distType_3->set(2);
+	sensorPosition_2->set(0,0,2);
+	sensorOrientation_2->set(0,-180,0);
+	lightSensor_2->updateSensorValues();
+	QVERIFY(Math::compareDoubles(brightness_2->get(), 1.0, maxDiff));
+
+
+	// clean up
+	lightSource_3->clear();
+	lightSensor_2->clear();
+	lightSource_2->clear();
+	lightSensor_1->clear();
+	lightSource_1->clear();
+
+	Physics::getPhysicsManager()->removeSimObject(lightSource_3);
+	Physics::getPhysicsManager()->removeSimObject(lightSensor_2);
+	Physics::getPhysicsManager()->removeSimObject(lightSource_2);
+	Physics::getPhysicsManager()->removeSimObject(lightSensor_1);
+	Physics::getPhysicsManager()->removeSimObject(lightSource_1);
+
+	delete lightSource_3;
+	delete lightSensor_2;
+	delete lightSource_2;
+	delete lightSensor_1;
+	delete lightSource_1;
 }
 
 }
