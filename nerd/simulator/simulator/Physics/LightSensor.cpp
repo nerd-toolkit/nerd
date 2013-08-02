@@ -330,6 +330,18 @@ void LightSensor::valueChanged(Value *value) {
 		mBrightness->setMin(mDetectableRange->getMin());
 		mBrightness->setMax(mDetectableRange->getMax());
 	}
+
+	else if(value == mSensorDimensions) {
+		BoxGeom *geom = dynamic_cast<BoxGeom*>(
+				mSensorObject->getGeometry());
+
+		if(geom != 0) {
+			geom->setSize(
+				mSensorDimensions->getX(),
+				mSensorDimensions->getY(),
+				mSensorDimensions->getZ());
+		}
+	}
 }
 
 

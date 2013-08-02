@@ -118,9 +118,9 @@ void TestLightSensor::testConstruction() {
 	
 	BoxGeom *collGeom_1 = dynamic_cast<BoxGeom*>(collObj_1->getGeometry());
 	QVERIFY(collGeom_1 != 0);
-	QVERIFY(collGeom_1->getWidth() == 0.1);
-	QVERIFY(collGeom_1->getHeight() == 0.1);
-	QVERIFY(collGeom_1->getDepth() == 0.1);
+	QVERIFY(collGeom_1->getWidth() == 0.01);
+	QVERIFY(collGeom_1->getHeight() == 0.01);
+	QVERIFY(collGeom_1->getDepth() == 0.01);
 	QVERIFY(collGeom_1->getSimObject() == lightSensor_1);
 
 	delete lightSensor_1;
@@ -201,9 +201,9 @@ void TestLightSensor::testCopy() {
 	
 	BoxGeom *collGeom_2 = dynamic_cast<BoxGeom*>(collObj_2->getGeometry());
 	QVERIFY(collGeom_2 != 0);
-	QVERIFY(collGeom_2->getWidth() == 0.1);
-	QVERIFY(collGeom_2->getHeight() == 0.1);
-	QVERIFY(collGeom_2->getDepth() == 0.1);
+	QVERIFY(collGeom_2->getWidth() == 0.01);
+	QVERIFY(collGeom_2->getHeight() == 0.01);
+	QVERIFY(collGeom_2->getDepth() == 0.01);
 	QVERIFY(collGeom_2->getSimObject() == lightSensor_2);
 
 	delete lightSensor_1;
