@@ -82,8 +82,8 @@ namespace nerd {
 		double calculateBrightness(LightSource *lightSource);
 
 	private:
-		SimBody *mHostBody;
-		StringValue *mHostBodyName;
+		SimBody *mHostBodyObj;
+		StringValue *mHostBody;
 		QList<int> mDetectableTypesList;
 		QList<LightSource*> mLightSources;
 		DoubleValue *mNoise;
@@ -92,6 +92,7 @@ namespace nerd {
 		BoolValue *mAmbientSensor;
 		Vector3DValue *mLocalOrientation;
 		StringValue *mDetectableTypes;
+		Vector3DValue *mSensorDimensions;
 		CollisionObject *mSensorObject;
 		BoolValue *mSwitchYZAxes;
 		BoolValue *mRestrictToPlane;

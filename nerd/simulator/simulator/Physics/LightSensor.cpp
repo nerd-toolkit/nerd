@@ -62,17 +62,19 @@ namespace nerd {
  * Constructs a new LightSensor.
  */
 LightSensor::LightSensor(const QString &name)
-	: SimSensor(), SimBody(name), mHostBody(0),
-	  mNoise(0), mBrightness(0), mLocalPosition(0),
-	  mAmbientSensor(0), mLocalOrientation(0),
-	  mDetectableTypes(0), mSensorObject(0)
+	: SimSensor(), SimBody(name), mHostBodyObj(0),
+	  mHostBody(0), mNoise(0), mBrightness(0),
+	  mLocalPosition(0), mAmbientSensor(0),
+	  mLocalOrientation(0), mDetectableTypes(0),
+	  mSensorDimensions(0), mSensorObject(0)
+
 {
 	double minDetectBrightness = 0.0;
 	double maxDetectBrightness = 1.0;
 	
 	mDetectableTypesList.append(0);
 
-	mHostBodyName = new StringValue("");
+	mHostBody = new StringValue("");
 	mNoise = new DoubleValue(0.0);
 	mBrightness = new InterfaceValue("", "Brightness",
 			minDetectBrightness, minDetectBrightness, maxDetectBrightness);
@@ -83,8 +85,9 @@ LightSensor::LightSensor(const QString &name)
 	mRestrictToPlane = new BoolValue(true);
 	mDetectionAngle = new DoubleValue(180.0);
 	mDetectableRange = new RangeValue(minDetectBrightness, maxDetectBrightness);
+	mSensorDimensions = new Vector3DValue(0.01, 0.01, 0.01);
 	
-	mHostBodyName->setDescription(
+	mHostBody->setDescription(
 			"The full name of the body this light sensor is attached to.");
 	mBrightness->setDescription("The measured brightness");
 	mLocalPosition->setDescription(
@@ -105,8 +108,10 @@ LightSensor::LightSensor(const QString &name)
 			"if the given angular offset is exceeded.");
 	mDetectableRange->setDescription(
 			"The minimal and maximal brightness detectable by this sensor");
+	mSensorDimensions->setDescription(
+			"Dimensions of the box representing the sensor in simulation");
 
-	addParameter("HostBodyName", mHostBodyName);
+	addParameter("HostBody", mHostBody);
 	addParameter("Noise", mNoise);
 	addParameter("Brightness", mBrightness);
 	addParameter("LocalPosition", mLocalPosition);
@@ -115,13 +120,15 @@ LightSensor::LightSensor(const QString &name)
 	addParameter("DetectableTypes", mDetectableTypes);
 	addParameter("RestrictToPlane", mRestrictToPlane);
 	addParameter("DetectionAngle", mDetectionAngle);
-
 	addParameter("DetectableRange", mDetectableRange);
+	addParameter("SensorDimensions", mSensorDimensions);
 
 	mOutputValues.append(mBrightness);
 
 	mSensorObject = new CollisionObject(
-			BoxGeom(this, 0.1, 0.1, 0.1), this, false);
+			BoxGeom(this, mSensorDimensions->getX(),
+				mSensorDimensions->getY(), mSensorDimensions->getZ()),
+			this, false);
 	addCollisionObject(mSensorObject);
 	
 	Physics::getPhysicsManager();
@@ -137,12 +144,13 @@ LightSensor::LightSensor(const QString &name)
  */
 LightSensor::LightSensor(const LightSensor &other) 
 	: Object(), ValueChangedListener(), SimSensor(), SimBody(other),
-	  mHostBody(0), mHostBodyName(0),
+	  mHostBodyObj(0), mHostBody(0),
 	  mDetectableTypesList(other.mDetectableTypesList), mNoise(0),
 	  mBrightness(0), mLocalPosition(0), mAmbientSensor(0),
-	  mLocalOrientation(0), mDetectableTypes(0), mSensorObject(0)
+	  mLocalOrientation(0), mDetectableTypes(0),
+	  mSensorDimensions(0), mSensorObject(0)
 {
-	mHostBodyName = dynamic_cast<StringValue*>(getParameter("HostBodyName"));
+	mHostBody = dynamic_cast<StringValue*>(getParameter("HostBody"));
 	mNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
 	mBrightness = dynamic_cast<InterfaceValue*>(getParameter("Brightness"));
 	mLocalPosition =
@@ -159,6 +167,8 @@ LightSensor::LightSensor(const LightSensor &other)
 		dynamic_cast<DoubleValue*>(getParameter("DetectionAngle"));
 	mDetectableRange =
 		dynamic_cast<RangeValue*>(getParameter("DetectableRange"));
+	mSensorDimensions =
+		dynamic_cast<Vector3DValue*>(getParameter("SensorDimensions"));
 
 	mLightSources.clear();
 	mOutputValues.append(mBrightness);
@@ -166,7 +176,9 @@ LightSensor::LightSensor(const LightSensor &other)
 	mSwitchYZAxes = other.mSwitchYZAxes;
 
 	mSensorObject = new CollisionObject(
-			BoxGeom(this, 0.1, 0.1, 0.1), this, false);
+			BoxGeom(this, mSensorDimensions->getX(),
+				mSensorDimensions->getY(), mSensorDimensions->getZ()),
+			this, false);
 	addCollisionObject(mSensorObject);
 }
 
@@ -189,27 +201,27 @@ void LightSensor::setup() {
 	
 	// get host body object and its position
 	//
-	if(mHostBody != 0) {
-		mHostBody->getPositionValue()->
+	if(mHostBodyObj != 0) {
+		mHostBodyObj->getPositionValue()->
 			removeValueChangedListener(this);
-		mHostBody->getQuaternionOrientationValue()->
+		mHostBodyObj->getQuaternionOrientationValue()->
 			removeValueChangedListener(this);
-		mHostBody = 0;
+		mHostBodyObj = 0;
 	}
 
-	if(!mHostBodyName->get().isEmpty()) {
-		mHostBody = Physics::getPhysicsManager()->
-			getSimBody(mHostBodyName->get());
+	if(!mHostBody->get().isEmpty()) {
+		mHostBodyObj = Physics::getPhysicsManager()->
+			getSimBody(mHostBody->get());
 
-		if(mHostBody == 0) {
+		if(mHostBodyObj == 0) {
 			Core::log("LightSensor [" + getName() + 
 					"]::setup: Could not find host body [" +
-					mHostBodyName->get() + "]!", true);
+					mHostBody->get() + "]!", true);
 			return;
 		} else {
-			mHostBody->getPositionValue()->
+			mHostBodyObj->getPositionValue()->
 				addValueChangedListener(this);
-			mHostBody->getQuaternionOrientationValue()->
+			mHostBodyObj->getQuaternionOrientationValue()->
 				addValueChangedListener(this);
 		}
 	}
@@ -241,13 +253,13 @@ void LightSensor::collectLightSources() {
 void LightSensor::clear() {
 	SimBody::clear();
 
-	if(mHostBody != 0) {
-		mHostBody->getPositionValue()->
+	if(mHostBodyObj != 0) {
+		mHostBodyObj->getPositionValue()->
 			removeValueChangedListener(this);
-		mHostBody->getQuaternionOrientationValue()->
+		mHostBodyObj->getQuaternionOrientationValue()->
 			removeValueChangedListener(this);
 	}
-	mHostBody = 0;
+	mHostBodyObj = 0;
 
 	mLightSources.clear();
 	mDetectableTypesList.clear();
@@ -290,9 +302,9 @@ void LightSensor::valueChanged(Value *value) {
 	}
 
 	// position/orientation of host changed
-	else if(mHostBody != 0 && 
-			(value == mHostBody->getPositionValue() ||
-			 value == mHostBody->getQuaternionOrientationValue()))
+	else if(mHostBodyObj != 0 && 
+			(value == mHostBodyObj->getPositionValue() ||
+			 value == mHostBodyObj->getQuaternionOrientationValue()))
 	{
 		updatePositionAndOrientation();
 	}
@@ -325,7 +337,7 @@ void LightSensor::valueChanged(Value *value) {
 // that are used in the calculations below
 void LightSensor::updatePositionAndOrientation() {
 
-	if(mHostBody == 0) {
+	if(mHostBodyObj == 0) {
 
 		mPositionValue->set(mLocalPosition->get());
 		mOrientationValue->set(mLocalOrientation->get());
@@ -338,11 +350,11 @@ void LightSensor::updatePositionAndOrientation() {
 							mLocalPosition->getY(), 
 							mLocalPosition->getZ());
 
-			Quaternion bodyOrientationInverse = 
-				mHostBody->getQuaternionOrientationValue()->get().getInverse();
+			Quaternion bodyOrientationInverse = mHostBodyObj->
+				getQuaternionOrientationValue()->get().getInverse();
 
 			Quaternion rotatedLocalPosQuat =
-				mHostBody->getQuaternionOrientationValue()->get() *
+				mHostBodyObj->getQuaternionOrientationValue()->get() *
 				localPos * bodyOrientationInverse;
 
 			Vector3D rotatedLocalPos(rotatedLocalPosQuat.getX(),
@@ -350,14 +362,14 @@ void LightSensor::updatePositionAndOrientation() {
 									 rotatedLocalPosQuat.getZ());
 
 			mPositionValue->set(
-					mHostBody->getPositionValue()->get() +
+					mHostBodyObj->getPositionValue()->get() +
 					rotatedLocalPos);
 		} else {
-			mPositionValue->set(mHostBody->getPositionValue()->get());
+			mPositionValue->set(mHostBodyObj->getPositionValue()->get());
 		}
 
 		Vector3D angle =
-			mHostBody->getOrientationValue()->get() +
+			mHostBodyObj->getOrientationValue()->get() +
 			mLocalOrientation->get();
 		
 		mOrientationValue->set(Math::forceToDegreeRange(angle));
@@ -366,7 +378,7 @@ void LightSensor::updatePositionAndOrientation() {
 
 
 SimBody* LightSensor::getHostBody() const {
-	return mHostBody;
+	return mHostBodyObj;
 }
 
 

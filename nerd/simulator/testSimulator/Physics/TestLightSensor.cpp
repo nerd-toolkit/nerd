@@ -68,7 +68,7 @@ void TestLightSensor::testConstruction() {
 
 	// check default parameters
 	QVERIFY(dynamic_cast<StringValue*>(lightSensor_1->
-				getParameter("HostBodyName"))->get() == "");
+				getParameter("HostBody"))->get() == "");
 	QVERIFY(lightSensor_1->getHostBody() == 0);
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_1->
 				getParameter("Noise"))->get() == 0.0);
@@ -152,7 +152,7 @@ void TestLightSensor::testCopy() {
 	QVERIFY(lightSensor_1 != lightSensor_2);
 
 	QVERIFY(dynamic_cast<StringValue*>(lightSensor_2->
-				getParameter("HostBodyName"))->get() == "");
+				getParameter("HostBody"))->get() == "");
 	QVERIFY(dynamic_cast<DoubleValue*>(lightSensor_2->
 				getParameter("Noise"))->get() == 0.0);
 
@@ -237,7 +237,7 @@ void TestLightSensor::testMethods() {
 
 	// set host body of light sensor
 	dynamic_cast<StringValue*>(lightSensor_1->
-			getParameter("HostBodyName"))->set(hostBodyName_1);
+			getParameter("HostBody"))->set(hostBodyName_1);
 
 	// call setup with host body but no light sources
 	Physics::getPhysicsManager()->addSimObject(lightSensor_1);
@@ -352,7 +352,7 @@ void TestLightSensor::testSensor() {
 
 	// attach to the host body!
 	dynamic_cast<StringValue*>(lightSensor_1->
-			getParameter("HostBodyName"))->set("HostBody_1");
+			getParameter("HostBody"))->set("HostBody_1");
 
 	// get parameters to change between single tests
 	StringValue *detectableType_1 = dynamic_cast<StringValue*>
