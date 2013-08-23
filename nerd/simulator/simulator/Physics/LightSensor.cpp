@@ -62,7 +62,7 @@ namespace nerd {
  * Constructs a new LightSensor.
  */
 LightSensor::LightSensor(const QString &name)
-	: SimSensor(), SimBody(name), mHostBodyObj(0),
+	: SimBody(name), SimSensor(), mHostBodyObj(0),
 	  mHostBody(0), mNoise(0), mBrightness(0),
 	  mLocalPosition(0), mAmbientSensor(0),
 	  mLocalOrientation(0), mDetectableTypes(0),
@@ -143,7 +143,7 @@ LightSensor::LightSensor(const QString &name)
  * @param other the LightSensor object to copy.
  */
 LightSensor::LightSensor(const LightSensor &other) 
-	: Object(), ValueChangedListener(), SimSensor(), SimBody(other),
+	: Object(), ValueChangedListener(), SimBody(other), SimSensor(),
 	  mHostBodyObj(0), mHostBody(0),
 	  mDetectableTypesList(other.mDetectableTypesList), mNoise(0),
 	  mBrightness(0), mLocalPosition(0), mAmbientSensor(0),
@@ -234,6 +234,18 @@ void LightSensor::setup() {
 // update list of detectable types
 // and collect corresponding light sources
 void LightSensor::collectLightSources() {
+	// update list of detectable types
+	mDetectableTypesList.clear();
+	QStringList entries = mDetectableTypes->get().split(",");
+	for(int i = 0; i < entries.size(); ++i) {
+		bool ok = true;
+		int type = entries.at(i).toInt(&ok);
+		if(ok) { // only if it is an integer!
+			mDetectableTypesList.append(type);
+		}
+	}
+	
+	// collect corresponding light source objects
 	mLightSources.clear();
 	QList<SimObject*> simObjects =
 		Physics::getPhysicsManager()->getSimObjects();
@@ -288,16 +300,6 @@ void LightSensor::valueChanged(Value *value) {
 
 	// string of detectable light types has changed, update list
 	else if(value == mDetectableTypes) {
-		mDetectableTypesList.clear();
-		QStringList entries = mDetectableTypes->get().split(",");
-		for(int i = 0; i < entries.size(); ++i) {
-			bool ok = true;
-			int type = entries.at(i).toInt(&ok);
-			if(ok) { // only if it is an integer!
-				mDetectableTypesList.append(type);
-			}
-		}
-		// and collect the corresponding light sources
 		collectLightSources();
 	}
 

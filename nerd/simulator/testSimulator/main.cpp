@@ -64,12 +64,11 @@
 #include "Physics/TestPhysics.h"
 #include "Physics/TestSphereBody.h"
 #include "Physics/TestSimObjectGroup.h"
-#include "Physics/TestRayAndDistanceSensor.h"
 #include "Signal/TestSignals.h"
 #include "TestSimulationConstants.h"
 #include "Physics/TestValueTransferController.h"
-#include "Physics/TestSphericLightSource.h"
 #include "Physics/TestSimpleLightSource.h"
+#include "Physics/TestSphericLightSource.h"
 #include "Physics/TestLightSensor.h"
 
 TEST_START("TestSimulator", 1, -1, 24);
@@ -95,7 +94,6 @@ TEST_START("TestSimulator", 1, -1, 24);
 	TEST(TestPhysics);
 	TEST(TestMaterialProperties);
 	TEST(TestSimObjectGroup);
-	TEST(TestRayAndDistanceSensor);
 	TEST(TestSignals);
 	TEST(TestSimulationConstants);
 	TEST(TestValueTransferController);

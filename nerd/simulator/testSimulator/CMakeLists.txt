@@ -21,7 +21,6 @@ set(nerd_testSimulator_SRCS
 	Physics/TestGeom.cpp  
 	Physics/TestSimulationEnvironmentManager.cpp  
 	Physics/TestSimObjectGroup.cpp  
-	Physics/TestRayAndDistanceSensor.cpp  
 	Signal/TestSignals.cpp  
 	TestSimulationConstants.cpp
 	Physics/TestValueTransferController.cpp
@@ -50,7 +49,6 @@ set(nerd_testSimulator_MOC_HDRS
 	Physics/TestGeom.h  
 	Physics/TestSimulationEnvironmentManager.h  
 	Physics/TestSimObjectGroup.h  
-	Physics/TestRayAndDistanceSensor.h  
 	Signal/TestSignals.h  
 	TestSimulationConstants.h
 	Physics/TestValueTransferController.h
