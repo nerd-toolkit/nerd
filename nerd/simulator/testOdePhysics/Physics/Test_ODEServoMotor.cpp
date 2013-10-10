@@ -41,55 +41,28 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-#ifndef DistanceRay_H_
-#define DistanceRay_H_
+#include "Test_ODEServoMotor.h"
+#include "Physics/ODE_BoxBody.h"
+#include "Physics/Physics.h"
+#include "Physics/ODE_SimulationAlgorithm.h"
+#include "Core/Core.h"
 
-#include "Collision/CollisionObject.h"
-#include "Collision/DistanceSensorRule.h"
-#include "Physics/RayGeom.h"
-#include "Math/Vector3D.h"
+namespace nerd{
 
-namespace nerd {
+void Test_ODEServoMotor::testActuator() {
+	Core::resetCore();
+}
 
-class DistanceSensor;
+void Test_ODEServoMotor::testSensor() {
+	Core::resetCore();
+	PhysicsManager *pManager = Physics::getPhysicsManager();
+	ODE_SimulationAlgorithm *sAlgo = new ODE_SimulationAlgorithm();
+	pManager->setPhysicalSimulationAlgorithm(sAlgo);
+	sAlgo->resetPhysics();
+	
+	
 
-class DistanceRay {
-
-	public:
-		DistanceRay(const QString &name, const Vector3D &position,
-				const Quaternion &orientation, double length,
-				DistanceSensorRule *rule, const Color &active,
-				const Color &inactive, const Color &disableColor);
-		virtual ~DistanceRay();
-
-		void setOwner(DistanceSensor *sensor);
-		DistanceSensor* getOwner() const;
-
-		virtual void setName(const QString &name);
-		virtual QString getName() const;
-
-		virtual CollisionObject* getCollisionObject() const;
-		virtual RayGeom* getGeometry() const;
-		
-		virtual double getDistance(double minRange);
-// 		Vector3D getClosestKnownCollisionPoint() const;
-
-		virtual void updateRay(double length, bool disable = false);
-
-	private:
-		QString mName;
-		DistanceSensorRule *mRule;
-		CollisionObject *mCollisionObject;
-		RayGeom *mGeometry;
-		DistanceSensor *mOwner;
-		Color mActiveColor;
-		Color mInactiveColor;
-		Color mDisabledColor;
-// 		Vector3D mClosestKnownCollisionPoint;
-
-};
 
 }
 
-#endif
-
+}

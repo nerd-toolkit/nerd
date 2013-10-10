@@ -70,8 +70,10 @@
 #include "Physics/TestSimpleLightSource.h"
 #include "Physics/TestSphericLightSource.h"
 #include "Physics/TestLightSensor.h"
+#include "Physics/TestDistanceSensor.h"
+#include "Physics/TestServoMotor.h"
 
-TEST_START("TestSimulator", 1, -1, 24);
+TEST_START("TestSimulator", 1, -1, 25);
 
 	TEST(TestGeom); //tests all geoms.
 	TEST(TestCollisionObject);
@@ -100,6 +102,8 @@ TEST_START("TestSimulator", 1, -1, 24);
 	TEST(TestSimpleLightSource);
 	TEST(TestSphericLightSource);
 	TEST(TestLightSensor);
+	TEST(TestDistanceSensor);
+	TEST(TestServoMotor);
 
 TEST_END;
 

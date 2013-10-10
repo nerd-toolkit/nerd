@@ -56,68 +56,62 @@ using namespace std;
 namespace nerd {
 
 DistanceSensor::DistanceSensor(const QString &name)
-	: SimObject(name), SimSensor(), mRule(0)
+	: SimObject(name), SimSensor(), mRule(0), mHostBodyObj(0)
 {
 	mActiveColor = new ColorValue(Color(255, 0, 0));
-	mAngle = new DoubleValue(0.0);
-	mCalcMinDistance = new BoolValue(true);
-	mHostBodyName = new StringValue("");
+	mAngleOfAperture = new DoubleValue(0.0);
+	mCalculateMinimum = new BoolValue(true);
+	mHostBody = new StringValue("");
 	mInactiveColor = new ColorValue(Color(255, 255, 255));
 	mDisabledColor = new ColorValue(Color(255, 255, 255, 50));
 	mLocalOrientation = new QuaternionValue(0.0, 0.0, 0.0, 0.0);
 	mLocalPosition = new Vector3DValue(0.0, 0.0, 0.0);
 	mNumberOfRays = new IntValue(1);
-	mMaxRange = new DoubleValue(1.0);
-	mMinRange = new DoubleValue(0.0);
-	mDeadZone = new DoubleValue(0.0);
-	mSensorNoise = new DoubleValue(0.0);
-	mMinIntersectionPoint = new Vector3DValue();
+	mRayLength = new DoubleValue(1.0);
+	mRayOffset = new DoubleValue(0.0);
+	mNoise = new DoubleValue(0.0);
+	mIgnoreList = new StringValue("");
+	mIgnoreList->setDescription("Comma-separated list of regular expressions "
+								"matching sim bodies to ignore");
 	
 
 	mDistance = new InterfaceValue("", "Distance",
-			mMaxRange->get() - mMinRange->get(), 0.0,
-			mMaxRange->get() - mMinRange->get());
+			mRayLength->get() - mRayOffset->get(), 0.0,
+			mRayLength->get() - mRayOffset->get());
 	mOutputValues.append(mDistance);
 
-	//TODO this has to be solved differently to allow multiple DistanceSensors.
-	//mRule = new DistanceSensorRule(getName() + "/CollisionRule");
-
 	addParameter("ActiveColor", mActiveColor);
-	addParameter("AngleOfAperture", mAngle);
-	addParameter("CalculateMinimum", mCalcMinDistance);
+	addParameter("AngleOfAperture", mAngleOfAperture);
+	addParameter("CalculateMinimum", mCalculateMinimum);
 	addParameter("Distance", mDistance);
-	addParameter("HostBody", mHostBodyName);
+	addParameter("HostBody", mHostBody);
 	addParameter("InactiveColor", mInactiveColor);
 	addParameter("DisabledColor", mDisabledColor);
-	//addParameter("LocalOrientation", mLocalOrientation);
-	//addParameter("LocalPosition", mLocalPosition);
-	addParameter("MaxRange", mMaxRange);
-	addParameter("MinRange", mMinRange);
-	addParameter("DeadZone", mDeadZone);
-	addParameter("Noise", mSensorNoise);
+	addParameter("RayLength", mRayLength);
+	addParameter("RayOffset", mRayOffset);
+	addParameter("Noise", mNoise);
 	addParameter("NumberOfRays", mNumberOfRays);
-	addParameter("MinIntersectionPoint", mMinIntersectionPoint);
+	addParameter("IgnoreList", mIgnoreList);
 }
 
 DistanceSensor::DistanceSensor(const DistanceSensor &other)
-	: Object(), ValueChangedListener(), SimObject(other), SimSensor(), mRule(0)
+	: Object(), ValueChangedListener(), SimObject(other), SimSensor(),
+	mRule(0), mHostBodyObj(0)
 {
 	mActiveColor = dynamic_cast<ColorValue*>(getParameter("ActiveColor"));
-	mAngle = dynamic_cast<DoubleValue*>(getParameter("AngleOfAperture"));
-	mCalcMinDistance = dynamic_cast<BoolValue*>(
+	mAngleOfAperture =
+		dynamic_cast<DoubleValue*>(getParameter("AngleOfAperture"));
+	mCalculateMinimum = dynamic_cast<BoolValue*>(
 			getParameter("CalculateMinimum"));
 	mDistance = dynamic_cast<InterfaceValue*>(getParameter("Distance"));
-	mHostBodyName = dynamic_cast<StringValue*>(getParameter("HostBody"));
+	mHostBody = dynamic_cast<StringValue*>(getParameter("HostBody"));
 	mInactiveColor = dynamic_cast<ColorValue*>(getParameter("InactiveColor"));
 	mDisabledColor = dynamic_cast<ColorValue*>(getParameter("DisabledColor"));
-	//mLocalOrientation = dynamic_cast<QuaternionValue*>(getParameter("LocalOrientation"));
-	//mLocalPosition = dynamic_cast<Vector3DValue*>(getParameter("LocalPosition"));
-	mMaxRange = dynamic_cast<DoubleValue*>(getParameter("MaxRange"));
-	mMinRange = dynamic_cast<DoubleValue*>(getParameter("MinRange"));
-	mDeadZone = dynamic_cast<DoubleValue*>(getParameter("DeadZone"));
-	mSensorNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
+	mRayLength = dynamic_cast<DoubleValue*>(getParameter("RayLength"));
+	mRayOffset = dynamic_cast<DoubleValue*>(getParameter("RayOffset"));
+	mNoise = dynamic_cast<DoubleValue*>(getParameter("Noise"));
 	mNumberOfRays = dynamic_cast<IntValue*>(getParameter("NumberOfRays"));
-	mMinIntersectionPoint = dynamic_cast<Vector3DValue*>(getParameter("MinIntersectionPoint"));
+	mIgnoreList = dynamic_cast<StringValue*>(getParameter("IgnoreList"));
 	
 	mLocalOrientation = new QuaternionValue(*other.mLocalOrientation);
 	mLocalPosition = new Vector3DValue(*other.mLocalPosition);
@@ -125,8 +119,6 @@ DistanceSensor::DistanceSensor(const DistanceSensor &other)
 	if(mDistance != 0) {
 		mOutputValues.append(mDistance);
 	}
-
-	//mRule = other.mRule; //TODO
 }
 
 
@@ -141,61 +133,57 @@ SimObject* DistanceSensor::createCopy() const {
 void DistanceSensor::updateSensorValues() {
 	double distance;
 	
-	if(mCalcMinDistance->get()) {
+	if(mCalculateMinimum->get()) {
 		distance = getMinSensorValue();
 	}
 	else {
 		distance = getAvgSensorValue();
 	}
-	mDistance->set(Math::calculateGaussian(distance, mSensorNoise->get()));
+	mDistance->set(Math::calculateGaussian(distance, mNoise->get()));
 }
 
 double DistanceSensor::getMinSensorValue() {
 	DistanceRay *ray;
-	double d = mMinRange->get();
-	double distance = mMaxRange->get();
-	
-	Vector3D minIntersectionPoint;
+	double offset = mRayOffset->get();
+	double min = mRayLength->get();
 
 	for(QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
 		ray = i.next();
-		d = ray->getDistance(mMinRange->get(), mDeadZone->get());
-		ray->updateRay(d);
-		if(mMinRange->get() <= d && d < distance) {
-			distance = d;
-			minIntersectionPoint = ray->getClosestKnownCollisionPoint();
+		double dist = ray->getDistance(offset);
+		ray->updateRay(dist);
+		if(offset <= dist && dist < min) {
+			min = dist;
 		}
 	}
-	mMinIntersectionPoint->set(minIntersectionPoint);
 	
-	return distance - mMinRange->get();
+	return min - offset;
 }
 
 double DistanceSensor::getAvgSensorValue() {
 	DistanceRay *ray;
-	double d = mMinRange->get();
+	double d = mRayOffset->get();
 	double distance = 0.0;
 	int n = mNumberOfRays->get();
 
 	for (QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
 		ray = i.next();
-		d = ray->getDistance(mMinRange->get(), mDeadZone->get());
+		d = ray->getDistance(mRayOffset->get());
 		ray->updateRay(d);
-		if(mMinRange->get() <= d) {
+		if(mRayOffset->get() <= d) {
 			distance += d;
 		}
 		else {
 			n--;
 		}
 	}
-	return (0 < n ? distance / n : mMaxRange->get()) - mMinRange->get();
+	return (0 < n ? distance / n : mRayLength->get()) - mRayOffset->get();
 }
 
 void DistanceSensor::resetSensor() {
 	mDistance->set(mDistance->getMax());
 	for(int i = 0; i < mRays.size(); ++i) {
 		DistanceRay *ray = mRays.at(i);
-		RayGeom *rayGeom = ray->getRayCollisionObject();
+		RayGeom *rayGeom = ray->getGeometry();
 		ray->updateRay(rayGeom->getLength(), true);
 	}
 }
@@ -205,9 +193,9 @@ void DistanceSensor::valueChanged(Value *value) {
 	if(value == 0) {
 		return;
 	}
-	else if(value == mMaxRange || value == mMinRange) {
+	else if(value == mRayLength || value == mRayOffset) {
 		//adapt normalization of InterfaceValue to the current max range.
-		mDistance->setMax(mMaxRange->get() - mMinRange->get());
+		mDistance->setMax(mRayLength->get() - mRayOffset->get());
 	}
 	else if(value == mNameValue) {
 		if(mRule != 0) {
@@ -218,73 +206,43 @@ void DistanceSensor::valueChanged(Value *value) {
 			mRule = new DistanceSensorRule(getName() + "/CollisionRule");
 		}
 	}
+	else if(value == mIgnoreList) {
+		updateCollisionRule();
+	}
 }
 
 void DistanceSensor::setup() {
 	SimObject::setup();
-	
-	if(mRule == 0) {
-		mRule = new DistanceSensorRule(getName() + "/CollisionRule");
-	}
 
-	mHostBody = Physics::getPhysicsManager()->getSimBody(mHostBodyName->get());
+	mHostBodyObj = Physics::getPhysicsManager()->getSimBody(mHostBody->get());
 
-	if(mHostBody == 0) {
+	if(mHostBodyObj == 0) {
 		Core::log(QString("DistanceSensor [").append(getName())
 				.append("]::setup: Could not find host body [")
-				.append(mHostBodyName->get()).append("]!"), true);
+				.append(mHostBody->get()).append("]!"), true);
 		return;
 	}
 	
-// 	//collect undetectable objects
-// 	QStringList undetectableObjectNames = mUndetecableObjectsRegExps->get().split(",");
-// 	PhysicsManager *pm = Physics::getPhysicsManager();
-// 	
-// 	for(int i = 0; i < undetectableObjectNames.size(); ++i) {
-// 		QString regExp = undetectableObjectNames.at(i);
-// 		QList<SimObject*> undetectableObjects = pm->getSimObjects(regExp);
-// 		for(int j = 0; j < undetectableObjects.size(); ++j) {
-// 			SimBody *body = dynamic_cast<SimBody*>(undetectableObjects.at(j));
-// 			if(body != 0) {
-// 				mUndetectableObjects << body->getCollisionObjects();
-// 			}
-// 		}
-// 	}
+	// create and setup the initial collision rule
+	updateCollisionRule();
 
-	//set target objects
-	QList<CollisionObject*> clist;
-	QList<SimBody*> bodies = Physics::getPhysicsManager()->getSimBodies(); // get all bodies
-
-	for(QListIterator<SimBody*> i(bodies); i.hasNext();) {
-		QList<CollisionObject*> collisionObjects = i.next()->getCollisionObjects(); // and their coll objs
-		for(QListIterator<CollisionObject*> j(collisionObjects); j.hasNext();) {
-			CollisionObject *obj = j.next(); // current object
-			if(dynamic_cast<RayGeom*>(obj->getGeometry()) == 0) { // if it's NOT a ray
-				clist.append(obj); // add as collision object
-			}
-		}
-	}
-	mRule->setTargetGroup(clist); // in target group
-
-	for(QListIterator<CollisionObject*> j(mHostBody->getCollisionObjects()); j.hasNext();) {
-		CollisionObject *obj = j.next();
-		mRule->removeFromTargetGroup(obj);
-	}
-
-	QList<Quaternion> orientations = calcOrientations();
+	QList<Quaternion> orientations = getRayOrientations();
 	QList<CollisionObject*> cRays;
 
 	for(int i = 0; i < orientations.size(); ++i) {
 		DistanceRay *ray
 				= new DistanceRay(getName() + "/Ray" + QString::number(i),
-				mLocalPosition->get(), orientations.at(i), mMaxRange->get(), // mMaxRange == RayLength???
+				mLocalPosition->get(), orientations.at(i), mRayLength->get(),
 				mRule, mActiveColor->get(), mInactiveColor->get(), mDisabledColor->get());
 		ray->setOwner(this);
 		mRays.append(ray);
-		ray->getCollisionObject()->disableCollisions(true);
-		cRays += ray->getCollisionObject();
+		CollisionObject *colObj = ray->getCollisionObject();
+		colObj->disableCollisions(true);
+		mRule->addToSourceGroup(colObj);
+		mHostBodyObj->addCollisionObject(colObj);
+// 		cRays += ray->getCollisionObject();
 	}
-
+/*
 	SimBody *hostBody = getHostBody();
 	
 	for(QListIterator<CollisionObject*> i(cRays); i.hasNext();) {
@@ -294,134 +252,144 @@ void DistanceSensor::setup() {
 			hostBody->addCollisionObject(co);
 		}
 	}
+*/
 }
 
 
 void DistanceSensor::clear() {
 	QList<CollisionObject*> cRays;
-
-	SimObject::clear();
-	SimBody *hostBody = getHostBody();
 	
 	for(QListIterator<DistanceRay*> i(mRays); i.hasNext();) {
-		CollisionObject *co = i.next()->getCollisionObject();
-		mRule->removeFromSourceGroup(co);
-		mRule->removeFromTargetGroup(co);
-		if(hostBody != 0) {
-			hostBody->removeCollisionObject(co);
+		CollisionObject *colObj = i.next()->getCollisionObject();
+		mRule->removeFromSourceGroup(colObj);
+// 		mRule->removeFromTargetGroup(co);
+// 		if(hostBody != 0) {
+		mHostBodyObj->removeCollisionObject(colObj);
+// 		}
+	}
+// 	while(!mRays.empty()) {
+// 		DistanceRay *dRay = mRays.front();
+// 		mRays.removeAll(dRay);
+// 		dRay->setOwner(0);
+// 		delete dRay;
+// 	}
+	mRays.clear();
+	
+	SimObject::clear();
+}
+
+void DistanceSensor::updateCollisionRule() {
+	if(mRule == 0) {
+		mRule = new DistanceSensorRule(getName() + "/CollisionRule");
+	}
+	
+	// at first, add all sim bodies (except rays)
+	QList<CollisionObject*> clist;
+	QList<SimBody*> bodies = Physics::getPhysicsManager()->getSimBodies();
+	
+	for(QListIterator<SimBody*> i(bodies); i.hasNext();) {
+		QList<CollisionObject*> collisionObjects =
+									i.next()->getCollisionObjects();
+									
+		for(QListIterator<CollisionObject*> j(collisionObjects); j.hasNext();) {
+			CollisionObject *obj = j.next();
+			if(dynamic_cast<RayGeom*>(obj->getGeometry()) == 0) {
+				clist.append(obj);
+			}
 		}
 	}
-	while(!mRays.empty()) {
-		DistanceRay *dRay = mRays.front();
-		mRays.removeAll(dRay);
-		dRay->setOwner(0);
-		delete dRay;
+	mRule->setTargetGroup(clist);
+	
+	// remove host object from collision targets
+	for(QListIterator<CollisionObject*> j(mHostBodyObj->getCollisionObjects());
+		j.hasNext();) {
+		mRule->removeFromTargetGroup(j.next());
+	}
+	
+	// Ignore additional objects given as a list of regular expressions
+	QStringList ignoreNames =
+		mIgnoreList->get().split(",", QString::SkipEmptyParts);
+	PhysicsManager *pm = Physics::getPhysicsManager();
+		
+	for(int i = 0; i < ignoreNames.size(); ++i) {		
+		QString regExp = ignoreNames.at(i);
+		QList<SimObject*> ignoreObjects = pm->getSimObjects(regExp);
+		
+		if(ignoreObjects.empty()) {
+			Core::log(QString("DistanceSensor [").append(getName())
+			.append("]::updateCollisionRule: Could not find object(s) [")
+			.append(regExp).append("]!"), true);
+		} else {
+			for(int j = 0; j < ignoreObjects.size(); ++j) {
+				SimBody *body = dynamic_cast<SimBody*>(ignoreObjects.at(j));
+				if(body != 0) {
+// 					Core::log(QString("DistanceSensor [").append(getName())
+// 					.append("]::updateCollisionRule: Ignoring sim object [")
+// 					.append(body->getAbsoluteName()).append("]!"), true);
+					QList<CollisionObject*> colObjs = body->getCollisionObjects();
+					for(int k = 0; k < colObjs.size(); ++k) {
+						mRule->removeFromTargetGroup(colObjs.at(k));
+					}
+				}
+			}
+		}
 	}
 }
 
-QList<Quaternion> DistanceSensor::calcOrientations() const {
+QList<Quaternion> DistanceSensor::getRayOrientations() const {
 	
-	QList<Quaternion> l;
-	double angle = mAngle->get();
+// 	QList<Quaternion> l;
+// 	double angle = mAngleOfAperture->get();
+// 	int n = mNumberOfRays->get() - 1;
+// 	
+// 	double startAngle = angle / -2.0;
+// 	double angleIncrement = 0.0;
+// 	
+// 	if (n > 0) {
+// 		angleIncrement = angle / ((double) n);
+// 	}
+// 	
+// 	Quaternion angleQuat(1.0, 0.0, 0.0, 0.0);
+// 	
+// 	if(n <= 0) {
+// 		l.append(angleQuat);
+// 	}
+// 	else {
+// 		for(int i = 0; i < n + 1; ++i) {
+// 			angleQuat.setFromAngles(0.0, startAngle + (i * angleIncrement), 0.0);
+// 			l.append(angleQuat);
+// 		}
+// 	}
+// 	
+// 	return l;
+	
+	QList<Quaternion> orientations;
+	double angle = mAngleOfAperture->get();
 	int n = mNumberOfRays->get() - 1;
-	
-	double startAngle = angle / -2.0;
-	double angleIncrement = 0.0;
-	
-	if (n > 0) {
-		angleIncrement = angle / ((double) n);
-	}
 	
 	Quaternion angleQuat(1.0, 0.0, 0.0, 0.0);
 	
+	// only one ray, same orientation as sensor
 	if(n <= 0) {
-		l.append(angleQuat);
+		orientations.append(angleQuat);
 	}
+	
+	// multiple rays, calculcate individual orientations throughout angle range
 	else {
-		for(int i = 0; i < n + 1; ++i) {
-			angleQuat.setFromAngles(0.0, startAngle + (i * angleIncrement), 0.0);
-			l.append(angleQuat);
+		double startAngle = angle / -2.0;
+		double angleInc = angle / ((double) n);
+		
+		for(int i = 0; i < n+1; ++i) {
+			angleQuat.setFromAngles(0.0, startAngle + (i * angleInc), 0.0);
+			orientations.append(angleQuat);
 		}
 	}
 	
-// 	QList<Quaternion> l;
-// 	Quaternion peripheral(1.0, 0.0, 0.0, 0.0);
-// 	Quaternion rotation(1.0, 0.0, 0.0, 0.0);
-// 	Quaternion local = mLocalOrientation->get();
-// 	double angle = mAngle->get();
-// 	int n = mNumberOfRays->get() - 1;
-// 
-// 	if (n > 0) {
-// 		peripheral.setFromAngles(0.0, 0.0, angle / -2.0);
-// 		rotation.setFromAngles(0.0, 0.0, angle / ((double) n));
-// 	}
-// 	peripheral.normalize();
-// 	rotation.normalize();
-// 	if (n >= 0) {
-// 		//peripheral = peripheral * local * peripheral.getInverse();
-// 		l.append(peripheral);
-// 	} 
-// 	peripheral.normalize();
-// 	
-// 	cerr << "Peri: " << peripheral.getX() << " " << peripheral.getY() << " " << peripheral.getZ() << " " << peripheral.getW() << endl;
-// 	cerr << "Rot : " << rotation.getX() << " " << rotation.getY() << " " << rotation.getZ() << " " << rotation.getW() << endl;
-// 	
-// 	for (int i = 0; i < n; i++) {
-// 		peripheral = rotation * peripheral * rotation.getInverse();
-// 		peripheral.normalize();
-// 		l.append(peripheral);
-// 	}
-
-
-// 	QList<Quaternion> l;
-// 	Quaternion peripheral(1.0, 0.0, 0.0, 0.0);
-// 	Quaternion rotation(1.0, 0.0, 0.0, 0.0);
-// 	Quaternion local = mLocalOrientation->get();
-// 	double angle = mAngle->get();
-// 	int n = mNumberOfRays->get() - 1;
-// 
-// 	if (n > 0) {
-// 		peripheral.setFromAngles(0.0, 0.0, angle / -2.0);
-// 		rotation.setFromAngles(0.0, 0.0, angle / ((double) n));
-// 	}
-// 	peripheral.normalize();
-// 	rotation.normalize();
-// 	if (n >= 0) {
-// 		Quaternion newRotation = local * peripheral;
-// 		newRotation.normalize();
-// 		l.append(newRotation);
-// 	}
-// 	peripheral.normalize();
-// 	for (int i = 0; i < n; i++) {
-// 		peripheral = rotation * peripheral;
-// 		peripheral.normalize();
-// 		Quaternion newRotation = local * peripheral;
-// 		newRotation.normalize();
-// 		l.append(newRotation);
-// 	}
-
-	
-	
-	/*
-	 m SensorGeometry->setLocalOrientatio*n(mLocalOrientation->get());
-	 mSensorBody->getGeometry()->setLocalPosition(mLocalPosition->get());
-	 Quaternion localPos(0, 
-			mLocalPosition->getX(), 
-			mLocalPosition->getY(), 
-			mLocalPosition->getZ());
-	 Quaternion bodyOrientationInverse = mHostBody->getQuaternionOrientationValue()->get().getInverse();
-	 Quaternion rotatedLocalPosQuat = mHostBody->getQuaternionOrientationValue()->get() 
-	 * localPos * bodyOrientationInverse;
-	 V ector3D rotatedLocalPos(rotatedLoc*alPosQuat.getX(), 
-	 rotatedLocalPosQuat.getY(), 
-	 rotatedLocalPosQuat.getZ());
-	*/
-	
-	return l;
+	return orientations;
 }
 
 SimBody* DistanceSensor::getHostBody() const {
-	return mHostBody;
+	return mHostBodyObj;
 }
 
 }

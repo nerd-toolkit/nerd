@@ -171,7 +171,9 @@ LightSensor::LightSensor(const LightSensor &other)
 		dynamic_cast<Vector3DValue*>(getParameter("SensorDimensions"));
 
 	mLightSources.clear();
-	mOutputValues.append(mBrightness);
+	if(mBrightness != 0) {
+		mOutputValues.append(mBrightness);
+	}
 	
 	mSwitchYZAxes = other.mSwitchYZAxes;
 

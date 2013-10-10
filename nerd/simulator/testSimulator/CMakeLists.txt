@@ -28,6 +28,8 @@ set(nerd_testSimulator_SRCS
 	Physics/TestSimpleLightSource.cpp
 	Physics/TestSphericLightSource.cpp
 	Physics/TestLightSensor.cpp
+	Physics/TestDistanceSensor.cpp
+	Physics/TestServoMotor.cpp
 )
 
 
@@ -56,6 +58,8 @@ set(nerd_testSimulator_MOC_HDRS
 	Physics/TestSimpleLightSource.h
 	Physics/TestSphericLightSource.h
 	Physics/TestLightSensor.h
+	Physics/TestDistanceSensor.h
+	Physics/TestServoMotor.h
 )
 
 set(nerd_testSimulator_RCS
@@ -84,21 +88,29 @@ QT4_WRAP_UI(nerd_testSimulator_UI_HDRS ${nerd_testSimulator_UIS})
 #Create library.
 add_executable(testSimulator ${nerd_testSimulator_SRCS} ${nerd_testSimulator_MOC_SRCS} ${nerd_testSimulator_RC_SRCS} ${nerd_testSimulator_UI_HDRS})
 
+set(ODE_INCLUDE_PATH ../../../ode-0.12/include)
+set(ODE_LIBRARY_PATH ../../../ode-0.12/ode/src/.libs/libode.a)
+
 add_definitions(-Wall)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../system/nerd)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/simulator)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../simulator/odePhysics)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/${ODE_INCLUDE_PATH})
 
 link_directories(${QT_LIBRARIES} 
 				${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd
 				${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator
+				${CMAKE_CURRENT_BINARY_DIR}/../../simulator/odePhysics
 )
 
 TARGET_LINK_LIBRARIES(testSimulator
 	${QT_LIBRARIES}
 	${CMAKE_CURRENT_BINARY_DIR}/../../system/nerd/libnerd.a
+	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/odePhysics/libodePhysics.a
 	${CMAKE_CURRENT_BINARY_DIR}/../../simulator/simulator/libsimulator.a
+	${CMAKE_CURRENT_BINARY_DIR}/${ODE_LIBRARY_PATH}
 )
 
-add_dependencies(testSimulator nerd simulator)
+add_dependencies(testSimulator nerd simulator odePhysics)
 

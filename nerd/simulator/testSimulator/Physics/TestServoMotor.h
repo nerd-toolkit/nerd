@@ -41,55 +41,26 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-#ifndef DistanceRay_H_
-#define DistanceRay_H_
 
-#include "Collision/CollisionObject.h"
-#include "Collision/DistanceSensorRule.h"
-#include "Physics/RayGeom.h"
-#include "Math/Vector3D.h"
+#ifndef TestServoMotor_H_
+#define TestServoMotor_H_
+
+#include <QtTest/QtTest>
 
 namespace nerd {
 
-class DistanceSensor;
+class TestServoMotor : public QObject {
 
-class DistanceRay {
+	Q_OBJECT
 
-	public:
-		DistanceRay(const QString &name, const Vector3D &position,
-				const Quaternion &orientation, double length,
-				DistanceSensorRule *rule, const Color &active,
-				const Color &inactive, const Color &disableColor);
-		virtual ~DistanceRay();
-
-		void setOwner(DistanceSensor *sensor);
-		DistanceSensor* getOwner() const;
-
-		virtual void setName(const QString &name);
-		virtual QString getName() const;
-
-		virtual CollisionObject* getCollisionObject() const;
-		virtual RayGeom* getGeometry() const;
-		
-		virtual double getDistance(double minRange);
-// 		Vector3D getClosestKnownCollisionPoint() const;
-
-		virtual void updateRay(double length, bool disable = false);
+	private slots:
+		void testConstruction();
+		void testCopy();
+		void testMethods();
 
 	private:
-		QString mName;
-		DistanceSensorRule *mRule;
-		CollisionObject *mCollisionObject;
-		RayGeom *mGeometry;
-		DistanceSensor *mOwner;
-		Color mActiveColor;
-		Color mInactiveColor;
-		Color mDisabledColor;
-// 		Vector3D mClosestKnownCollisionPoint;
-
 };
-
 }
-
 #endif
+
 

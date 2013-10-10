@@ -41,55 +41,61 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *  
  ***************************************************************************/
 
-#ifndef DistanceRay_H_
-#define DistanceRay_H_
 
-#include "Collision/CollisionObject.h"
-#include "Collision/DistanceSensorRule.h"
-#include "Physics/RayGeom.h"
-#include "Math/Vector3D.h"
+#include "Core/Core.h"
+#include "Value/QuaternionValue.h"
+#include "Value/Vector3DValue.h"
+#include "SimulationConstants.h"	
+#include "Physics/Physics.h"
+#include "Physics/ServoMotor.h"
+#include "Math/Math.h"
+#include <cmath>
+#include "TestServoMotor.h"
 
-namespace nerd {
+using namespace std;
 
-class DistanceSensor;
+namespace nerd{
 
-class DistanceRay {
+// josef
+void TestServoMotor::testConstruction() {
+	Core::resetCore();
 
-	public:
-		DistanceRay(const QString &name, const Vector3D &position,
-				const Quaternion &orientation, double length,
-				DistanceSensorRule *rule, const Color &active,
-				const Color &inactive, const Color &disableColor);
-		virtual ~DistanceRay();
+	// construct default motor, no temperature
+	ServoMotor *motor_1 = new ServoMotor("Motor_1", false);
+	QVERIFY(motor_1 != 0);
+	
+	QVERIFY(dynamic_cast<DoubleValue*>(motor_1->
+		getParameter("PID_P"))->get() == 1.0);
+	
+	InterfaceValue *dS = dynamic_cast<InterfaceValue*>(motor_1->
+		getParameter("DesiredSetting"));
+	
+	dS->set(1.0);
+	
+	Physics::getPhysicsManager()->addSimObject(motor_1);
+	motor_1->setup();
+	
+	motor_1->clear();
+	Physics::getPhysicsManager()->removeSimObject(motor_1);
 
-		void setOwner(DistanceSensor *sensor);
-		DistanceSensor* getOwner() const;
+	delete motor_1;
+}
 
-		virtual void setName(const QString &name);
-		virtual QString getName() const;
 
-		virtual CollisionObject* getCollisionObject() const;
-		virtual RayGeom* getGeometry() const;
-		
-		virtual double getDistance(double minRange);
-// 		Vector3D getClosestKnownCollisionPoint() const;
+// josef
+void TestServoMotor::testCopy() {
+	Core::resetCore();
 
-		virtual void updateRay(double length, bool disable = false);
+	
+}
 
-	private:
-		QString mName;
-		DistanceSensorRule *mRule;
-		CollisionObject *mCollisionObject;
-		RayGeom *mGeometry;
-		DistanceSensor *mOwner;
-		Color mActiveColor;
-		Color mInactiveColor;
-		Color mDisabledColor;
-// 		Vector3D mClosestKnownCollisionPoint;
 
-};
+// josef TODO
+void TestServoMotor::testMethods() {
+	Core::resetCore();
+	PhysicsManager *pManager = Physics::getPhysicsManager();
 
 }
 
-#endif
+}
 

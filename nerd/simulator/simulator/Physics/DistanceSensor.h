@@ -64,33 +64,35 @@ class DistanceSensor : public SimObject, public SimSensor {
 		virtual void updateSensorValues();
 
 		virtual void valueChanged(Value *value);
-		virtual QList<Quaternion> calcOrientations() const;
+		virtual QList<Quaternion> getRayOrientations() const;
 		SimBody* getHostBody() const;
 
 		virtual double getAvgSensorValue();
 		virtual double getMinSensorValue();
 		
 		virtual void resetSensor();
+		virtual void updateCollisionRule();
 		
 	protected:
-		BoolValue *mCalcMinDistance;
+		BoolValue *mCalculateMinimum;
 		DistanceSensorRule *mRule;
-		DoubleValue *mAngle;
-		DoubleValue *mMaxRange;
-		DoubleValue *mMinRange;
-		DoubleValue *mDeadZone;
-		DoubleValue *mSensorNoise;
-		Vector3DValue *mMinIntersectionPoint;
+		DoubleValue *mAngleOfAperture;
+		DoubleValue *mRayLength;
+		DoubleValue *mRayOffset;
+// 		DoubleValue *mDeadZone;
+		DoubleValue *mNoise;
+// 		Vector3DValue *mMinIntersectionPoint;
 		IntValue *mNumberOfRays;
 		InterfaceValue *mDistance;
 		QList<DistanceRay*> mRays;
 		QuaternionValue *mLocalOrientation;
-		SimBody *mHostBody;
-		StringValue *mHostBodyName;
+		SimBody *mHostBodyObj;
+		StringValue *mHostBody;
 		Vector3DValue *mLocalPosition;
 		ColorValue *mActiveColor;
 		ColorValue *mInactiveColor;
 		ColorValue *mDisabledColor;
+		StringValue* mIgnoreList;
 };
 
 }

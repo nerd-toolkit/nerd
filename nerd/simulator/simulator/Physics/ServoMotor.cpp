@@ -128,7 +128,7 @@ ServoMotor::ServoMotor(const QString &name, bool enableTemperature) : EventListe
 	mTimeStepSize = dynamic_cast<DoubleValue*>(
 		Core::getInstance()->getValueManager()->getValue(SimulationConstants::VALUE_TIME_STEP_SIZE));
 	if(mTimeStepSize == 0) {
-		Core::log("ODE_TorqueDrivenDynamixel: Could not find required value: \""
+		Core::log("ServoMotor: Could not find required value: \""
 			"/Simulation/TimeStepSize\".");
 	}	
 
@@ -176,7 +176,7 @@ ServoMotor::ServoMotor(const ServoMotor &joint) : Object(), ValueChangedListener
 	mTimeStepSize = dynamic_cast<DoubleValue*>(
 		Core::getInstance()->getValueManager()->getValue(SimulationConstants::VALUE_TIME_STEP_SIZE));
 	if(mTimeStepSize == 0) {
-		Core::log("ODE_TorqueDrivenDynamixel: Could not find required value: \""
+		Core::log("ServoMotor: Could not find required value: \""
 			"/Simulation/TimeStepSize\".");
 	}	
 
