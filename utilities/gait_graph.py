@@ -56,8 +56,6 @@ def main(argv=None):
     for i in range(len(vals)):
         contact = False
         for j in range(len(vals[i])):
-            if j == args.steps:
-                break
             val = vals[i][j]
             if not contact:
                 if (threshold > 0 and val >= threshold) or (threshold < 0 and val <= threshold):
