@@ -8,9 +8,9 @@ def main(argv=None):
     parser.add_argument("file", help="file with the input data")
     parser.add_argument("threshold", help="value threshold for ground contact", type=float)
     parser.add_argument("-s", "--steps", type=int, help="maximum number of steps to plot")
-    parser.add_argument("-g", "--grid", action="store_true", help="print a grid")
+    parser.add_argument("-g", "--grid", action="store_true", help="show a grid")
     parser.add_argument("-t", "--title", help="title of the graph")
-    parser.add_argument("-o", "--output", action="store_true", help="save graph to SVG file")
+    parser.add_argument("-o", "--output", help="save graph to specified file (SVG)")
     parser.add_argument("-v", "--verbosity", action="store_true", help="increase output verbosity")
     args = parser.parse_args()
 
@@ -85,9 +85,9 @@ def main(argv=None):
     if args.title is not None:
         ax.set_title(args.title)
 
-    if args.output:
-        out_file = in_file.replace('.txt', '.svg')
-        plt.savefig(out_file, format='svg')
+    if args.output is not None:
+        #out_file = in_file.replace('.txt', '.svg')
+        plt.savefig(args.output, format='svg')
         if args.verbosity:
             print '-- Generated graph saved to file', out_file
 
