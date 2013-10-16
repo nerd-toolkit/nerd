@@ -7,7 +7,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("file", help="file with the input data")
     parser.add_argument("threshold", help="value threshold for ground contact", type=float)
-    parser.add_argument("-s", "--steps", type=int, help="maximum number of steps to plot")
+    parser.add_argument("-r", "--range", help="range of time steps to plot (MIN:MAX or just MAX)")
     parser.add_argument("-g", "--grid", action="store_true", help="show a grid")
     parser.add_argument("-t", "--title", help="title of the graph")
     parser.add_argument("-o", "--output", help="save graph to specified file (SVG)")
@@ -47,6 +47,15 @@ def main(argv=None):
 
     vals = zip(*v)
 
+    steprange = [0, len(vals[0])]
+    if args.range is not None:
+        if args.range.isdigit():
+            steprange[1] = int(args.range)
+        else:
+            steprange = map(int, args.range.split(":"))
+
+    print steprange
+
     if args.verbosity:
         print '-- Number of values (time steps):', len(vals[0])
         print '-- Preparing data for plotting ...'
@@ -55,7 +64,7 @@ def main(argv=None):
     ranges = [[] for _ in range(len(vals))]
     for i in range(len(vals)):
         contact = False
-        for j in range(len(vals[i])):
+        for j in range(steprange[0],steprange[1]):
             val = vals[i][j]
             if not contact:
                 if (threshold > 0 and val >= threshold) or (threshold < 0 and val <= threshold):
@@ -75,7 +84,7 @@ def main(argv=None):
         ax.broken_barh(ranges[i], (10*(i+1), 6), facecolors='black')
 
     ax.set_ylim(5,10*(len(ranges)+1)+1)
-    ax.set_xlim(0,min(len(vals[0]),args.steps))
+    ax.set_xlim(steprange[0],steprange[1])
     ax.set_xlabel('time steps')
     ax.set_yticks([10*(i+1)+3 for i in range(len(legs))])
     ax.set_yticklabels(legs)
@@ -85,7 +94,8 @@ def main(argv=None):
 
     if args.output is not None:
         #out_file = in_file.replace('.txt', '.svg')
-        plt.savefig(args.output, format='svg')
+        out_file = args.output if args.output.endswith('.svg') else args.output.append('.svg')
+        plt.savefig(out_file, format='svg')
         if args.verbosity:
             print '-- Generated graph saved to file', out_file
 
