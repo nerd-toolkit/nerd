@@ -19,7 +19,7 @@ def main(argv=None):
     threshold = args.threshold
 
     if args.verbosity:
-        print 'gait_graph.py ...'
+        print 'gait_graph.py started ...'
         print '-- Using input data file', in_file
 
     with open(in_file, "r") as f:
@@ -54,10 +54,9 @@ def main(argv=None):
         else:
             steprange = map(int, args.range.split(":"))
 
-    print steprange
-
     if args.verbosity:
         print '-- Number of values (time steps):', len(vals[0])
+        print '-- Using only range', steprange[0], 'to', steprange[1]
         print '-- Preparing data for plotting ...'
 
     # extract bar ranges for the graph
@@ -78,6 +77,8 @@ def main(argv=None):
                     ranges[i].append((cstart, j-cstart+1))
 
     # draw the graph
+    if args.verbosity:
+        print '-- Plotting data values now ...'
     fig, ax = plt.subplots()
 
     for i in range(len(ranges)):
@@ -100,6 +101,9 @@ def main(argv=None):
             print '-- Generated graph saved to file', out_file
 
     plt.show()
+
+    if args.verbosity:
+        print '... gait_graph.py finished.'
 
 if __name__ == '__main__':
 	sys.exit(main())
