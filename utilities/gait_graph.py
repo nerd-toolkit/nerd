@@ -95,7 +95,7 @@ def main(argv=None):
 
     if args.output is not None:
         #out_file = in_file.replace('.txt', '.svg')
-        out_file = args.output if args.output.endswith('.svg') else args.output.append('.svg')
+        out_file = args.output if args.output.endswith('.svg') else args.output+'.svg'
         plt.savefig(out_file, format='svg')
         if args.verbosity:
             print '-- Generated graph saved to file', out_file
