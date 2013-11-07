@@ -5,19 +5,19 @@ import matplotlib.pyplot as plt
 
 def main(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument("file", help="file with the input data")
-    parser.add_argument("threshold", help="value threshold for ground contact", type=float)
-    parser.add_argument("-r", "--range", help="range of time steps to plot (MIN:MAX or just MAX)")
+    parser.add_argument("FILE", help="file with the input data")
+    parser.add_argument("THRESHOLD", help="value threshold for ground contact", type=float)
+    parser.add_argument("-v", "--verbosity", action="store_true", help="increase output verbosity")
     parser.add_argument("-g", "--grid", action="store_true", help="show a grid")
     parser.add_argument("-t", "--title", help="title of the graph")
-    parser.add_argument("-o", "--output", help="save graph to specified file (SVG)")
-    parser.add_argument("-v", "--verbosity", action="store_true", help="increase output verbosity")
     parser.add_argument("-a", "--aspect", help="height of the graph relative to its width, default is 0.25", type=float)
+    parser.add_argument("-r", "--range", help="range of time steps to plot (MIN:MAX or just MAX)")
+    parser.add_argument("-o", "--output", help="save graph to specified file (SVG)")
     args = parser.parse_args()
 
-    in_file = args.file
+    in_file = args.FILE
     legs = []
-    threshold = args.threshold
+    threshold = args.THRESHOLD
 
     if args.verbosity:
         print 'gait_graph.py started ...'
