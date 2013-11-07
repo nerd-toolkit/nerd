@@ -12,6 +12,7 @@ def main(argv=None):
     parser.add_argument("-t", "--title", help="title of the graph")
     parser.add_argument("-o", "--output", help="save graph to specified file (SVG)")
     parser.add_argument("-v", "--verbosity", action="store_true", help="increase output verbosity")
+    parser.add_argument("-a", "--aspect", help="height of the graph relative to its width, default is 0.25", type=float)
     args = parser.parse_args()
 
     in_file = args.file
@@ -21,6 +22,10 @@ def main(argv=None):
     if args.verbosity:
         print 'gait_graph.py started ...'
         print '-- Using input data file', in_file
+
+    aspect = 0.25
+    if args.aspect is not None:
+        aspect = args.aspect
 
     with open(in_file, "r") as f:
         in_data = f.read()
@@ -92,6 +97,7 @@ def main(argv=None):
     ax.grid(args.grid)
     if args.title is not None:
         ax.set_title(args.title)
+    ax.set_aspect(aspect)
 
     if args.output is not None:
         #out_file = in_file.replace('.txt', '.svg')
