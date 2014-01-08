@@ -41,7 +41,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 #ifndef NERD_DynamicsPlotterMainWindow_H_
@@ -84,6 +84,7 @@ class DynamicsPlotterMainWindow : public QWidget {
 
 	protected slots:
 		void closeEvent(QCloseEvent *e);
+		void showWindow();
 
 	private:
 		QGridLayout *mWidgetLayout;
@@ -91,16 +92,17 @@ class DynamicsPlotterMainWindow : public QWidget {
 
 		DebugLoggerPanel *mEvolutionLoggerPanel;
 		DebugLoggerPanel *mDebugLoggerPanel;
-	
+
 		EventVisualizationWindow *mEventList;
 		EventDetailPanel *mEventDetailPanel;
 
 		ValueDetailPanel *mValueDetailPanel;
 		MultipleParameterWindowWidget *mParameterLists;
 		OpenGLVisualization *mVisualization;
-	
+
 		bool mShutDownTriggered;
 		QMap<QString, QMenu*> mMenuLookup;
+
 };
 }
 #endif

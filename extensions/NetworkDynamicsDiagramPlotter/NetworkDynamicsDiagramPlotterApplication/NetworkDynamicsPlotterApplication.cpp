@@ -41,7 +41,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -98,12 +98,12 @@ NetworkDynamicsPlotterApplication::NetworkDynamicsPlotterApplication()
 	//Add statis mode value to allow the plotters to prevent network modifications in the editor
 	//while the plots are calculated.
 	BoolValue *stasisModeValue = new BoolValue(true);
-	
+
 	Core::getInstance()->getValueManager()->addValue(
 				EvolutionConstants::VALUE_EVO_STASIS_MODE, stasisModeValue);
 
 	//Check if the physical simulator is enabled.
-	CommandLineArgument *simArg = new CommandLineArgument("useSimulator", "sim", "", 
+	CommandLineArgument *simArg = new CommandLineArgument("useSimulator", "sim", "",
 														  "Enables the physical simulator.", 0, 0, true, true);
 	if(simArg->getNumberOfEntries() > 0) {
 		mEnableSimulator = true;
@@ -125,8 +125,8 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 	//Have to  be present before the GUI is constructed.
 	StandardNeuralNetworkFunctions();
 	StandardConstraintCollection();
-	
-	
+
+
 
 	mMainWindow = new DynamicsPlotterMainWindow(mEnableSimulator, true);
 
@@ -139,20 +139,20 @@ bool NetworkDynamicsPlotterApplication::setupGui() {
 		mMainWindow->getMenu("Control")->addAction(runPlotterButton);
 	}
 
-	connect(this, SIGNAL(showGui()), mMainWindow, SLOT(show()));
+	connect(this, SIGNAL(showGui()), mMainWindow, SLOT(showWindow()));
 
-	
+
 	mTimer = new QTimer();
 	mTimer->setInterval(2000);
-	
+
 	OnlinePlotter *op = new OnlinePlotter();
 	//Core::getInstance()->addSystemObject(op);
-	
+
 	for(int i = 0; i < 6; ++i) {
-		
+
 		OnlinePlotterWindow *opw = new OnlinePlotterWindow(i);
-		
-		connect(op, SIGNAL(dataPrepared(QString, MatrixValue*, bool)), opw, 
+
+		connect(op, SIGNAL(dataPrepared(QString, MatrixValue*, bool)), opw,
 SLOT(printData(QString, MatrixValue*, bool)));
 		connect(mTimer, SIGNAL(timeout()), opw, SLOT(updateData()));
 		connect(opw, SIGNAL(timerStart()), mTimer, SLOT(start()));
@@ -161,9 +161,9 @@ SLOT(printData(QString, MatrixValue*, bool)));
 	}
 
 	connect(op, SIGNAL(finishedProcessing()), mTimer, SLOT(stop()));
-	
+
 	//***/Till****//
-	
+
 	return true;
 }
 
@@ -176,15 +176,15 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 	NeuroModuleCollection();
 
 	DynamicsPlotCollection();
-	
+
 	if(mEnableSimulator) {
 		new SimObjectGroupPrinter();
-		
+
 		//Choose Physics Engine (or external Yars simulator)
 		CommandLineArgument *physicsArg = new CommandLineArgument("physics", "p", "<physicsLibrary>",
 											"Uses <physicsLibrary> as physics engine. "
 											"Currently there are [ode, yars].", 1,0, true);
-		
+
 		if(physicsArg->getNumberOfEntries() != 0 && !physicsArg->getEntryParameters(0).empty()
 			&& physicsArg->getEntryParameters(0).at(0).trimmed() == "yars")
 		{
@@ -199,28 +199,28 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 			//install ODE PhysicsLayer
 			ODE_Physics();
 		}
-		
+
 		//install file parser
 		new SimpleObjectFileParser();
-		
+
 		new StepsPerSecondCounter();
-		
-		
+
+
 		//Priovide the -net required to load a network for one or more agents.
 		new NetworkAgentControlParser();
-		
+
 		ScriptedModelLoader();
 	}
-	
+
 	UniversalNeuroScriptLoader();
 
 
 	//load a network if given.
 	CommandLineArgument *netArg = new CommandLineArgument("loadNetwork", "net", "<networkFile",
-								"Loads a NeuralNetwork to the NetworkEditor", 
+								"Loads a NeuralNetwork to the NetworkEditor",
 								1, 0, false, true);
 
-	//Only provide a -net to load a network (or create a default in case no -net is given) when 
+	//Only provide a -net to load a network (or create a default in case no -net is given) when
 	//NOT using a physical simulation.
 	if(!mEnableSimulator) {
 		if(netArg->getNumberOfEntries() > 0) {
@@ -228,7 +228,7 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 			if(files.size() > 0) {
 				QString errorMessage;
 				QList<QString> warnings;
-				NeuralNetwork *net = NeuralNetworkIO::createNetworkFromFile(files.at(0), 
+				NeuralNetwork *net = NeuralNetworkIO::createNetworkFromFile(files.at(0),
 								&errorMessage, &warnings);
 
 				if(errorMessage != "") {
@@ -249,7 +249,7 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 			Neuro::getNeuralNetworkManager()->addNeuralNetwork(new ModularNeuralNetwork(
 											AdditiveTimeDiscreteActivationFunction(),
 											TransferFunctionTanh(),
-											SimpleSynapseFunction())); 
+											SimpleSynapseFunction()));
 		}
 	}
 
@@ -263,14 +263,14 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 
 bool NetworkDynamicsPlotterApplication::runApplication() {
 	bool ok = true;
-	
+
 	if(mEnableSimulator) {
 		Physics::getSimulationEnvironmentManager()->createSnapshot();
 	}
 
 	mExecutionLoop->start();
 
-	return ok; 
+	return ok;
 }
 
 

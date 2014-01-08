@@ -41,7 +41,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 #include "DynamicsPlotterMainWindow.h"
@@ -55,9 +55,9 @@
 
 namespace nerd {
 
-DynamicsPlotterMainWindow::DynamicsPlotterMainWindow(bool enableSimulator, bool enableDebugging) 
-		: mWidgetLayout(0), mMainMenuBar(0), 
-		mDebugLoggerPanel(0), mVisualization(0), mShutDownTriggered(false) 
+DynamicsPlotterMainWindow::DynamicsPlotterMainWindow(bool enableSimulator, bool enableDebugging)
+		: mWidgetLayout(0), mMainMenuBar(0),
+		mDebugLoggerPanel(0), mVisualization(0), mShutDownTriggered(false)
 {
 	setup(enableSimulator, enableDebugging);
 }
@@ -91,7 +91,7 @@ void DynamicsPlotterMainWindow::setup(bool enableSimulator, bool enableDebugging
 
 	setAttribute(Qt::WA_QuitOnClose, false);
 	setWindowTitle("NERD Dynamics Analyzer");
-	
+
 	if(enableSimulator) {
 		resize(400,400);
 	}
@@ -102,7 +102,7 @@ void DynamicsPlotterMainWindow::setup(bool enableSimulator, bool enableDebugging
 	//Setup layout
 	mWidgetLayout = new QGridLayout();
 	setLayout(mWidgetLayout);
-	
+
 	setAutoFillBackground(true);
 	mWidgetLayout->setSpacing(0);
 	mWidgetLayout->setAlignment(Qt::AlignLeft);
@@ -111,7 +111,7 @@ void DynamicsPlotterMainWindow::setup(bool enableSimulator, bool enableDebugging
 	//Create standard menu bar
 	mMainMenuBar = new QMenuBar();
 	mWidgetLayout->addWidget(mMainMenuBar, 0, 0);
-	
+
 	if(enableSimulator) {
 		mVisualization = new OpenGLVisualization(true, 0, "Main", true);
 		mWidgetLayout->addWidget(mVisualization, 1, 0);
@@ -125,13 +125,13 @@ void DynamicsPlotterMainWindow::setup(bool enableSimulator, bool enableDebugging
 	QAction *parameterListAction = toolMenu->addAction(tr("&Object Properties"));
 	parameterListAction->setShortcut(tr("Ctrl+o"));
 	connect(parameterListAction, SIGNAL(triggered()), mParameterLists, SLOT(show()));
-	
-// 	AddInternalDiagramPlotterAction *addDiagramPlotterAction = 
+
+// 	AddInternalDiagramPlotterAction *addDiagramPlotterAction =
 // 						new AddInternalDiagramPlotterAction("Diagram Plotter", "Diagram",
 // 									toolMenu);
 // 	toolMenu->addAction(addDiagramPlotterAction);
-	
-	
+
+
 
 	if(enableDebugging) {
 		QMenu *debugMenu = getMenu(QString("Debug"));
@@ -144,19 +144,19 @@ void DynamicsPlotterMainWindow::setup(bool enableSimulator, bool enableDebugging
 		//Add debug logger panel
 		mDebugLoggerPanel = new DebugLoggerPanel();
 		QAction *debugLoggerAction = debugMenu->addAction(tr("Debug Logger Panel"));
-		connect(debugLoggerAction, SIGNAL(triggered()), mDebugLoggerPanel, 
+		connect(debugLoggerAction, SIGNAL(triggered()), mDebugLoggerPanel,
 			SLOT(showWindow()));
 
 		//Add event detail panel
 		mEventDetailPanel = new EventDetailPanel();
 		QAction *eventDetailAction = debugMenu->addAction(tr("Event Detail Panel"));
-		connect(eventDetailAction, SIGNAL(triggered()), mEventDetailPanel, 
+		connect(eventDetailAction, SIGNAL(triggered()), mEventDetailPanel,
 			SLOT(showWindow()));
 
 		//Add value detail panel
 		mValueDetailPanel = new ValueDetailPanel();
 		QAction *valueDetailAction = debugMenu->addAction(tr("Value Detail Panel"));
-		connect(valueDetailAction, SIGNAL(triggered()), mValueDetailPanel, 
+		connect(valueDetailAction, SIGNAL(triggered()), mValueDetailPanel,
 			SLOT(showWindow()));
 	}
 
@@ -172,6 +172,13 @@ void DynamicsPlotterMainWindow::closeEvent(QCloseEvent*) {
 		mShutDownTriggered = true;
 		Core::getInstance()->scheduleTask(new ShutDownTask());
 	}
+}
+
+void DynamicsPlotterMainWindow::showWindow() {
+	if(mVisualization != 0) {
+		mVisualization->resetViewport();
+	}
+	show();
 }
 
 }
