@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 #include "FitnessManager.h"
@@ -64,7 +64,7 @@ namespace nerd {
 /**
  * Constructor.
  */
-FitnessManager::FitnessManager() : mNextTryEvent(0), mNextIndividualEvent(0), 
+FitnessManager::FitnessManager() : mNextTryEvent(0), mNextIndividualEvent(0),
 		mStepCompletedEvent(0), mTryCompletedEvent(0), mIndividualCompletedEvent(0),
 		mGenerationCompletedEvent(0), mResetEvent(0), mNumberOfSteps(0), mNumberOfTries(0),
 		mTerminateTryEvent(0), mEnableFitnessFunctionExecution(true)
@@ -73,7 +73,7 @@ FitnessManager::FitnessManager() : mNextTryEvent(0), mNextIndividualEvent(0),
 
 
 /**
- * Destructor. 
+ * Destructor.
  * Destroys all registered FitnessFunctions and FitnessFunction prototypes.
  */
 FitnessManager::~FitnessManager() {
@@ -96,8 +96,8 @@ bool FitnessManager::init() {
 	bool initOk = true;
 
 	//print names of FitnessFunctionPrototypes if required
-	CommandLineArgument *printFitnessFunctionsArgument = new CommandLineArgument("fitnessPrototypes", 
-							"fitnessPrototypes", "", 
+	CommandLineArgument *printFitnessFunctionsArgument = new CommandLineArgument("fitnessPrototypes",
+							"fitnessPrototypes", "",
 							"Prints the names of all available FitnessFunction prototypes.",
 							0, 0, false, false);
 	printFitnessFunctionsArgument->setProperty("debug");
@@ -115,11 +115,11 @@ bool FitnessManager::init() {
 	return initOk;
 }
 
-/** 
+/**
  * Establishes connections to Events and Values.
  */
 bool FitnessManager::bind() {
-	
+
 	bool bindOk = true;
 
 	EventManager *eManager = Core::getInstance()->getEventManager();
@@ -213,28 +213,28 @@ void FitnessManager::eventOccured(Event *event) {
 			++i;
 		}
 	}
-	else if(event == mStepCompletedEvent && mEnableFitnessFunctionExecution) {	
+	else if(event == mStepCompletedEvent && mEnableFitnessFunctionExecution) {
 		QHash<QString, FitnessFunction*>::const_iterator i = mFitnessFunctions.constBegin();
 		while(i != mFitnessFunctions.constEnd()) {
 			i.value()->update();
 			++i;
 		}
 	}
-	else if(event == mTryCompletedEvent && mEnableFitnessFunctionExecution) {	
+	else if(event == mTryCompletedEvent && mEnableFitnessFunctionExecution) {
 		QHash<QString, FitnessFunction*>::const_iterator i = mFitnessFunctions.constBegin();
 		while(i != mFitnessFunctions.constEnd()) {
 			i.value()->finishTry();
 			++i;
 		}
 	}
-	else if(event == mIndividualCompletedEvent) {	
+	else if(event == mIndividualCompletedEvent) {
 		QHash<QString, FitnessFunction*>::const_iterator i = mFitnessFunctions.constBegin();
 		while(i != mFitnessFunctions.constEnd()) {
 			i.value()->finishIndividual();
 			++i;
 		}
 	}
-	if(event == mGenerationCompletedEvent) {	
+	if(event == mGenerationCompletedEvent) {
 		QHash<QString, FitnessFunction*>::const_iterator i = mFitnessFunctions.constBegin();
 		while(i != mFitnessFunctions.constEnd()) {
 			i.value()->finishGeneration();
@@ -245,17 +245,17 @@ void FitnessManager::eventOccured(Event *event) {
 
 
 /**
- * Adds a fitnessfunction to the fitness manager. After successfully adding the fitness 
- * function, this function will be called after the according events occurred 
+ * Adds a fitnessfunction to the fitness manager. After successfully adding the fitness
+ * function, this function will be called after the according events occurred
  * (individual completed, try completed...).
  *
- * @param fitnessFunction 
- * @return 
+ * @param fitnessFunction
+ * @return
  */
 bool FitnessManager::addFitnessFunction(FitnessFunction *fitnessFunction) {
-	if(fitnessFunction == 0 
-		|| mFitnessFunctions.keys().contains(fitnessFunction->getName()) 
-		|| mFitnessFunctions.values().contains(fitnessFunction)) 
+	if(fitnessFunction == 0
+		|| mFitnessFunctions.keys().contains(fitnessFunction->getName())
+		|| mFitnessFunctions.values().contains(fitnessFunction))
 	{
 		return false;
 	}
@@ -264,11 +264,11 @@ bool FitnessManager::addFitnessFunction(FitnessFunction *fitnessFunction) {
 }
 
 /**
- * Remove the fitness function with the given name from the list of managed fitness 
+ * Remove the fitness function with the given name from the list of managed fitness
  * functions. Thereby, this function will not be updated during the evolution process.
- * 
- * @param fitnessFunctionName 
- * @return 
+ *
+ * @param fitnessFunctionName
+ * @return
  */
 bool FitnessManager::removeFitnessFunction(const QString &fitnessFunctionName) {
 	if(!mFitnessFunctions.keys().contains(fitnessFunctionName)) {
@@ -280,12 +280,12 @@ bool FitnessManager::removeFitnessFunction(const QString &fitnessFunctionName) {
 
 /**
  * Remove a fitness function from the list of managed fitness functions. Thereby, this function will not be updated during the evolution process.
- * @param fitnessFunction 
- * @return 
+ * @param fitnessFunction
+ * @return
  */
 bool FitnessManager::removeFitnessFunction(FitnessFunction *fitnessFunction) {
-	if(!mFitnessFunctions.values().contains(fitnessFunction) 
-		|| mFitnessFunctions.value(fitnessFunction->getName()) != fitnessFunction) 
+	if(!mFitnessFunctions.values().contains(fitnessFunction)
+		|| mFitnessFunctions.value(fitnessFunction->getName()) != fitnessFunction)
 	{
 		return false;
 	}
@@ -297,7 +297,7 @@ QList<FitnessFunction*> FitnessManager::getFitnessFunctions() {
 	return mFitnessFunctions.values();
 }
 
-QList<QString> FitnessManager::getFitnessFunctionNames() {	
+QList<QString> FitnessManager::getFitnessFunctionNames() {
 	return mFitnessFunctions.keys();
 }
 
@@ -305,13 +305,13 @@ QList<QString> FitnessManager::getFitnessFunctionNames() {
  * Adds a prototype of a fitness function to the list of prototypes. The prototype name must be unique to allow a name-based identification of the prototype to be used.
  * @param name The name to be used as prototype name.
  * @param fitnessFunction The fitness function to be used as prototype of the given name.
- * @return 
+ * @return
  */
 bool FitnessManager::addFitnessFunctionPrototype(const QString &name, FitnessFunction* fitnessFunction) {
-	if(name == 0 
-		|| fitnessFunction == 0 
-		|| mFitnessFunctionPrototypes.keys().contains(name) 
-		|| mFitnessFunctionPrototypes.values().contains(fitnessFunction)) 
+	if(name == 0
+		|| fitnessFunction == 0
+		|| mFitnessFunctionPrototypes.keys().contains(name)
+		|| mFitnessFunctionPrototypes.values().contains(fitnessFunction))
 	{
 		return false;
 	}
@@ -335,14 +335,14 @@ QHash<QString, FitnessFunction*> FitnessManager::getFitnessFunctionPrototypes() 
  * Create a fitness function from a prototype. This method creates a copy of the fitnessfunction that is stored as prototype of the given name.
  * @param prototypeName The name of the prototype to be used
  * @param fitnessFunctionName The name to be used for the fitnessfunction.
- * @return 
+ * @return
  */
-FitnessFunction* FitnessManager::createFitnessFunctionFromPrototype(const QString &prototypeName, 
-										const QString &fitnessFunctionName) 
+FitnessFunction* FitnessManager::createFitnessFunctionFromPrototype(const QString &prototypeName,
+										const QString &fitnessFunctionName)
 {
-	if(prototypeName == 0 
-		|| !mFitnessFunctionPrototypes.keys().contains(prototypeName) 
-		|| mFitnessFunctionPrototypes.value(prototypeName) == 0) 
+	if(prototypeName == 0
+		|| !mFitnessFunctionPrototypes.keys().contains(prototypeName)
+		|| mFitnessFunctionPrototypes.value(prototypeName) == 0)
 	{
 		return 0;
 	}
@@ -352,7 +352,7 @@ FitnessFunction* FitnessManager::createFitnessFunctionFromPrototype(const QStrin
 	}
 	if(fitnessFunctionName != "") {
 		fitnessFunction->setName(fitnessFunctionName);
-	} 
+	}
 	else {
 		fitnessFunction->setName(prototypeName);
 	}
@@ -360,12 +360,12 @@ FitnessFunction* FitnessManager::createFitnessFunctionFromPrototype(const QStrin
 	return fitnessFunction;
 }
 
-bool FitnessManager::writeFitnessValuesToFile(const QString &fileName, 
-		const QString &comment) 
+bool FitnessManager::writeFitnessValuesToFile(const QString &fileName,
+		const QString &comment)
 {
 	QString fullPath = fileName;
 	QFile file(fullPath);
-	
+
 	if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		std::cerr << "Could not open file " << fullPath.toStdString().c_str()
 			<< " to write Values." << std::endl;
@@ -425,7 +425,7 @@ int FitnessManager::getNumberOfTries() {
  * If disabled then the FitnessFunctions are not executed, which is useful if the FitnessManager
  * is only used to manage and organize the FitnessFunctions for an evolution application.
  * In such applications the evaluation (including fitness calculation) is done in a separate application.
- * Enabled FitnessFunctions could lead to warnings and error messages because the 
+ * Enabled FitnessFunctions could lead to warnings and error messages because the
  * simulation environment and other required parts of the evaluation might not be present.
  *
  * @param enable determins whether to switch execution on or off.

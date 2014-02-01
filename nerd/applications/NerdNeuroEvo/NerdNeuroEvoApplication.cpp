@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -139,13 +139,13 @@ bool NerdNeuroEvoApplication::runApplication() {
 }
 
 bool  NerdNeuroEvoApplication::setupGui() {
-	CommandLineArgument *guiArgument = 
+	CommandLineArgument *guiArgument =
 			new CommandLineArgument(
 				"enableGui", "gui", "",
 				"Starts the application with graphical user interface.",
 				0, 0,
 				true);
-	CommandLineArgument *noGuiArgument = 
+	CommandLineArgument *noGuiArgument =
 			new CommandLineArgument(
 				"disableGui", "nogui", "",
 				"Starts the application without graphical user interface.",
@@ -163,9 +163,9 @@ bool  NerdNeuroEvoApplication::setupGui() {
 		mGuiMainWindow = new GuiMainWindow(true, true);
 		connect(this, SIGNAL(showGui()), mGuiMainWindow, SLOT(showWindow()));
 
-		OnlineFitnessPlotter *plotterButton = new OnlineFitnessPlotter(); 
+		OnlineFitnessPlotter *plotterButton = new OnlineFitnessPlotter();
 		mGuiMainWindow->getMenu("Evolution")->addAction(plotterButton->getAction());
-		
+
 		EvolutionProgressBar *progressBar = new EvolutionProgressBar();
 		mGuiMainWindow->addWidget(progressBar);
 
@@ -173,7 +173,7 @@ bool  NerdNeuroEvoApplication::setupGui() {
 		overview->getAction()->setShortcut(tr("Ctrl+Shift+p"));
 		mGuiMainWindow->getMenu("Evolution")->addAction(overview->getAction());
 
-		EvolutionPropertyPanelCollection(mGuiMainWindow->getMenu("Evolution"), 
+		EvolutionPropertyPanelCollection(mGuiMainWindow->getMenu("Evolution"),
 											"Evolution Parameters");
 
 		BoolValueSwitcherAction *runEvolutionButton = new BoolValueSwitcherAction("&Run Evolution",
@@ -190,7 +190,7 @@ bool  NerdNeuroEvoApplication::setupGui() {
 bool NerdNeuroEvoApplication::setupApplication()
 {
 	bool ok = true;
-	
+
 
 	//Choose Physics Engine (or external Yars simulator)
 	CommandLineArgument *physicsArg = new CommandLineArgument("physics", "p", "<physicsLibrary>",
@@ -222,7 +222,7 @@ bool NerdNeuroEvoApplication::setupApplication()
 
 	//Install fitness prototypes
 	NeuroFitnessPrototypes();
-	
+
 	//Install standard NN functions and objects.
 	StandardNeuralNetworkFunctions();
 
@@ -232,7 +232,7 @@ bool NerdNeuroEvoApplication::setupApplication()
 	//Install neuro modules
 	NeuroModuleCollection();
 	StandardTagCollection();
-	
+
 	//Enable NeuroModulation
 	NeuroModulatorManager::getInstance();
 
@@ -254,9 +254,11 @@ bool NerdNeuroEvoApplication::setupApplication()
 	settingsLogger->addValues("/Control/NumberOfSteps");
 	settingsLogger->addValues("/Control/NumberOfTries");
 
+	new TerminateTryCollisionRule();
+
 	new StepsPerSecondCounter();
 	new SimObjectGroupPrinter();
-	new SaveBestNetworksHandler(3); 
+	new SaveBestNetworksHandler(3);
 
 	//add motor model rotation
 	new ModelParameterRotator();
@@ -266,7 +268,7 @@ bool NerdNeuroEvoApplication::setupApplication()
 
 	UniversalNeuroScriptLoader();
 	ScriptedModelLoader();
-	
+
 	//Add plugin to calculate the open degrees of freedom of the network during evolution.
 	new NetworkDegreeOfFreedomCalculator();
 

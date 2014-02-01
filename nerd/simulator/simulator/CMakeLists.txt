@@ -22,6 +22,7 @@ set(nerd_simulator_SRCS
 	Gui/Control/MotorControlPanel.cpp  
 	Gui/Visualization/OpenGLVisualization.cpp  
 	Gui/Visualization/VisualizationChooser.cpp  
+	Gui/Visualization/PositionPlotter.cpp
 	Physics/AccelSensor.cpp  
 	Physics/AngleSensor.cpp  
 	Physics/BoxBody.cpp  
@@ -165,6 +166,7 @@ set(nerd_simulator_MOC_HDRS
 	Gui/Control/MotorControlPanel.h  
 	Gui/Visualization/OpenGLVisualization.h  
 	Gui/Visualization/VisualizationChooser.h  
+	Gui/Visualization/PositionPlotter.h
 	Application/ODCP_StandardGuiApplication.h  
 	Application/OSP_StandardGuiApplication.h  
 	Models/ScriptedModel.h

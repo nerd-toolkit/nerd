@@ -80,6 +80,7 @@
 #include <PlugIns/StepsPerSecondCounter.h>
 #include <Control/NetworkAgentControlParser.h>
 #include "Exporters/MatlabExporter.h"
+#include "PlugIns/ModelParameterRotator.h"
 
 
 using namespace std;
@@ -108,6 +109,7 @@ NetworkDynamicsPlotterApplication::NetworkDynamicsPlotterApplication()
 	if(simArg->getNumberOfEntries() > 0) {
 		mEnableSimulator = true;
 	}
+	Physics::install();
 }
 
 
@@ -208,6 +210,8 @@ bool NetworkDynamicsPlotterApplication::setupApplication() {
 
 		//Priovide the -net required to load a network for one or more agents.
 		new NetworkAgentControlParser();
+
+		new ModelParameterRotator();
 
 		ScriptedModelLoader();
 	}

@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -155,10 +155,11 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 		mIsManipulatable(0), mPauseValue(0), mUseTexturesValue(0), mDisplaySimulationTime(0),
 		mShowOnlySimulationTime(0),
 		mChangeViewportTimer(0), mVisualizationTimer(0), mStepsPerSecondValue(0),
-		mRunInPerformanceMode(0), mGlIsUpdating(false), mUseAsFrameGrabber(0), mDisableTexturesArg(0)
+		mRunInPerformanceMode(0), mGlIsUpdating(false), mUseAsFrameGrabber(0),
+		mDisableTexturesArg(0), mTotalStepsCounters(0)
 {
 	mRealTimeRecorderRunning = 0;
-	
+
 	setWhatsThis("Ctrl+Shift+v:	Save current position as new initial viewpoint.\nShift+v:"
 		" 	Restore initial viewpoint.\nCtrl+x:	Show/Hide Textures.\nCtrl+t: 	"
 		"Show/Hide time information.\nCtrl+a: 	Show/Hide Coordinate Axes\nCtrl+g: 	"
@@ -208,7 +209,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 
 	mVisualizationName = name;
 	mPublishValues = publishValues;
-	
+
 	Physics::getPhysicsManager();
 	mSwitchYZAxes = Core::getInstance()->getValueManager()->getBoolValue(SimulationConstants::VALUE_SWITCH_YZ_AXES);
 
@@ -220,8 +221,8 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 		mStartPosition = new Vector3DValue(0.5, -5, 0.75);
 		mStartOrientation = new Vector3DValue(90,0,0);
 	}
-	
-	
+
+
 	mStartPosition->setDescription("The camera position after view reset (STRG+V)");
 	mStartOrientation->setDescription("The camera orientation after view reset (STRG+V)");
 	mCurrentOrientation = new Vector3DValue();
@@ -303,6 +304,14 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
 
 	makeCurrent();
 	mFrameBuffer = new QGLFramebufferObject(200, 200);
+
+	mTotalStepsCounters = dynamic_cast<ULongLongValue*>(
+                    Core::getInstance()->getValueManager()->
+                    getValue(SimulationConstants::VALUE_TOTAL_STEP_COUNTER));
+	mPosPlotNames = new StringValue("");
+	mPosPlotActive = new BoolValue(false);
+	addParameter("PositionPlotObjects", mPosPlotNames, publishValues);
+	addParameter("PositionPlotActive", mPosPlotActive, publishValues);
 }
 
 OpenGLVisualization::~OpenGLVisualization() {
@@ -339,6 +348,30 @@ OpenGLVisualization::~OpenGLVisualization() {
 	delete mChangeViewportTimer;
 	delete mLastMousePosition;
 	delete mFrameBuffer;
+}
+
+void OpenGLVisualization::activatePlotter(QString names) {
+    cout << "OpenGLVis: plotter activation signal received." << endl;
+    mPosPlotNames->set(names);
+    QStringList nameList = names.split(",");
+    for(int i=0; i<nameList.size(); ++i) {
+        SimBody *body = Physics::getPhysicsManager()->getSimBody(nameList.at(i));
+        if(body != 0 && !mPosPlotData.contains(body)) {
+            mPosPlotData.insert(body, body->getPositionValue()->get());
+        }
+        cout << "OpenGLVis: added body " << nameList.at(i).toStdString() << " to list" << endl;
+    }
+    mPosPlotActive->set(true);
+}
+
+void OpenGLVisualization::deactivatePlotter() {
+    cout << "OpenGLVis: plotter deactivation signal received." << endl;
+    mPosPlotActive->set(false);
+    mPosPlotData.clear();
+    mPosPlotNames->set("");
+    if(mPosPlotData.size() == 0 && !mPosPlotActive⁻>get()) {
+        cout << "OpenGLVis: plotter data all cleared" << endl;
+    }
 }
 
 void OpenGLVisualization::closeEvent(QCloseEvent*) {
@@ -616,7 +649,7 @@ void OpenGLVisualization::init() {
 			mTriggerPaintEvents.append(event);
 		}
 	}
-	
+
 	mRealTimeRecorderRunning = vm->getBoolValue(SimulationConstants::VALUE_RUN_REAL_TIME_RECORDER);
 
 	if(!ok)
@@ -631,7 +664,7 @@ void OpenGLVisualization::init() {
 
 void OpenGLVisualization::updateVisualization() {
 
-	
+
 	glClearColor (mClearColorValue->get().red() / 255.0,
 					mClearColorValue->get().green() / 255.0,
 					mClearColorValue->get().blue() / 255.0,
@@ -834,6 +867,15 @@ void OpenGLVisualization::updateVisualization() {
 		glPopMatrix();
 	}
 	glDisable(GL_BLEND);
+
+    // ONLINE POSITION PLOTTER (josef)
+	// TODO draw position trace and save current position
+	// add current position to list/map
+	if(mPosPlotActive->get()) {
+        for(int k=0; k<mPosPlotData.size(); ++k) {
+            // TODO
+        }
+	}
 }
 
 void OpenGLVisualization::drawPlane(PlaneBody *plane) {
@@ -850,11 +892,11 @@ void OpenGLVisualization::drawPlane(PlaneBody *plane) {
 
 	if(axis != 0 && distance != 0 && color != 0 && material != 0) {
 		const float gsize = PLANE_SIZE;
-		
+
 		//TODO What was this line for? @verena
 		//Vector3D newVector = distance->get() * axis->get();
-		
-		
+
+
 		glColor4f(color->get().red() / 255.0, color->get().green() / 255.0,
 			color->get().blue() / 255.0, color->get().alpha() / 255.0);
 
@@ -901,9 +943,9 @@ void OpenGLVisualization::drawPlane(PlaneBody *plane) {
 
 void OpenGLVisualization::drawAxis() {
 	glShadeModel(GL_FLAT);
-	
+
 	double axisLength = 1;
-	
+
 	if(mDrawCoordinateAxes->get()) {
 		glLineWidth(2);
 		glColor3f(255,0,0);
@@ -923,18 +965,18 @@ void OpenGLVisualization::drawAxis() {
 
 		glEnd();
 	}
-	
-	
+
+
 	glColor4f(0, 0, 0, 100);
 	axisLength = 2 * PLANE_SIZE;
 				glLineWidth(2.0);
 	double off = 0.0005;
-	
+
 	if(mShowCoordinateSystemLines->get()){
 		for(int k = 0; k < 1; k++) {
 			for(int i = -PLANE_SIZE; i < PLANE_SIZE; i++) {
 				int mod = i % 5;
-				
+
 				Color c;
 				if(mod == 0) {
 					c = mCoordinateSystemLongLinesColor->get();
@@ -1075,7 +1117,7 @@ void OpenGLVisualization::paintGL() {
 				renderText(posX, 3 * posY, QString(": ")
 						.append(QString::number(mStepsPerSecondValue->get())), font);
 			}
-			
+
 			if(!mHideRecordSymbol->get()) {
 				//show REC sign if screen recorder is running.
 				fontSize = Math::max(fontSize, 20);
@@ -1169,8 +1211,8 @@ void OpenGLVisualization::resizeGL(int width, int height){
 		glScalef(mWindowRation, mWindowRation, 1);
 	}
 
-	gluPerspective((GLfloat) mOpeningAngleValue->get(), 
-					mWindowRation, mMinDistanceCutoffValue->get(), 
+	gluPerspective((GLfloat) mOpeningAngleValue->get(),
+					mWindowRation, mMinDistanceCutoffValue->get(),
 					mMaxDistanceCutoffValue->get());
 
 	glMatrixMode (GL_MODELVIEW);
@@ -1188,20 +1230,20 @@ void OpenGLVisualization::focusOutEvent(QFocusEvent*) {
 
 
 void OpenGLVisualization::createEnvironmentConditions() {
-	
-	GLfloat pos[4] = {	(float) mPosition->getX(), 
-						(float) mPosition->getY(), 
-						(float) mPosition->getZ(), 
+
+	GLfloat pos[4] = {	(float) mPosition->getX(),
+						(float) mPosition->getY(),
+						(float) mPosition->getZ(),
 						(float) 1.0};
-						
-	GLfloat white[4] = {(float) mDiffuseLight->getX(), 
-						(float) mDiffuseLight->getY(), 
-						(float) mDiffuseLight->getZ(), 
+
+	GLfloat white[4] = {(float) mDiffuseLight->getX(),
+						(float) mDiffuseLight->getY(),
+						(float) mDiffuseLight->getZ(),
 						(float) 1.0};
-						
-	GLfloat black[4] = {(float) mSpecularLight->getX(), 
-						(float) mSpecularLight->getY(), 
-						(float) mSpecularLight->getZ(), 
+
+	GLfloat black[4] = {(float) mSpecularLight->getX(),
+						(float) mSpecularLight->getY(),
+						(float) mSpecularLight->getZ(),
 						(float) 0.0};
 
 	glEnable(GL_LIGHTING);
@@ -1210,11 +1252,11 @@ void OpenGLVisualization::createEnvironmentConditions() {
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, black);
 
-	GLfloat LModelAmbient[4] ={	(float) mAmbientLight->getX(), 
+	GLfloat LModelAmbient[4] ={	(float) mAmbientLight->getX(),
 								(float) mAmbientLight->getY(),
 								(float) mAmbientLight->getZ(),
 								(float) 1.0F};
-								
+
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,&LModelAmbient[0]);
 
 	glEnable (GL_COLOR_MATERIAL);
@@ -1230,20 +1272,20 @@ void OpenGLVisualization::createEnvironmentConditions() {
 }
 
 void OpenGLVisualization::changeLighting() {
-	
-	GLfloat pos[4] = {	(float) mPosition->getX(), 
-						(float) mPosition->getY(), 
-						(float) mPosition->getZ(), 
+
+	GLfloat pos[4] = {	(float) mPosition->getX(),
+						(float) mPosition->getY(),
+						(float) mPosition->getZ(),
 						(float) 1.0};
-						
- 	GLfloat white[4] = {(float) mDiffuseLight->getX(), 
+
+ 	GLfloat white[4] = {(float) mDiffuseLight->getX(),
 						(float) mDiffuseLight->getY(),
-						(float) mDiffuseLight->getZ(), 
+						(float) mDiffuseLight->getZ(),
 						(float) 1.0};
-						
-	GLfloat black[4] = {(float) mSpecularLight->getX(), 
+
+	GLfloat black[4] = {(float) mSpecularLight->getX(),
 						(float) mSpecularLight->getY(),
-						(float) mSpecularLight->getZ(), 
+						(float) mSpecularLight->getZ(),
 						(float) 0.0};
 
 	glEnable(GL_LIGHTING);
@@ -1252,11 +1294,11 @@ void OpenGLVisualization::changeLighting() {
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, black);
 
-	GLfloat LModelAmbient[4] ={	(float) mAmbientLight->getX(), 
+	GLfloat LModelAmbient[4] ={	(float) mAmbientLight->getX(),
 								(float) mAmbientLight->getY(),
 								(float) mAmbientLight->getZ(),
 								(float) 1.0F};
-								
+
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,&LModelAmbient[0]);
 
 	glEnable (GL_COLOR_MATERIAL);
@@ -1286,7 +1328,7 @@ void OpenGLVisualization::drawBox(CollisionObject *currentCollisionObject, bool 
 	Vector3D eighth = points.at(7);
 	Vector3D firstCross;
 	Vector3D secondCross;
-	
+
 	//TODO Could there be an error: fourth is never used! @verena?
 
 	if(hasATexture) {
@@ -1694,9 +1736,9 @@ void OpenGLVisualization::valueChanged(Value *value) {
 				mReferenceBodyOrientation = 0;
 			}
 		}
-		
+
 		mReferenceBody = Physics::getPhysicsManager()->getSimBody(mReferenceBodyName->get());
-		
+
 		if(mReferenceBody != 0) {
 			mReferenceBodyPosition = mReferenceBody->getPositionValue();
 			mReferenceBodyOrientation = mReferenceBody->getQuaternionOrientationValue();
@@ -1707,7 +1749,7 @@ void OpenGLVisualization::valueChanged(Value *value) {
 				Core::log("OpenGLVisualization: Could not find reference body with name ["
 						  + mReferenceBodyName->get() + "]. Ignoring", true);
 			}
-			
+
 			mReferenceBodyPosition = new Vector3DValue(0.0, 0.0, 0.0);
 			mReferenceBodyOrientation = new QuaternionValue();
 		}
@@ -1803,9 +1845,9 @@ void OpenGLVisualization::changeView() {
 		glMatrixMode (GL_PROJECTION);
 		glLoadIdentity ();
 
-		gluPerspective((GLfloat) mOpeningAngleValue->get(), 
+		gluPerspective((GLfloat) mOpeningAngleValue->get(),
 						mWindowRation,
-						mMinDistanceCutoffValue->get(), 
+						mMinDistanceCutoffValue->get(),
 						mMaxDistanceCutoffValue->get());
 
 		glMatrixMode (GL_MODELVIEW);
@@ -2056,7 +2098,7 @@ void OpenGLVisualization::wheelEvent(QWheelEvent *e) {
 
 
 /**
- * Enables the manipulation of the simulation by the user via keyboard. If the OpenGLVisualization 
+ * Enables the manipulation of the simulation by the user via keyboard. If the OpenGLVisualization
  * is started with mCanManipulate being false, the manipulation is disabled.
  * @param e
  */
@@ -2097,7 +2139,7 @@ void OpenGLVisualization::keyPressEvent(QKeyEvent *e) {
 		else if(e->key() == Qt::Key_G && (e->modifiers() & Qt::ControlModifier)) {
 			mShowCoordinateSystemLines->set(!mShowCoordinateSystemLines->get());
 		}
-		
+
 		//TODO moveOffset and sideOffset seem to be relicts from previous refactorings. Check and remove!
 // 		double moveOffset = mMaxMoveStepSize->get();
 // 		double sideOffset = mMaxSideStepSize->get();
@@ -2300,7 +2342,7 @@ void OpenGLVisualization::drawCylinder(CollisionObject *currentCollisionObject, 
 			glDisable(GL_TEXTURE_2D);
 		}
 		glBindTexture( GL_TEXTURE_2D, mTexture[0] );
-		glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(), 
+		glTexImage2D( GL_TEXTURE_2D, 0, 3, mTextureImages.value(textureType).width(),
 					  mTextureImages.value(textureType).height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 					  mTextureImages.value(textureType).bits());
 	}
@@ -2382,44 +2424,44 @@ void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
 	Vector3D startPoint = ray->getLocalPosition();
 	Vector3D endPoint = startPoint;
 	endPoint.setZ(endPoint.getZ() + length);
-	
+
 	Vector3D pos = ray->getLocalPosition();
-	
+
 	Quaternion localRayOrientation = ray->getLocalOrientation();
-	
+
 	Vector3D newPoint;
 	Quaternion back(localRayOrientation);
 	back.setW(-back.getW());
 	Quaternion inv = back.getInverse();
 	Quaternion old(0, 0, 0, 0);
-	
+
 	Quaternion inverse = localRayOrientation.getInverse();
-	
+
 	old.set(0, startPoint.getX(), startPoint.getY(), startPoint.getZ());
 	Quaternion newPointQ = localRayOrientation * old * inverse;
 	startPoint.set(newPointQ.getX(), newPointQ.getY(), newPointQ.getZ());
-	
+
 	old.set(0, endPoint.getX(), endPoint.getY(), endPoint.getZ());
 	newPointQ = localRayOrientation * old * inverse;
 	endPoint.set(newPointQ.getX(), newPointQ.getY(), newPointQ.getZ());
 
-	
+
 	glPushMatrix();
 	glShadeModel(GL_FLAT);
 	glTranslated(pos.getX(), pos.getY(), pos.getZ());
 	//glRotated(angle, x, y, z);
-	
-	
+
+
 	glLineWidth(1);
 	glBegin(GL_LINES);
 	glVertex3d(startPoint.getX(), startPoint.getY(), startPoint.getZ());
 	glVertex3d(endPoint.getX(), endPoint.getY(), endPoint.getZ());
 	glEnd();
 	glPopMatrix();
-*/	
-	
+*/
+
 	 //TODO the above changes are only testwise!
-	 
+
 	 RayGeom *ray = dynamic_cast<RayGeom*>(currentCollisionObject->getGeometry());
 	 if(ray == 0) {
 		 return;
@@ -2428,9 +2470,9 @@ void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
 	 Vector3D startPoint = ray->getLocalPosition();
 	 Vector3D endPoint = startPoint;
 	 endPoint.setZ(endPoint.getZ() + length);
-	 
+
 	 Vector3D pos = ray->getLocalPosition();
-	 
+
 	 Quaternion quaternion = ray->getLocalOrientation();
 	 double angle = 2 * acos(quaternion.getW());
 	 double scale = sqrt(quaternion.getX() * quaternion.getX() + quaternion.getY()
@@ -2438,28 +2480,28 @@ void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
 	 double x = 0.0;
 	 double y = 0.0;
 	 double z = 0.0;
-	 
+
 	 if(scale != 0.0) {
 		 x = quaternion.getX() / scale;
 		 y = quaternion.getY() / scale;
 		 z = quaternion.getZ() / scale;
 	 }
 	 angle = angle * 180.0 / Math::PI;
-	 
+
 	 glPushMatrix();
 	 glShadeModel(GL_FLAT);
 	 glTranslated(pos.getX(), pos.getY(), pos.getZ());
 	 glRotated(angle, x, y, z);
-	 
-	 
-	 
+
+
+
 	 glLineWidth(1);
 	 glBegin(GL_LINES);
 	 glVertex3d(startPoint.getX(), startPoint.getY(), startPoint.getZ());
 	 glVertex3d(endPoint.getX(), endPoint.getY(), endPoint.getZ());
 	 glEnd();
 	 glPopMatrix();
-	 
+
 // 	RayGeom *ray = dynamic_cast<RayGeom*>(currentCollisionObject->getGeometry());
 // 	if(ray == 0) {
 // 		return;
@@ -2468,9 +2510,9 @@ void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
 // 	Vector3D startPoint = ray->getLocalPosition();
 // 	Vector3D endPoint = startPoint;
 // 	endPoint.setZ(endPoint.getZ() + length);
-// 
+//
 // 	Vector3D pos = ray->getLocalPosition();
-// 
+//
 // 	Quaternion quaternion = ray->getLocalOrientation();
 // 	double angle = 2 * acos(quaternion.getW());
 // 	double scale = sqrt(quaternion.getX() * quaternion.getX() + quaternion.getY()
@@ -2478,28 +2520,28 @@ void OpenGLVisualization::drawRay(CollisionObject *currentCollisionObject) {
 // 	double x = 0.0;
 // 	double y = 0.0;
 // 	double z = 0.0;
-// 
+//
 // 	if(scale != 0.0) {
 // 		x = quaternion.getX() / scale;
 // 		y = quaternion.getY() / scale;
 // 		z = quaternion.getZ() / scale;
 // 	}
 // 	angle = angle * 180.0 / Math::PI;
-// 
+//
 // 	glPushMatrix();
 // 	glShadeModel(GL_FLAT);
 // 	glTranslated(pos.getX(), pos.getY(), pos.getZ());
 // 	glRotated(angle, x, y, z);
-// 	
-// 
+//
+//
 // 	glLineWidth(1);
 // 	glBegin(GL_LINES);
 // 		glVertex3d(startPoint.getX(), startPoint.getY(), startPoint.getZ());
 // 		glVertex3d(endPoint.getX(), endPoint.getY(), endPoint.getZ());
 // 	glEnd();
 // 	glPopMatrix();
-	
-	
+
+
 }
 
 

@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -67,6 +67,8 @@
 #include <QGLFramebufferObject>
 #include "PlugIns/CommandLineArgument.h"
 #include <GL/glu.h>
+#include "Value/ULongLongValue.h"
+#include "Math/Vector3D.h"
 
 namespace nerd{
 
@@ -87,18 +89,18 @@ class CollisionObject;
 class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 							public virtual EventListener
 {
-	
+
 	Q_OBJECT
 
 	public:
-		OpenGLVisualization(bool isManipulatable, SimBody *referenceBody, 
+		OpenGLVisualization(bool isManipulatable, SimBody *referenceBody,
 					const QString &name, bool publishValues=false, QWidget *w = 0);
 		virtual ~OpenGLVisualization();
 		void init();
 		virtual void valueChanged(Value *value);
 		virtual void eventOccured(Event *event);
 		virtual QString getName() const;
-		
+
 		static double getDefaultOpeningAngle();
 		static double getDefaultMinCutoff();
 		static double getDefaultMaxCutoff();
@@ -109,11 +111,13 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		void stopVisualizationTimer();
 
 	public slots:
-		void keyPressEvent(QKeyEvent *e);	
+		void keyPressEvent(QKeyEvent *e);
 		void keyReleaseEvent(QKeyEvent *e);
 		void resetViewport();
 		void changeVisibility();
 		void closeEvent(QCloseEvent *e);
+		void activatePlotter(QString names);
+		void deactivatePlotter();
 
 	protected slots:
 		void mousePressEvent(QMouseEvent *e);
@@ -121,16 +125,16 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		void mouseMoveEvent(QMouseEvent *e);
 		void moveViewPoint();
 		void wheelEvent(QWheelEvent *e);
-	
+
 	private slots:
 		void updateGL();
-	
+
 	protected:
 		void paintGL();
 		void initializeGL();
 		void resizeGL(int width, int height);
 		void focusOutEvent(QFocusEvent *event);
-	
+
 	private:
 		void updateVisualization();
 		void createEnvironmentConditions();
@@ -154,16 +158,16 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		double off;
 		bool mLightChanged;
 		bool mPublishValues;
-		bool mInitSuccessful;	
-		bool mShiftHold;	
+		bool mInitSuccessful;
+		bool mShiftHold;
 		bool mRightButtonPress;
 		bool mLeftButtonPress;
 		bool mMiddleButtonPress;
-		bool mShowAxisAndCollisionObjects; 
+		bool mShowAxisAndCollisionObjects;
 
 		bool mTimerChanged;
 		bool mViewChanged;
-		
+
 		int mWindowPosX;
 		int mWindowPosY;
 		int mUpdateInterval;
@@ -176,7 +180,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		double mY;
 		double mZ;
 		double mStepSizeDistance;
-		
+
 		SimBody *mReferenceBody;
 		StringValue *mReferenceBodyName;
 
@@ -190,18 +194,18 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		Vector3DValue *mCurrentPosition;
 		Vector3DValue *mCurrentOrientation;
 		Vector3DValue* mReferenceBodyPosition;
-		
+
 		QuaternionValue *mReferenceBodyOrientation;
-		
+
 		IntValue *mViewPortUpdateTimerInterval;
 		IntValue *mPaintUpdateTimerInterval;
-	
+
 		DoubleValue *mShininess;
 		DoubleValue *mMinMoveStepSize;
 		DoubleValue *mMaxMoveStepSize;
 		DoubleValue *mMinSideStepSize;
 		DoubleValue *mMaxSideStepSize;
-		DoubleValue *mMouseRotationStepSize;	
+		DoubleValue *mMouseRotationStepSize;
 		DoubleValue *mSimulationTime;
 		DoubleValue *mRealTime;
 		IntValue *mTimeDisplaySize;
@@ -215,10 +219,10 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 
 		ColorValue *mClearColorValue;
 		ColorValue *mTimeTextColorValue;
-			
+
 		BoolValue *mDrawCoordinateAxes;
 		BoolValue *mIsManipulatable;
-		BoolValue *mPauseValue;	
+		BoolValue *mPauseValue;
 		BoolValue *mUseTexturesValue;
 		BoolValue *mDisplaySimulationTime;
 		BoolValue *mShowOnlySimulationTime;
@@ -235,13 +239,13 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 
 		QString mVisualizationName;
 
-		QTimer *mChangeViewportTimer;	
+		QTimer *mChangeViewportTimer;
 		QTimer *mVisualizationTimer;
-	
+
 		Vector3D mMouseClickPosition;
 		Vector3D mMouseCurrentPosition;
 
-		GLUquadricObj *mGluObject;		
+		GLUquadricObj *mGluObject;
 		GLuint mTexture[1];
 		GLuint	mSkyTexture[1];
 
@@ -260,6 +264,13 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		BoolValue *mDrawOnTopOfPreviousFrame;
 
 		CommandLineArgument *mDisableTexturesArg;
+
+		ULongLongValue *mTotalStepsCounters;
+		StringValue *mPosPlotNames;
+		//QList<SimBody*> mPosPlotBodies;
+		//QList< QList < Vector3D > > mPosPlotData;
+		QHash<SimBody*,Vector3D> mPosPlotData;
+		BoolValue *mPosPlotActive;
 };
 
 }

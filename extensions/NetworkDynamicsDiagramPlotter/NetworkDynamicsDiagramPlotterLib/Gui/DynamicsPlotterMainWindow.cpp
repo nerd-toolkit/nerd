@@ -52,6 +52,8 @@
 #include <PlugIns/CommandLineArgument.h>
 #include "Gui/Visualization/OpenGLVisualization.h"
 #include <QGridLayout>
+#include "Gui/GuiManager.h"
+#include "NerdConstants.h"
 
 namespace nerd {
 
@@ -59,6 +61,7 @@ DynamicsPlotterMainWindow::DynamicsPlotterMainWindow(bool enableSimulator, bool 
 		: mWidgetLayout(0), mMainMenuBar(0),
 		mDebugLoggerPanel(0), mVisualization(0), mShutDownTriggered(false)
 {
+    GuiManager::getGlobalGuiManager()->addWidget(NerdConstants::GUI_MAIN_SIMULATION_WINDOW, this);
 	setup(enableSimulator, enableDebugging);
 }
 

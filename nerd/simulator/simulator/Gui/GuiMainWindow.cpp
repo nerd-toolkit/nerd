@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -72,7 +72,7 @@ namespace nerd{
 
 
 
-GuiMainWindow::GuiMainWindow(bool simulationIsControllable, bool enableDebugging) 
+GuiMainWindow::GuiMainWindow(bool simulationIsControllable, bool enableDebugging)
 	: mVisualization(0), mControlArea(0), mWidgetLayout(0), mMainMenuBar(0),
 	  mEventList(0), mVisualizationChooser(0), mEventDetailPanel(0),
 	  mValueDetailPanel(0), mDebugLoggerPanel(0), mValueLoggerPanel(0),
@@ -82,7 +82,7 @@ GuiMainWindow::GuiMainWindow(bool simulationIsControllable, bool enableDebugging
 	GuiManager::getGlobalGuiManager()->addWidget(NerdConstants::GUI_MAIN_SIMULATION_WINDOW, this);
 
 	setup(simulationIsControllable, enableDebugging);
-	
+
 }
 
 GuiMainWindow::~GuiMainWindow() {
@@ -144,15 +144,15 @@ void GuiMainWindow::valueChanged(Value *value) {
 QString GuiMainWindow::getName() const {
 	return "GuiMainWindow";
 }
-		
-		
+
+
 QString GuiMainWindow::getIconName() {
 	return "orcsLogo.png";
 }
 
 void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 
-	CommandLineArgument *windowTitleArg = new CommandLineArgument("setTitle", "setTitle", "<Title with up to 10 words>", 
+	CommandLineArgument *windowTitleArg = new CommandLineArgument("setTitle", "setTitle", "<Title with up to 10 words>",
 						"Sets the title of the main application.", 1, 10, false, false);
 	if(windowTitleArg->getNumberOfEntries() > 0) {
 		QStringList titleFragments = windowTitleArg->getEntryParameters(0);
@@ -175,7 +175,7 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 								.append(GuiMainWindow::getIconName());
 	if(!jpgImage.load(name)) {
 		Core::log("Could not load Window-Icon");
-	} 
+	}
 	else {
 		image = QPixmap::fromImage(jpgImage);
 		QIcon orcsIcon(image);
@@ -257,7 +257,16 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	visuChooserAction->setWhatsThis("Allows the creation and management of additional "
 									"camera viewpoints of the simulation.");
 	connect(visuChooserAction, SIGNAL(triggered()), mVisualizationChooser, SLOT(showWindow()));
-	
+
+	//Add position plotter panel
+	mPositionPlotter = new PositionPlotter();
+	QAction *posPlotterAction = viewMenu->addAction(tr("&Position Plotter"));
+	posPlotterAction->setWhatsThis("Gives simple control for online position "
+                                   "plotting in the running simulation");
+    connect(posPlotterAction, SIGNAL(triggered()), mPositionPlotter, SLOT(showWindow()));
+    connect(mPositionPlotter, SIGNAL(activatePlotter(QString)), mVisualization, SLOT(activatePlotter(QString)));
+    connect(mPositionPlotter, SIGNAL(deactivatePlotter()), mVisualization, SLOT(deactivatePlotter()));
+
 	//Add real-time recorder checkbox
 	QAction *recordWithCameraAction = new BoolValueSwitcherAction("Record Video", SimulationConstants::VALUE_RUN_REAL_TIME_RECORDER);
 	recordWithCameraAction->setWhatsThis("Starts and stops the real-time recorder. When stopped, then the video is played back.");
@@ -269,34 +278,34 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	mPluginWindows.append(helpWindow);
 	helpWindow->getAction()->setShortcut(tr("F1"));
 	helpMenu->addAction(helpWindow->getAction());
-	
+
 	QAction *showWebHelp = helpMenu->addAction("Online Help");
 	connect(showWebHelp, SIGNAL(triggered(bool)),
 			this, SLOT(openWebHelp()));
-	
+
 	helpMenu->addSeparator();
 
 	helpMenu->addAction(QWhatsThis::createAction());
 
 	helpMenu->addSeparator();
-	
+
 	QAction *showHomepage = helpMenu->addAction("NERD Toolkit Homepage");
 	connect(showHomepage, SIGNAL(triggered(bool)),
 			this, SLOT(openWebHome()));
-	
+
 	AboutInfoWidget *aboutWindow = new AboutInfoWidget(tr("About NERD"));
 	mPluginWindows.append(aboutWindow);
 	helpMenu->addAction(aboutWindow->getAction());
-	
-	
-	mToggleWindowArgument = new CommandLineArgument("toggle", "toggle", "", 
+
+
+	mToggleWindowArgument = new CommandLineArgument("toggle", "toggle", "",
 						"Makes the OpenGL windows toggle. (Required in some VNC Viewers)", 0, 0, true, false);
-	
+
 	mToggleWindowValue = mToggleWindowArgument->getParameterValue();
 	if(mToggleWindowValue != 0) {
 		mToggleWindowValue->addValueChangedListener(this);
 	}
-	
+
 	//If environment variable VIDEO MODE is set, then prevent windows toggling
 	QByteArray videoMode = qgetenv(NerdConstants::ENV_VAR_VIDEO_MODE.toUtf8());
 	if(!videoMode.isNull()) {
@@ -317,7 +326,7 @@ void GuiMainWindow::createBasicControlMenu() {
 
 	//Add bypass neurocontroller checkbox
 	BoolValueSwitcherAction *bypassNetworksAction =
-			new BoolValueSwitcherAction("Bypass NeuroControllers", 
+			new BoolValueSwitcherAction("Bypass NeuroControllers",
 							SimulationConstants::VALUE_NNM_BYPASS_NETWORKS);
 	bypassNetworksAction->setWhatsThis("Enables or disables the NeuroControllers.");
 	controlMenu->addAction(bypassNetworksAction);
@@ -350,7 +359,7 @@ void GuiMainWindow::createBasicControlMenu() {
 	controlMenu->addAction(pauseAction);
 
 	//Add next step trigger
-	NextStepTriggerAction *nextStepAction = 
+	NextStepTriggerAction *nextStepAction =
 			new NextStepTriggerAction("&Next Step");
 	nextStepAction->setShortcut(tr("Ctrl+n"));
 	nextStepAction->setWhatsThis("If the simulator is paused, then a single simulation step "
@@ -433,7 +442,7 @@ void GuiMainWindow::showWindow() {
 	}
 	show();
 	//mWindowToggleTimer.setInterval(100);
-	
+
 	//update toggle state.
 	connect(&mWindowToggleTimer, SIGNAL(timeout()),
 						this, SLOT(toggleTimerExpired()));
