@@ -369,7 +369,7 @@ void OpenGLVisualization::deactivatePlotter() {
     mPosPlotActive->set(false);
     mPosPlotData.clear();
     mPosPlotNames->set("");
-    if(mPosPlotData.size() == 0 && !mPosPlotActive⁻>get()) {
+    if(mPosPlotData.size() == 0 && !mPosPlotActive->get()) {
         cout << "OpenGLVis: plotter data all cleared" << endl;
     }
 }
@@ -869,11 +869,32 @@ void OpenGLVisualization::updateVisualization() {
 	glDisable(GL_BLEND);
 
     // ONLINE POSITION PLOTTER (josef)
-	// TODO draw position trace and save current position
-	// add current position to list/map
 	if(mPosPlotActive->get()) {
-        for(int k=0; k<mPosPlotData.size(); ++k) {
-            // TODO
+		cout << "Position Plotter active ..." << endl;
+        QList<SimBody*> bodyList = mPosPlotData.uniqueKeys();
+        for(int i=0; i<bodyList.size(); ++i) {
+            SimBody *body = bodyList.at(i);
+            Vector3D newPosition = body->getPositionValue()->get();
+
+            if(!newPosition.equals(mPosPlotData.value(body))) {
+                mPosPlotData.insertMulti(body, newPosition);
+            }
+
+            QList<Vector3D> positions = mPosPlotData.values(body);
+
+            if(positions.size() > 1) {
+				cout << "Plotting positions ..." << endl;
+                QList<Vector3D>::const_iterator p;
+
+                glLineWidth(2.5);
+                glColor3f(1.0, 0.0, 0.0);
+                glBegin(GL_LINE_STRIP);
+                for (p = positions.constBegin(); p != positions.constEnd(); ++p) {
+					cout << "Setting vertex ..." << endl;
+                    glVertex3f((*p).getX(), (*p).getY(), (*p).getZ());
+                }
+                glEnd();
+            }
         }
 	}
 }
