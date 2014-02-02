@@ -116,8 +116,10 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		void resetViewport();
 		void changeVisibility();
 		void closeEvent(QCloseEvent *e);
-		void activatePlotter(QString names);
+		void activatePlotter(QString names, double width, QColor color);
 		void deactivatePlotter();
+		void setPlotterColor(QColor color);
+		void setPlotterWidth(double width);
 
 	protected slots:
 		void mousePressEvent(QMouseEvent *e);
@@ -271,6 +273,8 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		//QList< QList < Vector3D > > mPosPlotData;
 		QHash<SimBody*,Vector3D> mPosPlotData;
 		BoolValue *mPosPlotActive;
+		DoubleValue *mPosPlotWidth;
+		QColor mPosPlotColor;
 };
 
 }

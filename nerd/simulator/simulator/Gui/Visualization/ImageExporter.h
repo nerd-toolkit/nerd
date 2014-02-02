@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   NERD - Neurodynamics and Evolutionary Robotics Development Toolkit    *
  *                                                                         *
@@ -43,105 +44,44 @@
 
 
 
-#ifndef GuiMainWindow_H_
-#define GuiMainWindow_H_
-#include "Gui/Visualization/OpenGLVisualization.h"
-#include "Gui/Value/ValueVisualizationWindow.h"
-#include "Gui/Event/EventVisualizationWindow.h"
-#include "Gui/Visualization/VisualizationChooser.h"
-#include "Gui/Visualization/PositionPlotter.h"
-#include "Gui/Visualization/ImageExporter.h"
-#include "Gui/ControlWindow.h"
-#include <QGLWidget>
+#ifndef ImageExporter_H_
+#define ImageExporter_H_
 #include <QWidget>
-#include <QMouseEvent>
-#include <QKeyEvent>
-#include <QCloseEvent>
-#include <QMenuBar>
-#include "Gui/Value/ValueVisualizationWindow.h"
-#include "Gui/Event/EventVisualizationWindow.h"
-#include "Gui/Event/EventDetailPanel.h"
-#include "Gui/Value/ValueDetailPanel.h"
-#include "Gui/Parameter/MultipleParameterWindowWidget.h"
-#include "Gui/Parameter/ParameterVisualization.h"
-#include "Gui/DebugLoggerPanel/DebugLoggerPanel.h"
-#include "Util/Color.h"
-#include "Gui/Containers/MainWindowContainer.h"
-#include <QTimer>
-#include "PlugIns/CommandLineArgument.h"
-#include "Value/ValueChangedListener.h"
+#include <QGridLayout>
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QRadioButton>
 
 namespace nerd{
 
-class RobotView;
-class MotorControlGui;
-class MotorControlManager;
+class OpenGLVisualization;
 
-
-class GuiMainWindow : public QWidget, ValueChangedListener {
-
+class ImageExporter:public QWidget{
 	Q_OBJECT
 
 	public:
-		GuiMainWindow(bool simulationIsControllable, bool enableDebugging = false);
-		virtual ~GuiMainWindow();
-
-		virtual void valueChanged(Value *value);
-		virtual QString getName() const;
-
-		QMenuBar* getMenuBar();
-		QMenu* getMenu(const QString &name);
-		QPushButton* addButton(const QString &buttonName, QWidget *newPluginWindow);
-		QMenu* addMenu(const QString &buttonName, QWidget *newPluginWindow);
-		void addWidget(QWidget *newView);
-
-		virtual void createBasicControlMenu();
-
-		static QString getIconName();
+		ImageExporter();
+		~ImageExporter();
 
 	private:
-		void setup(bool openGLControllable, bool enableDebugging);
 
-	protected slots:
-		void closeEvent(QCloseEvent *e);
-
+    private slots:
+        void saveImage();
 
 	public slots:
-		void toggleTimerExpired();
 		void showWindow();
-		void openWebHelp();
-		void openWebHome();
+
+	signals:
+	    void exportViewport(QString, QString);
 
 	private:
-		OpenGLVisualization *mVisualization;
-		ControlWindow *mControlArea;
-		QGridLayout *mWidgetLayout;
-		QMenuBar *mMainMenuBar;
+		int mPosX;
+		int mPosY;
 
-		EventVisualizationWindow *mEventList;
-		VisualizationChooser *mVisualizationChooser;
-		PositionPlotter *mPositionPlotter;
-		ImageExporter *mImageExporter;
-		EventDetailPanel *mEventDetailPanel;
-		ValueDetailPanel *mValueDetailPanel;
-		DebugLoggerPanel *mDebugLoggerPanel;
-		DebugLoggerPanel *mValueLoggerPanel;
-// 		MotorControlGui *mMotorControlGui;
-		MotorControlManager *mMotorControlGui;
-		MainWindowContainer *mParameterManipulationWindow;
-		MultipleParameterWindowWidget *mParameterLists;
-		QVector<QWidget*> mPluginWindows;
-		QMap<QString, QMenu*> mMenuLookup;
-		QList<QWidget*> mViewList;
-		bool mShutDownTriggered;
-		bool mWindowToggleState;
-		QTimer mWindowToggleTimer;
-		CommandLineArgument *mToggleWindowArgument;
-		StringValue *mToggleWindowValue;
-
-
-
+		QGridLayout *mWindowLayout;
+		QRadioButton *mPngRadio;
+		QPushButton *mSaveButton;
 };
 }
 #endif
-

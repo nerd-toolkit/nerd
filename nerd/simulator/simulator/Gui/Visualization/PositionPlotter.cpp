@@ -49,6 +49,7 @@
 #include "Physics/SimBody.h"
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QColorDialog>
 #include "Gui/Visualization/OpenGLVisualization.h"
 #include "Physics/Physics.h"
 #include "Gui/GuiManager.h"
@@ -59,6 +60,10 @@ PositionPlotter::PositionPlotter() {
 	setWindowTitle("Position Plotter");
 	mPosX = 0;
 	mPosY = 0;
+
+    mPlotterActive = false;
+    mLineWidth = 2.5;
+    mLineColor = QColor(Qt::red);
 
 	GuiManager::getGlobalGuiManager()->addWidget("PositionPlotter", this);
 
@@ -103,11 +108,32 @@ PositionPlotter::PositionPlotter() {
 	mObjectList->hide();
 	mObjectList->setWhatsThis("List of all sim bodies being plotted.");
 
+	QLabel *widthLabel = new QLabel("Line Width");
+	mWidthSlider = new QSlider(Qt::Horizontal);
+	mWidthSlider->setMinimum(5);
+	mWidthSlider->setMaximum(100);
+	mWidthSlider->setSingleStep(5);
+	mWidthSlider->setValue(mLineWidth*10);
+	//QLabel *colorIndicator = new QLabel("Line Color");
+	//colorIndicator->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
+	//colorIndicator->setPalette(QPalette(mLineColor));
+	//colorIndicator->setAutoFillBackground(true);
+	mColorButton = new QPushButton("Line Color");
+	//mColorButton->setPalette(QPalette(mLineColor));
+	//mColorButton->setAutoFillBackground(true);
+	QHBoxLayout *optionLayout = new QHBoxLayout();
+	mWindowLayout->addLayout(optionLayout, 7, 0);
+	optionLayout->setMargin(1);
+	optionLayout->addWidget(widthLabel);
+	optionLayout->addWidget(mWidthSlider);
+	//optionLayout->addWidget(colorIndicator);
+	optionLayout->addWidget(mColorButton);
+
 	mActivateButton = new QPushButton("Activate Plotter");
 	mDeactivateButton = new QPushButton("Deactivate Plotter");
 	mDeactivateButton->setDisabled(true);
 	QHBoxLayout *controlLayout = new QHBoxLayout();
-	mWindowLayout->addLayout(controlLayout, 7, 0);
+	mWindowLayout->addLayout(controlLayout, 8, 0);
 	controlLayout->setMargin(1);
 	controlLayout->addWidget(mActivateButton);
 	controlLayout->setAlignment(mActivateButton, Qt::AlignRight);
@@ -119,12 +145,15 @@ PositionPlotter::PositionPlotter() {
     connect(mAddObject, SIGNAL(clicked()),
             this, SLOT(addObjectToList()));
 
+    connect(mWidthSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(setLineWidth(int)));
+	connect(mColorButton, SIGNAL(clicked()),
+			this, SLOT(setLineColor()));
+
 	connect(mActivateButton, SIGNAL(clicked()),
 			this, SLOT(plotterActivateAction()));
     connect(mDeactivateButton, SIGNAL(clicked()),
             this, SLOT(plotterDeactivateAction()));
-
-    mPlotterActive = false;
 
 }
 
@@ -139,7 +168,7 @@ void PositionPlotter::addObjectToList() {
             QListWidgetItem *item = new QListWidgetItem(objectName);
             mObjectList->addItem(item);
         }
-        std::cout << "Objects in internal list:" << std::endl;
+        //std::cout << "Objects in internal list:" << std::endl;
         for(int i=0; i<mObjectNameList.size(); ++i) {
             std::cout << mObjectNameList.at(i).toStdString() << std::endl;
         }
@@ -166,11 +195,32 @@ void PositionPlotter::removeSelectedObjects() {
             mActivateButton->setDisabled(true);
             mObjectList->hide();
         }
-        std::cout << "Objects in internal list:" << std::endl;
+        //std::cout << "Objects in internal list:" << std::endl;
         for(int i=0; i<mObjectNameList.size(); ++i) {
             std::cout << mObjectNameList.at(i).toStdString() << std::endl;
         }
     }
+}
+
+void PositionPlotter::setLineColor() {
+	QColor newColor =
+		QColorDialog::getColor(mLineColor, this);
+	if(newColor.isValid()) {
+		mLineColor = newColor;
+		//mColorButton->setPalette(QPalette(QColor(mLineColor)));
+		//mColorButton->setAutoFillBackground(true);
+		if(mPlotterActive) {
+			emit changeLineColor(mLineColor);
+		}
+	}
+}
+
+void PositionPlotter::setLineWidth(int value) {
+    mLineWidth = value / 10;
+    if(mPlotterActive) {
+        emit changeLineWidth(mLineWidth);
+    }
+
 }
 
 void PositionPlotter::plotterActivateAction() {
@@ -180,7 +230,7 @@ void PositionPlotter::plotterActivateAction() {
     mAddObject->setDisabled(true);
     mActivateButton->setDisabled(true);
     mDeactivateButton->setEnabled(true);
-    emit activatePlotter(names);
+    emit activatePlotter(names, mLineWidth, mLineColor);
 }
 
 void PositionPlotter::plotterDeactivateAction() {

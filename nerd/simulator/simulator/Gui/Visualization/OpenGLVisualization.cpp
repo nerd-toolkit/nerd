@@ -310,8 +310,11 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
                     getValue(SimulationConstants::VALUE_TOTAL_STEP_COUNTER));
 	mPosPlotNames = new StringValue("");
 	mPosPlotActive = new BoolValue(false);
+	mPosPlotWidth = new DoubleValue(2.5);
+	mPosPlotColor = QColor(Qt::red);
 	addParameter("PositionPlotObjects", mPosPlotNames, publishValues);
 	addParameter("PositionPlotActive", mPosPlotActive, publishValues);
+	addParameter("PositionPlotLineWidth", mPosPlotWidth, publishValues);
 }
 
 OpenGLVisualization::~OpenGLVisualization() {
@@ -350,28 +353,38 @@ OpenGLVisualization::~OpenGLVisualization() {
 	delete mFrameBuffer;
 }
 
-void OpenGLVisualization::activatePlotter(QString names) {
-    cout << "OpenGLVis: plotter activation signal received." << endl;
+void OpenGLVisualization::activatePlotter(QString names, double width, QColor color) {
+    //cout << "OpenGLVis: plotter activation signal received." << endl;
     mPosPlotNames->set(names);
+	mPosPlotWidth->set(width);
+	mPosPlotColor = color;
     QStringList nameList = names.split(",");
     for(int i=0; i<nameList.size(); ++i) {
         SimBody *body = Physics::getPhysicsManager()->getSimBody(nameList.at(i));
         if(body != 0 && !mPosPlotData.contains(body)) {
             mPosPlotData.insert(body, body->getPositionValue()->get());
         }
-        cout << "OpenGLVis: added body " << nameList.at(i).toStdString() << " to list" << endl;
+        //cout << "OpenGLVis: added body " << nameList.at(i).toStdString() << " to list" << endl;
     }
     mPosPlotActive->set(true);
 }
 
 void OpenGLVisualization::deactivatePlotter() {
-    cout << "OpenGLVis: plotter deactivation signal received." << endl;
+    //cout << "OpenGLVis: plotter deactivation signal received." << endl;
     mPosPlotActive->set(false);
     mPosPlotData.clear();
     mPosPlotNames->set("");
-    if(mPosPlotData.size() == 0 && !mPosPlotActive->get()) {
-        cout << "OpenGLVis: plotter data all cleared" << endl;
-    }
+    //if(mPosPlotData.size() == 0 && !mPosPlotActive->get()) {
+    //    cout << "OpenGLVis: plotter data all cleared" << endl;
+    //}
+}
+
+void OpenGLVisualization::setPlotterColor(QColor color) {
+	mPosPlotColor = color;
+}
+
+void OpenGLVisualization::setPlotterWidth(double width) {
+    mPosPlotWidth->set(width);
 }
 
 void OpenGLVisualization::closeEvent(QCloseEvent*) {
@@ -870,27 +883,31 @@ void OpenGLVisualization::updateVisualization() {
 
     // ONLINE POSITION PLOTTER (josef)
 	if(mPosPlotActive->get()) {
-		cout << "Position Plotter active ..." << endl;
+        double lineWidth = mPosPlotWidth->get();
+        QColor lineColor = mPosPlotColor;
+
         QList<SimBody*> bodyList = mPosPlotData.uniqueKeys();
         for(int i=0; i<bodyList.size(); ++i) {
             SimBody *body = bodyList.at(i);
             Vector3D newPosition = body->getPositionValue()->get();
 
+			// QHash.value takes most recent when multiple
             if(!newPosition.equals(mPosPlotData.value(body))) {
+				// do not remember the current position, if no movement
                 mPosPlotData.insertMulti(body, newPosition);
             }
 
+			// get all saved positions
             QList<Vector3D> positions = mPosPlotData.values(body);
 
+			// draw them
             if(positions.size() > 1) {
-				cout << "Plotting positions ..." << endl;
                 QList<Vector3D>::const_iterator p;
 
-                glLineWidth(2.5);
-                glColor3f(1.0, 0.0, 0.0);
+                glLineWidth(lineWidth);
+                glColor3f(lineColor.redF(), lineColor.greenF(), lineColor.blueF());
                 glBegin(GL_LINE_STRIP);
                 for (p = positions.constBegin(); p != positions.constEnd(); ++p) {
-					cout << "Setting vertex ..." << endl;
                     glVertex3f((*p).getX(), (*p).getY(), (*p).getZ());
                 }
                 glEnd();

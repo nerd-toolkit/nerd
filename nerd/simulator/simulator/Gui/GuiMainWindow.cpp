@@ -64,6 +64,7 @@
 #include <QDir>
 #include <QFile>
 #include <QDesktopServices>
+#include <QColor>
 
 
 using namespace std;
@@ -263,9 +264,23 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
 	QAction *posPlotterAction = viewMenu->addAction(tr("&Position Plotter"));
 	posPlotterAction->setWhatsThis("Gives simple control for online position "
                                    "plotting in the running simulation");
-    connect(posPlotterAction, SIGNAL(triggered()), mPositionPlotter, SLOT(showWindow()));
-    connect(mPositionPlotter, SIGNAL(activatePlotter(QString)), mVisualization, SLOT(activatePlotter(QString)));
-    connect(mPositionPlotter, SIGNAL(deactivatePlotter()), mVisualization, SLOT(deactivatePlotter()));
+    connect(posPlotterAction, SIGNAL(triggered()),
+			mPositionPlotter, SLOT(showWindow()));
+    connect(mPositionPlotter, SIGNAL(activatePlotter(QString, double, QColor)),
+			mVisualization, SLOT(activatePlotter(QString, double, QColor)));
+    connect(mPositionPlotter, SIGNAL(deactivatePlotter()),
+			mVisualization, SLOT(deactivatePlotter()));
+	connect(mPositionPlotter, SIGNAL(changeLineColor(QColor)),
+			mVisualization, SLOT(setPlotterColor(QColor)));
+    connect(mPositionPlotter, SIGNAL(changeLineWidth(double)),
+            mVisualization, SLOT(setPlotterWidth(double)));
+
+    mImageExporter = new ImageExporter();
+    QAction *imageExporterAction = viewMenu->addAction(tr("&Image Exporter"));
+    imageExporterAction->setWhatsThis("Allows export of current view as image file");
+    connect(imageExporterAction, SIGNAL(triggered()),
+            mImageExporter, SLOT(showWindow()));
+
 
 	//Add real-time recorder checkbox
 	QAction *recordWithCameraAction = new BoolValueSwitcherAction("Record Video", SimulationConstants::VALUE_RUN_REAL_TIME_RECORDER);

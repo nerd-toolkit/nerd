@@ -70,6 +70,8 @@ class PositionPlotter:public QWidget{
     private slots:
 		void addObjectToList();
 		void removeSelectedObjects();
+		void setLineColor();
+		void setLineWidth(int);
 		void plotterActivateAction();
 		void plotterDeactivateAction();
 
@@ -77,12 +79,18 @@ class PositionPlotter:public QWidget{
 		void showWindow();
 
 	signals:
-		void activatePlotter(QString);
+		void activatePlotter(QString, double, QColor);
 		void deactivatePlotter();
+		void changeLineColor(QColor);
+		void changeLineWidth(double);
 
 	private:
 		int mPosX;
 		int mPosY;
+
+		QColor mLineColor;
+		double mLineWidth;
+		bool mPlotterActive;
 
 		QComboBox *mObjectSelectionBox;
 		QGridLayout *mWindowLayout;
@@ -90,11 +98,12 @@ class PositionPlotter:public QWidget{
 		QPushButton *mAddObject;
 		QListWidget *mObjectList;
 		QPushButton *mRemoveObject;
+		QSlider *mWidthSlider;
+		QPushButton *mColorButton;
 		QPushButton *mActivateButton;
 		QPushButton *mDeactivateButton;
 
 		QStringList mObjectNameList;
-		bool mPlotterActive;
 };
 }
 #endif

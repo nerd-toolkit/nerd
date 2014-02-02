@@ -42,106 +42,74 @@
  ***************************************************************************/
 
 
-
-#ifndef GuiMainWindow_H_
-#define GuiMainWindow_H_
+#include <iostream>
+#include "ImageExporter.h"
+#include "Core/Core.h"
+#include <QGroupBox>
+#include <QFileDialog>
+#include <QHBoxLayout>
 #include "Gui/Visualization/OpenGLVisualization.h"
-#include "Gui/Value/ValueVisualizationWindow.h"
-#include "Gui/Event/EventVisualizationWindow.h"
-#include "Gui/Visualization/VisualizationChooser.h"
-#include "Gui/Visualization/PositionPlotter.h"
-#include "Gui/Visualization/ImageExporter.h"
-#include "Gui/ControlWindow.h"
-#include <QGLWidget>
-#include <QWidget>
-#include <QMouseEvent>
-#include <QKeyEvent>
-#include <QCloseEvent>
-#include <QMenuBar>
-#include "Gui/Value/ValueVisualizationWindow.h"
-#include "Gui/Event/EventVisualizationWindow.h"
-#include "Gui/Event/EventDetailPanel.h"
-#include "Gui/Value/ValueDetailPanel.h"
-#include "Gui/Parameter/MultipleParameterWindowWidget.h"
-#include "Gui/Parameter/ParameterVisualization.h"
-#include "Gui/DebugLoggerPanel/DebugLoggerPanel.h"
-#include "Util/Color.h"
-#include "Gui/Containers/MainWindowContainer.h"
-#include <QTimer>
-#include "PlugIns/CommandLineArgument.h"
-#include "Value/ValueChangedListener.h"
+#include "Gui/GuiManager.h"
 
 namespace nerd{
 
-class RobotView;
-class MotorControlGui;
-class MotorControlManager;
+ImageExporter::ImageExporter() {
+	setWindowTitle("Image Exporter");
+	mPosX = 0;
+	mPosY = 0;
+
+	GuiManager::getGlobalGuiManager()->addWidget("ImageExporter", this);
+
+	setAttribute(Qt::WA_QuitOnClose, false);
+	setAttribute(Qt::WA_DeleteOnClose, false);
+
+	mWindowLayout = new QGridLayout();
+	mWindowLayout->setMargin(1);
+	setLayout(mWindowLayout);
+
+	QGroupBox *groupBox = new QGroupBox(tr("Image format"));
+    QRadioButton *mPngRadio = new QRadioButton(tr("png"));
+    QHBoxLayout *hbox = new QHBoxLayout();
+    hbox->addWidget(mPngRadio);
+    hbox->addStretch(1);
+    groupBox->setLayout(hbox);
+
+    mPngRadio->setChecked(true);
+
+	mSaveButton = new QPushButton("Save image");
+
+    mWindowLayout->addWidget(groupBox);
+	mWindowLayout->addWidget(mSaveButton);
+	connect(mSaveButton, SIGNAL(clicked()),
+            this, SLOT(saveImage()));
 
 
-class GuiMainWindow : public QWidget, ValueChangedListener {
-
-	Q_OBJECT
-
-	public:
-		GuiMainWindow(bool simulationIsControllable, bool enableDebugging = false);
-		virtual ~GuiMainWindow();
-
-		virtual void valueChanged(Value *value);
-		virtual QString getName() const;
-
-		QMenuBar* getMenuBar();
-		QMenu* getMenu(const QString &name);
-		QPushButton* addButton(const QString &buttonName, QWidget *newPluginWindow);
-		QMenu* addMenu(const QString &buttonName, QWidget *newPluginWindow);
-		void addWidget(QWidget *newView);
-
-		virtual void createBasicControlMenu();
-
-		static QString getIconName();
-
-	private:
-		void setup(bool openGLControllable, bool enableDebugging);
-
-	protected slots:
-		void closeEvent(QCloseEvent *e);
-
-
-	public slots:
-		void toggleTimerExpired();
-		void showWindow();
-		void openWebHelp();
-		void openWebHome();
-
-	private:
-		OpenGLVisualization *mVisualization;
-		ControlWindow *mControlArea;
-		QGridLayout *mWidgetLayout;
-		QMenuBar *mMainMenuBar;
-
-		EventVisualizationWindow *mEventList;
-		VisualizationChooser *mVisualizationChooser;
-		PositionPlotter *mPositionPlotter;
-		ImageExporter *mImageExporter;
-		EventDetailPanel *mEventDetailPanel;
-		ValueDetailPanel *mValueDetailPanel;
-		DebugLoggerPanel *mDebugLoggerPanel;
-		DebugLoggerPanel *mValueLoggerPanel;
-// 		MotorControlGui *mMotorControlGui;
-		MotorControlManager *mMotorControlGui;
-		MainWindowContainer *mParameterManipulationWindow;
-		MultipleParameterWindowWidget *mParameterLists;
-		QVector<QWidget*> mPluginWindows;
-		QMap<QString, QMenu*> mMenuLookup;
-		QList<QWidget*> mViewList;
-		bool mShutDownTriggered;
-		bool mWindowToggleState;
-		QTimer mWindowToggleTimer;
-		CommandLineArgument *mToggleWindowArgument;
-		StringValue *mToggleWindowValue;
-
-
-
-};
 }
-#endif
 
+ImageExporter::~ImageExporter() {
+}
+
+void ImageExporter::saveImage() {
+    QString format = "png";
+    QString fileName = QFileDialog::getSaveFileName(this,
+                        tr("Export Image"),
+                        QString(),
+                        tr("All Files (*)"));
+    if(!fileName.isEmpty()) {
+        emit exportViewport(fileName, format);
+    }
+}
+
+
+void ImageExporter::showWindow() {
+	if(isHidden()) {
+		show();
+	}
+	else {
+		mPosX = x();
+		mPosY = y();
+		hide();
+	}
+}
+
+}
