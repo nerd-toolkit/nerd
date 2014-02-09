@@ -49,6 +49,7 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <QLineEdit>
+#include <QGroupBox>
 #include <QCheckBox>
 #include <QPushButton>
 #include <QRadioButton>
@@ -67,20 +68,24 @@ class ImageExporter:public QWidget{
 	private:
 
     private slots:
-        void saveImage();
+        void chooseFile();
 
 	public slots:
 		void showWindow();
+		void imageExported(bool);
 
 	signals:
-	    void exportViewport(QString, QString);
+	    void exportImage(QString, int, int);
 
 	private:
 		int mPosX;
 		int mPosY;
 
+        QString mFileName;
 		QGridLayout *mWindowLayout;
-		QRadioButton *mPngRadio;
+		QGroupBox *mSizeBox;
+		QLineEdit *mWidthEdit;
+		QLineEdit *mHeightEdit;
 		QPushButton *mSaveButton;
 };
 }

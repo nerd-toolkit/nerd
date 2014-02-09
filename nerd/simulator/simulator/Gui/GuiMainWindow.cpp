@@ -266,10 +266,10 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
                                    "plotting in the running simulation");
     connect(posPlotterAction, SIGNAL(triggered()),
 			mPositionPlotter, SLOT(showWindow()));
-    connect(mPositionPlotter, SIGNAL(activatePlotter(QString, double, QColor)),
-			mVisualization, SLOT(activatePlotter(QString, double, QColor)));
-    connect(mPositionPlotter, SIGNAL(deactivatePlotter()),
-			mVisualization, SLOT(deactivatePlotter()));
+    connect(mPositionPlotter, SIGNAL(activatePlotter(QString, double, QColor, bool)),
+			mVisualization, SLOT(activatePlotter(QString, double, QColor, bool)));
+    connect(mPositionPlotter, SIGNAL(deactivatePlotter(bool, bool)),
+			mVisualization, SLOT(deactivatePlotter(bool, bool)));
 	connect(mPositionPlotter, SIGNAL(changeLineColor(QColor)),
 			mVisualization, SLOT(setPlotterColor(QColor)));
     connect(mPositionPlotter, SIGNAL(changeLineWidth(double)),
@@ -280,6 +280,10 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
     imageExporterAction->setWhatsThis("Allows export of current view as image file");
     connect(imageExporterAction, SIGNAL(triggered()),
             mImageExporter, SLOT(showWindow()));
+    connect(mImageExporter, SIGNAL(exportImage(QString, int, int)),
+            mVisualization, SLOT(exportCurrentViewport(QString, int, int)));
+    connect(mVisualization, SIGNAL(viewportExported(bool)),
+            mImageExporter, SLOT(imageExported(bool)));
 
 
 	//Add real-time recorder checkbox

@@ -129,11 +129,17 @@ PositionPlotter::PositionPlotter() {
 	//optionLayout->addWidget(colorIndicator);
 	optionLayout->addWidget(mColorButton);
 
+	mKeepData = new QCheckBox("Keep position data on deactivation");
+	mWindowLayout->addWidget(mKeepData, 8, 0);
+
+	mControlSim = new QCheckBox("Control simulation with plotter");
+	mWindowLayout->addWidget(mControlSim, 9, 0);
+
 	mActivateButton = new QPushButton("Activate Plotter");
 	mDeactivateButton = new QPushButton("Deactivate Plotter");
 	mDeactivateButton->setDisabled(true);
 	QHBoxLayout *controlLayout = new QHBoxLayout();
-	mWindowLayout->addLayout(controlLayout, 8, 0);
+	mWindowLayout->addLayout(controlLayout, 10, 0);
 	controlLayout->setMargin(1);
 	controlLayout->addWidget(mActivateButton);
 	controlLayout->setAlignment(mActivateButton, Qt::AlignRight);
@@ -169,9 +175,9 @@ void PositionPlotter::addObjectToList() {
             mObjectList->addItem(item);
         }
         //std::cout << "Objects in internal list:" << std::endl;
-        for(int i=0; i<mObjectNameList.size(); ++i) {
-            std::cout << mObjectNameList.at(i).toStdString() << std::endl;
-        }
+        //for(int i=0; i<mObjectNameList.size(); ++i) {
+        //    std::cout << mObjectNameList.at(i).toStdString() << std::endl;
+        //}
         if(mObjectList->isHidden()) {
             mObjectList->show();
             mActivateButton->setEnabled(true);
@@ -196,9 +202,9 @@ void PositionPlotter::removeSelectedObjects() {
             mObjectList->hide();
         }
         //std::cout << "Objects in internal list:" << std::endl;
-        for(int i=0; i<mObjectNameList.size(); ++i) {
-            std::cout << mObjectNameList.at(i).toStdString() << std::endl;
-        }
+        //for(int i=0; i<mObjectNameList.size(); ++i) {
+        //    std::cout << mObjectNameList.at(i).toStdString() << std::endl;
+        //}
     }
 }
 
@@ -230,11 +236,11 @@ void PositionPlotter::plotterActivateAction() {
     mAddObject->setDisabled(true);
     mActivateButton->setDisabled(true);
     mDeactivateButton->setEnabled(true);
-    emit activatePlotter(names, mLineWidth, mLineColor);
+    emit activatePlotter(names, mLineWidth, mLineColor, mControlSim->isChecked());
 }
 
 void PositionPlotter::plotterDeactivateAction() {
-    emit deactivatePlotter();
+    emit deactivatePlotter(mKeepData->isChecked(), mControlSim->isChecked());
     mAddObject->setEnabled(true);
     mRemoveObject->setEnabled(true);
     mDeactivateButton->setDisabled(true);

@@ -79,8 +79,8 @@ class PositionPlotter:public QWidget{
 		void showWindow();
 
 	signals:
-		void activatePlotter(QString, double, QColor);
-		void deactivatePlotter();
+		void activatePlotter(QString, double, QColor, bool);
+		void deactivatePlotter(bool, bool);
 		void changeLineColor(QColor);
 		void changeLineWidth(double);
 
@@ -104,6 +104,8 @@ class PositionPlotter:public QWidget{
 		QPushButton *mDeactivateButton;
 
 		QStringList mObjectNameList;
+		QCheckBox *mKeepData;
+		QCheckBox *mControlSim;
 };
 }
 #endif

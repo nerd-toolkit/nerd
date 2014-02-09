@@ -73,6 +73,7 @@
 #include <iostream>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QSvgGenerator>
 #include "PlugIns/CommandLineArgument.h"
 
 using namespace std;
@@ -309,6 +310,7 @@ OpenGLVisualization::OpenGLVisualization(bool isManipulatable, SimBody *referenc
                     Core::getInstance()->getValueManager()->
                     getValue(SimulationConstants::VALUE_TOTAL_STEP_COUNTER));
 	mPosPlotNames = new StringValue("");
+	mPosPlotNames->addValueChangedListener(this);
 	mPosPlotActive = new BoolValue(false);
 	mPosPlotWidth = new DoubleValue(2.5);
 	mPosPlotColor = QColor(Qt::red);
@@ -353,7 +355,22 @@ OpenGLVisualization::~OpenGLVisualization() {
 	delete mFrameBuffer;
 }
 
-void OpenGLVisualization::activatePlotter(QString names, double width, QColor color) {
+void OpenGLVisualization::exportCurrentViewport(QString fileName, int w, int h) {
+    //cout << "Exporting current Viewport" << endl;
+    if(mPauseValue != 0) {
+        mPauseValue->set(true);
+        //cout << "Simulation paused" << endl;
+
+        //cout << "Saving current viewport to file " << fileName.toStdString() << endl;
+        if(w == 0 || h == 0) {
+            w = width();
+            h = height();
+        }
+        emit viewportExported(renderPixmap(w, h).save(fileName, 0, 90));
+    }
+}
+
+void OpenGLVisualization::activatePlotter(QString names, double width, QColor color, bool resume) {
     //cout << "OpenGLVis: plotter activation signal received." << endl;
     mPosPlotNames->set(names);
 	mPosPlotWidth->set(width);
@@ -367,13 +384,26 @@ void OpenGLVisualization::activatePlotter(QString names, double width, QColor co
         //cout << "OpenGLVis: added body " << nameList.at(i).toStdString() << " to list" << endl;
     }
     mPosPlotActive->set(true);
+    if(resume && mPauseValue != 0) {
+        mPauseValue->set(false);
+        //Core::getInstance()->getValueManager()->
+        //getBoolValue(SimulationConstants::VALUE_EXECUTION_PAUSE)->
+        //set(false);
+    }
 }
 
-void OpenGLVisualization::deactivatePlotter() {
+void OpenGLVisualization::deactivatePlotter(bool keepData, bool pause) {
     //cout << "OpenGLVis: plotter deactivation signal received." << endl;
+    if(pause && mPauseValue != 0) {
+        mPauseValue->set(true);
+        //Core::getInstance()->getValueManager()->
+        //getBoolValue(SimulationConstants::VALUE_EXECUTION_PAUSE)->
+        //set(true);
+    }
     mPosPlotActive->set(false);
-    mPosPlotData.clear();
-    mPosPlotNames->set("");
+    if(!keepData) {
+        mPosPlotData.clear();
+    }
     //if(mPosPlotData.size() == 0 && !mPosPlotActive->get()) {
     //    cout << "OpenGLVis: plotter data all cleared" << endl;
     //}
@@ -880,9 +910,10 @@ void OpenGLVisualization::updateVisualization() {
 		glPopMatrix();
 	}
 	glDisable(GL_BLEND);
+	glDisable(GL_LIGHTING);
 
     // ONLINE POSITION PLOTTER (josef)
-	if(mPosPlotActive->get()) {
+	//if(mPosPlotActive->get()) {
         double lineWidth = mPosPlotWidth->get();
         QColor lineColor = mPosPlotColor;
 
@@ -892,7 +923,9 @@ void OpenGLVisualization::updateVisualization() {
             Vector3D newPosition = body->getPositionValue()->get();
 
 			// QHash.value takes most recent when multiple
-            if(!newPosition.equals(mPosPlotData.value(body))) {
+            if(mPosPlotActive->get() &&
+               mPosPlotNames->get().split(",").contains(body->getAbsoluteName()) &&
+               !newPosition.equals(mPosPlotData.value(body))) {
 				// do not remember the current position, if no movement
                 mPosPlotData.insertMulti(body, newPosition);
             }
@@ -913,7 +946,8 @@ void OpenGLVisualization::updateVisualization() {
                 glEnd();
             }
         }
-	}
+	//}
+	glEnable(GL_LIGHTING);
 }
 
 void OpenGLVisualization::drawPlane(PlaneBody *plane) {
@@ -1225,10 +1259,6 @@ void OpenGLVisualization::updateGL() {
 		glDraw();
 
 		mGlIsUpdating = false;
-
-		//TODO remove, just to try out.
-		//QImage img = grabFrameBuffer(true);
-		//img.save(QString("screenImage_").append(getName()).append(".png"), "PNG");
 	}
 
 	if(runVisualizationTimer) {
@@ -1752,6 +1782,9 @@ void OpenGLVisualization::valueChanged(Value *value) {
 	if(value == 0) {
 		return;
 	}
+	if(value == mPosPlotNames) {
+        mPosPlotNameList = mPosPlotNames->get().split(",");
+	}
 	if(value == mCurrentPosition) {
 		mX = mCurrentPosition->getX();
 		mY = mCurrentPosition->getY();
@@ -1869,6 +1902,12 @@ void OpenGLVisualization::valueChanged(Value *value) {
 void OpenGLVisualization::eventOccured(Event *event) {
 	if(event == 0) {
 		return;
+	}
+	if(event == Core::getInstance()->getEventManager()->getEvent(NerdConstants::EVENT_EXECUTION_RESET_COMPLETED, false)) {
+        if(mPosPlotActive->get()) {
+            deactivatePlotter(false);
+            activatePlotter(mPosPlotNames->get(), mPosPlotWidth->get(), mPosPlotColor);
+        }
 	}
 	if(mPauseValue != 0 && mPauseValue->get()) {
 		if(mTriggerPaintEvents.contains(event)) {

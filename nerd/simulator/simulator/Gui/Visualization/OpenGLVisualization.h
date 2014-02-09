@@ -109,6 +109,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		void deleting(QString name);
 		void startVisualizationTimer();
 		void stopVisualizationTimer();
+		void viewportExported(bool);
 
 	public slots:
 		void keyPressEvent(QKeyEvent *e);
@@ -116,10 +117,11 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		void resetViewport();
 		void changeVisibility();
 		void closeEvent(QCloseEvent *e);
-		void activatePlotter(QString names, double width, QColor color);
-		void deactivatePlotter();
+		void activatePlotter(QString names, double width, QColor color, bool resume = false);
+		void deactivatePlotter(bool keepData = false, bool pause = false);
 		void setPlotterColor(QColor color);
 		void setPlotterWidth(double width);
+		void exportCurrentViewport(QString fileName, int w, int h);
 
 	protected slots:
 		void mousePressEvent(QMouseEvent *e);
@@ -269,6 +271,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 
 		ULongLongValue *mTotalStepsCounters;
 		StringValue *mPosPlotNames;
+		QStringList mPosPlotNameList;
 		//QList<SimBody*> mPosPlotBodies;
 		//QList< QList < Vector3D > > mPosPlotData;
 		QHash<SimBody*,Vector3D> mPosPlotData;

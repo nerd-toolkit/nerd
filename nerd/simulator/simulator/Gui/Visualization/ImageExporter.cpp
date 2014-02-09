@@ -45,8 +45,8 @@
 #include <iostream>
 #include "ImageExporter.h"
 #include "Core/Core.h"
-#include <QGroupBox>
 #include <QFileDialog>
+#include <QErrorMessage>
 #include <QHBoxLayout>
 #include "Gui/Visualization/OpenGLVisualization.h"
 #include "Gui/GuiManager.h"
@@ -67,36 +67,62 @@ ImageExporter::ImageExporter() {
 	mWindowLayout->setMargin(1);
 	setLayout(mWindowLayout);
 
-	QGroupBox *groupBox = new QGroupBox(tr("Image format"));
-    QRadioButton *mPngRadio = new QRadioButton(tr("png"));
+	mSizeBox = new QGroupBox(tr("Custom Image Size"));
+	mSizeBox->setCheckable(true);
+	mSizeBox->setChecked(false);
     QHBoxLayout *hbox = new QHBoxLayout();
-    hbox->addWidget(mPngRadio);
+    QLabel *widthLabel = new QLabel("Width");
+    mWidthEdit = new QLineEdit("0");
+    mWidthEdit->setInputMask("D9999");
+    QLabel *heightLabel = new QLabel("Height");
+    mHeightEdit = new QLineEdit("0");
+    mHeightEdit->setInputMask("D9999");
+    hbox->addWidget(widthLabel);
+    hbox->addWidget(mWidthEdit);
+    hbox->addWidget(heightLabel);
+    hbox->addWidget(mHeightEdit);
     hbox->addStretch(1);
-    groupBox->setLayout(hbox);
-
-    mPngRadio->setChecked(true);
+    mSizeBox->setLayout(hbox);
 
 	mSaveButton = new QPushButton("Save image");
 
-    mWindowLayout->addWidget(groupBox);
+    mWindowLayout->setSpacing(1);
+    mWindowLayout->addWidget(mSizeBox);
 	mWindowLayout->addWidget(mSaveButton);
 	connect(mSaveButton, SIGNAL(clicked()),
-            this, SLOT(saveImage()));
-
+            this, SLOT(chooseFile()));
 
 }
 
 ImageExporter::~ImageExporter() {
 }
 
-void ImageExporter::saveImage() {
-    QString format = "png";
-    QString fileName = QFileDialog::getSaveFileName(this,
+void ImageExporter::chooseFile() {
+    mFileName = QFileDialog::getSaveFileName(this,
                         tr("Export Image"),
                         QString(),
                         tr("All Files (*)"));
-    if(!fileName.isEmpty()) {
-        emit exportViewport(fileName, format);
+    if(!mFileName.isEmpty()) {
+        QString extension = ".png";
+        if(!mFileName.endsWith(extension)) {
+            mFileName.append(extension);
+        }
+        int w, h = 0;
+        if(mSizeBox->isChecked()) {
+            w = mWidthEdit->text().toInt();
+            h = mHeightEdit->text().toInt();
+        }
+        emit exportImage(mFileName, w, h);
+    }
+}
+
+void ImageExporter::imageExported(bool success) {
+    QErrorMessage *message = new QErrorMessage(this);
+    if(success) {
+        message->showMessage(QString("Image successfully exported to file ").
+                                    append(mFileName), "success");
+    } else {
+        message->showMessage("Image could not be saved.", "fail");
     }
 }
 
