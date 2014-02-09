@@ -73,7 +73,6 @@
 #include <iostream>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QSvgGenerator>
 #include "PlugIns/CommandLineArgument.h"
 
 using namespace std;
