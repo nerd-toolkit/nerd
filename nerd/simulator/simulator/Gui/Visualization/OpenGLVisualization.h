@@ -121,7 +121,7 @@ class OpenGLVisualization : public QGLWidget, public ParameterizedObject,
 		void deactivatePlotter(bool keepData = false, bool pause = false);
 		void setPlotterColor(QColor color);
 		void setPlotterWidth(double width);
-		void exportCurrentViewport(QString fileName, int w, int h);
+		void exportCurrentViewport(QString fileName, int w, int h, bool hideTime);
 
 	protected slots:
 		void mousePressEvent(QMouseEvent *e);

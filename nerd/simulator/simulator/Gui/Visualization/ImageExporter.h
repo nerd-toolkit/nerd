@@ -75,7 +75,7 @@ class ImageExporter:public QWidget{
 		void imageExported(bool);
 
 	signals:
-	    void exportImage(QString, int, int);
+	    void exportImage(QString, int, int, bool);
 
 	private:
 		int mPosX;
@@ -83,6 +83,7 @@ class ImageExporter:public QWidget{
 
         QString mFileName;
 		QGridLayout *mWindowLayout;
+		QCheckBox *mHideTimeBox;
 		QGroupBox *mSizeBox;
 		QLineEdit *mWidthEdit;
 		QLineEdit *mHeightEdit;

@@ -71,7 +71,7 @@ PositionPlotter::PositionPlotter() {
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
 	mWindowLayout = new QGridLayout();
-	mWindowLayout->setMargin(1);
+	mWindowLayout->setContentsMargins(11,11,11,11);
 	setLayout(mWindowLayout);
 
 	QGroupBox *simBodyBox = new QGroupBox();

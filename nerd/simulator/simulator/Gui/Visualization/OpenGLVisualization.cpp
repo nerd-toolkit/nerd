@@ -354,18 +354,19 @@ OpenGLVisualization::~OpenGLVisualization() {
 	delete mFrameBuffer;
 }
 
-void OpenGLVisualization::exportCurrentViewport(QString fileName, int w, int h) {
+void OpenGLVisualization::exportCurrentViewport(QString fileName, int w, int h, bool hideTime) {
     //cout << "Exporting current Viewport" << endl;
     if(mPauseValue != 0) {
         mPauseValue->set(true);
         //cout << "Simulation paused" << endl;
 
         //cout << "Saving current viewport to file " << fileName.toStdString() << endl;
-        if(w == 0 || h == 0) {
-            w = width();
-            h = height();
-        }
-        emit viewportExported(renderPixmap(w, h).save(fileName, 0, 90));
+
+        bool showTime = mDisplaySimulationTime->get();
+        mDisplaySimulationTime->set(!hideTime);
+        bool ok = renderPixmap(w, h).save(fileName, 0, 90);
+        mDisplaySimulationTime->set(showTime);
+        emit viewportExported(ok);
     }
 }
 
@@ -913,8 +914,10 @@ void OpenGLVisualization::updateVisualization() {
 
     // ONLINE POSITION PLOTTER (josef)
 	//if(mPosPlotActive->get()) {
-        double lineWidth = mPosPlotWidth->get();
-        QColor lineColor = mPosPlotColor;
+        glLineWidth(mPosPlotWidth->get());
+        glColor3f(mPosPlotColor.redF(),
+				  mPosPlotColor.greenF(),
+				  mPosPlotColor.blueF());
 
         QList<SimBody*> bodyList = mPosPlotData.uniqueKeys();
         for(int i=0; i<bodyList.size(); ++i) {
@@ -936,8 +939,6 @@ void OpenGLVisualization::updateVisualization() {
             if(positions.size() > 1) {
                 QList<Vector3D>::const_iterator p;
 
-                glLineWidth(lineWidth);
-                glColor3f(lineColor.redF(), lineColor.greenF(), lineColor.blueF());
                 glBegin(GL_LINE_STRIP);
                 for (p = positions.constBegin(); p != positions.constEnd(); ++p) {
                     glVertex3f((*p).getX(), (*p).getY(), (*p).getZ());

@@ -64,7 +64,6 @@ ImageExporter::ImageExporter() {
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
 	mWindowLayout = new QGridLayout();
-	mWindowLayout->setMargin(1);
 	setLayout(mWindowLayout);
 
 	mSizeBox = new QGroupBox(tr("Custom Image Size"));
@@ -74,20 +73,27 @@ ImageExporter::ImageExporter() {
     QLabel *widthLabel = new QLabel("Width");
     mWidthEdit = new QLineEdit("0");
     mWidthEdit->setInputMask("D9999");
+    //mWidthEdit->setFixedWidth(5);
     QLabel *heightLabel = new QLabel("Height");
     mHeightEdit = new QLineEdit("0");
     mHeightEdit->setInputMask("D9999");
+    //mHeightEdit->setFixedWidth(5);
     hbox->addWidget(widthLabel);
     hbox->addWidget(mWidthEdit);
     hbox->addWidget(heightLabel);
     hbox->addWidget(mHeightEdit);
     hbox->addStretch(1);
+    hbox->setContentsMargins(5,5,5,5);
     mSizeBox->setLayout(hbox);
+
+    mHideTimeBox = new QCheckBox("Hide current simulation time information on image");
+    mHideTimeBox->setChecked(true);
 
 	mSaveButton = new QPushButton("Save image");
 
-    mWindowLayout->setSpacing(1);
+    mWindowLayout->setContentsMargins(11, 11, 11, 11);
     mWindowLayout->addWidget(mSizeBox);
+    mWindowLayout->addWidget(mHideTimeBox);
 	mWindowLayout->addWidget(mSaveButton);
 	connect(mSaveButton, SIGNAL(clicked()),
             this, SLOT(chooseFile()));
@@ -112,7 +118,7 @@ void ImageExporter::chooseFile() {
             w = mWidthEdit->text().toInt();
             h = mHeightEdit->text().toInt();
         }
-        emit exportImage(mFileName, w, h);
+        emit exportImage(mFileName, w, h, mHideTimeBox->isChecked());
     }
 }
 

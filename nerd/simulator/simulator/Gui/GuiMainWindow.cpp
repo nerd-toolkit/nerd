@@ -280,8 +280,8 @@ void GuiMainWindow::setup(bool openGLControllable, bool enableDebugging) {
     imageExporterAction->setWhatsThis("Allows export of current view as image file");
     connect(imageExporterAction, SIGNAL(triggered()),
             mImageExporter, SLOT(showWindow()));
-    connect(mImageExporter, SIGNAL(exportImage(QString, int, int)),
-            mVisualization, SLOT(exportCurrentViewport(QString, int, int)));
+    connect(mImageExporter, SIGNAL(exportImage(QString, int, int, bool)),
+            mVisualization, SLOT(exportCurrentViewport(QString, int, int, bool)));
     connect(mVisualization, SIGNAL(viewportExported(bool)),
             mImageExporter, SLOT(imageExported(bool)));
 
