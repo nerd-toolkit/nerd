@@ -289,27 +289,29 @@ void PictureSeriesCreator::deactivate() {
 			QStringList args;
 
 			args << "mf://*.png"
-                 << "-mf w=" + mVideoResolutionWidth->getValueAsString()
-                 +     ":h=" + mVideoResolutionHeight->getValueAsString()
-                 +     ":fps=" + QString::number(framePerSecond)
-                 +     ":type=png";
+                 << "-mf"
+				 << "w=" + mVideoResolutionWidth->getValueAsString()
+                 +  ":h=" + mVideoResolutionHeight->getValueAsString()
+                 +  ":fps=" + QString::number(framePerSecond)
+                 +  ":type=png";
 
 			QString codec = mVideoCodec->get();
             if(codec == "raw") {
-                args << "-ovc raw";
+                args << "-ovc" << "raw";
             } else if(codec == "x264") {
-                args << "-ovc x264 -x264encopts preset=slow:tune=film:crf=20"
-                     << "-of rawvideo";
+                args << "-ovc" << "x264"
+					 << "-x264encopts" << "preset=slow:tune=film:crf=20"
+                     << "-of" << "rawvideo";
             } else {
                 // old arguments (fallback, low quality)
-                args << "-ovc lavc"
-                     << "-lavcopts vcodec=mpeg4:mbd=2:trell";
+                args << "-ovc" << "lavc"
+                     << "-lavcopts" << "vcodec=mpeg4:mbd=2:trell";
 			}
 
-			args << "-oac copy"
+			args << "-oac" << "copy"
 			     << "-o" << fileName;
 
-			Core::log("Execute: " + args.join(" "), true);
+			Core::log("Execute: mencoder " + args.join(" "), true);
 			encoderProc.start("mencoder", args);
 		}
 		else {
