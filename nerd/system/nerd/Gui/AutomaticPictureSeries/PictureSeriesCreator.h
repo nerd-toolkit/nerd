@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -65,8 +65,8 @@ namespace nerd {
 	 * PictureSeriesCreator.
 	 *
 	 */
-	class PictureSeriesCreator : public QObject, public virtual SystemObject, public ValueChangedListener, 
-								 public virtual EventListener 
+	class PictureSeriesCreator : public QObject, public virtual SystemObject, public ValueChangedListener,
+								 public virtual EventListener
 	{
 	Q_OBJECT
 	public:
@@ -107,6 +107,7 @@ namespace nerd {
 		BoolValue *mTryVideoCreation;
 		IntValue *mVideoResolutionWidth;
 		IntValue *mVideoResolutionHeight;
+		StringValue *mVideoCodec;
 		StringValue *mPlayBackCommand;
 		BoolValue *mPlayVideoBackAfterCreation;
 		BoolValue *mAutoGrabSimulationWindow;

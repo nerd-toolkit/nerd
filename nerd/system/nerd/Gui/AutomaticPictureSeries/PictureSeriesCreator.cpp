@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -89,6 +89,8 @@ PictureSeriesCreator::PictureSeriesCreator()
 	mRecordingRectangle = new StringValue("");
 	mVideoResolutionWidth = new IntValue(800);
 	mVideoResolutionHeight = new IntValue(600);
+	mVideoCodec = new StringValue("mpeg");
+	mVideoCodec->setDescription("possible values are: 'mpeg' (default), 'x264' and 'raw' (png stream)");
 	mPlayBackCommand = new StringValue("mplayer <name> -loop 0");
 	mPlayVideoBackAfterCreation = new BoolValue(true);
 	mAutoGrabSimulationWindow = new BoolValue(true);
@@ -114,6 +116,7 @@ PictureSeriesCreator::PictureSeriesCreator()
 	vm->addValue("/ScreenRecorder/Config/AutoGrabSimulationWindowAsRect", mAutoGrabSimulationWindow);
 	vm->addValue("/ScreenRecorder/Video/PreserveVideos", mPreserveVideos);
 	vm->addValue("/ScreenRecorder/Video/KeepImages", mKeepImages);
+	vm->addValue("/ScreenRecorder/Video/VideoCodec", mVideoCodec);
 
 	mRunCreator->addValueChangedListener(this);
 
@@ -188,9 +191,9 @@ void PictureSeriesCreator::eventOccured(Event *event) {
 
 			mScreenshotInProgress = true;
 			QCoreApplication::instance()->thread()->wait(Math::min(1000, mScreenShotDelay->get()));
-	
+
 			emit takeScreenshot();
-	
+
 			while(mScreenshotInProgress) {
 				QCoreApplication::instance()->thread()->wait(10);
 			}
@@ -265,7 +268,7 @@ void PictureSeriesCreator::deactivate() {
 	if(mTriggerEvent != 0) {
 		mTriggerEvent->removeEventListener(this);
 	}
-	
+
 	QString workingDir = mCurrentWorkingDirectory + "/" + mTimestampPrefix;
 
 	mTriggerEvent = 0;
@@ -273,40 +276,39 @@ void PictureSeriesCreator::deactivate() {
 	if(mTryVideoCreation->get()) {
 		//try mencoder
 		int framePerSecond = mFramePerSecond->get();
-		
+
 		QProcess encoderProc;
 		encoderProc.setWorkingDirectory(workingDir);
-		
+
 		QString fileName = mOutputFileName->get();
 		if(mPreserveVideos->get()) {
 			fileName = mTimestampPrefix + "_" + fileName;
 		}
 
 		if(mVideoCreationCommand->get().trimmed() == "") {
-			
-			
 			QStringList args;
-			// old arguments
+
 			args << "mf://*.png"
-				<< "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()
-						 + ":h=" + mVideoResolutionHeight->getValueAsString() 
-						 + ":fps=" + QString::number(framePerSecond) + ":type=png"
-				<< "-ovc" << "lavc"
-				<< "-lavcopts" << "vcodec=mpeg4:mbd=2:trell"
-				<< "-oac" << "copy"
-				<< "-o" << fileName;
-			
-// 			//new arguments should have a better quality?
-// 			args << "mf://*.png"
-// 				 << "-mf" << "w=" + mVideoResolutionWidth->getValueAsString()
-// 					+ ":h=" + mVideoResolutionHeight->getValueAsString() 
-// 					+ ":fps=" + QString::number(framePerSecond) + ":type=png"
-// 				 //<< "-mf" << "w=800:h=600:fps=25:type=png"
-// 				 << "-ovc" << "x264"
-// 				 << "-x264encopts" << "preset=slow:tune=film:crf=20"
-// 				 << "-of" << "rawvideo" 
-// 				 << "-o" <<  mOutputFileName->get();
-				
+                 << "-mf w=" + mVideoResolutionWidth->getValueAsString()
+                 +     ":h=" + mVideoResolutionHeight->getValueAsString()
+                 +     ":fps=" + QString::number(framePerSecond)
+                 +     ":type=png";
+
+			QString codec = mVideoCodec->get();
+            if(codec == "raw") {
+                args << "-ovc raw";
+            } else if(codec == "x264") {
+                args << "-ovc x264 -x264encopts preset=slow:tune=film:crf=20"
+                     << "-of rawvideo";
+            } else {
+                // old arguments (fallback, low quality)
+                args << "-ovc lavc"
+                     << "-lavcopts vcodec=mpeg4:mbd=2:trell";
+			}
+
+			args << "-oac copy"
+			     << "-o" << fileName;
+
 			Core::log("Execute: " + args.join(" "), true);
 			encoderProc.start("mencoder", args);
 		}
@@ -322,7 +324,7 @@ void PictureSeriesCreator::deactivate() {
 		cerr << "Encoding video (please wait)! ";
 
 		encoderProc.waitForStarted();
-	
+
 		while(encoderProc.state() == QProcess::Running) {
 			cerr << ".";
 			encoderProc.waitForFinished(500);
@@ -330,28 +332,28 @@ void PictureSeriesCreator::deactivate() {
 		}
 		cerr << "." << endl;
 		Core::getInstance()->executePendingTasks();
-	
+
 		//check for autoclear
 		if(encoderProc.exitCode() == 0) {
-			cerr << "Video [" << fileName.toStdString().c_str() 
+			cerr << "Video [" << fileName.toStdString().c_str()
 				 << "] created successfully!" << endl;
-				 
+
 			QDir wdir(mCurrentWorkingDirectory);
 			QFile outputFile(mCurrentWorkingDirectory + "/" + fileName);
 			if(outputFile.exists()) {
 				outputFile.remove();
 			}
 			wdir.rename(mTimestampPrefix + "/" + fileName, fileName);
-			
-			if(mKeepImages->get()) {	 
-				cerr << "All raw images are preserved in folder [" 
+
+			if(mKeepImages->get()) {
+				cerr << "All raw images are preserved in folder ["
 					 << workingDir.toStdString().c_str() << "]" << endl;
 			}
 			else {
 				cerr << "Deleting screenshots... Please wait!" << endl;
-		
+
 				QDir dir(workingDir);
-		
+
 				QStringList files = dir.entryList();
 				for(QListIterator<QString> i(files); i.hasNext();) {
 					QString fileName = i.next();
@@ -360,19 +362,19 @@ void PictureSeriesCreator::deactivate() {
 					}
 				}
 			}
-			
+
 			//play back video
 			if(mPlayVideoBackAfterCreation->get()) {
 				QString playbackCommand = mPlayBackCommand->get().replace("<name>", fileName);
 				QProcess playbackProc;
 				playbackProc.setWorkingDirectory(mCurrentWorkingDirectory);
-				
+
 				QStringList args = playbackCommand.split(" ");
 				if(args.size() > 0) {
 					QString command = args.first();
 					args.removeFirst();
 					playbackProc.start(command, args);
-					
+
 					playbackProc.waitForStarted();
 					cerr << "Please close video screen to resume simulation..." << endl;
 					while(playbackProc.state() == QProcess::Running) {
@@ -397,12 +399,12 @@ void PictureSeriesCreator::guessMainSimulationWindowRectangle() {
 	if(rectangleString == "" || mAutoGrabSimulationWindow->get()) {;
 		QWidget *mainSimulationWidget = GuiManager::getGlobalGuiManager()
 					->getWidget(NerdConstants::GUI_MAIN_SIMULATION_WINDOW);
-		
+
 		if(mainSimulationWidget != 0 && mainSimulationWidget->isWindow()) {
 			if(!(mainSimulationWidget->isHidden() || !mainSimulationWidget->isVisible())) {
 				mCurrentRecordingRectangle = mainSimulationWidget->frameGeometry();
 
-				Core::getInstance()->scheduleTask(new ChangeValueTask(mRecordingRectangle, 
+				Core::getInstance()->scheduleTask(new ChangeValueTask(mRecordingRectangle,
 						QString("(" )
 							+ QString::number(mCurrentRecordingRectangle.x()) + ","
 							+ QString::number(mCurrentRecordingRectangle.y()) + ","
