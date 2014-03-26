@@ -41,71 +41,107 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
-#include "ActivationFunction/ScriptableActivationFunction.h"
-#include "ActivationFunction/Izhikevitch2003SpikingActivationFunction.h"
-#include "ActivationFunction/AdditiveTimeDiscreteNeuroModulatorActivationFunction.h"
-#include "ActivationFunction/BiasActivationFunction.h"
-#include "ActivationFunction/EnergyNeuronActivationFunction.h"
+#include "EnergyNeuronActivationFunction.h"
+#include <QListIterator>
+#include "Network/Synapse.h"
+#include "Network/Neuron.h"
+#include <Math/Math.h>
+#include <iostream>
+#include <math.h>
+
+using namespace std;
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
+EnergyNeuronActivationFunction::EnergyNeuronActivationFunction()
+	: ActivationFunction("EnergyNeuron")
 {
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+    mRechargeRate = new DoubleValue(0.001);
+    mAutoDischargeRate = new DoubleValue(0.0001);
+    mMaxCharge = new DoubleValue(1.0);
+    mInitCharge = new DoubleValue(1.0);
+    mCurrentCharge = new DoubleValue(1.0);
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+	addParameter("RechargeRate", mRechargeRate);
+	mRechargeRate->setDescription("Factor for incoming charge from synapses");
+	addParameter("AutoDischargeRate", mAutoDischargeRate);
+	mAutoDischargeRate->setDescription("Rate for autmomatic decay of energy");
+	addParameter("MaxCharge", mMaxCharge);
+	mMaxCharge->setDescription("Maximum value of energy the neuron can 'hold'");
+	addParameter("InitCharge", mInitCharge);
+	mInitCharge->setDescription("The Initial charge of the neuron at reset");
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
-
-// 	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-// 		SelfRegulatingNeuronV2ActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		Izhikevitch2003SpikingActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteNeuroModulatorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		BiasActivationFunction());
-
-    Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-        EnergyNeuronActivationFunction());
+	addObservableOutput("Charge", mCurrentCharge);
 }
+
+EnergyNeuronActivationFunction::EnergyNeuronActivationFunction(
+			const EnergyNeuronActivationFunction &other)
+	: Object(), ValueChangedListener(),
+	  ObservableNetworkElement(other), ActivationFunction(other)
+{
+	mRechargeRate = dynamic_cast<DoubleValue*>(getParameter("RechargeRate"));
+	mAutoDischargeRate =
+        dynamic_cast<DoubleValue*>(getParameter("AutoDischargeRate"));
+	mMaxCharge = dynamic_cast<DoubleValue*>(getParameter("MaxCharge"));
+	mInitCharge = dynamic_cast<DoubleValue*>(getParameter("InitCharge"));
+	mCurrentCharge = new DoubleValue(mInitCharge->get());
+
+	addObservableOutput("Charge", mCurrentCharge);
+}
+
+EnergyNeuronActivationFunction::~EnergyNeuronActivationFunction() {
+}
+
+ActivationFunction* EnergyNeuronActivationFunction::createCopy() const {
+	return new EnergyNeuronActivationFunction(*this);
+}
+
+void EnergyNeuronActivationFunction::reset(Neuron*) {
+	mCurrentCharge->set(mInitCharge->get());
+}
+
+
+double EnergyNeuronActivationFunction::calculateActivation(Neuron *owner) {
+	ActivationFunction::calculateActivation(owner);
+	if(owner == 0) {
+		return 0.0;
+	}
+	//double activation = owner->getBiasValue().get(); // ignore bias?
+	double activation = mCurrentCharge->get() - mAutoDischargeRate->get();
+	if(activation < 0) {
+        activation = 0.0;
+	}
+
+	QList<Synapse*> synapses = owner->getSynapses();
+	double inCharge;
+	double factor = mRechargeRate->get();
+	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
+         inCharge = i.next()->calculateActivation();
+         if(inCharge > 0) {
+            activation += factor * inCharge;
+         }
+	}
+	if(activation > mMaxCharge->get()) {
+        activation = mMaxCharge->get();
+	}
+
+	mCurrentCharge->set(activation);
+	return activation;
+}
+
+bool EnergyNeuronActivationFunction::equals(ActivationFunction *activationFunction) const {
+	if(ActivationFunction::equals(activationFunction) == false) {
+		return false;
+	}
+	EnergyNeuronActivationFunction *af =
+ 			dynamic_cast<EnergyNeuronActivationFunction*>(activationFunction);
+
+	if(af == 0) {
+		return false;
+	}
+	return true;
+}
+
 
 }
 

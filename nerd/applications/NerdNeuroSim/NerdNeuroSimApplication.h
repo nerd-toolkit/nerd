@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -59,7 +59,7 @@ namespace nerd {
 	public:
 		NerdNeuroSimApplication();
 		virtual ~NerdNeuroSimApplication();
-	
+
 		virtual QString getName() const;
 
 	protected:
@@ -67,7 +67,7 @@ namespace nerd {
 		virtual bool setupApplication();
 		virtual bool buildSimulationModel();
 
-	private:		
+	private:
 
 	};
 

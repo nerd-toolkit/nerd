@@ -41,72 +41,40 @@
  *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
-#include "StandardActivationFunctions.h"
-#include "Network/Neuro.h"
-#include "ActivationFunction/AdditiveTimeDiscreteActivationFunction.h"
-#include "ActivationFunction/ASeriesActivationFunction.h"
-#include "ActivationFunction/SignalGeneratorActivationFunction.h"
-#include "ActivationFunction/DelayLineActivationFunction.h"
-#include "ActivationFunction/ChaoticNeuronActivationFunction.h"
-#include "ActivationFunction/MSeriesActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h"
-#include "ActivationFunction/LearningRules/SelfRegulatingNeuronV2ActivationFunction.h"
-#include "ActivationFunction/ScriptableActivationFunction.h"
-#include "ActivationFunction/Izhikevitch2003SpikingActivationFunction.h"
-#include "ActivationFunction/AdditiveTimeDiscreteNeuroModulatorActivationFunction.h"
-#include "ActivationFunction/BiasActivationFunction.h"
-#include "ActivationFunction/EnergyNeuronActivationFunction.h"
+
+#ifndef NERDEnergyNeuronActivationFunction_H
+#define NERDEnergyNeuronActivationFunction_H
+
+#include "ActivationFunction/ActivationFunction.h"
+#include "Value/DoubleValue.h"
 
 namespace nerd {
 
-StandardActivationFunctions::StandardActivationFunctions()
-{
-	//Time discrete additive activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteActivationFunction());
+	class EnergyNeuronActivationFunction : public ActivationFunction {
+	public:
+		EnergyNeuronActivationFunction();
+		EnergyNeuronActivationFunction(const EnergyNeuronActivationFunction &other);
+		virtual ~EnergyNeuronActivationFunction();
 
-	//ASeries activation function.
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ASeriesActivationFunction());
+		virtual ActivationFunction* createCopy() const;
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		MSeriesActivationFunction());
+		virtual void reset(Neuron *owner);
+		virtual double calculateActivation(Neuron *owner);
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SignalGeneratorActivationFunction());
+		bool equals(ActivationFunction *activationFunction) const;
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		DelayLineActivationFunction());
+	private:
+		DoubleValue *mRechargeRate;
+		//DoubleValue *mDischargeRate; // might be useful later
+		DoubleValue *mAutoDischargeRate;
+		DoubleValue *mMaxCharge;
+		DoubleValue *mInitCharge;
 
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ChaoticNeuronActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		SelfRegulatingNeuronActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableSelfRegulatingNeuronActivationFunction());
-
-// 	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-// 		SelfRegulatingNeuronV2ActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		ScriptableActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		Izhikevitch2003SpikingActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		AdditiveTimeDiscreteNeuroModulatorActivationFunction());
-
-	Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-		BiasActivationFunction());
-
-    Neuro::getNeuralNetworkManager()->addActivationFunctionPrototype(
-        EnergyNeuronActivationFunction());
-}
+		DoubleValue *mCurrentCharge;
+	};
 
 }
+
+#endif
 
 

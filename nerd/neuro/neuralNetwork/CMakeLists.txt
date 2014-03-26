@@ -2,69 +2,69 @@ cmake_minimum_required(VERSION 2.6)
 project(nerd_neuralNetwork)
 
 set(nerd_neuralNetwork_SRCS
-	Network/NeuralNetwork.cpp  
-	Network/Synapse.cpp  
-	Network/Neuron.cpp  
-	ActivationFunction/ActivationFunction.cpp  
-	TransferFunction/TransferFunction.cpp  
-	SynapseFunction/SynapseFunction.cpp  
-	ActivationFunction/AdditiveTimeDiscreteActivationFunction.cpp  
-	SynapseFunction/SimpleSynapseFunction.cpp  
-	TransferFunction/TransferFunctionTanh.cpp  
-	ModularNeuralNetwork/ModularNeuralNetwork.cpp  
-	Network/Neuro.cpp  
-	IO/NeuralNetworkIO.cpp  
-	IO/NeuralNetworkIOSimbaV3Xml.cpp  
-	Collections/StandardTransferFunctions.cpp  
-	Collections/StandardSynapseFunctions.cpp  
-	Collections/StandardActivationFunctions.cpp  
-	Collections/StandardNeuralNetworkFunctions.cpp  
-	NeuralNetworkConstants.cpp  
-	IO/NeuralNetworkIOEvosunXml.cpp  
-	ModularNeuralNetwork/NeuronGroup.cpp  
-	ModularNeuralNetwork/NeuroModule.cpp  
-	TransferFunction/TransferFunctionRamp.cpp  
-	ActivationFunction/ASeriesActivationFunction.cpp  
-	SynapseFunction/ASeriesSynapseFunction.cpp  
-	TransferFunction/TransferFunctionASeriesTanh.cpp  
-	Math/ASeriesFunctions.cpp  
-	Constraints/SymmetryConstraint.cpp  
-	Constraints/GroupConstraint.cpp  
-	Constraints/NumberOfNeuronsConstraint.cpp  
-	Constraints/NumberOfReadNeuronsConstraint.cpp  
-	Constraints/ConstraintManager.cpp  
-	Constraints/Constraints.cpp  
-	Collections/StandardConstraintCollection.cpp  
-	IO/NeuralNetworkIOBytecode.cpp  
-	Util/LoadNetworkIntoExistingNetwork.cpp  
-	ActivationFunction/SignalGeneratorActivationFunction.cpp  
-	TransferFunction/TransferFunctionSigmoid.cpp  
-	TransferFunction/TransferFunctionParameterizedSigmoid.cpp  
-	Constraints/NetworkElementPair.cpp  
-	SynapseFunction/AbsoluteValueSynapseFunction.cpp  
-	SynapseFunction/MultiplicativeSynapseFunction.cpp  
-	ModularNeuralNetwork/NeuroModuleManager.cpp  
-	Network/NeuralNetworkManager.cpp  
-	Collections/NeuroModuleCollection.cpp  
-	Util/NeuralNetworkUtil.cpp  
-	TransferFunction/TransferFunctionNeutral.cpp  
-	Network/NeuroTagManager.cpp  
-	Constraints/PreventMutualConnectionsConstraint.cpp  
-	PlugIns/NeuralNetworkAttributes.cpp  
-	Util/ReplaceModuleHandler.cpp  
-	Network/NeuralNetworkElement.cpp  
-	Constraints/SimpleScriptedConstraint.cpp  
-	Collections/StandardTagCollection.cpp  
-	Constraints/ConnectionSymmetryConstraint.cpp  
-	SynapseFunction/ASeriesMultiSynapseFunction.cpp  
-	IO/NeuralNetworkIOMSeriesBDN.cpp  
-	IO/NeuralNetworkIOASeriesBDN.cpp  
-	IO/DebugNeuralNetworkIOMSeriesComponentsBDN.cpp  
-	Constraints/WeightAndBiasCalculatorConstraint.cpp  
-	Script/ScriptedNetworkManipulator.cpp  
-	IO/NeuralNetworkBDNExporter.cpp  
-	Collections/UniversalNeuroScriptLoader.cpp  
-	Script/UniversalNeuroScriptingContext.cpp  
+	Network/NeuralNetwork.cpp
+	Network/Synapse.cpp
+	Network/Neuron.cpp
+	ActivationFunction/ActivationFunction.cpp
+	TransferFunction/TransferFunction.cpp
+	SynapseFunction/SynapseFunction.cpp
+	ActivationFunction/AdditiveTimeDiscreteActivationFunction.cpp
+	SynapseFunction/SimpleSynapseFunction.cpp
+	TransferFunction/TransferFunctionTanh.cpp
+	ModularNeuralNetwork/ModularNeuralNetwork.cpp
+	Network/Neuro.cpp
+	IO/NeuralNetworkIO.cpp
+	IO/NeuralNetworkIOSimbaV3Xml.cpp
+	Collections/StandardTransferFunctions.cpp
+	Collections/StandardSynapseFunctions.cpp
+	Collections/StandardActivationFunctions.cpp
+	Collections/StandardNeuralNetworkFunctions.cpp
+	NeuralNetworkConstants.cpp
+	IO/NeuralNetworkIOEvosunXml.cpp
+	ModularNeuralNetwork/NeuronGroup.cpp
+	ModularNeuralNetwork/NeuroModule.cpp
+	TransferFunction/TransferFunctionRamp.cpp
+	ActivationFunction/ASeriesActivationFunction.cpp
+	SynapseFunction/ASeriesSynapseFunction.cpp
+	TransferFunction/TransferFunctionASeriesTanh.cpp
+	Math/ASeriesFunctions.cpp
+	Constraints/SymmetryConstraint.cpp
+	Constraints/GroupConstraint.cpp
+	Constraints/NumberOfNeuronsConstraint.cpp
+	Constraints/NumberOfReadNeuronsConstraint.cpp
+	Constraints/ConstraintManager.cpp
+	Constraints/Constraints.cpp
+	Collections/StandardConstraintCollection.cpp
+	IO/NeuralNetworkIOBytecode.cpp
+	Util/LoadNetworkIntoExistingNetwork.cpp
+	ActivationFunction/SignalGeneratorActivationFunction.cpp
+	TransferFunction/TransferFunctionSigmoid.cpp
+	TransferFunction/TransferFunctionParameterizedSigmoid.cpp
+	Constraints/NetworkElementPair.cpp
+	SynapseFunction/AbsoluteValueSynapseFunction.cpp
+	SynapseFunction/MultiplicativeSynapseFunction.cpp
+	ModularNeuralNetwork/NeuroModuleManager.cpp
+	Network/NeuralNetworkManager.cpp
+	Collections/NeuroModuleCollection.cpp
+	Util/NeuralNetworkUtil.cpp
+	TransferFunction/TransferFunctionNeutral.cpp
+	Network/NeuroTagManager.cpp
+	Constraints/PreventMutualConnectionsConstraint.cpp
+	PlugIns/NeuralNetworkAttributes.cpp
+	Util/ReplaceModuleHandler.cpp
+	Network/NeuralNetworkElement.cpp
+	Constraints/SimpleScriptedConstraint.cpp
+	Collections/StandardTagCollection.cpp
+	Constraints/ConnectionSymmetryConstraint.cpp
+	SynapseFunction/ASeriesMultiSynapseFunction.cpp
+	IO/NeuralNetworkIOMSeriesBDN.cpp
+	IO/NeuralNetworkIOASeriesBDN.cpp
+	IO/DebugNeuralNetworkIOMSeriesComponentsBDN.cpp
+	Constraints/WeightAndBiasCalculatorConstraint.cpp
+	Script/ScriptedNetworkManipulator.cpp
+	IO/NeuralNetworkBDNExporter.cpp
+	Collections/UniversalNeuroScriptLoader.cpp
+	Script/UniversalNeuroScriptingContext.cpp
 	IO/NeuralNetworkIONerdV1Xml.cpp
 	Constraints/FeedForwardConstraint.cpp
 	ActivationFunction/DelayLineActivationFunction.cpp
@@ -108,10 +108,11 @@ set(nerd_neuralNetwork_SRCS
 	ActivationFunction/BiasActivationFunction.cpp
 	Constraints/ActiveConstraint.cpp
 	SynapseFunction/Learning/ModulatingModulatedRandomSearchSynapseFunction.cpp
+	ActivationFunction/EnergyNeuronActivationFunction.cpp
 )
 
 set(nerd_neuralNetwork_MOC_HDRS
-	Script/ScriptedNetworkManipulator.h 
+	Script/ScriptedNetworkManipulator.h
 	ActivationFunction/LearningRules/ScriptableSelfRegulatingNeuronActivationFunction.h
 	ActivationFunction/ScriptableActivationFunction.h
 	SynapseFunction/ScriptableSynapseFunction.h
