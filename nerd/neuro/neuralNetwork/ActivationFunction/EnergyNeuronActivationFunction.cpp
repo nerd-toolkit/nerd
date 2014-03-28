@@ -61,6 +61,7 @@ EnergyNeuronActivationFunction::EnergyNeuronActivationFunction()
     mMaxCharge = new DoubleValue(1.0);
     mInitCharge = new DoubleValue(1.0);
     mCurrentCharge = new DoubleValue(1.0);
+    mThreshold = new DoubleValue(0.0);
 
 	addParameter("RechargeRate", mRechargeRate);
 	mRechargeRate->setDescription("Factor for incoming charge from synapses");
@@ -70,6 +71,8 @@ EnergyNeuronActivationFunction::EnergyNeuronActivationFunction()
 	mMaxCharge->setDescription("Maximum value of energy the neuron can 'hold'");
 	addParameter("InitCharge", mInitCharge);
 	mInitCharge->setDescription("The Initial charge of the neuron at reset");
+	addParameter("Threshold", mThreshold);
+	mThreshold->setDescription("Minimum required input to start charging");
 
 	addObservableOutput("Charge", mCurrentCharge);
 }
@@ -84,6 +87,7 @@ EnergyNeuronActivationFunction::EnergyNeuronActivationFunction(
         dynamic_cast<DoubleValue*>(getParameter("AutoDischargeRate"));
 	mMaxCharge = dynamic_cast<DoubleValue*>(getParameter("MaxCharge"));
 	mInitCharge = dynamic_cast<DoubleValue*>(getParameter("InitCharge"));
+	mThreshold = dynamic_cast<DoubleValue*>(getParameter("Threshold"));
 	mCurrentCharge = new DoubleValue(mInitCharge->get());
 
 	addObservableOutput("Charge", mCurrentCharge);
@@ -113,14 +117,18 @@ double EnergyNeuronActivationFunction::calculateActivation(Neuron *owner) {
 	}
 
 	QList<Synapse*> synapses = owner->getSynapses();
-	double inCharge;
-	double factor = mRechargeRate->get();
+	double sIn;
+	double inCharge = 0.0;
 	for(QListIterator<Synapse*> i(synapses); i.hasNext();) {
-         inCharge = i.next()->calculateActivation();
-         if(inCharge > 0) {
-            activation += factor * inCharge;
+         sIn = i.next()->calculateActivation();
+         if(sIn > 0) {
+            inCharge += sIn;
          }
 	}
+	if(inCharge >= mThreshold->get()) {
+        activation += mRechargeRate->get() * inCharge;
+	}
+
 	if(activation > mMaxCharge->get()) {
         activation = mMaxCharge->get();
 	}

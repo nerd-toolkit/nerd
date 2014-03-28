@@ -69,6 +69,7 @@ namespace nerd {
 		DoubleValue *mAutoDischargeRate;
 		DoubleValue *mMaxCharge;
 		DoubleValue *mInitCharge;
+		DoubleValue *mThreshold;
 
 		DoubleValue *mCurrentCharge;
 	};
