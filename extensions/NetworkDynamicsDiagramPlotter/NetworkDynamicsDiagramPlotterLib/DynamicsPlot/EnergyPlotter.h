@@ -1,9 +1,6 @@
 /***************************************************************************
  *   NERD - Neurodynamics and Evolutionary Robotics Development Toolkit    *
  *                                                                         *
- *   NetworkDynamicsPlotter project by Till Faber and Christian Rempis     *
- *   till.faber@uni-osnabrueck.de
- *                                                                         *
  *   University of Osnabrueck, Germany                                     *
  *   Institute of Cognitive Science                                        *
  *   Neurocybernetics Group                                                *
@@ -45,56 +42,35 @@
  ***************************************************************************/
 
 
+#ifndef ENERGYPLOTTER_H
+#define ENERGYPLOTTER_H
 
-#include "DynamicsPlotCollection.h"
-#include <iostream>
-#include <QList>
-#include "Core/Core.h"
-#include "DynamicsPlot/BifurcationPlotter.h"
-#include "DynamicsPlot/BasinPlotter.h"
-#include "DynamicsPlot/TransientPlotter.h"
-#include "DynamicsPlot/IsoperiodPlotter.h"
-#include "DynamicsPlot/FirstReturnMap.h"
-#include "DynamicsPlot/DummyPlotter.h"
-#include "DynamicsPlot/LyapunovExponent.h"
-#include "DynamicsPlot/EnergyPlotter.h"
-#include "Event/EventManager.h"
-
-using namespace std;
+#include "DynamicsPlot/DynamicsPlotter.h"
 
 namespace nerd {
+	class EnergyPlotter : public DynamicsPlotter {
 
+	public:
+		EnergyPlotter();
+		virtual ~EnergyPlotter();
 
-/**
- * Constructs a new DynamicsPlotCollection.
- */
-DynamicsPlotCollection::DynamicsPlotCollection()
-{
-	new BifurcationPlotter();
-	new BasinPlotter();
-	new IsoperiodPlotter();
-	new FirstReturnMap();
-	new TransientPlotter();
-	new LyapunovExponent();
-	new EnergyPlotter();
+		virtual void calculateData();
 
-	new DummyPlotter();
+	private:
+		StringValue *mVariedElement;
+		StringValue *mVariedRange;
+		IntValue *mResolutionX;
+		IntValue *mResolutionY;
 
+		BoolValue *mDrawNL;
+
+		IntValue *mPreIterations;
+		IntValue *mIterations;
+
+		BoolValue *mResetNetworkActivation;
+		BoolValue *mRestoreNetworkConfiguration;
+		BoolValue *mResetSimulator;
+	};
 }
 
-
-
-/**
- * Destructor.
- */
-DynamicsPlotCollection::~DynamicsPlotCollection() {
-}
-
-
-
-
-}
-
-
-
-
+#endif // ENERGYPLOTTER_H

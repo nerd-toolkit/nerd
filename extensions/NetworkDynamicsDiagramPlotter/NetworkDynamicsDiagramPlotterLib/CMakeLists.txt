@@ -9,28 +9,29 @@ set(nerd_dynamicsPlotLib_SRCS
 	DynamicsPlot/FirstReturnMap.cpp
 	DynamicsPlot/TransientPlotter.cpp
 	DynamicsPlot/LyapunovExponent.cpp
-	Gui/DynamicsPlotterMainWindow.cpp  
-	Execution/PlotterExecutionLoop.cpp  
-	DynamicsPlot/DynamicsPlotManager.cpp  
-	DynamicsPlotConstants.cpp  
-	DynamicsPlot/DynamicsPlotter.cpp  
-	Collections/DynamicsPlotCollection.cpp  
-	DynamicsPlot/Exporters/Exporter.cpp  
-	DynamicsPlot/OnlinePlotter/OnlinePlotter.cpp  
-	DynamicsPlot/OnlinePlotter/OnlinePlotterWindow.cpp  
-	DynamicsPlot/OnlinePlotter/MouseMoveLabel.cpp  
+	Gui/DynamicsPlotterMainWindow.cpp
+	Execution/PlotterExecutionLoop.cpp
+	DynamicsPlot/DynamicsPlotManager.cpp
+	DynamicsPlotConstants.cpp
+	DynamicsPlot/DynamicsPlotter.cpp
+	Collections/DynamicsPlotCollection.cpp
+	DynamicsPlot/Exporters/Exporter.cpp
+	DynamicsPlot/OnlinePlotter/OnlinePlotter.cpp
+	DynamicsPlot/OnlinePlotter/OnlinePlotterWindow.cpp
+	DynamicsPlot/OnlinePlotter/MouseMoveLabel.cpp
 	Gui/InternalDiagramPlotter/InternalDiagramPlotterWidget.cpp
 	Gui/InternalDiagramPlotter/InternalDiagramPlotterMainWidget.cpp
 	Gui/InternalDiagramPlotter/AddInternalDiagramPlotterAction.cpp
 	DynamicsPlot/OnlinePlotter/OnlinePlotterTabbedWindow.cpp
 	DynamicsPlot/DummyPlotter.cpp
 	Exporters/MatlabExporter.cpp
+	DynamicsPlot/EnergyPlotter.cpp
 )
 
 set(nerd_dynamicsPlotLib_MOC_HDRS
-	Gui/DynamicsPlotterMainWindow.h   
-	DynamicsPlot/OnlinePlotter/OnlinePlotter.h  
-	DynamicsPlot/OnlinePlotter/OnlinePlotterWindow.h  
+	Gui/DynamicsPlotterMainWindow.h
+	DynamicsPlot/OnlinePlotter/OnlinePlotter.h
+	DynamicsPlot/OnlinePlotter/OnlinePlotterWindow.h
 	Gui/InternalDiagramPlotter/InternalDiagramPlotterWidget.h
 	Gui/InternalDiagramPlotter/InternalDiagramPlotterMainWidget.h
 	Gui/InternalDiagramPlotter/AddInternalDiagramPlotterAction.h
