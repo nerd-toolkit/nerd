@@ -75,9 +75,8 @@ EnergyPlotter::EnergyPlotter() : DynamicsPlotter("Energy") {
 	mPreIterations->setDescription("Number of simulation steps to reach attractor");
 	mIterations = new IntValue(10);
 	mIterations->setDescription("Number of simulation steps to run on attractor");
-
-	mDrawNL = new BoolValue(true);
-	mDrawNL->setDescription("Draw a red line at y=0 for orientation");
+	mPostIterations = new IntValue(0);
+	mPostIterations->setDescription("Number of steps to run additionally, if no attractor is found initially");
 
 	mResetNetworkActivation = new BoolValue(true);
 	mResetNetworkActivation->setDescription("Whether or not to reset the network's activation "
@@ -99,8 +98,7 @@ EnergyPlotter::EnergyPlotter() : DynamicsPlotter("Energy") {
 
 	addParameter("Config/PreIterations", mPreIterations, true);
 	addParameter("Config/Iterations", mIterations, true);
-
-	addParameter("Config/DrawNL", mDrawNL, true);
+	addParameter("Config/PostIterations", mPostIterations, true);
 
 	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
 	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
@@ -176,6 +174,7 @@ void EnergyPlotter::calculateData() {
 
 	int preIterations = mPreIterations->get();
 	int iterations = mIterations->get();
+	int postIterations = mPostIterations->get();
 
 	// PREPARE data matrix
 	{
@@ -211,91 +210,92 @@ void EnergyPlotter::calculateData() {
 
         variedValue->set(vValues.at(x)); // set actual value
 
-        // PRE-ITERATIONS
-        for(int j = 0; j <= preIterations && mActiveValue->get(); ++j) {
-            // let the network run for 1 timestep
+        // PRE-ITERATIONS - 1
+        for(int j = 1; j < preIterations && mActiveValue->get(); ++j) {
             triggerNetworkStep();
         }
 
-        double sum = 0.0;
-        QList<double> lastActivations;
+        QList< QList<double> > activations;
 
-        triggerNetworkStep();
-        for(int n = 0; n < neurons.size(); ++n) {
-            lastActivations.append(neurons.at(n)->getLastActivation());
-        }
-
-        // ITERATIONS-1 on attractor
-        for(int j = 1; j <= iterations && mActiveValue->get(); ++j) {
-
+        // ITERATIONS + 1
+        for(int j = 0; j <= iterations && mActiveValue->get(); ++j) {
             triggerNetworkStep();
-
-            double currSum = 0.0;
-            for(int n = 0; n < neurons.size(); ++n) {
-                Neuron *neuron = neurons.at(n);
-                if(neuron != 0) {
-                    //cout << "currAct: " << neuron->getLastActivation() << endl;
-                    //cout << "lastAct: " << lastActivations.at(n) << endl;
-                    currSum += pow(neuron->getLastActivation() -
-                                lastActivations.at(n), 2);
-                    lastActivations.insert(n, neuron->getLastActivation());
-                } // sum_i=1^N ( a(t+1)-a(t) ) ^ 2
-                //cout << "currSum: " << currSum << endl;
-            }
-            sum += currSum / neurons.size(); // sum_i=1^N ( a(t+1)-a(t) ) ^ 2 / N
-            //cout << "sum: " << sum << endl;
+            activations.append(DynamicsPlotterUtil::getNeuronActivations(network));
         }
-        double energy = sum / iterations; // sum... / p
-        energies.append(energy);
-        //cout << "energy: " << energy << endl;
 
-        // find smallest and biggest energy
-        double ymin = energies.first(); double ymax = energies.first();
-        for(int i = 1; i < energies.size(); ++i) {
-            double y = energies.at(i);
-            if(y < ymin) {
-                ymin = y;
+        // look for attractor/period
+        int period = DynamicsPlotterUtil::findAttractorPeriod(activations);
+
+        // no attractor found
+        if(period == 0) {
+            // run additional PostIterations, if any
+            for(int j = 0; j < postIterations; ++j) {
+                activations.clear();
+                triggerNetworkStep();
+                activations.append(DynamicsPlotterUtil::getNeuronActivations(network));
             }
-            if(y > ymax) {
-                ymax = y;
-            }
+            // look for an attractor again
+            period = DynamicsPlotterUtil::findAttractorPeriod(activations);
         }
-        if(ymax-ymin == 0) {
-            ymin = -1;
-            ymax = 1;
-        }
-        double ystep = (ymax - ymin) / (double)(resolutionY - 1);
 
-        {
-            //Thread safety of matrix.
-            QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+        // found attractor
+        if(period > 0) {
 
-            // clear data matrix
-            mData->fill(0);
-
-            // rescale
-            for(int y = 1; y <= resolutionY; ++y) {
-                double v = ymin + (y-1) * ystep;
-                mData->set(Math::round(v, 5), 0, y, 0);
-            }
-
-            // fill rescaled matrix again
-            for(int x = 1; x <= energies.size(); ++x) {
-                double v = min(max(ymin, energies.at(x - 1)), ymax);
-                int y = ceil(((v - ymin) / ystep) + 1);
-                mData->set(1, x, y, 0);
-                mData->set(vValues.at(x-1), x, 0, 0);
-            }
-
-            // find null position (if any)
-            int ny = ceil(((-ymin)/ystep)+1);
-            // and draw red line indicating y=0
-            if(mDrawNL->get() && ny < resolutionY && ny > 0) {
-                for(int x = 0; x < resolutionX; ++x) {
-                    if(mData->get(x, ny, 0) == 0) {
-                        mData->set(2, x, ny, 0);
-                    }
+            // calculate the actual energy of the attractor!
+            double sum = 0.0;
+            for(int p = 1; p < period; ++p) {
+                QList<double> curr = activations.at(p);
+                QList<double> last = activations.at(p-1);
+                double currSum = 0.0; //sum_i=1^N
+                for(int n = 0; n < curr.size(); ++n) {
+                    currSum += pow(curr.at(n) - last.at(n), 2); //a(t)-a(t-1))^2
                 }
+                sum += currSum / curr.size(); // sum_i=1^N / N
+            }
+            double energy = sum / period; // sum... / p
+            energies.append(energy);
+
+
+            // updating the matrix and axes:
+            //
+            // find smallest and biggest energy
+            double ymin = energies.first(); double ymax = energies.first();
+            for(int i = 1; i < energies.size(); ++i) {
+                double y = energies.at(i);
+                if(y < ymin) {
+                    ymin = y;
+                }
+                if(y > ymax) {
+                    ymax = y;
+                }
+            }
+            if(ymax-ymin == 0) {
+                ymin = 0;
+                ymax = 1;
+            }
+            double ystep = (ymax - ymin) / (double)(resolutionY - 1);
+
+            {
+                //Thread safety of matrix.
+                QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
+
+                // clear data matrix
+                mData->fill(0);
+
+                // rescale
+                for(int y = 1; y <= resolutionY; ++y) {
+                    double v = ymin + (y-1) * ystep;
+                    mData->set(Math::round(v, 5), 0, y, 0);
+                }
+
+                // fill rescaled matrix again
+                for(int x = 1; x <= energies.size(); ++x) {
+                    double v = min(max(ymin, energies.at(x - 1)), ymax);
+                    int y = ceil(((v - ymin) / ystep) + 1);
+                    mData->set(1, x, y, 0);
+                    mData->set(vValues.at(x-1), x, 0, 0);
+                }
+
             }
         }
 

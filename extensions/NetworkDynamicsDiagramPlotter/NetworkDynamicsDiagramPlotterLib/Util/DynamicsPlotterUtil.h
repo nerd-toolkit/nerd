@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -58,17 +58,17 @@ namespace nerd {
 	class EditorMessageWidget;
 	class DynamicsPlotterUtil {
 
-	public:	
-		
+	public:
+
 		static DoubleValue* getElementValue(const QString &parameter,
 											NeuralNetworkElement* networkElement,
 											QList<Neuron*> *neuronsWithActivationChange = 0);
 
-		static DoubleValue* getElementValue(const QString &specifier, 
+		static DoubleValue* getElementValue(const QString &specifier,
 											const QList<NeuralNetworkElement*> &networkElements,
 											QList<Neuron*> *neuronsWithActivationChange = 0);
-		
-		static QList< QList<DoubleValue*> > getElementValues(const QList<QStringList> &specifiers, 
+
+		static QList< QList<DoubleValue*> > getElementValues(const QList<QStringList> &specifiers,
 															const QList<NeuralNetworkElement*> &networkElements,
 															QList<Neuron*> *neuronsWithActivationChange = 0);
 
@@ -78,21 +78,25 @@ namespace nerd {
 
 		static QList<QStringList> parseElementString(QString const &string);
 
-		static QList<double> getDoublesFromString(const QString &list, const QString &separator = ",", 
+		static QList<double> getDoublesFromString(const QString &list, const QString &separator = ",",
 												const QString &replace = "|");
-		
+
 		static QList<DoubleValue*> getNetworkValues(const QList<NeuralNetworkElement*> networkElements);
-		
+
 		static QList<double> getNetworkState(const QList<DoubleValue*> networkValues);
-				
-		static bool compareNetworkStates(const QList<double> &state1, 
+
+		static QList<double> getNeuronActivations(NeuralNetwork* network);
+
+		static int findAttractorPeriod(QList< QList<double> > history);
+
+		static bool compareNetworkStates(const QList<double> &state1,
 										const QList<double> &state2, double accuracy = 0.001);
 
 		static double getDistance(const QList<double> &state1, const QList<double> &state2);
-		
+
 		static void transferNeuronActivationToOutput(NeuralNetwork *network);
 		static void transferNeuronActivationToOutput(const QList<Neuron*> neurons);
-		
+
 		static void reportProblem(const QString &errorMessage);
 		static void clearProblemMessageArea();
 

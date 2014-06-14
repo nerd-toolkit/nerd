@@ -62,10 +62,9 @@ namespace nerd {
 		IntValue *mResolutionX;
 		IntValue *mResolutionY;
 
-		BoolValue *mDrawNL;
-
 		IntValue *mPreIterations;
 		IntValue *mIterations;
+		IntValue *mPostIterations;
 
 		BoolValue *mResetNetworkActivation;
 		BoolValue *mRestoreNetworkConfiguration;

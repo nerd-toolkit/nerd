@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -56,11 +56,11 @@
 
 namespace nerd {
 
-	
+
 	EditorMessageWidget* DynamicsPlotterUtil::sMessageWidget = 0;
 	Core* DynamicsPlotterUtil::sCore = 0;
 
-	
+
 	DoubleValue* DynamicsPlotterUtil::getElementValue(QString const &specifier,
 													  NeuralNetworkElement* networkElement,
 													  QList<Neuron*> *neuronsWithActivationChange)
@@ -86,7 +86,7 @@ namespace nerd {
 		} else {
 			parameter = specifier;
 		}
-		
+
 		// requested parameter is neuron-specific
 		if(nParams.contains(parameter)) {
 			Neuron *neuron = dynamic_cast<Neuron*>(networkElement);
@@ -139,7 +139,7 @@ namespace nerd {
 						}
 					}
 				}
-				
+
 				// requested parameter has not been found, report
 				reportProblem("DynamicsPlotterUtil::getElementValue(1) : "
 							  "Found neuron ["+QString::number(neuron->getId())+"] "
@@ -183,7 +183,7 @@ namespace nerd {
 							  "["+specifier+"]");
 			}
 		}
-		
+
 		// neuron/synapse or specified parameter not found
 		// do not report here, since getElementValues
 		// correctly calls this function with non-matching
@@ -193,18 +193,18 @@ namespace nerd {
 
 
 	/**
-	 * 
+	 *
 	 * The neuronsWithActivationChange parameter can be used to collect all DoubelValues that correspond
 	 * to activation values of neurons. These neurons have to be collected in each DymnamcisPlotter in
-	 * variable DynamcisPlotter::mNeuronsWithActivationsToTransfer to be handled correctly, if the 
+	 * variable DynamcisPlotter::mNeuronsWithActivationsToTransfer to be handled correctly, if the
 	 * activation of a neuron should be varied during an analyzer run. Otherwise the varied activations
-	 * are immediately overwritten by the newly calculated activations at the first network update. 
-	 * 
+	 * are immediately overwritten by the newly calculated activations at the first network update.
+	 *
 	 * If this method is used to collect elements that will NOT be changed during analyzer runs,
 	 * then the last parameter MUST be empty. Othewise activations of neurons collected in this way
-	 * will be treated differently compared to the other neurons in the network. This may lead to 
+	 * will be treated differently compared to the other neurons in the network. This may lead to
 	 * unexpected and erroneous behavior.
-	 * 
+	 *
 	 * @param specifier the specification of the desired DoubleValue object.
 	 * @param networkElements the list of objects that are considered to find the specified DoubleValue object.
 	 * @param neuronsWithActivationChange (optional) list to collect all activation values that are going to be changed during a run.
@@ -259,32 +259,32 @@ namespace nerd {
 
 
 	/**
-	 * 
+	 *
 	 * The neuronsWithActivationChange parameter can be used to collect all DoubelValues that correspond
 	 * to activation values of neurons. These neurons have to be collected in each DymnamcisPlotter in
-	 * variable DynamcisPlotter::mNeuronsWithActivationsToTransfer to be handled correctly, if the 
+	 * variable DynamcisPlotter::mNeuronsWithActivationsToTransfer to be handled correctly, if the
 	 * activation of a neuron should be varied during an analyzer run. Otherwise the varied activations
-	 * are immediately overwritten by the newly calculated activations at the first network update. 
-	 * 
+	 * are immediately overwritten by the newly calculated activations at the first network update.
+	 *
 	 * If this method is used to collect elements that will NOT be changed during analyzer runs,
 	 * then the last parameter MUST be empty. Othewise activations of neurons collected in this way
-	 * will be treated differently compared to the other neurons in the network. This may lead to 
+	 * will be treated differently compared to the other neurons in the network. This may lead to
 	 * unexpected and erroneous behavior.
-	 * 
+	 *
 	 * @param specifierLists a list of stringlists, containing the single specifications of DoubleValues.
 	 * @param networkElements the list of objects that are considered to find the specified DoubleValue object.
 	 * @param neuronsWithActivationChange (optional) list to collect all activation values that are going to be changed during a run.
 	 */
-	QList< QList<DoubleValue*> > DynamicsPlotterUtil::getElementValues(QList<QStringList> const &specifierLists, 
-																	   QList<NeuralNetworkElement*> const &networkElements, 
+	QList< QList<DoubleValue*> > DynamicsPlotterUtil::getElementValues(QList<QStringList> const &specifierLists,
+																	   QList<NeuralNetworkElement*> const &networkElements,
 																	   QList<Neuron*> *neuronsWithActivationChange)
 	{
 		QList< QList<DoubleValue*> > plotElements, emptyList;
 		emptyList = QList< QList<DoubleValue*> >();
-		
+
 		for(int listNr = 0; listNr < specifierLists.size(); ++listNr) {
 			QList<DoubleValue*> elementValues;
-			
+
 			QStringList specifierList = specifierLists.at(listNr);
 			for(int specifierNr = 0; specifierNr < specifierList.size(); ++specifierNr) {
 
@@ -325,7 +325,7 @@ namespace nerd {
 									  "for element specifier ["+specifier+"]!");
 						return emptyList;
 					}
-					
+
 					elementValues.append(elementValue);
 
 				}
@@ -337,6 +337,34 @@ namespace nerd {
 		return plotElements;
 	}
 
+
+	QList<double> DynamicsPlotterUtil::getNeuronActivations(NeuralNetwork* network) {
+        if(network == 0) {
+            reportProblem("DynamicsPlotterUtil::getNeuronActivations : No network");
+            return QList<double>();
+        }
+        QList<double> activations;
+        QList<Neuron*> neurons = network->getNeurons();
+        for(int n = 0; n < neurons.size(); ++n) {
+            activations.append(neurons.at(n)->getLastActivation());
+        }
+        return activations;
+	}
+
+	int DynamicsPlotterUtil::findAttractorPeriod(QList< QList<double> > history) {
+        bool attractor = false;
+        int period = 0;
+        for(int i = 0; i < history.size()-1 && !attractor; ++i) {
+            for(int k = i+1; k < history.size() && !attractor; ++k) {
+                attractor = DynamicsPlotterUtil::compareNetworkStates(
+                            history.at(i), history.at(k));
+                if(attractor) {
+                    period = k-i;
+                }
+            }
+        }
+        return period;
+	}
 
 	QList<QStringList> DynamicsPlotterUtil::parseElementString(QString const &elementString) {
 		if(elementString.isEmpty()) {
@@ -384,13 +412,13 @@ namespace nerd {
 			reportProblem("DynamicsPlotterUtil::getMeanValues : Empty list. Nothing to do.");
 			return emptyList;
 		}
-		
+
 		for(int currList = 0; currList < valuesListList.size(); ++currList) {
 			meanValues.append(getMeanValue(valuesListList.at(currList)));
 		}
 
 		return meanValues;
-	}		 
+	}
 
 
 	// separator is a string containing the symbol/character separating entries
@@ -408,16 +436,16 @@ namespace nerd {
 		QStringList doublelist = tmp.split(separator, QString::SkipEmptyParts);
 		QList<double> output;
 		bool ok;
-		
+
 		for(int i = 0; i < doublelist.size(); ++i) {
 			double d = doublelist.at(i).toDouble(&ok);
-			
+
 			if(!ok) {
 				reportProblem("DynamicsPlotterUtil::getDoublesFromString : "
 							  "Unable to convert ["+doublelist.at(i)+"] to double");
 				return QList<double>();
 			}
-			
+
 			output.append(d);
 		}
 		return output;
@@ -430,20 +458,20 @@ namespace nerd {
 		QList<DoubleValue*> list;
 		for(int i = 0; i < networkElements.size(); ++i) {
 			NeuralNetworkElement *e = networkElements.at(i);
-			
+
 			if(e == 0) {
 				reportProblem("DynamicsPlotterUtil::getNetworkState : "
 							"NeuralNetworkElement is NULL!");
 				return QList<DoubleValue*>();
 			}
-			
+
 			Neuron *n = dynamic_cast<Neuron*>(e);
 			if(n != 0) {
 				DoubleValue *d = &(n->getActivationValue());
 				list.append(d);
 				DoubleValue *b = &(n->getBiasValue());
 				list.append(b);
-				
+
 				ObservableNetworkElement *tf =
 				dynamic_cast<ObservableNetworkElement*>(n->getTransferFunction());
 				if(tf != 0) {
@@ -455,7 +483,7 @@ namespace nerd {
 						}
 					}
 				}
-				
+
 				ObservableNetworkElement *af =
 				dynamic_cast<ObservableNetworkElement*>(n->getActivationFunction());
 				if(af != 0) {
@@ -468,12 +496,12 @@ namespace nerd {
 					}
 				}
 			}
-			
+
 			Synapse *s = dynamic_cast<Synapse*>(e);
 			if(s != 0) {
 				DoubleValue *d = &(s->getStrengthValue());
 				list.append(d);
-				
+
 				ObservableNetworkElement *sf =
 				dynamic_cast<ObservableNetworkElement*>(s->getSynapseFunction());
 				if(sf != 0) {
@@ -496,13 +524,13 @@ namespace nerd {
 		if(networkValues.isEmpty()) {
 			return QList<double>();
 		}
-		
+
 		QList<double> networkState;
 		for(int i = 0; i < networkValues.size(); ++i) {
 			double tmp = networkValues.at(i)->get();
 			networkState.append(tmp);
 		}
-		
+
 		return networkState;
 	}
 
@@ -513,13 +541,13 @@ namespace nerd {
 						"appear to be from different networks");
 			return false;
 		}
-		
+
 		for(int i = 0; i < state1.size(); ++i) {
 			if(!Math::compareDoubles(state1.at(i), state2.at(i), accuracy) ) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -539,16 +567,16 @@ namespace nerd {
 
 
 	void DynamicsPlotterUtil::transferNeuronActivationToOutput(NeuralNetwork *network) {
-			
+
 		if(network != 0) {
-			
+
 			//Set the output of every neuron to the transferred activation
 			DynamicsPlotterUtil::transferNeuronActivationToOutput(network->getNeurons());
 		}
 	}
 
 	void DynamicsPlotterUtil::transferNeuronActivationToOutput(const QList<Neuron*> neurons) {
-		
+
 		//Set the output of every neuron to the transferred activation
 		for(QListIterator<Neuron*> i(neurons); i.hasNext();) {
 			Neuron *neuron = i.next();
@@ -557,11 +585,11 @@ namespace nerd {
 					neuron->getActivationValue().get(), neuron));
 		}
 	}
-	
+
 	void DynamicsPlotterUtil::reportProblem(const QString &errorMessage) {
-		
-		if(DynamicsPlotterUtil::sMessageWidget == 0 
-				|| DynamicsPlotterUtil::sCore != Core::getInstance()) 
+
+		if(DynamicsPlotterUtil::sMessageWidget == 0
+				|| DynamicsPlotterUtil::sCore != Core::getInstance())
 		{
 			DynamicsPlotterUtil::sCore = Core::getInstance();
 			DynamicsPlotterUtil::sMessageWidget = dynamic_cast<EditorMessageWidget*>(
@@ -575,10 +603,10 @@ namespace nerd {
 			Core::log(QTime::currentTime().toString("hh:mm:ss") + ": " + errorMessage, true);
 		}
 	}
-	
+
 	void DynamicsPlotterUtil::clearProblemMessageArea() {
-		if(DynamicsPlotterUtil::sMessageWidget == 0 
-				|| DynamicsPlotterUtil::sCore != Core::getInstance()) 
+		if(DynamicsPlotterUtil::sMessageWidget == 0
+				|| DynamicsPlotterUtil::sCore != Core::getInstance())
 		{
 			DynamicsPlotterUtil::sCore = Core::getInstance();
 			DynamicsPlotterUtil::sMessageWidget = dynamic_cast<EditorMessageWidget*>(
