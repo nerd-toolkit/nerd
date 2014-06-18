@@ -38,7 +38,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  *                                                                         *
  *   Publications based on work using the NERD kit have to state this      *
- *   clearly by citing the NERD homepage and the NERD overview paper.      *  
+ *   clearly by citing the NERD homepage and the NERD overview paper.      *
  ***************************************************************************/
 
 
@@ -54,7 +54,7 @@ using namespace std;
 
 namespace nerd {
 
-FirstReturnMap::FirstReturnMap() 
+FirstReturnMap::FirstReturnMap()
 	: DynamicsPlotter("FirstReturnMap"), mCurrentMarker(1)
 {
 	// initialising
@@ -64,7 +64,7 @@ FirstReturnMap::FirstReturnMap()
 					"Format is ID:PARAM or ID:FUNC:PARAM\n"
 					"separated by ',' for the average or\n"
 					"          by '|' for multiple plots");
-	
+
 	mObservedRanges = new StringValue("-1,1");
 	mObservedRanges->setDescription("Limits of the plot values\n"
 					"give two comma-separated values for each separate plot\n"
@@ -77,16 +77,7 @@ FirstReturnMap::FirstReturnMap()
 	mStepsToRun->setDescription("Number of simulation steps that are computed");
 	mStepsToPlot = new IntValue(100);
 	mStepsToPlot->setDescription("How many steps to plot after running for StepsToRun steps");
-	
-	mResetNetworkActivation = new BoolValue(true);
-	mResetNetworkActivation->setDescription("Whether or not to reset the "
-						"network's activation after each parameter change");
-	
-	mRestoreNetworkConfiguration = new BoolValue(true);
-	mRestoreNetworkConfiguration->setDescription("If true, then all network "
-					"parameters like bias, weight, observable parameters are "
-					"reset to the initial state before each run");
-	
+
 	mKeepPreviousData = new BoolValue(false);
 	mKeepPreviousData->setDescription("If true, then the plot will be drawn on top of the previous data, i.e. "
 									  "the data matrix will not be deleted before use. However, if the size of "
@@ -94,29 +85,26 @@ FirstReturnMap::FirstReturnMap()
 									  "To make it easier to identify different analyzer runs in the plot "
 									  "each run uses a different color.");
 
-	
+
 	addParameter("Config/ObservedElems", mObservedElems, true);
 	addParameter("Config/ObservedRanges", mObservedRanges, true);
 	addParameter("Config/ObservedResolution", mObservedResolution, true);
-	
+
 	addParameter("Config/StepsToRun", mStepsToRun, true);
 	addParameter("Config/StepsToPlot", mStepsToPlot, true);
-	
-	addParameter("Config/ResetNetworkActivation", mResetNetworkActivation, true);
-	addParameter("Config/RestoreNetworkConfiguration", mRestoreNetworkConfiguration, true);
-	
+
 	addParameter("Config/KeepPreviousData", mKeepPreviousData, true);
-	
+
 	mTitleNames->set("First Return Map|First Return Map|First Return Map|First Return Map|First Return Map|First Return Map");
 }
 
 FirstReturnMap::~FirstReturnMap() {}
 
 void FirstReturnMap::calculateData() {
-	
+
 	// get program core
 	Core *core = Core::getInstance();
-	
+
 	// get network
 	ModularNeuralNetwork *network = getCurrentNetwork();
 	QList<NeuralNetworkElement*> networkElements;
@@ -132,50 +120,45 @@ void FirstReturnMap::calculateData() {
 		reportProblem("FirstReturnMap: No elements to observe.");
 		return;
 	}
-	
+
 	QList< QList <DoubleValue*> > observedValues =
 		DynamicsPlotterUtil::getElementValues(observedElems, networkElements);
-	
+
 	if(observedValues.isEmpty()) {
 		reportProblem("FirstReturnMap: Observed element returned NULL pointer. "
 					"Aborting.");
 		return;
 	}
-	
-	QList<double> observedRanges = 
+
+	QList<double> observedRanges =
 				DynamicsPlotterUtil::getDoublesFromString(mObservedRanges->get());
-				
+
 	if(observedRanges.isEmpty() || observedRanges.size() != 2*observedValues.size()) {
 		reportProblem("FirstReturnMap: Given value ranges don't match the elements."
 					" Aborting.");
 		return;
 	}
-		
+
 	int resolution = mObservedResolution->get();
-	
+
 	//avoid division by zero!
 	if(resolution < 2) {
 		reportProblem("FirstReturnMap: Invalid resolution given.");
 		return;
 	}
-	
-	bool resetNetworkActivation = mResetNetworkActivation->get();
-	storeCurrentNetworkActivities();
-	bool restoreNetConfiguration = mRestoreNetworkConfiguration->get();
-	storeNetworkConfiguration();
-	
+
 	//This is important when the physical simulator is activated!
 	triggerReset();
-	
-	
+
+
 	bool keepPreviousData = mKeepPreviousData->get();
 	QList<double> rangeStart, rangeEnd, rangeStep;
-	
+
 	{
 		//Thread safety of matrix.
 		QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
-		
-	
+
+
 		if(keepPreviousData
 			&& (mData->getMatrixWidth() == (resolution + 1))
 			&& (mData->getMatrixHeight() == (resolution + 1))
@@ -191,21 +174,21 @@ void FirstReturnMap::calculateData() {
 			keepPreviousData = false;
 			mCurrentMarker = 1;
 		}
-	
+
 		if(!keepPreviousData) {
 			// PREPARE data matrix
 			mData->clear();
 			mData->resize(resolution + 1, resolution + 1, observedValues.size());
 			mData->fill(0);
 		}
-	
-	
+
+
 		// iterate through plots and write axes first
 		for(int i = 0; i * 2 + 1 < observedRanges.size(); ++i) {
 			rangeStart.append(observedRanges.at(2*i));
 			rangeEnd.append(observedRanges.at(2*i+1));
 			rangeStep.append((rangeEnd.at(i) - rangeStart.at(i)) / (double) (resolution - 1));
-			
+
 			for(int x = 1; x <= resolution; ++x) {
 				double val = rangeStart.at(i)+(x-1)*rangeStep.at(i);
 				mData->set(Math::round(val,5), x, 0, i); // x-axis
@@ -216,28 +199,20 @@ void FirstReturnMap::calculateData() {
 
 	int stepsRun = mStepsToRun->get();
 	int stepsPlot = mStepsToPlot->get();
-	
+
 	//important to support randomization and constraints!
 	notifyNetworkParametersChanged(network);
-	
-	// run network	
-	for(int j=1; j < stepsRun-stepsPlot && mActiveValue->get(); ++j) {
+
+	// run network
+	for(int j = 0; j < stepsRun && mActiveValue->get(); ++j) {
 		triggerNetworkStep();
 	}
-	
-	QList<double> oldActs;
-	for(int k = 0; k <= stepsPlot && mActiveValue->get(); ++k) {
 
-		if(restoreNetConfiguration) {
-			restoreNetworkConfiguration();
-		}
-		
-		if(resetNetworkActivation) {
-			restoreCurrentNetworkActivites();
-		}
+	QList<double> oldActs;
+	for(int k = 0; k < stepsPlot && mActiveValue->get(); ++k) {
 
 		triggerNetworkStep();
-		
+
 		for(int i = 0; i < observedValues.size(); ++i) {
 			QList<DoubleValue*> currentValues = observedValues.at(i);
 
@@ -251,28 +226,28 @@ void FirstReturnMap::calculateData() {
 			if(k > 0) {
 				//x-axis: t-1
 				//y-axis: t
-				int x = ceil(oldActs.at(i) - rangeStart.at(i)) / rangeStep.at(i) + 1;
-				int y = ceil(act - rangeStart.at(i)) / rangeStep.at(i) + 1;
-				
+				int x = ceil((oldActs.at(i) - rangeStart.at(i)) / rangeStep.at(i));
+				int y = ceil((act - rangeStart.at(i)) / rangeStep.at(i));
+
 				//Thread safety of matrix.
 				QMutexLocker guard(mDynamicsPlotManager->getMatrixLocker());
-		
+
 				mData->set(mCurrentMarker, x, y, i);
 				oldActs.replace(i, act);
-				
+
 			} else {
 				oldActs.append(act);
 			}
-		}	
-	
+		}
+
 		if(core->isShuttingDown()) {
 			return;
 		}
 		core->executePendingTasks();
-	
+
 	}
 
-	// CLEAN UP	
+	// CLEAN UP
 	triggerReset();
 	restoreNetworkConfiguration();
 	restoreCurrentNetworkActivites();
